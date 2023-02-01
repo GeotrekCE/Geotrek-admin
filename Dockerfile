@@ -16,7 +16,7 @@ ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
-
+RUN adduser geotrek --disabled-password && chown geotrek:geotrek -R /opt
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
     unzip \
@@ -37,20 +37,24 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libpango1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
-    libffi-dev && \
+    libffi-dev \
+    libvips && \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
-COPY requirements.txt requirements.txt
+USER geotrek
 RUN python3 -m venv /opt/venv
-RUN /opt/venv/bin/pip install -U pip setuptools wheel
+RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
+COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
+COPY requirements-dev.txt requirements-dev.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements-dev.txt -U
 
-COPY geotrek/ geotrek/
-COPY manage.py manage.py
-COPY VERSION VERSION
-COPY setup.cfg setup.cfg
-COPY docker/* /usr/local/bin/
+COPY --chown=geotrek:geotrek geotrek/ geotrek/
+COPY --chown=geotrek:geotrek manage.py manage.py
+COPY --chown=geotrek:geotrek VERSION VERSION
+COPY --chown=geotrek:geotrek setup.cfg setup.cfg
+COPY --chown=geotrek:geotrek docker/* /usr/local/bin/
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000

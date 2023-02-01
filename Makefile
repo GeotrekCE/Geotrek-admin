@@ -7,6 +7,12 @@ build-no-cache:
 serve:
 	docker-compose up
 
+deps:
+	docker-compose run --rm web bash -c "pip-compile -q && pip-compile -q requirements-dev.in"
+
+flake8:
+	docker-compose run --rm web flake8 geotrek
+
 messages:
 	docker-compose run --rm web ./manage.py makemessages -a --no-location
 

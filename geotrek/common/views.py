@@ -4,53 +4,70 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import is_zipfile, ZipFile
+from zipfile import ZipFile, is_zipfile
 
 import redis
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.models import CHANGE, LogEntry
+from django.contrib.auth.decorators import (login_required,
+                                            permission_required,
+                                            user_passes_test)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
+from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db.models.functions import Cast
-from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
-from django.views.decorators.http import require_POST, require_http_methods
-from django.views.generic import RedirectView, View
-from django.views.generic import TemplateView
+from django.views.decorators.http import require_http_methods, require_POST
+from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
+from django_large_image.rest import LargeImageFileDetailMixin
+from geotrek.common.filters import HDViewPointFilterSet
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
-from mapentity.registry import registry, app_settings
+from mapentity.registry import app_settings, registry
+from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
-from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework import mixins
+from rest_framework import permissions as rest_permissions
+from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
+from geotrek.common.mixins.api import APIViewSet
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.parsers import SuricateParser
-from .forms import AttachmentAccessibilityForm, ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, \
-    SyncRandoForm
-from .mixins.views import MetaMixin, DocumentPortalMixin, DocumentPublicMixin, BookletMixin
-from .models import TargetPortal, AccessibilityAttachment, Theme
-from .permissions import PublicOrReadPermMixin
-from .serializers import ThemeSerializer
-from .tasks import import_datas, import_datas_from_web, launch_sync_rando
-from .utils import leaflet_bounds
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
+
 from ..altimetry.models import Dem
 from ..core.models import Path
+from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
+                    HDViewPointForm, ImportDatasetForm,
+                    ImportDatasetFormWithFile, ImportSuricateForm,
+                    SyncRandoForm)
+from .mixins.views import (BookletMixin, CompletenessMixin,
+                           DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
+from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
+from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
+from .serializers import (HDViewPointAPIGeoJSONSerializer,
+                          HDViewPointAPISerializer,
+                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
+                          ThemeSerializer)
+from .tasks import import_datas, import_datas_from_web, launch_sync_rando
+from .utils import leaflet_bounds
+from .utils.import_celery import (create_tmp_destination,
+                                  discover_available_parsers)
 
 
 class Meta(MetaMixin, TemplateView):
@@ -187,11 +204,12 @@ def import_file(uploaded, parser, encoding, user_pk):
             zfile = ZipFile(f)
             for name in zfile.namelist():
                 zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-                if name.endswith('shp'):
-                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                       module=parser.__module__, encoding=encoding, user=user_pk)
-                    return
-    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+            filename = os.path.join(destination_dir, f'{os.path.basename(os.path.splitext(f.name)[0])}.shp')
+            if os.path.exists(filename):
+                import_datas.delay(name=parser.__name__, filename=filename,
+                                   module=parser.__module__, encoding=encoding, user=user_pk)
+            return
+    import_datas.delay(name=parser.__name__, filename=os.path.join(destination_dir, str(uploaded.name)),
                        module=parser.__module__, encoding=encoding, user=user_pk)
 
 
@@ -313,6 +331,81 @@ class ParametersView(View):
             'geotrek_admin_version': settings.VERSION,
         }
         return JsonResponse(response)
+
+
+class HDViewPointList(MapEntityList):
+    queryset = HDViewPoint.objects.all()
+    filterform = HDViewPointFilterSet
+    columns = ['id', 'title']
+
+
+class HDViewPointViewSet(GeotrekMapentityViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointSerializer
+    geojson_serializer_class = HDViewPointGeoJSONSerializer
+    mapentity_list_class = HDViewPointList
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.only('id', 'title')
+        return qs
+
+
+class HDViewPointAPIViewSet(APIViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointAPISerializer
+    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
+
+    def get_queryset(self):
+        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+
+class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):
+    model = HDViewPoint
+    queryset = HDViewPoint.objects.all().select_related('content_type', 'license')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().content_object.same_structure(self.request.user)
+        return context
+
+
+class HDViewPointCreate(mapentity_views.MapEntityCreate, LoginRequiredMixin):
+    model = HDViewPoint
+    form_class = HDViewPointForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['content_type'] = self.request.GET.get('content_type')
+        kwargs['object_id'] = self.request.GET.get('object_id')
+        return kwargs
+
+
+class HDViewPointUpdate(mapentity_views.MapEntityUpdate, LoginRequiredMixin):
+    queryset = HDViewPoint.objects.all()
+    form_class = HDViewPointForm
+
+
+class HDViewPointDelete(mapentity_views.MapEntityDelete, LoginRequiredMixin):
+    model = HDViewPoint
+
+    def get_success_url(self):
+        return self.get_object().content_object.get_detail_url()
+
+
+class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
+    model = HDViewPoint
+    form_class = HDViewPointAnnotationForm
+    template_name_suffix = '_annotation_form'
+
+
+class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
+    queryset = HDViewPoint.objects.all()
+    serializer_class = HDViewPointAPISerializer
+    permission_classes = [RelatedPublishedPermission]
+    # for `django-large-image`: the name of the image FileField on your model
+    FILE_FIELD_NAME = 'picture'
 
 
 @login_required

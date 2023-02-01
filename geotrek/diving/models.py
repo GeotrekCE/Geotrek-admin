@@ -5,12 +5,12 @@ from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 
 from colorfield.fields import ColorField
-from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (NoDeleteMixin, TimeStampedModelMixin,
                                           PublishableMixin, PicturesMixin, AddPropertyMixin,
-                                          PictogramMixin, OptionalPictogramMixin)
+                                          PictogramMixin, OptionalPictogramMixin, GeotrekMapEntityMixin,
+                                          get_uuid_duplication)
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology
@@ -99,8 +99,8 @@ class Level(OptionalPictogramMixin):
         super().save(*args, **kwargs)
 
 
-class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, PicturesMixin):
+class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin,
+           GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -123,6 +123,10 @@ class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMi
     source = models.ManyToManyField('common.RecordSource', blank=True, related_name='dives', verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Dive")

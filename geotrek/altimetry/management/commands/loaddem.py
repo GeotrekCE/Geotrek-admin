@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.contrib.gis.gdal.error import GDALException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
@@ -8,8 +9,8 @@ import os.path
 from subprocess import call, PIPE
 import tempfile
 
-from geotrek.altimetry.models import Dem
-from geotrek.core.models import Path
+from geotrek.altimetry.models import AltimetryMixin, Dem
+from geotrek.core.models import Topology
 
 
 class Command(BaseCommand):
@@ -109,7 +110,13 @@ class Command(BaseCommand):
         if update_altimetry_paths:
             if verbose:
                 self.stdout.write('Updating 3d geometries.\n')
-            Path.objects.all().update(geom=F('geom'))
+            for model in apps.get_models():
+                if 'geom' in [field.name for field in model._meta.get_fields()] and issubclass(model, AltimetryMixin):
+                    if settings.TREKKING_TOPOLOGY_ENABLED:
+                        if not issubclass(model, Topology):
+                            model.objects.all().update(geom=F('geom'))
+                    else:
+                        model.objects.all().update(geom=F('geom'))
         return
 
     def call_command_system(self, cmd, **kwargs):

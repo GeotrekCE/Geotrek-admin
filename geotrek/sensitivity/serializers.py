@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.utils.translation import get_language
 from drf_dynamic_fields import DynamicFieldsMixin
+from geotrek.api.v2.serializers import AttachmentSerializer
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -50,6 +51,7 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField()
     openair_url = rest_serializers.SerializerMethodField()
+    attachments = AttachmentSerializer(many=True)
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
@@ -59,7 +61,7 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
 
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'openair_url')
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'openair_url', 'attachments')
 
 
 class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):

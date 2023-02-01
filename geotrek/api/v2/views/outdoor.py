@@ -6,7 +6,7 @@ from django.utils.translation import activate
 
 from geotrek.api.v2 import serializers as api_serializers, \
     filters as api_filters, viewsets as api_viewsets
-from geotrek.common.models import Attachment
+from geotrek.common.models import Attachment, HDViewPoint
 from geotrek.outdoor import models as outdoor_models
 
 
@@ -24,7 +24,9 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         return outdoor_models.Site.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .prefetch_related(Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
+                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
+                              Prefetch('view_points',
+                                       queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
             .order_by('name')  # Required for reliable pagination
 
 

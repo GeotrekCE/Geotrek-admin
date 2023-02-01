@@ -85,6 +85,35 @@ Don't forget the u character before strings if they contain non-ascii characters
 To apply changes, you may have to run ``sudo service geotrek restart``.
 
 
+Import Treks from APIDAE
+------------------------
+
+A parser implementation is available to import Treks from APIDAE. Use it by defining a subclass of ```geotrek.trekking.parsers.ApidaeTrekParser`` in your ``var/conf/parsers.py`` configuration file as shown above.
+
+You'll have to configure how to access your APIDAE data: ``api_key``, ``project_id`` and ``selection_id`` (those are setting attributes from the APIDAE base parser).
+
+The ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` attributes define default mapping with the trekking module data fixture. You may override this to match your own types of Trek Practice.
+
+
+Import from LEI
+---------------
+
+To import touristic content or touristic event from LEI , create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.tourism.parsers import LEITouristicContentParser, LEITouristicEventParser
+
+    class XXXLEIContentParser(LEITouristicContentParser):
+        label = "LEI TouristicContent"
+        url = "https://url.asp"
+
+    class XXXLEIEventParser(LEITouristicEventParser):
+        label = "LEI TouristicEvent"
+        url = "https://url.asp"
+
+
+
 Configure Marque Esprit Parc import
 -----------------------------------
 
@@ -176,13 +205,13 @@ If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_f
 
 
 Importing from multiple sources with deletion
-----------------
+---------------------------------------------
 
 When importing data for the same model using two (or more) different sources, the ``provider`` field should be used to differenciate between sources, allowing to enable object deletion with ``delete = True`` without causing the last parser to delete objects created by preceeding parsers.
 
 In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will each import their objects, set the ``provider`` field on these objects, and only delete objects that disappeared from their respective source since last parsing.
 
-::
+.. code-block:: python
 
     class Provider_1Parser(XXXXParser):
         delete = True
@@ -203,7 +232,7 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
 
 The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.
 
-::
+.. code-block:: python
 
     class Provider_1Parser(XXXXParser):
         delete = True
@@ -282,7 +311,7 @@ A usecase for this is to aggregate data from several Geotrek-admin instance.
 For example, to import treks from another instance,
 edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
-::
+.. code-block:: python
 
     class DemoGeotrekTrekParser(BaseGeotrekTrekParser):
         url = "https://remote-geotrek-admin.net"  # replace url with remote instance url
@@ -309,6 +338,17 @@ Treks are now imported into your own instance.
 
 Import other datas from a file
 ==============================
+
+You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to
+import data from files directly in your admin (superusers only).
+For example, some parsers are not available by default but you can use them adding some lines in your parsers file :
+
+.. code-block:: python
+
+    from geotrek.trekking.parsers import TrekParser # only without dynamic segmentation (`TREKKING_TOPOLOGY_ENABLED` = False)
+    from geotrek.trekking.parsers import POIParser
+
+
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
@@ -790,8 +830,8 @@ when the order is not well managed during topologies' display.
 
 
 
-Automatication commands
------------------------
+Automatic commands
+------------------
 
 
 You can set up automatic commands by creating a `cron` file under ``/etc/cron.d/geotrek_command`` that contains:

@@ -11,7 +11,7 @@ from geotrek.api.v2 import filters as api_filters, serializers as api_serializer
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.renderers import SVGProfileRenderer
-from geotrek.common.models import Attachment, AccessibilityAttachment
+from geotrek.common.models import Attachment, AccessibilityAttachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
 
 
@@ -39,7 +39,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                               Prefetch('attachments_accessibility',
                                        queryset=AccessibilityAttachment.objects.select_related('license')),
                               Prefetch('web_links',
-                                       queryset=trekking_models.WebLink.objects.select_related('category'))) \
+                                       queryset=trekking_models.WebLink.objects.select_related('category')),
+                              Prefetch('view_points',
+                                       queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination
@@ -168,7 +170,9 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
         .select_related('topo_object', 'type', ) \
         .prefetch_related('topo_object__aggregations',
                           Prefetch('attachments',
-                                   queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
+                                   queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
+                          Prefetch('view_points',
+                                   queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 

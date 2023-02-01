@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
 from django.db import models, connection
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError, InternalError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.contrib.gis.geos import Point, Polygon
@@ -35,6 +35,7 @@ from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License
+from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
 
@@ -242,7 +243,6 @@ class Parser:
     def parse_translation_field(self, dst, src, val):
         """Specific treatment for translated fields
         TODO: check self.default_language to get default values
-        TODO: handle flow with a field for each language (ex: APIDAE)
         TODO: compare each translated fields with source fields :
         this only compares old 'name' with new 'name' but it should compare
             - old 'name_en' with new 'name_en',
@@ -251,22 +251,34 @@ class Parser:
         """
         val = val or ""
         modified = False
-
-        if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
-        else:
-            val = self.apply_filter(dst, src, val)
+        old_values = {}
+        # We keep every old values for each langs to get tracability during filter or apply filter
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
-            old = getattr(self.obj, dst_field_lang)
-            # Field not translated, use same val for all translated
-            val = val or ""
+            old_values[lang] = getattr(self.obj, dst_field_lang)
+        # If during filter, the traduction of the field has been changed
+        # we can still check if this value has been changed
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val_default_language = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        else:
+            val_default_language = self.apply_filter(dst, src, val)
 
-            if old != val:
-                # Set dst_field_lang only if empty
-                if not old:
-                    self.set_value(dst_field_lang, src, val)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            new_value = getattr(self.obj, dst_field_lang)
+            old_value = old_values[lang]
+            # Field not translated, use same val for all translated
+            val_default_language = val_default_language or ""
+            # Set val_default_language only if new empty
+            if not new_value:
+                # If there is no new value check if old value is different form the default value
+                # If this is the same, it means old value was empty and was fill with default value in previous import
+                if old_value != val_default_language:
+                    self.set_value(dst_field_lang, src, val_default_language)
                     modified = True
+            if new_value != old_value:
+                modified = True
+
         return modified
 
     def parse_field(self, row, dst, src, updated, non_field):
@@ -552,6 +564,33 @@ class Parser:
         raise DownloadImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
 
 
+class XmlParser(Parser):
+    """XML Parser"""
+    ns = {}
+    results_path = ''
+
+    def next_row(self):
+        if self.filename:
+            with open(self.filename) as f:
+                self.root = ET.fromstring(f.read())
+        else:
+            response = requests.get(self.url, params={})
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
+                    url=self.url, status_code=response.status_code))
+            self.root = ET.fromstring(response.content)
+        entries = self.root.findall(self.results_path, self.ns)
+        self.nb = len(entries)
+        for row in entries:
+            yield row
+
+    def get_part(self, dst, src, val):
+        return val.findtext(src, None, self.ns)
+
+    def normalize_field_name(self, name):
+        return name
+
+
 class ShapeParser(Parser):
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
@@ -697,9 +736,14 @@ class AttachmentParserMixin:
             ) and not self.has_size_changed(kwargs.get('url'), attachment):
                 found = True
                 attachments_to_delete.remove(attachment)
-                if kwargs.get('author') != attachment.author or kwargs.get('legend') != attachment.legend:
+                if (
+                        kwargs.get('author') != attachment.author
+                        or kwargs.get('legend') != attachment.legend
+                        or kwargs.get('title') != attachment.title
+                ):
                     attachment.author = kwargs.get('author')
                     attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+                    attachment.title = textwrap.shorten(kwargs.get('title', ''), width=127)
                     attachment.save()
                     updated = True
                 break
@@ -745,23 +789,25 @@ class AttachmentParserMixin:
         attachment.creator = self.creator
         attachment.author = kwargs.get('author')
         attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+        attachment.title = textwrap.shorten(kwargs.get('title'), width=127)
         return attachment
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
         attachments = []
-        for url, legend, author in self.filter_attachments(src, val):
-            url = self.base_url + url
-            legend = legend or ""
-            author = author or ""
+        for attachment_data in self.filter_attachments(src, val):
+            url = self.base_url + attachment_data[0]
+            legend = attachment_data[1] or ""
+            author = attachment_data[2] or ""
+            title = attachment_data[3] if len(attachment_data) > 3 else ""
             basename, ext = os.path.splitext(os.path.basename(url))
             name = '%s%s' % (basename[:128], ext)
             found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
-                                                           legend=legend, author=author)
+                                                           legend=legend, author=author, title=title)
             if found:
                 continue
 
             parsed_url = urlparse(url)
-            attachment = self.generate_attachment(author=author, legend=legend)
+            attachment = self.generate_attachment(author=author, legend=legend, title=title)
             save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
             if not save:
                 continue
@@ -954,6 +1000,127 @@ class OpenSystemParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class LEIParser(AttachmentParserMixin, XmlParser):
+    """
+    Parser for LEI tourism SIT
+
+    You can define :
+
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': 'COMMENTAIRE',
+        'contact': (
+            'ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE',
+            'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'
+        ),
+        'email': ('ADRPROD_EMAIL'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+
+    non_fields = {     # URL                                         # Legend
+        'attachments': [('CRITERES/Crit[@CLEF_CRITERE="30000279"]', 'CRITERES/Crit[@CLEF_CRITERE="900003"]'),
+                        ('CRITERES/Crit[@CLEF_CRITERE="30000280"]', 'CRITERES/Crit[@CLEF_CRITERE="900004"]')],
+    }
+    """
+    results_path = 'Resultat/sit_liste'
+    eid = 'eid'
+
+    def get_part(self, dst, src, val):
+        """For generic CRITERES return XML Crit element"""
+        if 'CRITERES/Crit' in src:
+            # Return list of Crit elements
+            return val.findall(src)
+        return val.findtext(src, None, self.ns)
+
+    def get_crit_kv(self, crit):
+        """Get Crit key / value according to Nomenclature"""
+        crit_name = self.root.findtext(
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/NOMCRIT'
+        )
+        crit_value = self.get_crit_value(crit)
+        # If value is available for crit, add it to result
+        if crit.text is not None and crit_value != 'Photos':
+            crit_value = "{0} : {1}".format(crit_value, crit.text)
+        return crit_name, crit_value
+
+    def get_crit_value(self, crit):
+        """Get Crit value only, according to Nomenclature"""
+        return self.root.findtext(
+            f'NOMENCLATURE/CRIT[@CLEF="{crit.attrib["CLEF_CRITERE"]}"]/MODAL[@CLEF="{crit.attrib["CLEF_MODA"]}"]'
+        )
+
+    def start(self):
+        super().start()
+        lei = set(self.model.objects.filter(eid__startswith='LEI').values_list('pk', flat=True))
+        self.to_delete = self.to_delete & lei
+
+    def filter_eid(self, src, val):
+        return 'LEI' + val
+
+    def filter_attachments(self, src, val):
+        """Get Photos url and legend from Crit element list
+
+        Keyword arguments:
+        src --
+        val -- Crit element list
+
+        returns photos list of tuples (url, legend, '')
+        """
+        photos = []
+        for crits in val:
+            url_crits = crits[0]
+            legend_crits = crits[1]
+            if legend_crits:
+                legend_crit = legend_crits[0]
+                legend = legend_crit.text
+                if legend:
+                    legend = legend[:128]
+            else:
+                legend = ""
+            for crit in url_crits:
+                url = crit.text
+                if not url:
+                    continue
+                url = url.replace('https://', 'http://')
+                if url[:7] != 'http://':
+                    url = 'http://' + url
+                photos.append((url, legend, ''))
+        return photos
+
+    def filter_description(self, src, val):
+        if val is None:
+            return ""
+        val = val.replace('\n', '<br>')
+        return val
+
+    def filter_geom(self, src, val):
+        lat, lng = val
+        if lat is None or lng is None:
+            raise ValueImportError("Empty geometry")
+        lat = lat.replace(',', '.')
+        lng = lng.replace(',', '.')
+        try:
+            geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        except ValueError:
+            raise ValueImportError("Empty geometry")
+
+        try:
+            geom.transform(settings.SRID)
+        except (GDALException, InternalError) as e:
+            raise ValueImportError(e)
+        return geom
+
+    def filter_website(self, src, val):
+        (val1, val2) = val
+
+        if val1:
+            return add_http_prefix(val1)
+        if val2:
+            return add_http_prefix(val2)
 
 
 class GeotrekAggregatorParser:
@@ -1234,3 +1401,47 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 yield row
 
             self.next_url = self.root['next']
+
+
+class ApidaeBaseParser(Parser):
+    """Parser to import "anything" from APIDAE"""
+    separator = None
+    api_key = None
+    project_id = None
+    selection_id = None
+    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+    size = 100
+    skip = 0
+
+    # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
+    locales = None
+
+    @property
+    def items(self):
+        if self.nb == 0:
+            return []
+        return self.root['objetsTouristiques']
+
+    def next_row(self):
+        while True:
+            params = {
+                'apiKey': self.api_key,
+                'projetId': self.project_id,
+                'selectionIds': [self.selection_id],
+                'count': self.size,
+                'first': self.skip,
+                'responseFields': self.responseFields
+            }
+            if self.locales:
+                params['locales'] = self.locales
+            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
+            self.root = response.json()
+            self.nb = int(self.root['numFound'])
+            for row in self.items:
+                yield row
+            self.skip += self.size
+            if self.skip >= self.nb:
+                return
+
+    def normalize_field_name(self, name):
+        return name

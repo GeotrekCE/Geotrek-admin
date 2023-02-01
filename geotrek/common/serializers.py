@@ -1,13 +1,16 @@
 from django.conf import settings
-from django.urls import reverse
 from django.db import models as django_db_models
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils.translation import get_language
-
+from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
-from rest_framework import serializers as rest_fields
+from rest_framework_gis.fields import (GeometryField,
+                                       GeometrySerializerMethodField)
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from .models import Theme, RecordSource, TargetPortal, FileType, Attachment, Label
+from .models import (Attachment, FileType, HDViewPoint, Label, RecordSource,
+                     TargetPortal, Theme)
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -19,7 +22,7 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
             if model_field.null:
                 kwargs['allow_none'] = True
             kwargs['max_length'] = getattr(model_field, 'max_length')
-            return rest_fields.CharField(**kwargs)
+            return rest_serializers.CharField(**kwargs)
         return super().get_field(model_field)
 
 
@@ -92,3 +95,37 @@ class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = Label
         fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
+
+
+class HDViewPointSerializer(TranslatedModelSerializer):
+    class Meta:
+        model = HDViewPoint
+        fields = (
+            'id', 'uuid', 'author', 'title', 'legend', 'license'
+        )
+
+
+class HDViewPointGeoJSONSerializer(MapentityGeojsonModelSerializer):
+    api_geom = GeometrySerializerMethodField()
+
+    def get_api_geom(self, obj):
+        return obj.geom.transform(4326, clone=True)
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = HDViewPoint
+        fields = ('id', 'title')
+
+
+class HDViewPointAPISerializer(HDViewPointSerializer):
+    class Meta(HDViewPointSerializer.Meta):
+        id_field = 'id'
+        fields = HDViewPointSerializer.Meta.fields
+
+
+class HDViewPointAPIGeoJSONSerializer(GeoFeatureModelSerializer, HDViewPointAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(HDViewPointAPISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = HDViewPointAPISerializer.Meta.fields + ('api_geom', )

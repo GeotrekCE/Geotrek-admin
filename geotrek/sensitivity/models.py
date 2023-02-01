@@ -9,13 +9,14 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 from pyopenair.factory import wkt2openair
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
-from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
+                                          AddPropertyMixin, GeotrekMapEntityMixin, get_uuid_duplication)
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.sensitivity.helpers import openair_atimes_concat
 from geotrek.core.models import simplify_coords
@@ -77,7 +78,7 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
-class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
@@ -90,6 +91,10 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     objects = SensitiveAreaManager()
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Sensitive area")

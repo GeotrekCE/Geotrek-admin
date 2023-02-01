@@ -84,7 +84,7 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
             'id': self.obj.pk,
             'levels': self.obj.levels_display,
             'name': self.obj.name_display,
-            'thumbnail': 'None'
+            'thumbnail': 'None',
         }
 
     def get_bad_data(self):

@@ -1,0 +1,72 @@
+{% load i18n mapentity_tags %}
+
+<h3 id="with-tooltip" >{% trans "HD Views" %}
+    <span id="viewpoint-tooltip" data-tooltip="{% trans "Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)" %}">?</span>
+</h3>
+{% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
+<div class="alert alert-warning">
+    {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
+</div>
+{% else %}
+    {% if perms.common.read_hdviewpoint %}
+        {% if perms.common.add_hdviewpoint %}
+            <p class="autohide" style="text-align: right;">
+                <a href="{% url 'common:hdviewpoint_add' %}?object_id={{ object.pk }}&content_type={{ object.get_content_type_id }}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new HD view" %}</a>
+            </p>
+        {% endif %}
+        <table class="table">
+            {% for viewpoint in object.view_points.all %}
+            {% if forloop.first %}
+            <thead>
+                <th>{% trans "File" %}</th>
+                <th>{% trans "Title" %}</th>
+                <th>{% trans "Legend" %}</th>
+                <th>{% trans "Author" %}</th>
+                <th>{% trans "Update date" %}</th>
+                {% block extra_column_header %}{% endblock %}
+                {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
+                    {% block actions_attachment_header %}
+                        <th>{% trans "Actions" %}</th>
+                    {% endblock actions_attachment_header %}
+                {% endif %}
+            </thead>
+            {% endif %}
+            <tbody>
+            <tr data-id="{{ viewpoint.pk }}"
+                data-title="{{ viewpoint.title }}">
+                <td>
+                    <a href="{{ viewpoint.get_detail_url }}" target="_self">
+                        <img class="img-polaroid" src="{{ viewpoint.thumbnail_url }}" alt="{{ viewpoint.title|safe }}" title="{{ viewpoint.title|safe }}">
+                    </a>
+                </td>
+                <td>{{ viewpoint.title }}</td>
+                <td>{{ viewpoint.legend }}</td>
+                <td><p>{{ viewpoint.author }}</p><p><i style="font-size:10px;">{{ viewpoint.license.label }}</i></p></td>
+                <td>{{ viewpoint.date_update }}</td>
+                {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure and perms.common.change_hdviewpoint or perms.common.delete_hdviewpoint%}
+                    <td>
+                        <a href="{{ viewpoint.get_detail_url }}">
+                            {% trans "Details" %}
+                        </a>
+                        {% if perms.common.change_hdviewpoint %}
+                            &nbsp;
+                            <a href="{% url 'common:hdviewpoint_update' viewpoint.pk %}" class="update-action">
+                                {% trans "Update" %}
+                            </a>
+                        {% endif %} 
+                        {% if perms.common.delete_hdviewpoint %} 
+                            &nbsp;
+                            <a href="{% url 'common:hdviewpoint_delete' viewpoint.pk %}" class="delete-action">
+                                {% trans "Delete" %}
+                            </a>
+                        </td>
+                        {% endif %}
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        {% trans "You are not allowed to see HD views." %}
+    {% endif %}
+{% endif %}

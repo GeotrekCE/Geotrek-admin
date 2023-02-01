@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+    <Document>
+        <name>A test trace in KML format</name>
+        <Style id="roadStyle">
+            <LineStyle>
+                <color>9F0000FF</color>
+                <width>4</width>
+            </LineStyle>
+
+        </Style>
+        <Placemark>
+            <name>A trace for my test trek</name>
+            <LookAt>
+                <longitude>6.51847</longitude>
+                <latitude>45.80873</latitude>
+            </LookAt>
+            <Point>
+                <coordinates>6.51847,45.80873,0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
