@@ -21,7 +21,7 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     container:
-      image: python:3.6
+      image: python:3.8
       env:
         LANG: C.UTF-8
     steps:
@@ -29,5 +29,5 @@ jobs:
       - name: Documentation
         run: |
           cd docs/
-          pip install -r ./requirements.txt
-          make html
+          pip install -r ./requirements.txt -U
+          make html SPHINXOPTS="-W"

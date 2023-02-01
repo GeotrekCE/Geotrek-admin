@@ -205,13 +205,13 @@ If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_f
 
 
 Importing from multiple sources with deletion
-----------------
+---------------------------------------------
 
 When importing data for the same model using two (or more) different sources, the ``provider`` field should be used to differenciate between sources, allowing to enable object deletion with ``delete = True`` without causing the last parser to delete objects created by preceeding parsers.
 
 In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will each import their objects, set the ``provider`` field on these objects, and only delete objects that disappeared from their respective source since last parsing.
 
-::
+.. code-block:: python
 
     class Provider_1Parser(XXXXParser):
         delete = True
@@ -232,7 +232,7 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
 
 The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.
 
-::
+.. code-block:: python
 
     class Provider_1Parser(XXXXParser):
         delete = True
@@ -311,7 +311,7 @@ A usecase for this is to aggregate data from several Geotrek-admin instance.
 For example, to import treks from another instance,
 edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
-::
+.. code-block:: python
 
     class DemoGeotrekTrekParser(BaseGeotrekTrekParser):
         url = "https://remote-geotrek-admin.net"  # replace url with remote instance url
@@ -343,7 +343,7 @@ You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/c
 import data from files directly in your admin (superusers only).
 For example, some parsers are not available by default but you can use them adding some lines in your parsers file :
 
-::
+.. code-block:: python
 
     from geotrek.trekking.parsers import TrekParser # only without dynamic segmentation (`TREKKING_TOPOLOGY_ENABLED` = False)
     from geotrek.trekking.parsers import POIParser
@@ -830,8 +830,8 @@ when the order is not well managed during topologies' display.
 
 
 
-Automatication commands
------------------------
+Automatic commands
+------------------
 
 
 You can set up automatic commands by creating a `cron` file under ``/etc/cron.d/geotrek_command`` that contains:

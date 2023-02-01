@@ -13,6 +13,11 @@ def is_photos_accessibilities_enabled():
 
 
 @register.simple_tag
+def are_hdviews_enabled():
+    return settings.ENABLE_HD_VIEWS
+
+
+@register.simple_tag
 def settings_value(name):
     return getattr(settings, name, "")
 

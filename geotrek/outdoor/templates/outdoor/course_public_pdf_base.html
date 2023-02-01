@@ -46,7 +46,7 @@
         </div>
       </header>
       <div class="gray">
-        {% if object.parent_sites.first.practice.pictogram %}
+        {% if object.parent_sites.first.practice and object.parent_sites.first.practice.pictogram %}
           <div class="main-icon category-S{{ object.parent_sites.first.practice.pk }}">
             <img src="file://{{ object.parent_sites.first.practice.pictogram.path }}" alt="">
           </div>

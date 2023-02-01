@@ -1,5 +1,4 @@
 from datetime import date
-from decimal import Decimal
 import json
 import os
 from copy import copy
@@ -24,7 +23,7 @@ from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, POIType, Service, Trek, DifficultyLevel, Route
 from geotrek.trekking.parsers import (
     TrekParser, GeotrekPOIParser, GeotrekServiceParser, GeotrekTrekParser, ApidaeTrekParser, ApidaeTrekThemeParser,
-    ApidaePOIParser, _prepare_attachment_from_apidae_illustration
+    ApidaePOIParser, _prepare_attachment_from_apidae_illustration, RowImportError
 )
 
 
@@ -625,7 +624,7 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
     """Returns a mocked_get. The mocked_get may return:
     - `data_filename` content on call to APIDAE API,
-    - GPX data file content (the filename is taken from the request's path),
+    - Geometric data file content (the filename is taken from the request's path),
     - a dummy jpg content if a jpg file is requested.
 
     parser_class: the class of the parser instance which will call this mocked_get
@@ -648,11 +647,16 @@ def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
             extension = url_path.split('.')[1]
             if extension == 'jpg':
                 rv.content = copy(testdata.IMG_FILE)
-            elif extension == 'gpx':
+            elif extension in ['gpx', 'kml']:
                 filename = os.path.join(test_data_dir, url_path.lstrip('/'))
                 with open(filename, 'r') as f:
-                    gpx = f.read()
-                rv.content = bytes(gpx, 'utf-8')
+                    geodata = f.read()
+                rv.content = bytes(geodata, 'utf-8')
+            elif extension == 'kmz':
+                filename = os.path.join(test_data_dir, url_path.lstrip('/'))
+                with open(filename, 'rb') as f:
+                    geodata = f.read()
+                rv.content = geodata
         return rv
 
     return dummy_get
@@ -663,6 +667,13 @@ class TestApidaeTrekParser(ApidaeTrekParser):
     api_key = 'ABCDEF'
     project_id = 1234
     selection_id = 654321
+
+
+class TestApidaeTrekSameValueDefaultLanguageDifferentTranslationParser(TestApidaeTrekParser):
+    def filter_description(self, src, val):
+        description = super().filter_description(src, val)
+        self.set_value('description_fr', src, "FOOBAR")
+        return description
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
@@ -784,6 +795,39 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 0)
 
     @mock.patch('requests.get')
+    def test_trek_import_multiple_time(self, mocked_get):
+        RouteFactory(route='Boucle')
+        mocked_get.side_effect = self.make_dummy_get('a_trek.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        old_description_en = trek.description_en
+        old_description = trek.description
+        description_fr = (
+            '<p>Départ : du parking de la Chapelle Saint Michel </p>'
+            '<p>1/ Suivre le chemin qui part à droite, traversant le vallon.</p>'
+            '<p>2/ Au carrefour tourner à droite et suivre la rivière</p>'
+            '<p>3/ Retour à la chapelle en passant à travers le petit bois.</p>'
+            '<p>Ouvert toute l\'année</p>'
+            '<p>Fermeture exceptionnelle en cas de pluie forte</p>'
+            '<p>Suivre le balisage GR (blanc/rouge) ou GRP (jaune/rouge).</p>'
+            '<p>Montée en télésiège payante. 2 points de vente - télésiège Frastaz et Bois Noir.</p>'
+            '<p><strong>Site web (URL):</strong>https://example.com/ma_rando.html<br>'
+            '<strong>Téléphone:</strong>01 23 45 67 89<br>'
+            '<strong>Mél:</strong>accueil-rando@example.com<br>'
+            '<strong>Signaux de fumée:</strong>1 gros nuage suivi de 2 petits</p>'
+        )
+        self.assertEqual(trek.description_fr, description_fr)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekSameValueDefaultLanguageDifferentTranslationParser',
+                     verbosity=0)
+        trek.refresh_from_db()
+        self.assertEqual(trek.description_fr, 'FOOBAR')
+        self.assertEqual(old_description_en, trek.description_en)
+        self.assertEqual(old_description, trek.description)
+
+    @mock.patch('requests.get')
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('a_trek.json')
 
@@ -798,25 +842,70 @@ class ApidaeTrekParserTests(TestCase):
         self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
 
     @mock.patch('requests.get')
-    def test_trek_not_imported_when_multiple_plans(self, mocked_get):
-        output_stdout = StringIO()
-        mocked_get.side_effect = self.make_dummy_get('trek_multiple_plans_error.json')
+    def test_trek_geometry_can_be_imported_from_kml(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('trek_with_kml_trace.json')
 
-        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2, stdout=output_stdout)
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
 
-        self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('has more than one map defined', output_stdout.getvalue())
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
 
     @mock.patch('requests.get')
-    def test_trek_not_imported_when_no_gpx_file(self, mocked_get):
+    def test_trek_geometry_can_be_imported_from_kmz(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('trek_with_kmz_trace.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_supported_format(self, mocked_get):
         output_stdout = StringIO()
-        mocked_get.side_effect = self.make_dummy_get('trek_plan_no_gpx_error.json')
+        mocked_get.side_effect = self.make_dummy_get('trek_no_supported_plan_format_error.json')
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
                      stdout=output_stdout)
 
         self.assertEqual(Trek.objects.count(), 0)
-        self.assertIn('pas au format GPX', output_stdout.getvalue())
+        self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_plan_attached(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('no attachment with the type "PLAN"', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_plan(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('has no attachment with the type "PLAN"', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
+    def test_trek_not_imported_when_no_multimedia_attachments(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_no_multimedia_attachments_error.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('missing required field \'multimedias\'', output_stdout.getvalue().lower())
 
     @mock.patch('requests.get')
     def test_trek_linked_entities_are_imported(self, mocked_get):
@@ -1128,6 +1217,12 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
         self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
 
+    def test_it_raises_an_error_on_not_continuous_segments(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_not_continuous_segments.gpx')
+
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_gpx(gpx)
+
     def test_it_handles_segment_with_single_point(self):
         gpx = self._get_gpx_from(
             'geotrek/trekking/tests/data/apidae_trek_parser/trace_with_single_point_segment.gpx'
@@ -1137,6 +1232,33 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertEqual(geom.srid, 2154)
         self.assertEqual(geom.geom_type, 'LineString')
         self.assertEqual(len(geom.coords), 13)
+
+
+class KmlToGeomTests(SimpleTestCase):
+
+    @staticmethod
+    def _get_kml_from(filename):
+        with open(filename, 'r') as f:
+            kml = f.read()
+        return bytes(kml, 'utf-8')
+
+    def test_kml_can_be_converted(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace.kml')
+
+        geom = ApidaeTrekParser._get_geom_from_kml(kml)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 61)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 973160.8, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6529320.1, delta=0.1)
+
+    def test_it_raises_exception_when_no_linear_data(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
+
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_kml(kml)
 
 
 class GetPracticeNameFromActivities(SimpleTestCase):
@@ -1191,7 +1313,7 @@ class MakeDurationTests(SimpleTestCase):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)
 
     def test_it_rounds_output_to_two_decimal_places(self):
-        self.assertEqual(Decimal(ApidaeTrekParser._make_duration(duration_in_minutes=20)), Decimal('0.33'))
+        self.assertEqual(ApidaeTrekParser._make_duration(duration_in_minutes=20), 0.33)
 
 
 class TestApidaePOIParser(ApidaePOIParser):

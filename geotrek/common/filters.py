@@ -1,6 +1,9 @@
 from django.utils.translation import gettext_lazy as _
+from django_filters import ModelMultipleChoiceFilter, RangeFilter
+from mapentity.filters import MapEntityFilterSet
 
-from django_filters import RangeFilter, ModelMultipleChoiceFilter
+from geotrek.common.models import HDViewPoint
+
 from .fields import OneLineRangeField
 
 
@@ -27,3 +30,10 @@ class RightFilter(ModelMultipleChoiceFilter):
         if self.queryset is not None:
             return self.queryset
         return self.model.objects.all()
+
+
+class HDViewPointFilterSet(MapEntityFilterSet):
+
+    class Meta(MapEntityFilterSet.Meta):
+        model = HDViewPoint
+        fields = ['title']
