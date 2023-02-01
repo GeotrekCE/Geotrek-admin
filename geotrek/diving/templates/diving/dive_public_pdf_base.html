@@ -39,7 +39,7 @@
       </header>
       <div class="gray">
         <div>
-          {% if object.practice %}
+          {% if object.practice and object.practice.pictogram %}
             <div class="main-icon category-D{{ object.practice.pk }}" {% block picto_attr %}{% endblock picto_attr %}>
               <img src="file://{{ object.practice.pictogram.path }}" alt="">
             </div>

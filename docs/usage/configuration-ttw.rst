@@ -116,9 +116,12 @@ Utilisateurs et droits
 Une fois un utilisateur créé avec les informations minimales, il est possible de lui octroyer un certain nombre de permissions :
 
 -  **Actif** : permet de déterminer si l'utilisateur peut se connecter à Geotrek-Admin ou non. 
-  Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer. 
+
+  Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer.
   En effet supprimer le compte supprimera également par exemple toutes les entrées dans l'historique de Geotrek associées à ce compte.
+
 -  **Statut équipe** : si la case est cochée l'utilisateur pourra accéder à l'interface d'administration de Geotrek-Admin
+
 -  **Statut super-utilisateur** : permet d'octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
 
 Il est possible pour un utilisateur, de lui donner des permissions spécifiques. Celles-ci sont déterminées par type d'objet. 

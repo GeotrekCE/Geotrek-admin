@@ -218,7 +218,7 @@ Make sure to run these 3 commands daily to maintain synchronization and update r
 
 
 Display reports with status defined colors
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block :: python
 
@@ -228,7 +228,7 @@ Go to the Admin Site and select colors to display for each status (`/admin/feedb
 
 
 Use timers to receive alerts for your reports
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to enable receiving email alerts for reports that have remained in the same status for too long.
 For instance, I can create two report statuses "To program" with timer days set to 10 and "Programmed" with timer days set to 0.
@@ -278,6 +278,7 @@ add the following code:
 
 The following settings are related to sensitive areas:
 
+
 .. code-block :: python
 
     SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
@@ -287,8 +288,12 @@ The following settings are related to sensitive areas:
 
     # Buffer around treks to intersects sensitive areas
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+
+.. notes
+
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
+
 
 To take these changes into account, you need to run :
 

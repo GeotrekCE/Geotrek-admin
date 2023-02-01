@@ -1,6 +1,7 @@
 import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
@@ -12,8 +13,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
-                                          TimeStampedModelMixin)
+from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.utils import intersecting
@@ -26,7 +26,6 @@ from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -111,8 +110,8 @@ class CourseType(TimeStampedModelMixin, models.Model):
         return self.name
 
 
-class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
+           StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -175,6 +174,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='site')
 
     check_structure_in_forms = False
 
@@ -299,6 +299,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.refresh_from_db()
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
@@ -333,8 +337,8 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
-             AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
+             StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,

@@ -5,11 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from extended_choices import Choices
-from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.utils import classproperty
-from geotrek.common.mixins.models import BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin
+from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
+                                          GeotrekMapEntityMixin)
 from geotrek.core.models import Topology, Path
 from geotrek.infrastructure.managers import InfrastructureGISManager
 
@@ -141,7 +141,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         return settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
 
 
-class Infrastructure(MapEntityMixin, BaseInfrastructure):
+class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     type = models.ForeignKey(InfrastructureType, related_name="infrastructures", verbose_name=_("Type"), on_delete=models.CASCADE)
     objects = InfrastructureGISManager()

@@ -1,0 +1,22 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "multimedias": [
+        {
+          "type": "DOCUMENT",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/some_document.pdf",
+              "extension": "pdf"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test mais sans plan"
+      }
+    }
+  ]
+}

@@ -20,7 +20,7 @@ from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
-from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
+from geotrek.common.models import Attachment, HDViewPoint, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -100,7 +100,10 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
 
 class TrekDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Trek.objects.existing().select_related('topo_object')
+    queryset = Trek.objects.existing().select_related('topo_object').prefetch_related(
+        Prefetch('view_points',
+                 queryset=HDViewPoint.objects.select_related('content_type', 'license'))
+    )
 
     @property
     def icon_sizes(self):
@@ -329,7 +332,10 @@ class POIFormatList(MapEntityFormat, POIList):
 
 
 class POIDetail(CompletenessMixin, MapEntityDetail):
-    queryset = POI.objects.existing()
+    queryset = POI.objects.existing().prefetch_related(
+        Prefetch('view_points',
+                 queryset=HDViewPoint.objects.select_related('content_type', 'license'))
+    )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

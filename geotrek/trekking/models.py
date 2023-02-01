@@ -13,14 +13,16 @@ from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
 import simplekml
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
+from mapentity.helpers import clone_attachment
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology
-from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.core.models import Path, Topology, simplify_coords
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin
+    TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
 
@@ -103,7 +105,7 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
-class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
+class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
                                  help_text=_("Departure description"))
@@ -203,6 +205,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='trek')
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
@@ -474,6 +477,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
             return super().save(update_fields=field_names, *args, **kwargs)
         super().save(*args, **kwargs)
 
+    def duplicate(self, **kwargs):
+        clone = super().duplicate(**kwargs)
+        for attachment in AccessibilityAttachment.objects.filter(object_id=self.pk):
+            clone_attachment(attachment, 'attachment_file', {"content_object": clone, "uuid": get_uuid_duplication})
+        return clone
+
     @property
     def portal_display(self):
         return ', '.join([str(portal) for portal in self.portal.all()])
@@ -693,12 +702,13 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
         return "%s" % self.label
 
 
-class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
+class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='poi')
 
     geometry_types_allowed = ["POINT"]
 
@@ -819,7 +829,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
         return self.name
 
 
-class Service(StructureRelated, MapEntityMixin, Topology):
+class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)

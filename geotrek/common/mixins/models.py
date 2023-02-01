@@ -2,12 +2,14 @@ import datetime
 import hashlib
 import os
 import shutil
+import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Q, Max, Count
+
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
@@ -20,6 +22,23 @@ from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
+
+from mapentity.models import MapEntityMixin
+
+
+class CheckBoxActionMixin:
+    @property
+    def checkbox(self):
+        return '<input type="checkbox" name="{}[]" value="{}" />'.format(self._meta.model_name,
+                                                                         self.pk)
+
+    @classproperty
+    def checkbox_verbose_name(cls):
+        return _("Action")
+
+    @property
+    def checkbox_display(self):
+        return self.checkbox
 
 
 class TimeStampedModelMixin(models.Model):
@@ -417,3 +436,31 @@ class AddPropertyMixin:
             raise AttributeError("%s has already an attribute %s" % (cls, name))
         setattr(cls, name, property(func))
         setattr(cls, '%s_verbose_name' % name, verbose_name)
+
+
+def get_uuid_duplication(uid_field):
+    return uuid.uuid4()
+
+
+class GeotrekMapEntityMixin(MapEntityMixin):
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication},
+        "avoid_fields": ["aggregations"],
+        "uuid": get_uuid_duplication,
+    }
+
+    class Meta:
+        abstract = True
+
+    def duplicate(self, **kwargs):
+        elements_duplication = self.elements_duplication.copy()
+        if "name" in [field.name for field in self._meta.get_fields()]:
+            elements_duplication['name'] = f"{self.name} (copy)"
+        if "structure" in [field.name for field in self._meta.get_fields()]:
+            request = kwargs.pop('request', None)
+            if request:
+                elements_duplication['structure'] = request.user.profile.structure
+        clone = super(MapEntityMixin, self).duplicate(**elements_duplication)
+        if hasattr(clone, 'mutate'):
+            clone.mutate(self)
+        return clone
