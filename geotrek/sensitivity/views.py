@@ -206,6 +206,7 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
 
         return response
 
+
 class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
 
     def get_queryset(self):

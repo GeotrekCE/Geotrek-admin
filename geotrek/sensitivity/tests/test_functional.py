@@ -19,9 +19,8 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['description', 'contact']
 
-
     def get_expected_json_attrs(self):
-        
+
         return {
             'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',

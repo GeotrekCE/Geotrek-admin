@@ -36,4 +36,3 @@ class StandardResultsSetPagination(PageNumberPagination):
         if 'no_page' in request.query_params:
             return None
         return super().paginate_queryset(queryset, request, view)
-
