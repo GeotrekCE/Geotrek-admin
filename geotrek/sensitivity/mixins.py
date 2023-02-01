@@ -8,11 +8,12 @@ from geotrek.common.functions import GeometryType, Buffer, Area
 
 logger = logging.getLogger(__name__)
 
+
 class SensitiveAreaQueryset:
     """Mixin used for to properly querying SensitiveAreas"""
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(SensitiveAreaQueryset, self).get_queryset()
+        qs = super().get_queryset()
         qs = (
             (
                 qs
@@ -46,7 +47,7 @@ class SensitiveAreaQueryset:
             )
             .annotate(area=Area("geom2d_transformed"))
             .order_by("-area")
-            )
+        )
 
         if "practices" in self.request.GET:
             qs = qs.filter(
