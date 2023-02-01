@@ -5,6 +5,10 @@ CHANGELOG
 2.96.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Improvements**
+
+- Sensitivity: Add missing attachments list to sensitive areas API
+
 
 2.96.0     (2023-02-01)
 -----------------------
@@ -109,10 +113,6 @@ In preparation for HD Views developments (PR #3298)
 - New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
 - New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
 - Change default color of imported filelayer (#306)
-
-**Improvements**
-
-- Sensitivity: Add missing attachments list to sensitive areas API
 
 **Bug fixes**
 
