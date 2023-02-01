@@ -110,6 +110,10 @@ In preparation for HD Views developments (PR #3298)
 - New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
 - Change default color of imported filelayer (#306)
 
+**Improvements**
+
+- Sensitivity: Add missing attachments list to sensitive areas API
+
 **Bug fixes**
 
 - Fix shp zipfile import
