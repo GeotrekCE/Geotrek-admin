@@ -1,1 +1,0 @@
-/app/src/var/conf/parsers.py
