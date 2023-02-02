@@ -18,6 +18,7 @@ describe('Create signage', () => {
   beforeEach(() => {
     cy.setCookie('django_language', 'en');
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"})
   });
 
   it('Create signage', () => {

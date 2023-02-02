@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F, Case, When
+from django.db.models import F, Case, When, Prefetch
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
+from geotrek.common.models import Attachment
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.common.functions import GeometryType, Buffer, Area
@@ -32,12 +33,17 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         return api_serializers.override_serializer(format_output, base_serializer_class)
 
     def get_queryset(self):
-        queryset = sensitivity_models.SensitiveArea.objects.existing() \
-            .filter(published=True) \
-            .select_related('species', 'structure') \
-            .prefetch_related('species__practices') \
-            .prefetch_related('labels') \
+        queryset = (
+            sensitivity_models.SensitiveArea.objects.existing()
+            .filter(published=True)
+            .select_related('species', 'structure')
+            .prefetch_related(
+                'species__practices', 
+                'labels',
+                Prefetch('attachments', queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
+            )
             .alias(geom_type=GeometryType(F('geom')))
+        )
         if 'bubble' in self.request.GET:
             queryset = queryset.annotate(geom_transformed=Transform(F('geom'), settings.API_SRID))
         else:

@@ -14,3 +14,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "django"
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]  # only allow auto update on django bug and security fixes

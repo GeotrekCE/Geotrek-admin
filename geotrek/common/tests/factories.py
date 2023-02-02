@@ -141,3 +141,53 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
     creator = factory.SubFactory(UserFactory)
     title = factory.Sequence("Title {0}".format)
     legend = factory.Sequence("Legend {0}".format)
+
+
+class HDViewPointFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.HDViewPoint
+    picture = get_dummy_uploaded_image()
+    title = "A title"
+    author = "An author"
+    legend = "Something"
+    geom = "SRID=2154;POINT(0 0)"
+    annotations = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [
+                                7997.087502861313,
+                                6997.090981210413
+                            ],
+                            [
+                                7997.087502861313,
+                                6456.7472299480705
+                            ],
+                            [
+                                8631.090837675794,
+                                6456.7472299480705
+                            ],
+                            [
+                                8631.090837675794,
+                                6997.090981210413
+                            ],
+                            [
+                                7997.087502861313,
+                                6997.090981210413
+                            ]
+                        ]
+                    ]
+                },
+                "properties": {
+                    "annotationType": "ellipse",
+                    "name": "Ellipse 1",
+                    "annotationId": 1
+                }
+            }
+        ]
+    }

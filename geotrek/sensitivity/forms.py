@@ -24,7 +24,7 @@ class SensitiveAreaForm(CommonForm):
                                      label=pgettext("Singular", "Species"))
 
     class Meta:
-        fields = ['structure', 'species', 'published', 'description', 'contact', 'labels', 'geom']
+        fields = ['structure', 'species', 'published', 'description', 'contact', 'rules', 'geom']
         model = SensitiveArea
         widgets = {'geom': BubbleMapWidget()}
 
@@ -50,7 +50,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_("URL"), required=False)
 
     class Meta:
-        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices', 'labels'] + \
+        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices', 'rules'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
         widgets = {'geom': PolygonMapWidget()}
@@ -87,9 +87,9 @@ class RegulatorySensitiveAreaForm(CommonForm):
         species.save()
         species.practices.set(self.cleaned_data['practices'])
         area = super().save(commit=False)
-        logger.debug(f'LABELS {self.cleaned_data["labels"]}')
-        area.labels.set(self.cleaned_data["labels"])
-        logger.debug(f'AREALABELS {area.labels}')
+        logger.debug(f'RULES {self.cleaned_data["rules"]}')
+        area.rules.set(self.cleaned_data["rules"])
+        logger.debug(f'AREARULES {area.rules}')
         area.species = species
         area.save()
         return area

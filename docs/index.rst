@@ -38,10 +38,16 @@ Welcome to Geotrek's documentation!
     :caption: Contribute
     :maxdepth: 2
 
+    CONTRIBUTING
+    contribute/development
     contribute/translating
     contribute/documentation
-    contribute/development
     contribute/design
+
+.. toctree::
+    :caption: Others
+    :maxdepth: 2
+
     authors
     changelog
 

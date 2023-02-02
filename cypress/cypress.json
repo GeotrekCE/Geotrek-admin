@@ -1,5 +1,5 @@
 {
-  "fixturesFolder": false,
+  "fixturesFolder": "fixtures",
   "supportFile": "support",
   "integrationFolder": "integration",
   "pluginsFile": false,

@@ -9,14 +9,31 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin
-from geotrek.common.utils import intersecting, classproperty, simplify_coords
+from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
+                                          AddPropertyMixin, GeotrekMapEntityMixin, get_uuid_duplication)
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.sensitivity.managers import SensitiveAreaManager
-from geotrek.common.models import Label
+from geotrek.core.models import simplify_coords
 
+
+
+class Rule(TimeStampedModelMixin, OptionalPictogramMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    filter = models.BooleanField(verbose_name=_("Filter"), default=False,
+                                 help_text=_("Show this rule as a filter in public portal"))
+    url = models.URLField(blank=True, verbose_name="URL")
+
+    class Meta:
+        verbose_name = _("Rule")
+        verbose_name_plural = _("Rules")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
@@ -73,7 +90,7 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
-class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
@@ -84,9 +101,13 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
-    labels = models.ManyToManyField(Label, verbose_name=_("Labels"))
+    rules = models.ManyToManyField(Rule, verbose_name=_("Rules"))
 
     objects = SensitiveAreaManager()
+
+    elements_duplication = {
+        "attachments": {"uuid": get_uuid_duplication}
+    }
 
     class Meta:
         verbose_name = _("Sensitive area")

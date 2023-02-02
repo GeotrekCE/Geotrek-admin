@@ -56,12 +56,12 @@
         <tr>
             <th>{{ sensitivearea|verbose:"labels" }}</th>
             <td>
-                {% for label in  sensitivearea.labels.all %}
+                {% for rule in  sensitivearea.rules.all %}
                 <img
                     class="pictogram"
-                    src="{{label.pictogram.url}}"
-                    title="{{label.name}}"
-                    alt="{{label.name}}"
+                    src="{{rule.pictogram.url}}"
+                    title="{{rule.name}}"
+                    alt="{{rule.name}}"
                 />
                 {%endfor%}
             </td>

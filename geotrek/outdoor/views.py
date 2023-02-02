@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q
+from django.db.models import Q, Prefetch
+from geotrek.common.models import HDViewPoint
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
@@ -27,7 +28,10 @@ class SiteList(CustomColumnsMixin, MapEntityList):
 
 
 class SiteDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Site.objects.all()
+    queryset = Site.objects.all().prefetch_related(
+        Prefetch('view_points',
+                 queryset=HDViewPoint.objects.select_related('content_type', 'license'))
+    )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

@@ -2,6 +2,7 @@ import os
 
 from unittest import mock
 
+from django.contrib import messages
 from django.contrib.auth.models import Permission, User
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
@@ -15,7 +16,9 @@ from django.urls.exceptions import NoReverseMatch
 # Workaround https://code.djangoproject.com/ticket/22865
 from freezegun import freeze_time
 
-from geotrek.common.models import FileType  # NOQA
+from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
+from geotrek.common.tests.factories import AttachmentFactory, AttachmentAccessibilityFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
@@ -55,6 +58,72 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
             reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
                     kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
         self.assertEqual(response.status_code, 200)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_duplicate_object_without_structure(self, mock_requests):
+        if self.model is None or not getattr(self.model, 'can_duplicate') or hasattr(self.model, 'structure'):
+            return
+
+        obj_1 = self.modelfactory.create()
+        obj_1.refresh_from_db()
+        response_duplicate = self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
+                    kwargs={"pk": obj_1.pk})
+        )
+
+        self.assertEqual(response_duplicate.status_code, 302)
+        self.client.get(response_duplicate['location'])
+        self.assertEqual(self.model.objects.count(), 2)
+        if 'name' in [field.name for field in self.model._meta.get_fields()]:
+            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)
+        for field in self.model._meta.get_fields():
+            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            if not field.related_model and field.name not in fields_name_different:
+                self.assertEqual(str(getattr(obj_1, field.name)), str(getattr(self.model.objects.last(), field.name)))
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_duplicate_object_with_structure(self, mock_requests):
+        if self.model is None or not getattr(self.model, 'can_duplicate'):
+            return
+        fields_name = [field.name for field in self.model._meta.get_fields()]
+        if "structure" not in fields_name:
+            return
+        structure = StructureFactory.create()
+        obj_1 = self.modelfactory.create(structure=structure)
+        obj_1.refresh_from_db()
+
+        AttachmentFactory.create(content_object=obj_1,
+                                 attachment_file=get_dummy_uploaded_image())
+
+        attachments_accessibility = 'attachments_accessibility' in fields_name
+
+        if attachments_accessibility:
+            AttachmentAccessibilityFactory.create(content_object=obj_1,
+                                                  attachment_accessibility_file=get_dummy_uploaded_image())
+        response = self.client.post(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
+                    kwargs={"pk": obj_1.pk})
+        )
+        self.assertEqual(response.status_code, 302)
+
+        msg = [str(message) for message in messages.get_messages(response.wsgi_request)]
+        self.assertEqual(msg[0],
+                         f"{self.model._meta.verbose_name} has been duplicated successfully")
+
+        self.assertEqual(self.model.objects.count(), 2)
+        self.assertEqual(Attachment.objects.filter(object_id=obj_1.pk).count(), 1)
+        self.assertEqual(Attachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
+        if attachments_accessibility:
+            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=obj_1.pk).count(), 1)
+            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
+
+        if 'name' in fields_name:
+            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 1)
+        self.assertEqual(self.model.objects.filter(structure=structure).count(), 1)
+        for field in self.model._meta.get_fields():
+            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            if not field.related_model and field.name not in fields_name_different:
+                self.assertEqual(str(getattr(obj_1, field.name)), str(getattr(self.model.objects.last(), field.name)))
 
     @mock.patch('mapentity.helpers.requests')
     def test_document_public_export(self, mock_requests):

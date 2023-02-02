@@ -23,6 +23,15 @@
 {% endblock %}
 
 
+{% block attachments_extra_tab_nav %}
+    {% with attachments_count=object.attachments.count|add:object.view_points.count %}
+        <li class="nav-item">
+        <a id="tab-attachments" class="nav-link" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i>
+            <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ attachments_count }})</span></a>
+        </li>
+    {% endwith %%}
+{% endblock %}
+
 {% block after_attachments_extra_tab_content %}
    {% is_photos_accessibilities_enabled as enabled %}
    {% if enabled %}
@@ -36,6 +45,12 @@
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
+    {% are_hdviews_enabled as are_hdviews_enabled %}
+    {% if are_hdviews_enabled %}
+        <br>
+        <br>
+        {% include "common/hdviewpoint_detail_fragment.html" %}
+    {% endif %}
 {% endblock attachmentspanel %}
 
 {% block detailspanel %}
