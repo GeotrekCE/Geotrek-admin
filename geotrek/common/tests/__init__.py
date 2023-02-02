@@ -391,8 +391,8 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.login(username='Superuser', password='booh')
+        super_user = SuperUserFactory.create()
+        self.client.force_login(super_user)
 
         obj = self.modelfactory.create(geom=self.geom)
 
@@ -435,7 +435,7 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
         app_settings['SENDFILE_HTTP_HEADER'] = 'X-Accel-Redirect'
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        user = SuperUserFactory.create()
         self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom=self.geom)
@@ -461,8 +461,8 @@ class CommonPublishedLiveTest(CommonLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.force_login(user=user)
+        super_user = SuperUserFactory.create()
+        self.client.force_login(user=super_user)
 
         obj = self.modelfactory.create(geom=self.geom)
 
@@ -490,8 +490,8 @@ class CommonPublishedLiveTest(CommonLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
-        self.client.force_login(user=user)
+        super_user = SuperUserFactory.create()
+        self.client.force_login(user=super_user)
 
         obj = self.modelfactory.create(geom=self.geom, published=False)
 
@@ -536,7 +536,7 @@ class CommonPublishedLiveTest(CommonLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = UserFactory.create(username='user', password='booh')
+        user = UserFactory.create()
         self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom=self.geom, published=False)
