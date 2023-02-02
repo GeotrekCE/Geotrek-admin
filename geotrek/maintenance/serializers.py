@@ -1,6 +1,7 @@
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
+from rest_framework_gis.fields import GeometrySerializerMethodField
 
 from .models import Intervention, Project
 
@@ -18,9 +19,14 @@ class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
+    api_geom = GeometrySerializerMethodField()
+
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = Intervention
         fields = ["id", "name"]
+
+    def get_api_geom(self, obj):
+        return obj.api_geom
 
 
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
