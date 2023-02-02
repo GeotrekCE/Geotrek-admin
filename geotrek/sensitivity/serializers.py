@@ -15,7 +15,7 @@ class RuleSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
 
     class Meta:
         model = sensitivity_models.Rule
-        fields = ('id', 'desc', 'code', 'name', 'pictogram', 'url')
+        fields = ('id', 'code', 'name', 'pictogram', 'description', 'url')
 
 
 class SportPracticeSerializer(TranslatedModelSerializer):
