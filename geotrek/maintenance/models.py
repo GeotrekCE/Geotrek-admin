@@ -139,6 +139,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
             if not model._meta.model_name == "topology":
                 title = self.target.name_display
                 icon = model._meta.model_name
+            if model._meta.app_label == "land":
+                return '<img src="%simages/landedge-16.png"> %s' % (settings.STATIC_URL,
+                                                                    title)
             return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
                                                           icon,
                                                           title)
