@@ -746,7 +746,7 @@ class AttachmentParserMixin:
                     attachment.author = kwargs.get('author')
                     attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
                     attachment.title = textwrap.shorten(kwargs.get('title', ''), width=127)
-                    attachment.save()
+                    attachment.save(**{'skip_file_save': True})
                     updated = True
                 break
         return found, updated
