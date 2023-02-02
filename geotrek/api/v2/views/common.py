@@ -114,7 +114,7 @@ class FileTypeViewSet(api_viewsets.GeotrekViewSet):
 
 class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.HDViewPointSerializer
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.TrekAndSiteAndPOIRelatedPublishedNotDeletedByPortalFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.HDViewPointPublishedByPortalFilter,)
 
     def get_queryset(self):
         activate(self.request.GET.get('language'))

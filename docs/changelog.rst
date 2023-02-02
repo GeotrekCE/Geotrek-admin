@@ -5,6 +5,10 @@ CHANGELOG
 2.96.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix APIv2 filters deteriorated performances
+
 **Improvements**
 
 - Sensitivity: Add missing attachments list to sensitive areas API
@@ -12,6 +16,12 @@ CHANGELOG
 
 2.96.0     (2023-02-01)
 -----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- APIv2 filters performances are deteriorated - Skip to 2.96.1 instead
 
 **New feature**
 
