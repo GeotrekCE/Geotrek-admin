@@ -10,6 +10,13 @@ from .. import models
 from mapentity.tests.factories import UserFactory
 
 
+class RuleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.SportPractice
+
+    name = "Rule"
+
+
 class SportPracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SportPractice

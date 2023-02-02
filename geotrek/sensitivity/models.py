@@ -19,12 +19,10 @@ from geotrek.sensitivity.managers import SensitiveAreaManager
 from geotrek.core.models import simplify_coords
 
 
-
 class Rule(TimeStampedModelMixin, OptionalPictogramMixin):
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
-    advice = models.TextField(verbose_name=_("Advice"), blank=True)
-    filter = models.BooleanField(verbose_name=_("Filter"), default=False,
-                                 help_text=_("Show this rule as a filter in public portal"))
+    code = models.CharField(verbose_name=_("Code"), max_length=50, unique=True, blank=True, null=True)
+    name = models.CharField(verbose_name=_("Name"), max_length=128, unique=True)
+    description = models.TextField(verbose_name=_("Description"), blank=True)
     url = models.URLField(blank=True, verbose_name="URL")
 
     class Meta:
@@ -34,6 +32,7 @@ class Rule(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
+
 
 class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
@@ -101,7 +100,7 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
-    rules = models.ManyToManyField(Rule, verbose_name=_("Rules"))
+    rules = models.ManyToManyField(Rule, verbose_name=_("Rules"), blank=True)
 
     objects = SensitiveAreaManager()
 

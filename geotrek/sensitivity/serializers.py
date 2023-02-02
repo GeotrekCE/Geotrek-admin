@@ -12,18 +12,10 @@ from . import models as sensitivity_models
 
 
 class RuleSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    name = rest_serializers.SerializerMethodField()
-    advice = rest_serializers.SerializerMethodField()
-
-    def get_name(self, obj):
-        return get_translation_or_dict('name', self, obj)
-
-    def get_advice(self, obj):
-        return get_translation_or_dict('advice', self, obj)
 
     class Meta:
         model = sensitivity_models.Rule
-        fields = ('id', 'advice', 'filter', 'name', 'pictogram', 'url')
+        fields = ('id', 'desc', 'code', 'name', 'pictogram', 'url')
 
 
 class SportPracticeSerializer(TranslatedModelSerializer):

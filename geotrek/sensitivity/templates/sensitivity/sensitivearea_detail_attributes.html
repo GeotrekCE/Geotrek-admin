@@ -54,7 +54,7 @@
             <td>{{ sensitivearea.contact|safe|linebreaks }}</td>
         </tr>
         <tr>
-            <th>{{ sensitivearea|verbose:"labels" }}</th>
+            <th>{{ sensitivearea|verbose:"rules" }}</th>
             <td>
                 {% for rule in  sensitivearea.rules.all %}
                 <img

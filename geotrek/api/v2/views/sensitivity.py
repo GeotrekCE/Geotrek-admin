@@ -38,7 +38,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
             .filter(published=True)
             .select_related('species', 'structure')
             .prefetch_related(
-                'species__practices', 
+                'species__practices',
                 'labels',
                 Prefetch('attachments', queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
             )
