@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.common.tests import CommonPublishedLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
@@ -13,6 +13,8 @@ from geotrek.infrastructure.tests.factories import (InfrastructureFactory, Infra
                                                     InfrastructureTypeFactory, InfrastructureConditionFactory,
                                                     PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
+
+from mapentity.tests.factories import SuperUserFactory
 
 
 class InfrastructureTest(TestCase):
@@ -25,6 +27,12 @@ class InfrastructureTest(TestCase):
             infra = InfrastructureFactory.create(geom=p.geom)
 
         self.assertCountEqual(p.infrastructures, [infra])
+
+
+class InfrastructureViewsLiveTests(CommonPublishedLiveTest):
+    model = Infrastructure
+    modelfactory = InfrastructureFactory
+    userfactory = SuperUserFactory
 
 
 class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):

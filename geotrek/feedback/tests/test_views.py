@@ -19,7 +19,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
+from geotrek.common.tests import (CommonTest, CommonLiveTest, GeotrekAPITestCase,
                                   TranslationResetMixin)
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
@@ -112,6 +112,12 @@ class ReportSerializationOptimizeTests(TestCase):
                                     format="geojson"))
 
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
+
+
+class ReportViewsLiveTests(CommonLiveTest):
+    model = feedback_models.Report
+    modelfactory = feedback_factories.ReportFactory
+    userfactory = SuperUserFactory
 
 
 class ReportViewsTest(GeotrekAPITestCase, CommonTest):

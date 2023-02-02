@@ -3,13 +3,15 @@ import csv
 from io import StringIO
 import json
 
+from mapentity.tests.factories import SuperUserFactory
+
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.translation import gettext
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.common.tests import CommonLiveTest, CommonPublishedLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
@@ -67,6 +69,12 @@ class SignageTemplatesTest(TestCase):
         self.assertContains(response, gettext("Direction"))
         self.assertContains(response, "A direction on the line 1")
         self.assertContains(response, "A direction on the line 2")
+
+
+class BladeViewsLiveTests(CommonLiveTest):
+    model = Blade
+    modelfactory = BladeFactory
+    userfactory = SuperUserFactory
 
 
 class BladeViewsTest(GeotrekAPITestCase, CommonTest):
@@ -320,6 +328,12 @@ class BladeTemplatesTest(TestCase):
 
         self.assertNotContains(response, "A direction on the blade")
         self.assertContains(response, "A direction on the line")
+
+
+class SignageViewsLiveTests(CommonPublishedLiveTest):
+    model = Signage
+    modelfactory = SignageFactory
+    userfactory = SuperUserFactory
 
 
 class SignageViewsTest(GeotrekAPITestCase, CommonTest):

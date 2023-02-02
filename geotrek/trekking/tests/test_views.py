@@ -24,7 +24,7 @@ from rest_framework.reverse import reverse
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.templatetags import geotrek_tags
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
+from geotrek.common.tests import CommonTest, CommonLiveTest, CommonPublishedLiveTest, TranslationResetMixin, GeotrekAPITestCase
 from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory, RecordSourceFactory,
                                             TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -45,6 +45,12 @@ from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFac
                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                         TrekWithSignagesFactory, PracticeFactory)
 from ..models import POI, Trek, Service, OrderedTrekChild
+
+
+class POIViewsLiveTests(CommonPublishedLiveTest):
+    model = POI
+    modelfactory = POIFactory
+    userfactory = SuperUserFactory
 
 
 class POIViewsTest(GeotrekAPITestCase, CommonTest):
@@ -514,7 +520,7 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(response.status_code, 200)
 
 
-class TrekViewsLiveTests(CommonLiveTest):
+class TrekViewsLiveTests(CommonPublishedLiveTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = SuperUserFactory
@@ -1430,6 +1436,12 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
+
+
+class ServiceViewsLiveTests(CommonLiveTest):
+    model = Service
+    modelfactory = ServiceFactory
+    userfactory = SuperUserFactory
 
 
 class ServiceViewsTest(GeotrekAPITestCase, CommonTest):

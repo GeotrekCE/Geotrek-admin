@@ -3,7 +3,7 @@ from unittest import skipIf
 from django.conf import settings
 from django.test import TestCase
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, CommonLiveTest
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.core.tests.factories import PathFactory
 from geotrek.common.tests.factories import OrganismFactory
@@ -13,6 +13,8 @@ from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory, PhysicalTypeFactory,
                                           LandTypeFactory)
+
+from mapentity.tests.factories import SuperUserFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -66,6 +68,12 @@ class SignageManagementEdgeTest(EdgeHelperTest):
     helper_name = 'signage_edges'
 
 
+class PhysicalEdgeViewsLiveTests(CommonLiveTest):
+    model = PhysicalEdge
+    modelfactory = PhysicalEdgeFactory
+    userfactory = SuperUserFactory
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PhysicalEdgeViewsTest(CommonTest):
     model = PhysicalEdge
@@ -90,6 +98,12 @@ class PhysicalEdgeViewsTest(CommonTest):
             'physical_type': self.obj.physical_type_display,
             'length_2d': round(self.obj.length, 1)
         }
+
+
+class LandEdgeViewsLiveTests(CommonLiveTest):
+    model = LandEdge
+    modelfactory = LandEdgeFactory
+    userfactory = SuperUserFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -118,6 +132,12 @@ class LandEdgeViewsTest(CommonTest):
         }
 
 
+class CompetenceEdgeViewsLiveTests(CommonLiveTest):
+    model = CompetenceEdge
+    modelfactory = CompetenceEdgeFactory
+    userfactory = SuperUserFactory
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class CompetenceEdgeViewsTest(CommonTest):
     model = CompetenceEdge
@@ -144,6 +164,12 @@ class CompetenceEdgeViewsTest(CommonTest):
         }
 
 
+class WorkManagementEdgeViewsLiveTests(CommonLiveTest):
+    model = WorkManagementEdge
+    modelfactory = WorkManagementEdgeFactory
+    userfactory = SuperUserFactory
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class WorkManagementEdgeViewsTest(CommonTest):
     model = WorkManagementEdge
@@ -168,6 +194,12 @@ class WorkManagementEdgeViewsTest(CommonTest):
             'organization': self.obj.organization_display,
             'length_2d': round(self.obj.length, 1)
         }
+
+
+class SignageManagementEdgeViewsLiveTests(CommonLiveTest):
+    model = SignageManagementEdge
+    modelfactory = SignageManagementEdgeFactory
+    userfactory = SuperUserFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

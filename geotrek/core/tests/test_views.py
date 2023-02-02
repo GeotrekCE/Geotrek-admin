@@ -12,8 +12,9 @@ from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 
 from mapentity.tests.factories import UserFactory
+from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, CommonLiveTest
 
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -88,6 +89,13 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Path.objects.count(), 2)
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
+
+
+class PathViewsLiveTests(CommonLiveTest):
+    model = Path
+    modelfactory = PathFactory
+    userfactory = SuperUserFactory
+    geom = "LINESTRING(0 0, 1 1)"
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -702,6 +710,12 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         self.login()
         with self.assertNumQueries(6):
             self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
+
+
+class TrailViewsLiveTests(CommonLiveTest):
+    model = Trail
+    modelfactory = TrailFactory
+    userfactory = SuperUserFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

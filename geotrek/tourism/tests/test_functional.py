@@ -8,7 +8,7 @@ import filecmp
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.factories import TrekkingManagerFactory
 from geotrek.common.tests.factories import AttachmentFactory
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.common.tests import CommonTest, CommonPublishedLiveTest, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.tourism.models import (TouristicContent,
                                     TouristicEvent)
@@ -19,11 +19,19 @@ from geotrek.tourism.tests.factories import (TouristicContentFactory,
                                              TouristicEventParticipantCategoryFactory)
 from geotrek.zoning.tests.factories import CityFactory
 
+from mapentity.tests.factories import SuperUserFactory
+
 from unittest.mock import patch
 import os
 import csv
 from io import StringIO
 from operator import attrgetter
+
+
+class TouristicContentViewsLiveTests(CommonPublishedLiveTest):
+    model = TouristicContent
+    modelfactory = TouristicContentFactory
+    userfactory = SuperUserFactory
 
 
 class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
@@ -161,6 +169,12 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
         with override_settings(COLUMNS_LISTS={'touristic_content_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'type1', 'type2', 'eid'])
+
+
+class TouristicEventViewsLiveTests(CommonPublishedLiveTest):
+    model = TouristicEvent
+    modelfactory = TouristicEventFactory
+    userfactory = SuperUserFactory
 
 
 class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):

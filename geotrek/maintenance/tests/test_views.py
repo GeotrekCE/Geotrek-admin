@@ -15,7 +15,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.translation import activate, deactivate_all
 
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonTest, CommonLiveTest
 from mapentity.tests.factories import SuperUserFactory
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
@@ -40,6 +40,18 @@ from geotrek.maintenance.tests.factories import (InterventionFactory, Infrastruc
                                                  ProjectFactory, ContractorFactory, InterventionJobFactory,
                                                  SignageInterventionFactory, ProjectWithInterventionFactory)
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
+
+
+class InterventionViewsLiveTests(CommonLiveTest):
+    model = Intervention
+    modelfactory = InterventionFactory
+    userfactory = SuperUserFactory
+
+
+class InfrastructureInterventionViewsLiveTests(CommonLiveTest):
+    model = Intervention
+    modelfactory = InfrastructureInterventionFactory
+    userfactory = SuperUserFactory
 
 
 class InterventionViewsTest(CommonTest):
@@ -458,6 +470,12 @@ class InterventionViewsTest(CommonTest):
     def test_duplicate(self):
         super().test_duplicate()
         self.assertEqual(ManDay.objects.count(), 2)
+
+
+class ProjectViewsLiveTests(CommonLiveTest):
+    model = Project
+    modelfactory = ProjectWithInterventionFactory
+    userfactory = SuperUserFactory
 
 
 class ProjectViewsTest(CommonTest):

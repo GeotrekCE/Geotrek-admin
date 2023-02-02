@@ -1,10 +1,19 @@
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.common.tests import CommonPublishedLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.outdoor.models import Site, Course
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory, OutdoorManagerFactory
 from geotrek.authent.tests.factories import StructureFactory
 from django.test.utils import override_settings
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
+
+from mapentity.tests.factories import SuperUserFactory
+
+
+class SiteViewsLiveTests(CommonPublishedLiveTest):
+    model = Site
+    modelfactory = SiteFactory
+    userfactory = SuperUserFactory
+    geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
 
 class SiteViewsTests(GeotrekAPITestCase, CommonTest):
@@ -103,6 +112,13 @@ class SiteViewsTests(GeotrekAPITestCase, CommonTest):
         with override_settings(COLUMNS_LISTS={f'outdoor_{self.model._meta.model_name}_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'orientation', 'ratings', 'period'])
+
+
+class CourseViewsLiveTests(CommonPublishedLiveTest):
+    model = Course
+    modelfactory = CourseFactory
+    userfactory = SuperUserFactory
+    geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
 
 class CourseViewsTests(GeotrekAPITestCase, CommonTest):

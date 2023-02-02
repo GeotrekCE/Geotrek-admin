@@ -3,10 +3,18 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
+from geotrek.common.tests import CommonPublishedLiveTest, CommonTest, GeotrekAPITestCase
 from geotrek.sensitivity.models import SensitiveArea
 from geotrek.sensitivity.tests.factories import (SensitiveAreaFactory, SpeciesFactory, SportPracticeFactory,
                                                  RegulatorySensitiveAreaFactory, BiodivManagerFactory)
+
+from mapentity.tests.factories import SuperUserFactory
+
+
+class SensitiveAreaViewsLiveTests(CommonPublishedLiveTest):
+    model = SensitiveArea
+    modelfactory = SensitiveAreaFactory
+    userfactory = SuperUserFactory
 
 
 class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
@@ -78,6 +86,12 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
         with override_settings(COLUMNS_LISTS={'sensitivity_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'description', 'contact'])
+
+
+class RegulatorySensitiveAreaViewsLiveTests(CommonPublishedLiveTest):
+    model = SensitiveArea
+    modelfactory = RegulatorySensitiveAreaFactory
+    userfactory = SuperUserFactory
 
 
 class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
