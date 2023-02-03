@@ -132,19 +132,20 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         title = _('Paths')
         if self.target_type:
             model = self.target_type.model_class()
-
+            model_name = model._meta.verbose_name
             if not self.target:
-                title = model._meta.verbose_name + f' {self.target_id}'
-                return '<i>' + _('Deleted') + ' :</i><img src="%simages/%s-16.png"> <i>%s<i/>' % (settings.STATIC_URL, icon, title)
+                title = model_name + f' {self.target_id}'
+                return '<i>' + _('Deleted') + ' :</i><img src="%simages/%s-16.png" alt="%s"> <i>%s<i/>' % (settings.STATIC_URL,
+                                                                                                           icon,
+                                                                                                           model_name,
+                                                                                                           title)
             if not model._meta.model_name == "topology":
                 title = self.target.name_display
                 icon = model._meta.model_name
-            if model._meta.app_label == "land":
-                return '<img src="%simages/landedge-16.png"> %s' % (settings.STATIC_URL,
+            return '<img src="%simages/%s-16.png" alt="%s"/> %s' % (settings.STATIC_URL,
+                                                                    icon,
+                                                                    model_name,
                                                                     title)
-            return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
-                                                          icon,
-                                                          title)
         return '-'
 
     @property
