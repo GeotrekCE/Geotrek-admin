@@ -77,7 +77,7 @@ describe('Create path', () => {
     cy.get("a[href='#confirm-merge']").click()
     cy.get("button").contains('Merge').click()
     cy.url().should('include', '/path/list/')
-    cy.get("table#objects-list tr").should('have.length', 1)
+    cy.get("table#objects-list tbody tr").should('have.length', 1)
   })
   // One last path
 })
