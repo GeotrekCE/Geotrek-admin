@@ -1,21 +1,23 @@
 import os
 from io import BytesIO
-from PIL import Image
 from unittest import mock
 
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from geotrek.authent.tests.factories import StructureFactory
-
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from paperclip.models import random_suffix_regexp
+from PIL import Image
+
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory, AttachmentFactory
+from geotrek.common.tests.factories import (AttachmentAccessibilityFactory,
+                                            AttachmentFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
+from geotrek.trekking.tests.factories import PracticeFactory, TrekFactory
 from geotrek.trekking.views import TrekDetail
 
 
@@ -141,6 +143,42 @@ class EntityAttachmentTestCase(TestCase):
             '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
+
+    def test_filename_generation(self):
+        # Prepare attachment
+        file = BytesIO(b"File content")
+        file.name = 'foo_file.txt'
+        file.seek(0)
+        attachment = AccessibilityAttachment.objects.create(content_object=self.object,
+                                                            creator=self.user,
+                                                            author="foo author",
+                                                            legend="foo legend")
+        # Assert filename and suffix are not computed if there is no file in attachment
+        self.assertIsNone(attachment.prepare_file_suffix())
+        # Assert filename is made of attachment file name plus random suffix
+        attachment.attachment_accessibility_file = SimpleUploadedFile(
+            file.name,
+            file.read(),
+            content_type='text/plain'
+        )
+        name_1 = attachment.prepare_file_suffix()
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_file{attachment.random_suffix}.txt"
+        self.assertEqual(name_1, new_name)
+        # Assert filename is made of attachment title plus random suffix
+        attachment.random_suffix = None
+        attachment.title = "foo_title"
+        name_2 = attachment.prepare_file_suffix()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_title{attachment.random_suffix}.txt"
+        self.assertEqual(name_2, new_name)
+        # Assert filename is made of basename argument plus random suffix
+        attachment.random_suffix = None
+        name_3 = attachment.prepare_file_suffix("basename.txt")
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"basename{attachment.random_suffix}.txt"
+        self.assertEqual(name_3, new_name)
 
     def test_create_attachments_object_other_structure(self):
         def user_perms(p):

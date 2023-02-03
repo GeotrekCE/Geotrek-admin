@@ -15,6 +15,7 @@ from django.db.utils import DatabaseError
 from django.template.exceptions import TemplateDoesNotExist
 from django.test import TestCase
 from django.test.utils import override_settings
+from paperclip.models import random_suffix_regexp
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
@@ -24,8 +25,8 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     GeotrekParser, OpenSystemParser,
                                     TourInSoftParser, TourismSystemParser,
                                     ValueImportError, XmlParser)
-from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import ThemeFactory
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import get_dummy_img
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
@@ -274,8 +275,10 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertIn('paperclip/common_organism/{pk}/titi'.format(pk=organism.pk), attachment.attachment_file.name)
-        self.assertIn('.png', attachment.attachment_file.name)
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"paperclip/common_organism/{organism.pk}/titi{attachment.random_suffix}.png"
+        self.assertEqual(new_name, attachment.attachment_file.name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(attachment.is_image)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
@@ -343,8 +346,10 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertIn('paperclip/common_organism/{pk}/{ti}'.format(pk=organism.pk, ti='ti' * 64), attachment.attachment_file.name)
-        self.assertIn('.png', attachment.attachment_file.name)
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = 'paperclip/common_organism/{pk}/{ti}{suffix}.png'.format(pk=organism.pk, ti='ti' * 64, suffix=attachment.random_suffix)
+        self.assertEqual(attachment.attachment_file.name, new_name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
@@ -376,8 +381,10 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertIn('paperclip/common_organism/{pk}/titi'.format(pk=organism.pk), attachment.attachment_file.name)
-        self.assertIn('.png', attachment.attachment_file.name)
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"paperclip/common_organism/{organism.pk}/titi{attachment.random_suffix}.png"
+        self.assertEqual(attachment.attachment_file.name, new_name)
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertEqual(attachment.filetype.structure, None)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
@@ -400,9 +407,15 @@ class AttachmentParserTests(TestCase):
         mocked_head.return_value.headers = {'content-length': 0}
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        attachment = Attachment.objects.first()
+        old_name = attachment.attachment_file.name
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        self.assertIn(attachment.random_suffix, old_name)
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(Attachment.objects.first().attachment_file.name, old_name)
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -414,6 +427,10 @@ class AttachmentParserTests(TestCase):
         filename_no_legend = os.path.join(os.path.dirname(__file__), 'data', 'attachment_no_legend.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename_no_legend, verbosity=0)
         attachment = Attachment.objects.get()
+        old_name = attachment.attachment_file.name
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        self.assertIn(attachment.random_suffix, old_name)
         self.assertEqual(attachment.legend, '')
         self.assertEqual(attachment.author, '')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'attachment.xls')
@@ -421,6 +438,7 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
         attachment.refresh_from_db()
+        self.assertEqual(attachment.attachment_file.name, old_name)
         self.assertEqual(attachment.legend, 'legend')
         self.assertEqual(attachment.author, 'name')
 
@@ -434,10 +452,17 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         attachment = Attachment.objects.get()
+        old_name = attachment.attachment_file.name
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        self.assertIn(attachment.random_suffix, old_name)
         os.remove(attachment.attachment_file.path)
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(mocked_get.call_count, 2)
         self.assertEqual(Attachment.objects.count(), 1)
+        attachment = Attachment.objects.first()
+        # New file has new suffix since it was not found by parser
+        self.assertNotEqual(attachment.attachment_file.name, old_name)
 
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('requests.get')
