@@ -1,6 +1,5 @@
 import csv
 import json
-import os
 from datetime import datetime
 from io import StringIO
 from unittest import mock
@@ -16,6 +15,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from paperclip.models import random_suffix_regexp
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
@@ -308,9 +308,8 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get()
         self.assertEqual(report.attachments.count(), 1)
-        name, ext = os.path.splitext(report.attachments.first().attachment_file.name)
-        self.assertIn("dummy_img", name)
-        self.assertIn(".jpeg", ext)
+        regexp = f"dummy_img{random_suffix_regexp()}.jpeg"
+        self.assertRegex(report.attachments.first().attachment_file.name, regexp)
         self.assertTrue(report.attachments.first().is_image)
 
     @mock.patch('geotrek.feedback.views.logger')
