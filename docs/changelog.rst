@@ -8,10 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Sensitivity: Add missing attachments list to sensitive areas API
-- Sensitivity: Add ``openair`` export format for aerial sensitive areas. Usage example:
-
-  - http://pascal.bazile.free.fr/paraglidingFolder/divers/GPS/OpenAir-Format/
-  - https://www.data.gouv.fr/en/datasets/cartographies-aeriennes-dediees-a-la-pratique-du-vol-libre/
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
 
 2.96.0     (2023-02-01)
