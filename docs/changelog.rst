@@ -5,6 +5,9 @@ CHANGELOG
 2.96.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix intervention's geojson
 
 
 2.96.1 (2022-02-02)
