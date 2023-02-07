@@ -19,6 +19,15 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['description', 'contact']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'attachments': [],
@@ -89,6 +98,15 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
         'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
     }
     extra_column_list = ['description', 'contact']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {

@@ -104,20 +104,14 @@ class PathViewsTest(CommonTest):
     expected_column_list_extra = ['id', 'checkbox', 'name', 'length', 'length_2d', 'eid']
     expected_column_formatlist_extra = ['id', 'length_2d', 'eid']
 
-    def get_expected_json_attrs(self):
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
         return {
-            'arrival': '',
-            'ascent': 0,
-            'departure': '',
-            'descent': 0,
-            'draft': False,
-            'eid': None,
-            'max_elevation': 0,
-            'min_elevation': 0,
+            'id': self.obj.pk,
             'name': self.obj.name,
-            'slope': 0.0,
-            'valid': True,
-            'visible': True
+            'draft': self.obj.draft
         }
 
     def get_expected_datatables_attrs(self):
@@ -717,12 +711,13 @@ class TrailViewsTest(CommonTest):
     expected_column_list_extra = ['id', 'name', 'length', 'eid', 'departure', 'arrival']
     expected_column_formatlist_extra = ['id', 'length', 'eid', 'departure', 'arrival']
 
-    def get_expected_json_attrs(self):
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
         return {
-            'name': self.obj.name,
-            'departure': self.obj.departure,
-            'arrival': self.obj.arrival,
-            'comments': self.obj.comments,
+            'id': self.obj.pk,
+            'name': self.obj.name
         }
 
     def get_expected_datatables_attrs(self):
