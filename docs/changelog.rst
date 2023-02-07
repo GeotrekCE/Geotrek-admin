@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix intervention's geojson
+- Fix pictogram's for interventions on lands
 
 
 2.96.1 (2022-02-02)
