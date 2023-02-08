@@ -83,7 +83,6 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         super().setUp()
         self.sensitivearea = SensitiveAreaFactory.create()
         self.species = self.sensitivearea.species
-        print(f"SPECIES, {self.sensitivearea.species} {self.species.pk}")
         self.pk = self.sensitivearea.pk
         self.expected_properties = {
             'create_datetime': self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z'),
