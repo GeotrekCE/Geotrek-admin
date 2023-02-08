@@ -11,7 +11,7 @@ from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModel
 from . import models as sensitivity_models
 
 
-class RuleSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
+class RuleSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
 
     class Meta:
         model = sensitivity_models.Rule

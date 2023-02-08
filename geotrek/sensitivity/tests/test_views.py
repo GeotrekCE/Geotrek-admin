@@ -83,6 +83,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         super().setUp()
         self.sensitivearea = SensitiveAreaFactory.create()
         self.species = self.sensitivearea.species
+        print(f"SPECIES, {self.sensitivearea.species} {self.species.pk}")
         self.pk = self.sensitivearea.pk
         self.expected_properties = {
             'create_datetime': self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z'),
@@ -96,7 +97,20 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             'species_id': self.species.id,
             "name": self.species.name,
             "period": [False, False, False, False, False, True, True, False, False, False, False, False],
-            'practices': [p.pk for p in self.species.practices.all()],
+            'practices': [practice.pk for practice in self.species.practices.all()],
+            'rules': [
+                {'code': 'R1',
+                 'description': None,
+                 'id': self.sensitivearea.rules.all()[0].pk,
+                 'name': 'Rule1',
+                 'pictogram': 'http://testserver/media/picto_rule1.png',
+                 'url': 'http://url.com'},
+                {'code': 'R2',
+                 'description': 'abcdefgh',
+                 'id': self.sensitivearea.rules.all()[1].pk,
+                 'name': 'Rule2',
+                 'pictogram': 'http://testserver/media/picto_rule2.png',
+                 'url': 'http://url.com'}],
             'provider': '',
             'structure': 'My structure',
             'published': True,
