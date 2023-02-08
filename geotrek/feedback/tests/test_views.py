@@ -129,6 +129,15 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         super().setUpTestData()
         feedback_factories.WorkflowManagerFactory(user=UserFactory())
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'activity': self.obj.activity.pk,

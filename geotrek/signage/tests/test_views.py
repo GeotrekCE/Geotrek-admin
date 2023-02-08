@@ -18,7 +18,7 @@ from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
                                              InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
 from geotrek.signage.filters import SignageFilterSet
-from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
+from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
 
 
 class SignageTest(TestCase):
@@ -77,6 +77,15 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     extra_column_list = ['type', 'eid']
     expected_column_list_extra = ['id', 'number', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -330,6 +339,15 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     extra_column_list = ['type', 'eid']
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {

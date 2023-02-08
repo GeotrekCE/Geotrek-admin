@@ -2,8 +2,21 @@
 CHANGELOG
 =========
 
-2.96.0+dev (XXXX-XX-XX)
+2.96.1+dev (XXXX-XX-XX)
 -----------------------
+
+**Bug fixes**
+
+- Fix intervention's geojson
+- Fix pictogram's for interventions on lands
+
+
+2.96.1 (2022-02-02)
+-----------------------
+
+**Bug fixes**
+
+- Fix APIv2 filters deteriorated performances
 
 **Improvements**
 
@@ -12,6 +25,12 @@ CHANGELOG
 
 2.96.0     (2023-02-01)
 -----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- APIv2 filters performances are deteriorated - Skip to 2.96.1 instead
 
 **New feature**
 

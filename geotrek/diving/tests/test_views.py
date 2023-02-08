@@ -22,6 +22,16 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'depth', 'advice']
     expected_column_formatlist_extra = ['id', 'depth', 'advice']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name,
+            'draft': self.obj.draft
+        }
+
     def get_expected_json_attrs(self):
         return {
             'advice': '',
