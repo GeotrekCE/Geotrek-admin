@@ -33,6 +33,15 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
     extra_column_list = ['type1', 'type2', 'eid']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'accessibility': 'Accessible',
@@ -169,6 +178,15 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
     extra_column_list = ['type', 'eid', 'themes']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {

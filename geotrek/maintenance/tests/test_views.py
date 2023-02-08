@@ -46,10 +46,21 @@ class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
-    get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
     expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
     expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    expected_json_geom = {'coordinates': [[3.0, 46.5],
+                                          [3.001304, 46.5009004]],
+                          'type': 'LineString'}
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_bad_data(self):
         return OrderedDict([
@@ -464,10 +475,20 @@ class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectWithInterventionFactory
     userfactory = PathManagerFactory
-    get_expected_json_attrs = None  # Disable API tests
     extra_column_list = ['domain', 'contractors']
     expected_column_list_extra = ['id', 'name', 'domain', 'contractors']
     expected_column_formatlist_extra = ['id', 'domain', 'contractors']
+    expected_json_geom = {'type': 'GeometryCollection',
+                          'geometries': [{'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}]}
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_bad_data(self):
         return OrderedDict([

@@ -56,6 +56,15 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'areas': [],
@@ -224,6 +233,15 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'name', 'type', 'eid']
     length = 141.42135623731
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {

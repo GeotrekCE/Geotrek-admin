@@ -12,9 +12,6 @@ on:
 env:
   DEBIAN_FRONTEND: noninteractive
 
-permissions:
-  contents: write
-
 jobs:
   quality:
     name: Checking dependency graph
@@ -26,8 +23,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -65,13 +60,8 @@ jobs:
              requirements-dev.txt
 
       - name: Validating graph
-        if: steps.verify-changed-files.outputs.files_changed == 'true' && github.actor != 'dependabot[bot]'
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
+          git diff
           core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
-
-      - name: Dependabot commit dependencies
-        uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ github.actor == 'dependabot[bot]' }}
-        with:
-          commit_message: Apply dependencies update by dependabot

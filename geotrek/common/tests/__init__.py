@@ -290,9 +290,6 @@ class GeotrekAPITestCase:
     def get_expected_json_attrs(self):
         return {}
 
-    def get_expected_geojson_attrs(self):
-        return {}
-
     @freeze_time("2020-03-17")
     def test_api_list_for_model(self):
         if self.get_expected_json_attrs is None:
