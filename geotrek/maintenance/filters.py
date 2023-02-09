@@ -47,14 +47,14 @@ class PolygonInterventionFilterMixin:
                 elements_in_bbox.extend(
                     model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id', flat=True)
                 )
-            if 'geotrek.outdoor' in settings.INSTALLED_APPS and issubclass(model, Site) or issubclass(model, Course):
+            if 'geotrek.outdoor' in settings.INSTALLED_APPS and (issubclass(model, Site) or issubclass(model, Course)):
                 interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
                     target_id__in=model.objects.values_list('id', flat=True)
                 ))
             if 'geotrek.feedback' in settings.INSTALLED_APPS and issubclass(model, Report):
                 interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
                     target_id__in=model.objects.values_list('id', flat=True)))
-            if 'geotrek.signage' in settings.INSTALLED_APPS and issubclass(model, Topology) or issubclass(model, Signage):
+            if 'geotrek.signage' in settings.INSTALLED_APPS and (issubclass(model, Topology) or issubclass(model, Signage)):
                 signages = elements_in_bbox
             interventions += qs.values_list('id', flat=True).filter(target_type=target_type,
                                                                     target_id__in=elements_in_bbox)

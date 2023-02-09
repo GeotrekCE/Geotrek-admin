@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix intervention filter when outdoor or signage is not installed
 - Fix intervention's geojson
 - Fix pictogram's for interventions on lands
 
