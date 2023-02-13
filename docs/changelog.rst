@@ -7,8 +7,10 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix intervention filter when outdoor or signage is not installed
 - Fix intervention's geojson
 - Fix pictogram's for interventions on lands
+- Fix sensitivity layer was always loaded before click
 
 
 2.96.1 (2022-02-02)
