@@ -109,7 +109,7 @@ If false, no email will be sent to the sender of any feedback on Geotrek-rando w
 Suricate support
 ~~~~~~~~~~~~~~~~
 
-Geotrek reports can work together with Suricate API, using one of 4 modes. Proceed through a mode full configuration before proceeding to the next mode.
+Geotrek reports can work together with Suricate API, using one of 3 modes. Proceed through a mode full configuration before proceeding to the next mode.
 
 **1** - No Suricate (default)
 
