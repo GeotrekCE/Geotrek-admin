@@ -87,7 +87,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         species.save()
         species.practices.set(self.cleaned_data['practices'])
         area = super().save(commit=False)
-        area.rules.set(self.cleaned_data["rules"])
         area.species = species
         area.save()
+        self.save_m2m()
         return area
