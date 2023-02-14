@@ -39,7 +39,7 @@ packaging==21.3
     # via
     #   -c requirements.txt
     #   build
-pip-tools==6.12.1
+pip-tools==6.12.2
     # via -r dev-requirements.in
 pycodestyle==2.10.0
     # via flake8
@@ -68,10 +68,6 @@ sqlparse==0.4.2
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
-tomli==2.0.1
-    # via
-    #   build
-    #   pyproject-hooks
 wheel==0.38.4
     # via pip-tools
 
