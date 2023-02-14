@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2023-02-14 14:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,6 +79,18 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
+msgid "Code"
+msgstr "Codice"
+
+msgid "Description"
+msgstr "Descrizione"
+
+msgid "Rule"
+msgstr "Regolamento"
+
+msgid "Rules"
+msgstr "Regolamenti"
+
 msgid "Sport practice"
 msgstr ""
 
@@ -110,9 +122,6 @@ msgid "Visible on Geotrek-rando"
 msgstr ""
 
 msgid "Publication date"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Contact"
