@@ -257,7 +257,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
             if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : assign workflow manager if needed and save
-                if self.status.identifier in ['filed']:
+                if self.status.identifier in ['filed'] and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
                     self.assigned_user = WorkflowManager.objects.first().user
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more

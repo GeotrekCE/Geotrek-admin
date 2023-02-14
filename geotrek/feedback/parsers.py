@@ -210,6 +210,8 @@ class SuricateParser(SuricateGestionRequestManager):
             current_report += 1
         if verbosity >= 1:
             logger.info(f"Parsed {total_reports} reports from Suricate\n")
+        if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+            should_notify = False
         self.after_get_alerts(reports_created, should_notify)
 
     def create_documents(self, documents, parent):

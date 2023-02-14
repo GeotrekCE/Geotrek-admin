@@ -20,7 +20,7 @@ function display_message_fields_on_status_change() {
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     var workflow_manager = JSON.parse($('#workflow_manager').text());
     var selected = $('#id_status').val() || null;
-    do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified"))
+    do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified") || (status_ids_and_colors[selected]['id'] == "waiting"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
     $('#div_id_message_administrators').prop('hidden', !do_display);
     $('#div_id_message_sentinel_predefined').prop('hidden', !do_display);

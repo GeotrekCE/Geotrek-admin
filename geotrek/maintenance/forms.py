@@ -155,9 +155,11 @@ class InterventionForm(CommonForm):
             elif 'status' in self.changed_data and self.instance.status.order == 30:
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
-                target.assigned_user = WorkflowManager.objects.first().user
+                if not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+                    target.assigned_user = WorkflowManager.objects.first().user
                 target.save()
-                WorkflowManager.objects.first().notify_report_to_solve(target)
+                if not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+                    WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')

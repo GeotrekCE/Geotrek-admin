@@ -807,7 +807,8 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département"
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": False
 }
 
 REPORT_FILETYPE = "Report"

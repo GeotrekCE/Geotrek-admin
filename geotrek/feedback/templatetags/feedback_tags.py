@@ -18,6 +18,11 @@ def suricate_workflow_enabled():
 
 
 @register.simple_tag
+def skip_manager_moderation():
+    return settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION")
+
+
+@register.simple_tag
 def enable_report_colors_per_status():
     return settings.ENABLE_REPORT_COLORS_PER_STATUS
 
