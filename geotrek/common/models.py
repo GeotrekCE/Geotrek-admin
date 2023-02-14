@@ -141,6 +141,8 @@ class AccessibilityAttachment(models.Model):
                     self.content_object.pk)
                 # Compute maximum size left for filename
                 max_filename_size = self._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - settings.PAPERCLIP_RANDOM_SUFFIX_SIZE - len(subfolder) - len(ext) - 1
+                # In case PAPERCLIP_RANDOM_SUFFIX_SIZE is too big
+                max_filename_size = max(0, max_filename_size)
                 # Create new name with suffix and proper size
                 name = slugify(basename or self.title or name)[:max_filename_size]
                 return name + self.random_suffix + ext
