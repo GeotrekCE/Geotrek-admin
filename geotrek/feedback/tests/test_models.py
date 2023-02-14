@@ -12,17 +12,27 @@ from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
+from mapentity.tests.factories import SuperUserFactory, UserFactory
+
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
-from geotrek.feedback.admin import PredefinedEmailAdmin, WorkflowDistrictAdmin, WorkflowManagerAdmin
+from geotrek.feedback.admin import (PredefinedEmailAdmin,
+                                    WorkflowDistrictAdmin,
+                                    WorkflowManagerAdmin)
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import (PendingSuricateAPIRequest, PredefinedEmail, Report, SelectableUser,
-                                     TimerEvent, WorkflowDistrict, WorkflowManager)
-from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
+from geotrek.feedback.models import (PendingSuricateAPIRequest,
+                                     PredefinedEmail, Report, SelectableUser,
+                                     TimerEvent, WorkflowDistrict,
+                                     WorkflowManager)
+from geotrek.feedback.tests.factories import (ReportFactory,
+                                              ReportStatusFactory,
+                                              WorkflowDistrictFactory,
+                                              WorkflowManagerFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests, test_for_management_mode, test_for_workflow_mode)
+    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests,
+    SuricateWorkflowTests, test_for_report_and_basic_modes,
+    test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
-from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 class TestFeedbackModel(TestCase):
@@ -34,7 +44,7 @@ class TestFeedbackModel(TestCase):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
         self.assertEqual(self.report.name_display, s)
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_get_display_name_suricate(self):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.eid}\">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
@@ -144,23 +154,28 @@ class TestWorkflowUserModels(TestCase):
         # We can create emails
         self.assertIs(admin.has_add_permission(request), True)
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_cannot_create_several_managers(self):
         ma = WorkflowManagerAdmin(WorkflowManager, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
         # We can create a manager when there is none
+        self.assertIs(ma.has_add_permission(request), True)
+        # We cannot create a manager when there is one
+        WorkflowManagerFactory(user=UserFactory())
         self.assertIs(ma.has_add_permission(request), False)
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_cannot_create_several_workflow_districts(self):
         admin = WorkflowDistrictAdmin(WorkflowDistrict, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
         # We cannot create a district
+        self.assertIs(admin.has_add_permission(request), True)
+        WorkflowDistrictFactory(district=DistrictFactory())
         self.assertIs(admin.has_add_permission(request), False)
 
-    @test_for_management_mode
+    @test_for_report_and_basic_modes
     def test_cannot_create_predefined_emails(self):
         admin = PredefinedEmailAdmin(PredefinedEmail, AdminSite())
         request = MockRequest()
@@ -202,7 +217,7 @@ class TestPendingAPIRequests(SuricateTests):
         cls.status = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
         super().setUpTestData()
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_failed_get_on_management_api(self, mocked):
         uid = uuid.uuid4()

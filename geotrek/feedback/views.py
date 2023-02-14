@@ -160,7 +160,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
             qs = qs.filter(assigned_user=self.request.user)
 
         if self.format_kwarg == 'geojson':
-            number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+            number = 'eid' if settings.SURICATE_WORKFLOW_ENABLED else 'id'
             qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()),
                              api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'status')

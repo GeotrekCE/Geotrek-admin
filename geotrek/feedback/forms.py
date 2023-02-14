@@ -56,7 +56,7 @@ class ReportForm(CommonForm):
         # Store current status
         if self.instance.pk:
             self.old_status = self.instance.status
-        if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
+        if settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
             if self.instance.pk:  # On updates
                 # Hide fields that are handled automatically in these modes
                 self.fields["email"].widget = HiddenInput()

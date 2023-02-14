@@ -4,7 +4,6 @@
 
 {% block attributes %}
     {% suricate_workflow_enabled as suricate_workflow_enabled %}
-    {% suricate_management_enabled as suricate_management_enabled %}
     {% workflow_manager as workflow_manager %}
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
@@ -70,8 +69,7 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        {% suricate_management_enabled as suricate_management_enabled %}
-        {% if suricate_management_enabled %}
+        {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>
             <td>{{ report.created_in_suricate }}</td>
@@ -110,14 +108,10 @@
             <th>{{ report|verbose:"uses_timers" }}</th>
             <td>{% if report.uses_timers %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
         </tr>
-        {% endif %}
-        {% if suricate_management_enabled or suricate_workflow_enabled %}
             <tr>
                 <th>{{ report|verbose:"eid" }}</th>
                 <td>{{ report.eid }}</td>
             </tr>
-        {% endif %}
-        {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"locked" }}</th>
             <td>{% if report.locked %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>

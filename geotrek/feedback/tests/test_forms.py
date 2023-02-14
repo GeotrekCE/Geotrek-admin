@@ -1,5 +1,5 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 from hashlib import md5
 from unittest import mock
 
@@ -9,8 +9,6 @@ from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.urls.base import reverse
 from django.utils import translation
-from geotrek.zoning.tests.factories import DistrictFactory
-
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
@@ -18,14 +16,19 @@ from tinymce.widgets import TinyMCE
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManager
-from geotrek.feedback.tests.factories import PredefinedEmailFactory, ReportFactory, ReportStatusFactory
+from geotrek.feedback.models import (TimerEvent, WorkflowDistrict,
+                                     WorkflowManager)
+from geotrek.feedback.tests.factories import (PredefinedEmailFactory,
+                                              ReportFactory,
+                                              ReportStatusFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SuricateWorkflowTests, test_for_management_and_workflow_modes,
-    test_for_report_and_basic_modes, test_for_workflow_mode, test_for_management_mode)
+    SuricateWorkflowTests, test_for_report_and_basic_modes,
+    test_for_workflow_mode)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
-from geotrek.maintenance.tests.factories import InterventionFactory, ReportInterventionFactory
+from geotrek.maintenance.tests.factories import (InterventionFactory,
+                                                 ReportInterventionFactory)
+from geotrek.zoning.tests.factories import DistrictFactory
 
 
 class TestSuricateForms(SuricateWorkflowTests):
@@ -138,49 +141,6 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn('message_administrators', keys)
         self.assertIn('message_sentinel_predefined', keys)
         self.assertIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
-
-    @test_for_management_mode
-    def test_creation_form_specifics_2_management(self):
-        data = {
-            'email': 'test@test.fr',
-            'geom': Point(700000, 6600000, srid=settings.SRID)
-        }
-        form = ReportForm(data)
-        keys = form.fields.keys()
-
-        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
-        self.assertIsInstance(form.fields["email"].widget, EmailInput)
-        self.assertIsInstance(form.fields["comment"].widget, TinyMCE)
-        self.assertIsInstance(form.fields["activity"].widget, Select)
-        self.assertIsInstance(form.fields["category"].widget, Select)
-        self.assertIsInstance(form.fields["status"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["problem_magnitude"].widget, Select)
-        self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertNotIn('message_sentinel', keys)
-        self.assertNotIn('message_administrators', keys)
-        self.assertNotIn('message_sentinel_predefined', keys)
-        self.assertNotIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
-
-    @test_for_management_mode
-    def test_update_form_specifics_2_management(self):
-        form = ReportForm(instance=self.filed_report)
-        keys = form.fields.keys()
-        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
-        self.assertIsInstance(form.fields["email"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["comment"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["activity"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["category"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["status"].widget, Select)
-        self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
-        self.assertIsInstance(form.fields["related_trek"].widget, Select)
-        self.assertNotIn('message_sentinel', keys)
-        self.assertNotIn('message_administrators', keys)
-        self.assertNotIn('message_sentinel_predefined', keys)
-        self.assertNotIn('message_supervisor', keys)
         self.assertIsInstance(form.fields["assigned_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
@@ -307,7 +267,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEquals(response.status_code, 200)
         self.assertIn(emails_data, response.content.decode("utf-8"))
 
-    @test_for_management_and_workflow_modes
+    @test_for_workflow_mode
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEquals(response.status_code, 200)
@@ -440,7 +400,6 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Test Timer is created when report is created
         form = ReportForm(data=data)
         report = form.save()
-        print(report.status)
         self.assertEqual(TimerEvent.objects.count(), 1)
         self.assertEqual(TimerEvent.objects.first().step.identifier, "timer3")
         data = {

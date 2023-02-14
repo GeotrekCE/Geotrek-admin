@@ -189,7 +189,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         ordering = ["-date_insert"]
 
     def __str__(self):
-        if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) and self.eid:
+        if settings.SURICATE_WORKFLOW_ENABLED and self.eid:
             return f"{_('Report')} {self.eid}"
         else:
             return f"{_('Report')} {self.pk}"
@@ -250,16 +250,6 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
             self.try_send_report_to_managers()
             self.get_suricate_messenger().post_report(self)
         super().save(*args, **kwargs)  # Report updates should do nothing more
-
-    def save_suricate_management_mode(self, *args, **kwargs):
-        """Save method for Suricate Management mode"""
-        if not self.pk:  # This is a new report
-            if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                self.get_suricate_messenger().post_report(self)
-            else:  # This new report comes from Suricate : save
-                super().save(*args, **kwargs)
-        else:  # Report updates should do nothing more
-            super().save(*args, **kwargs)
 
     def save_suricate_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
@@ -354,12 +344,10 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
                 self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message_sentinel)
 
     def save(self, *args, **kwargs):
-        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
-        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
-        elif settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
-            self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
         elif settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_workflow_mode(*args, **kwargs)  # Suricate Workflow Mode
 
@@ -384,7 +372,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     @property
     def eid_verbose_name(self):
-        return _("Tag") if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else _("Label")
+        return _("Tag") if settings.SURICATE_WORKFLOW_ENABLED else _("Label")
 
     def distance(self, to_cls):
         """Distance to associate this report to another class"""
