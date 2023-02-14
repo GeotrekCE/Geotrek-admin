@@ -8,7 +8,7 @@ serve:
 	docker-compose up
 
 deps:
-	docker-compose run --rm web bash -c "pip-compile -q && pip-compile -q requirements-dev.in"
+	docker-compose run --rm web bash -c "pip-compile -q && pip-compile -q dev-requirements.in"
 
 flake8:
 	docker-compose run --rm web flake8 geotrek
