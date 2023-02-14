@@ -5,6 +5,10 @@ CHANGELOG
 2.96.1+dev (XXXX-XX-XX)
 -----------------------
 
+**New feature**
+
+- Add rules (with pictograms, descriptions and url) on regulatory sensitive areas (#3386)
+
 **Bug fixes**
 
 - Fix intervention filter when outdoor or signage is not installed
