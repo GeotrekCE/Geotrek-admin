@@ -1,9 +1,13 @@
+import logging
+
 from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
 from django.core.validators import MinValueValidator
 from django.utils.translation import pgettext, gettext as _
 from mapentity.widgets import MapWidget
+
+logger = logging.getLogger(__name__)
 
 
 class BubbleMapWidget(MapWidget):
@@ -46,7 +50,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_("URL"), required=False)
 
     class Meta:
-        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
+        fields = ['structure', 'name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices', 'rules'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
         widgets = {'geom': PolygonMapWidget()}
@@ -85,4 +89,5 @@ class RegulatorySensitiveAreaForm(CommonForm):
         area = super().save(commit=False)
         area.species = species
         area.save()
+        self.save_m2m()
         return area

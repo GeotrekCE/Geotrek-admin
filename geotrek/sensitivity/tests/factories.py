@@ -10,6 +10,14 @@ from .. import models
 from mapentity.tests.factories import UserFactory
 
 
+class RuleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Rule
+        django_get_or_create = ('code', 'name', 'url', 'pictogram')
+
+    name = "Rule"
+
+
 class SportPracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SportPractice
@@ -54,6 +62,28 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     published = True
     description = "Blabla"
     contact = "<a href=\"mailto:toto@tata.com\">toto@tata.com</a>"
+
+    @factory.post_generation
+    def rules(obj, create, extracted=None, **kwargs):
+        if create:
+            if not extracted:
+                rules = [
+                    RuleFactory.create(
+                        code='R1',
+                        name='Rule1',
+                        url='http://url.com',
+                        pictogram='picto_rule1.png'
+                    ),
+                    RuleFactory.create(
+                        code='R2',
+                        name='Rule2',
+                        url='http://url.com',
+                        pictogram='picto_rule2.png',
+                        description="abcdefgh"
+                    ),
+                ]
+            for rule in rules:
+                obj.rules.add(rule)
 
 
 class MultiPolygonSensitiveAreaFactory(SensitiveAreaFactory):

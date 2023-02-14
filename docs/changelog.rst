@@ -5,10 +5,20 @@ CHANGELOG
 2.96.1+dev (XXXX-XX-XX)
 -----------------------
 
+**New feature**
+
+- Add rules (with pictograms, descriptions and url) on regulatory sensitive areas (#3386)
+
 **Bug fixes**
 
+- Fix intervention filter when outdoor or signage is not installed
 - Fix intervention's geojson
 - Fix pictogram's for interventions on lands
+
+**Documentation**
+
+- Update Suricate documentation
+- Add HD Views documentation
 
 
 2.96.1 (2022-02-02)

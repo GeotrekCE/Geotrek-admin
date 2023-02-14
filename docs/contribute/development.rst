@@ -39,12 +39,12 @@ Adding or upgrade dependencies
 
 Consider using pip-tools to manage dependencies.
 
-* add your dependency in setup.py for general dependency, requirements-dev.in for dev dependency, then run :
+* add your dependency in setup.py for general dependency, dev-requirements.in for dev dependency, then run :
 
 ::
 
    docker-compose run --rm web pip-compile
-   docker-compose run --rm web pip-compile requirements-dev.in
+   docker-compose run --rm web pip-compile dev-requirements.in
 
 or
 
