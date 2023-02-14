@@ -10,17 +10,16 @@
             <th>{{ sensitivearea|verbose:"structure" }}</th>
             <td>{{ sensitivearea.structure }}</td>
         </tr>
-        {% if sensitivearea.species.category == 2 %}
-            <tr>
-                <th>{{ sensitivearea.species|verbose:"name" }}</th>
-                <td>{{ sensitivearea.species.name }}</td>
-            </tr>
-        {% else %}
+        {% if sensitivearea.species.category == 1 %}
             <tr>
                 <th>{{ sensitivearea|verbose:"species" }}</th>
-                <td>{{ sensitivearea.species }}</td>
+                <td>{{ sensitivearea.name }}</td>
             </tr>
         {% endif %}
+        <tr>
+            <th>{{ sensitivearea.species|verbose:"name" }}</th>
+            <td>{{ sensitivearea.name }}</td>
+        </tr>
         <tr>
             <th>{% trans "Period" %}</th>
             <td>{{ sensitivearea.species.pretty_period }}</td>

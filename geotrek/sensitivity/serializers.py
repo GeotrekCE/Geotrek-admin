@@ -57,7 +57,7 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
 
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'attachments')
+        fields = ('id', 'species', 'name', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'attachments')
 
 
 class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):

@@ -30,6 +30,7 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
 
     def get_expected_json_attrs(self):
         return {
+            'name': 'Sensitive area',
             'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
@@ -110,6 +111,7 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
 
     def get_expected_json_attrs(self):
         return {
+            'name': 'Sensitive area',
             'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
@@ -173,7 +175,6 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
 
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 200)
-
         self._post_update_form(obj)
 
         response = self.client.get(obj.get_delete_url())

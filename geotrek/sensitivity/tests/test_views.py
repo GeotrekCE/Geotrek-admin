@@ -69,10 +69,10 @@ class SensitiveAreaTemplatesTest(TestCase):
     def tearDown(self):
         self.client.logout()
 
-    def test_species_name_shown_in_detail_page(self):
+    def test_area_name_shown_in_detail_page(self):
         url = "/sensitivearea/{pk}/".format(pk=self.area.pk)
         response = self.client.get(url)
-        self.assertContains(response, self.area.species.name)
+        self.assertContains(response, self.area.name)
 
 
 @freeze_time("2020-01-01")
@@ -94,7 +94,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             'kml_url': 'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
             'info_url': self.species.url,
             'species_id': self.species.id,
-            "name": self.species.name,
+            "name": "Sensitive area",
             "period": [False, False, False, False, False, True, True, False, False, False, False, False],
             'practices': [p.pk for p in self.species.practices.all()],
             'provider': '',
@@ -211,7 +211,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['radius'], 5)
-        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_point.species.name)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_point.name)
 
     def test_list_sportpractice(self):
         url = '/api/v2/sensitivearea_practice/?format=json&language=en'
@@ -231,7 +231,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         url = '/api/v2/sensitivearea/?format=json&language=en&period=ignore&structures={}'.format(other_structure.pk)
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['name'], self.sensitivearea_other_structure.species.name)
+        self.assertEqual(response.json()['results'][0]['name'], self.sensitivearea_other_structure.name)
 
     def test_filters_no_period(self):
         StructureFactory.create()
@@ -252,7 +252,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         url = '/api/v2/sensitivearea/?format=json&language=en&period=2,3'
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_jf.species.name)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_jf.name)
 
     def test_filters_no_period_get_month(self):
         sensitive_area_month = SensitiveAreaFactory.create(**{'species__period01': True})
@@ -260,4 +260,4 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         url = '/api/v2/sensitivearea/?format=json&language=en'
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_month.species.name)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_month.name)

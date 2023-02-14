@@ -916,7 +916,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
 
         def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj.species)
+            return get_translation_or_dict('name', self, obj)
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)

@@ -76,6 +76,7 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
 
 class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
+    name = models.CharField(max_length=250, verbose_name=_("Name"), default='undefined')
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
     species = models.ForeignKey(Species, verbose_name=_("Species or regulatory area"), on_delete=models.PROTECT)
@@ -100,7 +101,7 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
         )
 
     def __str__(self):
-        return self.species.name
+        return self.name
 
     @property
     def radius(self):
@@ -191,7 +192,7 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
                 geometry += (coords, )
             geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
         geom = geom.transform(4326, clone=True)  # KML uses WGS84
-        line = kml.newpolygon(name=self.species.name,
+        line = kml.newpolygon(name=self.name,
                               description=plain_text(self.description),
                               altitudemode=simplekml.AltitudeMode.relativetoground,
                               outerboundaryis=simplify_coords(geom.coords[0]))

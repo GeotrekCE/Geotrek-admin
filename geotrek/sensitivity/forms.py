@@ -20,7 +20,7 @@ class SensitiveAreaForm(CommonForm):
                                      label=pgettext("Singular", "Species"))
 
     class Meta:
-        fields = ['structure', 'species', 'published', 'description', 'contact', 'geom']
+        fields = ['structure', 'species', 'name', 'published', 'description', 'contact', 'geom']
         model = SensitiveArea
         widgets = {'geom': BubbleMapWidget()}
 
@@ -55,7 +55,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         if kwargs['instance']:
             species = kwargs['instance'].species
             kwargs['initial'] = {
-                'name': species.name,
+                # 'name': species.name,
                 'elevation': species.radius,
                 'pictogram': species.pictogram,
                 'practices': species.practices.all(),
@@ -73,7 +73,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         else:
             species = self.instance.species
         species.category = Species.REGULATORY
-        species.name = self.cleaned_data['name']
+        # species.name = self.cleaned_data['name']
         species.radius = self.cleaned_data['elevation']
         species.pictogram = self.cleaned_data['pictogram']
         species.url = self.cleaned_data['url']
