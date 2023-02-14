@@ -47,8 +47,8 @@ RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
-COPY requirements-dev.txt requirements-dev.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r requirements-dev.txt -U
+COPY dev-requirements.txt dev-requirements.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt -U
 
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
 COPY --chown=geotrek:geotrek manage.py manage.py
