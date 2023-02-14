@@ -10,7 +10,11 @@ CHANGELOG
 - Fix intervention filter when outdoor or signage is not installed
 - Fix intervention's geojson
 - Fix pictogram's for interventions on lands
-- Fix sensitivity layer was always loaded before click
+
+**Documentation**
+
+- Update Suricate documentation
+- Add HD Views documentation
 
 
 2.96.1 (2022-02-02)
