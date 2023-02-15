@@ -20,6 +20,15 @@ CHANGELOG
 - Update Suricate documentation
 - Add HD Views documentation
 
+**Security**
+
+- Add safety checks on uploaded files
+
+**Warning**
+
+- Attachment filenames are now suffixed with a random string. This might cause duplication of old attachment files that previously did not have a suffix. Make sure to run `clean_attachments` command regularly to save disk space.
+
+
 
 2.96.1 (2022-02-02)
 -----------------------
@@ -129,11 +138,6 @@ In preparation for HD Views developments (PR #3298)
 - Fix default conf nginx for mobile
 - Replace image's relative URLs with absolute URLs in API v2 trek descriptions (#3321)
 - Disable scroll propagation on layers list to avoid zoom changes on map (#2687)
-
-
-**Security**
-
-- Add safety checks on uploaded files
 
 
 2.94.0     (2022-12-12)
