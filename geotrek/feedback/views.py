@@ -55,7 +55,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+        if settings.SURICATE_WORKFLOW_ENABLED and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and not (self.request.user.is_superuser or self.request.user.pk in list(
                 feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
@@ -153,7 +153,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
-        if settings.SURICATE_WORKFLOW_ENABLED and not (
+        if settings.SURICATE_WORKFLOW_ENABLED and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and not (
             self.request.user.is_superuser or self.request.user.pk in
             list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))
         ):
