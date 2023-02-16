@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function docker_compose {
-    # use docker-compose then fallback to new docker compose
+    # detect docker-compose or docker compose command
     if which docker-compose -eq 0
     then
       docker-compose  "$@"
