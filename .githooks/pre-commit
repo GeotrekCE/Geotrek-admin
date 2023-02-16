@@ -1,5 +1,12 @@
 #!/bin/bash
 
+ifeq (, $(shell which docker-compose))
+  docker_compose=docker compose
+else
+  docker_compose=docker-compose
+endif
+
+
 function dockercompose {
   # use docker-compose then fallback to new docker compose
   docker-compose  "$@"
@@ -8,13 +15,13 @@ function dockercompose {
 
 echo "Check dependency graph and fix requirements"
 
-dockercompose run -T --rm web bash -c "pip-compile -q && pip-compile dev-requirements.in"
+docker_compose run -T --rm web bash -c "pip-compile -q && pip-compile dev-requirements.in"
 
 
 
 echo "run Flake8..."
 
-dockercompose run -T --rm web flake8 geotrek
+docker_compose run -T --rm web flake8 geotrek
 status=$?
 
 if test $status -eq 1
