@@ -90,6 +90,12 @@ class PendingSuricateAPIRequest(models.Model):
     def remove_sync_error_flag_on_report(self, external_uuid):
         report = Report.objects.filter(external_uuid=external_uuid)
         report.update(sync_errors=F('sync_errors') - 1)
+        report = report.first()
+        if self.endpoint == "wsUpdateStatus" and json.loads(self.params).get('statut', '') == 'waiting' and report.status.identifier == 'filed':
+            # "waiting" status from suricate API does not override internal statuses on sync_suricate
+            # therefore, we need to manually set report status to waiting here if this is the call that failed
+            report.status = ReportStatus.objects.get(identifier='waiting')
+            report.save(update_fields=['status'])
 
     def save(self, *args, **kwargs):
         # Set sync_errors flag on report

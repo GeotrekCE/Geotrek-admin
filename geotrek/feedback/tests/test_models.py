@@ -344,3 +344,5 @@ class TestPendingAPIRequests(SuricateTests):
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
         report.refresh_from_db()
         self.assertEquals(0, report.sync_errors)
+        # Special case
+        self.assertEqual('waiting', report.status.identifier)
