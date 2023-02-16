@@ -15,13 +15,14 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from paperclip.models import random_suffix_regexp
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
                                   TranslationResetMixin)
-from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
@@ -279,7 +280,7 @@ class CreateReportsAPITest(BaseAPITest):
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'email': 'yeah@you.com',
             'activity': feedback_factories.ReportActivityFactory.create().pk,
-            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk
         }
 
     def post_report_data(self, data):
@@ -287,6 +288,7 @@ class CreateReportsAPITest(BaseAPITest):
         response = client.post(self.add_url, data=data,
                                allow_redirects=False)
         self.assertEqual(response.status_code, 201, self.add_url)
+        return response
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
@@ -301,13 +303,36 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
 
     def test_reports_with_file(self):
-        self.data['file'] = get_dummy_uploaded_file()
-        self.data['csv'] = get_dummy_uploaded_image_svg()
         self.data['image'] = get_dummy_uploaded_image()
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get()
-        self.assertEqual(report.attachments.count(), 3)
+        self.assertEqual(report.attachments.count(), 1)
+        regexp = f"dummy_img{random_suffix_regexp()}.jpeg"
+        self.assertRegex(report.attachments.first().attachment_file.name, regexp)
+        self.assertTrue(report.attachments.first().is_image)
+
+    @mock.patch('geotrek.feedback.views.logger')
+    def test_reports_with_failed_image(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_image_svg()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>")
+        self.assertEqual(report.attachments.count(), 0)
+
+    @mock.patch('geotrek.feedback.views.logger')
+    def test_reports_with_bad_file_format(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_document()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id} : {{\'attachment_file\': ['File mime type “text/plain” is not allowed for “odt”.']}}")
+        self.assertEqual(report.attachments.count(), 0)
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):

@@ -20,6 +20,15 @@ CHANGELOG
 - Update Suricate documentation
 - Add HD Views documentation
 
+**Security**
+
+- Add safety checks on uploaded files
+
+**Warning**
+
+- Attachment filenames are now suffixed with a random string. This might cause duplication of old attachment files that previously did not have a suffix. Make sure to run `clean_attachments` command regularly to save disk space.
+
+
 
 2.96.1 (2022-02-02)
 -----------------------

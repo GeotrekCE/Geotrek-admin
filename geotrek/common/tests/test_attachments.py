@@ -1,21 +1,23 @@
 import os
 from io import BytesIO
-from PIL import Image
 from unittest import mock
 
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from geotrek.authent.tests.factories import StructureFactory
-
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from paperclip.models import random_suffix_regexp
+from PIL import Image
+
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory, AttachmentFactory
+from geotrek.common.tests.factories import (AttachmentAccessibilityFactory,
+                                            AttachmentFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
+from geotrek.trekking.tests.factories import PracticeFactory, TrekFactory
 from geotrek.trekking.views import TrekDetail
 
 
@@ -142,6 +144,42 @@ class EntityAttachmentTestCase(TestCase):
             html)
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
+    def test_filename_generation(self):
+        # Prepare attachment
+        file = BytesIO(b"File content")
+        file.name = 'foo_file.txt'
+        file.seek(0)
+        attachment = AccessibilityAttachment.objects.create(content_object=self.object,
+                                                            creator=self.user,
+                                                            author="foo author",
+                                                            legend="foo legend")
+        # Assert filename and suffix are not computed if there is no file in attachment
+        self.assertIsNone(attachment.prepare_file_suffix())
+        # Assert filename is made of attachment file name plus random suffix
+        attachment.attachment_accessibility_file = SimpleUploadedFile(
+            file.name,
+            file.read(),
+            content_type='text/plain'
+        )
+        name_1 = attachment.prepare_file_suffix()
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_file{attachment.random_suffix}.txt"
+        self.assertEqual(name_1, new_name)
+        # Assert filename is made of attachment title plus random suffix
+        attachment.random_suffix = None
+        attachment.title = "foo_title"
+        name_2 = attachment.prepare_file_suffix()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_title{attachment.random_suffix}.txt"
+        self.assertEqual(name_2, new_name)
+        # Assert filename is made of basename argument plus random suffix
+        attachment.random_suffix = None
+        name_3 = attachment.prepare_file_suffix("basename.txt")
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"basename{attachment.random_suffix}.txt"
+        self.assertEqual(name_3, new_name)
+
     def test_create_attachments_object_other_structure(self):
         def user_perms(p):
             return {'authent.can_bypass_structure': False}.get(p, True)
@@ -180,8 +218,9 @@ class UploadAddAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
@@ -227,8 +266,9 @@ class UploadUpdateAttachmentTestCase(TestCase):
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
@@ -239,7 +279,8 @@ class UploadUpdateAttachmentTestCase(TestCase):
 
     def test_post_update_url(self):
         response = self.client.post(update_url_for_obj(self.attachment),
-                                    data=self.attachmentPostData())
+                                    data=self.attachmentPostData(),
+                                    )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
         self.attachment.refresh_from_db()
@@ -380,7 +421,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -395,8 +437,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': big_image,
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -419,7 +463,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -438,8 +483,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -463,7 +510,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -482,10 +530,11 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
-
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
         self.assertIn(b'The uploaded file is not tall enough', response.content)
@@ -495,16 +544,16 @@ class ReduceSaveSettingsTestCase(TestCase):
         self.client.force_login(self.superuser)
         attachment = AttachmentAccessibilityFactory.create(content_object=self.object)
         os.remove(attachment.attachment_accessibility_file.path)
-
         response = self.client.post(
             update_url_for_obj(attachment),
             data={
                 'creator': self.superuser,
                 'title': "A title",
-                'attachment_accessibility_file': "file",
+                'attachment_accessibility_file': get_dummy_uploaded_image("title.png"),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)

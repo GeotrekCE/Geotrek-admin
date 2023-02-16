@@ -1,15 +1,19 @@
+from tempfile import TemporaryDirectory
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 from django.urls import reverse
-from tempfile import TemporaryDirectory
+from mapentity.tests.factories import SuperUserFactory
+from paperclip.models import random_suffix_regexp
 
 from geotrek.common.models import Attachment, FileType, Theme
-from geotrek.common.tests.factories import AttachmentFactory, HDViewPointFactory, ThemeFactory
+from geotrek.common.tests.factories import (AttachmentFactory,
+                                            HDViewPointFactory, ThemeFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.models import DifficultyLevel, POI, Trek
-from geotrek.trekking.tests.factories import DifficultyLevelFactory, POIFactory, TrekFactory
-from mapentity.tests.factories import SuperUserFactory
+from geotrek.trekking.models import POI, DifficultyLevel, Trek
+from geotrek.trekking.tests.factories import (DifficultyLevelFactory,
+                                              POIFactory, TrekFactory)
 
 
 @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
@@ -34,8 +38,12 @@ class AttachmentAdminTest(TestCase):
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'img1.png')
-        self.assertContains(response, 'img2.png')
+        regexp1 = f"img1{random_suffix_regexp()}.png"
+        regexp2 = f"img2{random_suffix_regexp()}.png"
+        self.assertRegex(self.picture.filename, regexp1)
+        self.assertRegex(self.picture_2.filename, regexp2)
+        self.assertContains(response, self.picture.filename)
+        self.assertContains(response, self.picture_2.filename)
         self.assertContains(response, self.poi.get_detail_url())
         self.assertContains(response, self.trek.get_detail_url())
         self.assertContains(response, self.theme.pk)
@@ -48,8 +56,8 @@ class AttachmentAdminTest(TestCase):
 
         response = self.client.get(list_url, data)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'img1.png')
-        self.assertNotContains(response, 'img2.png')
+        self.assertContains(response, self.picture.filename)
+        self.assertNotContains(response, self.picture_2.filename)
 
     def test_attachment_can_be_change(self):
         change_url = reverse('admin:common_attachment_change', args=[self.picture.pk])

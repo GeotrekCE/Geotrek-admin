@@ -206,7 +206,7 @@ large-image-source-vips==1.17.2
     # via geotrek (setup.py)
 lxml==4.9.1
     # via mapentity
-mapentity==8.5.0
+mapentity==8.5.1
     # via geotrek (setup.py)
 markdown==3.4.1
     # via geotrek (setup.py)
@@ -228,7 +228,7 @@ packaging==21.3
     #   large-image-source-vips
 palettable==3.3.0
     # via large-image
-paperclip==2.6.1
+paperclip==2.7.0
     # via
     #   geotrek (setup.py)
     #   mapentity
@@ -267,6 +267,8 @@ pypdf2==1.27.5
     # via pdfimpose
 pyphen==0.11.0
     # via weasyprint
+python-magic==0.4.27
+    # via paperclip
 pytz==2022.7.1
     # via
     #   celery

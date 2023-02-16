@@ -386,12 +386,15 @@ class SyncRandoForm(forms.Form):
 
 
 class AttachmentAccessibilityForm(forms.ModelForm):
+    next = forms.CharField(widget=forms.HiddenInput())
+
     def __init__(self, request, *args, **kwargs):
         self._object = kwargs.pop('object', None)
 
         super().__init__(*args, **kwargs)
         self.fields['legend'].widget.attrs['placeholder'] = _('Overview of the tricky passage')
 
+        self.redirect_on_error = True
         # Detect fields errors without uploading (using HTML5)
         self.fields['author'].widget.attrs['pattern'] = r'^\S.*'
         self.fields['legend'].widget.attrs['pattern'] = r'^\S.*'
@@ -405,6 +408,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         self.helper.form_style = "default"
         self.helper.label_class = 'col-md-3'
         self.helper.field_class = 'col-md-9'
+        self.fields['next'].initial = f"{self._object.get_detail_url()}?tab=attachments-accessibility"
 
         if not self.instance.pk:
             form_actions = [
