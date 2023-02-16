@@ -1,16 +1,13 @@
 #!/bin/bash
 
-ifeq (, $(shell which docker-compose))
-  docker_compose=docker compose
-else
-  docker_compose=docker-compose
-endif
-
-
-function dockercompose {
-  # use docker-compose then fallback to new docker compose
-  docker-compose  "$@"
-  docker compose  "$@"
+function docker_compose {
+    # use docker-compose then fallback to new docker compose
+    if which docker-compose -eq 0
+    then
+      docker-compose  "$@"
+    else
+      docker compose  "$@"
+    fi
 }
 
 echo "Check dependency graph and fix requirements"
