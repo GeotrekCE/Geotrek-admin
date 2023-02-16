@@ -86,7 +86,7 @@ msgid "Description"
 msgstr "Descrizione"
 
 msgid "Rule"
-msgstr "Regolamento"
+msgstr "Regola"
 
 msgid "Rules"
 msgstr "Regolamenti"
