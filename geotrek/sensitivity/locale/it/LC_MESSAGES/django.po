@@ -89,7 +89,7 @@ msgid "Rule"
 msgstr "Regola"
 
 msgid "Rules"
-msgstr "Regolamenti"
+msgstr "Regole"
 
 msgid "Sport practice"
 msgstr ""
