@@ -87,10 +87,10 @@ msgid "Description"
 msgstr "Description"
 
 msgid "Rule"
-msgstr "Règlement"
+msgstr "Règle"
 
 msgid "Rules"
-msgstr "Règlements"
+msgstr "Règles"
 
 msgid "Sport practice"
 msgstr "Pratique sportive"
