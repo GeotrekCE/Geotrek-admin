@@ -214,7 +214,8 @@ class TestPendingAPIRequests(SuricateTests):
 
     @classmethod
     def setUpTestData(cls):
-        cls.status = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
+        cls.status = ReportStatusFactory(identifier='filed', label="En cours", color="#888888")
+        cls.status_waiting = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
         super().setUpTestData()
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
@@ -308,7 +309,7 @@ class TestPendingAPIRequests(SuricateTests):
         messenger = SuricateMessenger(PendingSuricateAPIRequest)
         self.assertRaises(
             Exception,
-            messenger.update_status(uid, self.status.identifier, "a nice and polite message", "a brief message")
+            messenger.update_status(uid, self.status_waiting.identifier, "a nice and polite message", "a brief message")
         )
         self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
         report.refresh_from_db()
@@ -345,4 +346,6 @@ class TestPendingAPIRequests(SuricateTests):
         report.refresh_from_db()
         self.assertEquals(0, report.sync_errors)
         # Special case
+        # "waiting" status from suricate API does not override internal statuses on sync_suricate
+        # therefore, we need to manually set report status to waiting here if this is the call that failed
         self.assertEqual('waiting', report.status.identifier)

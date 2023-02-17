@@ -39,8 +39,9 @@ SURICATE_MANAGEMENT_SETTINGS = {
     "AUTH": ("", ""),
 }
 
-SURICATE_WORKFLOW_SETTINGS = {
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département"
+SURICATE_WORKFLOW_SETTINGS_NO_MODERATION = {
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": True
 }
 
 
@@ -219,6 +220,22 @@ class SuricateAPITests(SuricateTests):
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
         self.assertEquals(r.comment, "Lames cassées")
+
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS_NO_MODERATION)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_creates_alerts_and_sends_no_mail(self, mocked_get, mocked_logger):
+        """Test GET requests on Alerts endpoint creates alerts and related objects, but sends no email if moderation is disabled"""
+        self.build_get_request_patch(mocked_get, cause_JPG_error=True)
+        self.assertEqual(len(mail.outbox), 0)
+        call_command("sync_suricate", verbosity=2)
+        # 8 out of 9 are imported because one of them is out of bbox by design
+        self.assertEqual(Report.objects.count(), 8)
+        self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
+        self.assertEqual(AttachedMessage.objects.count(), 44)
+        self.assertEqual(Attachment.objects.count(), 6)
+        self.assertEqual(len(mail.outbox), 0)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
