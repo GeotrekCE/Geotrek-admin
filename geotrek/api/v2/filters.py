@@ -357,7 +357,7 @@ class NearbyContentFilter(BaseFilterBackend):
         return fields
 
 
-class GeotrekZoningAndThemeFilter(NearbyContentFilter):
+class GeotrekZoningAndThemeFilter(BaseFilterBackend):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         cities = request.GET.get('cities')
