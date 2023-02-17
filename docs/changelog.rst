@@ -5,6 +5,10 @@ CHANGELOG
 2.97.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix link between attachment and file is lost when updating old attachment without suffix
+
 
 2.97.0 (2023-02-17)
 -----------------------
