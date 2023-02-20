@@ -1,8 +1,20 @@
-geotrek-admin (2.96.1+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.97.1+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 02 Feb 2023 12:39:48 +0100
+ -- Célia <celia@celia-notebook>  Fri, 17 Feb 2023 18:04:54 +0100
+
+geotrek-admin (2.97.1) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 17 Feb 2023 18:02:20 +0100
+
+geotrek-admin (2.97.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 17 Feb 2023 09:46:13 +0100
 
 geotrek-admin (2.96.1) RELEASED; urgency=medium
 

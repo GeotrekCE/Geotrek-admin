@@ -1,3 +1,5 @@
+from freezegun import freeze_time
+
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
@@ -54,6 +56,28 @@ class SensitiveAreaModelTest(TestCase):
                       '3.0012047,46.5003446,0.0 3.001304,46.5,0.0'
                       '</coordinates>',
                       sensitive_area.kml())
+
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES=['Practice1', ])
+    @freeze_time("2020-01-01")
+    def test_get_openair_data(self):
+        sensitive_area = SensitiveAreaFactory.create()
+        self.assertEqual(
+            'AC ZSM\n'
+            'AN Species\n'
+            f'*AUID GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {sensitive_area.pk}\n'
+            '*ADescr Species (published on 01/01/2020)\n'
+            '*ATimes {"6": ["UTC(01/06->30/06)", "ANY(00:00->23:59)"],"7": ["UTC(01/07->31/07)", "ANY(00:00->23:59)"]}\n'
+            'AH 329FT AGL\n'
+            'DP 46:29:59 N 03:00:00 E\n'
+            'DP 46:30:00 N 03:00:00 E',
+            sensitive_area.openair()
+        )
+
+    @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES=['Practice1', ])
+    def test_get_openair_data_with_radius(self):
+        species = SpeciesFactory.create(radius=300)
+        sensitive_area = SensitiveAreaFactory.create(species=species)
+        self.assertIn('AH 985FT AGL', sensitive_area.openair())
 
     def test_is_public(self):
         sensitive_area = SensitiveAreaFactory.create()

@@ -24,6 +24,21 @@ from geotrek.core.models import simplify_coords
 logger = logging.getLogger(__name__)
 
 
+class Rule(TimeStampedModelMixin, OptionalPictogramMixin):
+    code = models.CharField(verbose_name=_("Code"), max_length=50, unique=True, blank=True, null=True)
+    name = models.CharField(verbose_name=_("Name"), max_length=128, unique=True)
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    url = models.URLField(blank=True, verbose_name="URL")
+
+    class Meta:
+        verbose_name = _("Rule")
+        verbose_name_plural = _("Rules")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class SportPractice(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
 
@@ -90,6 +105,7 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+    rules = models.ManyToManyField(Rule, verbose_name=_("Rules"), blank=True)
 
     objects = SensitiveAreaManager()
 
@@ -212,7 +228,7 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
         geom = geom.transform(4326, clone=True)
         geom = geom.simplify(0.001, preserve_topology=True)
         other = {}
-        other['*AUID'] = "GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity){{{{{id}}}}}".format(id=str(self.pk))
+        other['*AUID'] = f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {str(self.pk)}"
         adescr = (self.species.name,)
         if self.publication_date:
             adescr += (f"(published on {self.publication_date.strftime('%d/%m/%Y')})",)

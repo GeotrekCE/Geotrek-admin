@@ -291,20 +291,20 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # All attachments are missing their image file
-            self.assertFalse(atta.attachment_file.name)
+            self.assertEqual(atta.attachment_file.name, '')
         # Succesfully download all images
         self.build_get_request_patch(mocked_get, cause_JPG_error=False)
         call_command("sync_suricate", verbosity=2)
         self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # No attachments are missing their image file
-            self.assertTrue(atta.attachment_file.name)
+            self.assertTrue(atta.attachment_file.storage.exists(atta.attachment_file.name))
         # Succesfully download all images a second time to cover "skip file" case
         call_command("sync_suricate", verbosity=2)
         self.assertEqual(Attachment.objects.count(), 6)
         for atta in Attachment.objects.all():
             # No attachments are missing their image file
-            self.assertTrue(atta.attachment_file.name)
+            self.assertTrue(atta.attachment_file.storage.exists(atta.attachment_file.name))
 
     @override_settings(PAPERCLIP_ENABLE_LINK=False)
     @override_settings(SURICATE_MANAGEMENT_ENABLED=True)

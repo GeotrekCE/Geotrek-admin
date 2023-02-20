@@ -5,8 +5,8 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - requirements-dev.in
-      - requirements-dev.txt
+      - dev-requirements.in
+      - dev-requirements.txt
       - .github/workflows/dependencies.yml
 
 env:
@@ -43,13 +43,13 @@ jobs:
         run: |
           pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
           pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c requirements-dev.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c requirements-dev.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c dev-requirements.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
 
       - name: Check dependency graph
         run: |
           pip-compile -q
-          pip-compile -q requirements-dev.in
+          pip-compile -q dev-requirements.in
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v13
@@ -57,11 +57,11 @@ jobs:
         with:
           files: |
              requirements.txt
-             requirements-dev.txt
+             dev-requirements.txt
 
       - name: Validating graph
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')

@@ -2,13 +2,43 @@
 CHANGELOG
 =========
 
-2.96.1+dev (XXXX-XX-XX)
+2.97.1+dev (XXXX-XX-XX)
+-----------------------
+
+2.97.1 (2023-02-17)
 -----------------------
 
 **Bug fixes**
 
+- Fix link between attachment and file is lost when updating old attachment without suffix
+
+
+2.97.0 (2023-02-17)
+-----------------------
+
+**New feature**
+
+- Add rules (with pictograms, descriptions and url) on regulatory sensitive areas (#3386)
+
+**Bug fixes**
+
+- Fix intervention filter when outdoor or signage is not installed
 - Fix intervention's geojson
 - Fix pictogram's for interventions on lands
+
+**Documentation**
+
+- Update Suricate documentation
+- Add HD Views documentation
+
+**Security**
+
+- Add safety checks on uploaded files
+
+**Warning**
+
+- Attachment filenames are now suffixed with a random string. This might cause duplication of old attachment files that previously did not have a suffix. Make sure to run `clean_attachments` command regularly to save disk space.
+
 
 
 2.96.1 (2022-02-02)

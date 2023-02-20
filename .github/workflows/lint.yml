@@ -43,8 +43,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir flake8 -c requirements-dev.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade flake8 -c requirements-dev.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir flake8 -c dev-requirements.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade flake8 -c dev-requirements.txt
 
       - name: Flake8
         run: |

@@ -900,6 +900,21 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name')
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+
+    class RuleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        class Meta:
+            model = sensitivity_models.Rule
+            fields = ('id', 'code', 'name', 'pictogram', 'description', 'url')
+
     class SensitiveAreaSerializer(DynamicFieldsMixin, TimeStampedSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
         name = serializers.SerializerMethodField()
@@ -914,6 +929,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()
         openair_url = serializers.SerializerMethodField(read_only=True)
+        rules = RuleSerializer(many=True)
         attachments = AttachmentSerializer(many=True)
 
         def get_name(self, obj):
@@ -951,7 +967,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
                 'id', 'contact', 'description', 'elevation',
                 'geometry', 'info_url', 'kml_url', 'openair_url', 'name', 'period',
                 'practices', 'published', 'species_id', 'provider', 'structure',
-                'url', 'attachments'
+                'url', 'attachments', 'rules'
             )
 
     class BubbleSensitiveAreaSerializer(SensitiveAreaSerializer):

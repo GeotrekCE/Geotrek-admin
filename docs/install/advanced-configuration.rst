@@ -109,13 +109,13 @@ If false, no email will be sent to the sender of any feedback on Geotrek-rando w
 Suricate support
 ~~~~~~~~~~~~~~~~
 
-Geotrek reports can work together with Suricate API, using one of 4 modes. Proceed through a mode full configuration before proceeding to the next mode.
+Geotrek reports can work together with Suricate API, using one of 3 modes. Proceed through a mode full configuration before proceeding to the next mode.
 
 **1** - No Suricate (default)
 
 This mode sends no report data to Suricate. 
 
-To initialize Report form, load lists for categories, activities, statuses and problem magnitude:
+To initialize Report forms (Geotrek-admin, Geotrek-rando-v2, Geotrek-rando-v3) load lists for categories, activities, statuses and problem magnitude:
 
 .. code-block :: python
 
@@ -124,7 +124,7 @@ To initialize Report form, load lists for categories, activities, statuses and p
 To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 
-**2** - Suricate Reports
+**2** - Suricate Standard
 
 This mode simply forwards all reports to Suricate, using the Standard API to post reports.
 
@@ -141,14 +141,16 @@ Set your account settings in ``custom.py``:
         'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
     }
 
-**3** - Suricate Management
+**3** - Suricate Management (Workflow)
 
-This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It implies enabling Suricate Report mode as well.
+This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It is used to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Report mode as well.
+You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
 
-Set your account settings in ``custom.py``:
+- Set your settings in ``custom.py`` :
 
 .. code-block :: python
 
+    SURICATE_WORKFLOW_ENABLED = True
     SURICATE_MANAGEMENT_ENABLED = True
 
     SURICATE_MANAGEMENT_SETTINGS = {
@@ -156,6 +158,10 @@ Set your account settings in ``custom.py``:
         'ID_ORIGIN': '<Suricate origin ID>',
         'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
         'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
+    }
+
+    SURICATE_WORKFLOW_SETTINGS = {
+        "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
     }
 
 You can use the following command to test your connection settings:
@@ -178,23 +184,6 @@ Load alerts from Suricate (located in your bounding box) :
 
 To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
-Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate. Therefore, in this mode, you should run the synchronization command **directly after** creating a report and **before and after** updating a report.
-
-**4** - Suricate Workflow
-
-This mode allows to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Management mode as well.
-You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
-
-- Set your settings in ``custom.py`` :
-
-.. code-block :: python
-
-    SURICATE_WORKFLOW_ENABLED = True
-
-    SURICATE_WORKFLOW_SETTINGS = {
-        "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
-    }
-
 - Then load extra required statuses for Reports and Interventions:
 
 .. code-block :: python
@@ -208,7 +197,7 @@ You can find a detailled explanation on the workflow here : https://github.com/G
     - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
     - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
-Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
+Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate, when the synchronization command is run. Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
 
 .. code-block :: python
 
@@ -236,8 +225,11 @@ If a report has had status "To program" for 10 days, an email alert will be sent
 The email alert will be sent to the assigned user for this report, or to managers (setting `MANAGERS`) if there is no assigned user.
 
 To enable the alerts :
+
 - Go to the Admin Site and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
+
 - Select the "Uses timers" checkbox on reports that you wish to receive alerts for (in report update form)
+
 - Make sure to run this commands daily to send email alerts and clear obsolete timers (thanks to `cron` for instance) :
 
 .. code-block :: python
@@ -823,7 +815,7 @@ These corresponding height/width parameters can be overriden to select resized i
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
 
 
-Prohibits usage of big pictures and small width / height
+Prohibit usage of big pictures and small width / height
 --------------------------------------------------------
 
 If you want to prohibit the usage of heavy pictures :
@@ -840,7 +832,56 @@ If you want to prohibit the usage of small pictures in pixels :
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
 
-These 3 settings will not also allow downloading images from the parsers
+These 3 settings will also not allow downloading images from the parsers.
+
+
+Prohibit usage of certain file types
+--------------------------------------------------------
+
+Paperclip will only accept attachment files matching a list of allowed extensions.
+Here is the default value for this setting, which you can extend if needed :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = [
+        'jpeg',
+        'jpg',
+        'mp3',
+        'mp4',
+        'odt',
+        'pdf',
+        'png',
+        'svg',
+        'txt',
+        'gif',
+        'tiff',
+        'tif',
+        'docx',
+        'webp',
+        'bmp',
+        'flac',
+        'mpeg',
+        'doc',
+        'ods',
+        'gpx',
+        'xls',
+        'xlsx',
+        'odg',
+    ]
+
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
+
+::
+
+    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+
+You can also entirely deactivate these checks with the following :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = None
+
+These 2 settings will also not allow downloading images from the parsers.
 
 
 Share services between several Geotrek instances

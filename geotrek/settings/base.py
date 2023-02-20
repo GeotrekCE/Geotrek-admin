@@ -838,6 +838,39 @@ ALLOW_PATH_DELETION_TOPOLOGY = True
 
 ENABLE_HD_VIEWS = True
 
+PAPERCLIP_ALLOWED_EXTENSIONS = [
+    'jpeg',
+    'jpg',
+    'mp3',
+    'mp4',
+    'odt',
+    'pdf',
+    'png',
+    'svg',
+    'txt',
+    'gif',
+    'tiff',
+    'tif',
+    'docx',
+    'webp',
+    'bmp',
+    'flac',
+    'mpeg',
+    'doc',
+    'ods',
+    'gpx',
+    'xls',
+    'xlsx',
+    'odg',
+]
+PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
+    'bmp': ['image/bmp'],
+    'gpx': ['text/xml'],
+    'webp': ['image/webp'],
+    'svg': ['image/svg']
+}
+PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')

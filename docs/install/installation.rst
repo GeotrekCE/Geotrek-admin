@@ -83,6 +83,49 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
 
 
+Extra steps
+------------------------------------------
+
+We highly recommend installing an antivirus software to regularly scan uploaded files located under ``/opt/geotrek-admin/var/media/``.
+
+Here is the installation process for `ClamAV <https://www.clamav.net/>`_ :
+
+::
+
+   apt install clamav
+
+Prepare quarantine folder for suspicious files :
+
+::
+
+   mkdir /var/lib/clamav/quarantine/
+   chmod 700 /var/lib/clamav/quarantine/
+
+
+Configure ClamAV via cron, to scan the folder once a day, put suspicious files in quarantine, and raise email alerts, by creating file ``/etc/cron.daily/clamscan`` with the following content :
+
+::
+
+   #!/bin/sh
+
+   nice -n 15 ionice -c 3 clamscan --recursive --allmatch --suppress-ok-results --no-summary --infected --scan-mail=no --log=/var/log/clamav/scan-report.$(date -Iseconds) /opt/geotrek-admin/var/media/ |mail -E -s "ClamAV report for $(hostname)" admin@example.com
+
+   # Cleanup old files in quarantine (> 90 days)
+   find /var/lib/clamav/quarantine/ -type f -mtime +90 -delete
+
+   # Cleanup old scan reports (> 365 days)
+   find /var/log/clamav/ -type f -name "scan-report.*" -mtime +365 -delete
+
+
+Make sure to change alert recepient (``admin@example.com`` above) and make this cron file executable :
+
+::
+
+   chmod 700 /etc/cron.daily/clamscan
+
+If a suspicious file is put in quarantine, you will need to manually delete the corresponding attachment from Geotrek-Admin (since the file for this attachment has moved to the quarantine folder, it will no longer be found).
+
+
 Upgrade
 -------
 

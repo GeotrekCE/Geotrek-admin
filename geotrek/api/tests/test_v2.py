@@ -4,6 +4,7 @@ from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
@@ -162,8 +163,9 @@ SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
 SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'contact', 'create_datetime', 'description', 'elevation', 'geometry',
-    'info_url', 'kml_url', 'openair_url', 'name', 'period', 'practices', 'provider', 'published',
-    'species_id', 'structure', 'update_datetime', 'url', 'attachments'
+    'info_url', 'kml_url', 'openair_url', 'name', 'period', 'practices', 'provider',
+    'published', 'species_id', 'structure', 'update_datetime', 'url', 'attachments',
+    'rules'
 ])
 
 SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -267,6 +269,10 @@ class BaseApiTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        # This prevents the test APIAccessAnonymousTestCase.test_hdviewpoint_detail_content_poi not passing on some environments.
+        # The root cause has not been investigated.
+        ContentType.objects.clear_cache()
+
         cls.nb_treks = 15
         cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()

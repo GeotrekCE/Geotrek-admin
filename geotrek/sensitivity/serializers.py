@@ -11,6 +11,13 @@ from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModel
 from . import models as sensitivity_models
 
 
+class RuleSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
+
+    class Meta:
+        model = sensitivity_models.Rule
+        fields = ('id', 'code', 'name', 'pictogram', 'description', 'url')
+
+
 class SportPracticeSerializer(TranslatedModelSerializer):
     class Meta:
         model = sensitivity_models.SportPractice
@@ -52,6 +59,7 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     kml_url = rest_serializers.SerializerMethodField()
     openair_url = rest_serializers.SerializerMethodField()
     attachments = AttachmentSerializer(many=True)
+    rules = RuleSerializer(many=True)
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
@@ -61,7 +69,10 @@ class SensitiveAreaAPISerializer(TranslatedModelSerializer):
 
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'openair_url', 'attachments')
+        fields = (
+            'id', 'species', 'description', 'contact', 'published', 'publication_date',
+            'kml_url', 'openair_url', 'attachments', 'rules'
+        )
 
 
 class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):
