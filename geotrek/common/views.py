@@ -582,12 +582,9 @@ def update_attachment_accessibility(request, attachment_pk,
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
-    can_delete = (
-            (
-                    request.user.has_perm(
-                        settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator
-            )
-            and obj.same_structure(request.user))
+    can_delete = ((request.user.has_perm(
+        settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
+        and obj.same_structure(request.user))
     if can_delete:
         g.delete()
         if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:
