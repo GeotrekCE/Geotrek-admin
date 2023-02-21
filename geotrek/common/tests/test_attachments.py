@@ -166,19 +166,21 @@ class EntityAttachmentTestCase(TestCase):
         self.assertRegex(attachment.random_suffix, regexp)
         new_name = f"foo_file{attachment.random_suffix}.txt"
         self.assertEqual(name_1, new_name)
-        # Assert filename is made of attachment title plus random suffix
+        # Assert filename would be made of basename argument plus random suffix
         attachment.random_suffix = None
-        attachment.title = "foo_title"
-        name_2 = attachment.prepare_file_suffix()
-        self.assertRegex(attachment.random_suffix, regexp)
-        new_name = f"foo_title{attachment.random_suffix}.txt"
-        self.assertEqual(name_2, new_name)
-        # Assert filename is made of basename argument plus random suffix
-        attachment.random_suffix = None
-        name_3 = attachment.prepare_file_suffix("basename.txt")
+        name_4 = attachment.prepare_file_suffix("basename.txt")
         self.assertRegex(attachment.random_suffix, regexp)
         new_name = f"basename{attachment.random_suffix}.txt"
-        self.assertEqual(name_3, new_name)
+        self.assertEqual(name_4, new_name)
+        # Assert filename is made of attachment title plus random suffix
+        attachment.title = "foo_title"
+        attachment.save(**{'force_refresh_suffix': True})
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_title{attachment.random_suffix}.txt"
+        _, name_2 = os.path.split(attachment.attachment_accessibility_file.name)
+        self.assertEqual(name_2, new_name)
+        name_3 = attachment.prepare_file_suffix()
+        self.assertEqual(new_name, name_3)
 
     def test_create_attachments_object_other_structure(self):
         def user_perms(p):

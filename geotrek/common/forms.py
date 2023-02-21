@@ -465,6 +465,11 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         obj = self._object
         self.instance.creator = request.user
         self.instance.content_object = obj
+        if "attachment_accessibility_file" in self.changed_data:
+            # New file : regenerate new random name for this attachment
+            instance = super().save(commit=False)
+            instance.save(**{'force_refresh_suffix': True})
+            return instance
         return super().save(*args, **kwargs)
 
 

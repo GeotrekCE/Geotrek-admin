@@ -5,6 +5,11 @@ CHANGELOG
 2.97.1+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix link between attachment and file is lost when updating old attachment without title and suffix
+
+
 2.97.1 (2023-02-17)
 -----------------------
 
