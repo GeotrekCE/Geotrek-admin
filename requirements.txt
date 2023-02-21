@@ -228,7 +228,7 @@ packaging==21.3
     #   large-image-source-vips
 palettable==3.3.0
     # via large-image
-git+https://github.com/makinacorpus/django-paperclip.git@bug_old_attachments_update_2#egg=paperclip
+paperclip==2.7.2
     # via
     #   geotrek (setup.py)
     #   mapentity
