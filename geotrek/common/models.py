@@ -105,13 +105,12 @@ class AccessibilityAttachment(models.Model):
         )
 
     def save(self, *args, **kwargs):
+        force_refresh_suffix = kwargs.pop("force_refresh_suffix", False)
         if self.attachment_accessibility_file:
-            name = self.attachment_accessibility_file.name
-            if self.pk is None:
+            if self.pk is None or force_refresh_suffix:
+                self.random_suffix = None
                 name = self.prepare_file_suffix()
-                self.attachment_accessibility_file.name = name
-        if self.attachment_accessibility_file and not kwargs.pop("skip_file_save", False):
-            self.attachment_accessibility_file.save(name, self.attachment_accessibility_file, save=False)
+                self.attachment_accessibility_file.name = attachment_accessibility_upload(self, name)
         super().save(*args, **kwargs)
 
     @property
@@ -132,9 +131,11 @@ class AccessibilityAttachment(models.Model):
                 self.random_suffix = '-' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=settings.PAPERCLIP_RANDOM_SUFFIX_SIZE))
                 # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
                 if basename:
+                    _, basename = os.path.split(basename)
                     basename, ext = os.path.splitext(basename)
                 else:
-                    name, ext = os.path.splitext(self.attachment_accessibility_file.name)
+                    _, name = os.path.split(self.attachment_accessibility_file.name)
+                    name, ext = os.path.splitext(name)
                 subfolder = '%s/%s' % (
                     '%s_%s' % (self.content_object._meta.app_label,
                                self.content_object._meta.model_name),
@@ -146,7 +147,8 @@ class AccessibilityAttachment(models.Model):
                 # Create new name with suffix and proper size
                 name = slugify(basename or self.title or name)[:max_filename_size]
                 return name + self.random_suffix + ext
-            return self.attachment_accessibility_file.name
+            _, name = os.path.split(self.attachment_accessibility_file.name)
+            return name
         return None
 
 
