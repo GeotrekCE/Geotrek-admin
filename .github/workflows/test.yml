@@ -175,7 +175,6 @@ jobs:
   build_deb_18_04:
       name: Build 18.04 package
       runs-on: ubuntu-latest
-      container: ubuntu:bionic
       steps:
         - uses: actions/checkout@v3
         - name: Prepare debian 18.04 versioning
@@ -198,7 +197,6 @@ jobs:
   build_deb_20_04:
     name: Build 20.04 package
     runs-on: ubuntu-latest
-    container: ubuntu:focal
     steps:
       - uses: actions/checkout@v3
       - name: Prepare debian 20.04 versioning
