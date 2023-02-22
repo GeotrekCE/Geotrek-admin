@@ -1,5 +1,8 @@
 Source: geotrek-admin
 Maintainer: Geotrek Team <support.geotrek@makina-corpus.com>
+Homepage: https://github.com/GeotrekCE/Geotrek-admin/
+Bugs: https://github.com/GeotrekCE/Geotrek-admin/issues/
+Vcs-Git: https://github.com/GeotrekCE/Geotrek-admin.git
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
