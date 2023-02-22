@@ -296,6 +296,41 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                                lambda self: intersecting(tourism_models.TouristicEvent, self, 0).filter(published=True),
                                _("Published touristic events"))
 
+
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor import models as outdoor_models
+
+    outdoor_models.Site.add_property('sensitive_areas',
+                                     lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                               ordering=False, field='geom_buffered'),
+                                     _("Sensitive areas"))
+    outdoor_models.Site.add_property('published_sensitive_areas',
+                                     lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False,
+                                                               field='geom_buffered').filter(published=True),
+                                     _("Published sensitive areas"))
+    outdoor_models.Course.add_property('sensitive_areas',
+                                       lambda self: intersecting(SensitiveArea, self, distance=0,
+                                                                 ordering=False, field='geom_buffered'),
+                                       _("Sensitive areas"))
+    outdoor_models.Course.add_property('published_sensitive_areas',
+                                       lambda self: intersecting(SensitiveArea, self, distance=0, ordering=False,
+                                                                 field='geom_buffered').filter(published=True),
+                                       _("Published sensitive areas"))
+
+    SensitiveArea.add_property('sites',
+                               lambda self: intersecting(outdoor_models.Site, self, 0),
+                               _("Touristic contents"))
+    SensitiveArea.add_property('published_sites',
+                               lambda self: intersecting(outdoor_models.Site, self, 0).filter(published=True),
+                               _("Published touristic contents"))
+    SensitiveArea.add_property('courses',
+                               lambda self: intersecting(outdoor_models.Course, self, 0),
+                               _("Touristic events"))
+    SensitiveArea.add_property('published_courses',
+                               lambda self: intersecting(outdoor_models.Course, self, 0).filter(published=True),
+                               _("Published touristic events"))
+
+
 SensitiveArea.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, 0), _("Sensitive areas"))
 SensitiveArea.add_property('published_sensitive_areas',
                            lambda self: intersecting(SensitiveArea, self, 0).filter(published=True),

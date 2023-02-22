@@ -2,8 +2,12 @@
 CHANGELOG
 =========
 
-2.97.2+dev (XXXX-XX-XX)
+2.97.3+dev (XXXX-XX-XX)
 -----------------------
+
+**Bug fixes**
+
+- Fix: nearby sensitive areas now appears in outdoor details pages (and the other way too) (`Issue #3494 <https://github.com/GeotrekCE/Geotrek-admin/issues/3494>`_)
 
 
 2.97.2 (2023-02-22)
