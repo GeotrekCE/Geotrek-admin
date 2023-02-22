@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
+from django.test import override_settings
 from django.urls.base import reverse
 from django.utils import translation
 from mapentity.tests.factories import SuperUserFactory, UserFactory
@@ -22,7 +23,7 @@ from geotrek.feedback.tests.factories import (PredefinedEmailFactory,
                                               ReportFactory,
                                               ReportStatusFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SuricateWorkflowTests, test_for_report_and_basic_modes,
+    SURICATE_WORKFLOW_SETTINGS_NO_MODERATION, SuricateWorkflowTests, test_for_report_and_basic_modes,
     test_for_workflow_mode)
 from geotrek.maintenance.forms import InterventionForm
 from geotrek.maintenance.models import InterventionStatus
@@ -189,6 +190,64 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Nouveau Signalement à traiter")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
+
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS_NO_MODERATION)
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_workflow_self_assign_step(self, mocked_post, mocked_get):
+        translation.activate('fr')
+        self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
+        mails_before = len(mail.outbox)
+        # User self-assigns a report though status change
+        data = {
+            'email': 'test@test.fr',
+            'geom': self.filed_report.geom,
+            'message_sentinel': "Your message",
+            "uses_timers": True,
+            'status': self.waiting_status.pk
+        }
+        form = ReportForm(instance=self.filed_report, data=data, user=self.other_user)
+        keys = form.fields.keys()
+        self.assertIsInstance(form.fields["geom"].widget, MapWidget)
+        self.assertIsInstance(form.fields["email"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["comment"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["activity"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["category"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["status"].widget, Select)
+        self.assertIsInstance(form.fields["problem_magnitude"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["related_trek"].widget, Select)
+        self.assertIn('message_sentinel', keys)
+        self.assertIn('message_administrators', keys)
+        self.assertIn('message_sentinel_predefined', keys)
+        self.assertIn('message_supervisor', keys)  # Will be hidden with JS
+        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
+        self.assertFalse(form.errors)
+        form.save()
+        # Assert report status changes
+        self.assertEquals(self.filed_report.status.identifier, "waiting")
+        # Asser timer is created
+        self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
+        # Assert data forwarded to Suricate
+        check = md5(
+            (SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER + SuricateMessenger().gestion_manager.ID_ORIGIN + str(self.filed_report.formatted_external_uuid)).encode()
+        ).hexdigest()
+        call1 = mock.call(
+            'http://suricate.wsmanagement.example.com/wsSendMessageSentinelle',
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_external_uuid, 'message': 'Your message', 'check': check},
+            auth=('', '')
+        )
+        call2 = mock.call(
+            'http://suricate.wsmanagement.example.com/wsUpdateStatus',
+            {'id_origin': 'geotrek', 'uid_alerte': self.filed_report.formatted_external_uuid, 'statut': 'waiting', 'txt_changestatut': 'Your message', 'txt_changestatut_sentinelle': 'Your message', 'check': check},
+            auth=('', '')
+        )
+        mocked_post.assert_has_calls([call1, call2], any_order=True)
+        mocked_get.assert_not_called()
+        # Assert user is not notified
+        self.assertEqual(len(mail.outbox), mails_before)
 
     @test_for_workflow_mode
     def test_workflow_program_step(self):

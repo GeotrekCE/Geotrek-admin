@@ -9,19 +9,6 @@ from geotrek.common.forms import CommonForm
 
 from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowDistrict, WorkflowManager
 
-# This dict stores constraints for status changes in management workflow
-# {'current_status': ['allowed_next_status', 'other_allowed_status']}
-# Empty status should not be changed from this form
-SURICATE_WORKFLOW_STEPS = {
-    'filed': ['classified', 'filed', 'rejected'],
-    'solved_intervention': ['solved', 'solved_intervention'],
-}
-if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
-    SURICATE_WORKFLOW_STEPS = {
-        'filed': ['classified', 'filed', 'rejected', 'waiting'],
-        'solved_intervention': ['solved', 'solved_intervention'],
-    }
-
 
 class ReportForm(CommonForm):
     geomfields = ["geom"]
@@ -56,6 +43,18 @@ class ReportForm(CommonForm):
         model = Report
 
     def __init__(self, *args, **kwargs):
+        # This dict stores constraints for status changes in management workflow
+        # {'current_status': ['allowed_next_status', 'other_allowed_status']}
+        # Empty status should not be changed from this form
+        suricate_workflow_steps = {
+            'filed': ['classified', 'filed', 'rejected'],
+            'solved_intervention': ['solved', 'solved_intervention'],
+        }
+        if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+            suricate_workflow_steps = {
+                'filed': ['classified', 'filed', 'rejected', 'waiting'],
+                'solved_intervention': ['solved', 'solved_intervention'],
+            }
         super().__init__(*args, **kwargs)
         if settings.SURICATE_WORKFLOW_ENABLED and settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
             self.user = kwargs['user']
@@ -75,7 +74,7 @@ class ReportForm(CommonForm):
                     self.old_supervisor = self.instance.assigned_user
                     # Add fields that are used only in Workflow mode
                     # status
-                    next_statuses = SURICATE_WORKFLOW_STEPS.get(self.instance.status.identifier, [self.instance.status.identifier])
+                    next_statuses = suricate_workflow_steps.get(self.instance.status.identifier, [self.instance.status.identifier])
                     self.fields["status"].empty_label = None
                     self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                     # assigned_user

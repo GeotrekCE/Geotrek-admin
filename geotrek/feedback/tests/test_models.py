@@ -29,10 +29,16 @@ from geotrek.feedback.tests.factories import (ReportFactory,
                                               WorkflowDistrictFactory,
                                               WorkflowManagerFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests,
+    SURICATE_MANAGEMENT_SETTINGS, SuricateTests,
     SuricateWorkflowTests, test_for_report_and_basic_modes,
     test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
+
+
+SURICATE_WORKFLOW_SETTINGS = {
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": False
+}
 
 
 class TestFeedbackModel(TestCase):
