@@ -20,6 +20,7 @@ from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, Optio
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
+from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 from geotrek.tourism.managers import TouristicContentTypeFilteringManager, TouristicContentType1Manager, \
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
@@ -511,3 +512,4 @@ TouristicContent.add_property('published_touristic_events', lambda self: interse
 TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
 TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
 TouristicEvent.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
+TouristicEvent.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
