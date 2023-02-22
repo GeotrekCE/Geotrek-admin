@@ -10,7 +10,7 @@ from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
-from django.utils import timezone
+from django.utils import timezone, translation
 from freezegun.api import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
@@ -47,11 +47,13 @@ class TestFeedbackModel(TestCase):
         cls.report = ReportFactory(email="mail@mail.fr", eid=666)
 
     def test_get_display_name(self):
+        translation.activate('en')
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
         self.assertEqual(self.report.name_display, s)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_get_display_name_suricate(self):
+        translation.activate('en')
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.eid}\">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
 
