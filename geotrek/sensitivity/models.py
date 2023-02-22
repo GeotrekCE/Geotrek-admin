@@ -228,6 +228,10 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
         return self.species.pretty_practices()
     pretty_practices_verbose_name = _("Practices")
 
+    def distance(self, to_cls):
+        """Distance to associate this site to another class"""
+        return settings.SENSITIVE_AREA_INTERSECTION_MARGIN
+
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
@@ -318,16 +322,16 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                                        _("Published sensitive areas"))
 
     SensitiveArea.add_property('sites',
-                               lambda self: intersecting(outdoor_models.Site, self, 0),
+                               lambda self: intersecting(outdoor_models.Site, self),
                                _("Touristic contents"))
     SensitiveArea.add_property('published_sites',
-                               lambda self: intersecting(outdoor_models.Site, self, 0).filter(published=True),
+                               lambda self: intersecting(outdoor_models.Site, self).filter(published=True),
                                _("Published touristic contents"))
     SensitiveArea.add_property('courses',
-                               lambda self: intersecting(outdoor_models.Course, self, 0),
+                               lambda self: intersecting(outdoor_models.Course, self),
                                _("Touristic events"))
     SensitiveArea.add_property('published_courses',
-                               lambda self: intersecting(outdoor_models.Course, self, 0).filter(published=True),
+                               lambda self: intersecting(outdoor_models.Course, self).filter(published=True),
                                _("Published touristic events"))
 
 
