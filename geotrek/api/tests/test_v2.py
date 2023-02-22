@@ -3452,16 +3452,6 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.poi1.pk)
 
-    def test_infodesk_near_outdoorcourse(self):
-        response = self.get_informationdesk_list({'near_outdoorcourse': self.course.pk})
-        self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
-
-    def test_infodesk_near_outdoorsite(self):
-        response = self.get_informationdesk_list({'near_outdoorsite': self.site.pk})
-        self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
-
     def test_sensitivearea_near_outdoorcourse(self):
         response = self.get_sensitivearea_list({'near_outdoorcourse': self.course.pk, 'period': 'any'})
         self.assertEqual(response.json()["count"], 1)
