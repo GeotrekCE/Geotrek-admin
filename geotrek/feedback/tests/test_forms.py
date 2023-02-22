@@ -165,6 +165,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert report status changes
         self.assertEquals(self.filed_report.status.identifier, "waiting")
+        self.assertEquals(self.filed_report.assigned_user, self.other_user)
         # Asser timer is created
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
@@ -228,6 +229,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert report status changes
         self.assertEquals(self.filed_report.status.identifier, "waiting")
+        self.assertEquals(self.filed_report.assigned_user, self.other_user)
         # Asser timer is created
         self.assertEquals(TimerEvent.objects.filter(report=self.filed_report, step=self.waiting_status).count(), 1)
         # Assert data forwarded to Suricate
