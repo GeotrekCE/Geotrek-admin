@@ -180,7 +180,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 qs = intersecting(qs,
                                   trek,
                                   distance=0,
-                                  field='geom')
+                                  field='geom_buffered')
             except Trek.DoesNotExist:
                 qs = qs.none()
         return qs.distinct()
@@ -207,7 +207,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('Filter by a trek id. It will show only the sensitive areas intersecting this trek.')
+                    description=_('Filter by a trek id. It will only show the contents related to this trek.')
                 )
             ),
         )
