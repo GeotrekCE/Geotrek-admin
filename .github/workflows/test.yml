@@ -65,6 +65,10 @@ jobs:
       run: |
         docker-compose run --rm web ./manage.py makemigrations --check
 
+    - name: Compile translations
+      run: |
+        docker-compose run --rm web ./manage.py compilemessages
+
     - name: Unit test
       run: |
         docker-compose run -e ENV=${{ matrix.tests-env }} --rm web coverage run ./manage.py test -v 3
