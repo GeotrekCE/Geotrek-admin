@@ -196,7 +196,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('Filter by a trek id. It will only show the contents related to this trek.')
+                    description=_('(deprecated) Same as near_trek.')
                 )
             ),
         )
