@@ -39,4 +39,4 @@ Depends:
  convertit,
  python3.8 (>= 3.8),
  libvips
-Description: Manage and promote your tourist trails and activites
+Description: Manage and promote your trails and tourist content and activities.

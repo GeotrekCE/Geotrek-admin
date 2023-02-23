@@ -37,17 +37,12 @@ env:
 jobs:
   test:
     name: Python Unittests
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: ['bionic-3.8', 'focal-3.8']
         tests-env: ['tests', 'tests_nds']
-        include:
-          - os: ubuntu-18.04
-            python-version: 3.8  # default python version in 18.04
-          - os: ubuntu-20.04
-            python-version: 3.8  # default python version in 20.04
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -72,86 +67,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
 
-    - uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          ~/.wheel_dir
-
-        key: pip-${{ matrix.python-version }}
-        restore-keys: |
-          pip-${{ matrix.python-version }}
-
-    - name: Install System dependencies
+    - name: Prepare test env
       run: |
-        sudo apt-get update -q
-        sudo apt-get -qq -y install \
-             unzip \
-             gettext \
-             binutils \
-             libproj-dev \
-             gdal-bin \
-             sudo \
-             less \
-             curl \
-             git \
-             iproute2 \
-             software-properties-common \
-             shared-mime-info \
-             fonts-liberation \
-             libssl-dev \
-             libfreetype6-dev \
-             libxml2-dev \
-             libxslt-dev \
-             libcairo2 \
-             libpango1.0-0 \
-             libpangocairo-1.0-0 \
-             libgdk-pixbuf2.0-dev \
-             libffi-dev \
-             libvips
-        sudo apt-get install -y --no-install-recommends postgis
+        cp .env-dev.dist .env
+        cp docker-compose-dev.yml docker-compose.yml
 
-    - name: Install python dependencies
+    - name: Build Docker image
       run: |
-        pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-        pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-        pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
-        pip3 wheel --wheel-dir=~/.wheel_dir -r dev-requirements.txt
-        pip3 install --find-links=~/.wheel_dir -r requirements.txt
-        pip3 install --find-links=~/.wheel_dir -r dev-requirements.txt
-
-    - name: Create test required directories
-      run: |
-        mkdir -p ./var/log ./var/cache/sessions
+        docker-compose build --build-arg BASE_IMAGE_TAG=${{ matrix.os }}
 
     - name: Check migrations
       run: |
-        python3 ./manage.py makemigrations --check
-
-    - name: Prepare environment
-      run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
-        python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        python3 ./manage.py compilemessages
-
-    - name: Launch Celery
-      run: |
-        celery -A geotrek worker -c 1 &
+        docker-compose run --rm web ./manage.py makemigrations --check
 
     - name: Unit test
       run: |
-        coverage run ./manage.py test -v 3
-        coverage xml -o coverage.xml
+        docker-compose run -e ENV=${{ matrix.tests-env }} --rm web coverage run ./manage.py test -v 3
+        docker-compose run -e ENV=${{ matrix.tests-env }} --rm web coverage xml -o /opt/geotrek-admin/var/coverage.xml
 
     - uses: codecov/codecov-action@v3
       with:
-        files: ./coverage.xml
+        files: ./var/coverage.xml
         env_vars: OS,ENV
         token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
         fail_ci_if_error: true # optional (default = false)
