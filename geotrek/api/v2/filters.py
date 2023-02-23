@@ -177,11 +177,10 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         trek_id = request.GET.get('trek')
         if trek_id:
             trek = get_object_or_404(Trek, pk=trek_id)
-            contents_intersecting = intersecting(qs,
-                                                 trek,
-                                                 distance=0,
-                                                 field='geom')
-            qs = contents_intersecting.order_by('id')
+            qs = intersecting(qs,
+                              trek,
+                              distance=0,
+                              field='geom')
         return qs.distinct()
 
     def get_schema_fields(self, view):
