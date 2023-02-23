@@ -15,7 +15,6 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
-from geotrek.core.models import Topology
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, \
     TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
@@ -219,12 +218,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            t = Trek.objects.get(pk=trek)
-            if settings.TREKKING_TOPOLOGY_ENABLED:
-                qs = Topology.overlapping(t, qs)
-            else:
-                qs = intersecting(qs, t)
-            qs = qs.exclude(pk__in=t.pois_excluded.all())
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek)
         sites = request.GET.get('sites', None)
         if sites is not None:
             qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Site, sites))
