@@ -2269,11 +2269,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
-        # validate wrong trek id get 404
+        # validate wrong trek id returns empty list
         response = self.get_sensitivearea_list({
             'trek': 9999
         })
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 0)
 
     def test_hdviewpoint_detail_content(self):
         response = self.get_hdviewpoint_detail(self.hdviewpoint_trek.pk)

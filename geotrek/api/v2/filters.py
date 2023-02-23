@@ -12,7 +12,6 @@ from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
-from rest_framework.generics import get_object_or_404
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
@@ -176,11 +175,14 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
         if trek_id:
-            trek = get_object_or_404(Trek, pk=trek_id)
-            qs = intersecting(qs,
-                              trek,
-                              distance=0,
-                              field='geom')
+            try:
+                trek = Trek.objects.get(pk=trek_id)
+                qs = intersecting(qs,
+                                  trek,
+                                  distance=0,
+                                  field='geom')
+            except Trek.DoesNotExist:
+                qs = qs.none()
         return qs.distinct()
 
     def get_schema_fields(self, view):
