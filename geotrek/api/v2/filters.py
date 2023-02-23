@@ -14,7 +14,6 @@ from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.common.utils import intersecting
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, \
     TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
@@ -172,14 +171,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
         if trek_id:
-            try:
-                trek = Trek.objects.get(pk=trek_id)
-                qs = intersecting(qs,
-                                  trek,
-                                  distance=0,
-                                  field='geom_buffered')
-            except Trek.DoesNotExist:
-                qs = qs.none()
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek_id)
         return qs.distinct()
 
     def get_schema_fields(self, view):
