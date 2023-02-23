@@ -48,23 +48,6 @@ jobs:
       ENV: ${{ matrix.tests-env }}
       OS: ${{ matrix.os }}
 
-    services:
-      postgres:
-        image: postgis/postgis:10-2.5
-        env:
-          POSTGRES_DB: ci_test
-          POSTGRES_PASSWORD: ci_test
-          POSTGRES_USER: ci_test
-        ports:
-          - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-      redis:
-        image: redis:5.0-alpine
-        ports:
-          - 6379:6379
-
     steps:
     - uses: actions/checkout@v3
 
