@@ -355,6 +355,10 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     def full_url(self):
         return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
 
+    @property
+    def metadata_url(self):
+        return reverse('common:hdviewpoint-metadata', kwargs={'pk': self.pk})
+
     @classmethod
     def get_list_url(cls):
         return reverse('admin:common_hdviewpoint_changelist')

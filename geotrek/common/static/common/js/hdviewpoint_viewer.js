@@ -13,7 +13,7 @@ function initializeViewer(base_tile_url, edit_annotations = false) {
             viewer.zoomRange({
                 // do not set a min limit so that bounds clamping determines min
                 min: -Infinity,
-                max: 12,
+                max: tileinfo.levels + 1,
             });
             viewer.createLayer('osm', params.layer);
 

@@ -346,6 +346,7 @@ class HDViewPointSerializer(TimeStampedSerializer):
     geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
     picture_tiles_url = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
+    metadata_url = serializers.SerializerMethodField()
     trek = serializers.SerializerMethodField()
     site = serializers.SerializerMethodField()
     poi = serializers.SerializerMethodField()
@@ -359,6 +360,9 @@ class HDViewPointSerializer(TimeStampedSerializer):
 
     def get_thumbnail_url(self, obj):
         return build_url(self, obj.thumbnail_url)
+
+    def get_metadata_url(self, obj):
+        return build_url(self, obj.metadata_url)
 
     def get_trek(self, obj):
         related_obj = obj.content_object
@@ -381,8 +385,8 @@ class HDViewPointSerializer(TimeStampedSerializer):
     class Meta(TimeStampedSerializer.Meta):
         model = common_models.HDViewPoint
         fields = TimeStampedSerializer.Meta.fields + (
-            'id', 'annotations', 'author', 'geometry', 'legend', 'license', 'picture_tiles_url',
-            'poi', 'title', 'site', 'trek', 'thumbnail_url', 'uuid'
+            'id', 'annotations', 'author', 'geometry', 'legend', 'license', 'metadata_url',
+            'picture_tiles_url', 'poi', 'title', 'site', 'trek', 'thumbnail_url', 'uuid'
         )
 
 
