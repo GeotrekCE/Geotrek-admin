@@ -246,7 +246,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_("Filter by a trek id. It will show only the POIs related to this trek.")
+                    description=_("(deprecated) Same as near_trek.")
                 )
             ), Field(
                 name='sites', required=False, location='query', schema=coreschema.Integer(
