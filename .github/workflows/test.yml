@@ -63,32 +63,32 @@ jobs:
 
     - name: Prepare test env
       run: |
-        sudo apt-get update -q
-        sudo apt-get -qq -y install \
-             unzip \
-             gettext \
-             binutils \
-             libproj-dev \
-             gdal-bin \
-             sudo \
-             less \
-             curl \
-             git \
-             iproute2 \
-             software-properties-common \
-             shared-mime-info \
-             fonts-liberation \
-             libssl-dev \
-             libfreetype6-dev \
-             libxml2-dev \
-             libxslt-dev \
-             libcairo2 \
-             libpango1.0-0 \
-             libpangocairo-1.0-0 \
-             libgdk-pixbuf2.0-dev \
-             libffi-dev \
-             libvips
-        sudo apt-get install -y --no-install-recommends postgis
+        apt-get update -q
+        apt-get -qq -y install \
+           unzip \
+           gettext \
+           binutils \
+           libproj-dev \
+           gdal-bin \
+           sudo \
+           less \
+           curl \
+           git \
+           iproute2 \
+           software-properties-common \
+           shared-mime-info \
+           fonts-liberation \
+           libssl-dev \
+           libfreetype6-dev \
+           libxml2-dev \
+           libxslt-dev \
+           libcairo2 \
+           libpango1.0-0 \
+           libpangocairo-1.0-0 \
+           libgdk-pixbuf2.0-dev \
+           libffi-dev \
+           libvips
+        apt-get install -y --no-install-recommends postgis
 
     - name: Install python dependencies
       run: |
