@@ -76,9 +76,10 @@ jobs:
           ~/.cache/pip
           ~/.wheel_dir
 
-        key: pip-${{ matrix.python-version }}
+        key: pip-3.8
         restore-keys: |
-          pip-${{ matrix.python-version }}
+          pip-3.8
+
     - uses: actions/cache@v3
       with:
         path: |
