@@ -284,92 +284,10 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: docker-cypress
+          name: cypress-docker
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
-
-  e2e_deb_18_04:
-    name: Tests E2E 18.04
-    runs-on: ubuntu-18.04
-    needs: [ build_deb_18_04 ]
-
-    env:
-      CYPRESS_BASE_URL: http://geotrek.local
-      CYPRESS_CACHE_FOLDER: ~/cypress/cache
-
-    services:
-      postgres:
-        image: postgis/postgis:10-2.5
-        env:
-          POSTGRES_DB: ci_test
-          POSTGRES_PASSWORD: ci_test
-          POSTGRES_USER: ci_test
-        ports:
-          - 5432:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: debian-18-04
-
-      - name: Simulate install.sh procedure
-        run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
-          sudo apt-get autoremove
-          echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-          wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
-          sudo apt-get -q update
-          echo "geotrek-admin geotrek-admin/LANGUAGES string en fr" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/POSTGRES_PASSWORD string $POSTGRES_PASSWORD" >> .debian_settings
-          echo "geotrek-admin geotrek-admin/SERVER_NAME string geotrek.local" >> .debian_settings
-          mkdir -p /opt/geotrek-admin/var/conf/
-          cp /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/custom.py /opt/geotrek-admin/var/conf/custom.py
-          sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
-          sudo debconf-set-selections .debian_settings
-
-      - name: Install package
-        run: |
-          sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo systemctl restart nginx
-
-      - name: Load Data
-        run: |
-          sudo geotrek loaddata minimal
-          sudo geotrek loaddata cirkwi
-          sudo geotrek loaddata basic
-          sudo geotrek loaddata test-integration
-          for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
-          	cd $dir > /dev/null
-          	sudo cp -r * /opt/geotrek-admin/var/media/upload/
-          done
-
-      - name: Install cypress
-        run: |
-          cd /home/runner/work/Geotrek-admin/Geotrek-admin/cypress
-          npm ci
-
-      - name: E2E test
-        run: |
-           /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/node_modules/.bin/cypress run -P /home/runner/work/Geotrek-admin/Geotrek-admin/cypress --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
-        continue-on-error: false
-
-      - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-18.04
-          path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
-
 
   e2e_deb_20_04:
     name: Tests E2E 20.04
@@ -455,7 +373,7 @@ jobs:
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
-    needs: [ test, e2e_docker_image, e2e_deb_18_04, e2e_deb_20_04 ]
+    needs: [ test, e2e_docker_image, build_deb_18_04, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
       - uses: actions/checkout@v3
