@@ -48,6 +48,8 @@ jobs:
     env:
       ENV: ${{ matrix.tests-env }}
       OS: ${{ matrix.os }}
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
 
     services:
       postgres:
