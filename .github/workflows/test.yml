@@ -79,6 +79,14 @@ jobs:
         key: pip-${{ matrix.python-version }}
         restore-keys: |
           pip-${{ matrix.python-version }}
+    - uses: actions/cache@v3
+      with:
+        path: |
+          /var/cache/apt
+
+        key: apt-${{ matrix.os }}
+        restore-keys: |
+          apt-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
