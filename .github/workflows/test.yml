@@ -43,6 +43,7 @@ jobs:
     strategy:
       matrix:
         os: ['bionic-3.8', 'focal-3.8']
+        python-version: ['3.8']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -75,18 +76,9 @@ jobs:
         path: |
           ./venv
 
-        key: pip-3.8
+        key: pip-${{ matrix.python-version }}
         restore-keys: |
-          pip-3.8
-
-    - uses: actions/cache@v3
-      with:
-        path: |
-          /var/cache/apt
-
-        key: apt-${{ matrix.os }}
-        restore-keys: |
-          apt-${{ matrix.os }}
+          pip-${{ matrix.python-version }}
 
     - name: Prepare test env
       run: |
