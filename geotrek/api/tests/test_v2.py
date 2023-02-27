@@ -1148,6 +1148,15 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         ids_treks = [element['id'] for element in json_response['results']]
         self.assertNotIn(trek_toulouse.pk, ids_treks)
 
+    def test_trek_list_filtered_by_near_trek(self):
+        trek = self.treks[0]
+
+        response = self.get_trek_list({"near_trek": trek.pk})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response["count"], 16)
+
     def test_trek_list_filters_inexistant_zones(self):
         response = self.get_trek_list({
             'cities': '99999',
