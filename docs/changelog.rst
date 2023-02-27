@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.97.3+dev (XXXX-XX-XX)
+2.97.2+dev (XXXX-XX-XX)
 -----------------------
 
 **Bug fixes**
