@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: nearby sensitive areas now appears in outdoor details pages (and the other way too) (`Issue #3494 <https://github.com/GeotrekCE/Geotrek-admin/issues/3494>`_)
+- Fix Interventions list datatable is empty
 
 **Improvements**
 
