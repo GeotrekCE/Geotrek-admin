@@ -74,6 +74,25 @@ def uniquify(values):
     return unique
 
 
+def queryset_or_model(queryset, model):
+    # It is very important to test queryset Noneness with `is None` because the queryset gets otherwise
+    # evaluated in bool() context. So here is a function not to forget that.
+    if queryset is not None:
+        return queryset
+    else:
+        return model
+
+
+def queryset_or_all_objects(queryset, model):
+    # It is very important to test queryset Noneness with `is None` because the queryset gets otherwise
+    # evaluated in bool() context. So here is a function not to forget that.
+    if queryset is None:
+        queryset = model.objects
+        if hasattr(queryset, 'existing'):
+            queryset = queryset.existing()
+    return queryset
+
+
 def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
     """ Small helper to filter all model instances by geometry intersection """
     if isinstance(qs, ModelBase):

@@ -308,6 +308,7 @@ class BaseApiTest(TestCase):
         cls.treks[3].save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
+        cls.event = tourism_factory.TouristicEventFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.city2 = zoning_factory.CityFactory(code='02000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -2193,6 +2194,33 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         })
         self.assertEqual(response.status_code, 200)
 
+    def test_sensitivearea_list_filtered_by_near_trek(self):
+        nearby_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN // 2
+        far_away_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN * 2
+        trek_x = 24800
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_path = core_factory.PathFactory(geom=LineString(Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID))
+            trek = trek_factory.TrekFactory(paths=[(trek_path, 0, 1)])
+        else:
+            trek = trek_factory.TrekFactory(geom=LineString(Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID))
+        # a sensitive area near it
+        near_area_x1 = trek_x + nearby_dist
+        near_area_x2 = trek_x + nearby_dist + 1000
+        sensitivity_factory.SensitiveAreaFactory(
+            geom=f'POLYGON(({near_area_x1} 7800, {near_area_x2} 7800, {near_area_x2} 7900, {near_area_x1} 7900, {near_area_x1} 7800))'
+        )
+        # a sensitive area far from it
+        far_area_x1 = trek_x + far_away_dist
+        far_area_x2 = trek_x + far_away_dist + 1000
+        sensitivity_factory.SensitiveAreaFactory(
+            geom=f'POLYGON(({far_area_x1} 7800, {far_area_x2} 7800, {far_area_x2} 7900, {far_area_x1} 7900, {far_area_x1} 7800))'
+        )
+
+        response = self.get_sensitivearea_list({"near_trek": trek.pk, "period": "ignore"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
     def test_sensitivearea_detail(self):
         self.check_structure_response(
             self.get_sensitivearea_detail(self.sensitivearea.pk, params={'period': 'any'}),
@@ -3492,6 +3520,38 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         response = self.get_sensitivearea_list({'near_outdoorsite': self.site.pk, 'period': 'any'})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.sensitivearea1.pk)
+
+
+class NearbyContentFilterTestCase(BaseApiTest):
+
+    def test_list_objects_filtered_by_near_target(self):
+
+        get_list_funcs = [
+            self.get_site_list,
+            self.get_course_list,
+            self.get_trek_list,
+            self.get_signage_list,
+            self.get_service_list,
+            self.get_poi_list,
+            self.get_touristiccontent_list,
+            self.get_touristicevent_list,
+            self.get_sensitivearea_list,
+            self.get_infrastructure_list,
+        ]
+
+        targets = {
+            "near_trek": self.treks[0].pk,
+            "near_touristiccontent": self.content.pk,
+            "near_touristicevent": self.event.pk,
+            "near_outdoorsite": self.site.pk,
+            "near_outdoorcourse": self.course.pk,
+        }
+
+        for list_func in get_list_funcs:
+            for filter_name, target_pk in targets.items():
+                with self.subTest(list_func=list_func.__name__, filter=filter_name):
+                    response = list_func(params={filter_name: target_pk})
+                    self.assertEqual(response.status_code, 200)
 
 
 class UpdateOrCreateDatesFilterTestCase(BaseApiTest):
