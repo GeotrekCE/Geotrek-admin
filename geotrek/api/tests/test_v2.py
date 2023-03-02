@@ -1660,6 +1660,31 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
 
+    def test_poi_list_filtered_by_near_trek(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek = trek_factory.TrekFactory()
+            trek_factory.POIFactory(paths=[(trek.paths.first(), 0.5, 0.5)], name="a POI near trek")
+            far_away_coords = [[n + 2000 for n in c] for c in trek.geom.coords]
+            far_away_path = core_factory.PathFactory(geom=LineString(far_away_coords, srid=settings.SRID))
+            trek_factory.POIFactory(paths=[far_away_path, 0.5, 0.5], name="a POI far from trek")
+            near_excluded_poi = trek_factory.POIFactory(paths=[(trek.paths.first(), 0.2, 0.2)])
+        else:
+            trek = trek_factory.TrekFactory(geom=LineString(Point(500, 600), Point(550, 800), srid=settings.SRID))
+            trek_factory.POIFactory(geom=Point(525, 700, srid=settings.SRID), name="a POI near trek")
+            trek_factory.POIFactory(geom=Point(2500, 3000, srid=settings.SRID), name="a POI far from trek")
+            near_excluded_poi = trek_factory.POIFactory(geom=Point(510, 620, srid=settings.SRID))
+        trek.pois_excluded.add(near_excluded_poi)
+
+        for filtername in ["near_trek", "trek"]:
+            response = self.get_poi_list({filtername: trek.pk})
+
+            self.assertEqual(response.status_code, 200)
+            # Expects a single POI without far away or excluded POIs
+            json_response = response.json()
+            self.assertEqual(json_response["count"], 1)
+            response_poi = json_response["results"][0]
+            self.assertEqual(response_poi["name"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], "a POI near trek")
+
     def test_poi_list_filter_distance(self):
         """ Test POI list is filtered by reference point distance """
         geom_path = LineString([(1.4464187622070312, 43.65147866566022),
