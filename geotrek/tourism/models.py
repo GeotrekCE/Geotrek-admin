@@ -322,6 +322,7 @@ Topology.add_property('touristic_contents', lambda self: intersecting(TouristicC
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+TouristicContent.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
 
 
 class TouristicEventType(TimeStampedModelMixin, OptionalPictogramMixin):
