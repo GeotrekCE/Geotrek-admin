@@ -2,8 +2,30 @@
 CHANGELOG
 =========
 
-2.97.1+dev (XXXX-XX-XX)
+2.97.3+dev (2023-02-28)
 -----------------------
+
+
+2.97.3 (2023-02-28)
+-----------------------
+
+**Bug fixes**
+
+- Fix: nearby sensitive areas now appears in outdoor details pages (and the other way too) (`Issue #3494 <https://github.com/GeotrekCE/Geotrek-admin/issues/3494>`_)
+- Fix Interventions list datatable is empty
+
+**Improvements**
+
+- Set max zoom on HD Views depending on tiles depth
+
+
+2.97.2 (2023-02-22)
+-----------------------
+
+**Bug fixes**
+
+- Fix link between attachment and file is lost when updating old attachment without title and suffix
+
 
 2.97.1 (2023-02-17)
 -----------------------

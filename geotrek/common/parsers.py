@@ -795,7 +795,6 @@ class AttachmentParserMixin:
                         return False, updated
             except UnidentifiedImageError:
                 pass
-            name = attachment.prepare_file_suffix(name)
             attachment.attachment_file.save(name, f, save=False)
             attachment.is_image = attachment.is_an_image()
         else:
