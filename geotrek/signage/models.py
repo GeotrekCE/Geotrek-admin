@@ -220,7 +220,7 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 
     @property
     def geom(self):
-        return self.topology.geom
+        return self.signage.geom
 
     @geom.setter
     def geom(self, value):
