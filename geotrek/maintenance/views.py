@@ -180,7 +180,7 @@ class InterventionViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'name')
         else:
-            qs = qs.select_related("stake", "status", "type")
+            qs = qs.select_related("stake", "status", "type", "target_type").prefetch_related('target')
         return qs
 
 

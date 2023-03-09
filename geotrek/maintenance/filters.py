@@ -1,6 +1,5 @@
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from django_filters import ChoiceFilter, MultipleChoiceFilter
 
@@ -9,20 +8,12 @@ from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
-from geotrek.feedback.models import Report
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 
 from .models import Intervention, Project
-from geotrek.core.models import Topology
-
-if 'geotrek.signage' in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade, Signage
-
-if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    from geotrek.outdoor.models import Site, Course
 
 
 class PolygonInterventionFilterMixin:
@@ -34,38 +25,17 @@ class PolygonInterventionFilterMixin:
             return qs
         if not isinstance(values, list):
             values = [values]
-
-        if 'geotrek.signage' in settings.INSTALLED_APPS:
-            blade_content_type = ContentType.objects.get_for_model(Blade)
-        signages = []
-        target_types = qs.values_list('target_type', flat=True).exclude(target_type=blade_content_type)
         interventions = []
-        for target_type in target_types:
-            model = ContentType.objects.get(pk=target_type).model_class()
-            elements_in_bbox = []
-            for value in values:
-                elements_in_bbox.extend(
-                    model.objects.filter(**{'geom__%s' % self.lookup_expr: self.get_geom(value)}).values_list('id', flat=True)
-                )
-            if 'geotrek.outdoor' in settings.INSTALLED_APPS and (issubclass(model, Site) or issubclass(model, Course)):
-                interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
-                    target_id__in=model.objects.values_list('id', flat=True)
-                ))
-            if 'geotrek.feedback' in settings.INSTALLED_APPS and issubclass(model, Report):
-                interventions.extend(qs.values_list('id', flat=True).filter(target_type=target_type).exclude(
-                    target_id__in=model.objects.values_list('id', flat=True)))
-            if 'geotrek.signage' in settings.INSTALLED_APPS and (issubclass(model, Topology) or issubclass(model, Signage)):
-                signages = elements_in_bbox
-            interventions += qs.values_list('id', flat=True).filter(target_type=target_type,
-                                                                    target_id__in=elements_in_bbox)
+        for value in values:
+            geom = self.get_geom(value)
+            bbox = geom.transform(settings.SRID, clone=True)
+            for element in qs:
+                if element.target:
+                    if not element.target.geom or element.target.geom.intersects(bbox):
+                        interventions.append(element.pk)
+                elif not element.target and element.target_type:
+                    interventions.append(element.pk)
 
-        if 'geotrek.signage' in settings.INSTALLED_APPS:
-            blades = list(Blade.objects.filter(signage__in=signages).values_list('id', flat=True))
-
-            blades_intervention = Intervention.objects.filter(target_id__in=blades,
-                                                              target_type=blade_content_type).values_list('id',
-                                                                                                          flat=True)
-            interventions.extend(blades_intervention)
         qs = qs.filter(pk__in=interventions).existing()
         return qs
 

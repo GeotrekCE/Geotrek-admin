@@ -5,6 +5,10 @@ CHANGELOG
 2.97.3+dev (2023-02-28)
 -----------------------
 
+**Performances**
+
+- Fix interventions list loading
+
 
 2.97.3 (2023-02-28)
 -----------------------
