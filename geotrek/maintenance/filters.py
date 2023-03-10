@@ -25,15 +25,15 @@ class PolygonInterventionFilterMixin:
         if not values:
             return qs
         if isinstance(values, list):
-            bbox = GeometryCollection([self.get_geom(value) for value in values])
+            geom_intersect = GeometryCollection([self.get_geom(value) for value in values])
         else:
-            bbox = self.get_geom(values).transform(settings.SRID, clone=True)
+            geom_intersect = self.get_geom(values).transform(settings.SRID, clone=True)
         interventions = []
         for element in qs:
             if element.target:
-                if not element.target.geom or element.target.geom.intersects(bbox):
+                if not element.target.geom or element.target.geom.intersects(geom_intersect):
                     interventions.append(element.pk)
-            elif not element.target and element.target_type:
+            elif element.target_type:
                 interventions.append(element.pk)
 
         qs = qs.filter(pk__in=interventions).existing()
