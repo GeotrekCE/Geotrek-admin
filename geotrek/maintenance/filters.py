@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
 from django_filters import ChoiceFilter, MultipleChoiceFilter
 
@@ -23,18 +24,17 @@ class PolygonInterventionFilterMixin:
     def filter(self, qs, values):
         if not values:
             return qs
-        if not isinstance(values, list):
-            values = [values]
+        if isinstance(values, list):
+            bbox = GeometryCollection([self.get_geom(value) for value in values])
+        else:
+            bbox = self.get_geom(values).transform(settings.SRID, clone=True)
         interventions = []
-        for value in values:
-            geom = self.get_geom(value)
-            bbox = geom.transform(settings.SRID, clone=True)
-            for element in qs:
-                if element.target:
-                    if not element.target.geom or element.target.geom.intersects(bbox):
-                        interventions.append(element.pk)
-                elif not element.target and element.target_type:
+        for element in qs:
+            if element.target:
+                if not element.target.geom or element.target.geom.intersects(bbox):
                     interventions.append(element.pk)
+            elif not element.target and element.target_type:
+                interventions.append(element.pk)
 
         qs = qs.filter(pk__in=interventions).existing()
         return qs

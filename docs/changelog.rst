@@ -18,6 +18,9 @@ CHANGELOG
 - Add arguments loadsignage : sealing / manager (#3377)
 - Various minor improvements for APIDAE Trek parser
 
+**Performances**
+
+- Improve performance zoning filter interventions
 
 2.97.4     (2023-03-09)
 -----------------------
