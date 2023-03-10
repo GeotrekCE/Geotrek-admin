@@ -17,6 +17,15 @@ from geotrek.zoning.models import City, District, RestrictedArea, RestrictedArea
 from .models import Intervention, Project
 
 
+class BboxInterventionFilterMixin:
+    def filter(self, qs, value):
+        if value:
+            value = value.transform(settings.SRID, clone=True)
+            return super().filter(qs, [value, ])
+        else:
+            return qs
+
+
 class PolygonInterventionFilterMixin:
     def get_geom(self, value):
         return value
@@ -24,10 +33,7 @@ class PolygonInterventionFilterMixin:
     def filter(self, qs, values):
         if not values:
             return qs
-        if isinstance(values, list):
-            geom_intersect = GeometryCollection([self.get_geom(value) for value in values])
-        else:
-            geom_intersect = self.get_geom(values).transform(settings.SRID, clone=True)
+        geom_intersect = GeometryCollection([self.get_geom(value) for value in values])
         interventions = []
         for element in qs:
             if element.target:
@@ -82,7 +88,7 @@ class InterventionIntersectionFilterDistrict(PolygonInterventionFilterMixin,
         return value.geom
 
 
-class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
+class PolygonTopologyFilter(BboxInterventionFilterMixin, PolygonInterventionFilterMixin, PolygonFilter):
     pass
 
 
