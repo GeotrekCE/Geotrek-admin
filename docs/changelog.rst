@@ -10,6 +10,7 @@ CHANGELOG
 - Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
 - Fix permissions bypass structure was always needed on accessibility attachments (#3396)
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
+- Fix: `delete=True` mode now works for APIDAE Trek parser
 
 
 **Improvements**

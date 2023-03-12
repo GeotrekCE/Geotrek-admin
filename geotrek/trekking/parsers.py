@@ -621,6 +621,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     def end(self):
         self._finalize_related_treks_association()
+        super().end()
 
     def filter_eid(self, src, val):
         return str(val)
