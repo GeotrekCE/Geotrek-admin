@@ -5,6 +5,9 @@ CHANGELOG
 2.97.4+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
 
 2.97.4     (2023-03-09)
 -----------------------

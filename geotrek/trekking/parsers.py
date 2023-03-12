@@ -716,7 +716,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return self.apply_filter(
             dst='practice',
             src=src,
-            val=ApidaeTrekParser._get_practice_name_from_activities(activities_ids)
+            val=self._get_practice_name_from_activities(activities_ids)
         )
 
     def filter_networks(self, src, val):
@@ -981,11 +981,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                         returned_practice_name = practice_name
         return returned_practice_name
 
-    @staticmethod
-    def _get_practice_name_from_activities(activities_ids):
+    @classmethod
+    def _get_practice_name_from_activities(cls, activities_ids):
         for mapping in (
-            ApidaeTrekParser.practices_mapped_with_activities_ids,
-            ApidaeTrekParser.practices_mapped_with_default_activities_ids
+            cls.practices_mapped_with_activities_ids,
+            cls.practices_mapped_with_default_activities_ids
         ):
             practice_name = ApidaeTrekParser._find_matching_practice_in_mapping(activities_ids, mapping)
             if practice_name:
