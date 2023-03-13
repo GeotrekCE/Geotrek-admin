@@ -8,6 +8,8 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
+- Fix permissions bypass structure was always needed on accessibility attachments (#3396)
+
 
 **Improvements**
 

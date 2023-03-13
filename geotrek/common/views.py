@@ -533,51 +533,58 @@ class ServeAttachmentAccessibility(View):
 
 @require_POST
 @permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def add_attachment_accessibility(request, app_label, model_name, pk,
                                  attachment_form=AttachmentAccessibilityForm,
                                  extra_context=None):
     model = apps.get_model(app_label, model_name)
     obj = get_object_or_404(model, pk=pk)
-
-    form = attachment_form(request, request.POST, request.FILES, object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Add attachment %s'),
-                                   _('Your attachment was uploaded.'),
-                                   extra_context)
+    if obj.same_structure(request.user):
+        form = attachment_form(request, request.POST, request.FILES, object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Add attachment %s'),
+                                       _('Your attachment was uploaded.'),
+                                       extra_context)
+    else:
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @require_http_methods(["GET", "POST"])
 @permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def update_attachment_accessibility(request, attachment_pk,
                                     attachment_form=AttachmentAccessibilityForm,
                                     extra_context=None):
     attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = attachment.content_object
-    if request.method == 'POST':
-        form = attachment_form(
-            request, request.POST, request.FILES,
-            instance=attachment,
-            object=obj)
+    if obj.same_structure(request.user):
+        if request.method == 'POST':
+            form = attachment_form(
+                request, request.POST, request.FILES,
+                instance=attachment,
+                object=obj)
+        else:
+            form = attachment_form(
+                request,
+                instance=attachment,
+                object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Update attachment %s'),
+                                       _('Your attachment was updated.'),
+                                       extra_context)
     else:
-        form = attachment_form(
-            request,
-            instance=attachment,
-            object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Update attachment %s'),
-                                   _('Your attachment was updated.'),
-                                   extra_context)
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
-    can_delete = (request.user.has_perm(
+    can_delete = ((request.user.has_perm(
         settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
+        and obj.same_structure(request.user))
     if can_delete:
         g.delete()
         if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:
