@@ -308,6 +308,7 @@ class BaseApiTest(TestCase):
         cls.treks[3].save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.content2 = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
+        cls.event = tourism_factory.TouristicEventFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
         cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.city2 = zoning_factory.CityFactory(code='02000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district = zoning_factory.DistrictFactory(geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
@@ -1148,6 +1149,15 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         ids_treks = [element['id'] for element in json_response['results']]
         self.assertNotIn(trek_toulouse.pk, ids_treks)
 
+    def test_trek_list_filtered_by_near_trek(self):
+        trek = self.treks[0]
+
+        response = self.get_trek_list({"near_trek": trek.pk})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response["count"], 16)
+
     def test_trek_list_filters_inexistant_zones(self):
         response = self.get_trek_list({
             'cities': '99999',
@@ -1650,6 +1660,31 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_poi_list_filter_sites(self):
         self.launch_tests_excluded_pois(self.site, 'sites')
+
+    def test_poi_list_filtered_by_near_trek(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek = trek_factory.TrekFactory()
+            trek_factory.POIFactory(paths=[(trek.paths.first(), 0.5, 0.5)], name="a POI near trek")
+            far_away_coords = [[n + 2000 for n in c] for c in trek.geom.coords]
+            far_away_path = core_factory.PathFactory(geom=LineString(far_away_coords, srid=settings.SRID))
+            trek_factory.POIFactory(paths=[far_away_path, 0.5, 0.5], name="a POI far from trek")
+            near_excluded_poi = trek_factory.POIFactory(paths=[(trek.paths.first(), 0.2, 0.2)])
+        else:
+            trek = trek_factory.TrekFactory(geom=LineString(Point(500, 600), Point(550, 800), srid=settings.SRID))
+            trek_factory.POIFactory(geom=Point(525, 700, srid=settings.SRID), name="a POI near trek")
+            trek_factory.POIFactory(geom=Point(2500, 3000, srid=settings.SRID), name="a POI far from trek")
+            near_excluded_poi = trek_factory.POIFactory(geom=Point(510, 620, srid=settings.SRID))
+        trek.pois_excluded.add(near_excluded_poi)
+
+        for filtername in ["near_trek", "trek"]:
+            response = self.get_poi_list({filtername: trek.pk})
+
+            self.assertEqual(response.status_code, 200)
+            # Expects a single POI without far away or excluded POIs
+            json_response = response.json()
+            self.assertEqual(json_response["count"], 1)
+            response_poi = json_response["results"][0]
+            self.assertEqual(response_poi["name"][settings.MODELTRANSLATION_DEFAULT_LANGUAGE], "a POI near trek")
 
     def test_poi_list_filter_distance(self):
         """ Test POI list is filtered by reference point distance """
@@ -2159,6 +2194,33 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         })
         self.assertEqual(response.status_code, 200)
 
+    def test_sensitivearea_list_filtered_by_near_trek(self):
+        nearby_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN // 2
+        far_away_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN * 2
+        trek_x = 24800
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            trek_path = core_factory.PathFactory(geom=LineString(Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID))
+            trek = trek_factory.TrekFactory(paths=[(trek_path, 0, 1)])
+        else:
+            trek = trek_factory.TrekFactory(geom=LineString(Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID))
+        # a sensitive area near it
+        near_area_x1 = trek_x + nearby_dist
+        near_area_x2 = trek_x + nearby_dist + 1000
+        sensitivity_factory.SensitiveAreaFactory(
+            geom=f'POLYGON(({near_area_x1} 7800, {near_area_x2} 7800, {near_area_x2} 7900, {near_area_x1} 7900, {near_area_x1} 7800))'
+        )
+        # a sensitive area far from it
+        far_area_x1 = trek_x + far_away_dist
+        far_area_x2 = trek_x + far_away_dist + 1000
+        sensitivity_factory.SensitiveAreaFactory(
+            geom=f'POLYGON(({far_area_x1} 7800, {far_area_x2} 7800, {far_area_x2} 7900, {far_area_x1} 7900, {far_area_x1} 7800))'
+        )
+
+        response = self.get_sensitivearea_list({"near_trek": trek.pk, "period": "ignore"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
     def test_sensitivearea_detail(self):
         self.check_structure_response(
             self.get_sensitivearea_detail(self.sensitivearea.pk, params={'period': 'any'}),
@@ -2235,11 +2297,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
-        # validate wrong trek id get 404
+        # validate wrong trek id returns empty list
         response = self.get_sensitivearea_list({
             'trek': 9999
         })
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 0)
 
     def test_hdviewpoint_detail_content(self):
         response = self.get_hdviewpoint_detail(self.hdviewpoint_trek.pk)
@@ -3411,6 +3474,11 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.touristic_content1.pk)
 
+    def test_touristiccontent_near_outdoorsite(self):
+        response = self.get_touristiccontent_list({'near_outdoorsite': self.site.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["results"][0]["id"], self.touristic_content1.pk)
+
     def test_outdoorcourse_near_outdoorcourse(self):
         response = self.get_course_list({'near_outdoorcourse': self.course.pk})
         self.assertEqual(response.json()["count"], 1)
@@ -3443,16 +3511,6 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.poi1.pk)
 
-    def test_infodesk_near_outdoorcourse(self):
-        response = self.get_informationdesk_list({'near_outdoorcourse': self.course.pk})
-        self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
-
-    def test_infodesk_near_outdoorsite(self):
-        response = self.get_informationdesk_list({'near_outdoorsite': self.site.pk})
-        self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(response.json()["results"][0]["id"], self.info_desk1.pk)
-
     def test_sensitivearea_near_outdoorcourse(self):
         response = self.get_sensitivearea_list({'near_outdoorcourse': self.course.pk, 'period': 'any'})
         self.assertEqual(response.json()["count"], 1)
@@ -3462,6 +3520,38 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         response = self.get_sensitivearea_list({'near_outdoorsite': self.site.pk, 'period': 'any'})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(response.json()["results"][0]["id"], self.sensitivearea1.pk)
+
+
+class NearbyContentFilterTestCase(BaseApiTest):
+
+    def test_list_objects_filtered_by_near_target(self):
+
+        get_list_funcs = [
+            self.get_site_list,
+            self.get_course_list,
+            self.get_trek_list,
+            self.get_signage_list,
+            self.get_service_list,
+            self.get_poi_list,
+            self.get_touristiccontent_list,
+            self.get_touristicevent_list,
+            self.get_sensitivearea_list,
+            self.get_infrastructure_list,
+        ]
+
+        targets = {
+            "near_trek": self.treks[0].pk,
+            "near_touristiccontent": self.content.pk,
+            "near_touristicevent": self.event.pk,
+            "near_outdoorsite": self.site.pk,
+            "near_outdoorcourse": self.course.pk,
+        }
+
+        for list_func in get_list_funcs:
+            for filter_name, target_pk in targets.items():
+                with self.subTest(list_func=list_func.__name__, filter=filter_name):
+                    response = list_func(params={filter_name: target_pk})
+                    self.assertEqual(response.status_code, 200)
 
 
 class UpdateOrCreateDatesFilterTestCase(BaseApiTest):

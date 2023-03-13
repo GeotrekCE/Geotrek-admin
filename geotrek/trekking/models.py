@@ -20,7 +20,7 @@ from mapentity.helpers import clone_attachment
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.utils import intersecting, classproperty
+from geotrek.common.utils import intersecting, classproperty, queryset_or_model, queryset_or_all_objects
 from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
     TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
 from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
@@ -353,17 +353,31 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return treks.order_by('topo_object').distinct('topo_object')
 
     @classmethod
-    def topology_treks(cls, topology):
+    def topology_treks(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
+
+        # This prevents auto-intersection for treks
+        if cls is topology.__class__:
+            qs = qs.exclude(pk=topology.pk)
+
         return qs
 
     @classmethod
     def published_topology_treks(cls, topology):
         return cls.topology_treks(topology).filter(published=True)
+
+    @classmethod
+    def outdoor_treks(cls, outdoor_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_object)
+
+    @classmethod
+    def tourism_treks(cls, tourism_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
     # Rando v1 compat
     @property
@@ -532,9 +546,9 @@ else:
     Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 Intervention.add_property('treks', lambda self: self.target.treks if self.target else [], _("Treks"))
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _("Treks"))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicContent.add_property('treks', Trek.tourism_treks, _("Treks"))
 tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicEvent.add_property('treks', Trek.tourism_treks, _("Treks"))
 tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('treks', lambda self: self.signage.treks, _("Treks"))
@@ -743,16 +757,17 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def topology_pois(cls, topology):
-        return cls.exclude_pois(cls.topology_all_pois(topology), topology)
+    def topology_pois(cls, topology, queryset=None):
+        return cls.exclude_pois(cls.topology_all_pois(topology, queryset), topology)
 
     @classmethod
-    def topology_all_pois(cls, topology):
+    def topology_all_pois(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=object_geom)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=object_geom)
             if topology.geom.geom_type == 'LineString':
                 qs = qs.annotate(locate=LineLocatePoint(Transform(topology.geom,
                                                                   settings.SRID),
@@ -767,6 +782,10 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         qs = cls.objects.existing().filter(geom__intersects=object_geom)
         qs = qs.order_by('pk')
         return qs
+
+    @classmethod
+    def tourism_pois(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
 
     @classmethod
     def published_topology_pois(cls, topology):
@@ -793,9 +812,9 @@ Topology.add_property('all_pois', POI.topology_all_pois, _("POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _("Published POIs"))
 Intervention.add_property('pois', lambda self: self.target.pois if self.target else [], _("POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _("POIs"))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicContent.add_property('pois', POI.tourism_pois, _("POIs"))
 tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicEvent.add_property('pois', POI.tourism_pois, _("POIs"))
 tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('pois', lambda self: self.signage.pois, _("POIs"))
@@ -874,12 +893,13 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
         return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def topology_services(cls, topology):
+    def topology_services(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
         if isinstance(topology, Trek):
             qs = qs.filter(type__practices=topology.practice)
         return qs
@@ -891,15 +911,23 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+    @classmethod
+    def outdoor_services(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def tourism_services(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
 
 Path.add_property('services', Service.path_services, _("Services"))
 Topology.add_property('services', Service.topology_services, _("Services"))
 Topology.add_property('published_services', Service.published_topology_services, _("Published Services"))
 Intervention.add_property('services', lambda self: self.target.services if self.target else [], _("Services"))
 Project.add_property('services', lambda self: self.edges_by_attr('services'), _("Services"))
-tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicContent.add_property('services', Service.tourism_services, _("Services"))
 tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
-tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicEvent.add_property('services', Service.tourism_services, _("Services"))
 tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('services', lambda self: self.signage.services, _("Services"))

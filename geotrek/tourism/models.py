@@ -18,8 +18,10 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import ReservationSystem, Theme
-from geotrek.common.utils import intersecting, classproperty
+from geotrek.common.utils import intersecting, classproperty, queryset_or_model
 from geotrek.core.models import Topology
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
 from geotrek.tourism.managers import TouristicContentTypeFilteringManager, TouristicContentType1Manager, \
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
@@ -271,6 +273,9 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     objects = TouristicContentManager()
 
+    # Name of the property on other models to get related nearby touristic contents
+    related_near_objects_property_name = "touristic_contents"
+
     class Meta:
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
@@ -315,11 +320,25 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
 
+    @classmethod
+    def topology_touristic_contents(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+    @classmethod
+    def outdoor_touristic_contents(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def tourism_touristic_contents(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
+
+
+Topology.add_property('touristic_contents', TouristicContent.topology_touristic_contents, _("Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+TouristicContent.add_property('touristic_contents', TouristicContent.tourism_touristic_contents, _("Touristic contents"))
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+TouristicContent.add_property('signages', Signage.tourism_signages, _("Signages"))
+TouristicContent.add_property('infrastructures', Infrastructure.tourism_infrastructures, _("Infrastructures"))
 
 
 class TouristicEventType(TimeStampedModelMixin, OptionalPictogramMixin):
@@ -421,6 +440,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place in the list or locate the event directly on the map"))
     id_prefix = 'E'
 
+    # Name of the property on other models to get related nearby touristic events
+    related_near_objects_property_name = "touristic_events"
+
     @property
     def participants_total(self):
         return self.participants.aggregate(participants_total=models.Sum('count'))['participants_total']
@@ -478,6 +500,22 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
 
+    @classmethod
+    def topology_touristic_events(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology)
+
+    @classmethod
+    def topology_published_touristic_events(cls, topology):
+        return cls.topology_touristic_events(topology).filter(published=True)
+
+    @classmethod
+    def tourism_touristic_events(cls, tourism_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
+
+    @classmethod
+    def outdoor_touristic_events(cls, outdoor_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_object)
+
 
 class TouristicEventParticipantCategory(TimeStampedModelMixin):
     label = models.CharField(verbose_name=_("Label"), max_length=255)
@@ -501,11 +539,13 @@ class TouristicEventParticipantCount(TimeStampedModelMixin):
         return f"{self.count} {self.category}"
 
 
-TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
+TouristicEvent.add_property('touristic_contents', TouristicContent.tourism_touristic_contents, _("Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _("Published touristic contents"))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
-Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
-TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Topology.add_property('touristic_events', TouristicEvent.topology_touristic_events, _("Touristic events"))
+Topology.add_property('published_touristic_events', TouristicEvent.topology_published_touristic_events, _("Published touristic events"))
+TouristicContent.add_property('touristic_events', TouristicEvent.tourism_touristic_events, _("Touristic events"))
 TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
-TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+TouristicEvent.add_property('touristic_events', TouristicEvent.tourism_touristic_events, _("Touristic events"))
 TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
+TouristicEvent.add_property('signages', Signage.tourism_signages, _("Signages"))
+TouristicEvent.add_property('infrastructures', Infrastructure.tourism_infrastructures, _("Infrastructures"))

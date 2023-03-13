@@ -4,19 +4,16 @@ from distutils.util import strtobool
 import coreschema
 from coreapi.document import Field
 from django.conf import settings
+from django.contrib.gis.db.models import Collect
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
-from django.contrib.gis.db.models import Collect
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
-from rest_framework.generics import get_object_or_404
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.common.utils import intersecting
-from geotrek.core.models import Topology
 from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, \
     TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
@@ -24,8 +21,6 @@ from geotrek.zoning.models import City, District
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
-if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    from geotrek.sensitivity.models import SensitiveArea
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -176,12 +171,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
         if trek_id:
-            trek = get_object_or_404(Trek, pk=trek_id)
-            contents_intersecting = intersecting(qs,
-                                                 trek,
-                                                 distance=0,
-                                                 field='geom')
-            qs = contents_intersecting.order_by('id')
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek_id)
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -206,7 +196,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('Filter by a trek id. It will show only the sensitive areas intersecting this trek.')
+                    description=_('(deprecated) Same as near_trek.')
                 )
             ),
         )
@@ -220,12 +210,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            t = Trek.objects.get(pk=trek)
-            if settings.TREKKING_TOPOLOGY_ENABLED:
-                qs = Topology.overlapping(t, qs)
-            else:
-                qs = intersecting(qs, t)
-            qs = qs.exclude(pk__in=t.pois_excluded.all())
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek)
         sites = request.GET.get('sites', None)
         if sites is not None:
             qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Site, sites))
@@ -253,7 +238,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_("Filter by a trek id. It will show only the POIs related to this trek.")
+                    description=_("(deprecated) Same as near_trek.")
                 )
             ), Field(
                 name='sites', required=False, location='query', schema=coreschema.Integer(
@@ -269,48 +254,54 @@ class GeotrekPOIFilter(BaseFilterBackend):
         )
 
 
+def _filter_near(base_model, target_model, target_pk, queryset):
+    """Filter the queryset of base_model objects by keeping only the objects near the target.
+
+    The function uses the model properties to achieve the filtering. For instance it would find and use the `target_trek.pois` property to filter
+    q POI queryset near a target trek.
+
+    Return an empty queryset if the target does not exist.
+    """
+
+    def pluralize(name):
+        return name + 's'
+
+    try:
+        target = target_model.objects.get(pk=target_pk)
+    except target_model.DoesNotExist:
+        return queryset.none()
+    prop_name = getattr(base_model, "related_near_objects_property_name", None) or pluralize(base_model._meta.model_name)
+    prop = getattr(target_model, prop_name)
+    return prop.fget(target, queryset)
+
+
 class NearbyContentFilter(BaseFilterBackend):
 
-    def intersect_queryset_with_object(self, qs, model, obj_pk, distance=None, field="geom"):
-        obj = model.objects.filter(pk=obj_pk).first()
-        if obj:
-            qs = intersecting(qs, obj, distance=distance, field=field)
-        else:
-            # Intersecting with a non-existing object results in empty data
-            qs = model.objects.none()
-        return qs
-
     def filter_queryset(self, request, qs, view):
-        distance = None
-        field = "geom"
-
-        # sensitive area particular cases. We should intersect with the buffered geometry
-        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-            if qs.model == SensitiveArea:
-                distance = 0
-                field = "geom_buffered"
-
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
-            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent,
-                                                     distance=distance, field=field)
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=TouristicEvent,
+                              target_pk=near_touristicevent)
+
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
-            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent,
-                                                     distance=distance, field=field)
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=TouristicContent,
+                              target_pk=near_touristiccontent)
+
         near_trek = request.GET.get('near_trek')
         if near_trek:
-            qs = self.intersect_queryset_with_object(qs, Trek, near_trek,
-                                                     distance=distance, field=field)
-        near_outdoorsite = request.GET.get('near_outdoorsite')
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=near_trek)
+
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            near_outdoorsite = request.GET.get('near_outdoorsite')
             if near_outdoorsite:
-                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite,
-                                                         distance=distance, field=field)
+                qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Site,
+                                  target_pk=near_outdoorsite)
+
             near_outdoorcourse = request.GET.get('near_outdoorcourse')
             if near_outdoorcourse:
-                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse,
-                                                         distance=distance, field=field)
+                qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Course,
+                                  target_pk=near_outdoorcourse)
         return qs
 
     def get_schema_fields(self, view):
@@ -357,7 +348,7 @@ class NearbyContentFilter(BaseFilterBackend):
         return fields
 
 
-class GeotrekZoningAndThemeFilter(NearbyContentFilter):
+class GeotrekZoningAndThemeFilter(BaseFilterBackend):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         cities = request.GET.get('cities')
