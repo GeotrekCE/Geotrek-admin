@@ -777,7 +777,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         tf = ApidaeTranslatedField(separator=', ')
         for nt in filtered_nt:
             tf.append(translated_value=nt)
-        self.apply_filter(
+        return self.apply_filter(
             dst='accessibility_covering',
             src=src,
             val=tf

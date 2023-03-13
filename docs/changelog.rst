@@ -16,6 +16,7 @@ CHANGELOG
 **Improvements**
 
 - Add arguments loadsignage : sealing / manager (#3377)
+- Various minor improvements for APIDAE Trek parser
 
 
 2.97.4     (2023-03-09)
