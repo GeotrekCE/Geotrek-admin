@@ -9,6 +9,11 @@ CHANGELOG
 
 - Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
 
+**Improvements**
+
+- Add arguments loadsignage : sealing / manager (#3377)
+
+
 2.97.4     (2023-03-09)
 -----------------------
 
