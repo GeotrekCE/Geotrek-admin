@@ -426,7 +426,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         'source': 'gestion.membreProprietaire',
         'themes': 'presentation.typologiesPromoSitra.*',
         'labels': ['presentation.typologiesPromoSitra.*', 'localisation.environnements.*'],
-        'related_treks': 'liens.liensObjetsTouristiquesTypes',
         'networks': 'informationsEquipement.activites',
         'accessibilities': 'informationsEquipement.itineraire.naturesTerrain.*',
     }
@@ -466,7 +465,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         'geom': {'required': True},
     }
     non_fields = {
-        'attachments': 'illustrations'
+        'attachments': 'illustrations',
+        'trek_children': 'liens.liensObjetsTouristiquesTypes.*',
     }
 
     # Relevant default mapping considering practices in trekking data fixture.
@@ -621,6 +621,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     def end(self):
         self._finalize_related_treks_association()
+        super().end()
 
     def filter_eid(self, src, val):
         return str(val)
@@ -696,19 +697,15 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 val=difficulty_level[translation_src]
             )
 
-    def filter_related_treks(self, src, val):
+    def save_trek_children(self, src, val):
         liens = val
-        child_treks = []
         for lien in liens:
             if lien['type'] == 'PARCOURS_ETAPE':
                 child_trek = lien['objetTouristique']
                 self._related_treks_mapping[self.obj.id].append(child_trek['id'])
-                child_treks.append(lien['objetTouristique'])
-        return self.apply_filter(
-            dst='related_treks',
-            src=src,
-            val=[ct['id'] for ct in child_treks]
-        )
+
+        # Always return "No changes" because one cannot know until the end which children trek are actually imported
+        return False
 
     def filter_practice(self, src, val):
         activities = val
@@ -776,7 +773,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         tf = ApidaeTranslatedField(separator=', ')
         for nt in filtered_nt:
             tf.append(translated_value=nt)
-        self.apply_filter(
+        return self.apply_filter(
             dst='accessibility_covering',
             src=src,
             val=tf
@@ -802,7 +799,12 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             parent_trek = Trek.objects.get(pk=parent_id)
             order = 0
             for child_eid in children_eids:
-                child_trek = Trek.objects.get(eid=child_eid)
+                try:
+                    child_trek = Trek.objects.get(eid=child_eid)
+                except Trek.DoesNotExist:
+                    # It is possible that the child trek is not part of the import,
+                    # if so just ignore it and do not create the link.
+                    continue
                 otc, _ = OrderedTrekChild.objects.get_or_create(
                     parent=parent_trek,
                     child=child_trek

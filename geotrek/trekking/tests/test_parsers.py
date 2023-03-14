@@ -962,6 +962,16 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '321321', '123125'])
 
     @mock.patch('requests.get')
+    def test_it_handles_not_imported_child_trek(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('related_treks_with_one_not_imported.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 2)
+        Trek.objects.filter(eid='123123').exists()
+        Trek.objects.filter(eid='123124').exists()
+
+    @mock.patch('requests.get')
     def test_links_to_child_treks_are_set_with_changed_order_in_data(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get('related_treks_another_order.json')
 
