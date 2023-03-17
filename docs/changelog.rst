@@ -13,6 +13,7 @@ CHANGELOG
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
 - Fix: `delete=True` mode now works for APIDAE Trek parser
 - Fix target should not be ordonnable for interventions
+- Fix: filter geometries on right geometry types in synchro mobile
 
 **Improvements**
 
