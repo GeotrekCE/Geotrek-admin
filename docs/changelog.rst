@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix: trekparser allowed to create trek with other geometry than linestrings
 - Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
 - Fix permissions bypass structure was always needed on accessibility attachments (#3396)
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)

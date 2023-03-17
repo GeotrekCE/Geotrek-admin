@@ -94,8 +94,9 @@ class TrekParserFilterGeomTests(TestCase):
 
     def test_point(self):
         geom = Point(0, 0)
-        self.assertEqual(self.parser.filter_geom('geom', geom), None)
-        self.assertTrue(self.parser.warnings)
+        with self.assertRaisesRegex(RowImportError,
+                                    "Invalid geometry type for field 'geom'. Should be LineString, not Point"):
+            self.parser.filter_geom('geom', geom)
 
     def test_linestring(self):
         geom = LineString((0, 0), (0, 1), (1, 1), (1, 0))
@@ -112,6 +113,7 @@ class TrekParserFilterGeomTests(TestCase):
         geom = MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101)))
         self.assertEqual(self.parser.filter_geom('geom', geom),
                          LineString((0, 0), (0, 1), (100, 100), (100, 101)))
+
         self.assertTrue(self.parser.warnings)
 
 
