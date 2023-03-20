@@ -121,8 +121,8 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
                 points += path
             return points
         elif val.geom_type != 'LineString':
-            self.add_warning(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
-            return None
+            # We use RowImportError because geom has default value POINT(0 0)
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
         return val
 
 
