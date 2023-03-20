@@ -21,6 +21,7 @@ from django.utils import translation
 from django.utils.translation import gettext as _
 from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
+from geotrek.common.functions import GeometryType
 from geotrek.flatpages.models import FlatPage
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
@@ -130,7 +131,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync POIs of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'pois', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -142,7 +143,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'touristic_contents.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync contents of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'touristic_contents', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -154,7 +155,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'touristic_events.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync events of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'touristic_events', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -247,7 +248,7 @@ class Command(BaseCommand):
 
     def sync_trekking(self, lang):
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
-        treks = trekking_models.Trek.objects.existing().order_by('pk')
+        treks = trekking_models.Trek.objects.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING").existing().order_by('pk')
         treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
 
         if self.portal:
@@ -260,7 +261,7 @@ class Command(BaseCommand):
             self.sync_trek_touristic_contents(lang, trek)
             self.sync_trek_touristic_events(lang, trek)
             # Sync detail of children too
-            for child in trek.children:
+            for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
                 self.sync_geojson(
                     lang, TrekViewSet,
                     '{pk}/treks/{child_pk}.geojson'.format(pk=trek.pk, child_pk=child.pk),
@@ -294,17 +295,17 @@ class Command(BaseCommand):
         if not self.skip_tiles:
             self.sync_trek_tiles(trek, trekid_zipfile)
 
-        for poi in trek.published_pois:
+        for poi in trek.published_pois.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if poi.resized_pictures:
                 for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                     self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                          zipfile=trekid_zipfile)
-        for touristic_content in trek.published_touristic_contents:
+        for touristic_content in trek.published_touristic_contents.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if touristic_content.resized_pictures:
                 for picture, thdetail in touristic_content.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                     self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                          zipfile=trekid_zipfile)
-        for touristic_event in trek.published_touristic_events:
+        for touristic_event in trek.published_touristic_events.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if touristic_event.resized_pictures:
                 for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                     self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
@@ -313,7 +314,7 @@ class Command(BaseCommand):
             for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                 self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
-        for desk in trek.information_desks.all():
+        for desk in trek.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
@@ -323,10 +324,10 @@ class Command(BaseCommand):
             self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                            url_media, directory=url_trek, zipfile=trekid_zipfile)
         # Sync media of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             for picture, resized in child.resized_pictures:
                 self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
-            for desk in child.information_desks.all():
+            for desk in child.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
             for lang in self.languages:
                 child.prepare_elevation_chart(lang, self.referer)
@@ -337,7 +338,7 @@ class Command(BaseCommand):
         self.close_zip(trekid_zipfile, zipname_trekid)
 
     def sync_treks_media(self):
-        treks = trekking_models.Trek.objects.existing().filter(published=True).order_by('pk')
+        treks = trekking_models.Trek.objects.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING").existing().filter(published=True).order_by('pk')
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
