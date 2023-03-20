@@ -12,13 +12,16 @@ CHANGELOG
 - Fix permissions bypass structure was always needed on accessibility attachments (#3396)
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
 - Fix: `delete=True` mode now works for APIDAE Trek parser
-
+- Fix target should not be ordonnable for interventions
 
 **Improvements**
 
 - Add arguments loadsignage : sealing / manager (#3377)
 - Various minor improvements for APIDAE Trek parser
 
+**Performances**
+
+- Improve performance zoning filter interventions
 
 2.97.4     (2023-03-09)
 -----------------------
