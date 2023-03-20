@@ -11,6 +11,7 @@ CHANGELOG
 - Fix permissions bypass structure was always needed on accessibility attachments (#3396)
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
 - Fix: `delete=True` mode now works for APIDAE Trek parser
+- Fix missing insert and update date in fixtures for Sensitivity and Outdoor modules
 
 
 **Improvements**
