@@ -23,6 +23,11 @@ CHANGELOG
 
 - Improve performance zoning filter interventions
 
+**Documentation**
+
+- Update UML diagrams in documentation
+
+
 2.97.4     (2023-03-09)
 -----------------------
 
