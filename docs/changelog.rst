@@ -7,18 +7,22 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix: trekparser allowed to create trek with other geometry than linestrings
 - Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
 - Fix permissions bypass structure was always needed on accessibility attachments (#3396)
 - Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
 - Fix: `delete=True` mode now works for APIDAE Trek parser
 - Fix missing insert and update date in fixtures for Sensitivity and Outdoor modules
-
+- Fix target should not be ordonnable for interventions
 
 **Improvements**
 
 - Add arguments loadsignage : sealing / manager (#3377)
 - Various minor improvements for APIDAE Trek parser
 
+**Performances**
+
+- Improve performance zoning filter interventions
 
 2.97.4     (2023-03-09)
 -----------------------

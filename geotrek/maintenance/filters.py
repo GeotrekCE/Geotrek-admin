@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.conf import settings
+from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
 from django_filters import ChoiceFilter, MultipleChoiceFilter
 
@@ -16,6 +17,15 @@ from geotrek.zoning.models import City, District, RestrictedArea, RestrictedArea
 from .models import Intervention, Project
 
 
+class BboxInterventionFilterMixin:
+    def filter(self, qs, value):
+        if value:
+            value = value.transform(settings.SRID, clone=True)
+            return super().filter(qs, [value, ])
+        else:
+            return qs
+
+
 class PolygonInterventionFilterMixin:
     def get_geom(self, value):
         return value
@@ -23,18 +33,14 @@ class PolygonInterventionFilterMixin:
     def filter(self, qs, values):
         if not values:
             return qs
-        if not isinstance(values, list):
-            values = [values]
+        geom_intersect = GeometryCollection([self.get_geom(value) for value in values])
         interventions = []
-        for value in values:
-            geom = self.get_geom(value)
-            bbox = geom.transform(settings.SRID, clone=True)
-            for element in qs:
-                if element.target:
-                    if not element.target.geom or element.target.geom.intersects(bbox):
-                        interventions.append(element.pk)
-                elif not element.target and element.target_type:
+        for element in qs:
+            if element.target:
+                if not element.target.geom or element.target.geom.intersects(geom_intersect):
                     interventions.append(element.pk)
+            elif element.target_type:
+                interventions.append(element.pk)
 
         qs = qs.filter(pk__in=interventions).existing()
         return qs
@@ -82,7 +88,7 @@ class InterventionIntersectionFilterDistrict(PolygonInterventionFilterMixin,
         return value.geom
 
 
-class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
+class PolygonTopologyFilter(BboxInterventionFilterMixin, PolygonInterventionFilterMixin, PolygonFilter):
     pass
 
 
