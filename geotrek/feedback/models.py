@@ -151,7 +151,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         Trek,
         null=True,
         blank=True,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         verbose_name=_("Related trek"),
     )
     created_in_suricate = models.DateTimeField(
