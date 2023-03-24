@@ -20,6 +20,15 @@ CHANGELOG
 
 - Add arguments loadsignage : sealing / manager (#3377)
 - Various minor improvements for APIDAE Trek parser
+- The "near_xxx" API filters now use the topological link regarding topological objects. This will provide better performances for those endpoints when topologies are enabled. See Issues `#3472 <https://github.com/GeotrekCE/Geotrek-admin/issues/3472>`_ and `#3505 <https://github.com/GeotrekCE/Geotrek-admin/issues/3505>`_.
+
+**Minor changes**
+
+- The "trek" API filter on POI and SensitiveArea list views now provide the same treatment as "near_trek" and is marked as deprecated.
+- `/api/v2/sensitive_area/?trek=123` now returns an empty list when trek does not exist instead of 404 - Not Found.
+- `/api/v2/sensitive_area/` results are no longer sorted by ID when the "trek" filter is used.
+- `/api/v2/sensitive_area/?trek=123` now uses the configured intersection margin for sensitive areas (previously returned intersections w/o margin).
+- The "near_trek" API filter now removes from results the trek's excluded POIs.
 
 **Performances**
 
@@ -40,18 +49,6 @@ CHANGELOG
 
 2.97.3 (2023-02-28)
 -----------------------
-
-**Improvements**
-
-- The "near_xxx" API filters now use the topological link regarding topological objects. This will provide better performances for those endpoints when topologies are enabled. See Issues `#3472 <https://github.com/GeotrekCE/Geotrek-admin/issues/3472>`_ and `#3505 <https://github.com/GeotrekCE/Geotrek-admin/issues/3505>`_.
-
-**Minor changes**
-
-- The "trek" API filter on POI and SensitiveArea list views now provide the same treatment as "near_trek" and is marked as deprecated.
-- `/api/v2/sensitive_area/?trek=123` now returns an empty list when trek does not exist instead of 404 - Not Found.
-- `/api/v2/sensitive_area/` results are no longer sorted by ID when the "trek" filter is used.
-- `/api/v2/sensitive_area/?trek=123` now uses the configured intersection margin for sensitive areas (previously returned intersections w/o margin).
-- The "near_trek" API filter now removes from results the trek's excluded POIs.
 
 **Bug fixes**
 
