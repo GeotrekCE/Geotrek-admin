@@ -16,6 +16,7 @@ CHANGELOG
 - Fix target should not be ordonnable for interventions
 - Fix: filter geometries on right geometry types in synchro mobile
 - Fix: trek deletion was not possible without removing report link to this trek
+- Fix: duplication attachments
 
 **Improvements**
 
