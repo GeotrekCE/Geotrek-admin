@@ -132,31 +132,55 @@ Upgrade
 From Geotrek-admin >= 2.33
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To upgrade the whole server, including Geotrek-admin, run:
+Beforehand you shoud update your system's catalog:
 
 ::
 
    sudo apt-get update
-   sudo apt-get upgrade
 
 If your current version is <= 2.40.1 you should run instead:
 
 ::
 
    sudo apt-get update  --allow-releaseinfo-change
-   sudo apt-get upgrade
 
-To prevent upgrading Geotrek-admin with the whole distribution, you can run:
+To display the installed version and the latest upgradeable version, run:
 
 ::
 
-   sudo apt-mark hold geotrek-admin
+   apt list --all-versions geotrek-admin
 
-To upgrade only Geotrek-admin and its dependencies, run:
+To upgrade only geotrek-admin and its dependencies, run:
 
 ::
 
    sudo apt-get install geotrek-admin
+
+To upgrade geotrek-admin to a **specific version**, run:
+
+::
+
+   sudo apt-get install geotrek-admin=<version>
+
+For instance:
+
+::
+
+   sudo apt-get install geotrek-admin=2.97.4.ubuntu18.04
+
+or
+
+::
+
+   sudo apt-get install geotrek-admin=2.98.0.ubuntu20.04
+
+**Note:** all package versions remain available. Even when not listed with ``apt list``.
+
+Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
+
+::
+
+   sudo apt-mark hold geotrek-admin
 
 
 From Geotrek-admin <= 2.32
