@@ -25,7 +25,7 @@ RUN env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -
 COPY . ./
 WORKDIR /dpkg-build
 
-RUN sed -i -re "1s/..UNRELEASED/~$(lsb_release -cs)) $(lsb_release -cs)/" debian/changelog \
+RUN sed -i -re "1s/..UNRELEASED/.ubuntu$(lsb_release -rs)) $(lsb_release -cs)/" debian/changelog \
     && chmod a-x debian/geotrek.* \
     && dpkg-buildpackage -us -uc -b && mkdir -p /dpkg && cp -pl /geotrek[-_]* /dpkg \
     && dpkg-deb -I /dpkg/geotrek*.deb
