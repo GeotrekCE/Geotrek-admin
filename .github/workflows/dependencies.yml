@@ -52,7 +52,7 @@ jobs:
           pip-compile -q dev-requirements.in
 
       - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v13
+        uses: tj-actions/verify-changed-files@v14
         id: verify-changed-files
         with:
           files: |
