@@ -1,4 +1,8 @@
 env
 var
 build
-debian
+geotrek.egg-info
+node_modules
+.github
+.githooks
+dpkg

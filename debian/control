@@ -1,5 +1,8 @@
 Source: geotrek-admin
 Maintainer: Geotrek Team <support.geotrek@makina-corpus.com>
+Homepage: https://github.com/GeotrekCE/Geotrek-admin/
+Bugs: https://github.com/GeotrekCE/Geotrek-admin/issues/
+Vcs-Git: https://github.com/GeotrekCE/Geotrek-admin.git
 Section: misc
 Priority: optional
 Standards-Version: 3.9.2
@@ -36,4 +39,4 @@ Depends:
  convertit,
  python3.8 (>= 3.8),
  libvips
-Description: Manage and promote your tourist trails and activites
+Description: Manage and promote your trails and tourist content and activities.
