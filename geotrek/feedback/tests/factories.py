@@ -47,6 +47,11 @@ class WorkflowManagerFactory(factory.django.DjangoModelFactory):
         model = feedback_models.WorkflowManager
 
 
+class WorkflowDistrictFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.WorkflowDistrict
+
+
 class ReportFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.Report

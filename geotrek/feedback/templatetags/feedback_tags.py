@@ -8,11 +8,6 @@ register = template.Library()
 
 
 @register.simple_tag
-def suricate_management_enabled():
-    return settings.SURICATE_MANAGEMENT_ENABLED
-
-
-@register.simple_tag
 def app_title():
     return settings.TITLE
 

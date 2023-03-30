@@ -26,6 +26,7 @@ CHANGELOG
 - Add arguments loadsignage : sealing / manager (#3377)
 - Various minor improvements for APIDAE Trek parser
 - The "near_xxx" API filters now use the topological link regarding topological objects. This will provide better performances for those endpoints when topologies are enabled. See Issues `#3472 <https://github.com/GeotrekCE/Geotrek-admin/issues/3472>`_ and `#3505 <https://github.com/GeotrekCE/Geotrek-admin/issues/3505>`_.
+- Enable using Suricate workflow without moderation steps
 
 **Minor changes**
 

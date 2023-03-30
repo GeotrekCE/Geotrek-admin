@@ -32,7 +32,6 @@ from geotrek.maintenance.tests.factories import (
 from . import factories as feedback_factories
 from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
                                  test_for_all_suricate_modes,
-                                 test_for_management_mode,
                                  test_for_report_and_basic_modes,
                                  test_for_workflow_mode)
 
@@ -472,7 +471,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
 
     @test_for_report_and_basic_modes
-    @test_for_management_mode
     def test_can_delete_report_intervention(self):
         self.client.force_login(user=self.admin)
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
@@ -487,17 +485,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("delete", response.content.decode("utf-8"))
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
-
-    @test_for_management_mode
-    def test_normal_user_sees_everything_2(self):
-        self.client.force_login(user=self.normal_user)
-        response = self.client.get(reverse('feedback:report_list'), follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(reverse("feedback:report-drf-list",
-                                           format="geojson"),
-                                   data={"status": self.classified_status.pk})
-        self.assertEqual(len(response.json()['features']), 3)
 
     @test_for_workflow_mode
     def test_csv_superuser_sees_emails(self):
