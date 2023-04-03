@@ -280,7 +280,7 @@ pytz==2022.7.1
     #   drf-yasg
 pyvips==2.2.1
     # via large-image-source-vips
-rcssmin==1.1.0
+rcssmin==1.1.1
     # via django-compressor
 redis==4.5.3
     # via geotrek (setup.py)
@@ -290,7 +290,7 @@ requests==2.28.2
     #   django-embed-video
     #   landez
     #   mapentity
-rjsmin==1.2.0
+rjsmin==1.2.1
     # via django-compressor
 ruamel-yaml==0.17.21
     # via drf-yasg
