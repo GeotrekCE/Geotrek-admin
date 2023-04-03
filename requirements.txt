@@ -306,7 +306,6 @@ six==1.16.0
     #   django-modeltranslation
     #   html5lib
     #   munch
-    #   pymemcache
     #   zodb
 soupsieve==2.3.2
     # via beautifulsoup4
