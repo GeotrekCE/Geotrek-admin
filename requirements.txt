@@ -259,7 +259,7 @@ pycparser==2.21
     # via cffi
 pygal==3.0.0
     # via geotrek (setup.py)
-pymemcache==3.5.2
+pymemcache==4.0.0
     # via geotrek (setup.py)
 pyparsing==3.0.8
     # via packaging
@@ -307,7 +307,6 @@ six==1.16.0
     #   django-modeltranslation
     #   html5lib
     #   munch
-    #   pymemcache
     #   zodb
 soupsieve==2.3.2
     # via beautifulsoup4
