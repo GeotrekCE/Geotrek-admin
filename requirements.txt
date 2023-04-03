@@ -16,7 +16,7 @@ attrs==22.2.0
     # via fiona
 beautifulsoup4==4.11.1
     # via mapentity
-billiard==3.6.4.0
+billiard==4.1.0
     # via celery
 btrees==4.10.0
     # via zodb
