@@ -24,17 +24,20 @@ class Command(BaseCommand):
 
         if '.' in options['parser']:
             # Python import syntax
-            Parser = import_string(options['parser'])
+            try:
+                Parser = import_string(options['parser'])
+            except Exception:
+                raise CommandError("Failed to import parser class '{0}'".format(options['parser']))
         else:
             # just a class name
-            module_path = join(settings.VAR_DIR, 'conf/parsers.py')
-            module_name = 'parsers'
-            class_name = options['parser']
-            spec = importlib.util.spec_from_file_location(module_name, module_path)
-            module = importlib.util.module_from_spec(spec)
-            Parser = getattr(module, class_name)
             try:
+                module_path = join(settings.VAR_DIR, 'conf/parsers.py')
+                module_name = 'parsers'
+                class_name = options['parser']
+                spec = importlib.util.spec_from_file_location(module_name, module_path)
+                module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
+                Parser = getattr(module, class_name)
             except FileNotFoundError:
                 raise CommandError("Failed to import parser file '{0}'".format(module_path))
 
