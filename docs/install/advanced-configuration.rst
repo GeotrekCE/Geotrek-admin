@@ -323,24 +323,25 @@ You can insert licenses of attachments with this command :
 Outdoor
 -------
 
-In order to enable outdoor module, in the custom settings file,
+In order to enable Outdoor module, in the custom settings file,
 add the following code:
 
 .. code-block :: python
 
-    # Enable outdoor module
+    # Enable Outdoor module
     INSTALLED_APPS += ('geotrek.outdoor', )
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
-You can also insert outdoor minimal data:
+You can also insert Outdoor minimal data:
 
 ::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
+After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
 
-Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
 You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
 https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
