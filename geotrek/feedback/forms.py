@@ -9,14 +9,6 @@ from geotrek.common.forms import CommonForm
 
 from .models import PredefinedEmail, Report, ReportStatus, TimerEvent, WorkflowDistrict, WorkflowManager
 
-# This dict stores constraints for status changes in management workflow
-# {'current_status': ['allowed_next_status', 'other_allowed_status']}
-# Empty status should not be changed from this form
-SURICATE_WORKFLOW_STEPS = {
-    'filed': ['classified', 'filed', 'rejected'],
-    'solved_intervention': ['solved', 'solved_intervention'],
-}
-
 
 class ReportForm(CommonForm):
     geomfields = ["geom"]
@@ -51,12 +43,26 @@ class ReportForm(CommonForm):
         model = Report
 
     def __init__(self, *args, **kwargs):
+        # This dict stores constraints for status changes in management workflow
+        # {'current_status': ['allowed_next_status', 'other_allowed_status']}
+        # Empty status should not be changed from this form
+        suricate_workflow_steps = {
+            'filed': ['classified', 'filed', 'rejected'],
+            'solved_intervention': ['solved', 'solved_intervention'],
+        }
+        if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+            suricate_workflow_steps = {
+                'filed': ['classified', 'filed', 'rejected', 'waiting'],
+                'solved_intervention': ['solved', 'solved_intervention'],
+            }
         super().__init__(*args, **kwargs)
+        if settings.SURICATE_WORKFLOW_ENABLED and settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+            self.user = kwargs['user']
         self.fields["geom"].required = True
         # Store current status
         if self.instance.pk:
             self.old_status = self.instance.status
-        if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
+        if settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
             if self.instance.pk:  # On updates
                 # Hide fields that are handled automatically in these modes
                 self.fields["email"].widget = HiddenInput()
@@ -68,7 +74,7 @@ class ReportForm(CommonForm):
                     self.old_supervisor = self.instance.assigned_user
                     # Add fields that are used only in Workflow mode
                     # status
-                    next_statuses = SURICATE_WORKFLOW_STEPS.get(self.instance.status.identifier, [self.instance.status.identifier])
+                    next_statuses = suricate_workflow_steps.get(self.instance.status.identifier, [self.instance.status.identifier])
                     self.fields["status"].empty_label = None
                     self.fields["status"].queryset = ReportStatus.objects.filter(identifier__in=next_statuses)
                     # assigned_user
@@ -97,6 +103,8 @@ class ReportForm(CommonForm):
                     right_after_message_sentinel_index = self.fieldslayout[0].fields.index('message_sentinel') + 1
                     self.fieldslayout[0].insert(right_after_message_sentinel_index, 'message_administrators')
                     self.fields["assigned_user"].empty_label = None
+                    if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+                        self.fields['assigned_user'].widget = HiddenInput()
             else:
                 # On new reports
                 self.fields["status"].widget = HiddenInput()
@@ -115,13 +123,19 @@ class ReportForm(CommonForm):
         creation = not self.instance.pk
         report = super().save(self, *args, **kwargs)
         if (not creation) and settings.SURICATE_WORKFLOW_ENABLED:
+            waiting_status = ReportStatus.objects.get(identifier='waiting')
+            # Assign report through moderation step
             if self.old_status.identifier in ['filed'] and report.assigned_user and report.assigned_user != WorkflowManager.objects.first().user:
                 msg = self.cleaned_data.get('message_supervisor', "")
                 report.notify_assigned_user(msg)
-                waiting_status = ReportStatus.objects.get(identifier='waiting')
                 report.status = waiting_status
                 report.save()
                 report.lock_in_suricate()
+                TimerEvent.objects.create(step=waiting_status, report=report)
+            # Self-assign report without moderation step
+            elif self.old_status.identifier in ['filed'] and not report.assigned_user and report.status.identifier in ['waiting']:
+                report.assigned_user = self.user
+                report.save()
                 TimerEvent.objects.create(step=waiting_status, report=report)
             if self.old_status.identifier != report.status.identifier or self.old_supervisor != report.assigned_user:
                 msg_sentinel = self.cleaned_data.get('message_sentinel', "")

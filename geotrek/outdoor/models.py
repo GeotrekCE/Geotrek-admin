@@ -16,7 +16,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, queryset_or_model
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
@@ -303,23 +303,34 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         super().save(*args, **kwargs)
         self.refresh_from_db()
 
+    @classmethod
+    def outdoor_sites(cls, outdoor_obj, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def topology_sites(cls, topology, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=topology)
+
+    @classmethod
+    def tourism_sites(cls, tourism_obj, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-TouristicContent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-TouristicEvent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Topology.add_property('sites', Site.topology_sites, _("Sites"))
+TouristicContent.add_property('sites', Site.tourism_sites, _("Sites"))
+TouristicEvent.add_property('sites', Site.tourism_sites, _("Sites"))
 Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
-Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Site.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
-Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+Site.add_property('sites', Site.outdoor_sites, _("Sites"))
+Site.add_property('treks', Trek.outdoor_treks, _("Treks"))
+Site.add_property('services', Service.outdoor_services, _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
-Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
-Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
-Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
-Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Site.add_property('infrastructures', Infrastructure.outdoor_infrastructures, _("Infrastructures"))
+Site.add_property('signages', Signage.outdoor_signages, _("Signages"))
+Site.add_property('touristic_contents', TouristicContent.outdoor_touristic_contents, _("Touristic contents"))
+Site.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
 
 
@@ -450,21 +461,35 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekM
             return geojson
         return None
 
+    @classmethod
+    def outdoor_courses(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def topology_courses(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology)
+
+    @classmethod
+    def tourism_courses(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-TouristicContent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Topology.add_property('courses', Course.topology_courses, _("Courses"))
+TouristicContent.add_property('courses', Course.tourism_courses, _("Courses"))
+TouristicEvent.add_property('courses', Course.tourism_courses, _("Courses"))
 Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
-Course.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Course.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
-Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+Course.add_property('sites', Site.outdoor_sites, _("Sites"))
+Course.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Course.add_property('treks', Trek.outdoor_treks, _("Treks"))
+Course.add_property('services', Service.outdoor_services, _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
-Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
-Course.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
-Course.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
-Course.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Course.add_property('infrastructures', Infrastructure.outdoor_infrastructures, _("Infrastructures"))
+Course.add_property('signages', Signage.outdoor_signages, _("Signages"))
+Course.add_property('touristic_contents', TouristicContent.outdoor_touristic_contents, _("Touristic contents"))
+Course.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
+
+Site.add_property('courses', Course.outdoor_courses, _("Parcours"))

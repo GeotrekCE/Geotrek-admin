@@ -3,7 +3,9 @@
     "fields": {
         "name_en": "Land",
         "name_fr": "Terrestre",
-        "name": "Terrestre"
+        "name": "Terrestre",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     },
     "model": "sensitivity.sportpractice",
     "pk": 1
@@ -12,7 +14,9 @@
     "fields": {
         "name_en": "Vertical",
         "name_fr": "Vertical",
-        "name": "Vertical"
+        "name": "Vertical",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     },
     "model": "sensitivity.sportpractice",
     "pk": 2
@@ -21,7 +25,9 @@
     "fields": {
         "name_en": "Aerial",
         "name_fr": "A\u00e9rien",
-        "name": "A\u00e9rien"
+        "name": "A\u00e9rien",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     },
     "model": "sensitivity.sportpractice",
     "pk": 3

@@ -151,7 +151,6 @@ You can find a detailled explanation on the workflow here : https://github.com/G
 .. code-block :: python
 
     SURICATE_WORKFLOW_ENABLED = True
-    SURICATE_MANAGEMENT_ENABLED = True
 
     SURICATE_MANAGEMENT_SETTINGS = {
         'URL': '<Suricate Management API Url>',
@@ -161,7 +160,8 @@ You can find a detailled explanation on the workflow here : https://github.com/G
     }
 
     SURICATE_WORKFLOW_SETTINGS = {
-        "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area."
+        "SURICATE_RELOCATED_REPORT_MESSAGE": "This report is not located in Workflow responsiblity area.",
+        "SKIP_MANAGER_MODERATION": False
     }
 
 You can use the following command to test your connection settings:
@@ -192,7 +192,7 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
 - Go to the Admin Site and 
-    - select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
+    - if you want to include the moderation steps (`SKIP_MANAGER_MODERATION = False`), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
     - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
     - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
     - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)

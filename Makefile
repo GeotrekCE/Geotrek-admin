@@ -10,6 +10,14 @@ build:
 build-no-cache:
 	docker build -t geotrek --no-cache .
 
+build_deb:
+	docker pull $(DISTRO)
+	docker build -t geotrek_deb -f ./docker/Dockerfile.debian.builder --build-arg DISTRO=$(DISTRO) .
+	docker run --name geotrek_deb_run -t geotrek_deb bash -c "exit"
+	docker cp geotrek_deb_run:/dpkg ./
+	docker stop geotrek_deb_run
+	docker rm geotrek_deb_run
+
 serve:
 	$(docker_compose) up
 

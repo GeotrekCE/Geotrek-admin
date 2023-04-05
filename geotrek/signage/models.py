@@ -8,7 +8,9 @@ from django.conf import settings
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
+from geotrek.common.utils import (
+    classproperty, format_coordinates, collate_c, spatial_reference, intersecting, queryset_or_model, queryset_or_all_objects
+)
 
 from geotrek.core.models import Topology, Path
 
@@ -78,17 +80,26 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
             return cls.objects.existing().filter(geom__intersects=area)
 
     @classmethod
-    def topology_signages(cls, topology):
+    def topology_signages(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
         return qs
 
     @classmethod
     def published_topology_signages(cls, topology):
         return cls.topology_signages(topology).filter(published=True)
+
+    @classmethod
+    def outdoor_signages(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def tourism_signages(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
 
     @property
     def order_blades(self):
@@ -220,7 +231,7 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 
     @property
     def geom(self):
-        return self.topology.geom
+        return self.signage.geom
 
     @geom.setter
     def geom(self, value):

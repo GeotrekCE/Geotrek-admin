@@ -59,3 +59,4 @@ docs/_build/
 /debian/geotrek-admin.prerm.debhelper
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
+/dpkg/

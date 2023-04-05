@@ -7,7 +7,7 @@ from django.conf import settings
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.utils import classproperty
+from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
 from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
                                           GeotrekMapEntityMixin)
 from geotrek.core.models import Topology, Path
@@ -174,17 +174,26 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
             return cls.objects.existing().filter(geom__intersects=area)
 
     @classmethod
-    def topology_infrastructures(cls, topology):
+    def topology_infrastructures(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
         return qs
 
     @classmethod
     def published_topology_infrastructure(cls, topology):
         return cls.topology_infrastructures(topology).filter(published=True)
+
+    @classmethod
+    def tourism_infrastructures(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
+    @classmethod
+    def outdoor_infrastructures(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

@@ -37,6 +37,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['target']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
@@ -180,7 +181,7 @@ class InterventionViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'name')
         else:
-            qs = qs.select_related("stake", "status", "type")
+            qs = qs.select_related("stake", "status", "type", "target_type").prefetch_related('target')
         return qs
 
 

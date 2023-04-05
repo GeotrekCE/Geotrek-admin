@@ -2,8 +2,55 @@
 CHANGELOG
 =========
 
-2.97.3+dev (2023-02-28)
+2.98.0+dev (XXXX-XX-XX)
 -----------------------
+
+2.98.0     (2023-03-27)
+-----------------------
+
+**Bug fixes**
+
+- Fix: trekparser allowed to create trek with other geometry than linestrings
+- Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
+- Fix permissions bypass structure was always needed on accessibility attachments (#3396)
+- Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
+- Fix: `delete=True` mode now works for APIDAE Trek parser
+- Fix missing insert and update date in fixtures for Sensitivity and Outdoor modules
+- Fix target should not be ordonnable for interventions
+- Fix: filter geometries on right geometry types in synchro mobile
+- Fix: trek deletion was not possible without removing report link to this trek
+- Fix: duplication attachments
+
+**Improvements**
+
+- Add arguments loadsignage : sealing / manager (#3377)
+- Various minor improvements for APIDAE Trek parser
+- The "near_xxx" API filters now use the topological link regarding topological objects. This will provide better performances for those endpoints when topologies are enabled. See Issues `#3472 <https://github.com/GeotrekCE/Geotrek-admin/issues/3472>`_ and `#3505 <https://github.com/GeotrekCE/Geotrek-admin/issues/3505>`_.
+- Enable using Suricate workflow without moderation steps
+
+**Minor changes**
+
+- The "trek" API filter on POI and SensitiveArea list views now provide the same treatment as "near_trek" and is marked as deprecated.
+- `/api/v2/sensitive_area/?trek=123` now returns an empty list when trek does not exist instead of 404 - Not Found.
+- `/api/v2/sensitive_area/` results are no longer sorted by ID when the "trek" filter is used.
+- `/api/v2/sensitive_area/?trek=123` now uses the configured intersection margin for sensitive areas (previously returned intersections w/o margin).
+- The "near_trek" API filter now removes from results the trek's excluded POIs.
+
+**Performances**
+
+- Improve performance zoning filter interventions
+
+**Documentation**
+
+- Update UML diagrams in documentation
+
+
+2.97.4     (2023-03-09)
+-----------------------
+
+**Performances**
+
+- Fix interventions list loading
 
 
 2.97.3 (2023-02-28)

@@ -205,19 +205,27 @@ class EntityAttachmentTestCase(TestCase):
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
 
-class UploadAddAttachmentTestCase(TestCase):
-
+class SetUpTestDataMixin:
     @classmethod
     def setUpTestData(cls):
-        cls.user = SuperUserFactory.create()
+        cls.superuser = SuperUserFactory.create()
         cls.object = TrekFactory.create()
+        cls.user = UserFactory()
+        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+            cls.user.user_permissions.add(perm.pk)
+        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+        cls.object_other_structure = TrekFactory.create(structure=StructureFactory.create())
+        cls.attachment_other_structure = AttachmentAccessibilityFactory.create(content_object=cls.object_other_structure)
+
+
+class UploadAddAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def setUp(self):
-        self.client.force_login(user=self.user)
+        self.client.force_login(user=self.superuser)
 
     def attachmentPostData(self):
         data = {
-            'creator': self.user,
+            'creator': self.superuser,
             'title': "A title",
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
@@ -231,37 +239,37 @@ class UploadAddAttachmentTestCase(TestCase):
                                     data=self.attachmentPostData())
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(3, AccessibilityAttachment.objects.count())
+
+        self.client.force_login(user=self.user)
+        response = self.client.post(add_url_for_obj(self.object_other_structure),
+                                    data=self.attachmentPostData())
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
+        self.assertEqual(3, AccessibilityAttachment.objects.count())
 
     def test_upload_creates_attachment(self):
         data = self.attachmentPostData()
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="A title")
         self.assertEqual(att.title, data['title'])
         self.assertEqual(att.legend, data['legend'])
 
     def test_title_gives_name_to_file(self):
         data = self.attachmentPostData()
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="A title")
         self.assertTrue('a-title' in att.attachment_accessibility_file.name)
 
     def test_filename_is_used_if_no_title(self):
         data = self.attachmentPostData()
         data['title'] = ''
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="")
         self.assertTrue('face' in att.attachment_accessibility_file.name)
 
 
-class UploadUpdateAttachmentTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = SuperUserFactory.create()
-        cls.object = TrekFactory.create()
-        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
-
-    def setUp(self):
-        self.client.force_login(user=self.user)
+class UploadUpdateAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def attachmentPostData(self):
         data = {
@@ -275,11 +283,19 @@ class UploadUpdateAttachmentTestCase(TestCase):
         return data
 
     def test_get_update_url(self):
+        self.client.force_login(user=self.superuser)
         response = self.client.get(update_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'value="Update attachment"', response.content)
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
 
     def test_post_update_url(self):
+        self.client.force_login(user=self.superuser)
         response = self.client.post(update_url_for_obj(self.attachment),
                                     data=self.attachmentPostData(),
                                     )
@@ -287,21 +303,27 @@ class UploadUpdateAttachmentTestCase(TestCase):
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
         self.attachment.refresh_from_db()
         self.assertEqual(self.attachment.legend, "A legend")
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
 
 
-class UploadDeleteAttachmentTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.object = TrekFactory.create()
-        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+class UploadDeleteAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def test_get_delete_with_perms_url(self):
         self.user = SuperUserFactory.create()
-        self.client.force_login(user=self.user)
+        self.client.force_login(user=self.superuser)
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
-        self.assertEqual(0, AccessibilityAttachment.objects.count())
+        self.assertEqual(1, AccessibilityAttachment.objects.count())
+
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 200)
 
     @mock.patch('django.contrib.auth.models.PermissionsMixin.has_perm')
     def test_get_delete_without_perms_url(self, mocke):
@@ -313,7 +335,7 @@ class UploadDeleteAttachmentTestCase(TestCase):
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
-        self.assertEqual(1, AccessibilityAttachment.objects.count())
+        self.assertEqual(2, AccessibilityAttachment.objects.count())
         response = self.client.get(delete_url_for_obj(self.attachment), follow=True)
         self.assertIn(b'You are not allowed to delete this attachment.', response.content)
 

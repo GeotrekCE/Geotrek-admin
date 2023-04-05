@@ -94,8 +94,9 @@ class TrekParserFilterGeomTests(TestCase):
 
     def test_point(self):
         geom = Point(0, 0)
-        self.assertEqual(self.parser.filter_geom('geom', geom), None)
-        self.assertTrue(self.parser.warnings)
+        with self.assertRaisesRegex(RowImportError,
+                                    "Invalid geometry type for field 'geom'. Should be LineString, not Point"):
+            self.parser.filter_geom('geom', geom)
 
     def test_linestring(self):
         geom = LineString((0, 0), (0, 1), (1, 1), (1, 0))
@@ -112,6 +113,7 @@ class TrekParserFilterGeomTests(TestCase):
         geom = MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101)))
         self.assertEqual(self.parser.filter_geom('geom', geom),
                          LineString((0, 0), (0, 1), (100, 100), (100, 101)))
+
         self.assertTrue(self.parser.warnings)
 
 
@@ -960,6 +962,16 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn(parent_trek, child_trek_2.parents.all())
         self.assertIn(parent_trek, child_trek_3.parents.all())
         self.assertEqual(list(parent_trek.children.values_list('eid', flat=True).all()), ['123124', '321321', '123125'])
+
+    @mock.patch('requests.get')
+    def test_it_handles_not_imported_child_trek(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get('related_treks_with_one_not_imported.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
+
+        self.assertEqual(Trek.objects.count(), 2)
+        Trek.objects.filter(eid='123123').exists()
+        Trek.objects.filter(eid='123124').exists()
 
     @mock.patch('requests.get')
     def test_links_to_child_treks_are_set_with_changed_order_in_data(self, mocked_get):
