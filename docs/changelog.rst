@@ -5,6 +5,11 @@ CHANGELOG
 2.98.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix: Remove user group creation in Outdoor fixture (#3524)
+
+
 2.98.0     (2023-03-27)
 -----------------------
 

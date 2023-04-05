@@ -1,19 +1,5 @@
 [
 {
-    "model": "auth.group",
-    "pk": 8,
-    "fields": {
-        "name": "Outdoor",
-        "permissions": [
-            ["add_site", "outdoor", "site"],
-            ["change_site", "outdoor", "site"],
-            ["delete_site", "outdoor", "site"],
-            ["read_site", "outdoor", "site"],
-            ["export_site", "outdoor", "site"]
-        ]
-    }
-},
-{
     "model": "outdoor.sector",
     "pk": 1,
     "fields": {
