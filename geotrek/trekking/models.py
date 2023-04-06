@@ -1,39 +1,43 @@
-import os
 import logging
+import os
 
+import simplekml
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
+from django.contrib.gis.db.models.functions import LineLocatePoint, Transform
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
-
-import simplekml
-
-from mapentity.serializers import plain_text
+from django.utils.translation import get_language, gettext
+from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
+from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
-from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.utils import intersecting, classproperty, queryset_or_model, queryset_or_all_objects
-from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
-from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
+from geotrek.common.mixins.models import (GeotrekMapEntityMixin,
+                                          OptionalPictogramMixin,
+                                          PictogramMixin, PicturesMixin,
+                                          PublishableMixin,
+                                          TimeStampedModelMixin,
+                                          get_uuid_duplication)
+from geotrek.common.models import (AccessibilityAttachment, RatingMixin,
+                                   RatingScaleMixin, ReservationSystem, Theme)
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.templatetags import geotrek_tags
-
+from geotrek.common.utils import (classproperty, intersecting,
+                                  queryset_or_all_objects, queryset_or_model)
+from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
-
-
-from colorfield.fields import ColorField
-
-from geotrek.trekking.managers import TrekOrderedChildManager, TrekManager, TrekRelationshipManager, WebLinkManager, \
-    POIManager, ServiceManager
+from geotrek.trekking.managers import (POIManager, ServiceManager, TrekManager,
+                                       TrekOrderedChildManager,
+                                       TrekRelationshipManager, WebLinkManager)
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +113,12 @@ class Rating(RatingMixin):
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
+
+
+@receiver(pre_delete, sender=RatingScale)
+def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
+    # RatingScale are deleted when Practices are deleted
+    log_cascade_deletion(sender, instance, Rating, 'scale')
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin):
