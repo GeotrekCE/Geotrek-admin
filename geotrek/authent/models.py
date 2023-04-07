@@ -71,7 +71,7 @@ class StructureOrNoneRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure or None entity
     """
-    structure = models.ForeignKey(Structure, on_delete=models.SET_NULL,
+    structure = models.ForeignKey(Structure, on_delete=models.PROTECT,
                                   verbose_name=_("Related structure"), blank=True, null=True)
 
     check_structure_in_forms = True
