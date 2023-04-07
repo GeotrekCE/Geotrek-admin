@@ -7,6 +7,8 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 from django.contrib.postgres.indexes import GistIndex
 from django.db.models import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
@@ -14,6 +16,7 @@ from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
                                           GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.models import Organism
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
@@ -29,7 +32,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
-    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
+    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.PROTECT)
     target_id = models.PositiveIntegerField(blank=True, null=True)
     target = GenericForeignKey('target_type', 'target_id')
 
@@ -398,7 +401,7 @@ class ManDay(DuplicateMixin, models.Model):
 
     nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE)
-    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), on_delete=models.CASCADE)
+    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("Manday")
@@ -410,6 +413,12 @@ class ManDay(DuplicateMixin, models.Model):
 
     def __str__(self):
         return str(self.nb_days)
+
+
+@receiver(pre_delete, sender=Intervention)
+def log_cascade_deletion_from_manday_intervention(sender, instance, using, **kwargs):
+    # ManDays are deleted when Interventions are deleted
+    log_cascade_deletion(sender, instance, ManDay, 'intervention')
 
 
 class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, TimeStampedModelMixin,
@@ -601,6 +610,12 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
         return _("Add a new project")
 
 
+@receiver(pre_delete, sender=Project)
+def log_cascade_deletion_from_intervention_project(sender, instance, using, **kwargs):
+    # Intervention are deleted when Project are deleted
+    log_cascade_deletion(sender, instance, Intervention, 'project')
+
+
 Path.add_property('projects', lambda self: Project.path_projects(self), _("Projects"))
 Topology.add_property('projects', lambda self: Project.topology_projects(self), _("Projects"))
 
@@ -662,3 +677,9 @@ class Funding(DuplicateMixin, models.Model):
 
     def __str__(self):
         return "%s : %s" % (self.project, self.amount)
+
+
+@receiver(pre_delete, sender=Project)
+def log_cascade_deletion_from_funding_project(sender, instance, using, **kwargs):
+    # Fundings are deleted when Projects are deleted
+    log_cascade_deletion(sender, instance, Funding, 'project')

@@ -7,6 +7,8 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
@@ -18,6 +20,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import ReservationSystem, Theme
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting, classproperty, queryset_or_model
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
@@ -153,6 +156,12 @@ GEOMETRY_TYPES = Choices(
 )
 
 
+@receiver(pre_delete, sender=InformationDeskType)
+def log_cascade_deletion_from_infodesk_type(sender, instance, using, **kwargs):
+    # InformationDesk are deleted when InformationDeskTypes are deleted
+    log_cascade_deletion(sender, instance, InformationDesk, 'type')
+
+
 class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
@@ -196,6 +205,12 @@ class TouristicContentType(OptionalPictogramMixin):
 
     def __str__(self):
         return self.label
+
+
+@receiver(pre_delete, sender=TouristicContentCategory)
+def log_cascade_deletion_from_touristiccontenttype_category(sender, instance, using, **kwargs):
+    # TouristicContentTypes are deleted when TouristicContentCategories are deleted
+    log_cascade_deletion(sender, instance, TouristicContentType, 'category')
 
 
 class TouristicContentType1(TouristicContentType):
@@ -532,7 +547,7 @@ class TouristicEventParticipantCategory(TimeStampedModelMixin):
 
 class TouristicEventParticipantCount(TimeStampedModelMixin):
     count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
-    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.CASCADE, related_name="participants")
+    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.PROTECT, related_name="participants")
     event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")
 
     def __str__(self):

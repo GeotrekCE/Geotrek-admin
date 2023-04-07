@@ -1,12 +1,15 @@
 import os
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
 from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
                                           GeotrekMapEntityMixin)
@@ -204,6 +207,12 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
         for trek in self.treks.all():
             trek.save()
         super().delete(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_infrastructure_topology(sender, instance, using, **kwargs):
+    # Infrastructures are deleted when topologies (from BaseInfrastructure) are deleted
+    log_cascade_deletion(sender, instance, Infrastructure, 'topo_object')
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))

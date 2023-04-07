@@ -56,7 +56,7 @@ class AccessibilityAttachment(models.Model):
 
     objects = AccessibilityAttachmentManager()
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -323,7 +323,7 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     geom = gis_models.PointField(verbose_name=_("Location"),
                                  srid=settings.SRID)
     object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     content_object = GenericForeignKey('content_type', 'object_id')
     annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

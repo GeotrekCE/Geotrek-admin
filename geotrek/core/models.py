@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+from geotrek.common.signals import log_cascade_deletion
 import simplekml
 import uuid
 from django.conf import settings
@@ -12,6 +13,8 @@ from django.core.mail import mail_managers
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -824,6 +827,18 @@ class PathAggregation(models.Model):
         ordering = ['order', ]
 
 
+@receiver(pre_delete, sender=Path)
+def log_cascade_deletion_from_pathaggregation_path(sender, instance, using, **kwargs):
+    # PathAggregation are deleted when Path are deleted
+    log_cascade_deletion(sender, instance, PathAggregation, 'path')
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_pathaggregation_topology(sender, instance, using, **kwargs):
+    # PathAggregation are deleted when Topology are deleted
+    log_cascade_deletion(sender, instance, PathAggregation, 'topo_object')
+
+
 class PathSource(StructureOrNoneRelated):
     source = models.CharField(verbose_name=_("Source"), max_length=50)
 
@@ -968,6 +983,12 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
         return kml.kml()
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_trail_topology(sender, instance, using, **kwargs):
+    # Trail are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Trail, 'topo_object')
+
+
 class TrailCategory(StructureOrNoneRelated):
     """Trail category"""
     label = models.CharField(verbose_name=_("Name"), max_length=128)
@@ -1047,6 +1068,12 @@ class CertificationTrail(StructureOrNoneRelated):
 
     def __str__(self):
         return f"{self.certification_label} / {self.certification_status}"
+
+
+@receiver(pre_delete, sender=Trail)
+def log_cascade_deletion_from_certificationtrail_trail(sender, instance, using, **kwargs):
+    # CertificationTrail are deleted when Trails are deleted
+    log_cascade_deletion(sender, instance, CertificationTrail, 'trail')
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

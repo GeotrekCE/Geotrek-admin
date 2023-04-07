@@ -1,8 +1,11 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.common.mixins.models import GeotrekMapEntityMixin
@@ -84,6 +87,12 @@ class PhysicalEdge(GeotrekMapEntityMixin, Topology):
         return cls.overlapping(topology).select_related('physical_type')
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_physicaledge_topology(sender, instance, using, **kwargs):
+    # PhysicalEdges are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, PhysicalEdge, 'topo_object')
+
+
 Path.add_property('physical_edges', PhysicalEdge.path_physicals, _("Physical edges"))
 Topology.add_property('physical_edges', PhysicalEdge.topology_physicals, _("Physical edges"))
 Intervention.add_property('physical_edges', lambda self: self.target.physical_edges if self.target and hasattr(self.target, 'physical_edges') else [], _("Physical edges"))
@@ -156,6 +165,12 @@ class LandEdge(GeotrekMapEntityMixin, Topology):
         return cls.overlapping(topology).select_related('land_type')
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_landedge_topology(sender, instance, using, **kwargs):
+    # LandEdges are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, LandEdge, 'topo_object')
+
+
 Path.add_property('land_edges', LandEdge.path_lands, _("Land edges"))
 Topology.add_property('land_edges', LandEdge.topology_lands, _("Land edges"))
 Intervention.add_property('land_edges', lambda self: self.target.land_edges if self.target and hasattr(self.target, 'land_edges') else [], _("Land edges"))
@@ -209,6 +224,12 @@ class CompetenceEdge(GeotrekMapEntityMixin, Topology):
     @classmethod
     def topology_competences(cls, topology):
         return cls.overlapping(Topology.objects.get(pk=topology.pk)).select_related('organization')
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_competenceedge_topology(sender, instance, using, **kwargs):
+    # CompetenceEdges are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, CompetenceEdge, 'topo_object')
 
 
 Path.add_property('competence_edges', CompetenceEdge.path_competences, _("Competence edges"))
@@ -266,6 +287,12 @@ class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
         return cls.overlapping(topology).select_related('organization')
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_workmanagementedge_topology(sender, instance, using, **kwargs):
+    # WorkManagementEdges are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, WorkManagementEdge, 'topo_object')
+
+
 Path.add_property('work_edges', WorkManagementEdge.path_works, _("Work management edges"))
 Topology.add_property('work_edges', WorkManagementEdge.topology_works, _("Work management edges"))
 Intervention.add_property('work_edges', lambda self: self.target.work_edges if self.target and hasattr(self.target, 'work_edges') else [], _("Work management edges"))
@@ -319,6 +346,12 @@ class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
     @classmethod
     def topology_signages(cls, topology):
         return cls.overlapping(topology).select_related('organization')
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_signagemanagementedge_topology(sender, instance, using, **kwargs):
+    # SignageManagementEdge are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, SignageManagementEdge, 'topo_object')
 
 
 Path.add_property('signage_edges', SignageManagementEdge.path_signages, _("Signage management edges"))

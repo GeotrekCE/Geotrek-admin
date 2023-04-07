@@ -117,7 +117,7 @@ class Rating(RatingMixin):
 
 @receiver(pre_delete, sender=RatingScale)
 def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
-    # RatingScale are deleted when Practices are deleted
+    # Ratings are deleted when RatingScales are deleted
     log_cascade_deletion(sender, instance, Rating, 'scale')
 
 
@@ -554,6 +554,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return {"maplayers": maplayers}
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_trek_topology(sender, instance, using, **kwargs):
+    # Treks are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Trek, 'topo_object')
+
+
 Path.add_property('treks', Trek.path_treks, _("Treks"))
 Topology.add_property('treks', Trek.topology_treks, _("Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
@@ -732,6 +738,12 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
         return "%s" % self.label
 
 
+@receiver(pre_delete, sender=WebLinkCategory)
+def log_cascade_deletion_from_weblinkcategory(sender, instance, using, **kwargs):
+    # WebLinks are deleted when WebLinksCategories are deleted
+    log_cascade_deletion(sender, instance, WebLink, 'category')
+
+
 class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
@@ -820,6 +832,12 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_poi_topology(sender, instance, using, **kwargs):
+    # POIs are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, POI, 'topo_object')
 
 
 Path.add_property('pois', POI.path_pois, _("POIs"))
@@ -934,6 +952,12 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     @classmethod
     def tourism_services(cls, tourism_obj, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_service_topology(sender, instance, using, **kwargs):
+    # Services are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Service, 'topo_object')
 
 
 Path.add_property('services', Service.path_services, _("Services"))
