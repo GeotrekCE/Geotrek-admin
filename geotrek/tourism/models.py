@@ -236,7 +236,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
-    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.CASCADE,
+    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.PROTECT,
                                  verbose_name=_("Category"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True,
                                help_text=_("Address, phone, etc."))
@@ -260,12 +260,12 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     verbose_name=_("Portal"))
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
-                                            on_delete=models.CASCADE, related_name='contents', blank=True,
+                                            on_delete=models.PROTECT, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
-                                           on_delete=models.CASCADE, blank=True, null=True)
+                                           on_delete=models.SET_NULL, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False,
@@ -406,7 +406,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                               blank=True, null=True)
     organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
-    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
+    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     capacity = models.IntegerField(verbose_name=_("Capacity"), blank=True, null=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)

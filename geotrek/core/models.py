@@ -50,13 +50,13 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
     arrival = models.CharField(null=True, blank=True, default="", max_length=250, verbose_name=_("Arrival"),
                                help_text=_("Arrival place"))
 
-    comfort = models.ForeignKey('Comfort', on_delete=models.CASCADE,
+    comfort = models.ForeignKey('Comfort', on_delete=models.PROTECT,
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"))
-    source = models.ForeignKey('PathSource', on_delete=models.CASCADE,
+    source = models.ForeignKey('PathSource', on_delete=models.PROTECT,
                                null=True, blank=True, related_name='paths',
                                verbose_name=_("Source"))
-    stake = models.ForeignKey('Stake', on_delete=models.CASCADE,
+    stake = models.ForeignKey('Stake', on_delete=models.PROTECT,
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"))
     usages = models.ManyToManyField('Usage',
@@ -914,7 +914,7 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     name = models.CharField(verbose_name=_("Name"), max_length=64)
     category = models.ForeignKey(
         "TrailCategory",
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Category"),

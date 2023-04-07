@@ -119,14 +119,14 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
     comment = models.TextField(blank=True, default="", verbose_name=_("Comment"))
     activity = models.ForeignKey(
         "ReportActivity",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Activity"),
     )
     category = models.ForeignKey(
         "ReportCategory",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Category"),
@@ -135,12 +135,12 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         "ReportProblemMagnitude",
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name=_("Problem magnitude"),
     )
     status = models.ForeignKey(
         "ReportStatus",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         default=status_default,

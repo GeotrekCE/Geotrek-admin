@@ -50,7 +50,7 @@ class Sector(TimeStampedModelMixin, models.Model):
 
 class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
+    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.CASCADE,
                                verbose_name=_("Sector"), null=True, blank=True)
 
     class Meta:
@@ -63,7 +63,7 @@ class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
 
 
 class RatingScale(RatingScaleMixin):
-    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"))
 
     class Meta:
@@ -73,7 +73,7 @@ class RatingScale(RatingScaleMixin):
 
 
 class Rating(RatingMixin):
-    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.CASCADE,
                               verbose_name=_("Scale"))
 
     class Meta:
@@ -84,7 +84,7 @@ class Rating(RatingMixin):
 
 class SiteType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -98,7 +98,7 @@ class SiteType(TimeStampedModelMixin, models.Model):
 
 class CourseType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:

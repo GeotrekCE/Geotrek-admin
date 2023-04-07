@@ -39,7 +39,7 @@ class PhysicalType(StructureOrNoneRelated):
 class PhysicalEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
-                                      on_delete=models.CASCADE)
+                                      on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     geometry_types_allowed = ["LINESTRING"]
@@ -109,7 +109,7 @@ class LandType(StructureOrNoneRelated):
 
 class LandEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
-    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), on_delete=models.CASCADE)
+    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), on_delete=models.PROTECT)
     owner = models.TextField(verbose_name=_("Owner"), blank=True)
     agreement = models.BooleanField(verbose_name=_("Agreement"), default=False)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -166,7 +166,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class CompetenceEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     geometry_types_allowed = ["LINESTRING"]
@@ -221,7 +221,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     geometry_types_allowed = ["LINESTRING"]
@@ -276,7 +276,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     geometry_types_allowed = ["LINESTRING"]

@@ -59,10 +59,10 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
     code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
-    manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
-    sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.PROTECT)
+    sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.PROTECT)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
-    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.PROTECT)
     coordinates_verbose_name = _("Coordinates")
 
     geometry_types_allowed = ["POINT"]
@@ -185,7 +185,7 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
     number = models.CharField(verbose_name=_("Number"), max_length=250)
     direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
                                   blank=True)
-    type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),

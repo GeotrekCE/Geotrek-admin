@@ -29,7 +29,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
-    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
+    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.DO_NOTHING)
     target_id = models.PositiveIntegerField(blank=True, null=True)
     target = GenericForeignKey('target_type', 'target_id')
 
@@ -50,12 +50,12 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
-    stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.CASCADE,
+    stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.PROTECT,
                               related_name='interventions', verbose_name=_("Stake"))
 
-    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), on_delete=models.CASCADE)
+    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), on_delete=models.PROTECT)
 
-    type = models.ForeignKey('InterventionType', null=True, blank=True, on_delete=models.CASCADE,
+    type = models.ForeignKey('InterventionType', null=True, blank=True, on_delete=models.PROTECT,
                              verbose_name=_("Type"))
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
@@ -424,15 +424,15 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
                                     blank=True, null=True, help_text=_("€"))
     comments = models.TextField(verbose_name=_("Comments"), blank=True,
                                 help_text=_("Remarks and notes"))
-    type = models.ForeignKey('ProjectType', null=True, blank=True, on_delete=models.CASCADE,
+    type = models.ForeignKey('ProjectType', null=True, blank=True, on_delete=models.PROTECT,
                              verbose_name=_("Type"))
-    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, on_delete=models.CASCADE,
+    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, on_delete=models.PROTECT,
                                verbose_name=_("Domain"))
     contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True,
                                          verbose_name=_("Contractors"))
-    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True, on_delete=models.CASCADE,
+    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True, on_delete=models.PROTECT,
                                       verbose_name=_("Project owner"))
-    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True, on_delete=models.CASCADE,
+    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True, on_delete=models.PROTECT,
                                         verbose_name=_("Project manager"))
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -654,7 +654,7 @@ class Funding(DuplicateMixin, models.Model):
 
     amount = models.FloatField(verbose_name=_("Amount"))
     project = models.ForeignKey(Project, verbose_name=_("Project"), on_delete=models.CASCADE)
-    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
+    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("Funding")
