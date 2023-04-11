@@ -1080,7 +1080,7 @@ Note that this setting does not impact the Path endpoints, which means that the 
 
 Use dynamic segmentation or not.
 
-*Do not change it after installation, or dump your database.*
+*Do not change this setting to false if you have already started integrating data, or dump your database.*
 
 **Map configuration**
 
