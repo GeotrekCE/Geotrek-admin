@@ -510,7 +510,7 @@ class CascadedDeletionLoggingTest(TestCase):
 
     def test_cascading_weblinks(self):
         clear_internal_user_cache()
-        categ_pk = self.practice.pk
+        categ_pk = self.categ.pk
         weblink_pk = self.weblink.pk
         categ_repr = str(self.categ)
         self.categ.delete()
