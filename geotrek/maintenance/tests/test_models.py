@@ -1,21 +1,26 @@
+from unittest import skipIf
+
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.utils import translation
-from django.conf import settings
-from unittest import skipIf
+from mapentity.middleware import clear_internal_user_cache
 
+from geotrek.core.tests.factories import (PathFactory, StakeFactory,
+                                          TopologyFactory, TrailFactory)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import BladeFactory, SignageFactory
-from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.tests.factories import (InterventionFactory,
-                                                 InfrastructureInterventionFactory,
-                                                 InfrastructurePointInterventionFactory,
-                                                 SignageInterventionFactory,
-                                                 ProjectFactory, ManDayFactory, InterventionJobFactory,
-                                                 InterventionDisorderFactory)
+from geotrek.maintenance.models import Funding, Intervention, ManDay
+from geotrek.maintenance.tests.factories import (
+    FundingFactory, InfrastructureInterventionFactory,
+    InfrastructurePointInterventionFactory, InterventionDisorderFactory,
+    InterventionFactory, InterventionJobFactory, ManDayFactory, ProjectFactory,
+    SignageInterventionFactory)
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
-from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory, TrailFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -54,9 +59,18 @@ class InterventionTest(TestCase):
 
     def test_mandays(self):
         i = InterventionFactory.create()
-        ManDayFactory.create(intervention=i, nb_days=5)
+        md = ManDayFactory.create(intervention=i, nb_days=5)
         ManDayFactory.create(intervention=i, nb_days=8)
         self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
+        clear_internal_user_cache()
+        manday_pk = md.pk
+        interv_pk = i.pk
+        obj_repr = str(i)
+        i.delete(force=True)
+        model_num = ContentType.objects.get_for_model(ManDay).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=manday_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Intervention {interv_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_path_helpers(self):
         p = PathFactory.create()
@@ -144,6 +158,22 @@ class InterventionTest(TestCase):
         self.assertFalse(interv.in_project)
         interv.project = proj
         self.assertTrue(interv.in_project)
+        interv.save()
+        funding = FundingFactory(project=proj, amount=6)
+        clear_internal_user_cache()
+        project_pk = proj.pk
+        interv_pk = interv.pk
+        funding_pk = funding.pk
+        obj_repr = str(proj)
+        proj.delete(force=True)
+        model_num = ContentType.objects.get_for_model(Intervention).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=interv_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        model_num = ContentType.objects.get_for_model(Funding).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=funding_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()

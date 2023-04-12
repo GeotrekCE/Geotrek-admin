@@ -1,12 +1,20 @@
 import json
 
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
-from django.contrib.gis.geos.point import Point, GEOSGeometry
+from django.contrib.gis.geos.point import GEOSGeometry, Point
 from django.test import TestCase, override_settings
+from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests.factories import OrganismFactory
-from geotrek.outdoor.tests.factories import SiteFactory, RatingScaleFactory, SectorFactory, CourseFactory
+from geotrek.outdoor.models import (CourseType, Practice, Rating, RatingScale,
+                                    SiteType)
+from geotrek.outdoor.tests.factories import (CourseFactory, CourseTypeFactory,
+                                             PracticeFactory, RatingFactory,
+                                             RatingScaleFactory, SectorFactory,
+                                             SiteFactory, SiteTypeFactory)
 from geotrek.trekking.tests.factories import POIFactory
 
 
@@ -131,6 +139,45 @@ class SectorTest(TestCase):
     def test_sector_str(self):
         sector = SectorFactory.create(name='Baz')
         self.assertEqual(str(sector), 'Baz')
+
+    def test_cascading_deletion(self):
+        sector = SectorFactory()
+        practice = PracticeFactory(sector=sector)
+        rating_scale = RatingScaleFactory(practice=practice)
+        rating = RatingFactory(scale=rating_scale)
+        site_type = SiteTypeFactory(practice=practice)
+        course_type = CourseTypeFactory(practice=practice)
+        clear_internal_user_cache()
+        sector_pk = sector.pk
+        sector_repr = str(sector)
+        practice_pk = practice.pk
+        practice_repr = str(practice)
+        rating_scale_pk = rating_scale.pk
+        rating_scale_repr = str(rating_scale)
+        rating_pk = rating.pk
+        site_type_pk = site_type.pk
+        course_type_pk = course_type.pk
+        sector.delete()
+        model_num = ContentType.objects.get_for_model(Practice).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=practice_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Sector {sector_pk} - {sector_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        model_num = ContentType.objects.get_for_model(RatingScale).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=rating_scale_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Practice {practice_pk} - {practice_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        model_num = ContentType.objects.get_for_model(Rating).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=rating_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from RatingScale {rating_scale_pk} - {rating_scale_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        model_num = ContentType.objects.get_for_model(CourseType).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=course_type_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Practice {practice_pk} - {practice_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        model_num = ContentType.objects.get_for_model(SiteType).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=site_type_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Practice {practice_pk} - {practice_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
 
 class RatingScaleTest(TestCase):

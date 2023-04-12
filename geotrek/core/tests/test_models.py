@@ -1,24 +1,32 @@
 import math
-from unittest import skipIf, mock
 import os
+from unittest import mock, skipIf
 
 from django.apps import apps
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import LineString, Point
+from django.core import mail
+from django.db import DEFAULT_DB_ALIAS, IntegrityError, connections
+from django.db.models import ProtectedError
 from django.template.loader import get_template
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.conf import settings
-from django.contrib.gis.geos import LineString, Point
-from django.core import mail
-from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
-from django.db.models import ProtectedError
-from geotrek.common.utils import dbnow
-from geotrek.authent.tests.factories import StructureFactory, UserFactory
+from mapentity.middleware import clear_internal_user_cache
+
 from geotrek.authent.models import Structure
-from geotrek.core.tests.factories import (
-    ComfortFactory, PathFactory, StakeFactory, TrailFactory, TrailCategoryFactory,
-    CertificationLabelFactory, CertificationStatusFactory, CertificationTrailFactory
-)
-from geotrek.core.models import Path, PathAggregation, Trail
+from geotrek.authent.tests.factories import StructureFactory, UserFactory
+from geotrek.common.utils import dbnow
+from geotrek.core.models import (CertificationTrail, Path, PathAggregation,
+                                 Trail)
+from geotrek.core.tests.factories import (CertificationLabelFactory,
+                                          CertificationStatusFactory,
+                                          CertificationTrailFactory,
+                                          ComfortFactory, PathFactory,
+                                          StakeFactory, TrailCategoryFactory,
+                                          TrailFactory)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -238,10 +246,20 @@ class TrailTest(TestCase):
 
 
 class TrailTestDisplay(TestCase):
+
     def test_trails_certifications_display(self):
         t1 = TrailFactory.create()
         certif = CertificationTrailFactory.create(trail=t1)
         self.assertEqual(t1.certifications_display, f'{certif}')
+        clear_internal_user_cache()
+        certif_pk = certif.pk
+        trail_pk = t1.pk
+        obj_repr = str(t1)
+        t1.delete(force=True)
+        model_num = ContentType.objects.get_for_model(CertificationTrail).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=certif_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Trail {trail_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

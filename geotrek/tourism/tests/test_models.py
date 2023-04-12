@@ -1,15 +1,22 @@
+import datetime
 import os
 
-from django.test import TestCase
 from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.test import TestCase
 from django.test.utils import override_settings
+from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
+from geotrek.tourism.models import InformationDesk, TouristicContentType
 from geotrek.tourism.tests import factories as tourism_factories
+from geotrek.tourism.tests.factories import (InformationDeskFactory,
+                                             InformationDeskTypeFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicContentType1Factory,
+                                             TouristicEventPlaceFactory)
 from geotrek.trekking.tests import factories as trekking_factories
-from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory, TouristicEventPlaceFactory
-
-import datetime
 
 
 class InformationDeskTypeTest(TestCase):
@@ -24,7 +31,7 @@ class InformationDeskTypeTest(TestCase):
 class InformationDeskTest(TestCase):
     def setUp(self):
         self.type_informationdesk = InformationDeskTypeFactory(label="Office")
-        self.information_desk = InformationDeskFactory(name="Test")
+        self.information_desk = InformationDeskFactory(name="Test", type=self.type_informationdesk)
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
@@ -40,6 +47,27 @@ class InformationDeskTest(TestCase):
     def test_thumbnail_photo_not_on_disk(self):
         os.remove(os.path.join(settings.MEDIA_ROOT, str(self.information_desk.photo)))
         self.assertIsNone(self.information_desk.thumbnail)
+
+    def test_cascading_deletions(self):
+        categ = TouristicContentCategoryFactory()
+        contenttype = TouristicContentType1Factory(category=categ)
+        clear_internal_user_cache()
+        contenttype_pk = contenttype.pk
+        caregory_pk = categ.pk
+        category_repr = str(categ)
+        categ.delete()
+        model_num = ContentType.objects.get_for_model(TouristicContentType).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=contenttype_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from TouristicContentCategory {caregory_pk} - {category_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
+        infodesk_pk = self.information_desk.pk
+        infodesktype_pk = self.type_informationdesk.pk
+        infodesktype_repr = str(self.type_informationdesk)
+        self.type_informationdesk.delete()
+        model_num = ContentType.objects.get_for_model(InformationDesk).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=infodesk_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from InformationDeskType {infodesktype_pk} - {infodesktype_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
 
 class TourismRelations(TestCase):
@@ -144,11 +172,11 @@ class TouristicEventModelTest(TestCase):
 
 class TouristicContentModelTest(TestCase):
     def tests_type_poi_mobilev1(self):
-        category = tourism_factories.TouristicContentCategoryFactory(label="Test")
-        content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                            category=category)
+        self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
+        self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                                 category=self.category)
 
-        self.assertEqual(str(content.type), "Test")
+        self.assertEqual(str(self.content.type), "Test")
 
 
 class TouristicEventCancellationReasonModelTest(TestCase):

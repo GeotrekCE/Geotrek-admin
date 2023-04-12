@@ -10,16 +10,20 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
+from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
-from geotrek.trekking.models import OrderedTrekChild, Rating, RatingScale, Trek
+from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
+                                     Trek, WebLink)
 from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
                                               RatingFactory,
                                               RatingScaleFactory,
                                               ServiceFactory, TrekFactory,
-                                              TrekWithPOIsFactory)
+                                              TrekWithPOIsFactory,
+                                              WebLinkCategoryFactory,
+                                              WebLinkFactory)
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
@@ -486,14 +490,15 @@ class RatingTest(TestCase):
 class CascadedDeletionLoggingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.filter(username="__internal__")
-        if not user:
-            UserFactory(username="__internal__")
+        clear_internal_user_cache()
         cls.practice = PracticeFactory(name="Pratice A")
         cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
         cls.rating = RatingFactory(scale=cls.scale)
+        cls.categ = WebLinkCategoryFactory()
+        cls.weblink = WebLinkFactory(category=cls.categ)
 
     def test_cascading_from_practice(self):
+        clear_internal_user_cache()
         practice_pk = self.practice.pk
         self.practice.delete()
         rating_model_num = ContentType.objects.get_for_model(Rating).pk
@@ -504,3 +509,14 @@ class CascadedDeletionLoggingTest(TestCase):
         self.assertEqual(scale_entry.action_flag, DELETION)
         self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
         self.assertEqual(rating_entry.action_flag, DELETION)
+
+    def test_cascading_weblinks(self):
+        clear_internal_user_cache()
+        categ_pk = self.practice.pk
+        weblink_pk = self.weblink.pk
+        categ_repr = str(self.categ)
+        self.categ.delete()
+        model_num = ContentType.objects.get_for_model(WebLink).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=weblink_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from WebLinkCategory {categ_pk} - {categ_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
