@@ -3,7 +3,6 @@ from unittest import skipIf
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      MultiPolygon, Point, Polygon)
@@ -12,7 +11,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from mapentity.middleware import clear_internal_user_cache
 
-from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,

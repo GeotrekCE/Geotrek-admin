@@ -5,7 +5,6 @@ from unittest import mock, skipIf
 from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.core import mail
