@@ -268,7 +268,7 @@ add the following code:
     # Enable sensitivity module
     INSTALLED_APPS += ('geotrek.sensitivity', )
 
-The following settings are related to sensitive areas:
+The following settings are related to sensitive areas: test
 
 
 .. code-block :: python
