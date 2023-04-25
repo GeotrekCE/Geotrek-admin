@@ -668,30 +668,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
-        def replace_image_paths_with_urls(self, data):
-            def replace(html_content):
-                if not html_content:
-                    return html_content
-                soup = BeautifulSoup(html_content, features="lxml")
-                imgs = soup.find_all('img')
-                for img in imgs:
-                    if img.attrs['src'][0] == '/':
-                        base_url = self.context.get("request").build_absolute_uri("/")[:-1]
-                        img['src'] = base_url + img.attrs["src"]
-                # Note: beautifulsoup makes a valid HTML doc from the data,
-                # but we don't want <html> or <body> in the output
-                return "".join([str(c) for c in soup.find("body").children])
-
-            try:
-                for k, v in data.items():
-                    data[k] = replace(v)
-            except AttributeError:
-                data = replace(data)
-
-            return data
-
         def get_description(self, obj):
-            return self.replace_image_paths_with_urls(get_translation_or_dict('description', self, obj))
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description', self, obj))
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)
@@ -715,7 +693,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('accessibility_width', self, obj)
 
         def get_ambiance(self, obj):
-            return self.replace_image_paths_with_urls(get_translation_or_dict('ambiance', self, obj))
+            return self._replace_image_paths_with_urls(get_translation_or_dict('ambiance', self, obj))
 
         def get_disabled_infrastructure(self, obj):
             return get_translation_or_dict('accessibility_infrastructure', self, obj)
@@ -737,7 +715,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('arrival', self, obj)
 
         def get_description_teaser(self, obj):
-            return self.replace_image_paths_with_urls(get_translation_or_dict('description_teaser', self, obj))
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description_teaser', self, obj))
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
@@ -788,6 +766,28 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
             return city.code if city else None
+
+        def _replace_image_paths_with_urls(self, data):
+            def replace(html_content):
+                if not html_content:
+                    return html_content
+                soup = BeautifulSoup(html_content, features="lxml")
+                imgs = soup.find_all('img')
+                for img in imgs:
+                    if img.attrs['src'][0] == '/':
+                        base_url = self.context.get("request").build_absolute_uri("/")[:-1]
+                        img['src'] = base_url + img.attrs["src"]
+                # Note: beautifulsoup makes a valid HTML doc from the data,
+                # but we don't want <html> or <body> in the output
+                return "".join([str(c) for c in soup.find("body").children])
+
+            try:
+                for k, v in data.items():
+                    data[k] = replace(v)
+            except AttributeError:
+                data = replace(data)
+
+            return data
 
         class Meta:
             model = trekking_models.Trek
