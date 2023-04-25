@@ -715,7 +715,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('accessibility_width', self, obj)
 
         def get_ambiance(self, obj):
-            return get_translation_or_dict('ambiance', self, obj)
+            return self.replace_image_paths_with_urls(get_translation_or_dict('ambiance', self, obj))
 
         def get_disabled_infrastructure(self, obj):
             return get_translation_or_dict('accessibility_infrastructure', self, obj)
@@ -737,7 +737,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('arrival', self, obj)
 
         def get_description_teaser(self, obj):
-            return get_translation_or_dict('description_teaser', self, obj)
+            return self.replace_image_paths_with_urls(get_translation_or_dict('description_teaser', self, obj))
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)

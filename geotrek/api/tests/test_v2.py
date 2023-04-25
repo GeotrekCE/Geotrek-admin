@@ -297,6 +297,8 @@ class BaseApiTest(TestCase):
                                  '<img src="/media/upload/steep_descent.svg" alt="Descent">' \
                                  '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
         cls.treks[0].description = html_content_with_imgs
+        cls.treks[0].description_teaser = html_content_with_imgs
+        cls.treks[0].ambiance = html_content_with_imgs
         cls.treks[0].save()
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
@@ -1275,6 +1277,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                                '<img alt="Descent" src="http://testserver/media/upload/steep_descent.svg"/>'\
                                '<img alt="" height="1848" src="https://testserver/media/upload/pedestre.svg" width="1848"/>'
         self.assertEqual(response.json()['description']['en'], expected_description)
+        self.assertEqual(response.json()['description_teaser']['en'], expected_description)
+        self.assertEqual(response.json()['ambiance']['en'], expected_description)
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
