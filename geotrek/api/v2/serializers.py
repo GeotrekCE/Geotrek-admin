@@ -668,29 +668,30 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
-        def replace_src_absolute(self, data):
-            soup = BeautifulSoup(data, features="lxml")
-            imgs = soup.find_all('img')
-            for img in imgs:
-                if img.attrs['src'][0] == '/':
-                    img['src'] = f'{self.context.get("request").build_absolute_uri("/")}{img.attrs["src"]}'
+        def replace_image_paths_with_urls(self, data):
+            def replace(html_content):
+                if not html_content:
+                    return html_content
+                soup = BeautifulSoup(html_content, features="lxml")
+                imgs = soup.find_all('img')
+                for img in imgs:
+                    if img.attrs['src'][0] == '/':
+                        base_url = self.context.get("request").build_absolute_uri("/")[:-1]
+                        img['src'] = base_url + img.attrs["src"]
+                # Note: beautifulsoup makes a valid HTML doc from the data,
+                # but we don't want <html> or <body> in the output
+                return "".join([str(c) for c in soup.find("body").children])
 
-        def get_description(self, obj):
-            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
-
-            if lang != 'all':
-                data = getattr(obj, '{}_{}'.format('description', lang))
-                if data:
-                    self.replace_src_absolute(data)
-            else:
-                data = {}
-                for language in settings.MODELTRANSLATION_LANGUAGES:
-                    data_lang = getattr(obj, '{}_{}'.format('description', language), )
-                    if data_lang:
-                        self.replace_src_absolute(data_lang)
-                    data.update({language: data_lang})
+            try:
+                for k, v in data.items():
+                    data[k] = replace(v)
+            except AttributeError:
+                data = replace(data)
 
             return data
+
+        def get_description(self, obj):
+            return self.replace_image_paths_with_urls(get_translation_or_dict('description', self, obj))
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)
