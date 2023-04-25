@@ -1280,6 +1280,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()['description_teaser']['en'], expected_description)
         self.assertEqual(response.json()['ambiance']['en'], expected_description)
 
+        # Same test requesting a specific language
+        response = self.get_trek_detail(self.treks[0].pk, params={'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['description'], expected_description)
+        self.assertEqual(response.json()['description_teaser'], expected_description)
+        self.assertEqual(response.json()['ambiance'], expected_description)
+
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
