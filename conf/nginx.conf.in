@@ -33,7 +33,8 @@ server {
     }
 
     location ~ ^/mobile/(.*)$ {
-        add_header Access-Control-Allow-Origin "*";
+        add_header Vary "Accept-Language";
+	add_header Access-Control-Allow-Origin "*";
         add_header Access-Control-Allow-Methods "GET, OPTIONS";
         root /opt/geotrek-admin/var/mobile/;
         try_files /${DOLLAR}http_accept_language/$1 /nolang/$1 =404;
