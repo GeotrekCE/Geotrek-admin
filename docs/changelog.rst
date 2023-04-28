@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: Remove user group creation in Outdoor fixture (#3524)
+- Fix: Configure nginx to invalidate mobile cache on language change
 
 
 2.98.0     (2023-03-27)
