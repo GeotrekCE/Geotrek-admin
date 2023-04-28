@@ -34,6 +34,7 @@ from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from geotrek.common.filters import HDViewPointFilterSet
+from large_image import config
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
@@ -401,6 +402,12 @@ class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
 
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
+
+    def __init__(self, **kwargs):
+        # Initial value is r'(^[^.]*|\.(yml|yaml|json|png|svs))$ which prevents from processing PNGs
+        config.setConfig('source_vips_ignored_names', r'(^[^.]*|\.(yml|yaml|json|svs))$')
+        super().__init__(**kwargs)
+
     queryset = HDViewPoint.objects.all()
     serializer_class = HDViewPointAPISerializer
     permission_classes = [RelatedPublishedPermission]

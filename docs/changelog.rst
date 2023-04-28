@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix: Remove user group creation in Outdoor fixture (#3524)
 - Fix: Configure nginx to invalidate mobile cache on language change
+- Fix: Configure large_image to use libvips even for PNG images (fixes HD Views for PNGs)
 
 
 2.98.0     (2023-03-27)
