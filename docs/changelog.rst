@@ -12,6 +12,11 @@ CHANGELOG
 - Fix: Configure large_image to use libvips even for PNG images (fixes HD Views for PNGs)
 
 
+**Maintenance**
+
+- Upgrade `django-large-image`
+
+
 2.98.0     (2023-03-27)
 -----------------------
 
