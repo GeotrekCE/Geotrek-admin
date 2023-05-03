@@ -507,14 +507,3 @@ class CascadedDeletionLoggingTest(TestCase):
         self.assertEqual(scale_entry.action_flag, DELETION)
         self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
         self.assertEqual(rating_entry.action_flag, DELETION)
-
-    def test_cascading_weblinks(self):
-        clear_internal_user_cache()
-        categ_pk = self.categ.pk
-        weblink_pk = self.weblink.pk
-        categ_repr = str(self.categ)
-        self.categ.delete()
-        model_num = ContentType.objects.get_for_model(WebLink).pk
-        entry = LogEntry.objects.get(content_type=model_num, object_id=weblink_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from WebLinkCategory {categ_pk} - {categ_repr}")
-        self.assertEqual(entry.action_flag, DELETION)

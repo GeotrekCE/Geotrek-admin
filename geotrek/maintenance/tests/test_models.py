@@ -161,14 +161,9 @@ class InterventionTest(TestCase):
         funding = FundingFactory(project=proj, amount=6)
         clear_internal_user_cache()
         project_pk = proj.pk
-        interv_pk = interv.pk
         funding_pk = funding.pk
         obj_repr = str(proj)
         proj.delete(force=True)
-        model_num = ContentType.objects.get_for_model(Intervention).pk
-        entry = LogEntry.objects.get(content_type=model_num, object_id=interv_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")
-        self.assertEqual(entry.action_flag, DELETION)
         model_num = ContentType.objects.get_for_model(Funding).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=funding_pk)
         self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")

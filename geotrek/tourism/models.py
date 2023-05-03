@@ -69,7 +69,7 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
-    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
+    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.PROTECT,
                              related_name='desks')
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Brief description"))
@@ -154,12 +154,6 @@ GEOMETRY_TYPES = Choices(
     ('POLYGON', 'polygon', _('Polygon')),
     ('ANY', 'any', _('Any')),
 )
-
-
-@receiver(pre_delete, sender=InformationDeskType)
-def log_cascade_deletion_from_infodesk_type(sender, instance, using, **kwargs):
-    # InformationDesk are deleted when InformationDeskTypes are deleted
-    log_cascade_deletion(sender, instance, InformationDesk, 'type')
 
 
 class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):

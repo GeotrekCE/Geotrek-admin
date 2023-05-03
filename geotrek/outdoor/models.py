@@ -53,7 +53,7 @@ class Sector(TimeStampedModelMixin, models.Model):
 
 class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.CASCADE,
+    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.SET_NULL,
                                verbose_name=_("Sector"), null=True, blank=True)
 
     class Meta:
@@ -63,12 +63,6 @@ class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
 
     def __str__(self):
         return self.name
-
-
-@receiver(pre_delete, sender=Sector)
-def log_cascade_deletion_from_sector_practice(sender, instance, using, **kwargs):
-    # Practice are deleted when Sector are deleted
-    log_cascade_deletion(sender, instance, Practice, 'sector')
 
 
 class RatingScale(RatingScaleMixin):

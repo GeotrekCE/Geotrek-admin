@@ -141,15 +141,12 @@ class SectorTest(TestCase):
         self.assertEqual(str(sector), 'Baz')
 
     def test_cascading_deletion(self):
-        sector = SectorFactory()
-        practice = PracticeFactory(sector=sector)
+        practice = PracticeFactory()
         rating_scale = RatingScaleFactory(practice=practice)
         rating = RatingFactory(scale=rating_scale)
         site_type = SiteTypeFactory(practice=practice)
         course_type = CourseTypeFactory(practice=practice)
         clear_internal_user_cache()
-        sector_pk = sector.pk
-        sector_repr = str(sector)
         practice_pk = practice.pk
         practice_repr = str(practice)
         rating_scale_pk = rating_scale.pk
@@ -157,11 +154,7 @@ class SectorTest(TestCase):
         rating_pk = rating.pk
         site_type_pk = site_type.pk
         course_type_pk = course_type.pk
-        sector.delete()
-        model_num = ContentType.objects.get_for_model(Practice).pk
-        entry = LogEntry.objects.get(content_type=model_num, object_id=practice_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from Sector {sector_pk} - {sector_repr}")
-        self.assertEqual(entry.action_flag, DELETION)
+        practice.delete()
         model_num = ContentType.objects.get_for_model(RatingScale).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=rating_scale_pk)
         self.assertEqual(entry.change_message, f"Deleted by cascade from Practice {practice_pk} - {practice_repr}")

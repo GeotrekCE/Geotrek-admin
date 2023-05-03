@@ -67,7 +67,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_("Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-                                on_delete=models.CASCADE, verbose_name=_("Project"))
+                                on_delete=models.SET_NULL, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -608,12 +608,6 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
     @classmethod
     def get_create_label(cls):
         return _("Add a new project")
-
-
-@receiver(pre_delete, sender=Project)
-def log_cascade_deletion_from_intervention_project(sender, instance, using, **kwargs):
-    # Intervention are deleted when Project are deleted
-    log_cascade_deletion(sender, instance, Intervention, 'project')
 
 
 Path.add_property('projects', lambda self: Project.path_projects(self), _("Projects"))

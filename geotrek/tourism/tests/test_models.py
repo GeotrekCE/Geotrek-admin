@@ -60,14 +60,6 @@ class InformationDeskTest(TestCase):
         entry = LogEntry.objects.get(content_type=model_num, object_id=contenttype_pk)
         self.assertEqual(entry.change_message, f"Deleted by cascade from TouristicContentCategory {caregory_pk} - {category_repr}")
         self.assertEqual(entry.action_flag, DELETION)
-        infodesk_pk = self.information_desk.pk
-        infodesktype_pk = self.type_informationdesk.pk
-        infodesktype_repr = str(self.type_informationdesk)
-        self.type_informationdesk.delete()
-        model_num = ContentType.objects.get_for_model(InformationDesk).pk
-        entry = LogEntry.objects.get(content_type=model_num, object_id=infodesk_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from InformationDeskType {infodesktype_pk} - {infodesktype_repr}")
-        self.assertEqual(entry.action_flag, DELETION)
 
 
 class TourismRelations(TestCase):

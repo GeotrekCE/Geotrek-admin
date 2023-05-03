@@ -708,7 +708,7 @@ class WebLink(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     url = models.URLField(verbose_name=_("URL"), max_length=2048)
     category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
-                                 related_name='links', null=True, blank=True, on_delete=models.CASCADE)
+                                 related_name='links', null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = WebLinkManager()
 
@@ -736,12 +736,6 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return "%s" % self.label
-
-
-@receiver(pre_delete, sender=WebLinkCategory)
-def log_cascade_deletion_from_weblinkcategory(sender, instance, using, **kwargs):
-    # WebLinks are deleted when WebLinksCategories are deleted
-    log_cascade_deletion(sender, instance, WebLink, 'category')
 
 
 class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
