@@ -14,7 +14,7 @@ from mapentity.middleware import clear_internal_user_cache
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
-                                     Trek, WebLink)
+                                     Trek)
 from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
                                               RatingFactory,
                                               RatingScaleFactory,

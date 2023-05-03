@@ -9,7 +9,7 @@ from django.test.utils import override_settings
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import InformationDesk, TouristicContentType
+from geotrek.tourism.models import TouristicContentType
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,

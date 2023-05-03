@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests.factories import OrganismFactory
-from geotrek.outdoor.models import (CourseType, Practice, Rating, RatingScale,
+from geotrek.outdoor.models import (CourseType, Rating, RatingScale,
                                     SiteType)
 from geotrek.outdoor.tests.factories import (CourseFactory, CourseTypeFactory,
                                              PracticeFactory, RatingFactory,
