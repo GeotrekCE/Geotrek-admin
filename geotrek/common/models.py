@@ -373,7 +373,8 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
 
     @property
     def thumbnail_url(self):
-        return reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+        url = reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+        return f"{url}?{urlencode({'source': 'vips'})}"
 
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
