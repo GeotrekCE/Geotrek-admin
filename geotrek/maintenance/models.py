@@ -7,6 +7,8 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 from django.contrib.postgres.indexes import GistIndex
 from django.db.models import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.models import AltimetryMixin
@@ -14,6 +16,7 @@ from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
                                           GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.models import Organism
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
@@ -29,7 +32,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
-    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
+    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.PROTECT)
     target_id = models.PositiveIntegerField(blank=True, null=True)
     target = GenericForeignKey('target_type', 'target_id')
 
@@ -50,12 +53,12 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
-    stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.CASCADE,
+    stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.PROTECT,
                               related_name='interventions', verbose_name=_("Stake"))
 
-    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), on_delete=models.CASCADE)
+    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), on_delete=models.PROTECT)
 
-    type = models.ForeignKey('InterventionType', null=True, blank=True, on_delete=models.CASCADE,
+    type = models.ForeignKey('InterventionType', null=True, blank=True, on_delete=models.PROTECT,
                              verbose_name=_("Type"))
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
@@ -64,7 +67,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_("Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-                                on_delete=models.CASCADE, verbose_name=_("Project"))
+                                on_delete=models.SET_NULL, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -398,7 +401,7 @@ class ManDay(DuplicateMixin, models.Model):
 
     nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6)
     intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE)
-    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), on_delete=models.CASCADE)
+    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("Manday")
@@ -410,6 +413,12 @@ class ManDay(DuplicateMixin, models.Model):
 
     def __str__(self):
         return str(self.nb_days)
+
+
+@receiver(pre_delete, sender=Intervention)
+def log_cascade_deletion_from_manday_intervention(sender, instance, using, **kwargs):
+    # ManDays are deleted when Interventions are deleted
+    log_cascade_deletion(sender, instance, ManDay, 'intervention')
 
 
 class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, TimeStampedModelMixin,
@@ -424,15 +433,15 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
                                     blank=True, null=True, help_text=_("€"))
     comments = models.TextField(verbose_name=_("Comments"), blank=True,
                                 help_text=_("Remarks and notes"))
-    type = models.ForeignKey('ProjectType', null=True, blank=True, on_delete=models.CASCADE,
+    type = models.ForeignKey('ProjectType', null=True, blank=True, on_delete=models.PROTECT,
                              verbose_name=_("Type"))
-    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, on_delete=models.CASCADE,
+    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, on_delete=models.PROTECT,
                                verbose_name=_("Domain"))
     contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True,
                                          verbose_name=_("Contractors"))
-    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True, on_delete=models.CASCADE,
+    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True, on_delete=models.PROTECT,
                                       verbose_name=_("Project owner"))
-    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True, on_delete=models.CASCADE,
+    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True, on_delete=models.PROTECT,
                                         verbose_name=_("Project manager"))
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -654,7 +663,7 @@ class Funding(DuplicateMixin, models.Model):
 
     amount = models.FloatField(verbose_name=_("Amount"))
     project = models.ForeignKey(Project, verbose_name=_("Project"), on_delete=models.CASCADE)
-    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
+    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("Funding")
@@ -662,3 +671,9 @@ class Funding(DuplicateMixin, models.Model):
 
     def __str__(self):
         return "%s : %s" % (self.project, self.amount)
+
+
+@receiver(pre_delete, sender=Project)
+def log_cascade_deletion_from_funding_project(sender, instance, using, **kwargs):
+    # Fundings are deleted when Projects are deleted
+    log_cascade_deletion(sender, instance, Funding, 'project')

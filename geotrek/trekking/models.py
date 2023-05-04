@@ -1,39 +1,43 @@
-import os
 import logging
+import os
 
+import simplekml
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
+from django.contrib.gis.db.models.functions import LineLocatePoint, Transform
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
-
-import simplekml
-
-from mapentity.serializers import plain_text
+from django.utils.translation import get_language, gettext
+from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
+from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
-from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.utils import intersecting, classproperty, queryset_or_model, queryset_or_all_objects
-from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
-from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
+from geotrek.common.mixins.models import (GeotrekMapEntityMixin,
+                                          OptionalPictogramMixin,
+                                          PictogramMixin, PicturesMixin,
+                                          PublishableMixin,
+                                          TimeStampedModelMixin,
+                                          get_uuid_duplication)
+from geotrek.common.models import (AccessibilityAttachment, RatingMixin,
+                                   RatingScaleMixin, ReservationSystem, Theme)
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.templatetags import geotrek_tags
-
+from geotrek.common.utils import (classproperty, intersecting,
+                                  queryset_or_all_objects, queryset_or_model)
+from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
-
-
-from colorfield.fields import ColorField
-
-from geotrek.trekking.managers import TrekOrderedChildManager, TrekManager, TrekRelationshipManager, WebLinkManager, \
-    POIManager, ServiceManager
+from geotrek.trekking.managers import (POIManager, ServiceManager, TrekManager,
+                                       TrekOrderedChildManager,
+                                       TrekRelationshipManager, WebLinkManager)
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +64,7 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
                                    help_text=_("Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.SET_NULL)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
     color = ColorField(verbose_name=_("Color"), default='#444444',
@@ -86,7 +90,7 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
 
 
 class RatingScale(RatingScaleMixin):
-    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"))
 
     class Meta:
@@ -95,14 +99,26 @@ class RatingScale(RatingScaleMixin):
         ordering = ('practice', 'order', 'name')
 
 
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_practice(sender, instance, using, **kwargs):
+    # RatingScale are deleted when Practices are deleted
+    log_cascade_deletion(sender, instance, RatingScale, 'practice')
+
+
 class Rating(RatingMixin):
-    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.CASCADE,
                               verbose_name=_("Scale"))
 
     class Meta:
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
+
+
+@receiver(pre_delete, sender=RatingScale)
+def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
+    # Ratings are deleted when RatingScales are deleted
+    log_cascade_deletion(sender, instance, Rating, 'scale')
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin):
@@ -138,7 +154,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
                                       help_text=_("Hiking networks"))
-    practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
+    practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.PROTECT,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility type"))
@@ -171,9 +187,9 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                                                    "minimum width for wheelchairs (Trail>0.90 m, "
                                                                    "Joëlette, Narrow trail requiring strong driving "
                                                                    "technique)"))
-    route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
+    route = models.ForeignKey('Route', related_name='treks', on_delete=models.PROTECT,
                               blank=True, null=True, verbose_name=_("Route"))
-    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
+    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.PROTECT,
                                    blank=True, null=True, verbose_name=_("Difficulty"))
     web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
@@ -201,7 +217,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
-                                           on_delete=models.CASCADE, blank=True, null=True)
+                                           on_delete=models.SET_NULL, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
@@ -538,6 +554,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return {"maplayers": maplayers}
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_trek_topology(sender, instance, using, **kwargs):
+    # Treks are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Trek, 'topo_object')
+
+
 Path.add_property('treks', Trek.path_treks, _("Treks"))
 Topology.add_property('treks', Trek.topology_treks, _("Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
@@ -605,7 +627,7 @@ class TrekNetwork(TimeStampedModelMixin, PictogramMixin):
 
 class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     id_prefix = 'A'
 
@@ -660,7 +682,7 @@ class DifficultyLevel(TimeStampedModelMixin, OptionalPictogramMixin):
     difficulty = models.CharField(verbose_name=_("Difficulty level"), max_length=128)
     cirkwi_level = models.IntegerField(verbose_name=_("Cirkwi level"), blank=True, null=True,
                                        help_text=_("Between 1 and 8"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("Difficulty level")
@@ -686,7 +708,7 @@ class WebLink(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     url = models.URLField(verbose_name=_("URL"), max_length=2048)
     category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
-                                 related_name='links', null=True, blank=True, on_delete=models.CASCADE)
+                                 related_name='links', null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = WebLinkManager()
 
@@ -719,7 +741,7 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     view_points = GenericRelation('common.HDViewPoint', related_query_name='poi')
@@ -806,6 +828,12 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_poi_topology(sender, instance, using, **kwargs):
+    # POIs are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, POI, 'topo_object')
+
+
 Path.add_property('pois', POI.path_pois, _("POIs"))
 Topology.add_property('pois', POI.topology_pois, _("POIs"))
 Topology.add_property('all_pois', POI.topology_all_pois, _("POIs"))
@@ -823,7 +851,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class POIType(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("POI type")
@@ -851,7 +879,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
 class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
-    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
@@ -918,6 +946,12 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     @classmethod
     def tourism_services(cls, tourism_obj, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_service_topology(sender, instance, using, **kwargs):
+    # Services are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Service, 'topo_object')
 
 
 Path.add_property('services', Service.path_services, _("Services"))

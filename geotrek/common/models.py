@@ -56,7 +56,7 @@ class AccessibilityAttachment(models.Model):
 
     objects = AccessibilityAttachmentManager()
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -70,13 +70,13 @@ class AccessibilityAttachment(models.Model):
     license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
                                 verbose_name=_("License"),
                                 null=True, blank=True,
-                                on_delete=models.SET_NULL)
+                                on_delete=models.PROTECT)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="created_attachments_accessibility",
                                 verbose_name=_('Creator'),
-                                help_text=_("User that uploaded"), on_delete=models.CASCADE)
+                                help_text=_("User that uploaded"), on_delete=models.PROTECT)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
                               help_text=_("Original creator"))
@@ -189,7 +189,7 @@ class Attachment(BaseAttachment):
 
 class Theme(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("Theme")
@@ -323,7 +323,7 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     geom = gis_models.PointField(verbose_name=_("Location"),
                                  srid=settings.SRID)
     object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     content_object = GenericForeignKey('content_type', 'object_id')
     annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -339,7 +339,7 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
                                 verbose_name=_("License"),
                                 null=True, blank=True,
-                                on_delete=models.SET_NULL)
+                                on_delete=models.PROTECT)
 
     class Meta:
         verbose_name = _("HD View")

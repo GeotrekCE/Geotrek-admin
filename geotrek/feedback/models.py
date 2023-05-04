@@ -12,12 +12,15 @@ from django.contrib.gis.db import models
 from django.core.mail import mail_managers, send_mail
 from django.db.models import F
 from django.db.models.query_utils import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import AddPropertyMixin, NoDeleteMixin, PicturesMixin, TimeStampedModelMixin, GeotrekMapEntityMixin
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
 from geotrek.trekking.models import POI, Service, Trek
@@ -119,14 +122,14 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
     comment = models.TextField(blank=True, default="", verbose_name=_("Comment"))
     activity = models.ForeignKey(
         "ReportActivity",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Activity"),
     )
     category = models.ForeignKey(
         "ReportCategory",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Category"),
@@ -135,12 +138,12 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         "ReportProblemMagnitude",
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name=_("Problem magnitude"),
     )
     status = models.ForeignKey(
         "ReportStatus",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         default=status_default,
@@ -539,6 +542,18 @@ class TimerEvent(models.Model):
         return obsolete_notified or obsolete_unused or timer_disabled
 
 
+@receiver(pre_delete, sender=Report)
+def log_cascade_deletion_from_timer_report(sender, instance, using, **kwargs):
+    # Timers are deleted when Reports are deleted
+    log_cascade_deletion(sender, instance, TimerEvent, 'report')
+
+
+@receiver(pre_delete, sender=ReportStatus)
+def log_cascade_deletion_from_timer_status(sender, instance, using, **kwargs):
+    # Timers are deleted when ReportStatus are deleted
+    log_cascade_deletion(sender, instance, TimerEvent, 'step')
+
+
 class PendingEmail(models.Model):
     recipient = models.EmailField(verbose_name=_("Email"), max_length=256, blank=True, null=True)
     subject = models.CharField(max_length=200, null=False, blank=False)
@@ -575,6 +590,12 @@ class PendingEmail(models.Model):
             report.mail_errors = F('mail_errors') - 1
             report.save()
         super().delete(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Report)
+def log_cascade_deletion_from_mail_report(sender, instance, using, **kwargs):
+    # Pending mails are deleted when Reports are deleted
+    log_cascade_deletion(sender, instance, PendingEmail, 'report')
 
 
 class WorkflowManager(models.Model):

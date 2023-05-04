@@ -64,3 +64,9 @@ class ReportFactory(factory.django.DjangoModelFactory):
     category = factory.SubFactory(ReportCategoryFactory)
     status = factory.SubFactory(ReportStatusFactory)
     eid = factory.Sequence(lambda n: n)
+
+
+class TimerEventFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = feedback_models.TimerEvent

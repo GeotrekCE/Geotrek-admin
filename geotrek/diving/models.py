@@ -106,12 +106,12 @@ class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMi
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     owner = models.CharField(verbose_name=_("Owner"), max_length=256, blank=True)
-    practice = models.ForeignKey(Practice, related_name="dives", on_delete=models.CASCADE,
+    practice = models.ForeignKey(Practice, related_name="dives", on_delete=models.PROTECT,
                                  blank=True, null=True, verbose_name=_("Practice"))
     departure = models.CharField(verbose_name=_("Departure area"), max_length=128, blank=True)
     disabled_sport = models.TextField(verbose_name=_("Disabled sport accessibility"), blank=True)
     facilities = models.TextField(verbose_name=_("Facilities"), blank=True)
-    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True, on_delete=models.CASCADE,
+    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True, on_delete=models.PROTECT,
                                    null=True, verbose_name=_("Difficulty level"))
     levels = models.ManyToManyField(Level, related_name='dives', blank=True,
                                     verbose_name=_("Technical levels"))

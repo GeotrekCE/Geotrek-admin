@@ -1,6 +1,8 @@
 import os
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _, pgettext_lazy
 
 from django.conf import settings
@@ -8,6 +10,7 @@ from django.conf import settings
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import (
     classproperty, format_coordinates, collate_c, spatial_reference, intersecting, queryset_or_model, queryset_or_all_objects
 )
@@ -59,10 +62,10 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
     code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
-    manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
-    sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.PROTECT)
+    sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.PROTECT)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
-    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.PROTECT)
     coordinates_verbose_name = _("Coordinates")
 
     geometry_types_allowed = ["POINT"]
@@ -137,6 +140,12 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
         super().delete(*args, **kwargs)
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_signage_topology(sender, instance, using, **kwargs):
+    # Signages are deleted when Topologies (from BaseInfrastructure) are deleted
+    log_cascade_deletion(sender, instance, Signage, 'topo_object')
+
+
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
 Topology.add_property('signages', Signage.topology_signages, _("Signages"))
 Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
@@ -185,7 +194,7 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
     number = models.CharField(verbose_name=_("Number"), max_length=250)
     direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
                                   blank=True)
-    type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
@@ -295,6 +304,12 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
+    # Blade are deleted when Topology are deleted
+    log_cascade_deletion(sender, instance, Blade, 'topology')
+
+
 class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
                               on_delete=models.CASCADE)
@@ -340,3 +355,9 @@ class Line(models.Model):
         unique_together = (('blade', 'number'), )
         verbose_name = _("Line")
         verbose_name_plural = _("Lines")
+
+
+@receiver(pre_delete, sender=Blade)
+def log_cascade_deletion_from_line_blade(sender, instance, using, **kwargs):
+    # Lines are deleted when Blade are deleted
+    log_cascade_deletion(sender, instance, Line, 'blade')

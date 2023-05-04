@@ -1,20 +1,28 @@
-from django.test import TestCase
-from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
-                                     MultiLineString, MultiPoint, Point)
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from django.test.utils import override_settings
-
 from unittest import skipIf
+
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
+                                     MultiPolygon, Point, Polygon)
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+from django.test.utils import override_settings
+from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
-from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
-from geotrek.trekking.tests.factories import (POIFactory, TrekFactory,
-                                              TrekWithPOIsFactory, ServiceFactory,
-                                              RatingFactory, RatingScaleFactory)
-from geotrek.trekking.models import Trek, OrderedTrekChild
+from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
+                                     Trek)
+from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
+                                              RatingFactory,
+                                              RatingScaleFactory,
+                                              ServiceFactory, TrekFactory,
+                                              TrekWithPOIsFactory,
+                                              WebLinkCategoryFactory,
+                                              WebLinkFactory)
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
 class TrekTest(TranslationResetMixin, TestCase):
@@ -475,3 +483,27 @@ class RatingTest(TestCase):
     def test_rating_str(self):
         scale = RatingFactory.create(name='Bar')
         self.assertEqual(str(scale), 'RatingScale : Bar')
+
+
+class CascadedDeletionLoggingTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        clear_internal_user_cache()
+        cls.practice = PracticeFactory(name="Pratice A")
+        cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
+        cls.rating = RatingFactory(scale=cls.scale)
+        cls.categ = WebLinkCategoryFactory()
+        cls.weblink = WebLinkFactory(category=cls.categ)
+
+    def test_cascading_from_practice(self):
+        clear_internal_user_cache()
+        practice_pk = self.practice.pk
+        self.practice.delete()
+        rating_model_num = ContentType.objects.get_for_model(Rating).pk
+        scale_model_num = ContentType.objects.get_for_model(RatingScale).pk
+        scale_entry = LogEntry.objects.get(content_type=scale_model_num, object_id=self.scale.pk)
+        rating_entry = LogEntry.objects.get(content_type=rating_model_num, object_id=self.rating.pk)
+        self.assertEqual(scale_entry.change_message, f"Deleted by cascade from Practice {practice_pk} - Pratice A")
+        self.assertEqual(scale_entry.action_flag, DELETION)
+        self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
+        self.assertEqual(rating_entry.action_flag, DELETION)

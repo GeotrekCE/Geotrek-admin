@@ -72,7 +72,11 @@ When updating or adding a new field ``my_field`` to a model ``MyModel``, please 
 
 **In** ``MyModel`` **class** :
 
-- If ``my_field`` is a ``ForeignKey``, make sure to override ``related_name`` with an explicit set name
+- If ``my_field`` is a ``ForeignKey``:
+
+    - make sure to override ``related_name`` with an explicit set name
+
+    - if ``my_field`` causes cascading deletion (argument ``on_delete=models.CASCADE``), make sure to log potential deletions (see example ``log_cascade_deletion_from_sector_practice`` in ``geotrek/outdoor/models.py``)
 
 - Make sure to set ``verbose_name`` on the field and add proper translations in ``.po`` files
 

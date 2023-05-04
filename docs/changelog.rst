@@ -16,6 +16,10 @@ CHANGELOG
 
 - Upgrade `django-large-image` and `pip-tools`
 
+**Improvements**
+
+- Improve cascading deletions logic, and log them to LogEntry model to maintain history of deletions
+
 
 2.98.0     (2023-03-27)
 -----------------------
