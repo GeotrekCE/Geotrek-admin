@@ -76,7 +76,7 @@ class AccessibilityAttachment(models.Model):
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="created_attachments_accessibility",
                                 verbose_name=_('Creator'),
-                                help_text=_("User that uploaded"), null=True, on_delete=models.SET_NULL)
+                                help_text=_("User that uploaded"), on_delete=models.PROTECT)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
                               help_text=_("Original creator"))
