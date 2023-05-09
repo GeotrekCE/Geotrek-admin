@@ -775,8 +775,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 imgs = soup.find_all('img')
                 for img in imgs:
                     if img.attrs['src'][0] == '/':
-                        base_url = self.context.get("request").build_absolute_uri("/")[:-1]
-                        img['src'] = base_url + img.attrs["src"]
+                        img['src'] = self.context.get("request").build_absolute_uri(img.attrs["src"])
                 # Note: beautifulsoup makes a valid HTML doc from the data,
                 # but we don't want <html> or <body> in the output
                 return "".join([str(c) for c in soup.find("body").children])
