@@ -771,14 +771,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             def replace(html_content):
                 if not html_content:
                     return html_content
-                soup = BeautifulSoup(html_content, features="lxml")
+                soup = BeautifulSoup(html_content, features="html.parser")
                 imgs = soup.find_all('img')
                 for img in imgs:
                     if img.attrs['src'][0] == '/':
                         img['src'] = self.context.get("request").build_absolute_uri(img.attrs["src"])
-                # Note: beautifulsoup makes a valid HTML doc from the data,
-                # but we don't want <html> or <body> in the output
-                return "".join([str(c) for c in soup.find("body").children])
+                return str(soup)
 
             try:
                 for k, v in data.items():
