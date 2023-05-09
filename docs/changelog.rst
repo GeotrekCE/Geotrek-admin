@@ -9,10 +9,10 @@ CHANGELOG
 
 - Fix: Remove user group creation in Outdoor fixture (#3524)
 - Fix: Configure nginx to invalidate mobile cache on language change
-- Fix: Configure large_image to use libvips even for PNG images (fixes HD Views for PNGs)
 - Fix: service pictograms' URLs are made absolute in the API output of Trek descriptions (#3321)
 - Fix: APIDAE Events parser now handles integer values for capacity (`#3573 <https://github.com/GeotrekCE/Geotrek-admin/issues/3573>`_)
-
+- Fix: Configure `large_image` to use `libvips` even for PNG images (fixes HD Views for PNGs)
+- Fix: Deleting signages must also delete their blades
 
 **Maintenance**
 
