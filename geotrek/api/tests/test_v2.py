@@ -293,6 +293,13 @@ class BaseApiTest(TestCase):
             cls.treks = trek_factory.TrekFactory.create_batch(cls.nb_treks, geom=cls.path.geom)
             trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
             trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
+        html_content_with_imgs = '<p>Some HTML content with images</p>' \
+                                 '<img src="/media/upload/steep_descent.svg" alt="Descent">' \
+                                 '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
+        cls.treks[0].description = html_content_with_imgs
+        cls.treks[0].description_teaser = html_content_with_imgs
+        cls.treks[0].ambiance = html_content_with_imgs
+        cls.treks[0].save()
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -364,10 +371,7 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
-            accessibility_level=cls.accessibility_level,
-            description='<p>Description</p>'
-                        '<img src="/media/upload/steep_descent.svg" alt="Descent">'
-                        '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
+            accessibility_level=cls.accessibility_level
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
@@ -1264,6 +1268,24 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'][0]['pdf'],
                          f'http://testserver/api/en/treks/{self.child2.pk}/child-2.pdf')
+
+    def test_trek_detail_img_src_are_completed_in_descriptions(self):
+        response = self.get_trek_detail(self.treks[0].pk)
+        self.assertEqual(response.status_code, 200)
+        # Note that tags are sorted and the HTML format slightly changed during the "src" processing.
+        expected_description = '<p>Some HTML content with images</p>'\
+                               '<img alt="Descent" src="http://testserver/media/upload/steep_descent.svg"/>'\
+                               '<img alt="" height="1848" src="https://testserver/media/upload/pedestre.svg" width="1848"/>'
+        self.assertEqual(response.json()['description']['en'], expected_description)
+        self.assertEqual(response.json()['description_teaser']['en'], expected_description)
+        self.assertEqual(response.json()['ambiance']['en'], expected_description)
+
+        # Same test requesting a specific language
+        response = self.get_trek_detail(self.treks[0].pk, params={'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['description'], expected_description)
+        self.assertEqual(response.json()['description_teaser'], expected_description)
+        self.assertEqual(response.json()['ambiance'], expected_description)
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
