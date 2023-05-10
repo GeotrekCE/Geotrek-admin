@@ -1,12 +1,15 @@
 import os
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
 from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
                                           GeotrekMapEntityMixin)
@@ -96,7 +99,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                    verbose_name=_("Description"), help_text=_("Specificites"))
     condition = models.ForeignKey(InfrastructureCondition,
                                   verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.SET_NULL)
+                                  on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
@@ -143,19 +146,19 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
     """ An infrastructure in the park, which is not of type SIGNAGE """
-    type = models.ForeignKey(InfrastructureType, related_name="infrastructures", verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(InfrastructureType, related_name="infrastructures", verbose_name=_("Type"), on_delete=models.PROTECT)
     objects = InfrastructureGISManager()
     maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
                                                verbose_name=_("Maintenance difficulty"),
                                                help_text=_("Danger level of infrastructure maintenance"),
                                                blank=True, null=True,
-                                               on_delete=models.SET_NULL,
+                                               on_delete=models.PROTECT,
                                                related_name='infrastructures_set')
     usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
                                          verbose_name=_("Usage difficulty"),
                                          help_text=_("Danger level of end users' infrastructure usage"),
                                          blank=True, null=True,
-                                         on_delete=models.SET_NULL,
+                                         on_delete=models.PROTECT,
                                          related_name='infrastructures_set')
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
 
@@ -204,6 +207,12 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
         for trek in self.treks.all():
             trek.save()
         super().delete(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_infrastructure_topology(sender, instance, using, **kwargs):
+    # Infrastructures are deleted when topologies (from BaseInfrastructure) are deleted
+    log_cascade_deletion(sender, instance, Infrastructure, 'topo_object')
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))

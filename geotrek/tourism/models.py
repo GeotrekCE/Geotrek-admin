@@ -7,6 +7,8 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
@@ -18,6 +20,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
                                           PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import ReservationSystem, Theme
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting, classproperty, queryset_or_model
 from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
@@ -66,7 +69,7 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
-    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
+    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.PROTECT,
                              related_name='desks')
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Brief description"))
@@ -198,6 +201,12 @@ class TouristicContentType(OptionalPictogramMixin):
         return self.label
 
 
+@receiver(pre_delete, sender=TouristicContentCategory)
+def log_cascade_deletion_from_touristiccontenttype_category(sender, instance, using, **kwargs):
+    # TouristicContentTypes are deleted when TouristicContentCategories are deleted
+    log_cascade_deletion(sender, instance, TouristicContentType, 'category')
+
+
 class TouristicContentType1(TouristicContentType):
     objects = TouristicContentType1Manager()
 
@@ -236,7 +245,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
-    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.CASCADE,
+    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.PROTECT,
                                  verbose_name=_("Category"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True,
                                help_text=_("Address, phone, etc."))
@@ -260,12 +269,12 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     verbose_name=_("Portal"))
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
-                                            on_delete=models.CASCADE, related_name='contents', blank=True,
+                                            on_delete=models.PROTECT, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
-                                           on_delete=models.CASCADE, blank=True, null=True)
+                                           on_delete=models.SET_NULL, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False,
@@ -406,7 +415,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                               blank=True, null=True)
     organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
-    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
+    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     capacity = models.IntegerField(verbose_name=_("Capacity"), blank=True, null=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)
@@ -532,7 +541,7 @@ class TouristicEventParticipantCategory(TimeStampedModelMixin):
 
 class TouristicEventParticipantCount(TimeStampedModelMixin):
     count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
-    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.CASCADE, related_name="participants")
+    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.PROTECT, related_name="participants")
     event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")
 
     def __str__(self):

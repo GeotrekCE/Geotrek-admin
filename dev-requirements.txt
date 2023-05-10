@@ -39,7 +39,7 @@ packaging==21.3
     # via
     #   -c requirements.txt
     #   build
-pip-tools==6.12.2
+pip-tools==6.13.0
     # via -r dev-requirements.in
 pycodestyle==2.10.0
     # via flake8

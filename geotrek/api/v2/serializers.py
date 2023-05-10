@@ -668,29 +668,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
-        def replace_src_absolute(self, data):
-            soup = BeautifulSoup(data, features="lxml")
-            imgs = soup.find_all('img')
-            for img in imgs:
-                if img.attrs['src'][0] == '/':
-                    img['src'] = f'{self.context.get("request").build_absolute_uri("/")}{img.attrs["src"]}'
-
         def get_description(self, obj):
-            lang = self.context.get('request').GET.get('language', 'all') if self.context.get('request') else 'all'
-
-            if lang != 'all':
-                data = getattr(obj, '{}_{}'.format('description', lang))
-                if data:
-                    self.replace_src_absolute(data)
-            else:
-                data = {}
-                for language in settings.MODELTRANSLATION_LANGUAGES:
-                    data_lang = getattr(obj, '{}_{}'.format('description', language), )
-                    if data_lang:
-                        self.replace_src_absolute(data_lang)
-                    data.update({language: data_lang})
-
-            return data
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description', self, obj))
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)
@@ -714,7 +693,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('accessibility_width', self, obj)
 
         def get_ambiance(self, obj):
-            return get_translation_or_dict('ambiance', self, obj)
+            return self._replace_image_paths_with_urls(get_translation_or_dict('ambiance', self, obj))
 
         def get_disabled_infrastructure(self, obj):
             return get_translation_or_dict('accessibility_infrastructure', self, obj)
@@ -736,7 +715,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('arrival', self, obj)
 
         def get_description_teaser(self, obj):
-            return get_translation_or_dict('description_teaser', self, obj)
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description_teaser', self, obj))
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
@@ -787,6 +766,25 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
             return city.code if city else None
+
+        def _replace_image_paths_with_urls(self, data):
+            def replace(html_content):
+                if not html_content:
+                    return html_content
+                soup = BeautifulSoup(html_content, features="html.parser")
+                imgs = soup.find_all('img')
+                for img in imgs:
+                    if img.attrs['src'][0] == '/':
+                        img['src'] = self.context.get("request").build_absolute_uri(img.attrs["src"])
+                return str(soup)
+
+            try:
+                for k, v in data.items():
+                    data[k] = replace(v)
+            except AttributeError:
+                data = replace(data)
+
+            return data
 
         class Meta:
             model = trekking_models.Trek

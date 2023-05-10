@@ -7,8 +7,11 @@ from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from geotrek.common.signals import log_cascade_deletion
 from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
@@ -50,7 +53,7 @@ class Sector(TimeStampedModelMixin, models.Model):
 
 class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
+    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.SET_NULL,
                                verbose_name=_("Sector"), null=True, blank=True)
 
     class Meta:
@@ -63,7 +66,7 @@ class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
 
 
 class RatingScale(RatingScaleMixin):
-    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"))
 
     class Meta:
@@ -72,8 +75,14 @@ class RatingScale(RatingScaleMixin):
         ordering = ('practice', 'order', 'name')
 
 
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_ratingscale_practice(sender, instance, using, **kwargs):
+    # RatingScale are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, RatingScale, 'practice')
+
+
 class Rating(RatingMixin):
-    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.CASCADE,
                               verbose_name=_("Scale"))
 
     class Meta:
@@ -82,9 +91,15 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
+@receiver(pre_delete, sender=RatingScale)
+def log_cascade_deletion_from_rating_ratingscale(sender, instance, using, **kwargs):
+    # Ratings are deleted when RatingScale are deleted
+    log_cascade_deletion(sender, instance, Rating, 'scale')
+
+
 class SiteType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -96,9 +111,15 @@ class SiteType(TimeStampedModelMixin, models.Model):
         return self.name
 
 
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_sitetype_practice(sender, instance, using, **kwargs):
+    # SiteType are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, SiteType, 'practice')
+
+
 class CourseType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -108,6 +129,12 @@ class CourseType(TimeStampedModelMixin, models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_coursetype_practice(sender, instance, using, **kwargs):
+    # CourseType are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, CourseType, 'practice')
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,

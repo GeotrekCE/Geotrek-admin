@@ -45,6 +45,8 @@ from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
+from mapentity.middleware import clear_internal_user_cache
+
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
 ])
@@ -267,6 +269,10 @@ HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted([
 class BaseApiTest(TestCase):
     """ Base TestCase for all API profiles """
 
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
+
     @classmethod
     def setUpTestData(cls):
         # This prevents the test APIAccessAnonymousTestCase.test_hdviewpoint_detail_content_poi not passing on some environments.
@@ -288,6 +294,13 @@ class BaseApiTest(TestCase):
             cls.treks = trek_factory.TrekFactory.create_batch(cls.nb_treks, geom=cls.path.geom)
             trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
             trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
+        html_content_with_imgs = '<p>Some HTML content with images</p>' \
+                                 '<img src="/media/upload/steep_descent.svg" alt="Descent">' \
+                                 '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
+        cls.treks[0].description = html_content_with_imgs
+        cls.treks[0].description_teaser = html_content_with_imgs
+        cls.treks[0].ambiance = html_content_with_imgs
+        cls.treks[0].save()
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -359,10 +372,7 @@ class BaseApiTest(TestCase):
             reservation_system=cls.reservation_system,
             practice=cls.practice,
             difficulty=cls.difficulty,
-            accessibility_level=cls.accessibility_level,
-            description='<p>Description</p>'
-                        '<img src="/media/upload/steep_descent.svg" alt="Descent">'
-                        '<img src="https://testserver/media/upload/pedestre.svg" alt="" width="1848" height="1848">'
+            accessibility_level=cls.accessibility_level
         )
         cls.parent.accessibilities.add(cls.accessibility)
         cls.parent.source.add(cls.source)
@@ -1259,6 +1269,24 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['results'][0]['pdf'],
                          f'http://testserver/api/en/treks/{self.child2.pk}/child-2.pdf')
+
+    def test_trek_detail_img_src_are_completed_in_descriptions(self):
+        response = self.get_trek_detail(self.treks[0].pk)
+        self.assertEqual(response.status_code, 200)
+        # Note that tags are sorted and the HTML format slightly changed during the "src" processing.
+        expected_description = '<p>Some HTML content with images</p>'\
+                               '<img alt="Descent" src="http://testserver/media/upload/steep_descent.svg"/>'\
+                               '<img alt="" height="1848" src="https://testserver/media/upload/pedestre.svg" width="1848"/>'
+        self.assertEqual(response.json()['description']['en'], expected_description)
+        self.assertEqual(response.json()['description_teaser']['en'], expected_description)
+        self.assertEqual(response.json()['ambiance']['en'], expected_description)
+
+        # Same test requesting a specific language
+        response = self.get_trek_detail(self.treks[0].pk, params={'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['description'], expected_description)
+        self.assertEqual(response.json()['description_teaser'], expected_description)
+        self.assertEqual(response.json()['ambiance'], expected_description)
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
@@ -2347,7 +2375,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def setUpTestData(cls):
         #  created user
         cls.administrator = SuperUserFactory()
-        BaseApiTest.setUpTestData()
+        super().setUpTestData()
 
     def test_path_list(self):
         self.client.force_login(self.administrator)
@@ -2375,10 +2403,6 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
 class APISwaggerTestCase(BaseApiTest):
     """ TestCase API documentation """
-
-    @classmethod
-    def setUpTestData(cls):
-        BaseApiTest.setUpTestData()
 
     def test_schema_fields(self):
         response = self.client.get('/api/v2/', {'format': 'openapi'})
@@ -2462,6 +2486,10 @@ class OutdoorRatingScaleTestCase(TestCase):
         cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
 
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
+
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_ratingscale/')
         self.assertEqual(response.status_code, 200)
@@ -2519,6 +2547,10 @@ class TrekRatingTestCase(TestCase):
         cls.rating1.treks.set([trek_factory.TrekFactory()])
         cls.rating2.treks.set([trek_factory.TrekFactory()])
         cls.rating3.treks.set([trek_factory.TrekFactory()])
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/trek_rating/')
@@ -2589,6 +2621,10 @@ class OutdoorRatingTestCase(TestCase):
         cls.rating1.sites.set([outdoor_factory.SiteFactory()])
         cls.rating2.sites.set([outdoor_factory.SiteFactory()])
         cls.rating3.sites.set([outdoor_factory.SiteFactory()])
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_rating/')
@@ -2661,6 +2697,10 @@ class FlatPageTestCase(TestCase):
         cls.page2 = flatpages_factory.FlatPageFactory(
             title='BBB', published=True, order=1, target='mobile', content='Blbh'
         )
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/flatpage/')
@@ -2746,6 +2786,10 @@ class ReportStatusTestCase(TestCase):
         cls.magnitude2 = feedback_factory.ReportProblemMagnitudeFactory(label="Hardcore")
         cls.category1 = feedback_factory.ReportCategoryFactory(label="Conflict")
         cls.category2 = feedback_factory.ReportCategoryFactory(label="Literring")
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def test_status_list(self):
         response = self.client.get('/api/v2/feedback_status/')
@@ -2844,6 +2888,10 @@ class LanguageOrderingTestCase(TestCase):
         cls.tc3 = tourism_factory.TouristicContentFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
         cls.tc4 = tourism_factory.TouristicContentFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
 
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
+
     def assert_ordered_by_language(self, endpoint, ordered_ids, language):
         # GET request on list with language param
         response = self.client.get(reverse(endpoint), {'language': language})
@@ -2883,6 +2931,10 @@ class WebLinksCategoryTestCase(TestCase):
         cls.web_link_cat1 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto1.png', label="To do")
         cls.web_link_cat2 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto2.png', label="To see")
         cls.web_link_cat3 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto3.png', label="To eat")
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def test_web_links_category_list(self):
         response = self.client.get(reverse('apiv2:weblink-category-list'))
@@ -2927,6 +2979,10 @@ class TrekWebLinksTestCase(TestCase):
         cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
         cls.trek1 = trek_factory.TrekFactory(web_links=[cls.web_link1, cls.web_link2])
 
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
+
     def test_web_links_in_trek_list(self):
         response = self.client.get(reverse('apiv2:trek-list'))
         self.assertEqual(response.status_code, 200)
@@ -2968,6 +3024,10 @@ class TrekDifficultyFilterCase(TestCase):
         cls.trek_medium = trek_factory.TrekFactory(difficulty=cls.medium)
         cls.trek_hard = trek_factory.TrekFactory(difficulty=cls.hard)
         cls.trek_v_hard = trek_factory.TrekFactory(difficulty=cls.v_hard)
+
+    def tearDown(self):
+        clear_internal_user_cache()
+        super().tearDown()
 
     def assert_trek_is_in_reponse(self, response, expected_trek):
         found = list(filter(lambda trek: trek['id'] == expected_trek.pk, response.json()['results']))

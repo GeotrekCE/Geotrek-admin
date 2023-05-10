@@ -23,6 +23,8 @@ Makina Corpus
 * Emmanuelle Helly
 * Célia Prat
 * Paul Florence
+* Marine Faucher
+* Marc-Antoine Dupré
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
@@ -31,14 +33,22 @@ Parc national des Ecrins
 ------------------------
 
 * Camille Monchicourt
+* Théo Lechémia
+* Élie Bouttier
 
 Others
 ------
 
-* Michaël Viadere
+* Michaël Viadere (OpenIG)
 * Guillaume Boitel
 * Jean Lenormand
 * Claude Paroz
+* Amandine Sahl (Parc National des Cévennes)
+* Frédéric Cloitre (LPO AuRA)
+* Idrissa Djepa Creutz (OepnIG / Parc National des Cévennes)
+* Yannick LE DUC
+* Guillaume Boitel (Parc National de Port Cros)
+* Pierre Loicq (Parc National de la Vanoise)
 
 Credits
 -------

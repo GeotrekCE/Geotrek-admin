@@ -5,13 +5,16 @@ from hashlib import md5
 from unittest import mock
 
 from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.admin.sites import AdminSite
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone, translation
 from freezegun.api import freeze_time
+from mapentity.middleware import clear_internal_user_cache
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek import __version__
@@ -26,14 +29,13 @@ from geotrek.feedback.models import (PendingSuricateAPIRequest,
                                      WorkflowManager)
 from geotrek.feedback.tests.factories import (ReportFactory,
                                               ReportStatusFactory,
+                                              TimerEventFactory,
                                               WorkflowDistrictFactory,
                                               WorkflowManagerFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SuricateTests,
-    SuricateWorkflowTests, test_for_report_and_basic_modes,
-    test_for_workflow_mode)
+    SURICATE_MANAGEMENT_SETTINGS, SuricateTests, SuricateWorkflowTests,
+    test_for_report_and_basic_modes, test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
-
 
 SURICATE_WORKFLOW_SETTINGS = {
     "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département",
@@ -87,6 +89,14 @@ class TestTimerEventClass(SuricateWorkflowTests):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
         self.assertEquals(event.deadline, event.date_event + timedelta(days=7))
+        obj_repr = str(self.programmed_report)
+        report_pk = self.programmed_report.pk
+        clear_internal_user_cache()
+        self.programmed_report.delete(force=True)
+        model_num = ContentType.objects.get_for_model(TimerEvent).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=event.pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Report {report_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_no_timers_when_disabled_on_reports(self):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
@@ -103,6 +113,21 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.assertTrue(self.event1.notification_sent)
         # Assert report status changed to late
         self.assertEqual(self.waiting_report.status, self.late_intervention_status)
+
+    def test_cascading_deletion(self):
+        clear_internal_user_cache()
+        ContentType.objects.clear_cache()
+        status = ReportStatusFactory(timer_days=3)
+        report = ReportFactory(uses_timers=True)
+        event = TimerEventFactory(step=status, report=report)
+        status_pk = status.pk
+        event_pk = event.pk
+        obj_repr = str(status)
+        status.delete()
+        model_num = ContentType.objects.get_for_model(TimerEvent).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=event_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from ReportStatus {status_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     @freeze_time("2099-07-04")
     def test_command_clears_obsolete_events(self):

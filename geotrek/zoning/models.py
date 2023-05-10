@@ -25,7 +25,7 @@ class RestrictedAreaType(models.Model):
 class RestrictedArea(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
+    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     class Meta:
