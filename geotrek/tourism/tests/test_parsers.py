@@ -471,6 +471,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
 
+    def test_filter_capacity_handles_integers(self):
+        self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", 27), 27)
+
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):
         def mocked_json():
