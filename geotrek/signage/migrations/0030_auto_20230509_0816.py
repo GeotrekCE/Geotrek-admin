@@ -8,10 +8,7 @@ def delete_blades_on_deleted_signages(apps, schema):
     signage_model = apps.get_model('signage', 'Signage')
     blade_model = apps.get_model('signage', 'Blade')
     signages_deleted = signage_model.objects.filter(deleted=True)
-    for signage in signages_deleted:
-        for blade in blade_model.objects.filter(signage=signage):
-            blade.deleted = True
-            blade.save()
+    blade_model.objects.filter(signage__in=signages_deleted).update(deleted=True)
 
 
 class Migration(migrations.Migration):
