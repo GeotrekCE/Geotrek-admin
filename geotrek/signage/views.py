@@ -109,7 +109,7 @@ class SignageAPIViewSet(APIViewSet):
 
 
 class BladeDetail(MapEntityDetail):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -148,7 +148,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
 
 
 class BladeUpdate(LineMixin, MapEntityUpdate):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     form_class = BladeForm
 
     @same_structure_required('signage:blade_detail')
@@ -172,7 +172,7 @@ class BladeDelete(MapEntityDelete):
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['type', 'color', 'direction']
@@ -231,7 +231,7 @@ class BladeViewSet(GeotrekMapentityViewSet):
     mapentity_list_class = BladeList
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'number')
         return qs
@@ -243,4 +243,4 @@ class BladeAPIViewSet(APIViewSet):
     geojson_serializer_class = BladeAPIGeojsonSerializer
 
     def get_queryset(self):
-        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
+        return Blade.objects.existing().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
