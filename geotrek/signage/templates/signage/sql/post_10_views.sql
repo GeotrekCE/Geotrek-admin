@@ -64,37 +64,21 @@ LEFT JOIN signage_signagetype b ON a.type_id = b.id
 LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
 LEFT JOIN signage_sealing d ON a.sealing_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM
-         (SELECT e.id,
-                 e.geom
-          FROM signage_signage t,
-               signage_signagetype b,
-               core_topology e
-          WHERE t.topo_object_id = e.id
-              AND t.type_id = b.id
-              AND e.deleted = FALSE ) a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM
-         (SELECT e.id,
-                 e.geom
-          FROM signage_signage t,
-               signage_signagetype b,
-               core_topology e
-          WHERE t.topo_object_id = e.id
-              AND t.type_id = b.id
-              AND e.deleted = FALSE ) a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 LEFT JOIN
     (SELECT organism,
             b.topo_object_id
      FROM common_organism a
-     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id 
+     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id
 ;
