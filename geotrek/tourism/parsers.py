@@ -338,6 +338,8 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         return '<br>'.join(lines)
 
     def filter_capacity(self, src, val):
+        if isinstance(val, int):
+            return val
         if val.isnumeric():
             return int(val)
         else:
