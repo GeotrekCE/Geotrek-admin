@@ -28,8 +28,11 @@ Sometimes you also have to run:
     Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
 
 
+Application settings
+--------------------
+
 Spatial extents
----------------
+~~~~~~~~~~~~~~~
 
 In order to check your configuration of spatial extents, a small tool
 is available at http://server/tools/extents/.
@@ -40,7 +43,7 @@ is available at http://server/tools/extents/.
 
 
 Email settings
---------------
+~~~~~~~~~~~~~~
 
 Geotrek-admin will send emails:
 
@@ -60,8 +63,115 @@ be sent to the managers:
     sudo geotrek sendtestemail --managers
 
 
-Disable modules and components
-------------------------------
+Swagger API documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
+
+Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
+
+Share services between several Geotrek instances
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As explained :ref:`in the design section <design-section>`, *Geotrek-admin* relies
+on several services. They are generic and reusable, and can thus be shared
+between several instances, in order to save system resources for example.
+
+A simple way to achieve this is to install one instance with everything
+as usual (*standalone*), and plug the other instances on its underlying services.
+
+
+Capture and conversion
+''''''''''''''''''''''
+
+If you want to use external services, in ``.env``, add following variables:
+
+.. code-block :: bash
+
+    CAPTURE_HOST=x.x.x.x
+    CAPTURE_PORT=XX
+    CONVERSION_HOST=x.x.x.x
+    CONVERSION_PORT=XX
+
+Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
+
+
+Shutdown useless services
+'''''''''''''''''''''''''
+
+Now that your instances point the shared server. You can shutdown the useless
+services on each instance.
+
+Start by stopping everything :
+
+::
+
+    sudo systemctl stop geotrek
+
+
+Control number of workers and request timeouts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the application runs on 4 processes, and timeouts after 30 seconds.
+
+To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
+
+To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
+
+
+External authent
+~~~~~~~~~~~~~~~~
+
+You can authenticate user against a remote database table or view.
+
+To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
+
+::
+
+    AUTHENT_DATABASE = 'authent'
+    DATABASES['authent'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': '<database name>',
+        'USER': '<user name>',
+        'PASSWORD': '<password>',
+        'HOST': '<host>',
+        'PORT': '<port>',
+    }
+    AUTHENT_TABLENAME = '<table name>'
+    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
+
+Expected columns in table/view are :
+
+* username : string (*unique*)
+* first_name : string
+* last_name : string
+* password : string (simple md5 encoded, or full hashed and salted password)
+* email : string
+* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
+* structure : string
+* lang : string (language code)
+
+.. note ::
+
+    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
+
+    User management will be disabled from Administration backoffice.
+
+    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
+    file, and restart instance (see paragraph above).
+
+    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
+    for more details.
+
+
+Modules and components
+----------------------
 
 In order to disable a full set of modules, in the custom settings file,
 add the following code:
@@ -94,6 +204,71 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Diving
+~~~~~~
+
+In order to enable diving module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable diving module
+    INSTALLED_APPS += ('geotrek.diving', )
+
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+
+You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+
+You can insert licenses of attachments with this command :
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+
+
+Outdoor
+~~~~~~~
+
+In order to enable Outdoor module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable Outdoor module
+    INSTALLED_APPS += ('geotrek.outdoor', )
+
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+
+You can also insert Outdoor minimal data:
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
+After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
+
+Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+
+Sensitive areas
+~~~~~~~~~~~~~~~
+
+In order to enable sensitivity module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable sensitivity module
+    INSTALLED_APPS += ('geotrek.sensitivity', )
+
+See `sensitivity section <./sensitivity.html>`_ for settings and imports.
+
 Feedback reports settings
 -------------------------
 
@@ -105,6 +280,7 @@ Send acknowledge email
     SEND_REPORT_ACK = True
 
 If false, no email will be sent to the sender of any feedback on Geotrek-rando website
+
 
 Suricate support
 ~~~~~~~~~~~~~~~~
@@ -257,157 +433,11 @@ Or if you want to erase emails for reports older than 90 days
     geotrek erase_emails --days 90
 
 
-Sensitive areas
----------------
+Map settings
+------------
 
-In order to enable sensitivity module, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable sensitivity module
-    INSTALLED_APPS += ('geotrek.sensitivity', )
-
-The following settings are related to sensitive areas:
-
-
-.. code-block :: python
-
-    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
-
-    # Default radius of sensitivity bubbles when not specified for species
-    SENSITIVITY_DEFAULT_RADIUS = 100  # meters
-
-    # Buffer around treks to intersects sensitive areas
-    SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
-
-.. notes
-
-    # Take care if you change this value after adding data. You should update buffered geometry in sql.
-    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
-
-
-To take these changes into account, you need to run :
-
-::
-
-    sudo dpkg-reconfigure -u geotrek-admin
-
-Diving
-------
-
-In order to enable diving module, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable diving module
-    INSTALLED_APPS += ('geotrek.diving', )
-
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
-
-You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
-    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
-
-You can insert licenses of attachments with this command :
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
-
-
-Outdoor
--------
-
-In order to enable Outdoor module, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable Outdoor module
-    INSTALLED_APPS += ('geotrek.outdoor', )
-
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
-
-You can also insert Outdoor minimal data:
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
-
-After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
-
-Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
-You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
-https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
-
-Swagger
--------
-
-In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable API v2 documentation
-    INSTALLED_APPS += ('drf_yasg', )
-
-Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-
-
-WYSIWYG editor configuration
-----------------------------
-
-Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
-
-Its configuration can be customized using advanced settings (see above paragraph).
-
-For example, in order to control which buttons are to be shown, and which tags
-are to be kept when cleaning-up, add this bloc :
-
-.. code-block :: python
-
-    TINYMCE_DEFAULT_CONFIG = {
-        'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
-        'valid_elements': "img,p,a,em/i,strong/b",
-    }
-
-This will apply to all text fields.
-
-For more information on configuration entries available, please refer to the
-official documentation of *TinyMCE version 3*.
-
-
-Max characters count
-~~~~~~~~~~~~~~~~~~~~
-
-Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters
-for text fields (to be used with django-mapentity >= 8.1).
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
-
-This will apply to all text fields.
-See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
-
-View attachments in the browser
--------------------------------
-
-Attached files are downloaded by default by browser, with the following line,
-files will be opened in the browser :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
-
-
-Change or add WMTS tiles layers (IGN, OSM, Mapbox...)
------------------------------------------------------
+Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
 
@@ -438,54 +468,8 @@ Example with IGN and OSM basemaps :
 
 To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
 
-
-External authent
-----------------
-
-You can authenticate user against a remote database table or view.
-
-To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
-
-::
-
-    AUTHENT_DATABASE = 'authent'
-    DATABASES['authent'] = {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': '<database name>',
-        'USER': '<user name>',
-        'PASSWORD': '<password>',
-        'HOST': '<host>',
-        'PORT': '<port>',
-    }
-    AUTHENT_TABLENAME = '<table name>'
-    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
-
-Expected columns in table/view are :
-
-* username : string (*unique*)
-* first_name : string
-* last_name : string
-* password : string (simple md5 encoded, or full hashed and salted password)
-* email : string
-* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
-* structure : string
-* lang : string (language code)
-
-.. note ::
-
-    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
-
-    User management will be disabled from Administration backoffice.
-
-    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
-    file, and restart instance (see paragraph above).
-
-    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
-    for more details.
-
-
 Map layers colors and style
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
@@ -520,7 +504,7 @@ of available styles.
 
 
 External raster layers
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to add overlay tiles layer on maps. For example, it can be useful to:
 
@@ -539,8 +523,7 @@ In ``custom.py``, just add the following lines:
     ]
 
 
-Expected properties
-~~~~~~~~~~~~~~~~~~~
+**Expected properties:**
 
 For ``GeoJSON`` files, you can provide the following properties :
 
@@ -553,7 +536,7 @@ For ``GeoJSON`` files, you can provide the following properties :
 
 
 Disable darker map backgrounds
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Since IGN map backgrounds are very dense and colourful, a dark opacity is
 applied. In order to disable, change this MapEntity setting :
@@ -563,13 +546,166 @@ applied. In order to disable, change this MapEntity setting :
     MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
 
-Configure Social network
-------------------------
+Attachments
+-----------
+
+View attachments in the browser
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Attached files are downloaded by default by browser, with the following line,
+files will be opened in the browser :
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
+
+
+Resizing uploaded pictures
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
+
+::
+
+    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
+
+These corresponding height/width parameters can be overriden to select resized image size :
+
+::
+
+    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+
+Prohibit usage of big pictures and small width / height
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to prohibit the usage of heavy pictures :
+
+::
+
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+
+
+If you want to prohibit the usage of small pictures in pixels :
+
+::
+
+    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
+    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+
+These 3 settings will also not allow downloading images from the parsers.
+
+
+Prohibit usage of certain file types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Paperclip will only accept attachment files matching a list of allowed extensions.
+Here is the default value for this setting, which you can extend if needed :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = [
+        'jpeg',
+        'jpg',
+        'mp3',
+        'mp4',
+        'odt',
+        'pdf',
+        'png',
+        'svg',
+        'txt',
+        'gif',
+        'tiff',
+        'tif',
+        'docx',
+        'webp',
+        'bmp',
+        'flac',
+        'mpeg',
+        'doc',
+        'ods',
+        'gpx',
+        'xls',
+        'xlsx',
+        'odg',
+    ]
+
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
+
+::
+
+    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+
+You can also entirely deactivate these checks with the following :
+
+::
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = None
+
+These 2 settings will also not allow downloading images from the parsers.
+
+
+Edition
+-------
+
+WYSIWYG editor configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
+
+Its configuration can be customized using advanced settings (see above paragraph).
+
+For example, in order to control which buttons are to be shown, and which tags
+are to be kept when cleaning-up, add this bloc :
+
+.. code-block :: python
+
+    TINYMCE_DEFAULT_CONFIG = {
+        'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
+        'valid_elements': "img,p,a,em/i,strong/b",
+    }
+
+This will apply to all text fields.
+
+For more information on configuration entries available, please refer to the
+official documentation of *TinyMCE version 3*.
+
+
+Max characters count
+~~~~~~~~~~~~~~~~~~~~
+
+Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters
+for text fields (to be used with django-mapentity >= 8.1).
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
+
+This will apply to all text fields.
+See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
+
+
+Copyright on pictures
+~~~~~~~~~~~~~~~~~~~~~
+
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
+
+::
+
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+
+You can also add ``{legend}``.
+
+::
+
+    THUMBNAIL_COPYRIGHT_SIZE = 15
+
 
 Facebook configuration
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
-When a content is shared to Facebook in Geotrek-rando,
+When a content is shared to Facebook in Geotrek-rando V2,
 it needs static html files built by synchronization (thanks to option ``--rando-url``).
 
 In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
@@ -592,7 +728,7 @@ you can also override these settings:
 
 
 Override translations
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 Translations are managed by https://weblate.makina-corpus.net/ where you can contribute.
 But you can also override default translation files available in each module
@@ -649,7 +785,7 @@ Apply changes (French translation in this example) :
 
 
 Override public PDF templates
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
 Treks, touristic contents, touristic events, outdoor sites and courses can be exported in PDF files.
@@ -731,7 +867,7 @@ To get your modifications available for Rando application, launch the ``sync_ran
 
 
 Custom font in public document template
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to use custom fonts in trek PDF, it is necessary to install the
 font files on the server.
@@ -754,7 +890,7 @@ For more information, check out Ubuntu documentation.
 
 
 Custom colors in public document template
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Trek export geometries are translucid red by default. In order to control the
 apparence of objects in public trek PDF exports, use the following setting:
@@ -767,14 +903,14 @@ See *Leaflet* reference documentation for detail about layers apparence.
 
 
 Primary color in PDF templates
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
 
 Custom logos
-------------
+~~~~~~~~~~~~
 
 You might also need to deploy logo images in the following places :
 
@@ -783,159 +919,11 @@ You might also need to deploy logo images in the following places :
 * ``var/conf/extra_static/images/logo-header.png``
 
 
-Copyright on pictures
----------------------
-
-If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
-
-::
-
-    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
-
-You can also add ``{legend}``.
-
-::
-
-    THUMBNAIL_COPYRIGHT_SIZE = 15
-
-
-Resizing uploaded pictures
---------------------------
-
-Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
-
-::
-
-    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
-
-These corresponding height/width parameters can be overriden to select resized image size :
-
-::
-
-    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
-    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
-
-
-Prohibit usage of big pictures and small width / height
---------------------------------------------------------
-
-If you want to prohibit the usage of heavy pictures :
-
-::
-
-    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
-
-
-If you want to prohibit the usage of small pictures in pixels :
-
-::
-
-    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
-    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
-
-These 3 settings will also not allow downloading images from the parsers.
-
-
-Prohibit usage of certain file types
---------------------------------------------------------
-
-Paperclip will only accept attachment files matching a list of allowed extensions.
-Here is the default value for this setting, which you can extend if needed :
-
-::
-
-    PAPERCLIP_ALLOWED_EXTENSIONS = [
-        'jpeg',
-        'jpg',
-        'mp3',
-        'mp4',
-        'odt',
-        'pdf',
-        'png',
-        'svg',
-        'txt',
-        'gif',
-        'tiff',
-        'tif',
-        'docx',
-        'webp',
-        'bmp',
-        'flac',
-        'mpeg',
-        'doc',
-        'ods',
-        'gpx',
-        'xls',
-        'xlsx',
-        'odg',
-    ]
-
-It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
-
-::
-
-    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
-
-You can also entirely deactivate these checks with the following :
-
-::
-
-    PAPERCLIP_ALLOWED_EXTENSIONS = None
-
-These 2 settings will also not allow downloading images from the parsers.
-
-
-Share services between several Geotrek instances
-------------------------------------------------
-
-As explained :ref:`in the design section <design-section>`, *Geotrek-admin* relies
-on several services. They are generic and reusable, and can thus be shared
-between several instances, in order to save system resources for example.
-
-A simple way to achieve this is to install one instance with everything
-as usual (*standalone*), and plug the other instances on its underlying services.
-
-
-Capture and conversion
-~~~~~~~~~~~~~~~~~~~~~~
-
-If you want to use external services, in ``.env``, add following variables:
-
-.. code-block :: bash
-
-    CAPTURE_HOST=x.x.x.x
-    CAPTURE_PORT=XX
-    CONVERSION_HOST=x.x.x.x
-    CONVERSION_PORT=XX
-
-Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
-
-
-Shutdown useless services
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Now that your instances point the shared server. You can shutdown the useless
-services on each instance.
-
-Start by stopping everything :
-
-::
-
-    sudo systemctl stop geotrek
-
-
-Control number of workers and request timeouts
-----------------------------------------------
-
-By default, the application runs on 4 processes, and timeouts after 30 seconds.
-
-To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
-
-To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
-
+Interface
+---------
 
 Configure columns displayed in lists views and exports
-------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each module, use the following syntax to configure columns to display in the main table.
 
@@ -960,9 +948,8 @@ Another setting exists to enable a more detailed export of jobs costs in the int
     ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
 
 
-
 Configure form fields in creation views
----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each module, use the following syntax to configure fields to hide in the creation form.
 
@@ -975,7 +962,7 @@ Please refer to the "settings detail" section for a complete list of modules and
 
 
 Configure form fields required or needed for review or publication
--------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Set 'error_on_publication' to avoid publication without completeness fields
 and 'error_on_review' if you want this fields to be required before sending to review.
