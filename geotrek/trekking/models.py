@@ -68,7 +68,7 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
     color = ColorField(verbose_name=_("Color"), default='#444444',
-                       help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
+                       help_text=_("Color of the practice, only used in mobile and pdfs."))  # To be implemented in Geotrek-rando
 
     id_prefix = 'T'
 

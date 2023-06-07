@@ -11,11 +11,14 @@ CHANGELOG
 - Enable filtering lists by objects IDs on APIv2 (#3458)
 - Add information desks link on Treks with AggregatorParsers
 
-
 **Improvements**
 
 - Published by language depending on each portals and languages.
 - Use default value with parsers when no value is found
+
+**Minor changes**
+
+- Use practice color of treks used for mobile in pdfs
 
 
 2.98.1 (2023-05-30)
