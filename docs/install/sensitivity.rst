@@ -35,6 +35,12 @@ The following settings are related to sensitive areas:
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
+To take these changes into account, you need to run :
+
+::
+
+    sudo dpkg-reconfigure -u geotrek-admin
+
 
 Import from https://biodiv-sports.fr
 ------------------------------------

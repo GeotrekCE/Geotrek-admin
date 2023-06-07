@@ -4,32 +4,11 @@
 Advanced configuration
 ======================
 
-Custom setting file
--------------------
-
-Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
-The list of all overridable setting and default values can be found
-`there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
-
-After any change in ``custom.py``, run:
-
-::
-
-    sudo service geotrek restart
-
-Sometimes you also have to run:
-
-::
-
-    sudo dpkg-reconfigure -u geotrek-admin
-
-.. note ::
-
-    Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
-
+Application settings
+--------------------
 
 Spatial extents
----------------
+~~~~~~~~~~~~~~~
 
 In order to check your configuration of spatial extents, a small tool
 is available at http://server/tools/extents/.
@@ -40,7 +19,7 @@ is available at http://server/tools/extents/.
 
 
 Email settings
---------------
+~~~~~~~~~~~~~~
 
 Geotrek-admin will send emails:
 
@@ -55,13 +34,422 @@ Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 You can test your configuration with the following command. A fake email will
 be sent to the managers:
 
-::
+.. code-block :: bash
 
     sudo geotrek sendtestemail --managers
 
 
-Disable modules and components
-------------------------------
+API
+~~~
+
+.. code-block :: python
+
+    API_IS_PUBLIC = True
+
+Choose if you want the API V2 to be available for everyone without authentication. This API provides access to promotion content (Treks, POIs, Touristic Contents ...). Set to False if Geotrek is intended to be used only for managing content and not promoting them.
+Note that this setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
+
+
+Swagger API documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
+
+Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
+
+Share services between several Geotrek instances
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As explained :ref:`in the design section <design-section>`, *Geotrek-admin* relies
+on several services. They are generic and reusable, and can thus be shared
+between several instances, in order to save system resources for example.
+
+A simple way to achieve this is to install one instance with everything
+as usual (*standalone*), and plug the other instances on its underlying services.
+
+
+Capture and conversion
+''''''''''''''''''''''
+
+If you want to use external services, in ``.env``, add following variables:
+
+.. code-block :: python
+
+    CAPTURE_HOST=x.x.x.x
+    CAPTURE_PORT=XX
+    CONVERSION_HOST=x.x.x.x
+    CONVERSION_PORT=XX
+
+Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
+
+
+Shutdown useless services
+'''''''''''''''''''''''''
+
+Now that your instances point the shared server. You can shutdown the useless
+services on each instance.
+
+Start by stopping everything:
+
+.. code-block :: bash
+
+    sudo systemctl stop geotrek
+
+
+Control number of workers and request timeouts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the application runs on 4 processes, and timeouts after 30 seconds.
+
+To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
+
+To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
+
+
+External authent
+~~~~~~~~~~~~~~~~
+
+You can authenticate user against a remote database table or view.
+
+To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
+
+.. code-block :: python
+
+    AUTHENT_DATABASE = 'authent'
+    DATABASES['authent'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': '<database name>',
+        'USER': '<user name>',
+        'PASSWORD': '<password>',
+        'HOST': '<host>',
+        'PORT': '<port>',
+    }
+    AUTHENT_TABLENAME = '<table name>'
+    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
+
+Expected columns in table/view are :
+
+* username : string (*unique*)
+* first_name : string
+* last_name : string
+* password : string (simple md5 encoded, or full hashed and salted password)
+* email : string
+* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
+* structure : string
+* lang : string (language code)
+
+.. note ::
+
+    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
+
+    User management will be disabled from Administration backoffice.
+
+    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
+    file, and restart instance (see paragraph above).
+
+    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
+    for more details.
+
+Custom SQL
+~~~~~~~~~~
+
+Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
+
+* app name is the name of the Django application, eg. trekking or tourism
+* ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
+* script are executed in INSTALLED_APPS order, then by alphabetical order of script names
+
+
+Map settings
+------------
+
+Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white):
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('Scan', '//wxs.ign.fr/<key>/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('Ortho', '//wxs.ign.fr/<key>/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('Cadastre', '//wxs.ign.fr/<key>/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('OSM', 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '&copy; OSM contributors'),
+    ]
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre',
+         '//wxs.ign.fr/<key>/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+    ]
+
+You can change or add more basemaps layers like this:
+
+.. code-block :: python
+
+        LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
+
+Specify the tiles URLs this way in your custom Django setting file:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
+        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
+    ]
+
+Example with IGN and OSM basemaps:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Plan V2', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&EXCEPTIONS=image/png&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Ortho', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('OSM', 'https//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'),
+        ('OSM Stamen Terrain', '//tile.stamen.com/terrain/{z}/{x}/{y}.jpg', '© OpenStreetMap contributors / Stamen Design'),
+        ('OpenTopoMap', 'https//a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
+    ]
+
+To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
+
+Map layers zoom
+~~~~~~~~~~~~~~~
+
+You can define the max_zoom the user can zoom for all tiles.
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['MAX_ZOOM'] = 19
+
+*It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.*
+
+
+Map layers colors and style
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All layers colors can be customized from the settings.
+See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
+layer style.
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+
+Or change just one parameter (the opacity for example):
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+
+
+Regarding colors that depend from database content, such as land layers
+(physical types, work management...) or restricted areas. We use a specific
+setting that receives a list of colors:
+
+.. code-block :: python
+
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
+
+
+See the default values in ``geotrek/settings/base.py`` for the complete list
+of available styles.
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_STYLES'] = {
+        'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+        'print': {'path': {'weight': 1},
+                  'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                           'arrowColor': 'black', 'arrowSize': 10},}
+    }
+
+Color of the different layers on the map
+
+.. code-block :: python
+
+    COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
+                   'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+                   'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
+                   'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                   'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                   'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
+                                      'darkviolet', 'lightcoral', 'palevioletred',
+                                      'MediumVioletRed', 'MediumOrchid', 'Magenta',
+                                      'LightSalmon', 'HotPink', 'Fuchsia']}
+
+Color of the different layers on the top right for landing.
+
+    * For land, physical, competence, signagemanagement, workmanagement should have 5 values.
+    * For restricted Area: add as many color as your number of restricted area type
+
+**Restart** the application for changes to take effect.
+
+
+External raster layers
+~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to add overlay tiles layer on maps. For example, it can be useful to:
+
+* Get the cadastral parcels on top of satellite images
+* Home made layers (*with Tilemill or QGisMapserver for example*).
+  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
+  that are marked as invisible in the database!
+
+In ``custom.py``, just add the following lines:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
+        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+    ]
+
+
+**Expected properties:**
+
+For ``GeoJSON`` files, you can provide the following properties :
+
+* ``title``: string
+* ``description``: string
+* ``website``: string
+* ``phone``: string
+* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
+* ``category``: object with ``id`` and ``label`` attributes
+
+
+Geographical CRUD
+~~~~~~~~~~~~~~~~~
+
+.. code-block :: python
+
+    PATH_SNAPPING_DISTANCE = 2.0
+
+Minimum distance to merge 2 paths in unit of SRID
+
+    *Change the distance. Better to keep it like this. Not used when ``TREKKING_TOPOLOGY_ENABLED = True``.*
+
+.. code-block :: python
+
+    SNAP_DISTANCE = 30
+
+Distance of snapping for the cursor in pixels on Leaflet map.
+
+.. code-block :: python
+
+    PATH_MERGE_SNAPPING_DISTANCE = 2
+
+Minimum distance to merge 2 paths.
+
+    *Change the distance. Should be higher or the same as PATH_SNAPPING_DISTANCE*
+
+    *Used when TREKKING_TOPOLOGY_ENABLED = True*
+
+.. code-block :: python
+
+    TREK_POINTS_OF_REFERENCE_ENABLED = True
+
+Points of reference are enabled on form of treks.
+
+.. code-block :: python
+
+    OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
+
+Points of reference are enabled on form of otudoor courses.
+
+.. code-block :: python
+
+    TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
+
+Land objects are added on other objects (path for example) with offset, avoiding overlay.
+
+    *You should not change it to avoid overlay except if you want to have more overlay.*
+    *You can do for example for :*
+
+.. code-block :: python
+
+        TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
+
+.. code-block :: python
+
+    ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
+    ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
+    ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
+    ALTIMETRIC_PROFILE_BACKGROUND = 'white'
+    ALTIMETRIC_PROFILE_COLOR = '#F77E00'
+    ALTIMETRIC_PROFILE_HEIGHT = 400
+    ALTIMETRIC_PROFILE_WIDTH = 800
+    ALTIMETRIC_PROFILE_FONTSIZE = 25
+    ALTIMETRIC_PROFILE_FONT = 'ubuntu'
+    ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
+    ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+    ALTIMETRIC_AREA_MARGIN = 0.15
+
+All settings used to generate altimetric profile.
+
+    *All these settings can be modified but you need to check the result every time*
+
+    *The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
+
+
+Disable darker map backgrounds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since IGN map backgrounds are very dense and colourful, a dark opacity is
+applied. In order to disable, change this MapEntity setting:
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
+
+
+Map screenshots
+~~~~~~~~~~~~~~~
+
+.. code-block :: python
+
+    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+    SHOW_POIS_ON_MAP_SCREENSHOT = True
+    SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+    SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
+    SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
+
+Show objects on maps of PDF
+
+.. code-block :: python
+
+    MAP_CAPTURE_SIZE = 800
+
+Size in pixels of the capture.
+
+    *Be careful with your pdfs.*
+    *If you change this value, pdfs will be rendered differently*
+
+
+Modules and components
+----------------------
+
+Enable Apps
+~~~~~~~~~~~
 
 In order to disable a full set of modules, in the custom settings file,
 add the following code:
@@ -80,13 +468,37 @@ In order to remove notion of trails:
 
     TRAIL_MODEL_ENABLED = False
 
+In order to remove landedge model:
+
+.. code-block :: python
+
+    LANDEDGE_MODEL_ENABLED = False
+
 In order to remove zoning combo-boxes on list map:
 
 .. code-block :: python
 
-    LAND_BBOX_CITIES_ENABLED = True
-    LAND_BBOX_DISTRICTS_ENABLED = True
+    LAND_BBOX_CITIES_ENABLED = False
+    LAND_BBOX_DISTRICTS_ENABLED = False
     LAND_BBOX_AREAS_ENABLED = False
+
+In order to hide TouristicContents and TouristicEvents on menu:
+
+.. code-block :: python
+
+    TOURISM_ENABLED = False
+
+In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
+
+.. code-block :: python
+
+    FLATPAGES_ENABLED = False
+
+In order to hide the accessibility menu for attachments:
+
+.. code-block :: python
+
+   ACCESSIBILITY_ATTACHMENTS_ENABLED = False
 
 .. note ::
 
@@ -94,17 +506,169 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Paths
+~~~~~
+
+.. code-block :: python
+
+    ALLOW_PATH_DELETION_TOPOLOGY = True
+
+If false, it forbid to delete a path when at least one topology is linked to this path.
+
+
+.. code-block :: python
+
+    ALERT_DRAFT = False
+
+If True, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+
+
+.. code-block :: python
+
+    ALERT_REVIEW = False
+
+
+If True, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+
+
+Signage and Blade
+~~~~~~~~~~~~~~~~~
+
+
+``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) allow to enable or disable blades and lines submodules.
+
+``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
+
+.. code-block :: python
+
+    BLADE_CODE_TYPE = int
+
+Type of the blade code (str or int)
+
+    *It can be str or int.*
+
+    *If you have an integer code : int*
+
+    *If you have an string code : str*
+
+.. code-block :: python
+
+    BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+
+Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
+
+    *If you want to change : move information under bracket*
+
+    *You can also remove one element between bracket*
+
+    *You can do for exemple :*
+    *"CD99.{signagecode}.{bladenumber}"*
+
+    *It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*
+
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
+
+.. code-block :: python
+
+    LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+
+Correspond to the format used in export of lines. Used in csv of signage.
+
+    *Similar with above*
+    *You can do for example :*
+    *"CD99.{signagecode}-{bladenumber}.{linenumber}"*
+
+    *It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of XIDNZEIU)*
+
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
+    * *linenumber is the number of the line*
+
+
+Diving
+~~~~~~
+
+In order to enable diving module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable diving module
+    INSTALLED_APPS += ('geotrek.diving', )
+
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+
+You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
+
+.. code-block :: bash
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+
+You can insert licenses of attachments with this command :
+
+.. code-block :: bash
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+
+
+Outdoor
+~~~~~~~
+
+In order to enable Outdoor module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable Outdoor module
+    INSTALLED_APPS += ('geotrek.outdoor', )
+
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+
+You can also insert Outdoor minimal data:
+
+.. code-block :: bash
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
+After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
+
+Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+
+Sensitive areas
+~~~~~~~~~~~~~~~
+
+In order to enable sensitivity module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable sensitivity module
+    INSTALLED_APPS += ('geotrek.sensitivity', )
+
+See `sensitivity section <./sensitivity.html>`_ for settings and imports.
+
 Feedback reports settings
 -------------------------
 
 Send acknowledge email
 ~~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. code-block :: python
 
     SEND_REPORT_ACK = True
 
 If false, no email will be sent to the sender of any feedback on Geotrek-rando website
+
 
 Suricate support
 ~~~~~~~~~~~~~~~~
@@ -257,110 +821,1384 @@ Or if you want to erase emails for reports older than 90 days
     geotrek erase_emails --days 90
 
 
-Sensitive areas
----------------
+Attachments
+-----------
 
-In order to enable sensitivity module, in the custom settings file,
-add the following code:
+View attachments in the browser
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block :: python
-
-    # Enable sensitivity module
-    INSTALLED_APPS += ('geotrek.sensitivity', )
-
-The following settings are related to sensitive areas:
-
+Attached files are downloaded by default by browser, with the following line,
+files will be opened in the browser :
 
 .. code-block :: python
 
-    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
-
-    # Default radius of sensitivity bubbles when not specified for species
-    SENSITIVITY_DEFAULT_RADIUS = 100  # meters
-
-    # Buffer around treks to intersects sensitive areas
-    SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
-
-.. notes
-
-    # Take care if you change this value after adding data. You should update buffered geometry in sql.
-    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
+    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
 
-To take these changes into account, you need to run :
+Resizing uploaded pictures
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
-
-    sudo dpkg-reconfigure -u geotrek-admin
-
-Diving
-------
-
-In order to enable diving module, in the custom settings file,
-add the following code:
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD``:
 
 .. code-block :: python
 
-    # Enable diving module
-    INSTALLED_APPS += ('geotrek.diving', )
+    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
 
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+These corresponding height/width parameters can be overriden to select resized image size:
 
-You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
+.. code-block :: python
 
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
-    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
-
-You can insert licenses of attachments with this command :
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
 
 
-Outdoor
+Prohibit usage of big pictures and small width / height
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to prohibit the usage of heavy pictures:
+
+.. code-block :: python
+
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+
+If you want to prohibit the usage of small pictures in pixels:
+
+.. code-block :: python
+
+    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
+    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+
+These 3 settings will also not allow downloading images from the parsers.
+
+
+Prohibit usage of certain file types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Paperclip will only accept attachment files matching a list of allowed extensions.
+Here is the default value for this setting, which you can extend if needed:
+
+.. code-block :: python
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = [
+        'jpeg',
+        'jpg',
+        'mp3',
+        'mp4',
+        'odt',
+        'pdf',
+        'png',
+        'svg',
+        'txt',
+        'gif',
+        'tiff',
+        'tif',
+        'docx',
+        'webp',
+        'bmp',
+        'flac',
+        'mpeg',
+        'doc',
+        'ods',
+        'gpx',
+        'xls',
+        'xlsx',
+        'odg',
+    ]
+
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax:
+
+.. code-block :: python
+
+    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+
+You can also entirely deactivate these checks with the following:
+
+.. code-block :: python
+
+    PAPERCLIP_ALLOWED_EXTENSIONS = None
+
+These 2 settings will also not allow downloading images from the parsers.
+
+
+Interface
+---------
+
+Configure columns displayed in lists views and exports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each module, use the following syntax to configure columns to display in the main table.
+
+.. code-block :: python
+
+    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
+
+
+For each module, use the following syntax to configure columns to export as CSV or SHP.
+
+.. code-block :: python
+
+    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
+
+
+Please refer to the "settings detail" section for a complete list of modules and available columms.
+
+Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
+
+.. code-block :: python
+
+    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+
+Custom columns available
+''''''''''''''''''''''''
+
+A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
+
+.. code-block :: python
+
+    COLUMNS_LISTS["path_view"] = [
+        "length_2d",
+        "valid",
+        "structure",
+        "visible",
+        "min_elevation",
+        "max_elevation",
+        "date_update",
+        "date_insert",
+        "stake",
+        "networks",
+        "comments",
+        "departure",
+        "arrival",
+        "comfort",
+        "source",
+        "usages",
+        "draft",
+        "trails",
+        "uuid",
+    ]
+    COLUMNS_LISTS["trail_view"] = [
+        "departure",
+        "arrival",
+        "category",
+        "length",
+        "structure",
+        "min_elevation",
+        "max_elevation",
+        "date_update",
+        "length_2d",
+        "date_insert",
+        "comments",
+        "uuid",
+    ]
+    COLUMNS_LISTS["landedge_view"] = [
+        "eid",
+        "min_elevation",
+        "max_elevation",
+        "date_update",
+        "length_2d",
+        "date_insert",
+        "owner",
+        "agreement",
+        "uuid",
+    ]
+    COLUMNS_LISTS["physicaledge_view"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["competenceedge_view"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["signagemanagementedge_export"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+        "provider"
+    ]
+    COLUMNS_LISTS["workmanagementedge_export"] = [
+        "eid",
+        "date_insert",
+        "date_update",
+        "length",
+        "length_2d",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+    ]
+    COLUMNS_LISTS["infrastructure_view"] = [
+        "condition",
+        "cities",
+        "structure",
+        "type",
+        "description",
+        "accessibility",
+        "date_update",
+        "date_insert",
+        "implantation_year",
+        "usage_difficulty",
+        "maintenance_difficulty",
+        "published",
+        "uuid",
+        "eid",
+        "provider",
+        "access"
+    ]
+    COLUMNS_LISTS["signage_view"] = [
+        "code",
+        "type",
+        "condition",
+        "structure",
+        "description",
+        "date_update",
+        "date_insert",
+        "implantation_year",
+        "printed_elevation",
+        "coordinates",
+        "sealing",
+        "access",
+        "manager",
+        "published",
+        "uuid",
+    ]
+    COLUMNS_LISTS["intervention_view"] = [
+        "date",
+        "type",
+        "target",
+        "status",
+        "stake",
+        "structure",
+        "subcontracting",
+        "status",
+        "disorders",
+        "length",
+        "material_cost",
+        "min_elevation",
+        "max_elevation",
+        "heliport_cost",
+        "subcontract_cost",
+        "date_update",
+        "date_insert",
+        "description",
+    ]
+    COLUMNS_LISTS["project_view"] = [
+        "structure",
+        "begin_year",
+        "end_year",
+        "constraint",
+        "global_cost",
+        "type",
+        "date_update",
+        "domain",
+        "contractors",
+        "project_owner",
+        "project_manager",
+        "founders",
+        "date_insert",
+        "comments",
+    ]
+    COLUMNS_LISTS["trek_view"] = [
+        "structure",
+        "departure",
+        "arrival",
+        "duration",
+        "description_teaser",
+        "description",
+        "gear",
+        "route",
+        "difficulty",
+        "ambiance",
+        "access",
+        "accessibility_infrastructure",
+        "advised_parking",
+        "parking_location",
+        "public_transport",
+        "themes",
+        "practice",
+        "min_elevation",
+        "max_elevation",
+        "length_2d",
+        "date_update",
+        "date_insert",
+        "accessibilities",
+        "accessibility_advice",
+        "accessibility_covering",
+        "accessibility_exposure",
+        "accessibility_level",
+        "accessibility_signage",
+        "accessibility_slope",
+        "accessibility_width",
+        "ratings_description",
+        "ratings",
+        "points_reference",
+        "source",
+        "reservation_system",
+        "reservation_id",
+        "portal",
+        "uuid",
+        "eid",
+        "eid2",
+        "provider"
+    ]
+    COLUMNS_LISTS["poi_view"] = [
+        "structure",
+        "description",
+        "type",
+        "min_elevation",
+        "date_update",
+        "date_insert",
+        "uuid",
+    ]
+    COLUMNS_LISTS["service_view"] = [
+        "structure",
+        "min_elevation",
+        "type",
+        "length_2d",
+        "date_update",
+        "date_insert",
+        "uuid",
+    ]
+    COLUMNS_LISTS["dive_view"] = [
+        "structure",
+        "description_teaser",
+        "description",
+        "owner",
+        "practice",
+        "departure",
+        "disabled_sport",
+        "facilities",
+        "difficulty",
+        "levels",
+        "depth",
+        "advice",
+        "themes",
+        "source",
+        "portal",
+        "date_update",
+        "date_insert",
+    ]
+    COLUMNS_LISTS["touristic_content_view"] = [
+        "structure",
+        "description_teaser",
+        "description",
+        "category",
+        "contact",
+        "email",
+        "website",
+        "practical_info",
+        "accessibility",
+        "label_accessibility",
+        "type1",
+        "type2",
+        "source",
+        "reservation_system",
+        "reservation_id",
+        "date_update",
+        "date_insert",
+        "uuid",
+        "eid",
+        "provider"
+    ]
+    COLUMNS_LISTS["touristic_event_view"] = [
+        "structure",
+        "themes",
+        "description_teaser",
+        "description",
+        "meeting_point",
+        "start_time",
+        "end_time",
+        "duration",
+        "begin_date",
+        "contact",
+        "email",
+        "website",
+        "end_date",
+        "organizer",
+        "speaker",
+        "type",
+        "accessibility",
+        "capacity",
+        "portal",
+        "source",
+        "practical_info",
+        "target_audience",
+        "booking",
+        "date_update",
+        "date_insert",
+        "uuid",
+        "eid",
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
+        "place",
+        'preparation_duration',
+        'intervention_duration',
+    ]
+    COLUMNS_LISTS["feedback_view"] = [
+        "email",
+        "comment",
+        "activity",
+        "category",
+        "problem_magnitude",
+        "status",
+        "related_trek",
+        "uuid",
+        "eid",
+        "external_eid",
+        "locked",
+        "origin"
+        "date_update",
+        "date_insert",
+        "created_in_suricate",
+        "last_updated_in_suricate",
+        "assigned_user",
+        "uses_timers"
+    ]
+    COLUMNS_LISTS["sensitivity_view"] = [
+        "structure",
+        "species",
+        "published",
+        "publication_date",
+        "contact",
+        "pretty_period",
+        "category",
+        "pretty_practices",
+        "description",
+        "date_update",
+        "date_insert",
+    ]
+    COLUMNS_LISTS["outdoor_site_view"] = [
+        "structure",
+        "name",
+        "practice",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "advice",
+        "accessibility",
+        "period",
+        "labels",
+        "themes",
+        "portal",
+        "source",
+        "information_desks",
+        "web_links",
+        "eid",
+        "orientation",
+        "wind",
+        "ratings",
+        "managers",
+        "type",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "period",
+        "orientation",
+        "wind",
+        "labels",
+        "themes",
+        "portal",
+        "source",
+        "managers",
+        "min_elevation",
+        "date_insert",
+        "date_update",
+        "uuid",
+    ]
+    COLUMNS_LISTS["outdoor_course_view"] = [
+        "structure",
+        "name",
+        "parent_sites",
+        "description",
+        "advice",
+        "equipment",
+        "accessibility",
+        "eid",
+        "height",
+        "ratings",
+        "gear",
+        "duration"
+        "ratings_description",
+        "type",
+        "points_reference",
+        "uuid",
+    ]
+    COLUMNS_LISTS["path_export"] = [
+        "structure",
+        "valid",
+        "visible",
+        "name",
+        "comments",
+        "departure",
+        "arrival",
+        "comfort",
+        "source",
+        "stake",
+        "usages",
+        "networks",
+        "date_insert",
+        "date_update",
+        "length_2d",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["trail_export"] = [
+        "structure",
+        "name",
+        "comments",
+        "departure",
+        "arrival",
+        "category",
+        "certifications",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["landedge_export"] = [
+        "eid",
+        "land_type",
+        "owner",
+        "agreement",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["physicaledge_export"] = [
+        "eid",
+        "physical_type",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["competenceedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["signagemanagementedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["workmanagementedge_export"] = [
+        "eid",
+        "organization",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["infrastructure_export"] = [
+        "name",
+        "type",
+        "condition",
+        "access",
+        "description",
+        "accessibility",
+        "implantation_year",
+        "published",
+        "publication_date",
+        "structure",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "usage_difficulty",
+        "maintenance_difficulty"
+        "uuid",
+        "eid",
+        "provider"
+    ]
+    COLUMNS_LISTS["signage_export"] = [
+        "structure",
+        "name",
+        "code",
+        "type",
+        "condition",
+        "description",
+        "implantation_year",
+        "published",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "lat_value",
+        "lng_value",
+        "printed_elevation",
+        "sealing",
+        "access",
+        "manager",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "uuid",
+        "eid",
+        "provider"
+    ]
+    COLUMNS_LISTS["intervention_export"] = [
+        "name",
+        "date",
+        "type",
+        "target",
+        "status",
+        "stake",
+        "disorders",
+        "total_manday",
+        "project",
+        "subcontracting",
+        "width",
+        "height",
+        "length",
+        "area",
+        "structure",
+        "description",
+        "date_insert",
+        "date_update",
+        "material_cost",
+        "heliport_cost",
+        "subcontract_cost",
+        "total_cost_mandays",
+        "total_cost",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+    ]
+    COLUMNS_LISTS["project_export"] = [
+        "structure",
+        "name",
+        "period",
+        "type",
+        "domain",
+        "constraint",
+        "global_cost",
+        "interventions",
+        "interventions_total_cost",
+        "comments",
+        "contractors",
+        "project_owner",
+        "project_manager",
+        "founders",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+    ]
+    COLUMNS_LISTS["trek_export"] = [
+        "eid",
+        "eid2",
+        "structure",
+        "name",
+        "departure",
+        "arrival",
+        "duration",
+        "duration_pretty",
+        "description",
+        "description_teaser",
+        "gear",
+        "networks",
+        "advice",
+        "ambiance",
+        "difficulty",
+        "information_desks",
+        "themes",
+        "practice",
+        "accessibilities",
+        "accessibility_advice",
+        "accessibility_covering",
+        "accessibility_exposure",
+        "accessibility_level",
+        "accessibility_signage",
+        "accessibility_slope",
+        "accessibility_width",
+        "ratings_description",
+        "ratings",
+        "access",
+        "route",
+        "public_transport",
+        "advised_parking",
+        "web_links",
+        "labels",
+        "accessibility_infrastructure",
+        "parking_location",
+        "points_reference",
+        "related",
+        "children",
+        "parents",
+        "pois",
+        "review",
+        "published",
+        "publication_date",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "source",
+        "portal",
+        "length_2d",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+        "provider"
+    ]
+    COLUMNS_LISTS["poi_export"] = [
+        "structure",
+        "eid",
+        "name",
+        "type",
+        "description",
+        "treks",
+        "review",
+        "published",
+        "publication_date",
+        "structure",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["service_export"] = [
+        "eid",
+        "type",
+        "length",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["dive_export"] = [
+        "eid",
+        "structure",
+        "name",
+        "departure",
+        "description",
+        "description_teaser",
+        "advice",
+        "difficulty",
+        "levels",
+        "themes",
+        "practice",
+        "disabled_sport",
+        "published",
+        "publication_date",
+        "date_insert",
+        "date_update",
+        "areas",
+        "source",
+        "portal",
+        "review",
+        "uuid",
+    ]
+    COLUMNS_LISTS["touristic_content_export"] = [
+        "structure",
+        "eid",
+        "name",
+        "category",
+        "type1",
+        "type2",
+        "description_teaser",
+        "description",
+        "themes",
+        "contact",
+        "email",
+        "website",
+        "practical_info",
+        "accessibility",
+        "label_accessibility",
+        "review",
+        "published",
+        "publication_date",
+        "source",
+        "portal",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "approved",
+        "uuid",
+        "provider"
+    ]
+    COLUMNS_LISTS["touristic_event_export"] = [
+        "structure",
+        "eid",
+        "name",
+        "type",
+        "description_teaser",
+        "description",
+        "themes",
+        "begin_date",
+        "end_date",
+        "duration",
+        "meeting_point",
+        "start_time",
+        "end_time",
+        "contact",
+        "email",
+        "website",
+        "organizer",
+        "speaker",
+        "accessibility",
+        "capacity",
+        "booking",
+        "target_audience",
+        "practical_info",
+        "date_insert",
+        "date_update",
+        "source",
+        "portal",
+        "review",
+        "published",
+        "publication_date",
+        "cities",
+        "districts",
+        "areas",
+        "approved",
+        "uuid",
+        "provider",
+        "bookable",
+        "cancelled",
+        "cancellation_reason"
+        "place",
+        'preparation_duration',
+        'intervention_duration'
+    ]
+    COLUMNS_LISTS["feedback_export"] = [
+        "comment",
+        "activity",
+        "category",
+        "problem_magnitude",
+        "status",
+        "related_trek",
+        "uuid",
+        "eid",
+        "external_eid",
+        "locked",
+        "origin"
+        "date_update",
+        "date_insert",
+        "created_in_suricate",
+        "last_updated_in_suricate",
+        "assigned_user",
+        "uses_timers"
+    ]
+    COLUMNS_LISTS["sensitivity_export"] = [
+        "species",
+        "published",
+        "description",
+        "contact",
+        "pretty_period",
+        "pretty_practices",
+    ]
+    COLUMNS_LISTS["outdoor_site_export"] = [
+        "structure",
+        "name",
+        "practice",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "advice",
+        "accessibility",
+        "period",
+        "labels",
+        "themes",
+        "portal",
+        "source",
+        "information_desks",
+        "web_links",
+        "eid",
+        "orientation",
+        "wind",
+        "ratings",
+        "managers",
+        "type",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "period",
+        "orientation",
+        "wind",
+        "labels",
+        "themes",
+        "portal",
+        "source",
+        "managers",
+        "min_elevation",
+        "date_insert",
+        "date_update",
+        "uuid",
+    ]
+    COLUMNS_LISTS["outdoor_course_export"] = [
+        "structure",
+        "name",
+        "parent_sites",
+        "description",
+        "advice",
+        "equipment",
+        "accessibility",
+        "eid",
+        "height",
+        "ratings",
+        "gear",
+        "duration"
+        "ratings_description",
+        "type",
+        "points_reference",
+        "uuid",
+    ]
+
+
+Configure form fields in creation views
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each module, use the following syntax to configure fields to hide in the creation form.
+
+.. code-block :: python
+
+    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+
+
+Please refer to the "settings detail" section for a complete list of modules and hideable fields.
+
+
+Hideable form fields
+''''''''''''''''''''
+
+An exhaustive list of form fields hideable in each module.
+
+.. code-block :: python
+
+    HIDDEN_FORM_FIELDS["path"] = [
+            "departure",
+            "name",
+            "stake",
+            "comfort",
+            "arrival",
+            "comments",
+            "source",
+            "networks",
+            "usages",
+            "valid",
+            "draft",
+            "reverse_geom",
+        ],
+    HIDDEN_FORM_FIELDS["trek"] = [
+            "structure",
+            "name",
+            "review",
+            "published",
+            "labels",
+            "departure",
+            "arrival",
+            "duration",
+            "difficulty",
+            "gear",
+            "route",
+            "ambiance",
+            "access",
+            "description_teaser",
+            "description",
+            "points_reference",
+            "accessibility_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "advice",
+            "themes",
+            "networks",
+            "practice",
+            "accessibilities",
+            "accessibility_advice",
+            "accessibility_covering",
+            "accessibility_exposure",
+            "accessibility_level",
+            "accessibility_signage",
+            "accessibility_slope",
+            "accessibility_width",
+            "web_links",
+            "information_desks",
+            "source",
+            "portal",
+            "children_trek",
+            "eid",
+            "eid2",
+            "ratings",
+            "ratings_description",
+            "reservation_system",
+            "reservation_id",
+            "pois_excluded",
+            "hidden_ordered_children",
+        ],
+    HIDDEN_FORM_FIELDS["trail"] = [
+            "departure",
+            "arrival",
+            "comments",
+            "category",
+        ],
+    HIDDEN_FORM_FIELDS["landedge"] = [
+            "owner",
+            "agreement"
+        ],
+    HIDDEN_FORM_FIELDS["infrastructure"] = [
+            "condition",
+            "access",
+            "description",
+            "accessibility",
+            "published",
+            "implantation_year",
+            "usage_difficulty",
+            "maintenance_difficulty"
+        ],
+    HIDDEN_FORM_FIELDS["signage"] = [
+            "condition",
+            "description",
+            "published",
+            "implantation_year",
+            "code",
+            "printed_elevation",
+            "manager",
+            "sealing",
+            "access"
+        ],
+    HIDDEN_FORM_FIELDS["intervention"] = [
+            "disorders",
+            "description",
+            "type",
+            "subcontracting",
+            "length",
+            "width",
+            "height",
+            "stake",
+            "project",
+            "material_cost",
+            "heliport_cost",
+            "subcontract_cost",
+        ],
+    HIDDEN_FORM_FIELDS["project"] = [
+            "type",
+            "type",
+            "domain",
+            "end_year",
+            "constraint",
+            "global_cost",
+            "comments",
+            "project_owner",
+            "project_manager",
+            "contractors",
+        ],
+    HIDDEN_FORM_FIELDS["site"] = [
+            "parent",
+            "review",
+            "published",
+            "practice",
+            "description_teaser",
+            "description",
+            "ambiance",
+            "advice",
+            "period",
+            "orientation",
+            "wind",
+            "labels",
+            "themes",
+            "information_desks",
+            "web_links",
+            "portal",
+            "source",
+            "managers",
+            "eid"
+        ],
+    HIDDEN_FORM_FIELDS["course"] = [
+            "review",
+            "published",
+            "description",
+            "advice",
+            "equipment",
+            "accessibility",
+            "height",
+            "children_course",
+            "eid",
+            "gear",
+            "duration"
+            "ratings_description",
+        ]
+    HIDDEN_FORM_FIELDS["poi"] = [
+            "review",
+            "published",
+            "description",
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["service"] = [
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["dive"] = [
+            "review",
+            "published",
+            "practice",
+            "advice",
+            "description_teaser",
+            "description",
+            "difficulty",
+            "levels",
+            "themes",
+            "owner",
+            "depth",
+            "facilities",
+            "departure",
+            "disabled_sport",
+            "source",
+            "portal",
+            "eid",
+        ],
+    HIDDEN_FORM_FIELDS["touristic_content"] = [
+            'label_accessibility'
+            'type1',
+            'type2',
+            'review',
+            'published',
+            'accessibility',
+            'description_teaser',
+            'description',
+            'themes',
+            'contact',
+            'email',
+            'website',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+            'reservation_system',
+            'reservation_id'
+        ],
+    HIDDEN_FORM_FIELDS["touristic_event"] = [
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'end_date',
+            'duration',
+            'meeting_point',
+            'start_time',
+            'end_time',
+            'contact',
+            'email',
+            'website',
+            'organizer',
+            'speaker',
+            'type',
+            'accessibility',
+            'capacity',
+            'booking',
+            'target_audience',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+            "bookable",
+            'cancelled',
+            'cancellation_reason'
+            'place',
+            'preparation_duration',
+            'intervention_duration'
+        ],
+    HIDDEN_FORM_FIELDS["report"] = [
+            "email",
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin",
+            "assigned_user",
+            "uses_timers"
+        ],
+    HIDDEN_FORM_FIELDS["sensitivity_species"] = [
+            "contact",
+            "published",
+            "description",
+        ],
+    HIDDEN_FORM_FIELDS["sensitivity_regulatory"] = [
+            "contact",
+            "published",
+            "description",
+            "pictogram",
+            "elevation",
+            "url",
+            "period01",
+            "period02",
+            "period03",
+            "period04",
+            "period05",
+            "period06",
+            "period07",
+            "period08",
+            "period09",
+            "period10",
+            "period11",
+            "period12",
+        ],
+    HIDDEN_FORM_FIELDS["blade"] = [
+            "condition",
+            "color",
+        ],
+    HIDDEN_FORM_FIELDS["report"] = [
+            "comment",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "related_trek",
+            "status",
+            "locked",
+            "uid",
+            "origin"
+        ]
+
+
+Configure form fields required or needed for review or publication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set 'error_on_publication' to avoid publication without completeness fields
+and 'error_on_review' if you want this fields to be required before sending to review.
+
+.. code-block :: python
+
+    COMPLETENESS_LEVEL = 'warning'
+
+For each module, configure fields to be needed or required on review or publication
+
+.. code-block :: python
+
+    COMPLETENESS_FIELDS = {
+        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+        'dive': ['practice', 'difficulty', 'description_teaser'],
+    }
+
+
+Edition
 -------
-
-In order to enable Outdoor module, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable Outdoor module
-    INSTALLED_APPS += ('geotrek.outdoor', )
-
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
-
-You can also insert Outdoor minimal data:
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
-
-After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
-
-Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
-You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
-https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
-
-Swagger
--------
-
-In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
-add the following code:
-
-.. code-block :: python
-
-    # Enable API v2 documentation
-    INSTALLED_APPS += ('drf_yasg', )
-
-Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-
 
 WYSIWYG editor configuration
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
@@ -395,181 +2233,29 @@ for text fields (to be used with django-mapentity >= 8.1).
 This will apply to all text fields.
 See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
 
-View attachments in the browser
--------------------------------
 
-Attached files are downloaded by default by browser, with the following line,
-files will be opened in the browser :
+Copyright on pictures
+~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block :: python
-
-    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
-
-
-Change or add WMTS tiles layers (IGN, OSM, Mapbox...)
------------------------------------------------------
-
-By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
-
-You can change or add more basemaps layers.
-
-Specify the tiles URLs this way in your custom Django setting file:
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this:
 
 .. code-block :: python
 
-    LEAFLET_CONFIG['TILES'] = [
-        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
-        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
-    ]
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
-Example with IGN and OSM basemaps :
+You can also add ``{legend}``:
 
-.. code-block :: python
-
-    LEAFLET_CONFIG['TILES'] = [
-        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Plan V2', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&EXCEPTIONS=image/png&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Ortho', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('OSM', 'https//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'),
-        ('OSM Stamen Terrain', '//tile.stamen.com/terrain/{z}/{x}/{y}.jpg', '© OpenStreetMap contributors / Stamen Design'),
-        ('OpenTopoMap', 'https//a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
-    ]
-
-To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
-
-
-External authent
-----------------
-
-You can authenticate user against a remote database table or view.
-
-To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
-
-::
-
-    AUTHENT_DATABASE = 'authent'
-    DATABASES['authent'] = {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': '<database name>',
-        'USER': '<user name>',
-        'PASSWORD': '<password>',
-        'HOST': '<host>',
-        'PORT': '<port>',
-    }
-    AUTHENT_TABLENAME = '<table name>'
-    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
-
-Expected columns in table/view are :
-
-* username : string (*unique*)
-* first_name : string
-* last_name : string
-* password : string (simple md5 encoded, or full hashed and salted password)
-* email : string
-* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
-* structure : string
-* lang : string (language code)
-
-.. note ::
-
-    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
-
-    User management will be disabled from Administration backoffice.
-
-    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
-    file, and restart instance (see paragraph above).
-
-    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
-    for more details.
-
-
-Map layers colors and style
----------------------------
-
-All layers colors can be customized from the settings.
-See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
-layer style.
-
-* To apply these style changes, re-run ``sudo systemctl restart geotrek``.
+    *"{title}-:-{author}-:-{legend}"*
 
 .. code-block :: python
 
-    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+    THUMBNAIL_COPYRIGHT_SIZE = 15
 
-Or change just one parameter (the opacity for example) :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
-
-
-Regarding colors that depend from database content, such as land layers
-(physical types, work management...) or restricted areas. We use a specific
-setting that receives a list of colors :
-
-.. code-block :: python
-
-    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
-
-
-See the default values in ``geotrek/settings/base.py`` for the complete list
-of available styles.
-
-**Restart** the application for changes to take effect.
-
-
-External raster layers
-----------------------
-
-It is possible to add overlay tiles layer on maps. For example, it can be useful to:
-
-* Get the cadastral parcels on top of satellite images
-* Home made layers (*with Tilemill or QGisMapserver for example*).
-  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
-  that are marked as invisible in the database!
-
-In ``custom.py``, just add the following lines:
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['OVERLAYS'] = [
-        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
-        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-    ]
-
-
-Expected properties
-~~~~~~~~~~~~~~~~~~~
-
-For ``GeoJSON`` files, you can provide the following properties :
-
-* ``title``: string
-* ``description``: string
-* ``website``: string
-* ``phone``: string
-* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
-* ``category``: object with ``id`` and ``label`` attributes
-
-
-Disable darker map backgrounds
-------------------------------
-
-Since IGN map backgrounds are very dense and colourful, a dark opacity is
-applied. In order to disable, change this MapEntity setting :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
-
-
-Configure Social network
-------------------------
 
 Facebook configuration
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
-When a content is shared to Facebook in Geotrek-rando,
+When a content is shared to Facebook in Geotrek-rando V2,
 it needs static html files built by synchronization (thanks to option ``--rando-url``).
 
 In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
@@ -578,13 +2264,13 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 
 In ``custom.py`` set Facebook App ID:
 
-::
+.. code-block :: python
 
     FACEBOOK_APP_ID = '<your Facebook AppID>'
 
 you can also override these settings:
 
-::
+.. code-block :: python
 
     FACEBOOK_IMAGE = '/images/logo-geotrek.png'
     FACEBOOK_IMAGE_WIDTH = 200
@@ -592,7 +2278,7 @@ you can also override these settings:
 
 
 Override translations
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 Translations are managed by https://weblate.makina-corpus.net/ where you can contribute.
 But you can also override default translation files available in each module
@@ -610,7 +2296,7 @@ Override the translations that you want in these files.
 
 Example of content for the French translation overriding:
 
-::
+.. code-block :: python
 
     # MY FRENCH CUSTOM TRANSLATION
     # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -638,9 +2324,9 @@ Example of content for the French translation overriding:
     msgid "District"
     msgstr "Pays"
 
-Apply changes (French translation in this example) :
+Apply changes (French translation in this example):
 
-::
+.. code-block :: bash
 
     cd /opt/geotrek-admin/var/conf/extra_locale
     sudo chown geotrek. fr/LC_MESSAGES/
@@ -649,7 +2335,7 @@ Apply changes (French translation in this example) :
 
 
 Override public PDF templates
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
 Treks, touristic contents, touristic events, outdoor sites and courses can be exported in PDF files.
@@ -662,9 +2348,7 @@ Treks, touristic contents, touristic events, outdoor sites and courses can be ex
 
 Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
 To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file :
-
-::
+to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file::
 
     {% extends "trekking/trek_public_pdf.html" %}
 
@@ -674,9 +2358,7 @@ To override for example the description block of trek PDF, copy and change the `
 in your ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
 
 It is also possible to use color defined for practice for pictogram by adding in your
-``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file :
-
-::
+``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file::
 
     {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
 
@@ -730,8 +2412,17 @@ Test your modifications by exporting a trek or a content to PDF from Geotrek-adm
 To get your modifications available for Rando application, launch the ``sync_rando`` command.
 
 
+PDF as booklet
+~~~~~~~~~~~~~~
+
+
+    USE_BOOKLET_PDF = True
+
+Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
+It is possible to customize the pdf, with trek_public_booklet_pdf.html.
+
 Custom font in public document template
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to use custom fonts in trek PDF, it is necessary to install the
 font files on the server.
@@ -746,7 +2437,7 @@ manager:
 For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
 ``/usr/local/share/fonts/custom/`` as root, and run the following command:
 
-::
+.. code-block :: bash
 
     fc-cache
 
@@ -754,12 +2445,12 @@ For more information, check out Ubuntu documentation.
 
 
 Custom colors in public document template
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Trek export geometries are translucid red by default. In order to control the
 apparence of objects in public trek PDF exports, use the following setting:
 
-::
+.. code-block :: python
 
     MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
@@ -767,14 +2458,18 @@ See *Leaflet* reference documentation for detail about layers apparence.
 
 
 Primary color in PDF templates
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
+.. code-block :: python
+
+    PRIMARY_COLOR = "#7b8c12"
+
 
 Custom logos
-------------
+~~~~~~~~~~~~
 
 You might also need to deploy logo images in the following places :
 
@@ -783,212 +2478,222 @@ You might also need to deploy logo images in the following places :
 * ``var/conf/extra_static/images/logo-header.png``
 
 
-Copyright on pictures
----------------------
+Synchronization settings
+------------------------
 
-If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
+Synchro Geotrek-rando
+~~~~~~~~~~~~~~~~~~~~~
 
-::
+.. code-block :: python
 
-    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 
-You can also add ``{legend}``.
+Path on your server where the data for Geotrek-rando website will be generated
 
-::
-
-    THUMBNAIL_COPYRIGHT_SIZE = 15
-
-
-Resizing uploaded pictures
---------------------------
-
-Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
-
-::
-
-    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
-
-These corresponding height/width parameters can be overriden to select resized image size :
-
-::
-
-    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
-    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+    *If you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
 
 
-Prohibit usage of big pictures and small width / height
---------------------------------------------------------
+.. code-block :: python
 
-If you want to prohibit the usage of heavy pictures :
+    TOURISM_INTERSECTION_MARGIN = 500
 
-::
+Distance to which tourist contents, tourist events, treks, pois, services will be displayed
 
-    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
+    *This distance can be changed by practice for treks in the admin.*
+
+.. code-block :: python
+
+    DIVING_INTERSECTION_MARGIN = 500
+
+Distance to which dives will be displayed.
+
+.. code-block :: python
+
+    TREK_EXPORT_POI_LIST_LIMIT = 14
+
+Limit of the number of pois on treks pdf.
+
+    *14 is already a huge amount of POI, but it's possible to add more*
+
+.. code-block :: python
+
+    TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
+
+Limit of the number of information desks on treks pdf.
+
+    *You can put -1 if you want all the information desks*
+
+.. code-block :: python
+
+    SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
+
+On the Geotrek-rando v2 website, treks practices will be displayed separately
+
+    *Field order for each practices in admin will be take in account*
+
+.. code-block :: python
+
+    SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+
+On the Geotrek-rando v2 website, accessibilites will be displayed separately
+
+.. code-block :: python
+
+    SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
+
+On the Geotrek-rando v2 website, if a trek has a children it will be displayed separately
+
+.. code-block :: python
+
+    SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
+
+On the Geotrek-rando v2 website, dives practices will be displayed separately
+
+.. code-block :: python
+
+    HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+
+On the Geotrek-rando v2 website, treks near other are hidden
+
+.. code-block :: python
+
+    SYNC_RANDO_OPTIONS = {}
+
+Options of the sync_rando command in Geotrek-admin interface.
+
+.. code-block :: python
+
+    TREK_WITH_POIS_PICTURES = False
+
+It enables correlated pictures on Gotrek-rando v2 to be displayed in the slideshow
+
+.. code-block :: python
+
+    ONLY_EXTERNAL_PUBLIC_PDF = False
+
+On Geotrek-rando v2 website, only PDF imported with filetype "Topoguide"
+will be used and not autogenerated.
+
+.. code-block :: python
+
+    TREK_CATEGORY_ORDER = 1
+    ITINERANCY_CATEGORY_ORDER = 2
+    DIVE_CATEGORY_ORDER = 10
+    TOURISTIC_EVENT_CATEGORY_ORDER = 99
+
+Order of all the objects without practices on Geotrek-rando website
+
+    *All the settings about order are the order inside Geotrek-rando website.*
+
+    *Practices of diving, treks and categories of touristic contents are taken in account*
 
 
-If you want to prohibit the usage of small pictures in pixels :
-
-::
-
-    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
-    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
-
-These 3 settings will also not allow downloading images from the parsers.
-
-
-Prohibit usage of certain file types
---------------------------------------------------------
-
-Paperclip will only accept attachment files matching a list of allowed extensions.
-Here is the default value for this setting, which you can extend if needed :
-
-::
-
-    PAPERCLIP_ALLOWED_EXTENSIONS = [
-        'jpeg',
-        'jpg',
-        'mp3',
-        'mp4',
-        'odt',
-        'pdf',
-        'png',
-        'svg',
-        'txt',
-        'gif',
-        'tiff',
-        'tif',
-        'docx',
-        'webp',
-        'bmp',
-        'flac',
-        'mpeg',
-        'doc',
-        'ods',
-        'gpx',
-        'xls',
-        'xlsx',
-        'odg',
-    ]
-
-It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
-
-::
-
-    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
-
-You can also entirely deactivate these checks with the following :
-
-::
-
-    PAPERCLIP_ALLOWED_EXTENSIONS = None
-
-These 2 settings will also not allow downloading images from the parsers.
-
-
-Share services between several Geotrek instances
-------------------------------------------------
-
-As explained :ref:`in the design section <design-section>`, *Geotrek-admin* relies
-on several services. They are generic and reusable, and can thus be shared
-between several instances, in order to save system resources for example.
-
-A simple way to achieve this is to install one instance with everything
-as usual (*standalone*), and plug the other instances on its underlying services.
-
-
-Capture and conversion
+Synchro Geotrek-mobile
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to use external services, in ``.env``, add following variables:
+.. code-block :: python
 
-.. code-block :: bash
+    SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
-    CAPTURE_HOST=x.x.x.x
-    CAPTURE_PORT=XX
-    CONVERSION_HOST=x.x.x.x
-    CONVERSION_PORT=XX
+Path on your server where the datas for mobile will be saved
 
-Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
+    *If you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
+
+.. code-block :: python
+
+    SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
+
+Options of the sync_mobile command
+
+.. code-block :: python
+
+    MOBILE_NUMBER_PICTURES_SYNC = 3
+
+Number max of pictures that will be displayed and synchronized for each object (trek, poi, etc.) in the mobile app.
+
+.. code-block :: python
+
+    MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
+
+URL's Tiles used for the mobile.
+
+    *Change for IGN:*
+
+.. code-block :: python
+
+        MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
+
+.. code-block :: python
+
+    MOBILE_LENGTH_INTERVALS =  [
+        {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+        {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
+        {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
+        {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
+    ]
+
+Intervals of the mobile for the length filter
+
+    *Interval key is in meters.*
+    *You can add new intervals*
+
+.. code-block :: python
+
+    MOBILE_LENGTH_INTERVALS =  [
+        {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+        {"id": 2, "name": "10 - 30 km", "interval": [9999, 29999]},
+        {"id": 3, "name": "30 - 50 km", "interval": [30000, 50000]},
+        {"id": 4, "name": "50 - 80 km", "interval": [50000, 80000]}
+        {"id": 5, "name": "> 80 km", "interval": [80000, 999999]}
+    ]
+
+.. code-block :: python
+
+    MOBILE_ASCENT_INTERVALS = [
+        {"id": 1, "name": "< 300 m", "interval": [0, 299]},
+        {"id": 2, "name": "300 - 600", "interval": [300, 599]},
+        {"id": 3, "name": "600 - 1000", "interval": [600, 999]},
+        {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
+    ]
+
+Intervals of the mobile for the ascent filter
+
+    *Do the same as above*
+
+.. code-block :: python
+
+    MOBILE_DURATION_INTERVALS = [
+        {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
+        {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
+        {"id": 3, "name": "2h30 - 5h", "interval": [2.5, 5]},
+        {"id": 4, "name": "5h - 9h", "interval": [5, 9]},
+        {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
+    ]
+
+Intervals of the mobile for the duration filter
+
+    *Check MOBILE_LENGTH_INTERVALS comment to use it, here interval correspond to 1 unit of hour*
+
+.. code-block :: python
+
+    ENABLED_MOBILE_FILTERS = [
+        'practice',
+        'difficulty',
+        'durations',
+        'ascent',
+        'lengths',
+        'themes',
+        'route',
+        'districts',
+        'cities',
+        'accessibilities',
+    ]
+
+List of all the filters enabled on mobile.
+
+    *Remove any of the filters if you don't want one of them. It's useless to add other one.*
 
 
-Shutdown useless services
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Now that your instances point the shared server. You can shutdown the useless
-services on each instance.
-
-Start by stopping everything :
-
-::
-
-    sudo systemctl stop geotrek
-
-
-Control number of workers and request timeouts
-----------------------------------------------
-
-By default, the application runs on 4 processes, and timeouts after 30 seconds.
-
-To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
-
-To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
-
-
-Configure columns displayed in lists views and exports
-------------------------------------------------------
-
-For each module, use the following syntax to configure columns to display in the main table.
-
-::
-
-    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
-
-
-For each module, use the following syntax to configure columns to export as CSV or SHP.
-
-::
-
-    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
-
-
-Please refer to the "settings detail" section for a complete list of modules and available columms.
-
-Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
-
-::
-
-    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
-
-
-
-Configure form fields in creation views
----------------------------------------
-
-For each module, use the following syntax to configure fields to hide in the creation form.
-
-::
-
-    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
-
-
-Please refer to the "settings detail" section for a complete list of modules and hideable fields.
-
-
-Configure form fields required or needed for review or publication
--------------------------------------------------------------------
-
-Set 'error_on_publication' to avoid publication without completeness fields
-and 'error_on_review' if you want this fields to be required before sending to review.
-
-::
-
-    COMPLETENESS_LEVEL = 'warning'
-
-For each module, configure fields to be needed or required on review or publication
-
-::
-
-    COMPLETENESS_FIELDS = {
-        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
-        'dive': ['practice', 'difficulty', 'description_teaser'],
-    }
+|
