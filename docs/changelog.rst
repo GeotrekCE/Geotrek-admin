@@ -25,6 +25,7 @@ CHANGELOG
 **Improvements**
 
 - Improve cascading deletions logic, and log them to LogEntry model to maintain history of deletions
+- Add rules data on `v_sensitivearea` view  (#3613)
 
 
 2.98.0     (2023-03-27)
@@ -413,7 +414,7 @@ In preparation for HD Views developments (PR #3298)
 -----------------------
 
 **DO NOT USE IT!**
- 
+
 **Warning**
 
 - Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
@@ -438,7 +439,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
 
-**Minor improvements** 
+**Minor improvements**
 
 - Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
 - Set ``begin_date`` not null for TouristicEvents (#3237)
