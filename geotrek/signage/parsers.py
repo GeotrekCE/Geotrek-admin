@@ -4,11 +4,10 @@ from geotrek.signage.models import Signage
 
 class GeotrekSignageParser(GeotrekParser):
     """Geotrek parser for Signage"""
-
+    fill_empty_translated_fields = True
     url = None
     model = Signage
     constant_fields = {
-        "published": True,
         "deleted": False
     }
     replace_fields = {

@@ -128,11 +128,10 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
 
 class GeotrekTrekParser(GeotrekParser):
     """Geotrek parser for Trek"""
-
+    fill_empty_translated_fields = True
     url = None
     model = Trek
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
     replace_fields = {
@@ -222,7 +221,7 @@ class GeotrekTrekParser(GeotrekParser):
 
 class GeotrekServiceParser(GeotrekParser):
     """Geotrek parser for Service"""
-
+    fill_empty_translated_fields = True
     url = None
     model = Service
     constant_fields = {
@@ -249,11 +248,10 @@ class GeotrekServiceParser(GeotrekParser):
 
 class GeotrekPOIParser(GeotrekParser):
     """Geotrek parser for GeotrekPOI"""
-
+    fill_empty_translated_fields = True
     url = None
     model = POI
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
     replace_fields = {

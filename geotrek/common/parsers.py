@@ -23,6 +23,7 @@ from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
 from django.db import models, connection
+from django.db.models.fields import NOT_PROVIDED
 from django.db.utils import DatabaseError, InternalError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
@@ -271,7 +272,10 @@ class Parser:
             new_value = getattr(self.obj, dst_field_lang)
             old_value = old_values[lang]
             # Field not translated, use same val for all translated
-            val_default_language = val_default_language or ""
+            if self.obj._meta.get_field(dst).default == NOT_PROVIDED:
+                val_default_language = val_default_language
+            else:
+                val_default_language = self.obj._meta.get_field(dst).default
             # Set val_default_language only if new empty
             if not new_value:
                 # If there is no new value check if old value is different form the default value
@@ -1370,13 +1374,21 @@ class GeotrekParser(AttachmentParserMixin, Parser):
 
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
+        val_default_lang = val
         if dst in self.translated_fields:
             if isinstance(val, dict):
+                val_default_lang = val.get(translation.get_language())
+                for language in settings.MODELTRANSLATION_LANGUAGES:
+                    if language not in val.keys():
+                        key = language
+                        if not self.obj._meta.get_field(dst).default == NOT_PROVIDED:
+                            self.set_value(f'{dst}_{key}', src, self.obj._meta.get_field(dst).default)
+                        else:
+                            self.set_value(f'{dst}_{key}', src, val_default_lang)
                 for key, final_value in val.items():
                     if key in settings.MODELTRANSLATION_LANGUAGES:
                         self.set_value(f'{dst}_{key}', src, final_value)
-                val = val.get(translation.get_language())
-        return val
+        return val_default_lang
 
     def normalize_field_name(self, name):
         return name

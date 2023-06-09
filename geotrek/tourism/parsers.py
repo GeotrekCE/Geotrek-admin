@@ -990,11 +990,10 @@ class LEITouristicEventParser(LEIParser):
 
 class GeotrekTouristicContentParser(GeotrekParser):
     """Geotrek parser for TouristicContent"""
-
+    fill_empty_translated_fields = True
     url = None
     model = TouristicContent
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
 
@@ -1077,11 +1076,10 @@ class GeotrekTouristicContentParser(GeotrekParser):
 
 class GeotrekTouristicEventParser(GeotrekParser):
     """Geotrek parser for TouristicEvent"""
-
+    fill_empty_translated_fields = True
     url = None
     model = TouristicEvent
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
     replace_fields = {
@@ -1108,6 +1106,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
 
 class GeotrekInformationDeskParser(GeotrekParser):
     """Geotrek parser for InformationDesk"""
+    fill_empty_translated_fields = True
     url = None
     model = InformationDesk
     constant_fields = {}
