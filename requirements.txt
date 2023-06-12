@@ -251,8 +251,6 @@ pillow==9.3.0
     #   weasyprint
 prompt-toolkit==3.0.30
     # via click-repl
-psutil==5.9.3
-    # via large-image
 psycopg2==2.9.5
     # via geotrek (setup.py)
 pycparser==2.21
