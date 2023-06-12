@@ -41,7 +41,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
-                                                          'sealing', 'provider']
+                                                          'sealing', 'access', 'provider']
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)

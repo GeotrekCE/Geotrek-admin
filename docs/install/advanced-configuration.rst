@@ -1796,7 +1796,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "published",
         "uuid",
         "eid",
-        "provider"
+        "provider",
+        "access"
     ]
     COLUMNS_LISTS["signage_view"] = [
         "code",
@@ -1810,6 +1811,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "printed_elevation",
         "coordinates",
         "sealing",
+        "access",
         "manager",
         "published",
         "uuid",
@@ -2213,6 +2215,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "name",
         "type",
         "condition",
+        "access",
         "description",
         "accessibility",
         "implantation_year",
@@ -2253,6 +2256,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "lng_value",
         "printed_elevation",
         "sealing",
+        "access",
         "manager",
         "length",
         "ascent",
@@ -2675,6 +2679,7 @@ An exhaustive list of form fields hideable in each module.
         ],
     HIDDEN_FORM_FIELDS["infrastructure"] = [
             "condition",
+            "access",
             "description",
             "accessibility",
             "published",
@@ -2690,7 +2695,8 @@ An exhaustive list of form fields hideable in each module.
             "code",
             "printed_elevation",
             "manager",
-            "sealing"
+            "sealing",
+            "access"
         ],
     HIDDEN_FORM_FIELDS["intervention"] = [
             "disorders",

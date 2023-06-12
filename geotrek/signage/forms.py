@@ -175,9 +175,10 @@ class SignageForm(BaseSignageForm):
             'printed_elevation',
             'manager',
             'sealing',
+            'access'
         )
     ]
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
-        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
+        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing', 'access']

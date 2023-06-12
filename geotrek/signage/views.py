@@ -43,7 +43,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
         'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
-        'printed_elevation', 'sealing', 'manager', 'uuid',
+        'printed_elevation', 'sealing', 'access', 'manager', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -95,7 +95,7 @@ class SignageViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('structure', 'manager', 'sealing', 'type', 'condition')
+            qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type', 'condition')
         return qs
 
 

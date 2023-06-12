@@ -273,6 +273,7 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['name_en'] = 'modified'
         data['implantation_year'] = target_year
+        data['access'] = ''
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
@@ -369,6 +370,7 @@ class InterventionViewsTest(CommonTest):
         data['name_en'] = 'modified'
         data['implantation_year'] = target_year
         data['accessibility'] = ''
+        data['access'] = ''
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:

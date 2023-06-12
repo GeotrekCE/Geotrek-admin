@@ -20,6 +20,7 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS WITH v_signage_tmp AS
             t.manager_id,
             t.condition_id,
             t.sealing_id,
+            t.access_id,
             t.structure_id,
             t.type_id,
             CONCAT (e.min_elevation, 'm') AS elevation,
@@ -50,6 +51,7 @@ SELECT a.id,
               ' ({{ spatial_reference }})') AS "Coordinates",
        d.label AS "Sealing",
        h.organism AS "Manager",
+       i.label AS "Access mean",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
            CASE
                WHEN a.published_{{ lang }} IS FALSE THEN 'No'
@@ -64,6 +66,7 @@ LEFT JOIN signage_signagetype b ON a.type_id = b.id
 LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
 LEFT JOIN signage_sealing d ON a.sealing_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
+LEFT JOIN infrastructure_infrastructureaccessmean i ON a.access_id = i.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
