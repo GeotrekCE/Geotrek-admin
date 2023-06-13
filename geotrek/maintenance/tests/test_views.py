@@ -28,7 +28,7 @@ from geotrek.maintenance.models import Funding, Intervention, InterventionStatus
 from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.infrastructure.tests.factories import InfrastructureAccessMeanFactory, InfrastructureFactory
 from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory)
@@ -273,7 +273,8 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['name_en'] = 'modified'
         data['implantation_year'] = target_year
-        data['access'] = ''
+        access_mean = InfrastructureAccessMeanFactory()
+        data['access'] = access_mean.pk
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
@@ -284,6 +285,7 @@ class InterventionViewsTest(CommonTest):
         # Check that intervention was not deleted (bug #783)
         intervention = Intervention.objects.first()
         self.assertFalse(intervention.deleted)
+        self.assertEqual(str(intervention.target.access), access_mean.label)
         self.assertEqual(intervention.target.name, 'modified')
         self.assertEqual(intervention.target.implantation_year, target_year)
 
