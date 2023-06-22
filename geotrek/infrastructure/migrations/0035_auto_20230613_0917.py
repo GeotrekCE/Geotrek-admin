@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('label', models.CharField(max_length=128)),
             ],
             options={
-                'verbose_name': 'Access Mean',
-                'verbose_name_plural': 'Access Means',
+                'verbose_name': 'Access mean',
+                'verbose_name_plural': 'Access means',
                 'ordering': ('label',),
             },
         ),

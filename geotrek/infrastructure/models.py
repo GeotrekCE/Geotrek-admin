@@ -48,8 +48,8 @@ class InfrastructureAccessMean(TimeStampedModelMixin):
     label = models.CharField(max_length=128)
 
     class Meta:
-        verbose_name = _("Access Mean")
-        verbose_name_plural = _("Access Means")
+        verbose_name = _("Access mean")
+        verbose_name_plural = _("Access means")
         ordering = ('label',)
 
     def __str__(self):

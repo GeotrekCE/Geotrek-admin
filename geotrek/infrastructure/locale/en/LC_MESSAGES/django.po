@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-13 09:26+0000\n"
+"POT-Creation-Date: 2023-06-22 13:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,10 +60,10 @@ msgstr ""
 msgid "Infrastructure Types"
 msgstr ""
 
-msgid "Access Mean"
+msgid "Access mean"
 msgstr ""
 
-msgid "Access Means"
+msgid "Access means"
 msgstr ""
 
 msgid "Infrastructure Condition"
@@ -85,9 +85,6 @@ msgid "Reference, code, ..."
 msgstr ""
 
 msgid "Specificites"
-msgstr ""
-
-msgid "Access mean"
 msgstr ""
 
 msgid "Condition"
