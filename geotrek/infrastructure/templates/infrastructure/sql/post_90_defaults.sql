@@ -7,6 +7,12 @@ ALTER TABLE infrastructure_infrastructuretype ALTER COLUMN date_update SET DEFAU
 -- structure
 -- pictogram
 
+-- InfrastructureAccessMean
+----------
+-- label
+ALTER TABLE infrastructure_infrastructureaccessmean ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE infrastructure_infrastructureaccessmean ALTER COLUMN date_update SET DEFAULT now();
+
 -- InfrastructureCondition
 --------------------------
 -- label
@@ -37,6 +43,7 @@ ALTER TABLE infrastructure_infrastructureusagedifficultylevel ALTER COLUMN date_
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN accessibility SET DEFAULT '';
 -- topo_object
 -- name
+-- access
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '';
 -- condition
 -- implantation_year

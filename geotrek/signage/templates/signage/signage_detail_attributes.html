@@ -52,6 +52,10 @@
             <td>{{ object.manager|default:"" }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"access" }}</th>
+            <td>{{ object.access|default:"" }}</td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

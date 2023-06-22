@@ -15,7 +15,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
         class Meta(TopologyForm.Meta):
             fields = TopologyForm.Meta.fields + \
-                ['structure', 'name', 'description', 'type', 'condition', 'implantation_year', 'published']
+                ['structure', 'name', 'description', 'type', 'condition', 'access', 'implantation_year', 'published']
 else:
     class BaseInfrastructureForm(CommonForm):
 
@@ -30,7 +30,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Infrastructure
-            fields = CommonForm.Meta.fields + ['geom', 'structure', 'name', 'description', 'type', 'condition',
+            fields = CommonForm.Meta.fields + ['geom', 'structure', 'name', 'description', 'type', 'condition', 'access',
                                                'implantation_year', 'published']
 
 
@@ -44,6 +44,7 @@ class InfrastructureForm(BaseInfrastructureForm):
             'accessibility',
             'type',
             'condition',
+            'access',
             'implantation_year',
             'usage_difficulty',
             'maintenance_difficulty',

@@ -5,6 +5,9 @@ CHANGELOG
 2.98.1+dev (XXXX-XX-XX)
 -----------------------
 
+**New feature**
+
+- Add field ``access`` to Signage and Infrastructure models (#3605)
 
 2.98.1 (2023-05-30)
 -----------------------

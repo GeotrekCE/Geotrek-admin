@@ -44,6 +44,18 @@ class InfrastructureType(TimeStampedModelMixin, StructureOrNoneRelated, Optional
         return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
 
 
+class InfrastructureAccessMean(TimeStampedModelMixin):
+    label = models.CharField(max_length=128)
+
+    class Meta:
+        verbose_name = _("Access mean")
+        verbose_name_plural = _("Access means")
+        ordering = ('label',)
+
+    def __str__(self):
+        return self.label
+
+
 class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
@@ -97,6 +109,9 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                             help_text=_("Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True,
                                    verbose_name=_("Description"), help_text=_("Specificites"))
+    access = models.ForeignKey(InfrastructureAccessMean,
+                               verbose_name=_("Access mean"), blank=True, null=True,
+                               on_delete=models.PROTECT)
     condition = models.ForeignKey(InfrastructureCondition,
                                   verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.PROTECT)

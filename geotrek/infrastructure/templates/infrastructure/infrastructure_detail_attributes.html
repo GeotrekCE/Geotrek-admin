@@ -36,13 +36,17 @@
             <th>{{ object|verbose:"implantation_year" }}</th>
             <td>{{ object.implantation_year|default:"" }}</td>
         </tr>
-                <tr>
+        <tr>
             <th>{{ object|verbose:"usage_difficulty" }}</th>
             <td>{{ object.usage_difficulty|default:"" }}</td>
         </tr>
-                <tr>
+        <tr>
             <th>{{ object|verbose:"maintenance_difficulty" }}</th>
             <td>{{ object.maintenance_difficulty|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"access" }}</th>
+            <td>{{ object.access|default:"" }}</td>
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
