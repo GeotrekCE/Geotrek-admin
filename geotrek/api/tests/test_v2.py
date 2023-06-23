@@ -903,6 +903,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_ids_filter(self):
+        response = self.get_trek_list({'ids': f"{self.treks[0].pk},{self.treks[1].pk}"})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 2)
+
+        response = self.get_trek_list({'ids': 99999})
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
     def test_trek_label_filter(self):
         response = self.get_trek_list({'labels': self.label.pk})
         #  test response code
