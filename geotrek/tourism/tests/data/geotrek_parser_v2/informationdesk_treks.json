@@ -1,0 +1,23 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02016"
+    },
+    {
+      "id": 2,
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02014"
+    },
+    {
+      "id": 3,
+      "uuid": "576198ee-b407-4e3c-9f3f-0b5efef02015"
+    },
+    {
+      "id": 4,
+      "uuid": "027b1b63-fa59-48e1-bfdf-daaefc03dee2"
+    }
+  ]
+}

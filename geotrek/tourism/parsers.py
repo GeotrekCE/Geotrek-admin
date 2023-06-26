@@ -16,6 +16,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser, GeotrekParser, ApidaeBaseParser, LEIParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
+from geotrek.trekking.parsers import GeotrekTrekParser
 
 
 class TouristicContentMixin:
@@ -1149,3 +1150,51 @@ class GeotrekInformationDeskParser(GeotrekParser):
         name = '%s%s' % (basename[:128], ext)
         file = UploadedFile(f, name=name)
         return file
+
+    def link_informationdesks(self, parser, match_id_uuid, json_uuid_key):
+        model_imported = parser.model
+        field = "information_desks"
+        for row in self.items:
+            objects_result_field = [match_id_uuid.get(val) for val in row[field]
+                                    if match_id_uuid.get(val)]
+            # object_result_field is the objects found for each field in initial_fields
+            # example every information desks for one trek
+            actual_objects_result = getattr(model_imported.objects.get(
+                **{json_uuid_key: row[json_uuid_key]}),
+                field)
+            object_to_remove = actual_objects_result.exclude(
+                id__in=[object_result.pk for object_result in objects_result_field])
+            if object_to_remove:
+                actual_objects_result.remove(
+                    *object_to_remove
+                )
+            getattr(model_imported.objects.get(**{json_uuid_key: row[json_uuid_key]}), field).add(
+                *objects_result_field)
+
+    def end_meta(self):
+        super().end_meta()
+        self.next_url = f"{self.url}/api/v2/informationdesk"
+        params = self.params_used
+        replace_fields = self.replace_fields
+        fields = f"{replace_fields.get('eid', 'uuid')},id"
+        params['fields'] = fields
+        params['page_size'] = 10000
+
+        response = self.request_or_retry(self.next_url, params=params)
+        datas = response.json()
+        match_id_uuid = {}
+        for result in datas['results']:
+            try:
+                match_id_uuid[result['id']] = InformationDesk.objects.get(uuid=result['uuid'])
+            except InformationDesk.DoesNotExist:
+                pass
+
+        self.next_url = f"{self.url}/api/v2/trek"
+        params = self.params_used
+        replace_fields = GeotrekTrekParser.replace_fields
+        fields = f"{replace_fields.get('eid', 'id')},information_desks"
+        params['fields'] = fields
+        params['page_size'] = 10000
+        response = self.request_or_retry(self.next_url, params=params)
+        self.root = response.json()
+        self.link_informationdesks(GeotrekTrekParser, match_id_uuid, replace_fields.get('eid', 'id'))
