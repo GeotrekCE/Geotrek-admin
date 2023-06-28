@@ -386,6 +386,13 @@ class TouristicEventPlace(TimeStampedModelMixin):
         return self.name
 
 
+class Organizer(models.Model):
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    def __str__(self):
+        return self.label
+
+
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                      StructureRelated, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
@@ -413,7 +420,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
+    organizer = models.ForeignKey(Organizer, verbose_name=_("Organizer"), blank=True, null=True,
+                                  on_delete=models.PROTECT)
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
