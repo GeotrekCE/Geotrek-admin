@@ -1222,6 +1222,15 @@ class GeotrekAggregatorParser:
                         logger.warning(warning)
                         key_warning = _(f"Model {model}")
                         self.add_warning(key_warning, warning)
+                        self.report_by_api_v2_by_type[key][model] = {
+                            'nb_lines': 0,
+                            'nb_success': 0,
+                            'nb_created': 0,
+                            'nb_updated': 0,
+                            'nb_deleted': None,
+                            'nb_unmodified': 0,
+                            'warnings': self.warnings
+                        }
                         continue
                 module_name, class_name = self.mapping_model_parser[model]
                 module = importlib.import_module(module_name)
