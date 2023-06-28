@@ -1181,12 +1181,6 @@ class GeotrekAggregatorParser:
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
-    def start_meta(self):
-        self.to_delete = set()
-
-    def end_meta(self):
-        pass
-
     def run_method_parser(self, key_name, parsers, method_name):
         for parser in parsers:
             self.progress_cb(0, 0, f'{str(parser.model._meta.model_name).capitalize()} ({key_name})')
