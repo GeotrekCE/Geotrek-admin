@@ -1,4 +1,5 @@
 import os
+import smtplib
 
 from crispy_forms.helper import FormHelper
 from django.conf import settings
@@ -239,10 +240,11 @@ class ReportAPIViewSet(APIViewSet):
                     logger.error(f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}: " + str(e))
 
         if settings.SEND_REPORT_ACK and response.status_code == 201:
-            send_mail(
-                _("Geotrek : Signal a mistake"),
-                _(
-                    """Hello,
+            try:
+                send_mail(
+                    _("Geotrek : Signal a mistake"),
+                    _(
+                        """Hello,
 
 We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
 
@@ -250,8 +252,10 @@ Best regards,
 
 The Geotrek Team
 http://www.geotrek.fr"""
-                ),
-                settings.DEFAULT_FROM_EMAIL,
-                [request.data.get("email")],
-            )
+                    ),
+                    settings.DEFAULT_FROM_EMAIL,
+                    [request.data.get("email")],
+                )
+            except (smtplib.SMTPException, ConnectionError, OSError) as error:
+                logger.error("Error while sending feedback acknowledgment email: %s", error)
         return response
