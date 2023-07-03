@@ -8,7 +8,6 @@
       "description": {
         "fr": "<p>Le pic des Trois Seigneurs est situ&eacute; au point de rencontre des trois vall&eacute;es de la&nbsp;<a>Courbi&egrave;re</a>, du&nbsp;<a>Vicdessos</a>&nbsp;et de l'<a>Arac</a>&nbsp;(<a>Couserans</a>).</p>\r\n<p>Modeste sommet bien individualis&eacute;, il offre n&eacute;anmoins un panorama exceptionnel sur les montagnes ari&eacute;geoises.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "external_id": null,
@@ -23,7 +22,6 @@
       "name": {
         "fr": "Pic des Trois Seigneurs",
         "en": "Peak of the Three Lords",
-        "es": "",
         "it": "Picco dei Tre Signori"
       },
       "attachments": [
@@ -53,14 +51,12 @@
       "published": {
         "fr": true,
         "en": false,
-        "es": false,
         "it": false
       },
       "type": 7,
       "type_label": {
         "fr": "Sommet",
         "en": "Peak",
-        "es": null,
         "it": null
       },
       "type_pictogram": "https://foo.fr/media/upload/poi-peak.png",
@@ -74,7 +70,6 @@
       "description": {
         "fr": "<p>Ce lac tr&egrave;s accessible est un site pris&eacute; par les p&ecirc;cheurs. On y observe&nbsp;<a>truites fario</a>, saumons des fontaines,&nbsp;<a>ombles chevaliers</a>,&nbsp;<a>cristivomers</a>&nbsp;et&nbsp;<a>vairons</a>.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "external_id": null,
@@ -89,7 +84,6 @@
       "name": {
         "fr": "Étang d'Arbu",
         "en": "",
-        "es": "",
         "it": ""
       },
       "attachments": [
@@ -119,14 +113,12 @@
       "published": {
         "fr": true,
         "en": false,
-        "es": false,
         "it": false
       },
       "type": 6,
       "type_label": {
         "fr": "Lac",
         "en": "Lake",
-        "es": null,
         "it": null
       },
       "type_pictogram": "https://foo.fr/media/upload/poi-lake.png",

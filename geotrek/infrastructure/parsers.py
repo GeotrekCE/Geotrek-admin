@@ -4,11 +4,10 @@ from geotrek.infrastructure.models import Infrastructure
 
 class GeotrekInfrastructureParser(GeotrekParser):
     """Geotrek parser for Infrastructure"""
-
+    fill_empty_translated_fields = True
     url = None
     model = Infrastructure
     constant_fields = {
-        "published": True,
         "deleted": False
     }
     replace_fields = {

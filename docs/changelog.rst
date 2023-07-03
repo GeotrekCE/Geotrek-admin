@@ -11,6 +11,12 @@ CHANGELOG
 - Enable filtering lists by objects IDs on APIv2 (#3458)
 
 
+**Improvements**
+
+- Published by language depending on each portals and languages.
+- Use default value with parsers when no value is found
+
+
 2.98.1 (2023-05-30)
 -----------------------
 

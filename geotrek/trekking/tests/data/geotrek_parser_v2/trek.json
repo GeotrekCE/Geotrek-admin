@@ -8,7 +8,6 @@
       "access": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibilities": [
@@ -17,63 +16,53 @@
       "accessibility_advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_covering": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_exposure": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_level": null,
       "accessibility_signage": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_slope": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_width": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advice": {
         "fr": "<p>Attention en cas d'orage. Fortement d&eacute;conseill&eacute; par mauvais temps!</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advised_parking": {
         "fr": "Avant le Port de Lers",
         "en": "",
-        "es": "",
         "it": ""
       },
       "altimetric_profile": "https://foo.fr/api/v2/trek/2/profile/",
       "ambiance": {
         "fr": "<p>Le nom de ce pic est issu de la l&eacute;gende selon laquelle les trois seigneurs des vall&eacute;es de Massat, Vicdessos et Rabat-les-Trois-Seigneurs, se rencontraient sur la dalle plate en son sommet afin de d&eacute;battre des droits des diff&eacute;rentes vall&eacute;es qu'ils administraient.</p>\r\n<p></p>\r\n<p>&Agrave; partir du xviie si&egrave;cle, de grandes caravanes d'&acirc;nes et de mulets transportaient le charbon de bois entre les for&ecirc;ts du Couserans et les forges &agrave; la catalane de la vall&eacute;e de Rabat via le col de la Pourtanelle sur l'&eacute;paulement nord du pic.</p>\r\n<p></p>\r\n<p>Au xixe si&egrave;cle, des porteurs de glace venaient y chercher leur butin sur le flanc nord du pic au glacier d'Ambans pour le transporter ensuite vers Toulouse. Ce glacier a totalement disparu au d&eacute;but du xxie si&egrave;cle.</p>\r\n<p></p>\r\n<p></p>\r\n<p>Source Wikipedia</p>\r\n<p></p>",
         "en": "Ambiance en",
-        "es": "",
         "it": ""
       },
       "arrival": {
         "fr": "Sur la route",
         "en": "",
-        "es": "",
         "it": ""
       },
       "ascent": 666,
@@ -124,7 +113,6 @@
       "departure": {
         "fr": "Port de Lers",
         "en": "Lers bridge",
-        "es": "",
         "it": ""
       },
       "departure_city": "09231",
@@ -136,20 +124,17 @@
       "description": {
         "fr": "<a href=\"https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3\">https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3</a>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "description_teaser": {
         "fr": "<p>Un tr&egrave;s joli point de vue, en retrait de la cha&icirc;ne des Pyr&eacute;n&eacute;es.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "difficulty": 1,
       "disabled_infrastructure": {
         "fr": "Accessibilit&eacute; am&eacute;nagement",
         "en": "",
-        "es": "",
         "it": ""
       },
       "duration": 24.0,
@@ -159,7 +144,6 @@
       "gear": {
         "fr": "Il faut de la corde",
         "en": "",
-        "es": "",
         "it": ""
       },
       "geometry": {
@@ -196,7 +180,6 @@
       "name": {
         "fr": "Boucle du Pic des Trois Seigneurs",
         "en": "Loop of the pic of 3 lords",
-        "es": "",
         "it": "Foo bar"
       },
       "networks": [
@@ -211,7 +194,6 @@
       "pdf": {
         "fr": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
         "en": "https://foo.fr/api/en/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
-        "es": "https://foo.fr/api/es/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
         "it": "https://foo.fr/api/it/treks/2/boucle-du-pic-des-trois-seigneurs.pdf"
       },
       "points_reference": {
@@ -249,20 +231,17 @@
       "ratings_description": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "previous": {},
       "public_transport": {
         "fr": "<a title=\"geotrek.fr\" rel=\"noopener\" href=\"http://geotrek.fr/\" target=\"_blank\">Test</a>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "published": {
         "fr": true,
         "en": true,
-        "es": true,
         "it": false
       },
       "reservation_system": null,
@@ -285,7 +264,6 @@
           "name": {
             "fr": "Camping",
             "en": "Camping",
-            "es": "Camping",
             "it": null
           },
           "url": "http://camping.com/",
@@ -293,7 +271,6 @@
             "label": {
               "fr": "A lire",
               "en": null,
-              "es": null,
               "it": null
             },
             "id": 4,
@@ -304,7 +281,6 @@
           "name": {
             "fr": "Makina Corpus",
             "en": "Makina Corpus",
-            "es": "Makina Corpus",
             "it": null
           },
           "url": "http://makina-corpus.com/",
@@ -312,7 +288,6 @@
             "label": {
               "fr": "A lire",
               "en": null,
-              "es": null,
               "it": null
             },
             "id": 4,
@@ -323,7 +298,6 @@
           "name": {
             "fr": "Test",
             "en": "",
-            "es": "",
             "it": ""
           },
           "url": "http://toto.com",
@@ -331,7 +305,6 @@
             "label": {
               "fr": "A lire",
               "en": null,
-              "es": null,
               "it": null
             },
             "id": 4,
@@ -345,70 +318,59 @@
       "access": {
         "fr": "Bonjour",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibilities": [],
       "accessibility_advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_covering": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_exposure": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_level": null,
       "accessibility_signage": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_slope": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_width": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advised_parking": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "altimetric_profile": "https://foo.fr/api/v2/trek/10443/profile/",
       "ambiance": {
         "fr": "Test ambiance",
         "en": "",
-        "es": "",
         "it": ""
       },
       "arrival": {
         "fr": "col de la Core",
         "en": "",
-        "es": "",
         "it": ""
       },
       "ascent": 722,
@@ -435,7 +397,6 @@
       "departure": {
         "fr": "Bethmale",
         "en": "",
-        "es": "",
         "it": ""
       },
       "departure_city": "09055",
@@ -447,20 +408,17 @@
       "description": {
         "fr": "La belle description de la cr&ecirc;te.",
         "en": "",
-        "es": "",
         "it": ""
       },
       "description_teaser": {
         "fr": "Au revoir",
         "en": "",
-        "es": "",
         "it": ""
       },
       "difficulty": 2,
       "disabled_infrastructure": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "duration": 2.0,
@@ -470,7 +428,6 @@
       "gear": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "geometry": {
@@ -499,7 +456,6 @@
       "name": {
         "fr": "De Bethmale au col de la Core",
         "en": "",
-        "es": "",
         "it": ""
       },
       "networks": [],
@@ -513,7 +469,6 @@
       "pdf": {
         "fr": "https://foo.fr/api/fr/treks/10443/de-bethmale-au-col-de-la-core.pdf",
         "en": "https://foo.fr/api/en/treks/10443/de-bethmale-au-col-de-la-core.pdf",
-        "es": "https://foo.fr/api/es/treks/10443/de-bethmale-au-col-de-la-core.pdf",
         "it": "https://foo.fr/api/it/treks/10443/de-bethmale-au-col-de-la-core.pdf"
       },
       "points_reference": null,
@@ -523,7 +478,6 @@
       "ratings_description": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "previous": {
@@ -532,13 +486,11 @@
       "public_transport": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "published": {
         "fr": true,
         "en": false,
-        "es": false,
         "it": false
       },
       "reservation_system": null,
@@ -558,70 +510,59 @@
       "access": {
         "fr": "<p>Depuis le village d'Aulus-les-Bains.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibilities": [],
       "accessibility_advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_covering": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_exposure": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_level": null,
       "accessibility_signage": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_slope": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibility_width": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advice": {
         "fr": "Sentier parfois escarp&eacute;. Camping interdit. Feu interdit.",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advised_parking": {
         "fr": "Dans le bas du village",
         "en": "",
-        "es": "",
         "it": ""
       },
       "altimetric_profile": "https://foo.fr/api/v2/trek/2849/profile/",
       "ambiance": {
         "fr": "<p>Une des plus belles cascades des Pyr&eacute;n&eacute;es pour toute la famille ! C'est une cascade naturelle des Pyr&eacute;n&eacute;es situ&eacute;e dans le Couserans en Ari&egrave;ge, &agrave; 1 380 m d'altitude. C'est une des plus belles et imposantes des Pyr&eacute;n&eacute;es. Le comte Henry Russell, c&eacute;l&egrave;bre pyr&eacute;n&eacute;istes du XIXe si&egrave;cle, la pla&ccedil;ait en t&ecirc;te de toutes ses rivales.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "arrival": {
         "fr": "Aulus-les-Bains (sud)",
         "en": "",
-        "es": "",
         "it": ""
       },
       "ascent": 1130,
@@ -691,7 +632,6 @@
       "departure": {
         "fr": "Aulus-les-Bains",
         "en": "",
-        "es": "",
         "it": ""
       },
       "departure_city": "09029",
@@ -703,20 +643,17 @@
       "description": {
         "fr": "<p>On acc&egrave;de &agrave; la cascade en 90 mn de marche &agrave; partir de la D 8, au d&eacute;part d'Aulus-les-Bains vers le col de Latrappe. Au premier virage en &eacute;pingle (1) une piste foresti&egrave;re s'&eacute;l&egrave;ve entre for&ecirc;t et p&acirc;turage. On franchit ensuite la passerelle de l'Artigou (1 060 m - 2) puis on longe la rive droite de l'Ars jusqu'au pied de la chute d'eau (3).</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "description_teaser": {
         "fr": "<p>Haute d'environ 246m, elle est a son apog&eacute;e &agrave; la fonte des neiges.</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "difficulty": 1,
       "disabled_infrastructure": {
         "fr": "<p>Aucune infrastructure sp&eacute;cifique</p>",
         "en": "",
-        "es": "",
         "it": ""
       },
       "duration": 4.0,
@@ -726,7 +663,6 @@
       "gear": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "geometry": {
@@ -757,7 +693,6 @@
       "name": {
         "fr": "Découverte de la Cascade d'Ars",
         "en": "",
-        "es": "",
         "it": ""
       },
       "networks": [
@@ -774,7 +709,6 @@
       "pdf": {
         "fr": "https://foo.fr/api/fr/treks/2849/decouverte-de-la-cascade-dars.pdf",
         "en": "https://foo.fr/api/en/treks/2849/decouverte-de-la-cascade-dars.pdf",
-        "es": "https://foo.fr/api/es/treks/2849/decouverte-de-la-cascade-dars.pdf",
         "it": "https://foo.fr/api/it/treks/2849/decouverte-de-la-cascade-dars.pdf"
       },
       "points_reference": {
@@ -800,20 +734,17 @@
       "ratings_description": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "previous": {},
       "public_transport": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "published": {
         "fr": true,
         "en": true,
-        "es": false,
         "it": false
       },
       "reservation_system": null,
@@ -835,70 +766,59 @@
       "access": {
         "fr": "Bonnac Irazein",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibilities": [],
       "accessibility_advice": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_covering": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_exposure": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_level": null,
       "accessibility_signage": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_slope": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_width": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advised_parking": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "altimetric_profile": "https://foo.fr/api/v2/trek/10439/profile/",
       "ambiance": {
         "fr": "Je suis une bonne ambiance.",
         "en": "",
-        "es": "",
         "it": ""
       },
       "arrival": {
         "fr": "Ourjout",
         "en": "",
-        "es": "",
         "it": ""
       },
       "ascent": 203,
@@ -950,20 +870,17 @@
       "description": {
         "fr": "Dede est au bar.",
         "en": "",
-        "es": "",
         "it": ""
       },
       "description_teaser": {
         "fr": "Chapeau a fleur.",
         "en": "",
-        "es": "",
         "it": ""
       },
       "difficulty": 2,
       "disabled_infrastructure": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "duration": 6.0,
@@ -973,7 +890,6 @@
       "gear": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "geometry": {
@@ -1002,7 +918,6 @@
       "name": {
         "fr": "Foo",
         "en": "Bar",
-        "es": "",
         "it": ""
       },
       "networks": [],
@@ -1018,7 +933,6 @@
       "pdf": {
         "fr": "https://foo.fr/api/fr/treks/10439/deyle-a-ourjout.pdf",
         "en": "https://foo.fr/api/en/treks/10439/deyle-a-ourjout.pdf",
-        "es": "https://foo.fr/api/es/treks/10439/deyle-a-ourjout.pdf",
         "it": "https://foo.fr/api/it/treks/10439/deyle-a-ourjout.pdf"
       },
       "points_reference": null,
@@ -1028,7 +942,6 @@
       "ratings_description": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "previous": {
@@ -1038,13 +951,11 @@
       "public_transport": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "published": {
         "fr": true,
         "en": false,
-        "es": false,
         "it": false
       },
       "reservation_system": null,
@@ -1064,70 +975,59 @@
       "access": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "accessibilities": [],
       "accessibility_advice": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_covering": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_exposure": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_level": null,
       "accessibility_signage": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_slope": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "accessibility_width": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "advice": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "advised_parking": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "altimetric_profile": "https://foo.fr/api/v2/trek/8700/profile/",
       "ambiance": {
         "fr": "Ambience",
         "en": "",
-        "es": "",
         "it": ""
       },
       "arrival": {
         "fr": "Étang",
         "en": "",
-        "es": "",
         "it": ""
       },
       "ascent": 1051,
@@ -1153,20 +1053,17 @@
       "description": {
         "fr": "Description",
         "en": "",
-        "es": "",
         "it": ""
       },
       "description_teaser": {
         "fr": "Chapeau",
         "en": "",
-        "es": "",
         "it": ""
       },
       "difficulty": 3,
       "disabled_infrastructure": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "duration": 4.0,
@@ -1176,7 +1073,6 @@
       "gear": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "geometry": {
@@ -1207,7 +1103,6 @@
       "name": {
         "fr": "Étang d'Alet",
         "en": "",
-        "es": "",
         "it": ""
       },
       "networks": [],
@@ -1217,7 +1112,6 @@
       "pdf": {
         "fr": "https://foo.fr/api/fr/treks/8700/etang-dalet.pdf",
         "en": "https://foo.fr/api/en/treks/8700/etang-dalet.pdf",
-        "es": "https://foo.fr/api/es/treks/8700/etang-dalet.pdf",
         "it": "https://foo.fr/api/it/treks/8700/etang-dalet.pdf"
       },
       "points_reference": null,
@@ -1227,20 +1121,17 @@
       "ratings_description": {
         "fr": "",
         "en": null,
-        "es": null,
         "it": null
       },
       "previous": {},
       "public_transport": {
         "fr": "",
         "en": "",
-        "es": "",
         "it": ""
       },
       "published": {
         "fr": true,
         "en": false,
-        "es": false,
         "it": false
       },
       "reservation_system": null,
