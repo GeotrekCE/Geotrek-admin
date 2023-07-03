@@ -922,12 +922,12 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['touristiccontent_category.json',
-                                'touristiccontent_themes.json',
-                                'sources.json',
-                                'touristiccontent_category.json',
-                                'touristiccontent_ids.json',
-                                'touristiccontent.json']
+        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+                                ('tourism', 'touristiccontent_themes.json'),
+                                ('tourism', 'sources.json'),
+                                ('tourism', 'touristiccontent_category.json'),
+                                ('tourism', 'touristiccontent_ids.json'),
+                                ('tourism', 'touristiccontent.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -951,12 +951,12 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create_create_categories(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['touristiccontent_category.json',
-                                'touristiccontent_themes.json',
-                                'sources.json',
-                                'touristiccontent_category.json',
-                                'touristiccontent_ids.json',
-                                'touristiccontent.json']
+        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+                                ('tourism', 'touristiccontent_themes.json'),
+                                ('tourism', 'sources.json'),
+                                ('tourism', 'touristiccontent_category.json'),
+                                ('tourism', 'touristiccontent_ids.json'),
+                                ('tourism', 'touristiccontent.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -986,10 +986,10 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['touristicevent_type.json',
-                                'sources.json',
-                                'touristicevent_ids.json',
-                                'touristicevent.json']
+        self.mock_json_order = [('tourism', 'touristicevent_type.json'),
+                                ('tourism', 'sources.json'),
+                                ('tourism', 'touristicevent_ids.json'),
+                                ('tourism', 'touristicevent.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -1019,8 +1019,8 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_download_attachment, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['informationdesk_ids.json',
-                                'informationdesk.json', ]
+        self.mock_json_order = [('tourism', 'informationdesk_ids.json'),
+                                ('tourism', 'informationdesk.json'), ]
         self.mock_download = 0
 
         def mocked_download(*args, **kwargs):

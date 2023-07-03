@@ -33,8 +33,11 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['signage_sealing.json', 'signage_condition.json', 'signage_type.json', 'signage_ids.json',
-                                'signage.json', ]
+        self.mock_json_order = [('signage', 'signage_sealing.json'),
+                                ('signage', 'signage_condition.json'),
+                                ('signage', 'signage_type.json'),
+                                ('signage', 'signage_ids.json'),
+                                ('signage', 'signage.json')]
         # Mock GET
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.json = self.mock_json

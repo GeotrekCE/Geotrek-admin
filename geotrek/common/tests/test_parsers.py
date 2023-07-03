@@ -745,9 +745,8 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                      stdout=output)
         stdout_parser = output.getvalue()
         self.assertIn('Render\n', stdout_parser)
-        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
-        self.assertIn('0000: InformationDesk (URL_1) (00%)', stdout_parser)
-        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
+        self.assertIn('(URL_1) (00%)', stdout_parser)
+        self.assertIn('(URL_1) (100%)', stdout_parser)
         # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
         self.assertEqual(8, mocked_import_module.call_count)
 
@@ -784,7 +783,9 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                      stdout=output)
         stdout_parser = output.getvalue()
         self.assertIn('Render\n', stdout_parser)
-        self.assertIn('0000: Trek (URL_1) (00%)', stdout_parser)
+
+        self.assertIn('(URL_1) (00%)', stdout_parser)
+        self.assertIn('(URL_1) (100%)', stdout_parser)
         # "VTT", "Vélo"
         # "Trek", "Service", "POI"
         # "POI", "InformationDesk", "TouristicContent"
@@ -805,22 +806,60 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
-        self.app_label = 'trekking'
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json',
-                                'trek_route.json',
-                                'trek_theme.json',
-                                'trek_practice.json',
-                                'trek_accessibility.json',
-                                'trek_network.json',
-                                'trek_label.json',
-                                'sources.json',
-                                'trek_ids.json',
-                                'trek.json',
-                                'trek_children.json',
-                                'poi_type.json',
-                                'poi_ids.json',
-                                'poi.json']
+        # First every categories (inside __init__)
+        # Then inside start_meta()
+        # start()
+        # parse()
+        # end()
+        # start()
+        # parse()
+        # end()
+        # end_meta()
+        self.mock_json_order = [
+            # First time
+            ('trekking', 'trek_difficulty.json'),
+            ('trekking', 'trek_route.json'),
+            ('trekking', 'trek_theme.json'),
+            ('trekking', 'trek_practice.json'),
+            ('trekking', 'trek_accessibility.json'),
+            ('trekking', 'trek_network.json'),
+            ('trekking', 'trek_label.json'),
+            ('trekking', 'sources.json'),
+            ('trekking', 'poi_type.json'),
+            ('trekking', 'trek_ids.json'),
+            ('trekking', 'trek.json'),
+            ('trekking', 'trek_children.json'),
+            ('trekking', 'poi_ids.json'),
+            ('trekking', 'poi.json'),
+            ('tourism', 'informationdesk_ids.json'),
+            ('tourism', 'informationdesk.json'),
+
+            #  End meta first time
+            ('tourism', 'informationdesk.json'),
+            ('trekking', 'trek_informationdesk.json'),
+
+            # Second time
+            ('trekking', 'trek_difficulty.json'),
+            ('trekking', 'trek_route.json'),
+            ('trekking', 'trek_theme.json'),
+            ('trekking', 'trek_practice.json'),
+            ('trekking', 'trek_accessibility.json'),
+            ('trekking', 'trek_network.json'),
+            ('trekking', 'trek_label.json'),
+            ('trekking', 'sources.json'),
+            ('trekking', 'poi_type.json'),
+            ('trekking', 'trek_ids.json'),
+            ('trekking', 'trek.json'),
+            ('trekking', 'trek_children.json'),
+            ('trekking', 'poi_ids.json'),
+            ('trekking', 'poi.json'),
+            ('tourism', 'informationdesk_ids.json'),
+            ('tourism', 'informationdesk.json'),
+            # End meta second time
+            ('tourism', 'informationdesk_treks.json'),
+            ('trekking', 'trek_informationdesk_2.json')
+        ]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -834,8 +873,15 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                      stdout=output)
         string_parser = output.getvalue()
         self.assertIn('0000: Trek (URL_1) (00%)', string_parser)
-        self.assertIn('0000: POI (URL_1) (00%)', string_parser)
+        self.assertIn('0000: Poi (URL_1) (00%)', string_parser)
         self.assertIn('5/5 lignes importées.', string_parser)
         self.assertIn('2/2 lignes importées.', string_parser)
         self.assertEqual(Trek.objects.count(), 5)
         self.assertEqual(POI.objects.count(), 2)
+        self.assertEqual(1, Trek.objects.get(name="Foo").information_desks.count())
+        self.assertEqual("Office de Tourisme de Seix",
+                         Trek.objects.get(name="Foo").information_desks.first().name)
+        self.assertEqual(3, Trek.objects.get(name="Boucle du Pic des Trois Seigneurs").information_desks.count())
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        self.assertEqual(1, Trek.objects.get(name="Boucle du Pic des Trois Seigneurs").information_desks.count())
