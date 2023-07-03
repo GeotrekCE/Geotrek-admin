@@ -5,9 +5,11 @@ CHANGELOG
 2.98.1+dev (XXXX-XX-XX)
 -----------------------
 
-**New feature**
+**New features**
 
 - Add field ``access`` to Signage and Infrastructure models (#3605)
+- Enable filtering lists by objects IDs on APIv2 (#3458)
+
 
 2.98.1 (2023-05-30)
 -----------------------
