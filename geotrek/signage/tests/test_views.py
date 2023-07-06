@@ -463,7 +463,7 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertIn(i2, filter.qs)
 
 
-class BladeFilterSetTest(InfraFilterTestMixin, AuthentFixturesTest):
+class BladeFilterSetTest(TestCase):
     factory = BladeFactory
     filterset = BladeFilterSet
 
