@@ -462,6 +462,7 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)
 
+
 class BladeFilterSetTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = BladeFactory
     filterset = BladeFilterSet
