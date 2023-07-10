@@ -1,4 +1,5 @@
 import factory
+from geotrek.common.tests.factories import OrganismFactory
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PointTopologyFactory
@@ -64,6 +65,7 @@ class SignageFactory(PointTopologyFactory):
     name = "Signage"
     type = factory.SubFactory(SignageTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
+    manager = factory.SubFactory(OrganismFactory)
     sealing = factory.SubFactory(SealingFactory)
     printed_elevation = 4807
     published = True
