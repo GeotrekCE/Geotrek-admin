@@ -61,4 +61,4 @@ class BladeFilterSet(MapEntityFilterSet):
 
     class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition', 'manager']
+        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']
