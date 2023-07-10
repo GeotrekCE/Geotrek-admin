@@ -11,6 +11,7 @@ CHANGELOG
 - Enable filtering lists by objects IDs on APIv2 (#3458)
 - Add information desks link on Treks with AggregatorParsers
 - Add filter by manager to Blades module
+- Add filter "Published" to outdoor course and outdoor site (#2810)
 
 
 **Improvements**
