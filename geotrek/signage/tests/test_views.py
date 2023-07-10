@@ -22,6 +22,7 @@ from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
 
 from mapentity.tests.factories import SuperUserFactory
 
+
 class SignageTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()

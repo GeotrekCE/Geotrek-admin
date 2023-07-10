@@ -10,6 +10,7 @@ CHANGELOG
 - Add field ``access`` to Signage and Infrastructure models (#3605)
 - Enable filtering lists by objects IDs on APIv2 (#3458)
 - Add information desks link on Treks with AggregatorParsers
+- Add a manager filter to the blades
 
 
 **Improvements**
