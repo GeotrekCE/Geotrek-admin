@@ -60,7 +60,7 @@
                 <tr>
                     <td>{{ line }}</td>
                     {% if is_direction_on_lines_enabled %}<td>{{ line.direction }}</td>{% endif %}
-                    <td>{{ line.text }}</td>
+                    <td>{{ line.text|default_if_none:""  }}</td>
                     <td>{{ line.pictogram_name|default_if_none:"" }}</td>
                     <td>{{ line.distance_pretty }}</td>
                     <td>{{ line.time_pretty }}</td>
