@@ -443,6 +443,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         accessibility = serializers.SerializerMethodField()
         external_id = serializers.CharField(source='eid')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
@@ -457,6 +458,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+        
+        def get_district(self, obj):
+            return [district.code for district in obj.published_district]
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
@@ -655,6 +659,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
@@ -761,6 +766,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+        
+        def get_districts(self, obj):
+            return [district.code for district in obj.published_districts]
 
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
@@ -1114,11 +1122,15 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parent = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+        
+        def get_districts(self, obj):
+            return [district.code for district in obj.published_districts]
 
         def get_courses(self, obj):
             courses = []
@@ -1189,12 +1201,16 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+        
+        def get_districts(self, obj):
+            return [district.code for district in obj.published_districts]
 
         def get_equipment(self, obj):
             return get_translation_or_dict('equipment', self, obj)
