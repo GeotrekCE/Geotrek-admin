@@ -458,7 +458,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
-        
+
         def get_district(self, obj):
             return [district.code for district in obj.published_district]
 
@@ -766,7 +766,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
-        
+
         def get_districts(self, obj):
             return [district.code for district in obj.published_districts]
 
@@ -1128,7 +1128,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
-        
+
         def get_districts(self, obj):
             return [district.code for district in obj.published_districts]
 
@@ -1208,7 +1208,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
-        
+
         def get_districts(self, obj):
             return [district.code for district in obj.published_districts]
 
