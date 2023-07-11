@@ -12,6 +12,7 @@ CHANGELOG
 - Add information desks link on Treks with AggregatorParsers
 - Add filter by manager to Blades module
 - Add filter "Published" to outdoor course and outdoor site (#2810)
+- Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 
 
 **Improvements**
