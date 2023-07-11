@@ -14,6 +14,7 @@ CHANGELOG
 - Add filter "Published" to outdoor course and outdoor site (#2810)
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 - Make line text optional (#3326)
+- Make signage blade lines text optional (#3326)
 
 
 **Improvements**
