@@ -608,7 +608,7 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
         class Meta:
             model = core_models.Path
             fields = (
-                'id', 'name', 'comments', 'departure', 'arrival', 'comfort', 'source', 'geometry', 'length_2d', 
+                'id', 'name', 'comments', 'departure', 'arrival', 'comfort', 'source', 'geometry', 'length_2d',
                 'length_3d', 'networks', 'usages', 'stake', 'provider', 'url', 'uuid'
             )
 
