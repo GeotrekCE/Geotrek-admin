@@ -460,7 +460,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_districts(self, obj):
-            return [district.name for district in obj.published_districts]
+            return [district.pk for district in obj.published_districts]
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
@@ -768,7 +768,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_districts(self, obj):
-            return [district.name for district in obj.published_districts]
+            return [district.pk for district in obj.published_districts]
 
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
@@ -1130,7 +1130,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_districts(self, obj):
-            return [district.name for district in obj.published_districts]
+            return [district.pk for district in obj.published_districts]
 
         def get_courses(self, obj):
             courses = []
@@ -1210,7 +1210,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             return [city.code for city in obj.published_cities]
 
         def get_districts(self, obj):
-            return [district.name for district in obj.published_districts]
+            return [district.pk for district in obj.published_districts]
 
         def get_equipment(self, obj):
             return get_translation_or_dict('equipment', self, obj)
