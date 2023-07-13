@@ -443,6 +443,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         accessibility = serializers.SerializerMethodField()
         external_id = serializers.CharField(source='eid')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
@@ -457,6 +458,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
@@ -478,7 +482,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'accessibility', 'attachments', 'approved', 'category', 'description',
                 'description_teaser', 'departure_city', 'geometry', 'label_accessibility',
-                'practical_info', 'url', 'cities',
+                'practical_info', 'url', 'cities', 'districts',
                 'external_id', 'name', 'pdf', 'portal', 'provider', 'published',
                 'source', 'structure', 'themes',
                 'types', 'contact', 'email',
@@ -537,7 +541,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable',
                 'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
-                'contact', 'description', 'description_teaser', 'duration',
+                'contact', 'description', 'description_teaser', 'districts', 'duration',
                 'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
                 'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
@@ -655,6 +659,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
@@ -762,6 +767,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
+
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
@@ -794,7 +802,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
                 'ascent', 'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
-                'description', 'description_teaser', 'difficulty',
+                'description', 'description_teaser', 'difficulty', 'districts',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
                 'elevation_svg_url', 'external_id', 'gear', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
@@ -1114,11 +1122,15 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parent = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
 
         def get_courses(self, obj):
             courses = []
@@ -1169,7 +1181,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Site
             fields = (
                 'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
-                'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
+                'description_teaser', 'districts', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
                 'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
                 'ratings', 'sector', 'source', 'structure', 'themes', 'view_points',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
@@ -1189,12 +1201,16 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
 
         def get_equipment(self, obj):
             return get_translation_or_dict('equipment', self, obj)
@@ -1228,7 +1244,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'duration', 'eid',
+                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'districts', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
                 'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url', 'uuid'
