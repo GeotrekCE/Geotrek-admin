@@ -77,8 +77,9 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'themes', 'update_datetime', 'url', 'uuid', 'view_points', 'web_links'
 ])
 
-PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['id', 'name', 'comments', 'departure', 'arrival', 'length_2d', 'length_3d',
-                                            'networks', 'usages', 'stake', 'provider', 'url', 'uuid'])
+PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'name', 'comments', 'departure', 'arrival', 'comfort', 'source', 'length_2d', 'length_3d',
+    'networks', 'usages', 'stake', 'provider', 'url', 'uuid'])
 
 TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + ['count_children', 'steps'])
 
