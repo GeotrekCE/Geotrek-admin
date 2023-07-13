@@ -1,6 +1,7 @@
 from django.test import TestCase
+from geotrek.authent.tests.factories import UserFactory
 from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory
-from geotrek.maintenance.forms import ManDayForm
+from geotrek.maintenance.forms import ManDayForm, ProjectForm
 
 
 class ManDayFormTest(TestCase):
@@ -40,3 +41,16 @@ class ManDayFormTest(TestCase):
             'job': self.job1.pk
         })
         self.assertFalse(form.is_valid())
+
+class ProjectDateFormTest(TestCase):
+    def test_begin_end_date(self):
+        user = UserFactory()
+        form = ProjectForm(
+            user=user,
+            data={
+            'name': 'project',
+            'begin_year': 2022,
+            'end_year': 2021,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("Start year is after end year", str(form.errors))

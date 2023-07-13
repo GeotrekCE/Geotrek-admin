@@ -207,3 +207,9 @@ class ProjectForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_tag = False
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+
+        if clean_data.get("end_year") and clean_data.get("end_year") < clean_data.get("begin_year"):
+            self.add_error('end_year', _('Start year is after end year'))
