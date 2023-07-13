@@ -19,6 +19,12 @@ CHANGELOG
 
 - Published by language depending on each portals and languages.
 - Use default value with parsers when no value is found
+- Improve filter popover (#2968)
+- Add a scroll bar into filter form and module list (#2849)
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
 
 
 2.98.1 (2023-05-30)
