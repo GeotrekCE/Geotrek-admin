@@ -10,7 +10,7 @@ Les modules signalétique et aménagement ont initialement été conçus dans un
 
 Les modules interventions et chantiers ont été conçus de façon à permettre à la fois un inventaire et un suivi des travaux (prévisionnel, administratif et financier).
 
-En termes de structuration, le choix initial a été de concevoir, sur le volet gestion, la gestion des valeurs des listes déroulantes structure par structure pour que chaque structure travaillant sur une même Geotrek-admin puisse avoir des typologies différentes (types de signalétique, d’aménagements, d’organismes...). Néanmoins depuis la version 2.20 de Geotrek-admin, il est possible de partager des typologies entre les différentes structures en ne renseignant pas ce champ.
+En termes de structuration, le choix initial a été de concevoir, sur le volet gestion, la gestion des valeurs des listes déroulantes structure par structure pour que chaque structure travaillant sur une même instance Geotrek-admin puisse avoir des typologies différentes (types de signalétique, d’aménagements, d’organismes...). Néanmoins depuis la version 2.20 de Geotrek-admin (https://makina-corpus.com/geotrek/nouveau-geotrek-version-2), il est possible de partager des typologies entre les différentes structures en ne renseignant pas ce champ.
 Un compte utilisateur appartenant à une structure X n'aura accès qu'aux typologies associées à celle-ci, ainsi qu'aux typologies partagées. De même, ce compte utilisateur ne pourra pas modifier ou supprimer des objets appartenant à une autre structure (c'est-à-dire créés par un compte utilisateur appartenant à une autre structure), sauf à avoir des permissions particulières.
 
 Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche SIG ou un relevé GPX sur la carte lors de la création d'un objet sur la carte pour pouvoir le visualiser et le localiser sur la carte (``Charger un fichier local (GPX, KML, GeoJSON)``).
@@ -20,7 +20,7 @@ Les tronçons
 
 C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
-Il peuvent être numérisés dans Geotrek-admin, mais il est conseillé des les importer, directement en SQL dans la base de données ou depuis QGIS (https://makina-corpus.com/blog/metier/2014/importer-une-couche-de-troncons-dans-geotrek).
+Il peuvent être numérisés dans Geotrek-admin, mais il est conseillé de les importer, directement en SQL dans la base de données ou depuis QGIS (https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek).
 
 Si ils sont numérisés directement dans Geotrek-admin, il est possible d'afficher sur la carte un fichier GPX ou GeoJSON pour faciliter leur localisation.
 
@@ -57,7 +57,7 @@ Ils permettent de renseigner des informations sur le linéaire (type physique, s
 Les aménagements
 ================
 
-Ils permettent d'inventorier les aménagements sur les sentiers (passerelles, mains courantes, cunettes, soutenements, bancs, parkings...) en les localisant, les typant, les décrivant, renseignant leur état et leur année d'implantation.
+Ils permettent d'inventorier les aménagements sur les sentiers (passerelles, mains courantes, cunettes, soutènements, bancs, parkings...) en les localisant, les typant, les décrivant, renseignant leur état et leur année d'implantation.
 
 Les types d'aménagement sont découpés en 2 catégories (Ouvrages et Equipements). Ce découpage n'est utilisé que pour filtrer les aménagements.
 
@@ -91,11 +91,11 @@ Chaque intervention correspond à un type. On peut aussi renseigner si celle-ci 
 
 Plusieurs interventions peuvent être rattachées à un même chantier pour avoir une vision globale de plusieurs interventions correspondant à une opération commune.
 
-L'onglet Avancé du formulaire permet de renseigner des informations financières sur chaque intervention (coût direct et indirect lié au nombre de jours/agents dissocié par fonction).
+L'onglet `Avancé` du formulaire permet de renseigner des informations financières sur chaque intervention (coût direct et indirect lié au nombre de jours/agents dissocié par fonction).
 
 Les chantiers
 =============
 
-Les chantiers permettent de grouper plusieurs interventions pour en avoir une vision globale et d'y renseigner globalement des informations administratives (Contraintes, financeurs, prestatires, cout global, maitrise d'ouvrage...) et éventuellement d'y attacher des documents (cahier des charges, recette, plans...).
+Les chantiers permettent de grouper plusieurs interventions pour en avoir une vision globale et d'y renseigner globalement des informations administratives (contraintes, financeurs, prestataires, cout global, maitrise d'ouvrage...) et éventuellement d'y attacher des documents (cahier des charges, recette, plans...).
 
 Leur géométrie est la somme des géométries des interventions qui les composent.

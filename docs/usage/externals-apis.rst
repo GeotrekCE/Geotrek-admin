@@ -5,9 +5,9 @@ External APIs
 Geotrek et IGNrando'
 ====================
 
-Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando'.
+Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando'(https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne).
 
-Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins
+Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins 
 
 Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par l'IGN :
 
