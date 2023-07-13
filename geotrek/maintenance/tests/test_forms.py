@@ -42,15 +42,17 @@ class ManDayFormTest(TestCase):
         })
         self.assertFalse(form.is_valid())
 
+
 class ProjectDateFormTest(TestCase):
+
     def test_begin_end_date(self):
         user = UserFactory()
         form = ProjectForm(
             user=user,
             data={
-            'name': 'project',
-            'begin_year': 2022,
-            'end_year': 2021,
-        })
+                'name': 'project',
+                'begin_year': 2022,
+                'end_year': 2021,
+            })
         self.assertFalse(form.is_valid())
         self.assertIn("Start year is after end year", str(form.errors))
