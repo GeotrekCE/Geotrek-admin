@@ -14,7 +14,7 @@ CHANGELOG
 - Add filter "Published" to outdoor course and outdoor site (#2810)
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 - Make signage blade lines text optional (#3326)
-- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake.
+- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
 
 
 **Improvements**
