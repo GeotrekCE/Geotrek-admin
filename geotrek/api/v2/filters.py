@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
+from geotrek.common.models import Label
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
@@ -1153,6 +1154,7 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekLabelFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        queryset = queryset.filter(published=True)
         filter_label = request.GET.get('only_filters')
         if filter_label:
             try:
