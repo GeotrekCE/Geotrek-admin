@@ -349,4 +349,4 @@ msgid "No intervention related."
 msgstr "Pas d'intervention liée."
 
 msgid "Start year is after end year"
-msgstr "L'année de départ est après l'année de fin"
+msgstr "L'année de début est après l'année de fin"
