@@ -597,7 +597,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+        url = HyperlinkedIdentityField(view_name='apiv2:path-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
@@ -608,8 +608,8 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
         class Meta:
             model = core_models.Path
             fields = (
-                'id', 'comments', 'geometry', 'length_2d', 'length_3d',
-                'name', 'provider', 'url', 'uuid'
+                'arrival', 'comfort', 'comments', 'departure', 'geometry', 'id', 'length_2d',
+                'length_3d', 'name', 'networks', 'provider', 'source', 'stake', 'url', 'usages', 'uuid'
             )
 
 
