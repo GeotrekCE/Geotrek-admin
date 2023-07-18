@@ -83,10 +83,10 @@ class SQLDefaultValuesTest(TestCase):
         with connection.cursor() as cur:
             cur.execute("""INSERT INTO common_label
                                    (
-                                   name, published
+                                   name
                                    ) VALUES
                                    (
-                                   'name_label', true
+                                   'name_label'
                                    )""")
         label = Label.objects.first()
         self.assertFalse(label.filter)
