@@ -523,8 +523,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
 
     @property
     def published_labels(self):
-        if not hasattr(self, 'published'):
-            return self.labels.all()
         return [label for label in self.labels.all() if label.published]
 
     @property
