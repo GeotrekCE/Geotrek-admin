@@ -5,6 +5,10 @@ CHANGELOG
 2.99.0+dev (XXXX-XX-XX)
 -----------------------
 
+**New features**
+
+- Filter trek and outdoor site labels according to whether they are published or not (#1736)
+
 
 2.99.0 (2023-07-18)
 -----------------------
@@ -19,7 +23,6 @@ CHANGELOG
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 - Make signage blade lines text optional (#3326)
 - Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
-- Filter trek and outdoor site labels according to whether they are published or not (#1736)
 
 
 **Improvements**
