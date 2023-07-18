@@ -15,7 +15,7 @@ CHANGELOG
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 - Make signage blade lines text optional (#3326)
 - Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
-- Filter trek labels according to whether they are published or not (#1736)
+- Filter trek and outdoor site labels according to whether they are published or not (#1736)
 
 
 **Improvements**

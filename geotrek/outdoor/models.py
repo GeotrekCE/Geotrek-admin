@@ -307,6 +307,12 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
     @property
+    def published_labels(self):
+        if not hasattr(self, 'published'):
+            return self.labels.all()
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def all_pois(self):
         return POI.outdoor_all_pois(self)
 

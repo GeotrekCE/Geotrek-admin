@@ -1127,6 +1127,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
+        labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
 
@@ -1135,6 +1136,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
+
+        def get_labels(self, obj):
+            return [label.pk for label in obj.published_labels]
 
         def get_courses(self, obj):
             courses = []
