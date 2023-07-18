@@ -770,7 +770,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
-        
+
         def get_labels(self, obj):
             return [label.pk for label in obj.published_labels]
 

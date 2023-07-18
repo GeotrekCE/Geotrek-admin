@@ -520,7 +520,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     @property
     def source_display(self):
         return ','.join([str(source) for source in self.source.all()])
-    
+
     @property
     def published_labels(self):
         if not hasattr(self, 'published'):

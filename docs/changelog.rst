@@ -13,8 +13,12 @@ CHANGELOG
 - Add filter by manager to Blades module
 - Add filter "Published" to outdoor course and outdoor site (#2810)
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
+<<<<<<< HEAD
 - Make signage blade lines text optional (#3326)
 - Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
+=======
+- Filter trek labels according to whether they are published or not (#1736)
+>>>>>>> c373766a5 (Add changelog and add test)
 
 
 **Improvements**
