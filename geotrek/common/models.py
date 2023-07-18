@@ -280,7 +280,7 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
-    published = models.BooleanField(verbose_name=_("Published"), default=True,
+    published = models.BooleanField(verbose_name=_("Published"), default=True, blank=True,
                                     help_text=_("Visible on Geotrek-rando"))
     filter = models.BooleanField(verbose_name=_("Filter"), default=False,
                                  help_text=_("Show this label as a filter in public portal"))
