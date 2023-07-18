@@ -3750,8 +3750,8 @@ class SitesLabelsFilterTestCase(BaseApiTest):
 
     @classmethod
     def setUpTestData(cls):
-        cls.label1 = common_factory.LabelFactory()
-        cls.label2 = common_factory.LabelFactory()
+        cls.label1 = common_factory.LabelFactory(published=True)
+        cls.label2 = common_factory.LabelFactory(published=False)
         cls.site1 = outdoor_factory.SiteFactory()
         cls.site1.labels.add(cls.label1)
         cls.site2 = outdoor_factory.SiteFactory()
@@ -3820,6 +3820,17 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 4)
         self.assertSetEqual({result['id'] for result in json_response.get('results')},
                             {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
+
+    def test_sites_label_filter_published(self):
+        all_labels = []
+        response = self.get_site_list()
+        self.assertEqual(response.status_code, 200)
+        results = response.json()['results']
+        for result in results:
+            all_labels.append(result['labels'])
+
+        self.assertIn([self.label1.pk], all_labels)
+        self.assertNotIn([self.label2.pk], all_labels)
 
 
 class CoursesTypesFilterTestCase(BaseApiTest):
