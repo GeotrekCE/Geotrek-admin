@@ -2,7 +2,11 @@
 CHANGELOG
 =========
 
-2.98.1+dev (XXXX-XX-XX)
+2.99.0+dev (XXXX-XX-XX)
+-----------------------
+
+
+2.99.0 (2023-07-18)
 -----------------------
 
 **New features**
@@ -24,11 +28,11 @@ CHANGELOG
 - Use default value with parsers when no value is found
 - Improve filter popover (#2968)
 - Add a scroll bar into filter form and module list (#2849)
+- In projects, start year must be before end year (#3567)
 
 **Maintenance**
 
 - Upgrade `django-mapentity`
-- In projects, start year must be before end year (#3567)
 
 
 2.98.1 (2023-05-30)
