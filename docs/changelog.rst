@@ -27,6 +27,7 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade `django-mapentity`
+- In projects, start year must be before end year (#3567)
 
 
 2.98.1 (2023-05-30)
