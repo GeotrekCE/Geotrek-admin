@@ -3826,8 +3826,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         response = self.get_site_list()
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
-        for result in results:
-            all_labels.append(result['labels'])
+        all_labels = [result['labels'] for result in results]
 
         self.assertIn([self.label1.pk], all_labels)
         self.assertNotIn([self.label2.pk], all_labels)
