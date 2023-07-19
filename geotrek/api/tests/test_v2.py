@@ -286,7 +286,7 @@ class BaseApiTest(TestCase):
         cls.network = trek_factory.TrekNetworkFactory.create()
         cls.rating = trek_factory.RatingFactory()
         cls.rating2 = trek_factory.RatingFactory()
-        cls.label = common_factory.LabelFactory(id=23, published=True)
+        cls.label = common_factory.LabelFactory(id=23)
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)],
@@ -461,7 +461,7 @@ class BaseApiTest(TestCase):
         cls.site2.portal.set([cls.portal])
         cls.theme3 = common_factory.ThemeFactory()
         cls.site2.themes.add(cls.theme3)
-        cls.label_3 = common_factory.LabelFactory(published=True)
+        cls.label_3 = common_factory.LabelFactory()
         cls.site2.labels.add(cls.label_3)
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
             content_object=cls.treks[0]
@@ -939,7 +939,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 18)
 
         trek = trek_factory.TrekFactory.create()
-        label = common_factory.LabelFactory.create(published=True)
+        label = common_factory.LabelFactory.create()
         trek.labels.add(label, self.label)
 
         response = self.get_trek_list({'labels_exclude': self.label.pk})
@@ -949,7 +949,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 18)
 
         trek = trek_factory.TrekFactory.create()
-        label_2 = common_factory.LabelFactory.create(published=True)
+        label_2 = common_factory.LabelFactory.create()
         trek.labels.add(label, label_2)
 
         response = self.get_trek_list({'labels_exclude': f'{self.label.pk},{label.pk}'})
@@ -2043,8 +2043,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_labels_filter_filter(self):
-        label_1 = common_factory.LabelFactory.create(filter=False, published=True)
-        label_2 = common_factory.LabelFactory.create(filter=True, published=True)
+        label_1 = common_factory.LabelFactory.create(filter=False)
+        label_2 = common_factory.LabelFactory.create(filter=True)
         self.treks[0].labels.add(label_1, label_2)
         response = self.get_label_list({'only_filters': True})
         self.assertEqual(response.json()["count"], 3)
@@ -3792,7 +3792,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
                             {self.site2.pk, self.site3.pk})
 
         site_a = outdoor_factory.SiteFactory()
-        label = common_factory.LabelFactory.create(published=True)
+        label = common_factory.LabelFactory.create()
         site_a.labels.add(label, self.label_published)
 
         response = self.get_site_list({'labels_exclude': self.label_published.pk})
@@ -3804,7 +3804,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
                             {self.site2.pk, self.site3.pk})
 
         site_b = outdoor_factory.SiteFactory()
-        label_2 = common_factory.LabelFactory.create(published=True)
+        label_2 = common_factory.LabelFactory.create()
         site_b.labels.add(label, label_2)
 
         response = self.get_site_list({'labels_exclude': f'{self.label_published.pk},{label.pk}'})
