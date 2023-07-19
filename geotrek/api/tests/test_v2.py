@@ -3759,7 +3759,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         cls.site3 = outdoor_factory.SiteFactory()
 
     def test_sites_label_filter_1(self):
-        response = self.get_site_list({'labels': self.label1.pk})
+        response = self.get_site_list({'labels': self.label_published.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_sites = response.json()['results']
@@ -3771,7 +3771,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site3.pk, all_ids)
 
     def test_sites_label_filter_2(self):
-        response = self.get_site_list({'labels': f"{self.label1.pk},{self.label2.pk}"})
+        response = self.get_site_list({'labels': f"{self.label_published.pk},{self.label_unpublished.pk}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_sites = response.json()['results']
@@ -3783,7 +3783,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site3.pk, all_ids)
 
     def test_sites_labels_exclude_filter(self):
-        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        response = self.get_site_list({'labels_exclude': self.label_published.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -3793,9 +3793,9 @@ class SitesLabelsFilterTestCase(BaseApiTest):
 
         site_a = outdoor_factory.SiteFactory()
         label = common_factory.LabelFactory.create()
-        site_a.labels.add(label, self.label1)
+        site_a.labels.add(label, self.label_published)
 
-        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        response = self.get_site_list({'labels_exclude': self.label_published.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -3807,7 +3807,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         label_2 = common_factory.LabelFactory.create()
         site_b.labels.add(label, label_2)
 
-        response = self.get_site_list({'labels_exclude': f'{self.label1.pk},{label.pk}'})
+        response = self.get_site_list({'labels_exclude': f'{self.label_published.pk},{label.pk}'})
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 2)
