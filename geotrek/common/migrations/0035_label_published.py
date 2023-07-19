@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='label',
             name='published',
-            field=models.BooleanField(default=True, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
         ),
     ]
