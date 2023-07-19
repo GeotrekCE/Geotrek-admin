@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-- Filter trek and outdoor site labels according to whether they are published or not (#1736)
+- Filter trek and outdoor site labels according to whether they are published or not (#3529)
 
 
 2.99.0 (2023-07-18)
