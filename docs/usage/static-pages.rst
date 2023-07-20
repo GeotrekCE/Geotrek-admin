@@ -2,6 +2,10 @@
 Pages statiques
 ===============
 
+.. danger::
+    Depuis Geotrek-Rando V3, le composant Bootstrap n'est plus utilisé pour gérer les différentes tailles d'écran. Cela signifie que la mise en page créée dans Geotrek-Admin n'est pas reproduite sur le site public. Cette documentation n'est valable que pour Geotrek-Rando V2 en attendant sa mise à jour expliquant le fonctionnement actuel. Voir le ticket : https://github.com/GeotrekCE/Geotrek-rando-v3/issues/466
+
+
 Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
 
 .. figure :: /images/user-manual/flatpages-gtecrins.jpg
