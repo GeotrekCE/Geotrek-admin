@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter
+from django_filters import LookupChoiceFilter
+from django import forms
 
 from mapentity.filters import MapEntityFilterSet
 
@@ -31,11 +32,13 @@ class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
 
     identification_choices = LandEdge.objects.values_list('identification', 'identification').order_by('identification').distinct()
 
-    provider = ChoiceFilter(
-        field_name='identification',
-        empty_label=_("Identification"),
-        label=_("Identification"),
-        choices=identification_choices,
+    identification = LookupChoiceFilter(
+        field_class=forms.CharField,
+        lookup_choices=[
+            ('contains', 'Contains'),
+            ('startswith', 'Starts with'),
+            ('endswith', 'Ends with'),
+        ]
     )
 
 
