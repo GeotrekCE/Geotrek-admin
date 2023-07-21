@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+from django_filters import ChoiceFilter
 
 from mapentity.filters import MapEntityFilterSet
 
@@ -26,7 +27,16 @@ class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
 class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
-        fields = ['land_type', 'owner', 'agreement']
+        fields = ['land_type', 'owner', 'agreement', 'identification']
+
+    identification_choices = LandEdge.objects.values_list('identification', 'identification').order_by('identification').distinct()
+
+    provider = ChoiceFilter(
+        field_name='identification',
+        empty_label=_("Identification"),
+        label=_("Identification"),
+        choices=identification_choices,
+    )
 
 
 class OrganismFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
