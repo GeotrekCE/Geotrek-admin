@@ -125,6 +125,7 @@ class LabelFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('label.png')
     advice = "Advice label"
     filter = True
+    published = True
 
 
 class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):

@@ -100,7 +100,7 @@ class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 class LabelAdmin(TabbedTranslationAdmin):
-    list_display = ('pictogram_img', 'name', 'filter')
+    list_display = ('pictogram_img', 'name', 'filter', 'published')
     list_display_links = ('name',)
     search_fields = ('name', )
 
