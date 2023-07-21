@@ -78,6 +78,10 @@ CHANGELOG
 
 - POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
 
+**Maintenance**
+
+- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
+
 
 2.101.0     (2023-10-05)
 ------------------------

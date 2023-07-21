@@ -626,3 +626,61 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         output = StringIO()
         call_command('reorder_topologies', stdout=output)
         self.assertIn(f'Topologies with errors :\nTREK id: {topo.pk}\n', output.getvalue())
+
+
+class MergePathsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        geom_1 = LineString((0, 0), (1, 1))
+        cls.p1 = Path.objects.create(geom=geom_1)
+        geom_2 = LineString((1, 1), (2, 2))
+        cls.p2 = Path.objects.create(geom=geom_2)
+        geom_3 = LineString((2, 2), (3, 3))
+        cls.p3 = Path.objects.create(geom=geom_3)
+        geom_4 = LineString((2, 2), (3, 1))
+        cls.p4 = Path.objects.create(geom=geom_4)
+        geom_5 = LineString((3, 3), (4, 4))
+        cls.p5 = Path.objects.create(geom=geom_5)
+        geom_6 = LineString((4, 4), (5, 5))
+        cls.p6 = Path.objects.create(geom=geom_6)
+        geom_7 = LineString((5, 5), (6, 6))
+        cls.p7 = Path.objects.create(geom=geom_7)
+        geom_8 = LineString((6, 6), (7, 7))
+        cls.p8 = Path.objects.create(geom=geom_8)
+        geom_9 = LineString((7, 7), (8, 8))
+        cls.p9 = Path.objects.create(geom=geom_9)
+
+    def test_find_and_merge_paths(self):
+        # Before call
+        #    p1      p2      p3      p5     p6     p7      p8     p9
+        # +-------+------+-------+------+-------+------+-------+------+
+        #                |
+        #                |  p4
+        #                |
+        #                +
+        self.assertEqual(Path.objects.count(), 9)
+        output = StringIO()
+        call_command('merge_segmented_paths', stdout=output)
+        #  After first call :
+        #    p1      p2      p3         p6            p8        p9
+        # +-------+------+-------+--------------+-------------+------+
+        #                |
+        #                |  p4
+        #                |
+        #                +
+        self.assertEqual(Path.objects.count(), 7)
+        with self.assertRaises(Path.DoesNotExist):
+            Path.objects.get(pk=self.p5.pk)
+        with self.assertRaises(Path.DoesNotExist):
+            Path.objects.get(pk=self.p7.pk)
+        call_command('merge_segmented_paths', stdout=output)
+        #  After second call :
+        #    p1      p2      p3               p8                 p9
+        # +-------+------+-------+----------------------------+------+
+        #                |
+        #                |  p4
+        #                |
+        #                +
+        with self.assertRaises(Path.DoesNotExist):
+            Path.objects.get(pk=self.p6.pk)
+        self.assertEqual(Path.objects.count(), 6)
