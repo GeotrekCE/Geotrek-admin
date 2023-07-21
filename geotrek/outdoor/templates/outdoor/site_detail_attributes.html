@@ -112,7 +112,12 @@
         <tr>
             <th>{{ object|verbose:"labels" }}</th>
             <td>
-                {% valuelist object.labels.all %}
+                {% for label in object.labels.all %}
+                    {% if label.published %}
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                    {% endif %}
+                    {{ label.name }}<br>
+                {% endfor %}
             </td>
         </tr>
         <tr>
