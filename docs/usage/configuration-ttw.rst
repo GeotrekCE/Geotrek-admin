@@ -72,14 +72,14 @@ Tourisme
 |image6|
 
 
-Exemple : catégorie de contenu touristique et ses sous-type
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Exemple : catégorie de contenu touristique et ses sous-types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |image7|
 
 
 Pour chaque catégorie il est possible de définir deux listes de
-sous-type et leur nom.
+sous-types et leur nom.
 
 Édition des sous-types de la catégorie “Hébergements”
 
@@ -105,7 +105,7 @@ Zones
 Gestion des utilisateurs
 ========================
 
-Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédants chacun des droits spécifiques et rattachés à des structures. La gestion des utilisateurs et des groupes est basé sur le `système d'authentification de Django <https://docs.djangoproject.com/fr/4.0/topics/auth/>`_.
+Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédant chacun des droits spécifiques et rattachés à des structures. La gestion des utilisateurs et des groupes est basée sur le `système d'authentification de Django <https://docs.djangoproject.com/fr/4.2/topics/auth/default/>`_.
 Pour cela les objets suivants dans l'interface d'administration doivent être utilisés :
 
 |image9|
@@ -175,7 +175,7 @@ Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pou
 
 Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire apparaitre une information.
 
-Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour ditinguer les contenus à afficher dans un widget ou dans un autre.
+Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
 
 Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
 
