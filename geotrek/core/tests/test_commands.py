@@ -637,7 +637,7 @@ class MergePathsTest(TestCase):
         cls.p2 = Path.objects.create(geom=geom_2)
         geom_3 = LineString((2, 2), (3, 3))
         cls.p3 = Path.objects.create(geom=geom_3)
-        geom_4 = LineString((2, 2), (3, 1))
+        geom_4 = LineString((2, 2), (6, 1))
         cls.p4 = Path.objects.create(geom=geom_4)
         geom_5 = LineString((3, 3), (4, 4))
         cls.p5 = Path.objects.create(geom=geom_5)
@@ -649,38 +649,51 @@ class MergePathsTest(TestCase):
         cls.p8 = Path.objects.create(geom=geom_8)
         geom_9 = LineString((7, 7), (8, 8))
         cls.p9 = Path.objects.create(geom=geom_9)
+        geom_10 = LineString((6, 1), (4, 1))
+        cls.p10 = Path.objects.create(geom=geom_10)
+        geom_11 = LineString((4, 1), (4, 0))
+        cls.p11 = Path.objects.create(geom=geom_11)
+        # print(cls.11.pk)
+        geom_12 = LineString((4, 1), (6, 1))
+        cls.p12 = Path.objects.create(geom=geom_12)
+        geom_13 = LineString((6, 6), (7, 5))
+        cls.p13 = Path.objects.create(geom=geom_13)
+        geom_14 = LineString((8, 8), (9, 9))
+        cls.p14 = Path.objects.create(geom=geom_14)
 
+    @override_settings(PATH_SNAPPING_DISTANCE=0, PATH_MERGE_SNAPPING_DISTANCE=0)
     def test_find_and_merge_paths(self):
         # Before call
-        #    p1      p2      p3      p5     p6     p7      p8     p9
-        # +-------+------+-------+------+-------+------+-------+------+
+        #    p1      p2      p3      p5     p6     p7      p8     p9     p14
+        # +-------+------+-------+------+-------+------+-------+------+------+
+        #                |                             |
+        #                |  p4                         |  p13
+        #                |                             |
+        #                +                             +
         #                |
-        #                |  p4
+        #                |  p10
+        #          p11   |
+        #         +------+
+        #                |
+        #                |  p12
         #                |
         #                +
-        self.assertEqual(Path.objects.count(), 9)
+        self.assertEqual(Path.objects.count(), 14)
         output = StringIO()
         call_command('merge_segmented_paths', stdout=output)
-        #  After first call :
-        #    p1      p2      p3         p6            p8        p9
-        # +-------+------+-------+--------------+-------------+------+
+        # After call
+        #        p1                     p6                       p14
+        # +--------------+-----------------------------+---------------------+
+        #                |                             |
+        #                |  p4                         |  p13
+        #                |                             |
+        #                +                             +
         #                |
-        #                |  p4
+        #                |  p10
+        #          p11   |
+        #         +------+
         #                |
-        #                +
-        self.assertEqual(Path.objects.count(), 7)
-        with self.assertRaises(Path.DoesNotExist):
-            Path.objects.get(pk=self.p5.pk)
-        with self.assertRaises(Path.DoesNotExist):
-            Path.objects.get(pk=self.p7.pk)
-        call_command('merge_segmented_paths', stdout=output)
-        #  After second call :
-        #    p1      p2      p3               p8                 p9
-        # +-------+------+-------+----------------------------+------+
-        #                |
-        #                |  p4
+        #                |  p12
         #                |
         #                +
-        with self.assertRaises(Path.DoesNotExist):
-            Path.objects.get(pk=self.p6.pk)
-        self.assertEqual(Path.objects.count(), 6)
+        self.assertEqual(Path.objects.count(), 8)

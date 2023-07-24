@@ -11,15 +11,12 @@ class Command(BaseCommand):
     help = 'Find and merge Paths that are splitted in several segments\n'
 
     def add_arguments(self, parser):
-        parser.add_argument('--dry', '-d', action='store_true', dest='dry', default=False,
-                            help="Do not change the database, dry run. Show the number of potential merges")
+        parser.add_argument('--sleeptime', '-d', action='store', dest='sleeptime', default=0.25,
+                            help="Time to wait between merges (SQL triggers take time)")
 
-    def handle(self, *args, **options):
-        dry = options.get('dry')
-
+    def extract_neighbourgs_graph(self, number_of_neighbourgs, discarded=[]):
         # Get all neighbours for each path, identify paths that could be merged (2 neighbours only)
         neighbours = dict()
-        mergeables = []
         with transaction.atomic():
             with connection.cursor() as cursor:
                 cursor.execute('''select id1, array_agg(id2) from
@@ -31,52 +28,115 @@ class Command(BaseCommand):
                             group by id1;''')
 
                 for path_id, path_neighbours_ids in cursor.fetchall():
-                    if len(path_neighbours_ids) == 2:
-                        mergeables.append(path_id)
+                    if path_id not in discarded and len(path_neighbours_ids) == number_of_neighbourgs:
                         neighbours[path_id] = path_neighbours_ids
+        return neighbours
 
-        # Match couples of paths to merge together (first neighbour, if not matched with another path yet)
-        still_mergeables = copy.deepcopy(mergeables)
-        merges = 0
-        merges_couples = []
-        merges_in = []
-        merges_out = []
-        merges_flat = []
-        for i in mergeables:
-            if i in still_mergeables:
-                neighbour = neighbours.get(i, None)
-                if neighbour:
-                    first_neighbour = neighbour[0]
-                    if first_neighbour in still_mergeables:
-                        merges += 1
-                        merges_couples.append((i, first_neighbour))
-                        merges_flat.append(i)
-                        merges_flat.append(first_neighbour)
-                        merges_in.append(i)
-                        merges_out.append(first_neighbour)
-                        still_mergeables.remove(i)
-                        still_mergeables.remove(first_neighbour)
+    def merge_paths_with_one_neighbour(self):
+        print("┌ STEP 1")
+        neighbours_graph = self.extract_neighbourgs_graph(1)
+        successes = 0
+        while len(neighbours_graph):
+            for path, neighbours in neighbours_graph.items():
+                neighbour = neighbours[0]
+                patha = Path.include_invisible.get(pk=int(path))
+                pathb = Path.include_invisible.get(pk=int(neighbour))
+                success = patha.merge_path(pathb)
+                if success == 2:
+                    print(f"├ Cannot merge {path} and {neighbour}")
+                elif success == 0:
+                    print(f"├ No matching points to merge paths {path} and {neighbour} found")
+                else:
+                    print(f"├ Merged {neighbour} into {path}")
+                    successes += 1
+                    sleep(self.sleeptime)
+            neighbours_graph = self.extract_neighbourgs_graph(1)
+        return successes
 
-        algo_ok = set(merges_in).isdisjoint(set(merges_out))
-
-        print(f"Found {merges} potential merges")
-
-        if algo_ok and not dry:
-            successes = 0
-            fails = 0
-            for (a, b) in merges_couples:
+    def merge_paths_with_two_neighbours(self):
+        print("┌ STEP 2")
+        extremities = []
+        successes = 0
+        neighbours_graph = self.extract_neighbourgs_graph(2)
+        mergeables = neighbours_graph.keys()
+        while len(mergeables) > 0:
+            for (a, neighbours) in neighbours_graph.items():
+                b = neighbours[0]
                 patha = Path.include_invisible.get(pk=int(a))
                 pathb = Path.include_invisible.get(pk=int(b))
                 success = patha.merge_path(pathb)
                 if success == 2:
-                    print(f"3rd path in intersection of {a} and {b}")
-                    fails += 1
-                elif success == 0:
-                    print(f"No matching points to merge paths {a} and {b} found")
-                    fails += 1
+                    print(f"├ Cannot merge {a} and {b}")
+                    extremities.append(a)
                 else:
-                    print(f"Merged {b} into {a}")
+                    print(f"├ Merged {b} into {a}")
                     successes += 1
-                sleep(0.5)
+                    sleep(self.sleeptime)
+            neighbours_graph = self.extract_neighbourgs_graph(2, discarded=extremities)
+            mergeables = neighbours_graph.keys()
+        return successes
 
-            print(f"{successes} successful merges - {fails} failed merges")
+    def merge_paths_with_three_neighbours(self):
+        print("┌ STEP 3")
+        extremities = []
+        successes = 0
+        neighbours_graph = self.extract_neighbourgs_graph(3)
+        mergeables = list(neighbours_graph.keys())
+        while len(mergeables) > 0:
+            still_mergeables = copy.deepcopy(mergeables)
+            for (a, neighbours) in neighbours_graph.items():
+                if a in still_mergeables:
+                    b = neighbours[0]
+                    patha = Path.include_invisible.get(pk=int(a))
+                    pathb = Path.include_invisible.get(pk=int(b))
+                    success = patha.merge_path(pathb)
+                    if success == 2:
+                        print(f"├ Cannot merge {a} and {b}")
+                        b = neighbours[1]
+                        patha = Path.include_invisible.get(pk=int(a))
+                        pathb = Path.include_invisible.get(pk=int(b))
+                        success = patha.merge_path(pathb)
+                        if success == 2:
+                            print(f"├ Cannot merge {a} and {b}")
+                            b = neighbours[2]
+                            patha = Path.include_invisible.get(pk=int(a))
+                            pathb = Path.include_invisible.get(pk=int(b))
+                            success = patha.merge_path(pathb)
+                            if success == 2:
+                                print(f"├ Cannot merge {a} and {b}")
+                                extremities.append(a)
+                            else:
+                                print(f"├ Merged {b} into {a}")
+                                sleep(self.sleeptime)
+                                still_mergeables.remove(b)
+                                successes += 1
+                        else:
+                            print(f"├ Merged {b} into {a}")
+                            sleep(self.sleeptime)
+                            still_mergeables.remove(b)
+                            successes += 1
+                    else:
+                        print(f"├ Merged {b} into {a}")
+                        sleep(self.sleeptime)
+                        still_mergeables.remove(b)
+                        successes += 1
+            neighbours_graph = self.extract_neighbourgs_graph(3, discarded=extremities)
+            mergeables = list(neighbours_graph.keys())
+        return successes
+
+    def handle(self, *args, **options):
+        self.sleeptime = options.get('sleeptime')
+        # Mettre un warning et un sleep
+        total_successes = 0
+        print("\n")
+        first_step_successes = self.merge_paths_with_one_neighbour()
+        print(f"└ {first_step_successes} merges")
+        total_successes += first_step_successes
+        second_step_successes = self.merge_paths_with_two_neighbours()
+        print(f"└ {second_step_successes} merges")
+        total_successes += second_step_successes
+        third_step_successes = self.merge_paths_with_three_neighbours()
+        print(f"└ {third_step_successes} merges")
+        total_successes += third_step_successes
+        merges_string = "MERGED " + str(total_successes) + " PATHS"
+        print(f"\n{merges_string:-^20}")
