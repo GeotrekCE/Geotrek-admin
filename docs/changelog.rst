@@ -8,7 +8,7 @@ CHANGELOG
 **New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
-
+- Filter by multiple structures on Blades list (#3646)
 
 2.99.0 (2023-07-18)
 -----------------------
