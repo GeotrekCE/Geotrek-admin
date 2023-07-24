@@ -653,7 +653,6 @@ class MergePathsTest(TestCase):
         cls.p10 = Path.objects.create(geom=geom_10)
         geom_11 = LineString((4, 1), (4, 0))
         cls.p11 = Path.objects.create(geom=geom_11)
-        # print(cls.11.pk)
         geom_12 = LineString((4, 1), (6, 1))
         cls.p12 = Path.objects.create(geom=geom_12)
         geom_13 = LineString((6, 6), (7, 5))
