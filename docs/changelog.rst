@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-2.98.1+dev (XXXX-XX-XX)
+2.99.0+dev (XXXX-XX-XX)
+-----------------------
+
+**New features**
+
+- Filter trek and outdoor site labels according to whether they are published or not (#3529)
+
+
+2.99.0 (2023-07-18)
 -----------------------
 
 **New features**
@@ -12,12 +20,22 @@ CHANGELOG
 - Add information desks link on Treks with AggregatorParsers
 - Add filter by manager to Blades module
 - Add filter "Published" to outdoor course and outdoor site (#2810)
+- Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
+- Make signage blade lines text optional (#3326)
+- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
 
 
 **Improvements**
 
 - Published by language depending on each portals and languages.
 - Use default value with parsers when no value is found
+- Improve filter popover (#2968)
+- Add a scroll bar into filter form and module list (#2849)
+- In projects, start year must be before end year (#3567)
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
 
 
 2.98.1 (2023-05-30)

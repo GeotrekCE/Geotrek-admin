@@ -1153,6 +1153,7 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekLabelFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        queryset = queryset.filter(published=True)
         filter_label = request.GET.get('only_filters')
         if filter_label:
             try:
