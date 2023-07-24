@@ -2,6 +2,10 @@
 Pages statiques
 ===============
 
+.. danger::
+    Depuis Geotrek-Rando V3, le composant Bootstrap n'est plus utilisé pour gérer les différentes tailles d'écran. Cela signifie que la mise en page créée dans Geotrek-Admin n'est pas reproduite sur le site public. Cette documentation n'est valable que pour Geotrek-Rando V2 en attendant sa mise à jour expliquant le fonctionnement actuel. Voir le ticket : https://github.com/GeotrekCE/Geotrek-rando-v3/issues/466
+
+
 Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
 
 .. figure :: /images/user-manual/flatpages-gtecrins.jpg
@@ -10,7 +14,7 @@ Les pages statiques sont les pages d'information et de contextualisation de votr
 
 Elles permettent de fournir à l'internaute et futur randonneur des informations génériques : présentation de votre structure, votre projet de randonnée, recommandations, informations pratiques, etc.
 
-Elles sont gérées depuis l'administe de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
+Elles sont gérées depuis l'Adminsite de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
 
 .. image :: /images/user-manual/flatpages-adminsite.jpg
 
@@ -41,7 +45,7 @@ Attention, à chaque fois que cela vous est demandé, veillez à sélectionner l
 
 .. image :: /images/user-manual/flatpages-form.jpg
 
-L'interface permet de construire sa page en responsive design, c'est-à-dire qu'il est possible de disposer les blocs de contenu pour s'adaptera aux différentes tailles d'écrans des utilisateurs.
+L'interface permet de construire sa page en responsive design, c'est-à-dire qu'il est possible de disposer les blocs de contenu pour s'adapter aux différentes tailles d'écrans des utilisateurs.
 
 .. image :: /images/user-manual/flatpages-bootstrap-responsive.jpg
 
@@ -55,7 +59,7 @@ Vous pouvez aussi utiliser ou vous inspirer des 2 gabarits d'exemple (Gabarit 1 
 
 Vous pouvez ajouter autant de gabarits que vous le souhaitez sur une seule page.
 
-Une fois que vous avez ajusté vos blocs de contenu pour un affiche sur ordinateur (Desktop), vous devez basculer sur l'affichage sur mobile (Phone) pour l'adapter à des plus petits écrans (en cliquant sur les + et - bleus de chaque bloc). Privilégiez alors des blocs sur une colonne faisant 100% de large.
+Une fois que vous avez ajusté vos blocs de contenu pour un affichage sur ordinateur (Desktop), vous devez basculer sur l'affichage sur mobile (Phone) pour l'adapter à de plus petits écrans (en cliquant sur les + et - bleus de chaque bloc). Privilégiez alors des blocs sur une colonne faisant 100% de large.
 
 .. image :: /images/user-manual/flatpages-blocks-edit.jpg
 
@@ -91,5 +95,5 @@ Astuces
 =======
 
 1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder.
-2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Nous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.
+2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Vous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.
 3. Si deux de vos pages ont le même numéro d'ordre d'apparition, une seule des deux sera affichée sur la plate-forme numérique.
