@@ -35,26 +35,28 @@ class Command(BaseCommand):
         if {a, b} in self.discarded:
             print(f"├ Already discarded {a} and {b}")
             return False
+        success = 2
         try:
             patha = Path.include_invisible.get(pk=a)
             pathb = Path.include_invisible.get(pk=b)
             with transaction.atomic():
                 success = patha.merge_path(pathb)
-                if success == 2:
-                    print(f"├ Cannot merge {a} and {b}")
-                    self.discarded.append({a, b})
-                    return False
-                elif success == 0:
-                    print(f"├ No matching points to merge paths {a} and {b} found")
-                    self.discarded.append({a, b})
-                    return False
-                else:
-                    print(f"├ Merged {b} into {a}")
-                    sleep(self.sleeptime)
-                    return True
         except Exception:
+            print(f"├ Cannot merge {a} and {b}")
             self.discarded.append({a, b})
             return False
+        if success == 2:
+            print(f"├ Cannot merge {a} and {b}")
+            self.discarded.append({a, b})
+            return False
+        elif success == 0:
+            print(f"├ No matching points to merge paths {a} and {b} found")
+            self.discarded.append({a, b})
+            return False
+        else:
+            print(f"├ Merged {b} into {a}")
+            sleep(self.sleeptime)
+            return True
 
     def merge_paths_with_one_neighbour(self):
         print("┌ STEP 1")
