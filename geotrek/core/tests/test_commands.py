@@ -661,6 +661,8 @@ class MergePathsTest(TestCase):
         cls.p14 = Path.objects.create(geom=geom_14)
         geom_15 = LineString((5, 3), (4, 1))
         cls.p15 = Path.objects.create(geom=geom_15)
+        geom_16 = LineString((7, 5), (8, 5), (8, 6), (7, 6), (7, 5))
+        cls.p16 = Path.objects.create(geom=geom_16)
 
     @override_settings(PATH_SNAPPING_DISTANCE=0, PATH_MERGE_SNAPPING_DISTANCE=0)
     def test_find_and_merge_paths(self):
@@ -670,16 +672,16 @@ class MergePathsTest(TestCase):
         #                |                             |
         #                |  p4                         |  p13
         #                |                             |
-        #                +                             +
-        #                |
-        #                |  p10
-        #          p11   |
-        #         +------+------+ p15
+        #                +                             +-------
+        #                |                             |       |
+        #                |  p10                        |   p16 |
+        #          p11   |                             |       |
+        #         +------+------+ p15                  --------
         #                |
         #                |  p12
         #                |
         #                +
-        self.assertEqual(Path.objects.count(), 15)
+        self.assertEqual(Path.objects.count(), 16)
         output = StringIO()
         call_command('merge_segmented_paths', stdout=output)
         # After call
@@ -688,13 +690,46 @@ class MergePathsTest(TestCase):
         #                |                             |
         #                |  p4                         |  p13
         #                |                             |
-        #                +                             +
-        #                |
-        #                |  p10
-        #          p11   |
-        #         +------+------+ p15
+        #                +                             +-------
+        #                |                             |       |
+        #                |  p10                        |   p16 |
+        #          p11   |                             |       |
+        #         +------+------+ p15                  --------
         #                |
         #                |  p12
         #                |
-        #                +
-        self.assertEqual(Path.objects.count(), 9)
+        #
+        output_str = ("┌ STEP 1\n"
+                      "├ Merged 2 into 1\n"
+                      "├ Merged 9 into 14\n"
+                      "├ Cannot merge 16 and 13\n"
+                      "├ Merged 8 into 14\n"
+                      "├ Already discarded 16 and 13\n"
+                      "└ 3 merges\n"
+                      "┌ STEP 2\n"
+                      "├ Cannot merge 1 and 3\n"
+                      "├ Merged 3 into 5\n"
+                      "├ Merged 5 into 6\n"
+                      "├ Cannot merge 14 and 7\n"
+                      "└ 2 merges\n"
+                      "┌ STEP 3\n"
+                      "├ Cannot merge 6 and 1\n"
+                      "├ Cannot merge 6 and 4\n"
+                      "├ Merged 7 into 6\n"
+                      "├ Cannot merge 7 and 6\n"
+                      "├ Cannot merge 7 and 13\n"
+                      "├ Already discarded 7 and 14\n"
+                      "├ Cannot merge 10 and 4\n"
+                      "├ Cannot merge 10 and 11\n"
+                      "├ Cannot merge 10 and 15\n"
+                      "├ Cannot merge 12 and 4\n"
+                      "├ Cannot merge 12 and 11\n"
+                      "├ Cannot merge 12 and 15\n"
+                      "├ Already discarded 13 and 7\n"
+                      "├ Cannot merge 13 and 14\n"
+                      "├ Already discarded 13 and 16\n"
+                      "└ 1 merges\n"
+                      "\n"
+                      "--- RAN 6 MERGES - FROM 16 TO 10 PATHS ---\n")
+        self.assertEqual(Path.objects.count(), 10)
+        self.assertIn(output_str, output.getvalue())

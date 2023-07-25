@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
     def try_merge(self, a, b):
         if {a, b} in self.discarded:
-            print(f"├ Already discarded {a} and {b}")
+            self.stdout.write(f"├ Already discarded {a} and {b}")
             return False
         success = 2
         try:
@@ -42,24 +42,20 @@ class Command(BaseCommand):
             with transaction.atomic():
                 success = patha.merge_path(pathb)
         except Exception:
-            print(f"├ Cannot merge {a} and {b}")
+            self.stdout.write(f"├ Cannot merge {a} and {b}")
             self.discarded.append({a, b})
             return False
-        if success == 2:
-            print(f"├ Cannot merge {a} and {b}")
-            self.discarded.append({a, b})
-            return False
-        elif success == 0:
-            print(f"├ No matching points to merge paths {a} and {b} found")
+        if success == 2 or success == 0:
+            self.stdout.write(f"├ Cannot merge {a} and {b}")
             self.discarded.append({a, b})
             return False
         else:
-            print(f"├ Merged {b} into {a}")
+            self.stdout.write(f"├ Merged {b} into {a}")
             sleep(self.sleeptime)
             return True
 
     def merge_paths_with_one_neighbour(self):
-        print("┌ STEP 1")
+        self.stdout.write("┌ STEP 1")
         neighbours_graph = self.extract_neighbourgs_graph(1)
         successes = 0
         fails = 0
@@ -75,7 +71,7 @@ class Command(BaseCommand):
         return successes
 
     def merge_paths_with_two_neighbours(self):
-        print("┌ STEP 2")
+        self.stdout.write("┌ STEP 2")
         successes = 0
         neighbours_graph = self.extract_neighbourgs_graph(2)
         mergeables = list(neighbours_graph.keys())
@@ -94,7 +90,7 @@ class Command(BaseCommand):
         return successes
 
     def merge_paths_with_three_neighbours(self):
-        print("┌ STEP 3")
+        self.stdout.write("┌ STEP 3")
         successes = 0
         neighbours_graph = self.extract_neighbourgs_graph(3)
         mergeables = list(neighbours_graph.keys())
@@ -120,21 +116,21 @@ class Command(BaseCommand):
         self.discarded = []
         paths_before = Path.include_invisible.count()
 
-        print("\n")
-        print(datetime.now())
+        self.stdout.write("\n")
+        self.stdout.write(str(datetime.now()))
 
         first_step_successes = self.merge_paths_with_one_neighbour()
-        print(f"└ {first_step_successes} merges")
+        self.stdout.write(f"└ {first_step_successes} merges")
         total_successes += first_step_successes
 
         second_step_successes = self.merge_paths_with_two_neighbours()
-        print(f"└ {second_step_successes} merges")
+        self.stdout.write(f"└ {second_step_successes} merges")
         total_successes += second_step_successes
 
         third_step_successes = self.merge_paths_with_three_neighbours()
-        print(f"└ {third_step_successes} merges")
+        self.stdout.write(f"└ {third_step_successes} merges")
         total_successes += third_step_successes
 
         paths_after = Path.include_invisible.count()
-        print(f"\n--- RAN {total_successes} MERGES - FROM {paths_before} TO {paths_after} PATHS ---\n")
-        print(datetime.now())
+        self.stdout.write(f"\n--- RAN {total_successes} MERGES - FROM {paths_before} TO {paths_after} PATHS ---\n")
+        self.stdout.write(str(datetime.now()))
