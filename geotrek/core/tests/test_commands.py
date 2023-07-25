@@ -659,6 +659,8 @@ class MergePathsTest(TestCase):
         cls.p13 = Path.objects.create(geom=geom_13)
         geom_14 = LineString((8, 8), (9, 9))
         cls.p14 = Path.objects.create(geom=geom_14)
+        geom_15 = LineString((5, 3), (4, 1))
+        cls.p15 = Path.objects.create(geom=geom_15)
 
     @override_settings(PATH_SNAPPING_DISTANCE=0, PATH_MERGE_SNAPPING_DISTANCE=0)
     def test_find_and_merge_paths(self):
@@ -672,12 +674,12 @@ class MergePathsTest(TestCase):
         #                |
         #                |  p10
         #          p11   |
-        #         +------+
+        #         +------+------+ p15
         #                |
         #                |  p12
         #                |
         #                +
-        self.assertEqual(Path.objects.count(), 14)
+        self.assertEqual(Path.objects.count(), 15)
         output = StringIO()
         call_command('merge_segmented_paths', stdout=output)
         # After call
@@ -690,9 +692,9 @@ class MergePathsTest(TestCase):
         #                |
         #                |  p10
         #          p11   |
-        #         +------+
+        #         +------+------+ p15
         #                |
         #                |  p12
         #                |
         #                +
-        self.assertEqual(Path.objects.count(), 8)
+        self.assertEqual(Path.objects.count(), 9)
