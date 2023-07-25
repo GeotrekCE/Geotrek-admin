@@ -100,7 +100,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('name')  # Required for reliable pagination
+            .order_by('begin_date')  # Required for reliable pagination
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
