@@ -857,9 +857,10 @@ Merge segmented paths
 A path network is most optimized when there is only one path between intersections.
 If the path database includes many fragmented paths, they could be merged to improve performances.
 
-You can run ``sudo geotrek merge_segmented_paths``. **This command can take several hours to run.**
+You can run ``sudo geotrek merge_segmented_paths``. 
 
-During the process of the command, every topology on a path will be set on the path it is merged with.
+.. danger::
+    This command can take several hours to run. During the process, every topology on a path will be set on the path it is merged with, but it would still be more efficient (and safer) to run it before creating topologies. 
 
 Before :
 ::
