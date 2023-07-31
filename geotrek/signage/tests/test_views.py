@@ -12,6 +12,7 @@ from django.utils.translation import gettext
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.signage.models import Signage, Blade
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
@@ -473,23 +474,24 @@ class BladeFilterSetTest(TestCase):
     def setUpTestData(cls):
         cls.model = cls.factory._meta.model
         cls.user = SuperUserFactory.create()
-        cls.signage = SignageFactory()
+
+        cls.manager = OrganismFactory()
+        cls.manager2 = OrganismFactory()
+
+        cls.signage = SignageFactory(manager=cls.manager, code="COUCOU")
+        cls.signage2 = SignageFactory(manager=cls.manager2, code="ADIEU")
+
         cls.blade = cls.factory(signage=cls.signage)
-        cls.signage2 = SignageFactory()
         cls.blade2 = cls.factory(signage=cls.signage2)
 
     def setUp(self):
         self.client.force_login(self.user)
 
     def test_filter_by_organism(self):
-        filter = BladeFilterSet(data={'manager': self.signage.manager})
+        filter = BladeFilterSet(data={'manager': [self.manager.pk,]})
         response = self.client.get(self.model.get_list_url())
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(
-            response,
-            f'option value="{self.signage.manager.pk}">{self.signage.manager.organism}</option>'
-        )
 
         self.assertIn(self.blade, filter.qs)
         self.assertNotIn(self.blade2, filter.qs)

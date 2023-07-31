@@ -1,4 +1,4 @@
-from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
+from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
@@ -55,7 +55,8 @@ class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
     structure = ModelMultipleChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all(),
                                           help_text=_("Filter by one or more structure."))
-    manager = ModelChoiceFilter(field_name='signage__manager', queryset=Organism.objects.all())
+    manager = ModelMultipleChoiceFilter(field_name='signage__manager', queryset=Organism.objects.all(),
+                                        help_text=_("Filter by one or more manager."))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
