@@ -5,9 +5,12 @@ CHANGELOG
 2.99.0+dev (XXXX-XX-XX)
 -----------------------
 
-**Improvements**
+**New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
+
+**Improvements**
+
 - Filter by multiple structures on Blades list (#3646)
 - Add a multiselect to filter the Blades by more than one manager
 
