@@ -9,7 +9,7 @@ def create_organizer_fk(apps, schema_editor):
     organizers = []
     for row in TouristicEventModel.objects.all():
         organizers.append(OrganizerModel(label=row.label))
-    OrganizerModel.objects.bulk_update_create(organizers)
+    OrganizerModel.objects.bulk_create(organizers)
 
 
 def reverse_create_organizer_fk(apps, schema_editor):
