@@ -461,7 +461,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
-        self.assertEqual(event.organizer, 'Toto')
+        self.assertEqual(str(event.organizer), 'Toto')
         self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
         self.assertQuerysetEqual(

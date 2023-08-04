@@ -88,9 +88,16 @@ class TouristicEventPlaceAdmin(LeafletGeoAdmin):
     search_fields = ('name',)
 
 
+class OrganizerAdmin(admin.ModelAdmin):
+    list_display = ('label',)
+    list_filter = ('label',)
+    search_fields = ('label',)
+
+
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
     admin.site.register(tourism_models.TouristicEventParticipantCategory, TouristicEventParticipantCategoryAdmin)
     admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)
     admin.site.register(tourism_models.TouristicEventPlace, TouristicEventPlaceAdmin)
+    admin.site.register(tourism_models.Organizer, OrganizerAdmin)
