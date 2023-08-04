@@ -28,10 +28,6 @@ class BladeModelTest(TestCase):
         if not user:
             UserFactory(username="__internal__")
 
-    def setUp(self):
-        self.signage = SignageFactory()
-        self.blade = BladeFactory(signage=self.signage)
-
     def test_set_topology_other_error(self):
         blade = BladeFactory.create()
         infra = InfrastructureFactory.create()
