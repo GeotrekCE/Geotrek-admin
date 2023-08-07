@@ -3177,13 +3177,13 @@ class TouristicEventTestCase(BaseApiTest):
         # Only two because past events are filter by default
         self.assertEqual(response.json().get("count"), 2)
         # Event with no end date is returned with begin date as end date
-        self.assertEqual(response.json().get("results")[1]['end_date'], "2022-02-20")
+        self.assertEqual(response.json().get("results")[0]['end_date'], "2022-02-20")
         # start_time replaces meeting_time
-        self.assertEqual(response.json().get("results")[1]['meeting_time'], "12:34:00")
+        self.assertEqual(response.json().get("results")[0]['meeting_time'], "12:34:00")
         # capacity replaces participant_number
-        self.assertEqual(response.json().get("results")[1]['participant_number'], '12')
+        self.assertEqual(response.json().get("results")[0]['participant_number'], '12')
         # Event with end date returns right end date
-        self.assertEqual(response.json().get("results")[0]['end_date'], "2202-02-22")
+        self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
         # Sorted by begin date
         self.assertLessEqual(response.json().get("results")[0]['begin_date'], response.json().get("results")[1]['begin_date'])
 
