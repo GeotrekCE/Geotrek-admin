@@ -3160,6 +3160,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
+        cls.organizer = tourism_factory.OrganizerFactory(label='OrganizerA')
         cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,
@@ -3169,7 +3170,8 @@ class TouristicEventTestCase(BaseApiTest):
             start_time="12:34",
             capacity=12,
             bookable=False,
-            place=cls.place
+            place=cls.place,
+            organizer=cls.organizer
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
@@ -3209,6 +3211,15 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristicevent_list({'dates_after': '2021-07-04'})
         # Event 1 finishes on 3rd of july
         self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_organizer_filters_1(self):
+        response = self.get_touristicevent_list({'organizer': 'tt'})
+        self.assertEqual(response.json()['organizer'][0],
+                         'Select a valid choice. tt is not one of the available choices.')
+
+    def test_touristic_event_organizer_filters_2(self):
+        response = self.get_touristicevent_list({'organizer': f'{self.organizer.label}'})
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_touristic_event_cancelled_filter(self):
         response = self.get_touristicevent_list({'cancelled': 'True'})
@@ -3259,6 +3270,10 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_place_filter(self):
         response = self.get_touristicevent_list({'place': f"{self.place.pk},{self.other_place.pk}"})
         self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place_not_valid_filter(self):
+        response = self.get_touristicevent_list({'place': "100000"})
+        self.assertEqual(response.json()['place'][0], "Select a valid choice. 100000 is not one of the available choices.")
 
     def test_touristic_event_place_list(self):
         response = self.get_touristiceventplace_list()
@@ -3830,7 +3845,6 @@ class SitesLabelsFilterTestCase(BaseApiTest):
                             {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
 
     def test_sites_label_filter_published(self):
-        all_labels = []
         response = self.get_site_list()
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']
