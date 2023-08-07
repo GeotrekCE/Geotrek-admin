@@ -3184,8 +3184,8 @@ class TouristicEventTestCase(BaseApiTest):
         self.assertEqual(response.json().get("results")[0]['participant_number'], '12')
         # Event with end date returns right end date
         self.assertEqual(response.json().get("results")[1]['end_date'], "2202-02-22")
-        # Sorted by begin date
-        self.assertLessEqual(response.json().get("results")[0]['begin_date'], response.json().get("results")[1]['begin_date'])
+        # Sorted by end date
+        self.assertLessEqual(response.json().get("results")[0]['end_date'], response.json().get("results")[1]['end_date'])
 
     def test_touristic_event_dates_filters_1(self):
         response = self.get_touristicevent_list({'dates_before': '2200-01-01', 'dates_after': '1970-01-01'})
