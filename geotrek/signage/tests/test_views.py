@@ -17,8 +17,10 @@ from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
                                              InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
-from geotrek.signage.filters import SignageFilterSet
+from geotrek.signage.filters import BladeFilterSet, SignageFilterSet
 from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
+
+from mapentity.tests.factories import SuperUserFactory
 
 
 class SignageTest(TestCase):
@@ -353,7 +355,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
         return {
             'code': '',
             'condition': self.obj.condition.pk,
-            'manager': None,
+            'manager': self.obj.manager.pk,
             'name': 'Signage',
             'printed_elevation': 4807,
             'publication_date': '2020-03-17',
@@ -461,3 +463,33 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
 
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)
+
+
+class BladeFilterSetTest(TestCase):
+    factory = BladeFactory
+    filterset = BladeFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.model = cls.factory._meta.model
+        cls.user = SuperUserFactory.create()
+        cls.signage = SignageFactory()
+        cls.blade = cls.factory(signage=cls.signage)
+        cls.signage2 = SignageFactory()
+        cls.blade2 = cls.factory(signage=cls.signage2)
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_filter_by_organism(self):
+        filter = BladeFilterSet(data={'manager': self.signage.manager})
+        response = self.client.get(self.model.get_list_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            f'option value="{self.signage.manager.pk}">{self.signage.manager.organism}</option>'
+        )
+
+        self.assertIn(self.blade, filter.qs)
+        self.assertNotIn(self.blade2, filter.qs)

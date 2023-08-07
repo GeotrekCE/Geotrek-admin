@@ -2,16 +2,45 @@
 CHANGELOG
 =========
 
-2.98.0+dev (XXXX-XX-XX)
+2.99.0 (2023-07-18)
+-----------------------
+
+**New features**
+
+- Add field ``access`` to Signage and Infrastructure models (#3605)
+- Enable filtering lists by objects IDs on APIv2 (#3458)
+- Add information desks link on Treks with AggregatorParsers
+- Add filter by manager to Blades module
+- Add filter "Published" to outdoor course and outdoor site (#2810)
+- Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
+- Make signage blade lines text optional (#3326)
+- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
+
+
+**Improvements**
+
+- Published by language depending on each portals and languages.
+- Use default value with parsers when no value is found
+- Improve filter popover (#2968)
+- Add a scroll bar into filter form and module list (#2849)
+- In projects, start year must be before end year (#3567)
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
+
+
+2.98.1 (2023-05-30)
 -----------------------
 
 **Bug fixes**
 
 - Fix: Remove user group creation in Outdoor fixture (#3524)
 - Fix: Configure nginx to invalidate mobile cache on language change
-- Fix: Configure large_image to use libvips even for PNG images (fixes HD Views for PNGs)
 - Fix: service pictograms' URLs are made absolute in the API output of Trek descriptions (#3321)
-
+- Fix: APIDAE Events parser now handles integer values for capacity (`#3573 <https://github.com/GeotrekCE/Geotrek-admin/issues/3573>`_)
+- Fix: Configure `large_image` to use `libvips` even for PNG images (fixes HD Views for PNGs)
+- Fix: Deleting signages must also delete their blades
 
 **Maintenance**
 

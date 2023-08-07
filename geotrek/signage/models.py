@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.conf import settings
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
+from geotrek.common.mixins.models import AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
 from geotrek.common.models import Organism
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import (
@@ -137,6 +137,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     def delete(self, *args, **kwargs):
         for trek in self.treks.all():
             trek.save()
+        Blade.objects.filter(signage=self).update(deleted=True)
         super().delete(*args, **kwargs)
 
 
@@ -188,9 +189,9 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
         return self.label
 
 
-class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin):
+class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, NoDeleteMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
-                                on_delete=models.PROTECT)
+                                on_delete=models.CASCADE)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
     direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
                                   blank=True)
@@ -310,13 +311,19 @@ def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
     log_cascade_deletion(sender, instance, Blade, 'topology')
 
 
+@receiver(pre_delete, sender=Signage)
+def log_cascade_deletion_from_blade_signage(sender, instance, using, **kwargs):
+    # Blade are deleted when Signage are deleted
+    log_cascade_deletion(sender, instance, Blade, 'signage')
+
+
 class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
                               on_delete=models.CASCADE)
     number = models.IntegerField(verbose_name=_("Number"))
     direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
                                   blank=True)
-    text = models.CharField(verbose_name=_("Text"), max_length=1000)
+    text = models.CharField(verbose_name=_("Text"), max_length=1000, blank=True, default="")
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=1, max_digits=8, help_text='km')
     pictogram_name = models.CharField(verbose_name=_("Pictogram"), max_length=250,

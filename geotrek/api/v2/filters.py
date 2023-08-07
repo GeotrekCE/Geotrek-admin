@@ -25,6 +25,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        ids = request.GET.get('ids')
+        if ids:
+            queryset = queryset.filter(pk__in=ids.split(','))
         return queryset
 
     def get_schema_fields(self, view):
@@ -44,7 +47,12 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
                     title=_("Omit"),
                     description=_("Omit specified fields to increase performance. Example: url,category.")
                 )
-            ),
+            ), Field(
+                name='ids', required=False, location='query', schema=coreschema.String(
+                    title=_("Identifiers"),
+                    description=_("Filter by one or more object id, comma-separated.")
+                )
+            )
         )
 
 

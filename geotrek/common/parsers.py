@@ -23,6 +23,7 @@ from urllib.parse import urlparse
 
 from django.contrib.gis.geos import GEOSGeometry, WKBWriter
 from django.db import models, connection
+from django.db.models.fields import NOT_PROVIDED
 from django.db.utils import DatabaseError, InternalError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
@@ -271,7 +272,10 @@ class Parser:
             new_value = getattr(self.obj, dst_field_lang)
             old_value = old_values[lang]
             # Field not translated, use same val for all translated
-            val_default_language = val_default_language or ""
+            if self.obj._meta.get_field(dst).default == NOT_PROVIDED:
+                val_default_language = val_default_language
+            else:
+                val_default_language = self.obj._meta.get_field(dst).default
             # Set val_default_language only if new empty
             if not new_value:
                 # If there is no new value check if old value is different form the default value
@@ -1181,6 +1185,21 @@ class GeotrekAggregatorParser:
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
+    def run_method_parser(self, key_name, parsers, method_name):
+        for parser in parsers:
+            self.progress_cb(0, 0, f'{str(parser.model._meta.model_name).capitalize()} ({key_name})')
+            getattr(parser, method_name)()
+            self.progress_cb(1, 0, f'{str(parser.model._meta.model_name).capitalize()} ({key_name})')
+            self.report_by_api_v2_by_type[key_name][str(parser.model._meta.model_name).capitalize()] = {
+                'nb_lines': parser.line,
+                'nb_success': parser.nb_success,
+                'nb_created': parser.nb_created,
+                'nb_updated': parser.nb_updated,
+                'nb_deleted': len(parser.to_delete),
+                'nb_unmodified': parser.nb_unmodified,
+                'warnings': parser.warnings
+            }
+
     def parse(self, filename=None, limit=None):
         filename = filename if filename else self.filename
         if not os.path.exists(filename):
@@ -1193,38 +1212,49 @@ class GeotrekAggregatorParser:
             models_to_import = datas.get('data_to_import')
             if not models_to_import:
                 models_to_import = self.mapping_model_parser.keys()
+            parsers_to_parse = []
             for model in models_to_import:
-                Parser = None
                 if settings.TREKKING_TOPOLOGY_ENABLED:
                     if model in self.invalid_model_topology:
                         warning = f"{model}s can't be imported with dynamic segmentation"
                         logger.warning(warning)
                         key_warning = _(f"Model {model}")
                         self.add_warning(key_warning, warning)
+                        self.report_by_api_v2_by_type[key][model] = {
+                            'nb_lines': 0,
+                            'nb_success': 0,
+                            'nb_created': 0,
+                            'nb_updated': 0,
+                            'nb_deleted': None,
+                            'nb_unmodified': 0,
+                            'warnings': self.warnings
+                        }
+                        continue
+                module_name, class_name = self.mapping_model_parser[model]
+                module = importlib.import_module(module_name)
+                parser = getattr(module, class_name)
+                if 'url' not in datas:
+                    warning = f"{key} has no url"
+                    key_warning = _("Geotrek-admin")
+                    self.add_warning(key_warning, warning)
+                    self.report_by_api_v2_by_type[key][str(parser.model._meta.model_name).capitalize()] = {
+                        'nb_lines': 0,
+                        'nb_success': 0,
+                        'nb_created': 0,
+                        'nb_updated': 0,
+                        'nb_deleted': None,
+                        'nb_unmodified': 0,
+                        'warnings': self.warnings
+                    }
                 else:
-                    module_name, class_name = self.mapping_model_parser[model]
-                    module = importlib.import_module(module_name)
-                    parser = getattr(module, class_name)
-                    if 'url' not in datas:
-                        warning = f"{key} has no url"
-                        key_warning = _("Geotrek-admin")
-                        self.add_warning(key_warning, warning)
-                    else:
-                        Parser = parser(progress_cb=self.progress_cb, provider=key, url=datas['url'],
-                                        portals_filter=datas.get('portals'), mapping=datas.get('mapping'),
-                                        create_categories=datas.get('create'), all_datas=datas.get('all_datas'))
-                        self.progress_cb(0, 0, f'{model} ({key})')
-                        Parser.parse()
+                    Parser = parser(progress_cb=self.progress_cb, provider=key, url=datas['url'],
+                                    portals_filter=datas.get('portals'), mapping=datas.get('mapping'),
+                                    create_categories=datas.get('create'), all_datas=datas.get('all_datas'))
+                    parsers_to_parse.append(Parser)
 
-                self.report_by_api_v2_by_type[key][model] = {
-                    'nb_lines': Parser.line if Parser else 0,
-                    'nb_success': Parser.nb_success if Parser else 0,
-                    'nb_created': Parser.nb_created if Parser else 0,
-                    'nb_updated': Parser.nb_updated if Parser else 0,
-                    'nb_deleted': len(Parser.to_delete) if Parser and Parser.delete else None,
-                    'nb_unmodified': Parser.nb_unmodified if Parser else 0,
-                    'warnings': Parser.warnings if Parser else self.warnings
-                }
+            self.run_method_parser(key, parsers_to_parse, 'start_meta')
+            self.run_method_parser(key, parsers_to_parse, 'parse')
+            self.run_method_parser(key, parsers_to_parse, 'end_meta')
 
     def report(self, output_format='txt'):
         context = {'report': self.report_by_api_v2_by_type}
@@ -1255,6 +1285,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     replace_fields = {}
     m2m_replace_fields = {}
     categories_keys_api_v2 = {}
+    params_used = {}
     non_fields = {
         'attachments': "attachments",
     }
@@ -1368,15 +1399,29 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     def filter_attachments(self, src, val):
         return [(subval.get('url'), subval.get('legend'), subval.get('author'), subval.get('license')) for subval in val]
 
+    def start_meta(self):
+        self.to_delete = set()
+
+    def end_meta(self):
+        pass
+
     def apply_filter(self, dst, src, val):
         val = super().apply_filter(dst, src, val)
+        val_default_lang = val
         if dst in self.translated_fields:
             if isinstance(val, dict):
+                val_default_lang = val.get(translation.get_language())
+                for language in settings.MODELTRANSLATION_LANGUAGES:
+                    if language not in val.keys():
+                        key = language
+                        if not self.obj._meta.get_field(dst).default == NOT_PROVIDED:
+                            self.set_value(f'{dst}_{key}', src, self.obj._meta.get_field(dst).default)
+                        else:
+                            self.set_value(f'{dst}_{key}', src, val_default_lang)
                 for key, final_value in val.items():
                     if key in settings.MODELTRANSLATION_LANGUAGES:
                         self.set_value(f'{dst}_{key}', src, final_value)
-                val = val.get(translation.get_language())
-        return val
+        return val_default_lang
 
     def normalize_field_name(self, name):
         return name
@@ -1408,6 +1453,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
             'portals': ','.join(portals) if portals else '',
             'updated_after': updated_after
         }
+        self.params_used = params
         response = self.request_or_retry(self.next_url, params=params)
         self.root = response.json()
         self.nb = int(self.root['count'])

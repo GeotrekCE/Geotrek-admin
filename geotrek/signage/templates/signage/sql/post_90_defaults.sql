@@ -17,6 +17,7 @@ ALTER TABLE signage_signagetype ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE signage_signage ALTER COLUMN code SET DEFAULT '';
 -- manager
 -- sealing
+-- access
 -- printed_elevation
 --type
 -- topo_object

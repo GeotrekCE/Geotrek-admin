@@ -116,7 +116,7 @@
             "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
-        {
+    {
         "pk": 1,
         "model": "signage.color",
         "fields": {

@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.models import Structure
+from geotrek.common.models import Organism
 from geotrek.core.models import Topology
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -41,7 +42,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
-                                                          'sealing', 'provider']
+                                                          'sealing', 'access', 'provider']
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)
@@ -53,6 +54,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
     structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
+    manager = ModelChoiceFilter(field_name='signage__manager', queryset=Organism.objects.all())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

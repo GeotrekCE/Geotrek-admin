@@ -43,6 +43,19 @@ class BladeModelTest(TestCase):
         blade_entry = LogEntry.objects.get(content_type=blade_model_num, object_id=blade.pk)
         self.assertEqual(blade_entry.change_message, f"Deleted by cascade from Topology {topo_pk} - {topo_repr}")
         self.assertEqual(blade_entry.action_flag, DELETION)
+        signa = SignageFactory()
+        blade = BladeFactory(signage=signa)
+        signa_pk = signa.pk
+        signa_repr = str(signa)
+        # NoDeleteMixin
+        signa.delete()
+        self.assertTrue(blade.delete)
+        # Force through NoDeleteMixin
+        signa.delete(force=True)
+        blade_model_num = ContentType.objects.get_for_model(Blade).pk
+        blade_entry = LogEntry.objects.get(content_type=blade_model_num, object_id=blade.pk)
+        self.assertEqual(blade_entry.change_message, f"Deleted by cascade from Signage {signa_pk} - {signa_repr}")
+        self.assertEqual(blade_entry.action_flag, DELETION)
 
 
 class SignageModelTest(TestCase):

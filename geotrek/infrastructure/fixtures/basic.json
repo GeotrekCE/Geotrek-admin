@@ -418,5 +418,41 @@
             "date_update": "2014-02-12T11:21:48.961Z",
             "date_insert": "2014-02-12T11:21:48.961Z"
         }
+    },
+    {
+        "pk": 1,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Pédestre",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Véhicule léger",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Quad",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "4x4",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
     }
 ]
