@@ -1,4 +1,4 @@
-from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter, ChoiceFilter
+from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
@@ -53,7 +53,8 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 
 class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
-    structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
+    structure = ModelMultipleChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all(),
+                                          help_text=_("Filter by one or more structure."))
     manager = ModelChoiceFilter(field_name='signage__manager', queryset=Organism.objects.all())
 
     def __init__(self, *args, **kwargs):

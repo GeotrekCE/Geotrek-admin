@@ -9,6 +9,7 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
+from geotrek.common.tests.factories import LabelFactory
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
@@ -507,3 +508,16 @@ class CascadedDeletionLoggingTest(TestCase):
         self.assertEqual(scale_entry.action_flag, DELETION)
         self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
         self.assertEqual(rating_entry.action_flag, DELETION)
+
+
+class TrekLabelsTestCase(TestCase):
+
+    def setUp(self):
+        self.trek = TrekFactory()
+        self.published_label = LabelFactory(published=True)
+        self.unpublished_label = LabelFactory(published=False)
+
+        self.trek.labels.set([self.published_label, self.unpublished_label])
+
+    def test_published_label_property(self):
+        self.assertEqual(self.trek.published_labels, [self.published_label])

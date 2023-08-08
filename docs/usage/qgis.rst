@@ -7,7 +7,7 @@ Visualiser les données dans QGIS
 Création de vues SQL pour afficher des couches dans QGIS
 ========================================================
 
-Des vues SQL ont été créées dans la base de données PostgreSQL de Geotrek-admin dans le but de les afficher dans QGIS ou autre. Ces vues contiennent les informations essentielles que l'on retrouve dans Geotrek-admin au niveau de chaque module.
+Des vues SQL ont été créées dans la base de données PostgreSQL de Geotrek-admin dans le but de les afficher dans QGIS ou autre (https://makina-corpus.com/django/creer-vues-sql-django-et-afficher-dans-un-sig). Ces vues contiennent les informations essentielles que l'on retrouve dans Geotrek-admin au niveau de chaque module.
 
 Ces vues sont consultables en lecture seule dans QGIS sous forme de couche SIG.
 

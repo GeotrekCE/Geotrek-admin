@@ -3751,16 +3751,16 @@ class SitesLabelsFilterTestCase(BaseApiTest):
 
     @classmethod
     def setUpTestData(cls):
-        cls.label1 = common_factory.LabelFactory()
-        cls.label2 = common_factory.LabelFactory()
+        cls.label_published = common_factory.LabelFactory(published=True)
+        cls.label_unpublished = common_factory.LabelFactory(published=False)
         cls.site1 = outdoor_factory.SiteFactory()
-        cls.site1.labels.add(cls.label1)
+        cls.site1.labels.add(cls.label_published)
         cls.site2 = outdoor_factory.SiteFactory()
-        cls.site2.labels.add(cls.label2)
+        cls.site2.labels.add(cls.label_unpublished)
         cls.site3 = outdoor_factory.SiteFactory()
 
     def test_sites_label_filter_1(self):
-        response = self.get_site_list({'labels': self.label1.pk})
+        response = self.get_site_list({'labels': self.label_published.pk})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         returned_sites = response.json()['results']
@@ -3772,7 +3772,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site3.pk, all_ids)
 
     def test_sites_label_filter_2(self):
-        response = self.get_site_list({'labels': f"{self.label1.pk},{self.label2.pk}"})
+        response = self.get_site_list({'labels': f"{self.label_published.pk},{self.label_unpublished.pk}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 2)
         returned_sites = response.json()['results']
@@ -3784,7 +3784,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertNotIn(self.site3.pk, all_ids)
 
     def test_sites_labels_exclude_filter(self):
-        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        response = self.get_site_list({'labels_exclude': self.label_published.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -3794,9 +3794,9 @@ class SitesLabelsFilterTestCase(BaseApiTest):
 
         site_a = outdoor_factory.SiteFactory()
         label = common_factory.LabelFactory.create()
-        site_a.labels.add(label, self.label1)
+        site_a.labels.add(label, self.label_published)
 
-        response = self.get_site_list({'labels_exclude': self.label1.pk})
+        response = self.get_site_list({'labels_exclude': self.label_published.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
@@ -3808,7 +3808,7 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         label_2 = common_factory.LabelFactory.create()
         site_b.labels.add(label, label_2)
 
-        response = self.get_site_list({'labels_exclude': f'{self.label1.pk},{label.pk}'})
+        response = self.get_site_list({'labels_exclude': f'{self.label_published.pk},{label.pk}'})
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 2)
@@ -3821,6 +3821,16 @@ class SitesLabelsFilterTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')), 4)
         self.assertSetEqual({result['id'] for result in json_response.get('results')},
                             {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
+
+    def test_sites_label_filter_published(self):
+        all_labels = []
+        response = self.get_site_list()
+        self.assertEqual(response.status_code, 200)
+        results = response.json()['results']
+        all_labels = [result['labels'] for result in results]
+
+        self.assertIn([self.label_published.pk], all_labels)
+        self.assertNotIn([self.label_unpublished.pk], all_labels)
 
 
 class CoursesTypesFilterTestCase(BaseApiTest):

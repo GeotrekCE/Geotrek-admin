@@ -522,6 +522,10 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return ','.join([str(source) for source in self.source.all()])
 
     @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
 
