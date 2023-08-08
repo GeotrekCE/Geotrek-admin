@@ -17,7 +17,7 @@ class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
 class LinePictogramAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
-    list_display = ('label', 'pictogram_img')
+    list_display = ('label', 'pictogram_img', 'code')
 
 
 class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
