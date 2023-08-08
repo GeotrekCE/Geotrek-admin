@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from geotrek.signage.models import SignageType, Color, Sealing, Direction, BladeType
+from geotrek.signage.models import LinePictogram, SignageType, Color, Sealing, Direction, BladeType
 
 
 class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
@@ -12,6 +12,12 @@ class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
 class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
+
+
+class LinePictogramAdmin(MergeActionMixin, admin.ModelAdmin):
+    search_fields = ('label',)
+    merge_field = 'label'
+    list_display = ('label', 'pictogram_img')
 
 
 class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
@@ -127,3 +133,4 @@ admin.site.register(Color, ColorBladeAdmin)
 admin.site.register(Sealing, SealingAdmin)
 admin.site.register(Direction, DirectionBladeAdmin)
 admin.site.register(BladeType, BladeTypeAdmin)
+admin.site.register(LinePictogram, LinePictogramAdmin)

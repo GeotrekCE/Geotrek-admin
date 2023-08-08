@@ -58,6 +58,16 @@ class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogr
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
 
 
+class LinePictogram(TimeStampedModelMixin, OptionalPictogramMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=250, blank=True, null=False, default='')
+    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
+    description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("Complete description"))
+
+    class Meta:
+        verbose_name = _("Line pictogram")
+        verbose_name_plural = _("Line pictograms")
+
+
 class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
@@ -326,8 +336,9 @@ class Line(models.Model):
     text = models.CharField(verbose_name=_("Text"), max_length=1000, blank=True, default="")
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=1, max_digits=8, help_text='km')
-    pictogram_name = models.CharField(verbose_name=_("Pictogram"), max_length=250,
-                                      blank=True, null=True)
+    pictograms = models.ManyToManyField('LinePictogram', related_name="lines",
+                                        blank=True,
+                                        verbose_name=_("Pictograms"))
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
     distance_pretty_verbose_name = _("Distance")
