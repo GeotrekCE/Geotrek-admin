@@ -1,0 +1,277 @@
+[
+    {
+        "pk": 1,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/011.svg",
+            "label": "No dogs, not even on leashes",
+            "label_fr": "Pas de chien même tenu en laisse",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/012.svg",
+            "label": "No noise, no disturbance",
+            "label_fr": "Ni bruit, ni dérangement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/021.svg",
+            "label": "No picking or taking",
+            "label_fr": "Ni cueillette, ni prélèvement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/022.svg",
+            "label": "No guns",
+            "label_fr": "Pas d’arme",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/023.svg",
+            "label": "No fishing within fifty meters of the shoreline",
+            "label_fr": "Pas de pêche à moins de cinquante mètres du rivage",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/031.svg",
+            "label": "No trash",
+            "label_fr": "Pas de déchet",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/033.svg",
+            "label": "No fire",
+            "label_fr": "Pas de feu",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/034.svg",
+            "label": "No smoking",
+            "label_fr": "Ne pas fumer",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/041.svg",
+            "label": "No camping",
+            "label_fr": "Camping interdit",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/042.svg",
+            "label": "No tramping",
+            "label_fr": "Bivouac interdit",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/043.svg",
+            "label": "Motorhomes prohibited",
+            "label_fr": "Camping-car interdit",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/051.svg",
+            "label": "No car",
+            "label_fr": "Pas de voiture",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/052.svg",
+            "label": "No motorcycle",
+            "label_fr": "Pas de moto",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/053.svg",
+            "label": "No off-road bike",
+            "label_fr": "Pas de vélo tout terrain",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/054.svg",
+            "label": "No anchoring",
+            "label_fr": "Pas de mouillage",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/055.svg",
+            "label": "No horseback riding activity",
+            "label_fr": "Pas d'activité équestre",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },    
+    {
+        "pk": 17,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/056.svg",
+            "label": "No hang-gliding or other air sports",
+            "label_fr": "Pas de deltaplane ou autres sports aériens",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 18,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/057.svg",
+            "label": "No paragliding or other air sports",
+            "label_fr": "Pas de parapente ou autres sports aériens",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 19,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/058.svg",
+            "label": "Ne pas sortir des sentiers",
+            "label_fr": "Stay on the paths",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 20,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/060.svg",
+            "label": "Do not collect minerals",
+            "label_fr": "Ne pas prélever de minéraux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 21,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/061.svg",
+            "label": "Do not collect animals",
+            "label_fr": "Ne pas prélever d’animaux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 22,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/069.svg",
+            "label": "Collecting turtles prohibited",
+            "label_fr": "Collecte des tortues interdite",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 23,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/070.svg",
+            "label": "No picking mushrooms",
+            "label_fr": "Pas de cueillette de champignons",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 24,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/111.svg",
+            "label": "Dog on leash",
+            "label_fr": "Chien en laisse",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 25,
+        "model": "signage.linepictogram",
+        "fields": {
+            "pictogram": "upload/153.svg",
+            "label": "Camping from 7pm to 9am",
+            "label_fr": "Camping de 19h à 9h",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    }
+]
