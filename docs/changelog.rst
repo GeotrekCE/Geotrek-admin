@@ -14,6 +14,8 @@ CHANGELOG
 - Filter by multiple structures on Blades list (#3646)
 - Add a multiselect to filter the Blades by more than one manager
 - Filter by begin date by default on touristic events in APIv2 (#3597)
+- Add model LinePictogram for each line (#3327)
+  ``geotrek loaddata pictograms`` to load data pictograms for national parks
 
 2.99.0 (2023-07-18)
 -----------------------
