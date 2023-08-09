@@ -1379,7 +1379,7 @@ Correspond to the format used in export of lines. Used in csv of signage.
     * *linenumber is the number of the line*
 
 
-If you want to add default pictograms of national parks and french departments, you can execute this command:
+If you want to add default pictograms of national parks, you can execute this command:
 
 ::
 
