@@ -167,3 +167,6 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
+
+msgid "Filter by one or more manager."
+msgstr "Filtrer par un ou plusieurs gestionnaires"
