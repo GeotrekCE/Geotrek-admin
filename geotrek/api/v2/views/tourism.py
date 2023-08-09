@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F
+from django.db.models import F, Case, When
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils.translation import activate
@@ -100,7 +100,11 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('name')  # Required for reliable pagination
+            .annotate(ordering_date=Case(
+                When(end_date__isnull=True, then=F('begin_date')),
+                default=F('end_date'),
+            )) \
+            .order_by('ordering_date')  # Required for reliable pagination
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
