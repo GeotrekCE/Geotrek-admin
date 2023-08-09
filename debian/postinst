@@ -118,7 +118,6 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	geotrek loaddata -v0 cirkwi || true
 	geotrek loaddata -v0 basic || true
 	geotrek loaddata -v0 licenses || true
-	geotrek loaddata -v0 pictograms || true
 	for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
 		cd $dir > /dev/null
 		cp -r * /opt/geotrek-admin/var/media/upload/

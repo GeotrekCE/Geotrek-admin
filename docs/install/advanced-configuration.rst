@@ -1383,7 +1383,7 @@ If you want to add default pictograms of national parks, you can execute this co
 
 ::
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/signage/fixtures/pictograms.json
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/signage/fixtures/pictograms_pn.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/signage/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 
