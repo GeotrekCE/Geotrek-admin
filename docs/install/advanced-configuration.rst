@@ -1379,14 +1379,6 @@ Correspond to the format used in export of lines. Used in csv of signage.
     * *linenumber is the number of the line*
 
 
-If you want to add default pictograms of national parks, you can execute this command:
-
-::
-
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/signage/fixtures/pictograms_pn.json
-    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/signage/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
-
-
 **Screenshots**
 
 ::
