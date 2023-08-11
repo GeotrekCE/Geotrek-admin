@@ -18,6 +18,11 @@ CHANGELOG
 
 - Reorganize generated release notes
 
+**Bug fixes**
+
+- Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
+
+
 
 2.100.1 (2023-09-05)
 -------------------------

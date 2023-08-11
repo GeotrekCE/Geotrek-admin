@@ -1317,6 +1317,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()['description'], expected_description)
         self.assertEqual(response.json()['description_teaser'], expected_description)
         self.assertEqual(response.json()['ambiance'], expected_description)
+        self.assertEqual(response.json()['view_points'][0]['geometry'], {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]})
 
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
