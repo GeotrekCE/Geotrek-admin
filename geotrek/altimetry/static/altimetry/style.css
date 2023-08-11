@@ -1,7 +1,7 @@
 #altitudegraph {
     position: fixed;
-    bottom: 10px;
-    right: 10px;
+    bottom: 24px;
+    right: 14px;
     background-color: white;
     border-radius: 5px;
     border: 1px solid #d4d4d4;
@@ -14,7 +14,7 @@
 }
 
 #altitudegraph.colapsed {
-    width: 20px;
+    width: revert;
 }
 #altitudegraph.colapsed img,
 #altitudegraph.colapsed h4 {
