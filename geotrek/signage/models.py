@@ -67,6 +67,9 @@ class LinePictogram(TimeStampedModelMixin, OptionalPictogramMixin):
         verbose_name = _("Line pictogram")
         verbose_name_plural = _("Line pictograms")
 
+    def __str__(self):
+        return self.label
+
 
 class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
