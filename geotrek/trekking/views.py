@@ -453,9 +453,9 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 class ServiceList(CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
     filterform = ServiceFilterSet
-    mandatory_columns = ['id', 'name']
+    mandatory_columns = ['id']
     default_extra_columns = []
-    searchable_columns = ['id', 'name']
+    searchable_columns = ['id']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):
