@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models import Q
+from django.db.models import Q, ProtectedError
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -333,6 +333,14 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.refresh_from_db()
+
+    def delete(self, *args, **kwargs):
+        if self.children.exists():
+            raise ProtectedError("Il reste des sites enfants :", self.children.all())
+        elif self.children_courses.exists():
+            raise ProtectedError("Il reste des parcours enfants :", self.children_courses.all())
+        else:
+            super().delete(*args, **kwargs)
 
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
