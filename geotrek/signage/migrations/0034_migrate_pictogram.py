@@ -4,7 +4,7 @@ from django.db import migrations
 def migrate_pictogram(apps, schema_editor):
     Line = apps.get_model('signage', 'Line')
     LinePictogram = apps.get_model('signage', 'LinePictogram')
-    for line in Line.objects.all():
+    for line in Line.objects.exclude(pictogram_name=None):
         if line.pictogram_name:
             line_pictogram, created = LinePictogram.objects.get_or_create(label=line.pictogram_name)
             line.pictograms.add(line_pictogram)
