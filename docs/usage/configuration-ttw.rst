@@ -38,6 +38,31 @@ Exemple : ajouter une pratique
 
 |image5|
 
+Exemple : ajouter une étiquette
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages : 
+- ne pas avoir à saisir à chaque itinéraire les même informations
+- permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
+
+Pour les configurer, vous devez :
+- vous rendre dans l'interface d'administration
+- dans la section Étiquettes du groupe "COMMUN" cliquer sur “+ ajouter”
+
+Via cette interface vous pourrez créer des étiquettes puis, une fois créées, les rattacher à des itinéraires.
+
+Créer une étiquette :
+
+.. image :: ../images/admin/creation_etiquette.png
+
+Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du HTML. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil https://htmlg.com/html-editor/ .
+
+Informations utiles : 
+
+- L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
+- Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
+- Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
+
 
 .. _sites-et-parcours-outdoor-1:
 
