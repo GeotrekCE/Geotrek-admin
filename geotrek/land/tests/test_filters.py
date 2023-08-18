@@ -9,7 +9,8 @@ from geotrek.land import filters  # noqa
 from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBounds
 from geotrek.land.tests.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
-    WorkManagementEdgeFactory, SignageManagementEdgeFactory
+    WorkManagementEdgeFactory, SignageManagementEdgeFactory,
+    CirculationEdgeFactory
 )
 
 
@@ -53,6 +54,9 @@ class LandFiltersTest(TestCase):
 
     def test_filter_by_land_edge(self):
         self._filter_by_edge(LandEdgeFactory, 'land_type', lambda edge: edge.land_type.pk)
+
+    def test_filter_by_circulation_edge(self):
+        self._filter_by_edge(CirculationEdgeFactory, 'circulation_type', lambda edge: edge.circulation_type.pk)
 
     def test_filter_by_competence_edge(self):
         self._filter_by_edge(CompetenceEdgeFactory, 'competence', lambda edge: edge.organization.pk)

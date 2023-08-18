@@ -13,7 +13,7 @@ from geotrek.zoning.filters import *  # NOQA
 
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
-    SignageManagementEdge, WorkManagementEdge,
+    SignageManagementEdge, WorkManagementEdge, CirculationEdge, CirculationType
 )
 
 
@@ -21,6 +21,12 @@ class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
         fields = ['physical_type']
+
+
+class CirculationEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        model = CirculationEdge
+        fields = ['circulation_type', 'authorized']
 
 
 class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
@@ -63,6 +69,13 @@ class TopologyFilterPhysicalType(TopologyFilter):
         return PhysicalEdge.objects.filter(physical_type__in=values)
 
 
+class TopologyFilterCirculationType(TopologyFilter):
+    model = CirculationType
+
+    def values_to_edges(self, values):
+        return CirculationEdge.objects.filter(circulation_type__in=values)
+
+
 class TopologyFilterLandType(TopologyFilter):
     model = LandType
 
@@ -95,6 +108,7 @@ def add_edge_filters(filter_set):
     filter_set.add_filters({
         'land_type': TopologyFilterLandType(label=_('Land edge'), required=False),
         'physical_type': TopologyFilterPhysicalType(label=_('Physical edge'), required=False),
+        'circulation_type': TopologyFilterCirculationType(label=_('Circulation edge'), required=False),
         'competence': TopologyFilterCompetenceEdge(label=_('Competence edge'), required=False),
         'signage': TopologyFilterSignageManagementEdge(label=_('Signage management edge'), required=False),
         'work': TopologyFilterWorkManagementEdge(label=_('Work management edge'), required=False),

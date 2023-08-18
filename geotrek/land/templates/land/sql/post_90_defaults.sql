@@ -24,6 +24,19 @@ ALTER TABLE land_landedge ALTER COLUMN owner SET DEFAULT '';
 ALTER TABLE land_landedge ALTER COLUMN agreement SET DEFAULT False;
 -- eid
 
+-- CirculationType
+-----------
+-- name
+-- structure
+
+
+-- CirculationEdge
+-----------
+-- topo_object
+-- circulation_type
+ALTER TABLE land_circulationedge ALTER COLUMN authorized SET DEFAULT False;
+-- eid
+
 
 -- CompetenceEdge
 -----------------

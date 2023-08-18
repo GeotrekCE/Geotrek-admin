@@ -5,6 +5,10 @@ CHANGELOG
 2.101.4+dev (XXXX-XX-XX)
 ------------------------
 
+**New features**
+
+- Add CirculationEdge model, which allows to create a traffic circulation plan on paths. Created on the model of LandEdge and PhysicalEdge (#3578)
+
 **Improvements**
 
 - Add rules fixture on sensitive area (#3470)

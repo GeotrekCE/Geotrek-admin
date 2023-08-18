@@ -135,5 +135,33 @@
             "right_of_way": false,
             "name": "Servitude DFCI"
         }
+    },
+    {
+        "pk": 1,
+        "model": "land.circulationtype",
+        "fields": {
+            "name": "Pédestre"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "land.circulationtype",
+        "fields": {
+            "name": "Cycliste"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "land.circulationtype",
+        "fields": {
+            "name": "Motorisée"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "land.circulationtype",
+        "fields": {
+            "name": "Équestre"
+        }
     }
 ]

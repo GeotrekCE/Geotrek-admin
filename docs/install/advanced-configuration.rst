@@ -1011,6 +1011,16 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "agreement",
         "uuid",
     ]
+    COLUMNS_LISTS["circulationedge_view"] = [
+        "eid",
+        "min_elevation",
+        "max_elevation",
+        "date_update",
+        "length_2d",
+        "date_insert",
+        "authorized",
+        "uuid",
+    ]
     COLUMNS_LISTS["physicaledge_view"] = [
         "eid",
         "date_insert",
@@ -1400,6 +1410,24 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "land_type",
         "owner",
         "agreement",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "length",
+        "length_2d",
+        "ascent",
+        "descent",
+        "min_elevation",
+        "max_elevation",
+        "slope",
+        "uuid",
+    ]
+    COLUMNS_LISTS["circulationedge_export"] = [
+        "eid",
+        "circulation_type",
+        "authorized",
         "date_insert",
         "date_update",
         "cities",
@@ -2180,6 +2208,9 @@ An exhaustive list of form fields hideable in each module.
             "locked",
             "uid",
             "origin"
+        ],
+    HIDDEN_FORM_FIELDS["circulationedge"] = [
+            "authorized",
         ]
 
 

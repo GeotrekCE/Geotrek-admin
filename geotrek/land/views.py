@@ -8,14 +8,16 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from .filters import PhysicalEdgeFilterSet, LandEdgeFilterSet, CompetenceEdgeFilterSet, WorkManagementEdgeFilterSet, \
-    SignageManagementEdgeFilterSet
-from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+    SignageManagementEdgeFilterSet, CirculationEdgeFilterSet
+from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm, \
+    CirculationEdgeForm
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge,
-                     WorkManagementEdge, SignageManagementEdge)
+                     WorkManagementEdge, SignageManagementEdge,
+                     CirculationEdge)
 from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceEdgeSerializer, \
     SignageManagementEdgeSerializer, WorkManagementEdgeSerializer, PhysicalEdgeGeojsonSerializer, \
     LandEdgeGeojsonSerializer, CompetenceEdgeGeojsonSerializer, WorkManagementEdgeGeojsonSerializer, \
-    SignageManagementEdgeGeojsonSerializer
+    SignageManagementEdgeGeojsonSerializer, CirculationEdgeSerializer, CirculationEdgeGeojsonSerializer
 
 
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
@@ -122,6 +124,59 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'land_type')
+            return qs
+        return qs.defer('geom', 'geom_3d')
+
+
+class CirculationEdgeList(CustomColumnsMixin, MapEntityList):
+    queryset = CirculationEdge.objects.existing()
+    filterform = CirculationEdgeFilterSet
+    mandatory_columns = ['id', 'circulation_type']
+    default_extra_columns = ['length', 'length_2d']
+
+
+class CirculationEdgeFormatList(MapEntityFormat, CirculationEdgeList):
+    mandatory_columns = ['id']
+    default_extra_columns = [
+        'circulation_type', 'authorized', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas', 'uuid', 'length_2d'
+    ] + AltimetryMixin.COLUMNS
+
+
+class CirculationEdgeDetail(MapEntityDetail):
+    queryset = CirculationEdge.objects.existing()
+
+
+class CirculationEdgeDocument(MapEntityDocument):
+    model = CirculationEdge
+
+
+class CirculationEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
+    model = CirculationEdge
+    form_class = CirculationEdgeForm
+
+
+class CirculationEdgeUpdate(MapEntityUpdate):
+    queryset = CirculationEdge.objects.existing()
+    form_class = CirculationEdgeForm
+
+
+class CirculationEdgeDelete(MapEntityDelete):
+    model = CirculationEdge
+
+
+class CirculationEdgeViewSet(GeotrekMapentityViewSet):
+    model = CirculationEdge
+    serializer_class = CirculationEdgeSerializer
+    geojson_serializer_class = CirculationEdgeGeojsonSerializer
+    filterset_class = CirculationEdgeFilterSet
+    mapentity_list_class = CirculationEdgeList
+
+    def get_queryset(self):
+        qs = self.model.objects.existing().select_related('circulation_type')
+        if self.format_kwarg == 'geojson':
+            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.only('id', 'circulation_type')
             return qs
         return qs.defer('geom', 'geom_3d')
 

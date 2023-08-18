@@ -8,11 +8,13 @@ from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.core.tests.factories import PathFactory
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
-                                 WorkManagementEdge, SignageManagementEdge)
+                                 WorkManagementEdge, SignageManagementEdge,
+                                 CirculationEdge)
 from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory, PhysicalTypeFactory,
-                                          LandTypeFactory)
+                                          LandTypeFactory, CirculationEdgeFactory,
+                                          CirculationTypeFactory)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -43,6 +45,13 @@ class PhysicalEdgeTest(EdgeHelperTest):
 
     factory = PhysicalEdgeFactory
     helper_name = 'physical_edges'
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class CirculationEdgeTest(EdgeHelperTest):
+
+    factory = CirculationEdgeFactory
+    helper_name = 'circulation_edges'
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -136,6 +145,44 @@ class LandEdgeViewsTest(CommonTest):
         return {
             'id': self.obj.pk,
             'land_type': self.obj.land_type_display,
+            'length': round(self.obj.length, 1),
+            'length_2d': round(self.obj.length, 1)
+        }
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class CirculationEdgeViewsTest(CommonTest):
+    model = CirculationEdge
+    modelfactory = CirculationEdgeFactory
+    userfactory = PathManagerFactory
+    extra_column_list = ['authorized']
+    expected_column_list_extra = ['id', 'circulation_type', 'authorized']
+    expected_column_formatlist_extra = ['id', 'authorized']
+    expected_json_geom = {'coordinates': [[3.0013501, 46.5008686],
+                                          [3.0000461, 46.4999682]],
+                          'type': 'LineString'}
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name,
+            'color_index': self.obj.circulation_type_id
+        }
+
+    def get_good_data(self):
+        path = PathFactory.create()
+        return {
+            'circulation_type': CirculationTypeFactory.create().pk,
+            'topology': '{"paths": [%s]}' % path.pk,
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'circulation_type': self.obj.circulation_type_display,
             'length': round(self.obj.length, 1),
             'length_2d': round(self.obj.length, 1)
         }
