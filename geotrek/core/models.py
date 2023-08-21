@@ -240,12 +240,6 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
     def delete(self, *args, **kwargs):
         related_treks = self.treks.all()
         for trek in related_treks:
-            trek.published_en = False
-            trek.published_fr = False
-            trek.published_it = False
-            trek.published_es = False
-            trek.published_de = False
-            trek.published_nl = False
             trek.published = False
             trek.save()
 
