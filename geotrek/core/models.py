@@ -244,6 +244,8 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
             trek.published_fr = False
             trek.published_it = False
             trek.published_es = False
+            trek.published_de = False
+            trek.published_nl = False
             trek.published = False
             trek.save()
 
