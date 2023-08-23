@@ -47,22 +47,35 @@ Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés s
 
 Pour les configurer, vous devez :
 - vous rendre dans l'interface d'administration
-- dans la section Étiquettes du groupe "COMMUN" cliquer sur “+ ajouter”
+- dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ Ajouter`
 
 Via cette interface vous pourrez créer des étiquettes puis, une fois créées, les rattacher à des itinéraires.
 
-Créer une étiquette :
+* Créer une étiquette :
 
 .. image :: ../images/admin/creation_etiquette.png
 
-Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du HTML. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil https://htmlg.com/html-editor/ .
+Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil libre `TinyMCE <https://www.tiny.cloud/docs/demo/basic-example/>`_.
 
-Informations utiles : 
+* Associer une étiquette à un itinéraire :
 
-- L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
-- Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
-- Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
+Une fois l'étiquette créée il faut l'associer à un itinéraire pour qu'elle soit visible sur le site. 
+Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet :guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu déroulant l'étiquette de votre choix (si vous en avez défini plusieurs). 
 
+.. image :: ../images/admin/associer_etiquette_itineraire.png
+
+.. tip::
+    * L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
+    * Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
+    * Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
+
+Rendu dans **Geotrek Rando** (onglet :guilabel:`Infos pratiques` d'une fiche randonnée) :
+
+.. image :: ../images/admin/rendu_etiquette.png
+
+Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
+
+.. image :: ../images/admin/rendu_etiquette2.png
 
 .. _sites-et-parcours-outdoor-1:
 
