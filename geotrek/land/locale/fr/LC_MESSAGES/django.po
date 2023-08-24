@@ -78,7 +78,7 @@ msgid "Land edges"
 msgstr "Types fonciers"
 
 msgid "Circulation edges"
-msgstr "Autorisations de circulation"
+msgstr "Circulations"
 
 msgid "Circulation type"
 msgstr "Type de circulation"
