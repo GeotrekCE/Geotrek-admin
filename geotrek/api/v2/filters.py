@@ -502,12 +502,11 @@ class TouristicEventFilterSet(filters.FilterSet):
         queryset=TouristicEventPlace.objects.all(),
         help_text=_("Filter by one or more Place id, comma-separated.")
     )
-    organizer = filters.ModelMultipleChoiceFilter(queryset=TouristicEventOrganizer.objects.all(),
-                                                  help_text=_("Filter by one or more organizer, comma-separated."),
-                                                  field_name='organizer__label',
-                                                  to_field_name='label',
-                                                  lookup_expr='icontains'
-                                                  )
+    organizer = filters.ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventOrganizer.objects.all(),
+        help_text=_("Filter by one or more organizer, comma-separated."),
+    )
 
     help_texts = {
         'bookable': _("Filter events on bookable boolean : true/false expected"),
