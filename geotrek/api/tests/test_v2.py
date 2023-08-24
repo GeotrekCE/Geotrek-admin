@@ -3160,7 +3160,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
-        cls.organizer = tourism_factory.OrganizerFactory(label='OrganizerA')
+        cls.organizer = tourism_factory.TouristicEventOrganizerFactory(label='OrganizerA')
         cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,

@@ -146,7 +146,7 @@ class TourismRelations(TestCase):
 
 class OrganizerModelTest(TestCase):
     def test_str(self):
-        organizer = tourism_factories.OrganizerFactory(label="foo bar")
+        organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
         self.assertEqual('foo bar', str(organizer))
 
 

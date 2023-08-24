@@ -147,11 +147,11 @@ class TouristicEventPlaceFactory(factory.django.DjangoModelFactory):
         model = models.TouristicEventPlace
 
 
-class OrganizerFactory(factory.django.DjangoModelFactory):
+class TouristicEventOrganizerFactory(factory.django.DjangoModelFactory):
     label = factory.Sequence("Organizer {0}".format)
 
     class Meta:
-        model = models.Organizer
+        model = models.TouristicEventOrganizer
 
 
 class TouristicEventFactory(factory.django.DjangoModelFactory):
