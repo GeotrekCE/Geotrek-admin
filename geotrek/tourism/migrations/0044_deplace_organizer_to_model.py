@@ -6,17 +6,18 @@ from django.db import migrations
 def create_organizer_fk(apps, schema_editor):
     TouristicEventModel = apps.get_model('tourism', 'TouristicEvent')
     OrganizerModel = apps.get_model('tourism', 'Organizer')
-    organizers = []
-    for row in TouristicEventModel.objects.all():
-        organizers.append(OrganizerModel(label=row.label))
-    OrganizerModel.objects.bulk_create(organizers)
+    for event in TouristicEventModel.objects.all():
+        if event.organizer:
+            organizer, _ = OrganizerModel.objects.get_or_create(label=event.organizer)
+            event.organizer_temp = organizer
+            event.save()
 
 
 def reverse_create_organizer_fk(apps, schema_editor):
-    OrganizerModel = apps.get_model('tourism', 'Organizer')
-    for row in OrganizerModel.objects.all():
-        for event in row.touristicevents.all():
-            event.organizer = row.label
+    TouristicEventModel = apps.get_model('tourism', 'TouristicEvent')
+    for event in TouristicEventModel.objects.all():
+        if event.organizer_temp:
+            event.organizer = event.organizer_temp.label
             event.save()
 
 
