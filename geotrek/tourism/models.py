@@ -386,7 +386,7 @@ class TouristicEventPlace(TimeStampedModelMixin):
         return self.name
 
 
-class TouristicEventOrganizer(models.Model):
+class TouristicEventOrganizer(TimeStampedModelMixin):
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
     class Meta:
