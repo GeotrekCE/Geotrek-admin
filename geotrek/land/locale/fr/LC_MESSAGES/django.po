@@ -24,7 +24,7 @@ msgid "Land edge"
 msgstr "Type foncier"
 
 msgid "Circulation edge"
-msgstr "Autorisation de circulation"
+msgstr "Circulation"
 
 msgid "Physical edge"
 msgstr "Type de voie"
@@ -81,10 +81,10 @@ msgid "Circulation edges"
 msgstr "Autorisations de circulation"
 
 msgid "Circulation type"
-msgstr "Type d'autorisation de circulation"
+msgstr "Type de circulation"
 
 msgid "Circulation types"
-msgstr "Types d'autorisation de circulation"
+msgstr "Types de circulation"
 
 msgid "Authorized"
 msgstr "Autorisée"
@@ -105,7 +105,7 @@ msgid "Add a new land edge"
 msgstr "Ajouter un type foncier"
 
 msgid "Add a new circulation edge"
-msgstr "Ajouter une nouvelle autorisation de circulation"
+msgstr "Ajouter une nouvelle circulation"
 
 msgid "Add a new physical edge"
 msgstr "Ajouter un type de voie"
