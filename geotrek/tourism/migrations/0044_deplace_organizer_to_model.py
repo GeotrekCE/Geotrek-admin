@@ -5,7 +5,7 @@ from django.db import migrations
 
 def create_organizer_fk(apps, schema_editor):
     TouristicEventModel = apps.get_model('tourism', 'TouristicEvent')
-    OrganizerModel = apps.get_model('tourism', 'Organizer')
+    OrganizerModel = apps.get_model('tourism', 'TouristicEventOrganizer')
     for event in TouristicEventModel.objects.all():
         if event.organizer:
             organizer, _ = OrganizerModel.objects.get_or_create(label=event.organizer)

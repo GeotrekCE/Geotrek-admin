@@ -386,7 +386,7 @@ class TouristicEventPlace(TimeStampedModelMixin):
         return self.name
 
 
-class Organizer(models.Model):
+class TouristicEventOrganizer(models.Model):
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
     class Meta:
@@ -425,8 +425,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    organizer = models.ForeignKey('tourism.Organizer', verbose_name=_("Organizer"), blank=True, null=True,
-                                  on_delete=models.PROTECT, related_name="touristicevents")
+    organizer = models.ForeignKey('tourism.TouristicEventOrganizer', verbose_name=_("Organizer"), blank=True, null=True,
+                                  on_delete=models.PROTECT, related_name="touristicevent")
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)

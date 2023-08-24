@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Organizer',
+            name='TouristicEventOrganizer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(max_length=128, verbose_name='Label')),
@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
             model_name='touristicevent',
             name='organizer_temp',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='touristicevents', to='tourism.organizer', verbose_name='Organizer'),
+                                    related_name='touristicevent', to='tourism.touristiceventorganizer', verbose_name='Organizer'),
         ),
     ]

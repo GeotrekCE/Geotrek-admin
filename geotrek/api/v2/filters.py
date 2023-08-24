@@ -14,7 +14,7 @@ from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.tourism.models import Organizer, TouristicContent, TouristicContentType, TouristicEvent, \
+from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
     TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
@@ -502,8 +502,8 @@ class TouristicEventFilterSet(filters.FilterSet):
         queryset=TouristicEventPlace.objects.all(),
         help_text=_("Filter by one or more Place id, comma-separated.")
     )
-    organizer = filters.ModelMultipleChoiceFilter(queryset=Organizer.objects.all(),
-                                                  help_text=_("Filter events on organizers"),
+    organizer = filters.ModelMultipleChoiceFilter(queryset=TouristicEventOrganizer.objects.all(),
+                                                  help_text=_("Filter by one or more organizer, comma-separated."),
                                                   field_name='organizer__label',
                                                   to_field_name='label',
                                                   lookup_expr='icontains'
