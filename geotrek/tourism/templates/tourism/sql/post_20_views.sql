@@ -218,7 +218,7 @@ SELECT a.id,
 FROM public.tourism_touristicevent a
 LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
 LEFT JOIN public.authent_structure c ON a.structure_id = c.id
-LEFT JOIN public.tourism_organizer d ON a.organizer_id = d.id
+LEFT JOIN public.tourism_touristiceventorganizer d ON a.organizer_id = d.id
 LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
 LEFT JOIN public.tourism_touristiceventplace p ON a.place_id = p.id
 LEFT JOIN
