@@ -9,6 +9,13 @@ def migrate_pictogram(apps, schema_editor):
         line.pictograms.add(line_pictogram)
 
 
+def reverse_migrate_pictogram(apps, schema_editor):
+    Line = apps.get_model('signage', 'Line')
+    for line in Line.objects.exclude(pictograms=None):
+        line.pictogram_name = line.pictograms.first().label
+        line.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -16,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_pictogram, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(migrate_pictogram, reverse_code=reverse_migrate_pictogram),
     ]
