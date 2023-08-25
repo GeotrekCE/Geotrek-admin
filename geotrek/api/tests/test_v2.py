@@ -3248,7 +3248,7 @@ class TouristicEventTestCase(BaseApiTest):
         response = self.get_touristiceventplace_detail(self.place.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE)
 
-    def test_touristic_event_place_detail(self):
+    def test_touristic_event_organizer_detail(self):
         response = self.get_touristiceventorganizer_detail(self.organizer.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_ORGANIZER_DETAIL_JSON_STRUCTURE)
 
