@@ -51,7 +51,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristicevent', api_views.TouristicEventViewSet, basename='touristicevent')
     router.register('touristicevent_type', api_views.TouristicEventTypeViewSet, basename='touristiceventtype')
     router.register('touristicevent_place', api_views.TouristicEventPlaceViewSet, basename='touristiceventplace')
-    router.register('touristicevent_organizer', api_views.TouristicEventOrganizerViewSet, basename='touristiceventplace')
+    router.register('touristicevent_organizer', api_views.TouristicEventOrganizerViewSet, basename='touristiceventorganizer')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
     router.register('informationdesk_type', api_views.InformationDeskTypeViewSet, basename='informationdesktype')
     router.register('label_accessibility', api_views.LabelAccessibilityViewSet, basename='labelaccessibility')
