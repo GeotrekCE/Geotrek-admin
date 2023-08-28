@@ -85,6 +85,8 @@ if 'geotrek.api' in settings.INSTALLED_APPS:
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+handler404 = 'geotrek.common.views.handler404'
+
 if settings.DEBUG or settings.TEST:
     if 'debug_toolbar' in settings.INSTALLED_APPS:
         # Debug toolbar is enabled in dev settings

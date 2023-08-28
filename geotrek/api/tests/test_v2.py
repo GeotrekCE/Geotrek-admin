@@ -1072,6 +1072,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {'version': __version__})
 
+    @override_settings(DEBUG=False)
+    def test_handle_404_route(self):
+        response = self.client.get("/api/v2/x")
+        self.assertEqual(response.status_code, 404)
+        self.assertJSONEqual(response.content, {'page': 'does not exist'})
+
     def test_trek_list_filter_distance(self):
         """ Test Trek list is filtered by reference point distance """
         toulouse_trek_geom = LineString([
