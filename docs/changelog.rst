@@ -12,7 +12,7 @@ CHANGELOG
 **New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
-- Respond a json when the pages does not exist in api v2
+- Respond 404 JSON if page not found in API v2
 
 **Improvements**
 
