@@ -1080,7 +1080,15 @@ Note that this setting does not impact the Path endpoints, which means that the 
 
 Use dynamic segmentation or not.
 
-*Do not change this setting to false if you have already started integrating data, or dump your database.*
+`Dynamic segmentation<https://geotrek.readthedocs.io/en/latest/usage/editing-objects.html#segmentation-dynamique>`_ is used by default when installing Geotrek-admin.
+
+With this mode, linear objects are built and stored related to paths.
+
+Without this mode, linear geometry of objects is built and stored as an independent geographic object without relation to paths.
+
+So if you want to use Geotrek-admin without dynamic segmentation, set TREKKING_TOPOLOGY_ENABLED to false after installation.
+
+Do not change it again to true after setting it to false.
 
 **Map configuration**
 
