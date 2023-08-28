@@ -36,5 +36,7 @@ class SQLDeleteTest(TestCase):
         t.refresh_from_db()
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
+            print(settings.MODELTRANSLATION_LANGUAGES)
             published_lang = getattr(t, f'published_{lang}')
+            print(lang)
             self.assertFalse(published_lang)
