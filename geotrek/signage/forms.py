@@ -23,7 +23,7 @@ class LineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        fields_for_layout = ['id', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time']
+        fields_for_layout = ['id', 'number', 'direction', 'text', 'distance', 'time', 'pictograms']
 
         if not settings.DIRECTION_ON_LINES_ENABLED:
             del self.fields['direction']
@@ -34,7 +34,7 @@ class LineForm(forms.ModelForm):
         self.helper.layout = Layout(*fields_for_layout)
 
     class Meta:
-        fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
+        fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'time', 'pictograms')
 
 
 LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)

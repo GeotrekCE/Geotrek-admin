@@ -220,9 +220,9 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
                                                              b"Direction,Condition,"
                                                              b"Coordinates (WGS 84 / Pseudo-Mercator),"
                                                              b"Number 1,Text 1,"
-                                                             b"Distance 1,Time 1,Pictogram 1,"
+                                                             b"Distance 1,Time 1,Pictograms 1,"
                                                              b"Number 2,Text 2,"
-                                                             b"Distance 2,Time 2,Pictogram 2")
+                                                             b"Distance 2,Time 2,Pictograms 2")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.

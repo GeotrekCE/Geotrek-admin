@@ -61,7 +61,14 @@
                     <td>{{ line }}</td>
                     {% if is_direction_on_lines_enabled %}<td>{{ line.direction }}</td>{% endif %}
                     <td>{{ line.text }}</td>
-                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                    <td>
+                        {% for pictogram in line.pictograms.all %}
+                            {{ pictogram.code|default_if_none:"" }} -
+                            {{ pictogram.label|default_if_none:"" }} -
+                            {{ pictogram.description|default_if_none:"" }}
+                            <br>
+                        {% endfor %}
+                    </td>
                     <td>{{ line.distance_pretty }}</td>
                     <td>{{ line.time_pretty }}</td>
                 </tr>

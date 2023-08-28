@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.signage.models import Blade
-from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, SealingFactory, SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, LinePictogramFactory, SealingFactory, SignageFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 
 
@@ -64,3 +64,9 @@ class SignageModelTest(TestCase):
         blade_2 = BladeFactory.create(number='A', signage=signage)
         blade = BladeFactory.create(number='*BL', signage=signage)
         self.assertEqual([blade, blade_2], list(signage.order_blades))
+
+
+class LinePictogramModelTest(TestCase):
+    def test_str_linepictogram(self):
+        linepictogram = LinePictogramFactory(label="fresnais")
+        self.assertEqual(str(linepictogram), "fresnais")
