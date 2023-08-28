@@ -9,7 +9,6 @@ CHANGELOG
 
 - Fix: unable to search within a list of services (#3521)
 - Fix: Unpublish trek in all languages when path is deleted (#1321)
-- Fix: To delete parent outdoor sites you must first delete their children (#3151)
 
 
 **New features**
@@ -28,11 +27,11 @@ CHANGELOG
 - Improve CSS of the altitude profile of altimetry (#3657)
 - Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
 - Serve GeoJS script locally
+- To delete parent outdoor sites you must first delete their children (#3151)
 
 **Documentation**
 
 - Add configuration file for readthedocs
-
 
 
 2.99.0 (2023-07-18)

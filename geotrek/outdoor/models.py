@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
-from django.db.models import Q, ProtectedError
+from django.db.models import Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -135,6 +135,16 @@ class CourseType(TimeStampedModelMixin, models.Model):
 def log_cascade_deletion_from_coursetype_practice(sender, instance, using, **kwargs):
     # CourseType are deleted when Practice are deleted
     log_cascade_deletion(sender, instance, CourseType, 'practice')
+
+
+class ChildSitesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child sites linked to this site")
+
+
+class ChildCoursesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child courses linked to this site")
 
 
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
@@ -336,9 +346,9 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
 
     def delete(self, *args, **kwargs):
         if self.children.exists():
-            raise ProtectedError("Il reste des sites enfants :", self.children.all())
+            raise ChildSitesExistError()
         elif self.children_courses.exists():
-            raise ProtectedError("Il reste des parcours enfants :", self.children_courses.all())
+            raise ChildCoursesExistError()
         else:
             super().delete(*args, **kwargs)
 
@@ -521,7 +531,7 @@ Blade.add_property('courses', lambda self: intersecting(Course, self), _("Course
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
 Course.add_property('sites', Site.outdoor_sites, _("Sites"))
-Course.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Course.add_property('courses', Course.outdoor_courses, _("Courses"))
 Course.add_property('treks', Trek.outdoor_treks, _("Treks"))
 Course.add_property('services', Service.outdoor_services, _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
@@ -531,4 +541,4 @@ Course.add_property('touristic_contents', TouristicContent.outdoor_touristic_con
 Course.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
 
-Site.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Site.add_property('courses', Course.outdoor_courses, _("Courses"))

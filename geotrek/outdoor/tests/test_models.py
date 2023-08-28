@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests.factories import OrganismFactory
-from geotrek.outdoor.models import (CourseType, Rating, RatingScale,
+from geotrek.outdoor.models import (ChildCoursesExistError, ChildSitesExistError, CourseType, Rating, RatingScale, Site,
                                     SiteType)
 from geotrek.outdoor.tests.factories import (CourseFactory, CourseTypeFactory,
                                              PracticeFactory, RatingFactory,
@@ -57,6 +57,26 @@ class SiteTest(TestCase):
                                                                'GEOMETRYCOLLECTION(POINT(1 2)))')
         self.assertEqual(site_multiple_geomcollection.geom.wkt,
                          'GEOMETRYCOLLECTION (POINT (0 0), POINT (1 1), POINT (1 2))')
+
+    def test_delete_method_delete_site_with_child_sites_and_courses(self):
+        self.parent_site = SiteFactory.create(name="parent_site")
+        self.child_site = SiteFactory.create(name="child_site", parent=self.parent_site)
+
+        self.parent_site_of_course = SiteFactory.create(name="parent_site_of_course")
+        self.child_course = CourseFactory.create(name="child_course", parent_sites=[self.parent_site_of_course])
+
+        # We can't delete a parent if it has children
+        with self.assertRaises(ChildSitesExistError):
+            self.parent_site.delete()
+        self.assertEqual(Site.objects.filter(pk=self.parent_site.pk).exists(), True)
+
+        with self.assertRaises(ChildCoursesExistError):
+            self.parent_site_of_course.delete()
+        self.assertEqual(Site.objects.filter(pk=self.parent_site_of_course.pk).exists(), True)
+
+        # But we can delete the children
+        self.child_site.delete()
+        self.child_course.delete()
 
 
 class SiteSuperTest(TestCase):
