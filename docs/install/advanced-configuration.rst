@@ -1080,7 +1080,7 @@ Note that this setting does not impact the Path endpoints, which means that the 
 
 Use dynamic segmentation or not.
 
-`Dynamic segmentation<https://geotrek.readthedocs.io/en/latest/usage/editing-objects.html#segmentation-dynamique>`_ is used by default when installing Geotrek-admin.
+`Dynamic segmentation <https://geotrek.readthedocs.io/en/latest/usage/editing-objects.html#segmentation-dynamique>`_ is used by default when installing Geotrek-admin.
 
 With this mode, linear objects are built and stored related to paths.
 
