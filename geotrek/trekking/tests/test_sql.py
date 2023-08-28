@@ -1,3 +1,4 @@
+from unittest import skipIf
 from django.test import TestCase
 
 from django.conf import settings
@@ -27,6 +28,7 @@ class SQLViewsTest(TestCase):
         self.assertEqual(sql_trek_dict['Name en'], 'foo bar')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SQLDeleteTest(TestCase):
     def test_delete(self):
         p1 = PathFactory.create()
