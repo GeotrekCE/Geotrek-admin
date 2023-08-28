@@ -5,6 +5,10 @@ CHANGELOG
 2.99.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix: unable to search within a list of services (#3521)
+
 **New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
