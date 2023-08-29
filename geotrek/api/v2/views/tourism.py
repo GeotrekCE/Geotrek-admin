@@ -118,3 +118,12 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
         return tourism_models.TouristicEventPlace.objects.prefetch_related('touristicevents').annotate(
             geom_transformed=Transform('geom', settings.API_SRID)
         ).order_by('name')
+
+
+class TouristicEventOrganizerViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.TouristicEventRelatedPortalFilter
+    )
+    serializer_class = api_serializers.TouristicEventOrganizerSerializer
+    queryset = tourism_models.TouristicEventOrganizer.objects.order_by('label')

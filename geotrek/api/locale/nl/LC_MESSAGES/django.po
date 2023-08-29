@@ -347,6 +347,9 @@ msgstr ""
 msgid "Filter by one or more Place id, comma-separated."
 msgstr ""
 
+msgid "Filter events on organizers"
+msgstr ""
+
 msgid "Filter events on bookable boolean : true/false expected"
 msgstr ""
 

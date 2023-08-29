@@ -231,6 +231,10 @@ TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'name', 'geometry'
 ])
 
+TOURISTIC_EVENT_ORGANIZER_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label'
+])
+
 TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'pictogram', 'type'
 ])
@@ -710,6 +714,12 @@ class BaseApiTest(TestCase):
 
     def get_touristiceventplace_detail(self, id_touristiceventplace, params=None):
         return self.client.get(reverse('apiv2:touristiceventplace-detail', args=(id_touristiceventplace,)), params)
+
+    def get_touristiceventorganizer_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristiceventorganizer-list'), params)
+
+    def get_touristiceventorganizer_detail(self, id_touristiceventorganizer, params=None):
+        return self.client.get(reverse('apiv2:touristiceventorganizer-detail', args=(id_touristiceventorganizer,)), params)
 
     def get_servicetype_list(self, params=None):
         return self.client.get(reverse('apiv2:servicetype-list'), params)
@@ -3160,6 +3170,7 @@ class TouristicEventTestCase(BaseApiTest):
         cls.touristic_event4 = tourism_factory.TouristicEventFactory(
             deleted=True
         )
+        cls.organizer = tourism_factory.TouristicEventOrganizerFactory(label='OrganizerA')
         cls.place_unpublished = tourism_factory.TouristicEventPlaceFactory(name="There")
         cls.touristic_event5 = tourism_factory.TouristicEventFactory(
             end_date=None,
@@ -3169,7 +3180,8 @@ class TouristicEventTestCase(BaseApiTest):
             start_time="12:34",
             capacity=12,
             bookable=False,
-            place=cls.place
+            place=cls.place,
+            organizer=cls.organizer
         )
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
@@ -3210,6 +3222,15 @@ class TouristicEventTestCase(BaseApiTest):
         # Event 1 finishes on 3rd of july
         self.assertEqual(response.json().get("count"), 2)
 
+    def test_touristic_event_organizer_filters_1(self):
+        response = self.get_touristicevent_list({'organizer': 'tt'})
+        self.assertEqual(response.json()['organizer'][0],
+                         '“tt” is not a valid value.')
+
+    def test_touristic_event_organizer_filters_2(self):
+        response = self.get_touristicevent_list({'organizer': f'{self.organizer.pk}'})
+        self.assertEqual(response.json().get("count"), 1)
+
     def test_touristic_event_cancelled_filter(self):
         response = self.get_touristicevent_list({'cancelled': 'True'})
         self.assertEqual(response.json().get("count"), 1)
@@ -3226,6 +3247,10 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_place_detail(self):
         response = self.get_touristiceventplace_detail(self.place.pk)
         self.check_structure_response(response, TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE)
+
+    def test_touristic_event_organizer_detail(self):
+        response = self.get_touristiceventorganizer_detail(self.organizer.pk)
+        self.check_structure_response(response, TOURISTIC_EVENT_ORGANIZER_DETAIL_JSON_STRUCTURE)
 
     def test_touristicevent_near_trek(self):
         response = self.get_touristicevent_list({'near_trek': self.trek.pk})
@@ -3259,6 +3284,10 @@ class TouristicEventTestCase(BaseApiTest):
     def test_touristic_event_place_filter(self):
         response = self.get_touristicevent_list({'place': f"{self.place.pk},{self.other_place.pk}"})
         self.assertEqual(response.json().get("count"), 2)
+
+    def test_touristic_event_place_not_valid_filter(self):
+        response = self.get_touristicevent_list({'place': "100000"})
+        self.assertEqual(response.json()['place'][0], "Select a valid choice. 100000 is not one of the available choices.")
 
     def test_touristic_event_place_list(self):
         response = self.get_touristiceventplace_list()
@@ -3830,7 +3859,6 @@ class SitesLabelsFilterTestCase(BaseApiTest):
                             {self.site1.pk, self.site2.pk, self.site3.pk, site_a.pk})
 
     def test_sites_label_filter_published(self):
-        all_labels = []
         response = self.get_site_list()
         self.assertEqual(response.status_code, 200)
         results = response.json()['results']

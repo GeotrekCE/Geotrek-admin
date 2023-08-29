@@ -144,6 +144,12 @@ class TourismRelations(TestCase):
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content)
 
 
+class OrganizerModelTest(TestCase):
+    def test_str(self):
+        organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
+        self.assertEqual('foo bar', str(organizer))
+
+
 class TouristicEventModelTest(TestCase):
     def test_dates_display_no_end_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
