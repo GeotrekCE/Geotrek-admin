@@ -76,6 +76,7 @@ CHANGELOG
 
 - Add configuration file for readthedocs
 - Update architecture schema
+- Reorganize settings section
 
 **Maintenance**
 
