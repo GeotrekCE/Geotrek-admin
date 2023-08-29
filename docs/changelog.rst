@@ -21,6 +21,11 @@ CHANGELOG
 - Filter by begin date by default on touristic events in APIv2 (#3597)
 - Add model LinePictogram for each line (#3327)
 
+**Documentation**
+
+- Add configuration file for readthedocs
+
+
 2.99.0 (2023-07-18)
 -----------------------
 
