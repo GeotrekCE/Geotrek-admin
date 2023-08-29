@@ -29,6 +29,7 @@ Welcome to Geotrek's documentation!
     install/configuration
     install/advanced-configuration
     install/settings-reference
+    install/users-management
     install/maintenance
     install/synchronization
     install/import
