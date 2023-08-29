@@ -10,7 +10,13 @@
         <tr>
             <th>{{ circulationedge|verbose:"authorized" }}</th>
             <td>
-                {% if circulationedge.authorized %}
+                {% if circulationedge.authorized is none %}
+                    {% trans "Undefined" %}
+                {% elif circulationedge.authorized %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
                     {% trans "Yes" %}
                 {% else %}
                     {% trans "No" %}
