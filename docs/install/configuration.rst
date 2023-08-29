@@ -6,7 +6,7 @@ Configuration
 Basic configuration update
 --------------------------
 
-To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:::
+To update basic configuration (server name, database connection, languages, or set workers number or timeout), run::
 
     sudo dpkg-reconfigure geotrek-admin
 
@@ -19,7 +19,7 @@ NGINX configuration
 
 NGINX configuration is controlled by Geotrek-admin and will be erased at each upgrade.
 Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or ``/etc/nginx/sites-enable/geotrek.conf``.
-Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then run:::
+Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then run::
 
     sudo dpkg-reconfigure geotrek-admin
 
@@ -27,7 +27,7 @@ Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.
 Activate SSL / HTTPS
 --------------------
 
-To activate https, you need firstly to change ``custom.py`` and add :::
+To activate https, you need firstly to change ``custom.py`` and add ::
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

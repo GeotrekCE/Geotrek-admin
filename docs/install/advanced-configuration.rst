@@ -11,11 +11,11 @@ Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/cu
 The list of all overridable setting and default values can be found
 `there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-After any change in ``custom.py``, run:::
+After any change in ``custom.py``, run::
 
     sudo service geotrek restart
 
-Sometimes you also have to run:::
+Sometimes you also have to run::
 
     sudo dpkg-reconfigure -u geotrek-admin
 
@@ -52,7 +52,7 @@ recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 
 You can test your configuration with the following command. A fake email will
-be sent to the managers:::
+be sent to the managers::
 
     sudo geotrek sendtestemail --managers
 
@@ -102,7 +102,7 @@ Shutdown useless services
 Now that your instances point the shared server. You can shutdown the useless
 services on each instance.
 
-Start by stopping everything :::
+Start by stopping everything ::
 
     sudo systemctl stop geotrek
 
@@ -122,7 +122,7 @@ External authent
 
 You can authenticate user against a remote database table or view.
 
-To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:::
+To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``::
 
     AUTHENT_DATABASE = 'authent'
     DATABASES['authent'] = {
@@ -320,12 +320,12 @@ add the following code:
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
-You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):::
+You can also insert diving minimal data (default practices, difficulties, levels and group permissions values)::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
-You can insert licenses of attachments with this command :::
+You can insert licenses of attachments with this command ::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
@@ -343,7 +343,7 @@ add the following code:
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
-You can also insert Outdoor minimal data:::
+You can also insert Outdoor minimal data::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
@@ -547,15 +547,11 @@ files will be opened in the browser :
 Resizing uploaded pictures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD`` :
-
-::
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD``::
 
     PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
 
-These corresponding height/width parameters can be overriden to select resized image size :
-
-::
+These corresponding height/width parameters can be overriden to select resized image size::
 
     PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
@@ -564,16 +560,12 @@ These corresponding height/width parameters can be overriden to select resized i
 Prohibit usage of big pictures and small width / height
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to prohibit the usage of heavy pictures :
-
-::
+If you want to prohibit the usage of heavy pictures::
 
     PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
 
 
-If you want to prohibit the usage of small pictures in pixels :
-
-::
+If you want to prohibit the usage of small pictures in pixels::
 
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
@@ -585,9 +577,7 @@ Prohibit usage of certain file types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Paperclip will only accept attachment files matching a list of allowed extensions.
-Here is the default value for this setting, which you can extend if needed :
-
-::
+Here is the default value for this setting, which you can extend if needed::
 
     PAPERCLIP_ALLOWED_EXTENSIONS = [
         'jpeg',
@@ -615,15 +605,11 @@ Here is the default value for this setting, which you can extend if needed :
         'odg',
     ]
 
-It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax :
-
-::
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax::
 
     PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
 
-You can also entirely deactivate these checks with the following :
-
-::
+You can also entirely deactivate these checks with the following::
 
     PAPERCLIP_ALLOWED_EXTENSIONS = None
 
@@ -735,9 +721,7 @@ See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for d
 Copyright on pictures
 ~~~~~~~~~~~~~~~~~~~~~
 
-If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
-
-::
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this::
 
     THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
@@ -820,9 +804,7 @@ Example of content for the French translation overriding:
     msgid "District"
     msgstr "Pays"
 
-Apply changes (French translation in this example) :
-
-::
+Apply changes (French translation in this example)::
 
     cd /opt/geotrek-admin/var/conf/extra_locale
     sudo chown geotrek. fr/LC_MESSAGES/
@@ -844,9 +826,7 @@ Treks, touristic contents, touristic events, outdoor sites and courses can be ex
 
 Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
 To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file :
-
-::
+to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file::
 
     {% extends "trekking/trek_public_pdf.html" %}
 
@@ -856,9 +836,7 @@ To override for example the description block of trek PDF, copy and change the `
 in your ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
 
 It is also possible to use color defined for practice for pictogram by adding in your
-``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file :
-
-::
+``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file::
 
     {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
 
