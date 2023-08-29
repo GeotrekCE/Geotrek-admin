@@ -380,7 +380,7 @@ class CirculationEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     circulation_type = models.ForeignKey(CirculationType, verbose_name=_("Circulation type"), on_delete=models.PROTECT)
     authorized = models.BooleanField(verbose_name=_("Authorized"), default=None, null=True)
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True)
 
     geometry_types_allowed = ["LINESTRING"]
 
