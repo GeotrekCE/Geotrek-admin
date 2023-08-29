@@ -11,15 +11,11 @@ Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/cu
 The list of all overridable setting and default values can be found
 `there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-After any change in ``custom.py``, run:
-
-::
+After any change in ``custom.py``, run:::
 
     sudo service geotrek restart
 
-Sometimes you also have to run:
-
-::
+Sometimes you also have to run:::
 
     sudo dpkg-reconfigure -u geotrek-admin
 
@@ -56,9 +52,7 @@ recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 
 You can test your configuration with the following command. A fake email will
-be sent to the managers:
-
-::
+be sent to the managers:::
 
     sudo geotrek sendtestemail --managers
 
@@ -108,9 +102,7 @@ Shutdown useless services
 Now that your instances point the shared server. You can shutdown the useless
 services on each instance.
 
-Start by stopping everything :
-
-::
+Start by stopping everything :::
 
     sudo systemctl stop geotrek
 
@@ -130,9 +122,7 @@ External authent
 
 You can authenticate user against a remote database table or view.
 
-To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
-
-::
+To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:::
 
     AUTHENT_DATABASE = 'authent'
     DATABASES['authent'] = {
@@ -330,16 +320,12 @@ add the following code:
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
-You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
-
-::
+You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
-You can insert licenses of attachments with this command :
-
-::
+You can insert licenses of attachments with this command :::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
@@ -357,9 +343,7 @@ add the following code:
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
-You can also insert Outdoor minimal data:
-
-::
+You can also insert Outdoor minimal data:::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
