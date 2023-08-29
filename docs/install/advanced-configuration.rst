@@ -170,6 +170,119 @@ Expected columns in table/view are :
     for more details.
 
 
+Map settings
+------------
+
+Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
+
+You can change or add more basemaps layers.
+
+Specify the tiles URLs this way in your custom Django setting file:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
+        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
+    ]
+
+Example with IGN and OSM basemaps :
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Plan V2', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&EXCEPTIONS=image/png&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Ortho', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('IGN Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
+        ('OSM', 'https//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'),
+        ('OSM Stamen Terrain', '//tile.stamen.com/terrain/{z}/{x}/{y}.jpg', '© OpenStreetMap contributors / Stamen Design'),
+        ('OpenTopoMap', 'https//a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
+    ]
+
+To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
+
+Map layers colors and style
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All layers colors can be customized from the settings.
+See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
+layer style.
+
+* To apply these style changes, re-run ``sudo systemctl restart geotrek``.
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+
+Or change just one parameter (the opacity for example) :
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+
+
+Regarding colors that depend from database content, such as land layers
+(physical types, work management...) or restricted areas. We use a specific
+setting that receives a list of colors :
+
+.. code-block :: python
+
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
+
+
+See the default values in ``geotrek/settings/base.py`` for the complete list
+of available styles.
+
+**Restart** the application for changes to take effect.
+
+
+External raster layers
+~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to add overlay tiles layer on maps. For example, it can be useful to:
+
+* Get the cadastral parcels on top of satellite images
+* Home made layers (*with Tilemill or QGisMapserver for example*).
+  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
+  that are marked as invisible in the database!
+
+In ``custom.py``, just add the following lines:
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
+        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+    ]
+
+
+**Expected properties:**
+
+For ``GeoJSON`` files, you can provide the following properties :
+
+* ``title``: string
+* ``description``: string
+* ``website``: string
+* ``phone``: string
+* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
+* ``category``: object with ``id`` and ``label`` attributes
+
+
+Disable darker map backgrounds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since IGN map backgrounds are very dense and colourful, a dark opacity is
+applied. In order to disable, change this MapEntity setting :
+
+.. code-block :: python
+
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
+
+
 Modules and components
 ----------------------
 
@@ -433,119 +546,6 @@ Or if you want to erase emails for reports older than 90 days
     geotrek erase_emails --days 90
 
 
-Map settings
-------------
-
-Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
-
-You can change or add more basemaps layers.
-
-Specify the tiles URLs this way in your custom Django setting file:
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['TILES'] = [
-        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
-        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
-    ]
-
-Example with IGN and OSM basemaps :
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['TILES'] = [
-        ('IGN Scan', '//wxs.ign.fr/YOURAPIKEY/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Plan V2', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&EXCEPTIONS=image/png&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Ortho', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('IGN Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '© IGN Geoportail'),
-        ('OSM', 'https//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap contributors'),
-        ('OSM Stamen Terrain', '//tile.stamen.com/terrain/{z}/{x}/{y}.jpg', '© OpenStreetMap contributors / Stamen Design'),
-        ('OpenTopoMap', 'https//a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
-    ]
-
-To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
-
-Map layers colors and style
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All layers colors can be customized from the settings.
-See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
-layer style.
-
-* To apply these style changes, re-run ``sudo systemctl restart geotrek``.
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
-
-Or change just one parameter (the opacity for example) :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
-
-
-Regarding colors that depend from database content, such as land layers
-(physical types, work management...) or restricted areas. We use a specific
-setting that receives a list of colors :
-
-.. code-block :: python
-
-    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
-
-
-See the default values in ``geotrek/settings/base.py`` for the complete list
-of available styles.
-
-**Restart** the application for changes to take effect.
-
-
-External raster layers
-~~~~~~~~~~~~~~~~~~~~~~
-
-It is possible to add overlay tiles layer on maps. For example, it can be useful to:
-
-* Get the cadastral parcels on top of satellite images
-* Home made layers (*with Tilemill or QGisMapserver for example*).
-  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
-  that are marked as invisible in the database!
-
-In ``custom.py``, just add the following lines:
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['OVERLAYS'] = [
-        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
-        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-    ]
-
-
-**Expected properties:**
-
-For ``GeoJSON`` files, you can provide the following properties :
-
-* ``title``: string
-* ``description``: string
-* ``website``: string
-* ``phone``: string
-* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
-* ``category``: object with ``id`` and ``label`` attributes
-
-
-Disable darker map backgrounds
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Since IGN map backgrounds are very dense and colourful, a dark opacity is
-applied. In order to disable, change this MapEntity setting :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
-
-
 Attachments
 -----------
 
@@ -644,6 +644,68 @@ You can also entirely deactivate these checks with the following :
     PAPERCLIP_ALLOWED_EXTENSIONS = None
 
 These 2 settings will also not allow downloading images from the parsers.
+
+
+Interface
+---------
+
+Configure columns displayed in lists views and exports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each module, use the following syntax to configure columns to display in the main table.
+
+::
+
+    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
+
+
+For each module, use the following syntax to configure columns to export as CSV or SHP.
+
+::
+
+    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
+
+
+Please refer to the "settings detail" section for a complete list of modules and available columms.
+
+Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
+
+::
+
+    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+
+Configure form fields in creation views
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each module, use the following syntax to configure fields to hide in the creation form.
+
+::
+
+    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+
+
+Please refer to the "settings detail" section for a complete list of modules and hideable fields.
+
+
+Configure form fields required or needed for review or publication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set 'error_on_publication' to avoid publication without completeness fields
+and 'error_on_review' if you want this fields to be required before sending to review.
+
+::
+
+    COMPLETENESS_LEVEL = 'warning'
+
+For each module, configure fields to be needed or required on review or publication
+
+::
+
+    COMPLETENESS_FIELDS = {
+        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+        'dive': ['practice', 'difficulty', 'description_teaser'],
+    }
 
 
 Edition
@@ -917,65 +979,3 @@ You might also need to deploy logo images in the following places :
 * ``var/conf/extra_static/images/favicon.png``
 * ``var/conf/extra_static/images/logo-login.png``
 * ``var/conf/extra_static/images/logo-header.png``
-
-
-Interface
----------
-
-Configure columns displayed in lists views and exports
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For each module, use the following syntax to configure columns to display in the main table.
-
-::
-
-    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
-
-
-For each module, use the following syntax to configure columns to export as CSV or SHP.
-
-::
-
-    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
-
-
-Please refer to the "settings detail" section for a complete list of modules and available columms.
-
-Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
-
-::
-
-    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
-
-
-Configure form fields in creation views
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For each module, use the following syntax to configure fields to hide in the creation form.
-
-::
-
-    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
-
-
-Please refer to the "settings detail" section for a complete list of modules and hideable fields.
-
-
-Configure form fields required or needed for review or publication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Set 'error_on_publication' to avoid publication without completeness fields
-and 'error_on_review' if you want this fields to be required before sending to review.
-
-::
-
-    COMPLETENESS_LEVEL = 'warning'
-
-For each module, configure fields to be needed or required on review or publication
-
-::
-
-    COMPLETENESS_FIELDS = {
-        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
-        'dive': ['practice', 'difficulty', 'description_teaser'],
-    }
