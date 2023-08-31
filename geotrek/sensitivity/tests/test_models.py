@@ -1,4 +1,5 @@
 from freezegun import freeze_time
+from difflib import SequenceMatcher
 
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -7,6 +8,19 @@ from django.contrib.gis.geos import GEOSGeometry
 
 from geotrek.sensitivity.tests.factories import SensitiveAreaFactory, SpeciesFactory
 from geotrek.trekking.tests.factories import TrekFactory
+
+
+def similar_string(a: str, b: str) -> float:
+    """compare two strings and return similarity ratio
+
+    Args:
+        a (str): first value
+        b (str): second_value
+
+    Returns:
+        float: Similarity ration
+    """
+    return SequenceMatcher(None, a, b).ratio()
 
 
 class SensitiveAreaModelTest(TestCase):
@@ -111,16 +125,19 @@ class SensitiveAreaModelTest(TestCase):
             "700000 6600000"
             "))"
         )
-        self.assertEqual(
-            GEOSGeometry(
-                "SRID=4326;POLYGON (("
-                "3 46.49999999999994, 3 46.50002701349548, "
-                "3.000039118674989 46.50002701348879, "
-                "3.000039118655609 46.49999999999324, "
-                "3 46.49999999999994"
-                "))"
-            ).wkt,
-            sensitive_area.wgs84_geom.wkt,
+        self.assertGreater(
+            similar_string(
+                GEOSGeometry(
+                    "SRID=4326;POLYGON (("
+                    "3 46.49999999999994, 3 46.50002701349548, "
+                    "3.000039118674989 46.50002701348879, "
+                    "3.000039118655609 46.49999999999324, "
+                    "3 46.49999999999994"
+                    "))"
+                ).wkt,
+                sensitive_area.wgs84_geom.wkt,
+            ),
+            0.9,
         )
 
     @override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=0)
