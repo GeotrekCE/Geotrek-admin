@@ -35,7 +35,7 @@
     {{object.annotations|json_script:"geojson_annotations"}}
     <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
     <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
-    <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+    <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
     <script>
         initializeViewer("{{base_tile_url}}", edit_annotations=true);
     </script>

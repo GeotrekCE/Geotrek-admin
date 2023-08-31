@@ -22,11 +22,9 @@ CHANGELOG
 - Filter by begin date by default on touristic events in APIv2 (#3597)
 - Add model LinePictogram for each line (#3327)
 - Create Organizer model for touristic events, configurable in admin site (#3625)
-<<<<<<< HEAD
 - Improve CSS of the altitude profile of altimetry (#3657)
-=======
 - Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
->>>>>>> Remove elliptic annotations from HD Views
+- Serve GeoJS script locally
 
 **Documentation**
 
