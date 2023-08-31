@@ -35,7 +35,7 @@ fieldset {
 }
 
 .form-panel#annotations {
-  flex-basis: 70%;
+  flex-basis: 55%;
 }
 
 .loader-wrapper {
