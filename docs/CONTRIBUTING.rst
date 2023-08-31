@@ -11,7 +11,7 @@ Conventions
 * Elegant and generic is good, simple is better
 * Separate bug fixes and new features in several pull requests.
 * Open a new Pull Request in "Draft" status until tests passed. Use at least 'bug', 'improvement' or 'feature' label.
-* Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
+* Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``), they should contains corresponding tag (see below)
 * Features are developed in a branch and merged from Github pull-requests.
 
 
@@ -31,6 +31,68 @@ Check TODO in the source tree:
 ::
 
    find geotrek | xargs egrep -n -i '(TODO|XXX|temporary|FIXME)'
+
+
+Pull requests
+-------------
+
+Before creating a pull request, ensure you follow thoses rules :
+
+* Follow the guidelines of this page
+* Self-review your code
+* Add comments in your code, particularly in hard-to-understand areas
+* Make corresponding changes to the documentation
+* There is tests that prove my fix is effective or that my feature works.
+* All new lines of code are tested
+* There is an entry in the changelog file
+
+Pull requests are following a naming convention in order to easily establish their perimeter. You can use one of those prefix:
+
++-----------------+---------------+------------------------+-----------------------+---------+
+| Tag             | Branch prefix | Emoji                  | Emoji code            | Unicode |
++=================+===============+========================+=======================+=========+
+| Improvements    | impr\_        | :dizzy:                | dizzy                 | 💫      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Bug fixes       | bug\_         | :bug:                  | bug                   | 🐛      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Features        | feat\_        | :sparkles:             | sparkles              | ✨      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Documentation   | doc\_         | :pencil:               | memo                  | 📝      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Maintenance     | maint\_       | :construction_site:    | building_construction | 🏗       |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Refactor        | ref\_         | :recycle:              | recycle               | ♻       |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Dependencies    | dep\_         | :arrow_up:             | arrow_up              | ⬆       |
++-----------------+---------------+------------------------+-----------------------+---------+
+| CI/CD           | cicd\_        | :construction_worker:  | construction_worker   | 👷      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Performances    | perf\_        | :zap:                  | zap                   | ⚡      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Tooling         | tool\_        | :hammer:               | hammer                | 🔨      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| UI/UX           | uiux\_        | :lipstick:             | lipstick              | 💄      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Security        | sec\_         | :lock:                 | lock                  | 🔒      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Translations    | trans\_       | :globe_with_meridians: | globe_with_meridians  | 🌐      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Hotfix          | hot\_         | :ambulance:            | ambulance             | 🚑      |
++-----------------+---------------+------------------------+-----------------------+---------+
+| Breaking change | break\_       | :boom:                 | boom                  | 💥      |
++-----------------+---------------+------------------------+-----------------------+---------+
+
+Tags used only for commits:
+
+========= =========================== =========================
+Tag       Emoji                       Emoji code
+========= =========================== =========================
+Codestyle :art:                       art
+Clean     :fire:                      fire
+Tests     :white_check_mark:          white_check_mark
+Release   :bookmark:                  bookmark
+Merge     :twisted_rightwards_arrows: twisted_rightwards_arrows
+========= =========================== =========================
 
 
 Release

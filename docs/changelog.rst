@@ -8,6 +8,7 @@ CHANGELOG
 **Documentation**
 
 - Update loading_data section to add information about MNT values that needs to be integer (#1891)
+- Add details and template for the pull requests process
 
 
 2.100.1 (2023-09-05)
