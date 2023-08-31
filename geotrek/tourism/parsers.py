@@ -289,6 +289,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     natural_keys = {
         'themes': 'label',
         'type': 'type',
+        'organizer': 'label',
         'source': 'name',
         'portal': 'name',
     }
@@ -300,6 +301,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         self.field_options = self.field_options.copy()
         self.field_options['themes'] = {'create': True}
         self.field_options['type'] = {'create': True}
+        self.field_options['organizer'] = {'create': True}
         if self.type is not None:
             self.constant_fields['type'] = self.type
         if self.themes is not None:
@@ -946,6 +948,7 @@ class LEITouristicEventParser(LEIParser):
     type = None
     natural_keys = {
         'category': 'label',
+        'organizer': 'label',
         'geom': {'required': True},
         'type': 'type',
     }
@@ -965,7 +968,7 @@ class LEITouristicEventParser(LEIParser):
 
     def filter_organizer(self, src, val):
         (first, second) = val
-        return first if first else second
+        return self.apply_filter('organizer', src, [first if first else second])
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val

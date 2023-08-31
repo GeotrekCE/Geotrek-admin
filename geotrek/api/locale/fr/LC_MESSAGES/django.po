@@ -384,6 +384,11 @@ msgid "Filter by one or more Place id, comma-separated."
 msgstr ""
 "Filtrer par un ou plusieurs id de lieu d'évènement, séparés par des virgules."
 
+msgid "Filter by one or more organizer, comma-separated."
+msgstr ""
+"Filtrer par un ou plusieurs id d'organisateur d'évènements, "
+"séparés par des virgules."
+
 msgid "Filter events on bookable boolean : true/false expected"
 msgstr "Filtre les évènements réservables : true/false attendu"
 

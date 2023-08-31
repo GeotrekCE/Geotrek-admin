@@ -6,6 +6,7 @@ import re
 from datetime import timedelta
 from zipfile import ZipFile, is_zipfile
 
+import logging
 import redis
 from django.apps import apps
 from django.conf import settings
@@ -29,6 +30,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
+from django.views.defaults import page_not_found
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
@@ -69,6 +71,15 @@ from .tasks import import_datas, import_datas_from_web, launch_sync_rando
 from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
                                   discover_available_parsers)
+
+logger = logging.getLogger(__name__)
+
+
+def handler404(request, exception, template_name="404.html"):
+    if "api/v2" in request.get_full_path():
+        logger.warning(f'{request.get_full_path()} has been tried')
+        return JsonResponse({"page": 'does not exist'}, status=404)
+    return page_not_found(request, exception, template_name="404.html")
 
 
 class Meta(MetaMixin, TemplateView):

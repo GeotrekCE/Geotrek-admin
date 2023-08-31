@@ -5,10 +5,27 @@ CHANGELOG
 2.99.0+dev (XXXX-XX-XX)
 -----------------------
 
+**Bug fixes**
+
+- Fix: unable to search within a list of services (#3521)
+
 **New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
+- Respond 404 JSON if page not found in API v2
+
+**Improvements**
+
 - Filter by multiple structures on Blades list (#3646)
+- Add a multiselect to filter the Blades by more than one manager
+- Filter by begin date by default on touristic events in APIv2 (#3597)
+- Add model LinePictogram for each line (#3327)
+- Create Organizer model for touristic events, configurable in admin site (#3625)
+
+**Documentation**
+
+- Add configuration file for readthedocs
+
 
 2.99.0 (2023-07-18)
 -----------------------

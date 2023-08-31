@@ -80,7 +80,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"organizer" }}</th>
-            <td>{{ object.organizer }}</td>
+            <td>{% if object.organizer %}{{ object.organizer }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"speaker" }}</th>

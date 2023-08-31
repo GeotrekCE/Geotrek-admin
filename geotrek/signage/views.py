@@ -196,7 +196,7 @@ class BladeFormatList(MapEntityFormat, BladeList):
     mandatory_columns = ['id']
     default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
                              'condition', 'coordinates']
-    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
+    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictograms']
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()

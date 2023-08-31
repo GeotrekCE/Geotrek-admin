@@ -96,6 +96,15 @@ class BladeFactory(factory.django.DjangoModelFactory):
             LineFactory.create(blade=obj)
 
 
+class LinePictogramFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.LinePictogram
+
+    label = factory.Sequence(lambda n: "Label %s" % n)
+    code = factory.Sequence(lambda n: "Code %s" % n)
+    description = factory.Sequence(lambda n: "Description %s" % n)
+
+
 class LineFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Line
@@ -104,6 +113,10 @@ class LineFactory(factory.django.DjangoModelFactory):
     direction = factory.SubFactory(LineDirectionFactory)
     text = "Text"
     distance = 42.5
-    pictogram_name = "Pictogram name"
     time = "0:42:30"
     blade = factory.SubFactory(BladeFactory)
+
+    @factory.post_generation
+    def pictograms(obj, create, extracted=None, **kwargs):
+        if create:
+            obj.pictograms.add(LinePictogramFactory.create())

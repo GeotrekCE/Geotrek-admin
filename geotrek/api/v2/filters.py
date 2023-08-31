@@ -14,8 +14,8 @@ from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, \
-    TouristicEventType
+from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
+    TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
@@ -502,6 +502,12 @@ class TouristicEventFilterSet(filters.FilterSet):
         queryset=TouristicEventPlace.objects.all(),
         help_text=_("Filter by one or more Place id, comma-separated.")
     )
+    organizer = filters.ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventOrganizer.objects.all(),
+        help_text=_("Filter by one or more organizer, comma-separated."),
+    )
+
     help_texts = {
         'bookable': _("Filter events on bookable boolean : true/false expected"),
         'cancelled': _("Filter events on cancelled boolean : true/false expected")
@@ -515,7 +521,7 @@ class TouristicEventFilterSet(filters.FilterSet):
 
     class Meta:
         model = TouristicEvent
-        fields = ['cancelled', 'bookable', 'place']
+        fields = ['cancelled', 'bookable', 'place', 'organizer']
 
 
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):

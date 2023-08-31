@@ -455,7 +455,7 @@ class ServiceList(CustomColumnsMixin, MapEntityList):
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
-    searchable_columns = ['id', 'name']
+    searchable_columns = ['id']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):
