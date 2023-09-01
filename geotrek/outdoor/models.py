@@ -137,6 +137,16 @@ def log_cascade_deletion_from_coursetype_practice(sender, instance, using, **kwa
     log_cascade_deletion(sender, instance, CourseType, 'practice')
 
 
+class ChildSitesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child sites linked to this site")
+
+
+class ChildCoursesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child courses linked to this site")
+
+
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
            StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
@@ -334,6 +344,14 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         super().save(*args, **kwargs)
         self.refresh_from_db()
 
+    def delete(self, *args, **kwargs):
+        if self.children.exists():
+            raise ChildSitesExistError()
+        elif self.children_courses.exists():
+            raise ChildCoursesExistError()
+        else:
+            super().delete(*args, **kwargs)
+
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
         return intersecting(queryset_or_model(queryset, cls), obj=outdoor_obj)
@@ -513,7 +531,7 @@ Blade.add_property('courses', lambda self: intersecting(Course, self), _("Course
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
 Course.add_property('sites', Site.outdoor_sites, _("Sites"))
-Course.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Course.add_property('courses', Course.outdoor_courses, _("Courses"))
 Course.add_property('treks', Trek.outdoor_treks, _("Treks"))
 Course.add_property('services', Service.outdoor_services, _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
@@ -523,4 +541,4 @@ Course.add_property('touristic_contents', TouristicContent.outdoor_touristic_con
 Course.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
 
-Site.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Site.add_property('courses', Course.outdoor_courses, _("Courses"))

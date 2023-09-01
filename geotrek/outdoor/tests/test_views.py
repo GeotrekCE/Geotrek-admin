@@ -10,6 +10,7 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.tests.factories import (RecordSourceFactory,
                                             TargetPortalFactory)
 from geotrek.outdoor import views as course_views
+from geotrek.outdoor.models import Site
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 from geotrek.trekking.tests.factories import POIFactory
@@ -130,3 +131,33 @@ class CourseCustomViewTests(TestCase):
         self.assertEqual(response.json()[0]['name'], 'course_with_ref_points')
         data = "{'type': 'MultiPoint', 'coordinates': [[12.0, 12.0]]}"
         self.assertEqual(str(response.json()[0]['points_reference']), data)
+
+
+class SiteDeleteTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
+
+    def test_view_delete_site(self):
+        self.site_1 = SiteFactory.create(name="site_1")
+        response = self.client.get(reverse('outdoor:site_delete', args=['%s' % self.site_1.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Do you really wish to delete <strong>%s</strong> ?' % (self.site_1.name))
+
+        self.site_2 = SiteFactory.create(name="site_2")
+        self.site_3 = SiteFactory.create(name="site_3", parent=self.site_2)
+        response = self.client.get(reverse('outdoor:site_delete', args=['%s' % self.site_2.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "You can't delete <strong>%s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding." % (self.site_2.name))
+
+    def test_delete_site(self):
+        site_1 = SiteFactory.create(name="site_1")
+        site_2 = SiteFactory.create(name="site_2")
+        self.assertEqual(Site.objects.count(), 2)
+        response = self.client.post(reverse('outdoor:site_delete', args=['%s' % site_2.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Site.objects.count(), 1)
+        self.assertEqual(Site.objects.filter(pk=site_1.pk).exists(), True)

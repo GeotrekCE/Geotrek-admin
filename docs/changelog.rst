@@ -8,12 +8,14 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: unable to search within a list of services (#3521)
-- Unpublish trek in all languages when path is deleted (#1321)
+- Fix: Unpublish trek in all languages when path is deleted (#1321)
+
 
 **New features**
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
 - Respond 404 JSON if page not found in API v2
+
 
 **Improvements**
 
@@ -25,6 +27,7 @@ CHANGELOG
 - Improve CSS of the altitude profile of altimetry (#3657)
 - Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
 - Serve GeoJS script locally
+- To delete parent outdoor sites you must first delete their children (#3151)
 
 **Documentation**
 
