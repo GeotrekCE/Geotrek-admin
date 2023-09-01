@@ -23,6 +23,8 @@ CHANGELOG
 - Add model LinePictogram for each line (#3327)
 - Create Organizer model for touristic events, configurable in admin site (#3625)
 - Improve CSS of the altitude profile of altimetry (#3657)
+- Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
+- Serve GeoJS script locally
 
 **Documentation**
 
