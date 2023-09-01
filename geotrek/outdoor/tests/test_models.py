@@ -78,6 +78,14 @@ class SiteTest(TestCase):
         self.child_site.delete()
         self.child_course.delete()
 
+    def test_duplicate_site_doesnt_duplicate_children(self):
+        self.site_1 = SiteFactory.create(name="parent_site")
+        self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
+        self.assertEqual(Site.objects.count(), 2)
+        self.site_1.duplicate()
+        # Means that only the parent_site is duplicated and not his child
+        self.assertEqual(Site.objects.count(), 3)
+
 
 class SiteSuperTest(TestCase):
     @classmethod

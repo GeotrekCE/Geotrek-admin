@@ -9,7 +9,7 @@ CHANGELOG
 
 - Fix: unable to search within a list of services (#3521)
 - Fix: Unpublish trek in all languages when path is deleted (#1321)
-
+- Fix: duplication on sites now does not duplicate children sites (#3665)
 
 **New features**
 
