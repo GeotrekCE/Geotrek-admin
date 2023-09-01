@@ -356,19 +356,19 @@ msgstr "Ajouter un site frère"
 
 #, python-format
 msgid ""
-"You can't delete <strong>%(object)s</strong> because it has child outdoor "
-"sites associated with it. Modify or delete these child outdoor sites before "
-"proceeding."
+"You can't delete <strong>%(object)s</strong> because it has children courses "
+"or sites. To be able to delete a parent site, you need to delete the children "
+"first."
 msgstr ""
 "Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites "
-"outdoor enfants y sont associés. Modifiez ou supprimez ces sites "
-"outdoorenfants avant de poursuivre."
+"ou parcours enfants lui sont associés. Pour pouvoir supprimer un site "
+"parent, il faut au préalable supprimer ses enfants."
 
 msgid "Child outdoor sites linked to this site"
-msgstr "Sites outdoor enfants liés à ce site"
+msgstr "Sites outdoor enfants de ce site"
 
 msgid "Child outdoor courses linked to this site"
-msgstr "Courses outdoor enfants liés à ce site"
+msgstr "Courses outdoor enfants de ce site"
 
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
