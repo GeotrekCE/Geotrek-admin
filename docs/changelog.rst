@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: unable to search within a list of services (#3521)
+- Unpublish trek in all languages when path is deleted (#1321)
 
 **New features**
 
