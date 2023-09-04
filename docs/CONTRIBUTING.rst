@@ -46,53 +46,53 @@ Before creating a pull request, ensure you follow thoses rules :
 * All new lines of code are tested
 * There is an entry in the changelog file
 
-Pull requests are following a naming convention in order to easily establish their perimeter. You can use one of those prefix:
+It is important to add a label to the pull request corresponding to the perimeter. Release notes are generated according to labels of pull requests. This is the list of available labels for pull requests:
 
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Tag             | Branch prefix | Emoji                  | Emoji code            | Unicode |
-+=================+===============+========================+=======================+=========+
-| Improvements    | impr\_        | :dizzy:                | dizzy                 | 💫      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Bug fixes       | bug\_         | :bug:                  | bug                   | 🐛      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Features        | feat\_        | :sparkles:             | sparkles              | ✨      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Documentation   | doc\_         | :pencil:               | memo                  | 📝      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Maintenance     | maint\_       | :construction_site:    | building_construction | 🏗       |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Refactor        | ref\_         | :recycle:              | recycle               | ♻       |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Dependencies    | dep\_         | :arrow_up:             | arrow_up              | ⬆       |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| CI/CD           | cicd\_        | :construction_worker:  | construction_worker   | 👷      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Performances    | perf\_        | :zap:                  | zap                   | ⚡      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Tooling         | tool\_        | :hammer:               | hammer                | 🔨      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| UI/UX           | uiux\_        | :lipstick:             | lipstick              | 💄      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Security        | sec\_         | :lock:                 | lock                  | 🔒      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Translations    | trans\_       | :globe_with_meridians: | globe_with_meridians  | 🌐      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Hotfix          | hot\_         | :ambulance:            | ambulance             | 🚑      |
-+-----------------+---------------+------------------------+-----------------------+---------+
-| Breaking change | break\_       | :boom:                 | boom                  | 💥      |
-+-----------------+---------------+------------------------+-----------------------+---------+
++-----------------+---------------+-----------------------+---------+
+| Tag             | Branch prefix | Emoji code            | Unicode |
++=================+===============+=======================+=========+
+| Improvements    | impr\_        | dizzy                 | 💫      |
++-----------------+---------------+-----------------------+---------+
+| Bug fixes       | bug\_         | bug                   | 🐛      |
++-----------------+---------------+-----------------------+---------+
+| Features        | feat\_        | sparkles              | ✨      |
++-----------------+---------------+-----------------------+---------+
+| Documentation   | doc\_         | memo                  | 📝      |
++-----------------+---------------+-----------------------+---------+
+| Maintenance     | maint\_       | building_construction | 🏗       |
++-----------------+---------------+-----------------------+---------+
+| Refactor        | ref\_         | recycle               | ♻       |
++-----------------+---------------+-----------------------+---------+
+| Dependencies    | dep\_         | arrow_up              | ⬆       |
++-----------------+---------------+-----------------------+---------+
+| CI/CD           | cicd\_        | construction_worker   | 👷      |
++-----------------+---------------+-----------------------+---------+
+| Performances    | perf\_        | zap                   | ⚡      |
++-----------------+---------------+-----------------------+---------+
+| UI/UX           | uiux\_        | lipstick              | 💄      |
++-----------------+---------------+-----------------------+---------+
+| Security        | sec\_         | lock                  | 🔒      |
++-----------------+---------------+-----------------------+---------+
+| Translations    | trans\_       | globe_with_meridians  | 🌐      |
++-----------------+---------------+-----------------------+---------+
+| Hotfix          | hot\_         | ambulance             | 🚑      |
++-----------------+---------------+-----------------------+---------+
+| Breaking change | break\_       | boom                  | 💥      |
++-----------------+---------------+-----------------------+---------+
 
-Tags used only for commits:
+Commits in pull requests are following a naming convention in order to easily establish their perimeter. Commit is formated as ``emoji [tag] description of commit``.
 
-========= =========================== =========================
-Tag       Emoji                       Emoji code
-========= =========================== =========================
-Codestyle :art:                       art
-Clean     :fire:                      fire
-Tests     :white_check_mark:          white_check_mark
-Release   :bookmark:                  bookmark
-Merge     :twisted_rightwards_arrows: twisted_rightwards_arrows
-========= =========================== =========================
+You can use one of the above prefix for your commits but also one of the following (tags used only for commits, not for pull requests):
+
+========= ========================= ========
+Tag       Emoji code                Unicode
+========= ========================= ========
+Codestyle art                       🎨
+Clean     fire                      🔥
+Tests     white_check_mark          ✅
+Release   bookmark                  🔖
+Merge     twisted_rightwards_arrows 🔀
+========= ========================= ========
 
 
 Release

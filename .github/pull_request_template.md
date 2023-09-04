@@ -19,10 +19,10 @@
 - [ ] I have made corresponding changes to the documentation
 - [ ] I have added tests that prove my fix is effective or that my feature works.
 - [ ] New and existing unit tests pass locally with my changes
-- [ ] I prefix my PR name with the corresponding tag
-- [ ] My commits are all using prefix convention
-- [ ] If my PR is still a work in progress I have marked it as "Draft"
 - [ ] I added an entry in the changelog file
+- [ ] My commits are all using prefix convention (emoji + tag name) and references associated issues
+- [ ] I added a label to the PR corresponding to the perimeter of my contribution
+- [ ] The title of my PR mentionned the issue associated
 
 
 <!-- ⚠️ IMPORTANT : All new lines of code should be tested -->
