@@ -32,6 +32,7 @@ CHANGELOG
 **Documentation**
 
 - Add configuration file for readthedocs
+- Update architecture schema
 
 
 2.99.0 (2023-07-18)

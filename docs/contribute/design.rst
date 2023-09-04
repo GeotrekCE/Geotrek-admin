@@ -7,7 +7,7 @@ Design
 Architecture
 ------------
 
-.. image :: /images/architecture-1.0.jpg
+.. image :: /images/architecture-1.0.png
     :width: 50%
 
 * **Geotrek-admin**, the web application
