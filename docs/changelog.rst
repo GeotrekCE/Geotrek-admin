@@ -13,6 +13,8 @@ CHANGELOG
 2.100.0 (2023-09-05)
 -----------------------
 
+**DO NOT USE**
+
 **Bug fixes**
 
 - Fix: unable to search within a list of services (#3521)
