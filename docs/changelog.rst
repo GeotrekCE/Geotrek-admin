@@ -9,6 +9,14 @@ CHANGELOG
 
 - Replace broken link 
 
+**Improvements**
+
+- Add rules data on ``v_sensitivearea`` view  (#3613)
+
+**Clean**
+
+- Remove unused folder 'bulkimport' from project (#3673)
+
 
 2.100.0 (2023-09-05)
 -----------------------
@@ -37,7 +45,7 @@ CHANGELOG
 - Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
 - Serve GeoJS script locally
 - To delete parent outdoor sites you must first delete their children (#3151)
-- Add rules data on ``v_sensitivearea`` view  (#3613)
+
 
 **Documentation**
 
@@ -47,10 +55,6 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade `django-mapentity`
-
-**Clean**
-
-- Remove unused folder 'bulkimport' from project (#3673)
 
 
 2.99.0 (2023-07-18)
