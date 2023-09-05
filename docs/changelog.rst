@@ -35,6 +35,7 @@ CHANGELOG
 - Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
 - Serve GeoJS script locally
 - To delete parent outdoor sites you must first delete their children (#3151)
+- Add rules data on ``v_sensitivearea`` view  (#3613)
 
 **Documentation**
 
@@ -93,7 +94,6 @@ CHANGELOG
 **Improvements**
 
 - Improve cascading deletions logic, and log them to LogEntry model to maintain history of deletions
-- Add rules data on `v_sensitivearea` view  (#3613)
 
 
 2.98.0     (2023-03-27)
