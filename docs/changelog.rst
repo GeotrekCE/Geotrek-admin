@@ -46,6 +46,10 @@ CHANGELOG
 
 - Upgrade `django-mapentity`
 
+**Clean**
+
+- Remove unused folder 'bulkimport' from project (#3673)
+
 
 2.99.0 (2023-07-18)
 -----------------------
