@@ -5,6 +5,10 @@ CHANGELOG
 2.100.1+dev (XXXX-XX-XX)
 -------------------------
 
+**Improvements**
+
+- Remove 'review' field on ServiceType (#1669)
+
 **Documentation**
 
 - Update loading_data section to add information about MNT values that needs to be integer (#1891)

@@ -1733,7 +1733,6 @@
     "fields": {
       "name_fr": "Eau potable",
       "name": "Drinking water",
-      "review": false,
       "pictogram": "upload/drinking_water.svg",
       "practices": [
         1,
@@ -1754,7 +1753,6 @@
     "fields": {
       "name_fr": "Descente pentue",
       "name": "Steep descent",
-      "review": false,
       "pictogram": "upload/steep_descent.svg",
       "practices": [
         1,
