@@ -1,8 +1,8 @@
-geotrek-admin (2.100.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.100.0+dev) RELEASED; urgency=medium
 
-  * 
+  * New package release 
 
- -- Hugo Hasson <formation@makina-thinkpad-t495>  Tue, 05 Sep 2023 11:24:25 +0200
+ -- Hugo Hasson <hugo.hasson@makina-corpus.com>  Tue, 05 Sep 2023 15:58:07 +0200
 
 geotrek-admin (2.100.0) RELEASED; urgency=medium
 
