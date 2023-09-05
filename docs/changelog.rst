@@ -3,8 +3,11 @@ CHANGELOG
 =========
 
 2.100.0+dev (XXXX-XX-XX)
------------------------
+-------------------------
 
+**Documentation**
+
+- Replace broken link 
 
 
 2.100.0 (2023-09-05)

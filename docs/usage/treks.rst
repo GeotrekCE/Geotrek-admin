@@ -9,7 +9,7 @@ Valorisation des sentiers
 Itinérance
 ==========
 
-Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : https://www.grand-tour-ecrins.fr/fr/trek/952958-Tour-de-la-Berarde-en-3-jours.
+Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : https://www.grand-tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-Ecrins.
 
 Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y ajouter des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet.
 
