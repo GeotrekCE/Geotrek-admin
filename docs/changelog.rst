@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.99.0+dev (XXXX-XX-XX)
+2.100.0 (2023-09-05)
 -----------------------
 
 **Bug fixes**
@@ -15,7 +15,6 @@ CHANGELOG
 
 - Filter trek and outdoor site labels according to whether they are published or not (#3529)
 - Respond 404 JSON if page not found in API v2
-
 
 **Improvements**
 
@@ -33,6 +32,10 @@ CHANGELOG
 
 - Add configuration file for readthedocs
 - Update architecture schema
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
 
 
 2.99.0 (2023-07-18)
