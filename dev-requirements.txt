@@ -25,7 +25,7 @@ django-debug-toolbar==3.8.1
     # via -r dev-requirements.in
 django-extensions==3.2.1
     # via -r dev-requirements.in
-factory-boy==3.2.1
+factory-boy==3.3.0
     # via -r dev-requirements.in
 faker==16.6.1
     # via factory-boy
