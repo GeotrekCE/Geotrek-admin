@@ -3,11 +3,16 @@ CHANGELOG
 =========
 
 2.100.1+dev (XXXX-XX-XX)
--------------------------
+------------------------
 
 **Documentation**
 
 - Update loading_data section to add information about MNT values that needs to be integer (#1891)
+- Add details and template for the pull requests process
+
+**CI**
+
+- Reorganize generated release notes
 
 
 2.100.1 (2023-09-05)
