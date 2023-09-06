@@ -2478,11 +2478,14 @@ You might also need to deploy logo images in the following places :
 * ``var/conf/extra_static/images/logo-header.png``
 
 
-Synchronization settings
-------------------------
+Settings for Geotrek-rando
+--------------------------
 
 Synchro Geotrek-rando
 ~~~~~~~~~~~~~~~~~~~~~
+
+With Geotrek-rando V2, there is a synchronization mechanism to expose Geotrek-admin contents in json files
+generated automatically. This is no more used in Geotrek-rando V3.
 
 .. code-block :: python
 
@@ -2492,6 +2495,16 @@ Path on your server where the data for Geotrek-rando website will be generated
 
     *If you want to modify it, do not forget to import os at the top of the file.*
     *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
+
+.. code-block :: python
+
+    SYNC_RANDO_OPTIONS = {}
+
+Options of the sync_rando command in Geotrek-admin interface.
+
+
+Distances
+~~~~~~~~~
 
 
 .. code-block :: python
@@ -2508,6 +2521,10 @@ Distance to which tourist contents, tourist events, treks, pois, services will b
 
 Distance to which dives will be displayed.
 
+
+Limits
+~~~~~~
+
 .. code-block :: python
 
     TREK_EXPORT_POI_LIST_LIMIT = 14
@@ -2523,6 +2540,10 @@ Limit of the number of pois on treks pdf.
 Limit of the number of information desks on treks pdf.
 
     *You can put -1 if you want all the information desks*
+
+
+Cateogories
+~~~~~~~~~~~
 
 .. code-block :: python
 
@@ -2558,12 +2579,6 @@ On the Geotrek-rando v2 website, treks near other are hidden
 
 .. code-block :: python
 
-    SYNC_RANDO_OPTIONS = {}
-
-Options of the sync_rando command in Geotrek-admin interface.
-
-.. code-block :: python
-
     TREK_WITH_POIS_PICTURES = False
 
 It enables correlated pictures on Gotrek-rando v2 to be displayed in the slideshow
@@ -2589,8 +2604,8 @@ Order of all the objects without practices on Geotrek-rando website
     *Practices of diving, treks and categories of touristic contents are taken in account*
 
 
-Synchro Geotrek-mobile
-~~~~~~~~~~~~~~~~~~~~~~
+Settings for Geotrek-mobile
+---------------------------
 
 .. code-block :: python
 
@@ -2696,4 +2711,8 @@ List of all the filters enabled on mobile.
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
 
 
-|
+================
+Settings details
+================
+
+Search settings in this page to have information.
