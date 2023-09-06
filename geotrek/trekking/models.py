@@ -20,7 +20,8 @@ from mapentity.helpers import clone_attachment
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (GeotrekMapEntityMixin,
+from geotrek.common.mixins.models import (BasePublishableMixin,
+                                          GeotrekMapEntityMixin,
                                           OptionalPictogramMixin,
                                           PictogramMixin, PicturesMixin,
                                           PublishableMixin,
@@ -866,7 +867,9 @@ class POIType(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
+class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128,
+                            help_text=_("Public name (Change carefully)"))
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
