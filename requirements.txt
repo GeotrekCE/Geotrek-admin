@@ -208,7 +208,7 @@ lxml==4.9.1
     # via mapentity
 mapentity==8.5.6
     # via geotrek (setup.py)
-markdown==3.4.1
+markdown==3.4.4
     # via geotrek (setup.py)
 markupsafe==2.0.1
     # via jinja2
