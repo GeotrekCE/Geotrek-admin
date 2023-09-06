@@ -39,6 +39,9 @@ jobs:
     name: Python Unittests
     runs-on: ubuntu-latest
     container: makinacorpus/geodjango:${{ matrix.os }}
+    
+    permissions:
+      packages: write  # required to publish docker image
 
     strategy:
       matrix:
