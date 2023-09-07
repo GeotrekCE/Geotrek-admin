@@ -18,7 +18,7 @@ backports-zoneinfo[tzdata]==0.2.1
     # via
     #   celery
     #   kombu
-beautifulsoup4==4.11.1
+beautifulsoup4==4.12.2
     # via mapentity
 billiard==4.1.0
     # via celery
