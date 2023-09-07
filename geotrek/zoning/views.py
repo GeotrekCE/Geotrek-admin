@@ -11,17 +11,6 @@ from .serializers import CitySerializer, RestrictedAreaSerializer, DistrictSeria
 from ..common.functions import SimplifyPreserveTopology
 
 
-class LandLayerMixin:
-    srid = settings.API_SRID
-    precision = settings.LAYER_PRECISION_LAND
-    simplify = settings.LAYER_SIMPLIFY_LAND
-
-    @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS,
-                                 cache=settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']))
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-
 class LandGeoJSONAPIViewMixin(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
