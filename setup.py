@@ -39,6 +39,8 @@ setup(
         'env_file',
         # pinned by requirements.txt
         'pymemcache',
+        'coreschema',
+        'coreapi',
         'psycopg2',
         'pdfimpose',
         'docutils',
