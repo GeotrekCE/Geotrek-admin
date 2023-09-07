@@ -5,6 +5,7 @@ on:
     paths:
       - 'geotrek/**'
       - '.github/workflows/lint.yml'
+      - 'dev-requirements.txt'
 
 env:
   DEBIAN_FRONTEND: noninteractive
