@@ -330,7 +330,7 @@ tinycss2==1.2.1
     #   cairosvg
     #   cssselect2
     #   weasyprint
-transaction==3.0.1
+transaction==3.1.0
     # via zodb
 typing-extensions==4.7.1
     # via
