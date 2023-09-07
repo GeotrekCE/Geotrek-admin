@@ -3,9 +3,10 @@ name: Linting
 on:
   pull_request:
     paths:
-      - 'geotrek/**'
-      - '.github/workflows/lint.yml'
-      - 'dev-requirements.txt'
+      - 'geotrek/**'  # if geotrek code change
+      - '.github/workflows/lint.yml'  # if lint workflow change
+      - 'dev-requirements.txt'  # if dev-requirements.txt change
+      - 'setup.cfg'   # if lint tools configuration change
 
 env:
   DEBIAN_FRONTEND: noninteractive
