@@ -67,6 +67,12 @@ click-repl==0.2.0
     # via celery
 cligj==0.7.2
     # via fiona
+coreapi==2.3.3
+    # via geotrek (setup.py)
+coreschema==0.0.4
+    # via
+    #   coreapi
+    #   geotrek (setup.py)
 cssselect2==0.7.0
     # via
     #   cairosvg
@@ -185,6 +191,10 @@ importlib-metadata==6.0.0
     # via markdown
 inflection==0.5.1
     # via drf-yasg
+itypes==1.2.0
+    # via coreapi
+jinja2==3.1.2
+    # via coreschema
 kombu==5.2.4
     # via celery
 landez==2.5.0
@@ -280,6 +290,7 @@ redis==4.5.4
     # via geotrek (setup.py)
 requests==2.31.0
     # via
+    #   coreapi
     #   django-embed-video
     #   landez
     #   mapentity
@@ -313,7 +324,9 @@ transaction==3.0.1
 typing-extensions==4.7.1
     # via asgiref
 uritemplate==4.1.1
-    # via drf-yasg
+    # via
+    #   coreapi
+    #   drf-yasg
 urllib3==1.26.13
     # via
     #   requests
