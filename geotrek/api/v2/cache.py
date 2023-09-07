@@ -1,4 +1,4 @@
-from rest_framework_extensions.cache.mixins import RetrieveCacheResponseMixin as BaseRetrieveCacheResponseMixin,\
+from rest_framework_extensions.cache.mixins import RetrieveCacheResponseMixin as BaseRetrieveCacheResponseMixin, \
     ListCacheResponseMixin as BaseListCacheResponseMixin
 
 from geotrek.api.v2.decorators import cache_response_detail, cache_response_list
