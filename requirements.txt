@@ -14,9 +14,13 @@ async-timeout==4.0.2
     # via redis
 attrs==22.2.0
     # via fiona
+backports-zoneinfo[tzdata]==0.2.1
+    # via
+    #   celery
+    #   kombu
 beautifulsoup4==4.11.1
     # via mapentity
-billiard==3.6.4.0
+billiard==4.1.0
     # via celery
 btrees==4.10.0
     # via zodb
@@ -32,7 +36,7 @@ cairosvg==2.7.0
     # via
     #   geotrek (setup.py)
     #   weasyprint
-celery==5.2.7
+celery==5.3.4
     # via
     #   django-celery-results
     #   geotrek (setup.py)
@@ -195,7 +199,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
     # via coreschema
-kombu==5.2.4
+kombu==5.3.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
@@ -269,11 +273,12 @@ pypdf2==1.27.5
     # via pdfimpose
 pyphen==0.11.0
     # via weasyprint
+python-dateutil==2.8.2
+    # via celery
 python-magic==0.4.27
     # via paperclip
 pytz==2023.3.post1
     # via
-    #   celery
     #   datetime
     #   django
     #   django-modelcluster
@@ -307,6 +312,7 @@ six==1.16.0
     #   django-modeltranslation
     #   html5lib
     #   munch
+    #   python-dateutil
     #   zodb
 soupsieve==2.3.2
     # via beautifulsoup4
@@ -322,7 +328,13 @@ tinycss2==1.2.1
 transaction==3.0.1
     # via zodb
 typing-extensions==4.7.1
-    # via asgiref
+    # via
+    #   asgiref
+    #   kombu
+tzdata==2023.3
+    # via
+    #   backports-zoneinfo
+    #   celery
 uritemplate==4.1.1
     # via
     #   coreapi
