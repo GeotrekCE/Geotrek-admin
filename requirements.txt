@@ -10,7 +10,7 @@ appy==1.0.15
     # via django-appypod
 asgiref==3.7.2
     # via django
-async-timeout==4.0.2
+async-timeout==4.0.3
     # via redis
 attrs==22.2.0
     # via fiona
