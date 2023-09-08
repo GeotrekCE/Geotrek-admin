@@ -253,27 +253,3 @@ UML diagrams of data model
 UML diagrams of Geotrek-admin data models are available in ``docs/data-model`` directory.
 To regenerate them from PostgreSQL, install postgresql-autodoc and graphviz Ubuntu packages
 and run ``make uml``.
-
-Documentation
-=============
-
-A container based on sphinx image is created using docker-compose-dev.yml,
-documentation is built in watch mode thanks to sphinx-autobuild.
-
-Access to documentation built in html : http://0.0.0.0:8800
-
-
-Translate documentation
------------------------
-
-- Generate .pot if needed
-
-.. code-block :: python
-
-    docker-compose run --rm sphinx make gettext
-
-- Generate .po files
-
-.. code-block :: python
-
-    docker-compose run --rm sphinx sphinx-intl update -p _build/locale -l fr
