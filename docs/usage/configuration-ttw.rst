@@ -146,7 +146,7 @@ Users management
 Geotrek-admin relies on `Django authentication and permissions system <https://docs.djangoproject.com/fr/4.2/topics/auth/default/>`_.
 Users belong to groups, and permissions can be assigned at user or group-level.
 
-With groups, you can create and configure user profile, each owning specific permissions and linked to structures.
+With groups, you can create and configure user profile, each owning specific permissions.
 
 The whole configuration of users, groups and permissions is available in the *AdminSite*,
 if you did not enable *External authent* (see below).
@@ -156,21 +156,22 @@ if you did not enable *External authent* (see below).
 Users and permissions
 ---------------------
 
-A given user can have three basic permissions level :
+A given user can have three basic status level:
 
--  **Actif** : permet de déterminer si l'utilisateur peut se connecter à Geotrek-Admin ou non.
+-  **Active**: if checked, the user can connect to Geotrek-admin
 
   Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer.
   En effet supprimer le compte supprimera également par exemple toutes les entrées dans l'historique de Geotrek associées à ce compte.
 
--  **Statut équipe** : si la case est cochée l'utilisateur pourra accéder à l'interface d'administration de Geotrek-Admin
+-  **Staff**: if checked, the user is authorized to access Geotrek-Admin administration interface
 
--  **Statut super-utilisateur** : permet d'octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
+-  **Superuser**: if checked, the user has all permission, without having to define them specifically
 
-Il est possible pour un utilisateur, de lui donner des permissions spécifiques. Celles-ci sont déterminées par type d'objet.
-  Pour cela il faut sélectionner les permissions dans l'écran de gauche pour les positionner dans l'écran de droite.
-  Par exemple sur la capture ci-dessous l'utilisateur possède les permissions pour consulter uniquement et exporter les informations relatives aux
-  signalétiques sans possibilité d'accéder aux autres modules ou de modifier les contenus.
+A user can get specific permissions by object type.
+
+To do so, select permissions from left box and move them in the right box.
+Snapshot below shows a user with permissions allowing him/her to view and export signage,
+without the ability to access to others modules. or edit signage objects.
 
 |image10|
 
@@ -179,11 +180,12 @@ Permissions fall into four main types of actions:
 * add
 * change
 * delete
-* visualization
+* read / view
 
 Each data type is at least associated with the four basic actions (*add*, *change*, *delete*, *read*). One data type corresponds to  a database table (*signage_signage*, *trekking_trek*...)
 
 Here is the signification of actions allowed through permissions:
+
 * *view*: see the data in Django *AdminSite* (for data of "category" type such as POI types, or difficulty level)
 * *read*: see the data in Geotrek-admin interface (button and data list)
 * *add*: adding of a new data (trek, theme...)
@@ -195,6 +197,12 @@ Here is the signification of actions allowed through permissions:
 
 Groups
 ------
+
+Groups allows to manage easily users and permissions. Each group is associated
+to some permissions.
+
+In user modification view, you can associate a user to one ore more groupes to
+get their permissions.
 
 By default six groups are created:
 
@@ -214,7 +222,7 @@ status using the dedicated checkbox. The *AdminSite* allows users to edit data c
 Structures
 ----------
 
-Each user has to be linke to a structure. During the installation, Geotrek create a default structure to which first users are linked.
+Each user has to be linked to a structure. During the installation, Geotrek create a default structure to which first users are linked.
 You can add new structures, according to territorial partners, companies, other organisations which work with you on Geotrek.
 
 Users of a given structure can work only on objects related to the same structure in Geotrek.
@@ -224,9 +232,8 @@ They can view objects from others structures, but won't be able to edit them.
 Each user would be linked to its region, through the structure.
 Thus it would guarantee that a user from Bretagne could not edit objects created by a user from Normandie.*
 
-Cette notion de structures permet de segmenter les périmètres d'action des utilisateurs
-et de permettre à différentes entités de travailler sur un même Geotrek-Admin,
-tout en garantissant une cohérence des données.
+The structure concept allows to  divide users actions fields, and allows several organisation to work on a same Geotrek-admin,
+while data keep coherence.
 
 .. note ::
 
@@ -238,55 +245,6 @@ tout en garantissant une cohérence des données.
 
     - this user has superuser rights
     - this user owns "Can bypass structure" permission, which allows him to override structure restriction
-
-
-Gestion des utilisateurs
-========================
-
-Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédant chacun des droits spécifiques et rattachés à des structures. La gestion des utilisateurs et des groupes est basée sur le `système d'authentification de Django <https://docs.djangoproject.com/fr/4.2/topics/auth/default/>`_.
-Pour cela les objets suivants dans l'interface d'administration doivent être utilisés :
-
-|image9|
-
-Utilisateurs et droits
-----------------------
-
-Une fois un utilisateur créé avec les informations minimales, il est possible de lui octroyer un certain nombre de permissions :
-
--  **Actif** : permet de déterminer si l'utilisateur peut se connecter à Geotrek-Admin ou non. 
-
-  Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer.
-  En effet supprimer le compte supprimera également par exemple toutes les entrées dans l'historique de Geotrek associées à ce compte.
-
--  **Statut équipe** : si la case est cochée l'utilisateur pourra accéder à l'interface d'administration de Geotrek-Admin
-
--  **Statut super-utilisateur** : permet d'octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
-
-Il est possible pour un utilisateur, de lui donner des permissions spécifiques. Celles-ci sont déterminées par type d'objet. 
-  Pour cela il faut sélectionner les permissions dans l'écran de gauche pour les positionner dans l'écran de droite.
-  Par exemple sur la capture ci-dessous l'utilisateur possède les permissions pour consulter uniquement et exporter les informations relatives aux 
-  signalétiques sans possibilité d'accéder aux autres modules ou de modifier les contenus.
-
-|image10|
-
-Cette gestion fine des droits permet de déterminer les différents accès aux modules pour chaque utilisateur. On retrouve généralement pour chaque type d'objet les permissions suivantes qu'il est possible de donner ou non à un utilisateur :
-
--  Lecture
--  Ecriture
--  Modification
--  Modification de la géométrie de l'objet
--  Publication
--  Export
-
-Groupes
--------
-
-Pour faciliter l'opération de création d'utilisateurs et d'affectation de permissions, il existe un système de groupes dans Geotrek.
-Pour chaque groupe il est possible d'associer un certain nombre de permissions.
-
-Ensuite, dans la vue de modification de cet utilisateur, il suffira d'associer un utilisateur à un groupe pour bénéficier des permissions correspondantes.
-
-Certains groupes existent par défaut dans Geotrek (Geotrek-rando, Lecteurs, Outdoor, Rédacteurs, Référents communication, Référents ronçons, Référents sentiers), mais il est bien entendu possible d'en ajouter d'autres pour refléter l'organisation de votre territoire.
 
 
 Structures

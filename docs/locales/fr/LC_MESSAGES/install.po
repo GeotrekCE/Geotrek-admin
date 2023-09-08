@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 08:02+0000\n"
+"POT-Creation-Date: 2023-09-08 15:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -1935,122 +1935,39 @@ msgid ""
 "geotrek-admin`."
 msgstr ""
 
-#: ../../install/configuration.rst:53
-msgid "Users management"
-msgstr ""
-
-#: ../../install/configuration.rst:55
-msgid ""
-"Geotrek-admin relies on Django authentication and permissions system. "
-"Users belong to groups. Permissions can be assigned at user or group-"
-"level."
-msgstr ""
-
-#: ../../install/configuration.rst:58
-msgid ""
-"The whole configuration of users, groups and permissions is available in "
-"the *AdminSite*, if you did not enable *External authent* (see below)."
-msgstr ""
-
-#: ../../install/configuration.rst:61
-msgid "By default six groups are created:"
-msgstr ""
-
-#: ../../install/configuration.rst:63
-msgid "Readers (\"Lecteurs\")"
-msgstr ""
-
-#: ../../install/configuration.rst:64
-msgid "Path managers (\"Référents sentiers\")"
-msgstr ""
-
-#: ../../install/configuration.rst:65
-msgid "Trek managers (\"Référents communication\")"
-msgstr ""
-
-#: ../../install/configuration.rst:66
-msgid "Editors (\"Rédacteurs\")"
-msgstr ""
-
-#: ../../install/configuration.rst:67
-msgid "Geotrek-rando (\"Geotrek-rando\")"
-msgstr ""
-
-#: ../../install/configuration.rst:68
-msgid "Trek and management editors (\"Rédacteurs rando et gestion\")"
-msgstr ""
-
-#: ../../install/configuration.rst:70
-msgid ""
-"Once the application is installed, it is possible to modify the default "
-"permissions of these existing groups, create new ones etc..."
-msgstr ""
-
-#: ../../install/configuration.rst:73
-msgid ""
-"If you want to allow the users to access the *AdminSite*, give them the "
-"*staff* status using the dedicated checkbox. The *AdminSite* allows users"
-" to edit data categories such as *trek difficulty levels*, *POI types*, "
-"etc."
-msgstr ""
-
-#: ../../install/configuration.rst:76
-msgid ""
-"Permissions fall into four main types of actions: * add * change * delete"
-" * visualization"
-msgstr ""
-
-#: ../../install/configuration.rst:82
-msgid ""
-"Each data type is at least associated with the four basic actions (*add*,"
-" *change*, *delete*, *read*). One data type corresponds to  a database "
-"table (*signage_signage*, *trekking_trek*...)"
-msgstr ""
-
-#: ../../install/configuration.rst:84
-msgid ""
-"Here is the signification of actions allowed through permissions: * "
-"*view*: see the data in Django *AdminSite* (for data of \"category\" type"
-" such as POI types, or difficulty level) * *read*: see the data in "
-"Geotrek-admin interface (button and data list) * *add*: adding of a new "
-"data (trek, theme...) * *change*: modify the data * *change_geom*: modify"
-" the data geometry * *publish*: publish the data * *export*: export the "
-"data thrgough Geotrek-admin interface (CSV, JSON...)"
-msgstr ""
-
-#: ../../install/configuration.rst:95
+#: ../../install/configuration.rst:54
 msgid "Database users"
 msgstr ""
 
-#: ../../install/configuration.rst:97
+#: ../../install/configuration.rst:56
 msgid ""
 "It is not safe to use the ``geotrek`` user in QGIS, or to give its "
 "password to many collaborators."
 msgstr ""
 
-#: ../../install/configuration.rst:100
+#: ../../install/configuration.rst:59
 msgid ""
 "A wise approach, is to create a *read-only* user, or with specific "
 "permissions."
 msgstr ""
 
-#: ../../install/configuration.rst:102
+#: ../../install/configuration.rst:61
 msgid "With *pgAdmin*, you can create database users like this:"
 msgstr ""
 
-#: ../../install/configuration.rst:111
+#: ../../install/configuration.rst:70
 msgid "And give them permissions by schema :"
 msgstr ""
 
-#: ../../install/configuration.rst:121
+#: ../../install/configuration.rst:80
 msgid "You can also create groups, etc. See PostgreSQL documentation."
 msgstr ""
 
-#: ../../install/configuration.rst:125
+#: ../../install/configuration.rst:84
 msgid "Advanced Configuration"
 msgstr ""
 
-#: ../../install/configuration.rst:127
+#: ../../install/configuration.rst:86
 msgid "See :ref:`advanced configuration <advanced-configuration-section>`..."
 msgstr ""
 
@@ -3911,4 +3828,3 @@ msgstr ""
 #: ../../install/troubleshooting.rst:55
 msgid "You have to update the signature key to get the last update :"
 msgstr ""
-
