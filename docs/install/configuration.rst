@@ -49,47 +49,6 @@ You have to move the configuration to the file `nginx.conf.in` because `nginx.co
 changed during command `dpkg-reconfigure geotrek-admin`.
 
 
-Users management
-----------------
-
-Geotrek-admin relies on Django authentication and permissions system. Users belong to
-groups. Permissions can be assigned at user or group-level.
-
-The whole configuration of users, groups and permissions is available in the *AdminSite*,
-if you did not enable *External authent* (see below).
-
-By default six groups are created:
-
-* Readers ("Lecteurs")
-* Path managers ("Référents sentiers")
-* Trek managers ("Référents communication")
-* Editors ("Rédacteurs")
-* Geotrek-rando ("Geotrek-rando")
-* Trek and management editors ("Rédacteurs rando et gestion")
-
-Once the application is installed, it is possible to modify the default permissions
-of these existing groups, create new ones etc...
-
-If you want to allow the users to access the *AdminSite*, give them the *staff*
-status using the dedicated checkbox. The *AdminSite* allows users to edit data categories such as *trek difficulty levels*, *POI types*, etc.
-
-Permissions fall into four main types of actions:
-* add
-* change
-* delete
-* visualization
-
-Each data type is at least associated with the four basic actions (*add*, *change*, *delete*, *read*). One data type corresponds to  a database table (*signage_signage*, *trekking_trek*...)
-
-Here is the signification of actions allowed through permissions:
-* *view*: see the data in Django *AdminSite* (for data of "category" type such as POI types, or difficulty level)
-* *read*: see the data in Geotrek-admin interface (button and data list)
-* *add*: adding of a new data (trek, theme...)
-* *change*: modify the data
-* *change_geom*: modify the data geometry
-* *publish*: publish the data
-* *export*: export the data thrgough Geotrek-admin interface (CSV, JSON...)
-
 
 Database users
 --------------
