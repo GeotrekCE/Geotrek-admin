@@ -51,7 +51,3 @@ msgstr ""
 #: ../../index.rst:58
 msgid ":ref:`search`"
 msgstr ""
-
-#~ msgid "Contents:"
-#~ msgstr "Contenus :"
-

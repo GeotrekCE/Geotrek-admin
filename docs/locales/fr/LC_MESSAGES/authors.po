@@ -220,10 +220,3 @@ msgstr ""
 #: ../../authors.rst:68
 msgid "*Ski course* by Sahua D from the Noun Project"
 msgstr ""
-
-#~ msgid "AUTHORS"
-#~ msgstr ""
-
-#~ msgid "Michaël Viadere"
-#~ msgstr ""
-
