@@ -15,6 +15,7 @@ CHANGELOG
 - Add details and template for the pull requests process
 - Update documentation fr translation files
 - Uniformize documentation section
+- Move user management section to user manual (#3709)
 
 **CI**
 
