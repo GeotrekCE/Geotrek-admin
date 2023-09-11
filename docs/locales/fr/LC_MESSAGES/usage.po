@@ -329,7 +329,7 @@ msgid ""
 "specific permissions."
 msgstr ""
 "Avec les groupes, vous pouvez créer et configurer un profil "
-"d'utilisateurchacun ayant des permissions spécifiques."
+"d'utilisateur, chacun ayant des permissions spécifiques."
 
 #: ../../usage/configuration-ttw.rst:153
 msgid ""
@@ -338,7 +338,7 @@ msgid ""
 msgstr ""
 "Toute la configuration des utilisateurs, groupes et permissions est "
 "disponible dans la partie *Administration*, sauf si vous avez "
-"activé\"*l'authentification externe*"
+"activé \"*l'authentification externe*"
 
 #: ../../usage/configuration-ttw.rst:156
 msgid "|image9|"
