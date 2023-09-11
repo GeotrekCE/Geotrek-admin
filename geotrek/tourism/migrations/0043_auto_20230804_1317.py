@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='TouristicEventOrganizer',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('label', models.CharField(max_length=128, verbose_name='Label')),
+                ('label', models.CharField(max_length=256, verbose_name='Label')),
             ],
             options={
                 'verbose_name': 'Organizer',
