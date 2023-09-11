@@ -145,7 +145,7 @@ Zones
 Users management
 ================
 
-Geotrek-admin relies on `Django authentication and permissions system <https://docs.djangoproject.com/fr/4.2/topics/auth/default/>`_.
+Geotrek-admin relies on `Django authentication and permissions system <https://docs.djangoproject.com/en/4.2/topics/auth/default/>`_.
 Users belong to groups, and permissions can be assigned at user or group-level.
 
 With groups, you can create and configure user profile, each owning specific permissions.
@@ -162,8 +162,8 @@ A given user can have three basic status level:
 
 -  **Active**: if checked, the user can connect to Geotrek-admin
 
-  Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer.
-  En effet supprimer le compte supprimera également par exemple toutes les entrées dans l'historique de Geotrek associées à ce compte.
+  It is better to deactivate an account when the user won't user Geotrek anymore, instead of supress it.
+  Deleting the account will delete also all entries created by this account.
 
 -  **Staff**: if checked, the user is authorized to access Geotrek-Admin administration interface
 
