@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 15:16+0000\n"
+"POT-Creation-Date: 2023-09-11 08:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../install/advanced-configuration.rst:5
 msgid "Advanced configuration"
-msgstr ""
+msgstr "Configuration avancée"
 
 #: ../../install/advanced-configuration.rst:8
 msgid "Custom setting file"
@@ -1935,39 +1935,47 @@ msgid ""
 "geotrek-admin`."
 msgstr ""
 
-#: ../../install/configuration.rst:54
+#: ../../install/configuration.rst:53
+msgid "Users management"
+msgstr ""
+
+#: ../../install/configuration.rst:55
+msgid "See :ref:`user management section in usage <user-management-section>`."
+msgstr ""
+
+#: ../../install/configuration.rst:59
 msgid "Database users"
 msgstr ""
 
-#: ../../install/configuration.rst:56
+#: ../../install/configuration.rst:61
 msgid ""
 "It is not safe to use the ``geotrek`` user in QGIS, or to give its "
 "password to many collaborators."
 msgstr ""
 
-#: ../../install/configuration.rst:59
+#: ../../install/configuration.rst:64
 msgid ""
 "A wise approach, is to create a *read-only* user, or with specific "
 "permissions."
 msgstr ""
 
-#: ../../install/configuration.rst:61
+#: ../../install/configuration.rst:66
 msgid "With *pgAdmin*, you can create database users like this:"
 msgstr ""
 
-#: ../../install/configuration.rst:70
+#: ../../install/configuration.rst:75
 msgid "And give them permissions by schema :"
 msgstr ""
 
-#: ../../install/configuration.rst:80
+#: ../../install/configuration.rst:85
 msgid "You can also create groups, etc. See PostgreSQL documentation."
 msgstr ""
 
-#: ../../install/configuration.rst:84
+#: ../../install/configuration.rst:89
 msgid "Advanced Configuration"
 msgstr ""
 
-#: ../../install/configuration.rst:86
+#: ../../install/configuration.rst:91
 msgid "See :ref:`advanced configuration <advanced-configuration-section>`..."
 msgstr ""
 
@@ -3828,3 +3836,4 @@ msgstr ""
 #: ../../install/troubleshooting.rst:55
 msgid "You have to update the signature key to get the last update :"
 msgstr ""
+

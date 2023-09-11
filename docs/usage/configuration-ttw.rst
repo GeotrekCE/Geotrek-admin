@@ -140,6 +140,8 @@ Zones
 -  Zones sensibles et types de zones
 
 
+.. _user-management-section:
+
 Users management
 ================
 

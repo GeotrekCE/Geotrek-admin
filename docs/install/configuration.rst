@@ -49,6 +49,11 @@ You have to move the configuration to the file `nginx.conf.in` because `nginx.co
 changed during command `dpkg-reconfigure geotrek-admin`.
 
 
+Users management
+----------------
+
+See :ref:`user management section in usage <user-management-section>`.
+
 
 Database users
 --------------
