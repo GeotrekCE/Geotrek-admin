@@ -249,24 +249,6 @@ while data keep coherence.
     - this user owns "Can bypass structure" permission, which allows him to override structure restriction
 
 
-Structures
-----------
-
-Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l'installation, Geotrek crée une structure à laquelle les premiers utilisateurs seront rattachés.
-Il est possible d'ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront ammenés à travailler à vos côté sur Geotrek.
-
-Les utilisateurs d'une structure ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n'auront pas le droit de les modifier.
-
-Exemple : Si on imagine un Geotrek déployé sur l'ensemble du territoire français, il serait alors envisageable d'avoir des structures correspondantes aux régions. Chaque utilisateur sera rattaché à sa région correspondante. 
- Il y aura alors la garantie qu'un utilisateur de Bretagne ne puisse pas modifier les objets saisis par un utilisateur de Normandie.
-
-Cette notion de structures permet de segmenter les périmètres d'action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin, tout en garantissant une cohérence des données.
-
-Deux précisions :
-- Un utilisateur d'une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
-- Pour qu'un utilisateur puisse modifier les objets d'une autre structure il y a deux possibilités : soit celui-ci est super-utilisateur, soit il devra posséder la permission "Can by structure" qui permet d'outrepasser la restriction des structures.
-
-
 Configuration des portails
 ==========================
 
