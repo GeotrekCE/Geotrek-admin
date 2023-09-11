@@ -24,6 +24,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
+- Increase length size of label on TouristicEventOrganizer model to fix migrations problems (#3719)
 
 
 
