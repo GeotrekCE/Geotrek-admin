@@ -393,7 +393,7 @@ msgstr ""
 #: ../../usage/configuration-ttw.rst:172
 msgid "A user can get specific permissions by object type."
 msgstr ""
-"Il est possible de donner à un utilisateur des permissions spécifiques, "
+"Un utilisateur peut avoir des permissions spécifiques, "
 "définies par type d'objet."
 
 #: ../../usage/configuration-ttw.rst:174
