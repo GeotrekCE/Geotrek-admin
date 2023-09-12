@@ -148,7 +148,13 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def cities_display(self):
-        return [str(c) for c in self.cities] if hasattr(self, 'cities') else []
+        all_cities_name = []
+        if hasattr(self, 'cities'):
+            for city in self.cities:
+                all_cities_name.append(city.name)
+            return ", ".join(all_cities_name)
+        else:
+            return ""
 
     @classproperty
     def cities_verbose_name(cls):
