@@ -1,6 +1,16 @@
 -- Parcours outdoor
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_courses AS
+WITH outdoor_course_geom AS (
+    SELECT  ST_CollectionExtract(geom, 3)  AS geom, id
+    FROM public.outdoor_course AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 2)  AS geom, id
+    FROM public.outdoor_course AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 1)  AS geom, id
+    FROM public.outdoor_course AS os
+  )
 SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
@@ -53,8 +63,9 @@ SELECT a.id,
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 1) AS geom
+       sg.geom AS geom
 FROM outdoor_course a
+JOIN outdoor_course sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
@@ -69,7 +80,7 @@ LEFT JOIN
      FROM
          outdoor_course a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) d ON a.id = d.id 
+     GROUP BY a.id) d ON a.id = d.id
 LEFT JOIN outdoor_coursetype e ON a.type_id = d.id
 LEFT JOIN
     (SELECT b.id,
@@ -140,6 +151,16 @@ LEFT JOIN
 -- Sites outdoor
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_sites AS
+WITH outdoor_site_geom AS (
+    SELECT  ST_CollectionExtract(geom, 3)  AS geom, id
+    FROM public.outdoor_site AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 2)  AS geom, id
+    FROM public.outdoor_site AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 1)  AS geom, id
+    FROM public.outdoor_site AS os
+  )
 SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
@@ -190,8 +211,9 @@ SELECT a.id,
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 1) AS geom
+       sg.geom AS geom
 FROM public.outdoor_site a
+JOIN outdoor_site_geom sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
@@ -206,7 +228,7 @@ LEFT JOIN
      FROM
          outdoor_site a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) d ON a.id = d.id 
+     GROUP BY a.id) d ON a.id = d.id
 LEFT JOIN outdoor_sitetype e ON a.type_id = e.id
 LEFT JOIN outdoor_practice f ON a.practice_id = f.id
 LEFT JOIN

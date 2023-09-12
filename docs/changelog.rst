@@ -17,6 +17,10 @@ CHANGELOG
 
 - Improve documentation for database restore
 
+**Bug fixes**
+
+- Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
+
 
 2.101.4     (2023-11-15)
 ------------------------
