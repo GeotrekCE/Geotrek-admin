@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Remove 'review' field on ServiceType (#1669)
+- Add organizer_id on TouristicEvent endpoint ( #3587)
 
 **Documentation**
 
