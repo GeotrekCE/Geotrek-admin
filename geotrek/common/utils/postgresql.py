@@ -107,8 +107,7 @@ def move_models_to_schemas(app):
             sql = "SELECT 1 FROM information_schema.tables WHERE table_name=%s AND table_schema!=%s"
             cursor.execute(sql, [table_name, schema_name])
             if cursor.fetchone():
-                sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
-                cursor.execute(sql)
+                cursor.execute("ALTER TABLE %s SET SCHEMA %s;", [table_name, schema_name])
                 logger.info("Moved %s to schema %s" % (table_name, schema_name))
 
     # For Django, search_path is set in connection options.
@@ -118,5 +117,4 @@ def move_models_to_schemas(app):
         dbname = settings.DATABASES['default']['NAME']
         dbuser = settings.DATABASES['default']['USER']
         search_path = ', '.join(('public', ) + tuple(set(settings.DATABASE_SCHEMAS.values())))
-        sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
-        cursor.execute(sql)
+        cursor.execute("ALTER ROLE %s IN DATABASE %s SET search_path=%s;", [dbuser, dbname, search_path])
