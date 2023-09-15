@@ -25,7 +25,6 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     nano \
     curl \
     git \
-    iproute2 \
     software-properties-common \
     shared-mime-info \
     fonts-liberation \
