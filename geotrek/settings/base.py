@@ -696,8 +696,6 @@ FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
 
-CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
