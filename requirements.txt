@@ -178,7 +178,7 @@ env-file==2020.12.3
     # via geotrek (setup.py)
 filelock==3.8.0
     # via django-large-image
-fiona==1.9.1
+fiona==1.9.4.post1
     # via
     #   geotrek (setup.py)
     #   mapentity
