@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 08:02+0000\n"
+"POT-Creation-Date: 2023-09-08 14:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -532,30 +532,8 @@ msgid ""
 "postgresql-autodoc and graphviz Ubuntu packages and run ``make uml``."
 msgstr ""
 
-#: ../../contribute/development.rst:258 ../../contribute/documentation.rst:2
+#: ../../contribute/documentation.rst:2
 msgid "Documentation"
-msgstr ""
-
-#: ../../contribute/development.rst:260
-msgid ""
-"A container based on sphinx image is created using docker-compose-"
-"dev.yml, documentation is built in watch mode thanks to sphinx-autobuild."
-msgstr ""
-
-#: ../../contribute/development.rst:263
-msgid "Access to documentation built in html : http://0.0.0.0:8800"
-msgstr ""
-
-#: ../../contribute/development.rst:267
-msgid "Translate documentation"
-msgstr ""
-
-#: ../../contribute/development.rst:269
-msgid "Generate .pot if needed"
-msgstr ""
-
-#: ../../contribute/development.rst:275
-msgid "Generate .po files"
 msgstr ""
 
 #: ../../contribute/documentation.rst:4
@@ -563,7 +541,29 @@ msgid "We use sphinx doc and sphinx-rtd-theme. Requirements are included."
 msgstr ""
 
 #: ../../contribute/documentation.rst:6
+msgid ""
+"A container based on sphinx image is created using docker-compose-"
+"dev.yml, documentation is built in watch mode thanks to sphinx-autobuild."
+msgstr ""
+
+#: ../../contribute/documentation.rst:9
 msgid "To compile and test documentation on local environment, run :"
+msgstr ""
+
+#: ../../contribute/documentation.rst:16
+msgid "Access to documentation built in html : http://0.0.0.0:8800"
+msgstr ""
+
+#: ../../contribute/documentation.rst:20
+msgid "Translate documentation"
+msgstr ""
+
+#: ../../contribute/documentation.rst:22
+msgid "Generate .pot if needed"
+msgstr ""
+
+#: ../../contribute/documentation.rst:28
+msgid "Generate .po files"
 msgstr ""
 
 #: ../../contribute/translating.rst:3

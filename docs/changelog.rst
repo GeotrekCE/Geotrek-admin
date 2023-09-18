@@ -24,6 +24,7 @@ CHANGELOG
 - Update documentation fr translation files
 - Uniformize documentation section
 - Move user management section to user manual (#3709)
+- Reorganize settings section (related to PR #3669)
 
 **CI**
 
