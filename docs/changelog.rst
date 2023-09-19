@@ -2,12 +2,67 @@
 CHANGELOG
 =========
 
-2.99.0+dev (XXXX-XX-XX)
+2.100.2+dev (XXXX-XX-XX)
+------------------------
+
+**Maintenance**
+
+- Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+
+
+2.100.2 (2023-09-12)
+------------------------
+
+**Improvements**
+
+- Remove 'review' field on ServiceType (#1669)
+
+**Documentation**
+
+- Update loading_data section to add information about MNT values that needs to be integer (#1891)
+- Add details and template for the pull requests process
+- Update documentation fr translation files
+- Uniformize documentation section
+- Move user management section to user manual (#3709)
+- Reorganize settings section (related to PR #3669)
+
+**CI**
+
+- Reorganize generated release notes
+
+**Bug fixes**
+
+- Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
+- Increase length size of label on TouristicEventOrganizer model to fix migrations problems (#3719)
+
+
+
+2.100.1 (2023-09-05)
+-------------------------
+
+**Documentation**
+
+- Replace broken link 
+
+**Improvements**
+
+- Add rules data on ``v_sensitivearea`` view  (#3613)
+
+**Clean**
+
+- Remove unused folder 'bulkimport' from project (#3673)
+
+
+2.100.0 (2023-09-05)
 -----------------------
+
+**DO NOT USE**
 
 **Bug fixes**
 
 - Fix: unable to search within a list of services (#3521)
+- Fix: Unpublish trek in all languages when path is deleted (#1321)
+- Fix: duplication on sites now does not duplicate children sites (#3665)
 
 **New features**
 
@@ -21,10 +76,20 @@ CHANGELOG
 - Filter by begin date by default on touristic events in APIv2 (#3597)
 - Add model LinePictogram for each line (#3327)
 - Create Organizer model for touristic events, configurable in admin site (#3625)
+- Improve CSS of the altitude profile of altimetry (#3657)
+- Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
+- Serve GeoJS script locally
+- To delete parent outdoor sites you must first delete their children (#3151)
+
 
 **Documentation**
 
 - Add configuration file for readthedocs
+- Update architecture schema
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
 
 
 2.99.0 (2023-07-18)
@@ -74,7 +139,6 @@ CHANGELOG
 **Improvements**
 
 - Improve cascading deletions logic, and log them to LogEntry model to maintain history of deletions
-- Add rules data on `v_sensitivearea` view  (#3613)
 
 
 2.98.0     (2023-03-27)

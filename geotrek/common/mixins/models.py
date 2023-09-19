@@ -445,7 +445,7 @@ def get_uuid_duplication(uid_field):
 class GeotrekMapEntityMixin(MapEntityMixin):
     elements_duplication = {
         "attachments": {"uuid": get_uuid_duplication},
-        "avoid_fields": ["aggregations"],
+        "avoid_fields": ["aggregations", "children",],
         "uuid": get_uuid_duplication,
     }
 

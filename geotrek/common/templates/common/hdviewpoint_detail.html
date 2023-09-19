@@ -90,7 +90,7 @@
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
             {{object.annotations|json_script:"geojson_annotations"}}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
-            <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+            <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
             <script>
               $(window).on('detailmap:ready', function (e, data) {
                 initializeViewer("{{base_tile_url}}");

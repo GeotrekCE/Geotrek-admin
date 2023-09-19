@@ -85,6 +85,16 @@ Instead of opening your database to the world (by opening the 5432 port for
 example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
 
 
+Manage Cache
+------------
+
+* You can purge application cache with command or in admin interface
+
+.. code-block:: bash
+
+    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori
+
+
 Major evolutions from version 2.33
 ----------------------------------
 

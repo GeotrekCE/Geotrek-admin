@@ -281,7 +281,7 @@ msgid ""
 "with this path. Modify these topologies before deleting this path."
 msgstr ""
 "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies "
-"sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
+"sont lié à ce tronçon. Modifiez ces topologies avant de supprimer ce tronçon"
 
 msgid "No, back to edit view"
 msgstr "Non, retour à la l'édition"

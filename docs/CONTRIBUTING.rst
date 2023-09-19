@@ -11,7 +11,7 @@ Conventions
 * Elegant and generic is good, simple is better
 * Separate bug fixes and new features in several pull requests.
 * Open a new Pull Request in "Draft" status until tests passed. Use at least 'bug', 'improvement' or 'feature' label.
-* Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``)
+* Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``), they should contains corresponding tag (see below)
 * Features are developed in a branch and merged from Github pull-requests.
 
 
@@ -33,19 +33,80 @@ Check TODO in the source tree:
    find geotrek | xargs egrep -n -i '(TODO|XXX|temporary|FIXME)'
 
 
+Pull requests
+-------------
+
+Before creating a pull request, ensure you follow thoses rules :
+
+* Follow the guidelines of this page
+* Self-review your code
+* Add comments in your code, particularly in hard-to-understand areas
+* Make corresponding changes to the documentation
+* There is tests that prove my fix is effective or that my feature works.
+* All new lines of code are tested
+* There is an entry in the changelog file
+
+It is important to add a label to the pull request corresponding to the perimeter. Release notes are generated according to labels of pull requests. This is the list of available labels for pull requests:
+
++-----------------+---------------+-----------------------+---------+
+| Tag             | Branch prefix | Emoji code            | Unicode |
++=================+===============+=======================+=========+
+| Improvements    | impr\_        | dizzy                 | 💫      |
++-----------------+---------------+-----------------------+---------+
+| Bug fixes       | bug\_         | bug                   | 🐛      |
++-----------------+---------------+-----------------------+---------+
+| Features        | feat\_        | sparkles              | ✨      |
++-----------------+---------------+-----------------------+---------+
+| Documentation   | doc\_         | memo                  | 📝      |
++-----------------+---------------+-----------------------+---------+
+| Maintenance     | maint\_       | building_construction | 🏗       |
++-----------------+---------------+-----------------------+---------+
+| Refactor        | ref\_         | recycle               | ♻       |
++-----------------+---------------+-----------------------+---------+
+| Dependencies    | dep\_         | arrow_up              | ⬆       |
++-----------------+---------------+-----------------------+---------+
+| CI/CD           | cicd\_        | construction_worker   | 👷      |
++-----------------+---------------+-----------------------+---------+
+| Performances    | perf\_        | zap                   | ⚡      |
++-----------------+---------------+-----------------------+---------+
+| UI/UX           | uiux\_        | lipstick              | 💄      |
++-----------------+---------------+-----------------------+---------+
+| Security        | sec\_         | lock                  | 🔒      |
++-----------------+---------------+-----------------------+---------+
+| Translations    | trans\_       | globe_with_meridians  | 🌐      |
++-----------------+---------------+-----------------------+---------+
+| Hotfix          | hot\_         | ambulance             | 🚑      |
++-----------------+---------------+-----------------------+---------+
+| Breaking change | break\_       | boom                  | 💥      |
++-----------------+---------------+-----------------------+---------+
+
+Commits in pull requests are following a naming convention in order to easily establish their perimeter. Commit is formated as ``emoji [tag] description of commit``.
+
+You can use one of the above prefix for your commits but also one of the following (tags used only for commits, not for pull requests):
+
+========= ========================= ========
+Tag       Emoji code                Unicode
+========= ========================= ========
+Codestyle art                       🎨
+Clean     fire                      🔥
+Tests     white_check_mark          ✅
+Release   bookmark                  🔖
+Merge     twisted_rightwards_arrows 🔀
+========= ========================= ========
+
+
 Release
 -------
 
 On master branch:
 
-* If need be, merge ``translations`` branch managed with https://weblate.makina-corpus.net
 * Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``+dev`` suffix and increment version (please use semver rules)
 * Run ``dch -r -D RELEASED``, update version in the same way and save
-* Commit with message 'Release x.y.z' to merge in ``master`` branch before release
-* Add git tag X.Y.Z
+* Commit with message 'Release x.y.z' and push to ``master``
+* Create new release on Github, with tag X.Y.Z, click on "Generate release notes"
+* Wait for release to be published through CI
 * Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to add ``+dev`` suffix
 * Run ``dch -v <version>+dev --no-force-save-on-release`` and save
-* Commit with message 'Back to development'
-* Push branch and tag
-* Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
+* Commit with message 'Back to development' and push to ```master``
+
 * When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
