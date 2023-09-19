@@ -103,6 +103,29 @@ class SensitiveAreaModelTest(TestCase):
             "Practice1",
         ]
     )
+    @freeze_time("2020-01-01")
+    def test_get_openair_point_data(self):
+        species = SpeciesFactory.create(radius=300)
+        sensitive_area = SensitiveAreaFactory.create(geom="POINT(700000 6600000)", species=species)
+        self.assertEqual(
+            "AC ZSM\n"
+            "AN Species\n"
+            f"*AUID GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {sensitive_area.pk}\n"
+            "*ADescr Species (published on 01/01/2020)\n"
+            '*ATimes {"6": ["UTC(01/06->30/06)", "ANY(00:00->23:59)"],"7": ["UTC(01/07->31/07)", "ANY(00:00->23:59)"]}\n'
+            "AH 985FT AGL\n"
+            "DP 46:29:59 N 03:00:14 E\n"
+            "DP 46:29:50 N 03:00:00 E\n"
+            "DP 46:29:59 N 02:59:45 E\n"
+            "DP 46:30:09 N 03:00:00 E",
+            sensitive_area.openair(),
+        )
+
+    @override_settings(
+        SENSITIVITY_OPENAIR_SPORT_PRACTICES=[
+            "Practice1",
+        ]
+    )
     def test_get_openair_data_with_radius(self):
         species = SpeciesFactory.create(radius=300)
         sensitive_area = SensitiveAreaFactory.create(species=species)
