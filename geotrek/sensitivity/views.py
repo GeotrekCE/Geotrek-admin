@@ -211,7 +211,9 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
 
     def get_queryset(self):
         aerial_practice = SportPractice.objects.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES)
-        return SensitiveArea.objects.filter(species__practices__in=aerial_practice)
+        return SensitiveArea.objects.filter(
+            species__practices__in=aerial_practice, published=True
+        ).select_related('species')
 
     def render_to_response(self, context):
         areas = self.get_queryset()
@@ -220,7 +222,13 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
         airspace_list = []
         for a in areas:
-            airspace_list.append(a.openair())
+            if not a.openair():
+                logger.error(
+                    "The openair format cannot be generated for area %s-%s",
+                    a.id, a
+                )
+            else:
+                airspace_list.append(a.openair())
         airspace_core = '\n\n'.join(airspace_list)
         airspace_file = file_header + airspace_core
         response = HttpResponse(airspace_file, content_type='application/octet-stream; charset=UTF-8')

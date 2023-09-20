@@ -251,20 +251,6 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
         }
         return wkt2openair(**data)
 
-    @property
-    def wgs84_geom(self):
-        geom = self.geom
-        if geom.geom_type == 'Point':
-            geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
-        if self.species.radius:
-            geometry = ()
-            for coords in geom.coords[0]:
-                coords += (self.species.radius, )
-                geometry += (coords, )
-            geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
-        geom = geom.transform(4326, clone=True)  # KML uses WGS84
-        return geom
-
     def is_public(self):
         return self.published
 
