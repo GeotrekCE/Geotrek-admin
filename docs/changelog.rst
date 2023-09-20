@@ -9,6 +9,9 @@ CHANGELOG
 
 - Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
 
+**New features**
+
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
 2.100.2 (2023-09-12)
 ------------------------
@@ -256,7 +259,6 @@ CHANGELOG
 **Improvements**
 
 - Sensitivity: Add missing attachments list to sensitive areas API
-- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
 
 2.96.0     (2023-02-01)
