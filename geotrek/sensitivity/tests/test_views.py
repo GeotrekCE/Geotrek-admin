@@ -343,6 +343,18 @@ class SensitiveAreaOpenAirViewsTest(TestCase):
 
     @override_settings(
         SENSITIVITY_OPENAIR_SPORT_PRACTICES=[
+            "Practice3",
+        ]
+    )
+    @freeze_time("2020-01-01")
+    def test_not_an_aerial_sensitiveaera_detail(self):
+        url = reverse("sensitivity:sensitivearea_openair_detail", args=("en", self.area1.pk))
+        response = self.client.get(url, HTTP_HOST='testserver')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'This is not an aerial area')
+
+    @override_settings(
+        SENSITIVITY_OPENAIR_SPORT_PRACTICES=[
             "Practice1",
         ]
     )
