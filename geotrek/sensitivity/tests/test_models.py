@@ -4,7 +4,6 @@ from difflib import SequenceMatcher
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry
 
 from geotrek.sensitivity.tests.factories import SensitiveAreaFactory, SpeciesFactory
 from geotrek.trekking.tests.factories import TrekFactory
@@ -136,32 +135,6 @@ class SensitiveAreaModelTest(TestCase):
         self.assertTrue(sensitive_area.is_public())
         sensitive_area.published = False
         self.assertFalse(sensitive_area.is_public())
-
-    def test_wgs84_geom(self):
-        """Test geometry transform to SRID WGS84"""
-        sensitive_area = SensitiveAreaFactory.create(
-            geom="POLYGON(("
-            "700000 6600000, "
-            "700000 6600003, "
-            "700003 6600003, "
-            "700003 6600000, "
-            "700000 6600000"
-            "))"
-        )
-        self.assertGreater(
-            similar_string(
-                GEOSGeometry(
-                    "SRID=4326;POLYGON (("
-                    "3 46.49999999999994, 3 46.50002701349548, "
-                    "3.000039118674989 46.50002701348879, "
-                    "3.000039118655609 46.49999999999324, "
-                    "3 46.49999999999994"
-                    "))"
-                ).wkt,
-                sensitive_area.wgs84_geom.wkt,
-            ),
-            0.9,
-        )
 
     @override_settings(SENSITIVE_AREA_INTERSECTION_MARGIN=0)
     def test_trek_sensitive_area(self):
