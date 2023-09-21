@@ -335,6 +335,7 @@ class SensitiveAreaOpenAirViewsTest(TestCase):
         f'*ADescr Species (published on {today})\n'
         '*ATimes {"6": ["UTC(01/06->30/06)", "ANY(00:00->23:59)"],"7": ["UTC(01/07->31/07)", "ANY(00:00->23:59)"]}\n'
         'AH 329FT AGL\n'
+        "AL SFC\n"
         'DP 46:29:59 N 03:00:04 E\n'
         'DP 46:29:56 N 03:00:00 E\n'
         'DP 46:29:59 N 02:59:55 E\n'

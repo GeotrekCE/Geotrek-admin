@@ -92,6 +92,7 @@ class SensitiveAreaModelTest(TestCase):
             "*ADescr Species (published on 01/01/2020)\n"
             '*ATimes {"6": ["UTC(01/06->30/06)", "ANY(00:00->23:59)"],"7": ["UTC(01/07->31/07)", "ANY(00:00->23:59)"]}\n'
             "AH 329FT AGL\n"
+            "AL SFC\n"
             "DP 46:29:59 N 03:00:00 E\n"
             "DP 46:30:00 N 03:00:00 E",
             sensitive_area.openair(),
@@ -113,6 +114,7 @@ class SensitiveAreaModelTest(TestCase):
             "*ADescr Species (published on 01/01/2020)\n"
             '*ATimes {"6": ["UTC(01/06->30/06)", "ANY(00:00->23:59)"],"7": ["UTC(01/07->31/07)", "ANY(00:00->23:59)"]}\n'
             "AH 985FT AGL\n"
+            "AL SFC\n"
             "DP 46:29:59 N 03:00:14 E\n"
             "DP 46:29:50 N 03:00:00 E\n"
             "DP 46:29:59 N 02:59:45 E\n"

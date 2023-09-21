@@ -269,7 +269,7 @@ pygal==3.0.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pyopenair==1.2.0
+pyopenair==1.2.1
     # via geotrek (setup.py)
 pyparsing==3.0.8
     # via packaging
