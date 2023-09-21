@@ -220,10 +220,7 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
-        airspace_list = []
-        for a in areas:
-            if a.openair():
-                airspace_list.append(a.openair())
+        airspace_list = [a.openair() for a in areas if a.openair()]
         airspace_core = '\n\n'.join(airspace_list)
         airspace_file = file_header + airspace_core
         response = HttpResponse(airspace_file, content_type='application/octet-stream; charset=UTF-8')
