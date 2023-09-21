@@ -195,7 +195,7 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
         is_aerial = area.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
-        if is_aerial:
+        if is_aerial and area.openair():
             result = file_header + area.openair()
             response = HttpResponse(result, content_type='application/octet-stream; charset=UTF-8')
             response['Content-Disposition'] = 'inline; filename=sensitivearea_openair_' + str(area.id) + '.txt'
@@ -222,12 +222,7 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
         airspace_list = []
         for a in areas:
-            if not a.openair():
-                logger.error(
-                    "The openair format cannot be generated for area %s-%s",
-                    a.id, a
-                )
-            else:
+            if a.openair():
                 airspace_list.append(a.openair())
         airspace_core = '\n\n'.join(airspace_list)
         airspace_file = file_header + airspace_core
