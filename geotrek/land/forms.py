@@ -27,7 +27,7 @@ class LandEdgeForm(EdgeForm):
 class CirculationEdgeForm(EdgeForm):
     class Meta(EdgeForm.Meta):
         model = CirculationEdge
-        fields = EdgeForm.Meta.fields + ['circulation_type', 'authorized']
+        fields = EdgeForm.Meta.fields + ['circulation_type', 'authorization_type']
 
 
 class OrganismForm(EdgeForm):

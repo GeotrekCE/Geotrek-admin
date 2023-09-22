@@ -14,7 +14,7 @@ from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory, PhysicalTypeFactory,
                                           LandTypeFactory, CirculationEdgeFactory,
-                                          CirculationTypeFactory)
+                                          CirculationTypeFactory, AuthorizationTypeFactory)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -155,9 +155,9 @@ class CirculationEdgeViewsTest(CommonTest):
     model = CirculationEdge
     modelfactory = CirculationEdgeFactory
     userfactory = PathManagerFactory
-    extra_column_list = ['authorized']
-    expected_column_list_extra = ['id', 'circulation_type', 'authorized']
-    expected_column_formatlist_extra = ['id', 'authorized']
+    extra_column_list = ['eid']
+    expected_column_list_extra = ['id', 'circulation_type', 'authorization_type', 'eid']
+    expected_column_formatlist_extra = ['id', 'eid']
     expected_json_geom = {'coordinates': [[3.0013501, 46.5008686],
                                           [3.0000461, 46.4999682]],
                           'type': 'LineString'}
@@ -176,6 +176,7 @@ class CirculationEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             'circulation_type': CirculationTypeFactory.create().pk,
+            'authorization_type': AuthorizationTypeFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
@@ -183,6 +184,7 @@ class CirculationEdgeViewsTest(CommonTest):
         return {
             'id': self.obj.pk,
             'circulation_type': self.obj.circulation_type_display,
+            'authorization_type': self.obj.authorization_type_display,
             'length': round(self.obj.length, 1),
             'length_2d': round(self.obj.length, 1)
         }

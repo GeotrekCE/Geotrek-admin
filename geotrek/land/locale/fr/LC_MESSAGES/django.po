@@ -86,8 +86,11 @@ msgstr "Type de circulation"
 msgid "Circulation types"
 msgstr "Types de circulation"
 
-msgid "Authorized"
-msgstr "Autorisée"
+msgid "Authorization type"
+msgstr "Type d'autorisation"
+
+msgid "Authorization types"
+msgstr "Types d'autorisation"
 
 msgid "Organism"
 msgstr "Organisme"
@@ -127,6 +130,3 @@ msgstr "Oui"
 
 msgid "No"
 msgstr "Non"
-
-msgid "Undefined"
-msgstr "Indéterminée"

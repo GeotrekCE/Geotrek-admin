@@ -26,6 +26,7 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class CirculationEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     circulation_type = serializers.CharField(source='circulation_type_display')
+    authorization_type = serializers.CharField(source='authorization_type_display')
     length = serializers.FloatField(source='length_display')
     length_2d = serializers.FloatField(source='length_2d_display')
 

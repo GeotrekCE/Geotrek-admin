@@ -8,20 +8,8 @@
             <td>{{ circulationedge.circulation_type }}</td>
         </tr>
         <tr>
-            <th>{{ circulationedge|verbose:"authorized" }}</th>
-            <td>
-                {% if circulationedge.authorized is none %}
-                    {% trans "Undefined" %}
-                {% elif circulationedge.authorized %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
-            </td>
+            <th>{{ circulationedge|verbose:"authorization_type" }}</th>
+            <td>{{ circulationedge.authorization_type }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

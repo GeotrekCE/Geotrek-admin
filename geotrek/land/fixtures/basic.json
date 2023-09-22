@@ -163,5 +163,26 @@
         "fields": {
             "name": "Équestre"
         }
+    },
+    {
+        "pk": 1,
+        "model": "land.authorizationtype",
+        "fields": {
+            "name": "Autorisée"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "land.authorizationtype",
+        "fields": {
+            "name": "Interdite"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "land.authorizationtype",
+        "fields": {
+            "name": "Réglementée"
+        }
     }
 ]

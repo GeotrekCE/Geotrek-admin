@@ -376,10 +376,24 @@ class CirculationType(StructureOrNoneRelated):
         return self.name
 
 
+class AuthorizationType(StructureOrNoneRelated):
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
+
+    class Meta:
+        verbose_name = _("Authorization type")
+        verbose_name_plural = _("Authorization types")
+        ordering = ['name']
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.name, self.structure.name)
+        return self.name
+
+
 class CirculationEdge(GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     circulation_type = models.ForeignKey(CirculationType, verbose_name=_("Circulation type"), on_delete=models.PROTECT)
-    authorized = models.BooleanField(verbose_name=_("Authorized"), null=True)
+    authorization_type = models.ForeignKey(AuthorizationType, verbose_name=_("Authorization type"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True)
 
     geometry_types_allowed = ["LINESTRING"]
@@ -409,6 +423,14 @@ class CirculationEdge(GeotrekMapEntityMixin, Topology):
             self.pk,
             self.get_detail_url(),
             self.circulation_type
+        )
+
+    @property
+    def authorization_type_display(self):
+        return '<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.authorization_type
         )
 
     @property

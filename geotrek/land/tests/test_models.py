@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from geotrek.authent.models import Structure
-from geotrek.land.models import LandType, PhysicalType, CirculationType
+from geotrek.land.models import LandType, PhysicalType, CirculationType, AuthorizationType
 
 
 class TestModelLand(TestCase):
@@ -31,3 +31,12 @@ class TestModelLand(TestCase):
         structure = Structure.objects.create(name="Structure_1")
         pt = CirculationType.objects.create(name='CirculationType_1', structure=structure)
         self.assertEqual(str(pt), 'CirculationType_1 (Structure_1)')
+
+    def test_authorizationtype_value_no_structure(self):
+        pt = AuthorizationType.objects.create(name='AuthorizationType_1')
+        self.assertEqual(str(pt), 'AuthorizationType_1')
+
+    def test_authorizationtype_value_default_structure(self):
+        structure = Structure.objects.create(name="Structure_1")
+        pt = AuthorizationType.objects.create(name='AuthorizationType_1', structure=structure)
+        self.assertEqual(str(pt), 'AuthorizationType_1 (Structure_1)')
