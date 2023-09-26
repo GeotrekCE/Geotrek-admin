@@ -22,7 +22,7 @@ from geotrek.trekking.views import TrekDetail
 
 
 def add_url_for_obj(obj):
-    return reverse('add_attachment_accessibility', kwargs={
+    return reverse('common:add_attachment_accessibility', kwargs={
         'app_label': obj._meta.app_label,
         'model_name': obj._meta.model_name,
         'pk': obj.pk
@@ -30,13 +30,13 @@ def add_url_for_obj(obj):
 
 
 def update_url_for_obj(attachment):
-    return reverse('update_attachment_accessibility', kwargs={
+    return reverse('common:update_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
 
 def delete_url_for_obj(attachment):
-    return reverse('delete_attachment_accessibility', kwargs={
+    return reverse('common:delete_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
