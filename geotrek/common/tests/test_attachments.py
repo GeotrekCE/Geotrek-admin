@@ -103,7 +103,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
 
     def test_update_form_in_details_if_perms(self):
@@ -115,7 +115,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
         self.assertIn(
             '<form  action="/paperclip/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
@@ -140,7 +140,7 @@ class EntityAttachmentTestCase(TestCase):
 
         self.assertNotIn(b"Submit attachment", html)
         self.assertNotIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
