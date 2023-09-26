@@ -131,14 +131,14 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
 class CirculationEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CirculationEdge.objects.existing()
     filterform = CirculationEdgeFilterSet
-    mandatory_columns = ['id', 'circulation_type']
+    mandatory_columns = ['id', 'circulation_type', 'authorization_type']
     default_extra_columns = ['length', 'length_2d']
 
 
 class CirculationEdgeFormatList(MapEntityFormat, CirculationEdgeList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'circulation_type', 'authorized', 'date_insert', 'date_update',
+        'circulation_type', 'authorization_type', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'uuid', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
