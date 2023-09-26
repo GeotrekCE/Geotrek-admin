@@ -8,6 +8,7 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+- Refactor code for accessibility attachments
 
 
 2.100.2 (2023-09-12)
