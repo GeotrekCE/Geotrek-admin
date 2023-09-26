@@ -5,6 +5,10 @@ CHANGELOG
 2.100.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Allow to load a signage with the year set to None
+
 **Maintenance**
 
 - Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
