@@ -505,6 +505,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             read_only=True,
             slug_field='label'
         )
+        organizer_id = serializers.PrimaryKeyRelatedField(
+            read_only=True
+        )
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
@@ -547,7 +550,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
                 'contact', 'description', 'description_teaser', 'districts', 'duration',
                 'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
-                'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'place',
+                'meeting_time', 'name', 'organizer', 'organizer_id', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
                 'start_time', 'structure', 'target_audience', 'themes', 'type',
                 'url', 'uuid', 'website'
