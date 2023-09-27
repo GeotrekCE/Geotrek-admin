@@ -197,7 +197,7 @@ class Command(BaseCommand):
                 image = Image.open(obj.pictogram.path)
             # Resize
             if size:
-                image = image.resize((size, size), Image.ANTIALIAS)
+                image = image.resize((size, size), Image.Resampling.LANCZOS)
             # Save
             image.save(dst, optimize=True, quality=95)
             if name not in zipfile.namelist():
