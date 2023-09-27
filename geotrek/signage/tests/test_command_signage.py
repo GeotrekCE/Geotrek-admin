@@ -1,9 +1,6 @@
 import os
 from io import StringIO
-from typing import Dict
 import tempfile
-
-import fiona
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
@@ -14,6 +11,7 @@ from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.tests.utils import update_gis
 
 
 class SignageCommandTest(TestCase):
@@ -23,25 +21,6 @@ class SignageCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.path = PathFactory.create()
-
-    def _update_gis(self, input_file_path: str, output_file_path: str, new_properties: Dict):
-        '''
-        Utility function that reads a GIS file (GeoPackage or Shapefile), update some properties,
-        then write a new shapefile (typically in /tmp). Useful to test specific property values.
-        Can eventually be moved somewhere else, since it's not specifically related to signages.
-        '''
-
-        with fiona.open(input_file_path) as source:
-            with fiona.open(output_file_path,
-                            mode='w',
-                            crs=source.crs,
-                            driver=source.driver,
-                            schema=source.schema) as dest:
-                for feat in source:
-                    dest.write(fiona.Feature(
-                        geometry=feat.geometry,
-                        properties={**feat.properties, **new_properties}
-                    ))
 
     def test_load_signage(self):
         output = StringIO()
@@ -81,7 +60,7 @@ class SignageCommandTest(TestCase):
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
-            self._update_gis(input_file_path, output_file_path, {'year': None})
+            update_gis(input_file_path, output_file_path, {'year': None})
 
             output = StringIO()
             StructureFactory.create(name='structure')
@@ -99,6 +78,31 @@ class SignageCommandTest(TestCase):
 
             value = Signage.objects.first()
             self.assertEqual(None, value.implantation_year)
+
+    def test_load_signage_bad_year(self):
+        '''Loading a signage with an invalid year should fail.'''
+
+        input_file_path = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
+            update_gis(input_file_path, output_file_path, {'year': 'not a number'})
+
+            output = StringIO()
+            StructureFactory.create(name='structure')
+
+            with self.assertRaisesRegex(CommandError, 'Invalid year: "not a number" is not a number.'):
+                call_command(
+                    'loadsignage',
+                    output_file_path,
+                    type_default='label',
+                    name_default='name',
+                    condition_default='condition',
+                    structure_default='structure',
+                    description_default='description',
+                    year_field='year',
+                    stdout=output
+                )
 
     def test_load_signage_bad_multipoints_error(self):
         output = StringIO()
