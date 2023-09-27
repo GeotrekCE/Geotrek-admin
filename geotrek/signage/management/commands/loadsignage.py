@@ -181,7 +181,10 @@ class Command(BaseCommand):
 
                     year = feature.get(field_implantation_year) if field_implantation_year in available_fields else default_year
                     if year:
-                        year = int(year) if str(year).isdigit() else default_year
+                        if str(year).isdigit():
+                            year = int(year)
+                        else:
+                            raise CommandError('Invalid year: "%s" is not a number.' % year)
                     else:
                         year = None
 
