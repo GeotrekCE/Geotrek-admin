@@ -5,19 +5,29 @@ CHANGELOG
 2.100.2+dev (XXXX-XX-XX)
 ------------------------
 
-**Maintenance**
+**New features**
 
-- Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
-- Refactor code for accessibility attachments
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
 **Bug fixes**
 
 - Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
 - Allow to load a signage with the year set to None, raise error if set to NaN (#3611)
 
-**New features**
+**Improvements**
 
-- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
+- Add organizer_id on TouristicEvent endpoint (#3587)
+
+**Maintenance**
+
+- Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+- Refactor code for accessibility attachments
+
+**Documentation**
+
+- Add new contributors to the authors list in documentation
+- Reorganize settings section (related to PR #3669)
+
 
 2.100.2 (2023-09-12)
 ------------------------
@@ -25,7 +35,6 @@ CHANGELOG
 **Improvements**
 
 - Remove 'review' field on ServiceType (#1669)
-- Add organizer_id on TouristicEvent endpoint ( #3587)
 
 **Documentation**
 
@@ -34,7 +43,6 @@ CHANGELOG
 - Update documentation fr translation files
 - Uniformize documentation section
 - Move user management section to user manual (#3709)
-- Reorganize settings section (related to PR #3669)
 
 **CI**
 
@@ -44,7 +52,6 @@ CHANGELOG
 
 - Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
 - Increase length size of label on TouristicEventOrganizer model to fix migrations problems (#3719)
-
 
 
 2.100.1 (2023-09-05)

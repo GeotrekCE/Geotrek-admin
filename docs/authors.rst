@@ -26,6 +26,7 @@ Makina Corpus
 * Marine Faucher
 * Marc-Antoine Dupré
 * Hugo Hasson
+* Joaquim Nallar
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
@@ -50,6 +51,7 @@ Others
 * Yannick LE DUC
 * Guillaume Boitel (Parc National de Port Cros)
 * Pierre Loicq (Parc National de la Vanoise)
+* Nathanaël (@roipoussiere)
 
 Credits
 -------
