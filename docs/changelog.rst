@@ -8,6 +8,11 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+- Refactor code for accessibility attachments
+
+**Bug fixes**
+
+- Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
 
 **New features**
 
@@ -19,6 +24,7 @@ CHANGELOG
 **Improvements**
 
 - Remove 'review' field on ServiceType (#1669)
+- Add organizer_id on TouristicEvent endpoint ( #3587)
 
 **Documentation**
 

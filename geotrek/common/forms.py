@@ -416,7 +416,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        _('Submit attachment'),
                        css_class="btn-primary")
             ]
-            self.form_url = reverse('add_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:add_attachment_accessibility', kwargs={
                 'app_label': self._object._meta.app_label,
                 'model_name': self._object._meta.model_name,
                 'pk': self._object.pk
@@ -429,7 +429,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        css_class="btn-primary")
             ]
             self.fields['title'].widget.attrs['readonly'] = True
-            self.form_url = reverse('update_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:update_attachment_accessibility', kwargs={
                 'attachment_pk': self.instance.pk
             })
 

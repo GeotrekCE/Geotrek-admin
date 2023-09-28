@@ -122,7 +122,7 @@ jobs:
 
     - name: Check migrations
       run: |
-        ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
 
     - name: Prepare environment
       run: |

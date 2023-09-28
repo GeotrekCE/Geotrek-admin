@@ -12,7 +12,7 @@ asgiref==3.7.2
     # via django
 async-timeout==4.0.3
     # via redis
-attrs==22.2.0
+attrs==23.1.0
     # via fiona
 backports-zoneinfo[tzdata]==0.2.1
     # via
@@ -22,7 +22,7 @@ beautifulsoup4==4.12.2
     # via mapentity
 billiard==4.1.0
     # via celery
-btrees==4.10.0
+btrees==5.0
     # via zodb
 cachetools==5.2.0
     # via large-image
@@ -248,7 +248,7 @@ persistent==4.9.0
     # via
     #   btrees
     #   zodb
-pillow==9.3.0
+pillow==10.0.1
     # via
     #   cairosvg
     #   django-colorfield
@@ -375,7 +375,7 @@ xlrd==2.0.1
     # via geotrek (setup.py)
 xmltodict==0.13.0
     # via tif2geojson
-zc-lockfile==2.0
+zc-lockfile==3.0.post1
     # via zodb
 zconfig==4.0
     # via zodb

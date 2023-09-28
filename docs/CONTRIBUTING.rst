@@ -44,7 +44,7 @@ Before creating a pull request, ensure you follow thoses rules :
 * Make corresponding changes to the documentation
 * There is tests that prove my fix is effective or that my feature works.
 * All new lines of code are tested
-* There is an entry in the changelog file
+* There is an entry in the changelog file (with the corresponding issue referenced)
 
 It is important to add a label to the pull request corresponding to the perimeter. Release notes are generated according to labels of pull requests. This is the list of available labels for pull requests:
 

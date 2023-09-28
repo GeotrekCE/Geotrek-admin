@@ -22,7 +22,7 @@ from geotrek.trekking.views import TrekDetail
 
 
 def add_url_for_obj(obj):
-    return reverse('add_attachment_accessibility', kwargs={
+    return reverse('common:add_attachment_accessibility', kwargs={
         'app_label': obj._meta.app_label,
         'model_name': obj._meta.model_name,
         'pk': obj.pk
@@ -30,13 +30,13 @@ def add_url_for_obj(obj):
 
 
 def update_url_for_obj(attachment):
-    return reverse('update_attachment_accessibility', kwargs={
+    return reverse('common:update_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
 
 def delete_url_for_obj(attachment):
-    return reverse('delete_attachment_accessibility', kwargs={
+    return reverse('common:delete_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
@@ -103,7 +103,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
 
     def test_update_form_in_details_if_perms(self):
@@ -115,7 +115,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
         self.assertIn(
             '<form  action="/paperclip/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
@@ -140,7 +140,7 @@ class EntityAttachmentTestCase(TestCase):
 
         self.assertNotIn(b"Submit attachment", html)
         self.assertNotIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
