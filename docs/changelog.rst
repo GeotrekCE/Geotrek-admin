@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
+- Allow to load a signage with the year set to None, raise error if set to NaN (#3611)
 
 **New features**
 

@@ -16,7 +16,7 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Load a layer with point geometries in te structure model\n'
+    help = 'Load a layer with point geometries in the structure model\n'
     can_import_settings = True
     counter = 0
 
@@ -178,7 +178,16 @@ class Command(BaseCommand):
 
                     structure = Structure.objects.get(name=feature.get(field_structure_type)) if field_structure_type in available_fields else structure
                     description = feature.get(field_description) if field_description in available_fields else default_description
-                    year = int(feature.get(field_implantation_year)) if field_implantation_year in available_fields and feature.get(field_implantation_year).isdigit() else default_year
+
+                    year = feature.get(field_implantation_year) if field_implantation_year in available_fields else default_year
+                    if year:
+                        if str(year).isdigit():
+                            year = int(year)
+                        else:
+                            raise CommandError('Invalid year: "%s" is not a number.' % year)
+                    else:
+                        year = None
+
                     eid = feature.get(field_eid) if field_eid in available_fields else None
                     code = feature.get(field_code) if field_code in available_fields else default_code
 

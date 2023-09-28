@@ -1,5 +1,6 @@
 import os
 from io import StringIO
+import tempfile
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
@@ -10,6 +11,7 @@ from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.tests.utils import update_gis
 
 
 class SignageCommandTest(TestCase):
@@ -50,6 +52,57 @@ class SignageCommandTest(TestCase):
         self.assertEqual('name', value.name)
         self.assertEqual(2010, value.implantation_year)
         self.assertEqual(Signage.objects.count(), 1)
+
+    def test_load_signage_none_year(self):
+        '''Loading a signage with a year set to None should not fail.'''
+
+        input_file_path = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
+            update_gis(input_file_path, output_file_path, {'year': None})
+
+            output = StringIO()
+            StructureFactory.create(name='structure')
+            call_command(
+                'loadsignage',
+                output_file_path,
+                type_default='label',
+                name_default='name',
+                condition_default='condition',
+                structure_default='structure',
+                description_default='description',
+                year_field='year',
+                stdout=output
+            )
+
+            value = Signage.objects.first()
+            self.assertEqual(None, value.implantation_year)
+
+    def test_load_signage_bad_year(self):
+        '''Loading a signage with an invalid year should fail.'''
+
+        input_file_path = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
+            update_gis(input_file_path, output_file_path, {'year': 'not a number'})
+
+            output = StringIO()
+            StructureFactory.create(name='structure')
+
+            with self.assertRaisesRegex(CommandError, 'Invalid year: "not a number" is not a number.'):
+                call_command(
+                    'loadsignage',
+                    output_file_path,
+                    type_default='label',
+                    name_default='name',
+                    condition_default='condition',
+                    structure_default='structure',
+                    description_default='description',
+                    year_field='year',
+                    stdout=output
+                )
 
     def test_load_signage_bad_multipoints_error(self):
         output = StringIO()
