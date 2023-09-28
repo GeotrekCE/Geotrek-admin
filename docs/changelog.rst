@@ -19,6 +19,11 @@ CHANGELOG
 
 - Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
+**Documentation**
+
+- Add new contributors to the authors list in documentation
+
+
 2.100.2 (2023-09-12)
 ------------------------
 
