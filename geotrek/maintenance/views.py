@@ -49,7 +49,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
 
-        queryset = Intervention.objects.existing()
+        queryset = super().get_queryset()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
 
