@@ -9,7 +9,7 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
                                      Point, Polygon)
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.db import connection
-from django.test.testcases import TestCase
+from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -18,6 +18,7 @@ from mapentity.tests.factories import SuperUserFactory
 from rest_framework.test import APITestCase
 
 from geotrek import __version__
+from geotrek.api.v2.views.trekking import TrekViewSet
 from geotrek.authent import models as authent_models
 from geotrek.authent.tests import factories as authent_factory
 from geotrek.common import models as common_models
@@ -53,6 +54,10 @@ PAGINATED_JSON_STRUCTURE = sorted([
 
 PAGINATED_GEOJSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'features', 'type'
+])
+
+GEOJSON_COLLECTION_STRUCTURE = sorted([
+    'features', 'type',
 ])
 
 GEOJSON_STRUCTURE = sorted([
@@ -167,8 +172,9 @@ SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
 
 SENSITIVE_AREA_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'contact', 'create_datetime', 'description', 'elevation', 'geometry',
-    'info_url', 'kml_url', 'name', 'period', 'practices', 'provider', 'published', 'species_id',
-    'structure', 'update_datetime', 'url', 'attachments', 'rules'
+    'info_url', 'kml_url', 'openair_url', 'name', 'period', 'practices', 'provider',
+    'published', 'species_id', 'structure', 'update_datetime', 'url', 'attachments',
+    'rules'
 ])
 
 SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -816,6 +822,51 @@ class BaseApiTest(TestCase):
 
     def get_hdviewpoint_detail(self, id_hdviewpoint, params=None):
         return self.client.get(reverse('apiv2:hdviewpoint-detail', args=(id_hdviewpoint,)), params)
+
+
+class NoPaginationTestCase(BaseApiTest):
+    """
+    Integration tests for disabled pagination.
+    """
+
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def test_json_no_page(self):
+        request = self.factory.get(
+            reverse("apiv2:trek-list"),
+            {
+                "no_page": "true",
+            }
+        )
+        response = TrekViewSet.as_view({"get": "list"})(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, list)
+        self.assertIsInstance(response.data[0], dict)
+        self.assertEqual(
+            len(response.data[0].get("geometry").get("coordinates")[0]),
+            3,
+        )
+
+    def test_geojson_no_page(self):
+        request = self.factory.get(
+            reverse("apiv2:trek-list"),
+            {
+                "no_page": "true",
+                "format": "geojson",
+            }
+        )
+        response = TrekViewSet.as_view({"get": "list"})(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, dict)
+        self.assertEqual(sorted(response.data.keys()), GEOJSON_COLLECTION_STRUCTURE)
+        self.assertEqual(
+            len(response.data.get("features")), self.nb_treks, response.data
+        )
+        self.assertEqual(
+            sorted(response.data.get("features")[0].get("properties").keys()),
+            TREK_PROPERTIES_GEOJSON_STRUCTURE,
+        )
 
 
 class APIAccessAnonymousTestCase(BaseApiTest):

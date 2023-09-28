@@ -15,6 +15,9 @@ CHANGELOG
 - Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
 - Allow to load a signage with the year set to None, raise error if set to NaN (#3611)
 
+**New features**
+
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
 
 2.100.2 (2023-09-12)
 ------------------------

@@ -228,6 +228,7 @@ numpy==1.23.4
     # via
     #   large-image
     #   large-image-source-vips
+    #   shapely
 packaging==21.3
     # via
     #   drf-yasg
@@ -268,6 +269,8 @@ pygal==3.0.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
+pyopenair==1.2.1
+    # via geotrek (setup.py)
 pyparsing==3.0.8
     # via packaging
 pypdf2==1.27.5
@@ -306,6 +309,8 @@ ruamel-yaml-clib==0.2.7
     # via ruamel-yaml
 sentry-sdk==1.30.0
     # via geotrek (setup.py)
+shapely==2.0.1
+    # via pyopenair
 simplekml==1.3.6
     # via geotrek (setup.py)
 six==1.16.0

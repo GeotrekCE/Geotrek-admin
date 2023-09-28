@@ -4,19 +4,24 @@
 
 import datetime
 import simplekml
-
+import logging
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, gettext_lazy as _
 
 from mapentity.serializers import plain_text
+from pyopenair.factory import wkt2openair
+
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin,
                                           AddPropertyMixin, GeotrekMapEntityMixin, get_uuid_duplication)
 from geotrek.common.utils import intersecting, classproperty, queryset_or_model
 from geotrek.sensitivity.managers import SensitiveAreaManager
+from geotrek.sensitivity.helpers import openair_atimes_concat
 from geotrek.core.models import simplify_coords
+
+logger = logging.getLogger(__name__)
 
 
 class Rule(TimeStampedModelMixin, OptionalPictogramMixin):
@@ -217,6 +222,34 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+    def openair(self):
+        """Exports sensitivearea into OpenAir format"""
+        geom = self.geom
+        if geom.geom_type == 'Point':
+            geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
+        geom = geom.transform(4326, clone=True)
+        geom = geom.simplify(0.001, preserve_topology=True)
+        other = {}
+        other['*AUID'] = f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {str(self.pk)}"
+        adescr = (self.species.name,)
+        if self.publication_date:
+            adescr += (f"(published on {self.publication_date.strftime('%d/%m/%Y')})",)
+        other['*ADescr'] = " ".join(adescr)
+        other['*ATimes'] = openair_atimes_concat(self)
+        wkt = geom.wkt
+        data = {
+            'wkt': wkt,
+            'an': self.species.name,
+            'ac': 'ZSM',
+            'ah_unit': 'm',
+            'ah_alti': self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS,
+            'ah_mode': 'AGL',
+            'al_mode': 'SFC',
+            # 'comment': self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')',
+            'other': other
+        }
+        return wkt2openair(**data)
 
     def is_public(self):
         return self.published

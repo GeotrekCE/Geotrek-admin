@@ -954,6 +954,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()
+        openair_url = serializers.SerializerMethodField(read_only=True)
         rules = RuleSerializer(many=True)
         attachments = AttachmentSerializer(many=True)
 
@@ -978,11 +979,19 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return build_url(self, url)
 
+        def get_openair_url(self, obj):
+            is_aerial = obj.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
+            if is_aerial:
+                url = reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+                return self.context['request'].build_absolute_uri(url)
+            else:
+                return None
+
         class Meta(TimeStampedSerializer.Meta):
             model = sensitivity_models.SensitiveArea
             fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'contact', 'description', 'elevation',
-                'geometry', 'info_url', 'kml_url', 'name', 'period',
+                'geometry', 'info_url', 'kml_url', 'openair_url', 'name', 'period',
                 'practices', 'published', 'species_id', 'provider', 'structure',
                 'url', 'attachments', 'rules'
             )
