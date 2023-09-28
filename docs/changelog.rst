@@ -17,6 +17,7 @@ CHANGELOG
 **Improvements**
 
 - Add organizer_id on TouristicEvent endpoint (#3587)
+- Sort API V2 by begin date by default on touristic events (#3597)
 
 **Maintenance**
 
@@ -90,7 +91,7 @@ CHANGELOG
 
 - Filter by multiple structures on Blades list (#3646)
 - Add a multiselect to filter the Blades by more than one manager
-- Filter by begin date by default on touristic events in APIv2 (#3597)
+- Filter by end date by default on touristic events in APIv2 (#3597)
 - Add model LinePictogram for each line (#3327)
 - Create Organizer model for touristic events, configurable in admin site (#3625)
 - Improve CSS of the altitude profile of altimetry (#3657)
