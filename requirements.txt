@@ -321,7 +321,7 @@ six==1.16.0
     #   html5lib
     #   python-dateutil
     #   zodb
-soupsieve==2.3.2
+soupsieve==2.5
     # via beautifulsoup4
 sqlparse==0.4.4
     # via django
