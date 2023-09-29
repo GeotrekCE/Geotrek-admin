@@ -383,7 +383,7 @@ zipp==3.11.0
     # via importlib-metadata
 zodb==5.7.0
     # via appy
-zodbpickle==2.6
+zodbpickle==3.0.1
     # via zodb
 zope-interface==6.0
     # via
