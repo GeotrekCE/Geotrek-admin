@@ -141,15 +141,12 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertFalse(i2 in filter.qs)
 
     def test_implantation_year_filter_with_str(self):
-        filter = InfrastructureFilterSet(data={'implantation_year': 'toto'})
-        self.login()
-        model = self.factory._meta.model
         i = InfrastructureFactory.create(implantation_year=2015)
         i2 = InfrastructureFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
+        filter_set = InfrastructureFilterSet(data={'implantation_year': 'toto'})
+        filter_form = filter_set.form.as_p()
+        self.assertIn('<option value="2015">2015</option>', filter_form)
+        self.assertIn('<option value="2016">2016</option>', filter_form)
 
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
-
-        self.assertIn(i, filter.qs)
-        self.assertIn(i2, filter.qs)
+        self.assertIn(i, filter_set.qs)
+        self.assertIn(i2, filter_set.qs)

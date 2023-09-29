@@ -27,7 +27,7 @@ class PolygonTopologyFilter(PolygonFilter):
 class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = MultipleChoiceFilter(choices=Signage.objects.implantation_year_choices())
+    implantation_year = MultipleChoiceFilter(choices=(('', '---------'),))
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
                                              choices=Intervention.objects.year_choices())
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
@@ -43,6 +43,10 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
                                                           'sealing', 'access', 'provider']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['implantation_year'].choices = Signage.objects.implantation_year_choices()
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)

@@ -12,7 +12,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = MultipleChoiceFilter(choices=Infrastructure.objects.implantation_year_choices())
+    implantation_year = MultipleChoiceFilter(choices=(('', '---------'),))
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
                                              choices=Intervention.objects.year_choices())
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
@@ -39,3 +39,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         interventions = Intervention.objects.filter(target_type=infrastructure_ct, date__year__in=value) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['implantation_year'].choices = Infrastructure.objects.implantation_year_choices()
