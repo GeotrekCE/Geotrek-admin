@@ -455,7 +455,7 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i = SignageFactory.create(implantation_year=2015)
         i2 = SignageFactory.create(implantation_year=2016)
         filter_set = SignageFilterSet(data={'implantation_year': 'toto'})
-        filter_form = filter.form
+        filter_form = filter_set.form
 
         self.assertIn('<option value="2015">2015</option>', filter_form.as_p())
         self.assertIn('<option value="2016">2016</option>', filter_form.as_p())
