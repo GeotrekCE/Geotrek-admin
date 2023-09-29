@@ -334,7 +334,7 @@ tinycss2==1.2.1
     #   weasyprint
 transaction==3.1.0
     # via zodb
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   asgiref
     #   django-modeltranslation

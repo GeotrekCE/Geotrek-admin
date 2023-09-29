@@ -78,7 +78,7 @@ tomli==2.0.1
     #   build
     #   pip-tools
     #   pyproject-hooks
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -c requirements.txt
     #   asgiref
