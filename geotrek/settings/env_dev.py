@@ -19,14 +19,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Developper additions
 # ..........................
 
-INSTALLED_APPS = (
+INSTALLED_APPS += (
     'django_extensions',
     'debug_toolbar',
     'geotrek.diving',
     'geotrek.sensitivity',
     'geotrek.outdoor',
     'drf_yasg',
-) + INSTALLED_APPS
+)
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
 
