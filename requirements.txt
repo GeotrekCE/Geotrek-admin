@@ -385,7 +385,7 @@ zodb==5.7.0
     # via appy
 zodbpickle==2.6
     # via zodb
-zope-interface==5.4.0
+zope-interface==6.0
     # via
     #   btrees
     #   datetime
