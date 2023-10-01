@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-- Add CirculationEdge model, which allows to create a traffic circulation plan on paths. Created on the model of LandEdge and PhysicalEdge (#3578)
+-Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
 
 **Improvements**
 

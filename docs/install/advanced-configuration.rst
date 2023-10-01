@@ -620,6 +620,16 @@ You can insert licenses of attachments with this command :
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
 
+Land
+~~~~~~~
+
+You can insert circulation and authorization types with this command :
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
+
+
 Outdoor
 ~~~~~~~
 
@@ -1019,7 +1029,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "length_2d",
         "date_insert",
-        "authorized",
         "uuid",
     ]
     COLUMNS_LISTS["physicaledge_view"] = [
@@ -1428,7 +1437,7 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     COLUMNS_LISTS["circulationedge_export"] = [
         "eid",
         "circulation_type",
-        "authorized",
+        "authorization_type",
         "date_insert",
         "date_update",
         "cities",
@@ -2211,7 +2220,6 @@ An exhaustive list of form fields hideable in each module.
             "origin"
         ],
     HIDDEN_FORM_FIELDS["circulationedge"] = [
-            "authorized",
         ]
 
 
