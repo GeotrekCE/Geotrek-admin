@@ -257,7 +257,7 @@ pillow==10.0.1
     #   large-image
     #   paperclip
     #   weasyprint
-prompt-toolkit==3.0.30
+prompt-toolkit==3.0.39
     # via click-repl
 psutil==5.9.5
     # via large-image
