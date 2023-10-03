@@ -13,7 +13,6 @@ from django.contrib.gis.geos import Point, LineString, GeometryCollection
 from django.contrib.gis import gdal
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils.translation import activate, deactivate_all
 
 from geotrek.common.tests import CommonTest
 from mapentity.tests.factories import SuperUserFactory
@@ -25,7 +24,7 @@ from geotrek.core.models import PathAggregation
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
-from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
+from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureAccessMeanFactory, InfrastructureFactory
@@ -714,71 +713,60 @@ class TestDetailedJobCostsExports(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
+    def get_csv_reader_names(self, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        return csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+
     def test_detailed_mandays_export(self):
         '''Test detailed intervention job costs are exported properly, and follow data changes'''
 
         # Assert each job used in intervention has a column in export view
-        columns = InterventionFormatList().columns
-        self.assertIn(self.job1_column_name, columns)
-        self.assertIn(self.job2_column_name, columns)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+
+        self.assertIn(self.job1_column_name, reader_csv.fieldnames)
+        self.assertIn(self.job2_column_name, reader_csv.fieldnames)
 
         # Assert no duplicate in column exports
-        self.assertEqual(len(columns), len(set(columns)))
+        self.assertEqual(len(reader_csv.fieldnames), len(set(reader_csv.fieldnames)))
 
         # Assert job not used in intervention is not exported
-        self.assertNotIn(self.job3_column_name, columns)
+        self.assertNotIn(self.job3_column_name, reader_csv.fieldnames)
 
-        # Assert queryset contains right amount for each cost
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
+        # Assert intervention export contains right amount for each cost
 
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
-
-        cost2_in_query_set = getattr(interv_in_query_set, self.job2_column_name)
-        self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
+            self.assertEqual(Decimal(elem[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
 
         # Assert cost is calculated properly when we add and remove mandays on the same job
         # Add manday and refresh
         manday1bis = ManDayFactory(nb_days=1, job=self.job1, intervention=self.interv)
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * (self.manday1.nb_days + manday1bis.nb_days))
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * (self.manday1.nb_days + manday1bis.nb_days))
         # Remove manday and refresh
         manday1bis.delete()
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
 
         # Assert deleted manday does not create an entry
         self.manday1.delete()
-        columns = InterventionFormatList().columns
-        self.assertNotIn(self.job1_column_name, columns)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        self.assertNotIn(self.job1_column_name, reader_csv.fieldnames)
 
         # Test column translations don't mess it up
-        activate('fr')
-        columns = InterventionFormatList().columns
-        self.assertIn(f"Coût_{self.job2}", columns)
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost2_in_query_set = getattr(interv_in_query_set, f"Coût_{self.job2}")
-        self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
-        deactivate_all()
-
-    def test_csv_detailed_cost_content(self):
-        '''Test CSV job costs exports contain accurate total price'''
-
-        response = self.client.get('/intervention/list/export/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Type'), 'text/csv')
-
-        # Assert right costs in CSV
-        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
-        for row in reader:
-            self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
-            self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
+        self.client.post("/i18n/setlang/", {"language": "fr"})
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        field_to_test = f"Coût_{self.job2}"
+        self.assertIn(field_to_test, reader_csv.fieldnames)
+        for elem in reader_csv:
+            # Decimal work only with '.' before decimal numbers, here we have "," because we are in french
+            english_field_format_num = elem[field_to_test].replace(",", ".")
+            self.assertEqual(Decimal(english_field_format_num), self.job2.cost * self.manday2.nb_days)
+        self.client.post("/i18n/setlang/", {"language": "fr"})
 
     def test_shp_detailed_cost_content(self):
         '''Test SHP job costs exports contain accurate total price'''
