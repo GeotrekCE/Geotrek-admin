@@ -348,7 +348,7 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-yasg
-urllib3==1.26.13
+urllib3==1.26.17
     # via
     #   requests
     #   sentry-sdk
