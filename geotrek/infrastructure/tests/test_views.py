@@ -52,7 +52,7 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'cities': '[]',
+            'cities': '',
             'condition': self.obj.condition.label,
             'id': self.obj.pk,
             'name': self.obj.name_display,
