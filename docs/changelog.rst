@@ -30,6 +30,7 @@ CHANGELOG
 
 - Add new contributors to the authors list in documentation
 - Reorganize settings section (related to PR #3669)
+- Update WYSIWYG link to help user when creating labels
 
 
 2.100.2 (2023-09-12)
