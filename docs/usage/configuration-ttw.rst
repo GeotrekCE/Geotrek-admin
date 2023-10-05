@@ -55,7 +55,7 @@ Via cette interface vous pourrez créer des étiquettes puis, une fois créées,
 
 .. image :: ../images/admin/creation_etiquette.png
 
-Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil libre `TinyMCE <https://www.tiny.cloud/docs/demo/basic-example/>`_.
+Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil libre `Summernote <https://summernote.org/>`_.
 
 * Associer une étiquette à un itinéraire :
 
