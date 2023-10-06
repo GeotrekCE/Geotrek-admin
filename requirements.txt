@@ -170,7 +170,7 @@ drf-yasg==1.21.5
     # via
     #   django-large-image
     #   geotrek (setup.py)
-easy-thumbnails==2.7
+easy-thumbnails==2.8.5
     # via
     #   mapentity
     #   paperclip
