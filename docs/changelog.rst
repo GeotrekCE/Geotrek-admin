@@ -5,13 +5,16 @@ CHANGELOG
 2.101.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Add debug log to `reorder_topologies` command 
+
 2.101.1 (2023-10-06)
 ------------------------
 
 **Bug fixes**
 
 - POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
-
 
 2.101.0 (2023-10-05)
 ------------------------
