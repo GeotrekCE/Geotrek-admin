@@ -10,6 +10,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from PIL.Image import DecompressionBombError
@@ -261,7 +262,7 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
         thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
-        except (IOError, InvalidImageFormatError, DecompressionBombError):
+        except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
             return ""
         thumbnail.author = obj.author
         thumbnail.legend = obj.legend
