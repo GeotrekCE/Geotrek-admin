@@ -5,6 +5,11 @@ CHANGELOG
 2.101.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
+
+
 2.101.0 (2023-10-05)
 ------------------------
 
