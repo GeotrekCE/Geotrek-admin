@@ -158,7 +158,7 @@ class CirculationEdgeViewsTest(CommonTest):
     extra_column_list = ['eid']
     expected_column_list_extra = ['id', 'circulation_type', 'authorization_type', 'eid']
     expected_column_formatlist_extra = ['id', 'eid']
-    expected_json_geom = {'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
+    expected_json_geom = {'coordinates': [[2.9998617, 46.5000955], [3.0011657, 46.500996]],
                           'type': 'LineString'}
 
     def get_expected_geojson_geom(self):

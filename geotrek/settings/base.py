@@ -400,6 +400,7 @@ MAPENTITY_CONFIG = {
         'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
         'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
         'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
@@ -593,6 +594,7 @@ SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'physical': 0,
+                           'circulation': 15,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
