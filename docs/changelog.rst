@@ -5,6 +5,11 @@ CHANGELOG
 2.101.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix Aggregator fails when updating Tour steps order (#3793)
+
+
 2.101.1 (2023-10-06)
 ------------------------
 
