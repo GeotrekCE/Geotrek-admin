@@ -307,7 +307,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                          [0, 0, 1])
         output = StringIO()
         call_command('reorder_topologies', stdout=output)
-        self.assertEqual('1 topologies has beeen updated\n', output.getvalue())
+        self.assertEqual(f'Processing topology : {topo.pk}\n1 topologies has beeen updated\n', output.getvalue())
         geometries = self.get_geometries(topo)
         self.assertEqual(geometries, [LineString((700000, 6600000), (700045, 6600045), srid=2154),
                                       LineString((700045, 6600045), (700050, 6600050), srid=2154),

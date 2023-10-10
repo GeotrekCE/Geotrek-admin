@@ -68,7 +68,8 @@ class Command(BaseCommand):
             """)
             points = cursor.fetchall()
             id_order = 0
-
+            if options['verbosity']:
+                self.stdout.write(f'Processing topology : {topology.pk}')
             dict_points = {}
             for id_pa_point, geom_point_wkt in points:
                 dict_points[id_pa_point] = GEOSGeometry(geom_point_wkt, srid=settings.SRID)
