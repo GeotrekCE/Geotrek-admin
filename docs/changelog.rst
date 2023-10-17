@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix Aggregator fails when updating Tour steps order (#3793)
+- Fix services list display error (refs ##3795)
 
 
 2.101.1 (2023-10-06)

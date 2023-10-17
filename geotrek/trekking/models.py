@@ -911,8 +911,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
                                                              self.name)
         if self.type.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        elif self.type.review:
-            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @classproperty
