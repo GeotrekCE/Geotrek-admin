@@ -211,9 +211,9 @@ class GeotrekTrekParser(GeotrekParser):
                         except Trek.DoesNotExist:
                             self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
                             continue
-                        OrderedTrekChild.objects.get_or_create(parent=trek_parent_instance[0],
-                                                               child=trek_child_instance,
-                                                               order=order)
+                        OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
+                                                                  child=trek_child_instance,
+                                                                  defaults={'order': order})
                         order += 1
         except Exception as e:
             self.add_warning(_(f"An error occured in children generation : {getattr(e, 'message', repr(e))}"))
