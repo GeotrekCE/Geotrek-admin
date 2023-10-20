@@ -17,25 +17,27 @@ class Command(BaseCommand):
     def execute(self, *args, **options):
         self.stdout.write("Update objects translation after migration from .po files")
         for lang in settings.MODELTRANSLATION_LANGUAGES:
+            correct_lang = lang.replace('-', '_')
             self.stdout.write("Lang : {lang}".format(lang=lang))
             with translation.override(lang, deactivate=True):
                 self.stdout.write("TargetPortal")
                 # 'Geotrek Rando' => TargetPortal title
                 TargetPortal.objects.filter(
-                    **{'title_{}'.format(lang): ''}
-                ).update(**{'title_{}'.format(lang): _('Geotrek Rando')})
+                    **{'title_{}'.format(correct_lang): ''}
+                ).update(**{'title_{}'.format(correct_lang): _('Geotrek Rando')})
                 # 'Geotrek is a web app ...' => TargetPortal description
                 TargetPortal.objects.filter(
-                    **{'description_{}'.format(lang): ''}
-                ).update(**{'description_{}'.format(lang): _('Geotrek is a web app allowing you to prepare your '
-                                                             'next trekking trip !')})
+                    **{'description_{}'.format(correct_lang): ''}
+                ).update(
+                    **{'description_{}'.format(correct_lang): _('Geotrek is a web app allowing you to prepare your '
+                                                                'next trekking trip !')})
                 self.stdout.write("Label is park centered")
                 Label.objects.filter(pk=1).filter(
-                    Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
-                ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
+                    Q(**{'name_{}'.format(correct_lang): ''}) | Q(**{'name_{}'.format(correct_lang): None})
+                ).update(**{'name_{}'.format(correct_lang): _('Is in the midst of the park')})
                 Label.objects.filter(pk=1).filter(
-                    Q(**{'advice_{}'.format(lang): ''}) | Q(**{'advice_{}'.format(lang): None})
-                ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
-                                                        'subjected to regulations which must be known '
-                                                        'by all visitors.')})
+                    Q(**{'advice_{}'.format(correct_lang): ''}) | Q(**{'advice_{}'.format(correct_lang): None})
+                ).update(**{'advice_{}'.format(correct_lang): _('The national park is an unrestricted natural area but '
+                                                                'subjected to regulations which must be known '
+                                                                'by all visitors.')})
         self.stdout.write("Done.")

@@ -47,6 +47,12 @@ def load_sql_files(app, stage):
             logger.info("Loading initial SQL data from '%s'" % sql_file)
             template = get_template(sql_file)
             context_settings = settings.__dict__['_wrapped'].__dict__
+            # fix languages in sql TEMPLATES
+            # (django-modeltranslations use _ instead of - in sub languages)
+            fixed_languages = []
+            for language in context_settings['MODELTRANSLATION_LANGUAGES']:
+                fixed_languages.append(language.replace('-', '_'))
+            context_settings['MODELTRANSLATION_LANGUAGES'] = fixed_languages
             context = dict(
                 schema_geotrek=schema,
                 schema_django=schema_django,
