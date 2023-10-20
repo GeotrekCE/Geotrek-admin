@@ -5,6 +5,11 @@ CHANGELOG
 2.101.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix sub-language usage (en-US, zh-hant, ...) (#3801)
+
+
 2.101.2 (2023-10-17)
 ------------------------
 
