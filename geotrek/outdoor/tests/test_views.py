@@ -74,6 +74,18 @@ class SiteCustomViewTests(TestCase):
         selected = f"<option value=\"{parent.pk}\" selected> {parent.name}</option>"
         self.assertContains(response, selected)
 
+    def test_lang_in_detail_page(self):
+        site = SiteFactory.create(name_fr='un site', name_en='a site')
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(site.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un site')
+        self.assertNotContains(response, 'a site')
+
+        response = self.client.get(site.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a site')
+        self.assertNotContains(response, 'un site')
+
 
 class CourseCustomViewTests(TestCase):
     @mock.patch('mapentity.helpers.requests.get')
@@ -131,6 +143,18 @@ class CourseCustomViewTests(TestCase):
         self.assertEqual(response.json()[0]['name'], 'course_with_ref_points')
         data = "{'type': 'MultiPoint', 'coordinates': [[12.0, 12.0]]}"
         self.assertEqual(str(response.json()[0]['points_reference']), data)
+
+    def test_lang_in_detail_page(self):
+        course = CourseFactory.create(name_fr='un parcours', name_en='a course', published=True)
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(course.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un parcours')
+        self.assertNotContains(response, 'a course')
+
+        response = self.client.get(course.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a course')
+        self.assertNotContains(response, 'un parcours')
 
 
 class SiteDeleteTest(TestCase):

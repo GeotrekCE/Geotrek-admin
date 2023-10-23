@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -159,6 +160,18 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         params = {'format': 'json', 'period': 'ignore', 'language': 'en'}
         response = self.client.get(url, params)
         self.assertIsNone(response.json()['species_id'])
+
+    def test_lang_in_detail_page(self):
+        sensitivearea = SensitiveAreaFactory.create(description_fr='une zone sensible', description_en='a sentive area')
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(sensitivearea.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'une zone sensible')
+        self.assertNotContains(response, 'a sentive area')
+
+        response = self.client.get(sensitivearea.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a sentive area')
+        self.assertNotContains(response, 'une zone sensible')
 
     @override_settings(SENSITIVITY_OPENAIR_SPORT_PRACTICES=['Practice1', ])
     def test_list_sensitivearea(self):

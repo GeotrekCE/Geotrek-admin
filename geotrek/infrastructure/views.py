@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils import translation
 from django.contrib.gis.db.models.functions import Transform
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -36,6 +37,13 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
 
 class InfrastructureDetail(MapEntityDetail):
     queryset = Infrastructure.objects.existing()
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

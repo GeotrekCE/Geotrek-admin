@@ -80,6 +80,17 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(infra.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
 
+    def test_lang_in_detail_page(self):
+        infra = InfrastructureFactory.create(name_fr='une infra', name_en='an infra')
+
+        response = self.client.get(infra.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'une infra')
+        self.assertNotContains(response, 'an infra')
+
+        response = self.client.get(infra.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'an infra')
+        self.assertNotContains(response, 'une infra')
+
     def test_check_structure_or_none_related_are_visible(self):
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())

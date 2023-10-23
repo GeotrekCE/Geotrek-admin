@@ -7,6 +7,7 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView
 from django.views.generic.detail import BaseDetailView
@@ -52,6 +53,13 @@ class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
 
 class SensitiveAreaDetail(MapEntityDetail):
     queryset = SensitiveArea.objects.existing()
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

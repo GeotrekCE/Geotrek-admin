@@ -223,6 +223,17 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
             reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
+    def test_lang_in_detail_page(self):
+        poi = POIFactory.create(name_fr='un POI', name_en='a POI')
+
+        response = self.client.get(poi.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un POI')
+        self.assertNotContains(response, 'a POI')
+
+        response = self.client.get(poi.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a POI')
+        self.assertNotContains(response, 'un POI')
+
 
 class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     model = Trek
@@ -483,6 +494,17 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
+    def test_lang_in_detail_page(self):
+        trek = TrekFactory.create(name_fr='un itinéraire', name_en='a trek')
+
+        response = self.client.get(trek.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un itinéraire')
+        self.assertNotContains(response, 'a trek')
+
+        response = self.client.get(trek.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a trek')
+        self.assertNotContains(response, 'un itinéraire')
 
     def test_list_in_csv(self):
         if self.model is None:

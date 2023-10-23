@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix language bug in several detail pages (#3577)
 - Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
 
 

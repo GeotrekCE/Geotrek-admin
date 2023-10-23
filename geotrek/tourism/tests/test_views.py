@@ -14,6 +14,7 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from embed_video.backends import detect_backend
 from paperclip.models import random_suffix_regexp
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import (StructureFactory, UserFactory,
@@ -360,6 +361,18 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             "type2_label": self.content.type2_label,
             "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
+    def test_lang_in_detail_page(self):
+        touristic_content = TouristicContentFactory.create(name_fr='un contenu touristique', name_en='a touristic content')
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(touristic_content.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un contenu touristique')
+        self.assertNotContains(response, 'a touristic content')
+
+        response = self.client.get(touristic_content.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a touristic content')
+        self.assertNotContains(response, 'un contenu touristique')
+
 
 class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicEventFactory
@@ -397,6 +410,18 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
                               "slug": "touristic-event",
                               "type1_label": "Type",
                               "pictogram": "/static/tourism/touristicevent.svg"})
+
+    def test_lang_in_detail_page(self):
+        touristic_event = TouristicContentFactory.create(name_fr='un évenement touristique', name_en='a touristic event')
+        self.client.force_login(SuperUserFactory())
+
+        response = self.client.get(touristic_event.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'un évenement touristique')
+        self.assertNotContains(response, 'a touristic event')
+
+        response = self.client.get(touristic_event.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a touristic event')
+        self.assertNotContains(response, 'un évenement touristique')
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):

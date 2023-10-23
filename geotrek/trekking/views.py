@@ -337,6 +337,13 @@ class POIDetail(CompletenessMixin, MapEntityDetail):
                  queryset=HDViewPoint.objects.select_related('content_type', 'license'))
     )
 
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
