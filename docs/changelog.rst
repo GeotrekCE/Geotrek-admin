@@ -5,6 +5,11 @@ CHANGELOG
 2.101.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
+
+
 2.101.2 (2023-10-17)
 ------------------------
 

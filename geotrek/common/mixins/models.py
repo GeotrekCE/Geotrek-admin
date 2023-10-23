@@ -16,6 +16,7 @@ from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from embed_video.backends import detect_backend, VideoDoesntExistException
@@ -153,7 +154,7 @@ class PicturesMixin:
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+            except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
                 logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
             else:
                 resized.append((picture, thdetail))
@@ -445,7 +446,7 @@ def get_uuid_duplication(uid_field):
 class GeotrekMapEntityMixin(MapEntityMixin):
     elements_duplication = {
         "attachments": {"uuid": get_uuid_duplication},
-        "avoid_fields": ["aggregations", "children",],
+        "avoid_fields": ["aggregations", "children"],
         "uuid": get_uuid_duplication,
     }
 
