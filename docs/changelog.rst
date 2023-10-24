@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix interventions url on project detail map (#3498)
 - Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
 
 
