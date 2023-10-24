@@ -166,6 +166,11 @@ CHANGELOG
 - Upgrade `django-mapentity`
 
 
+**Bug fixes**
+
+- Fix: protect report endpoint from email failure
+
+
 2.98.1 (2023-05-30)
 -----------------------
 
