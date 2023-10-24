@@ -166,6 +166,11 @@ CHANGELOG
 - Upgrade `django-mapentity`
 
 
+**Bug fixes**
+
+- Fix: Parser loading with import command (#3538)
+
+
 2.98.1 (2023-05-30)
 -----------------------
 
