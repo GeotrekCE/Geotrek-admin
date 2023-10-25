@@ -19,6 +19,7 @@ from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 
 from geotrek.core.models import Path, Trail, PathSource
+from geotrek.core.filters import PathFilterSet, TrailFilterSet
 
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -873,3 +874,53 @@ class RemovePathKeepTopology(TestCase):
         self.assertEqual(poi.deleted, False)
 
         self.assertAlmostEqual(1.5, poi.offset)
+
+
+class PathFilterTest(CommonTest, AuthentFixturesTest):
+    factory = PathFactory
+    filterset = PathFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = PathFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = PathFactory.create(provider='my_provider1')
+        signage2 = PathFactory.create(provider='my_provider2')
+
+        filter_set = PathFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
+
+
+class TrailFilterTest(CommonTest, AuthentFixturesTest):
+    factory = TrailFactory
+    filterset = TrailFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TrailFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = TrailFactory.create(provider='my_provider1')
+        signage2 = TrailFactory.create(provider='my_provider2')
+
+        filter_set = TrailFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)

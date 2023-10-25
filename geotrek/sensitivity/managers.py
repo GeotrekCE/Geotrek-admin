@@ -1,8 +1,5 @@
-from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
 
 
-class SensitiveAreaManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+class SensitiveAreaManager(NoDeleteManager, ProviderChoicesMixin):
+    pass

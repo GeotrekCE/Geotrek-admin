@@ -103,7 +103,7 @@ class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureR
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Path.objects.provider_choices()
+        choices=(('', '---------'),)
     )
     networks = ModelMultipleChoiceFilter(queryset=Network.objects.all().select_related("structure"))
     usages = ModelMultipleChoiceFilter(queryset=Usage.objects.all().select_related("structure"))
@@ -113,6 +113,10 @@ class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureR
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
             ['valid', 'networks', 'usages', 'comfort', 'stake', 'draft', 'provider']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['provider'].choices = Path.objects.provider_choices()
 
 
 class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
@@ -130,13 +134,17 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Trail.objects.provider_choices()
+        choices=(('', '---------'),)
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
             ['name', 'category', 'departure', 'arrival', 'certification_labels', 'comments', 'provider']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['provider'].choices = Trail.objects.provider_choices()
 
 
 class TopologyFilterTrail(TopologyFilter):

@@ -27,8 +27,12 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=TouristicContent.objects.provider_choices()
+        choices=(('', '---------'),)
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['provider'].choices = TouristicContent.objects.provider_choices()
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
@@ -83,8 +87,12 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=TouristicEvent.objects.provider_choices()
+        choices=(('', '---------'),)
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['provider'].choices = TouristicEvent.objects.provider_choices()
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent

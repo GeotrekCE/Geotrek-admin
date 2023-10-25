@@ -14,6 +14,7 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.signage.models import Signage, Blade
+from geotrek.signage.views import SignageList
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
@@ -462,6 +463,26 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
 
         self.assertIn(i, filter_set.qs)
         self.assertIn(i2, filter_set.qs)
+
+    def test_provider_filter_without_provider(self):
+        filter_set = SignageFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = SignageFactory.create(provider='my_provider1')
+        signage2 = SignageFactory.create(provider='my_provider2')
+
+        filter_set = SignageFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
 
 
 class BladeFilterSetTest(TestCase):

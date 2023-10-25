@@ -13,8 +13,12 @@ class SensitiveAreaFilterSet(StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=SensitiveArea.objects.provider_choices()
+        choices=(('', '---------'),)
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['provider'].choices = SensitiveArea.objects.provider_choices()
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = SensitiveArea

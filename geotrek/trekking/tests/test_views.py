@@ -37,6 +37,7 @@ from geotrek.tourism.tests import factories as tourism_factories
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
 from geotrek.trekking import views as trekking_views
+from geotrek.trekking.filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from .base import TrekkingManagerTest
 from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
@@ -1653,3 +1654,78 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         trek.infrastructures[0].delete()
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+
+
+class TrekFilterTest(TestCase):
+    factory = TrekFactory
+    filterset = TrekFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TrekFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = TrekFactory.create(provider='my_provider1')
+        signage2 = TrekFactory.create(provider='my_provider2')
+
+        filter_set = TrekFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
+
+
+class POIFilterTest(TestCase):
+    factory = POIFactory
+    filterset = POIFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = POIFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = POIFactory.create(provider='my_provider1')
+        signage2 = POIFactory.create(provider='my_provider2')
+
+        filter_set = POIFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
+
+
+class ServiceFilterTest(TestCase):
+    factory = ServiceFactory
+    filterset = ServiceFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = ServiceFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = ServiceFactory.create(provider='my_provider1')
+        signage2 = ServiceFactory.create(provider='my_provider2')
+
+        filter_set = ServiceFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
