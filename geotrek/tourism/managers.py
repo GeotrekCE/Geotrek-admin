@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db.models import Q
 from modeltranslation.manager import MultilingualManager
 
-from geotrek.common.mixins.managers import NoDeleteManager
+from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
 
 
 class TouristicContentTypeFilteringManager(MultilingualManager):
@@ -61,15 +61,9 @@ class TouristicContentType2Manager(MultilingualManager):
         return super().get_queryset().filter(in_list=2)
 
 
-class TouristicContentManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+class TouristicContentManager(NoDeleteManager, ProviderChoicesMixin):
+    pass
 
 
-class TouristicEventManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+class TouristicEventManager(NoDeleteManager, ProviderChoicesMixin):
+    pass

@@ -24,7 +24,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Infrastructure.objects.provider_choices()
+        choices=(('', '---------'),)
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -43,3 +43,4 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form.fields['implantation_year'].choices = Infrastructure.objects.implantation_year_choices()
+        self.form.fields['provider'].choices = Infrastructure.objects.provider_choices()

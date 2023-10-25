@@ -35,7 +35,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Signage.objects.provider_choices()
+        choices=(('', '---------'),)
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -47,6 +47,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form.fields['implantation_year'].choices = Signage.objects.implantation_year_choices()
+        self.form.fields['provider'].choices = Signage.objects.provider_choices()
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)
