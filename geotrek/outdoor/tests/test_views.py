@@ -176,8 +176,8 @@ class SiteFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = SiteFactory.create(provider='my_provider1')
-        signage2 = SiteFactory.create(provider='my_provider2')
+        site1 = SiteFactory.create(provider='my_provider1')
+        site2 = SiteFactory.create(provider='my_provider2')
 
         filter_set = SiteFilterSet()
         filter_form = filter_set.form
@@ -185,8 +185,8 @@ class SiteFilterTest(TestCase):
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
         self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
+        self.assertIn(site1, filter_set.qs)
+        self.assertIn(site2, filter_set.qs)
 
 
 class CourseFilterTest(TestCase):
@@ -201,8 +201,8 @@ class CourseFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = CourseFactory.create(provider='my_provider1')
-        signage2 = CourseFactory.create(provider='my_provider2')
+        course1 = CourseFactory.create(provider='my_provider1')
+        course2 = CourseFactory.create(provider='my_provider2')
 
         filter_set = CourseFilterSet()
         filter_form = filter_set.form
@@ -210,5 +210,5 @@ class CourseFilterTest(TestCase):
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
         self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
+        self.assertIn(course1, filter_set.qs)
+        self.assertIn(course2, filter_set.qs)

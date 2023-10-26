@@ -888,8 +888,8 @@ class PathFilterTest(CommonTest, AuthentFixturesTest):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = PathFactory.create(provider='my_provider1')
-        signage2 = PathFactory.create(provider='my_provider2')
+        path1 = PathFactory.create(provider='my_provider1')
+        path2 = PathFactory.create(provider='my_provider2')
 
         filter_set = PathFilterSet()
         filter_form = filter_set.form
@@ -897,8 +897,8 @@ class PathFilterTest(CommonTest, AuthentFixturesTest):
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
         self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
+        self.assertIn(path1, filter_set.qs)
+        self.assertIn(path2, filter_set.qs)
 
 
 class TrailFilterTest(CommonTest, AuthentFixturesTest):
@@ -913,8 +913,8 @@ class TrailFilterTest(CommonTest, AuthentFixturesTest):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = TrailFactory.create(provider='my_provider1')
-        signage2 = TrailFactory.create(provider='my_provider2')
+        trail1 = TrailFactory.create(provider='my_provider1')
+        trail2 = TrailFactory.create(provider='my_provider2')
 
         filter_set = TrailFilterSet()
         filter_form = filter_set.form
@@ -922,5 +922,5 @@ class TrailFilterTest(CommonTest, AuthentFixturesTest):
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
         self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
+        self.assertIn(trail1, filter_set.qs)
+        self.assertIn(trail2, filter_set.qs)

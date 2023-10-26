@@ -131,8 +131,8 @@ class InfrastructureFilterTest(CommonTest):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = InfrastructureFactory.create(provider='my_provider1')
-        signage2 = InfrastructureFactory.create(provider='my_provider2')
+        infrastructure1 = InfrastructureFactory.create(provider='my_provider1')
+        infrastructure2 = InfrastructureFactory.create(provider='my_provider2')
 
         filter_set = InfrastructureFilterSet()
         filter_form = filter_set.form
@@ -140,5 +140,5 @@ class InfrastructureFilterTest(CommonTest):
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
         self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
+        self.assertIn(infrastructure1, filter_set.qs)
+        self.assertIn(infrastructure2, filter_set.qs)
