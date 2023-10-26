@@ -6,8 +6,9 @@ from geotrek.common.mixins.managers import NoDeleteManager
 
 class InterventionManager(NoDeleteManager):
     def year_choices(self):
-        return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
-            .order_by('-year').distinct().values_list('year', 'year')
+        values = self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
+            .order_by('-year').distinct().values_list('year', flat=True)
+        return [(year, year) for year in values]
 
 
 class ProjectManager(NoDeleteManager):

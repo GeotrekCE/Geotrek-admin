@@ -43,20 +43,6 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         ]
 
 
-class AfterFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(end_date__gte=value)
-
-
-class BeforeFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(begin_date__lte=value)
-
-
 class CompletedFilter(django_filters.BooleanFilter):
     """
     Filter events with end_date in past (event completed)
@@ -80,8 +66,8 @@ class CompletedFilter(django_filters.BooleanFilter):
 
 
 class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    after = AfterFilter(label=_("After"))
-    before = BeforeFilter(label=_("Before"))
+    after = django_filters.DateFilter(label=_("After"), lookup_expr='gte', field_name='end_date')
+    before = django_filters.DateFilter(label=_("Before"), lookup_expr='lte', field_name='begin_date')
     completed = CompletedFilter(label=_("Completed"))
     provider = ChoiceFilter(
         field_name='provider',
