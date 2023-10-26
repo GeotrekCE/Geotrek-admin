@@ -2,13 +2,13 @@
 CHANGELOG
 =========
 
-2.101.2+dev (XXXX-XX-XX)
+2.101.3 (2023-10-17)
 ------------------------
 
 **Bug fixes**
 
 - Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
-
+- Fix provider choices in list filter forms
 
 2.101.2 (2023-10-17)
 ------------------------
