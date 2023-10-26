@@ -14,7 +14,6 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.signage.models import Signage, Blade
-from geotrek.signage.views import SignageList
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
