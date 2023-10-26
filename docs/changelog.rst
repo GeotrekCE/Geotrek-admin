@@ -5,6 +5,11 @@ CHANGELOG
 2.101.3+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix filters tigger exception with data and not updated until application restart (#3812)
+
+
 2.101.3     (2023-10-26)
 ------------------------
 
