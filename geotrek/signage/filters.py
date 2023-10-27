@@ -27,15 +27,15 @@ class PolygonTopologyFilter(PolygonFilter):
 class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = MultipleChoiceFilter(choices=(('', '---------'),))
+    implantation_year = MultipleChoiceFilter(choices=lambda: Signage.objects.implantation_year_choices())
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
-                                             choices=(('', '---------'),))
+                                             choices=lambda: Intervention.objects.year_choices())
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
     provider = ChoiceFilter(
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Signage.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -43,12 +43,6 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
                                                           'sealing', 'access', 'provider']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['implantation_year'].choices = Signage.objects.implantation_year_choices()
-        self.form.fields['provider'].choices = Signage.objects.provider_choices()
-        self.form.fields['intervention_year'].choices = Intervention.objects.year_choices()
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)

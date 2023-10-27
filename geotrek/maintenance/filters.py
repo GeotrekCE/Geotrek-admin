@@ -130,7 +130,7 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
 
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
-    year = MultipleChoiceFilter(choices=(('', '---------'),),
+    year = MultipleChoiceFilter(choices=lambda: Intervention.objects.year_choices(),
                                 field_name='date', lookup_expr='year', label=_("Year"))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
     area_type = InterventionIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False,
@@ -155,7 +155,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     bbox = PythonPolygonFilter(field_name='geom')
     year = MultipleChoiceFilter(
         label=_("Year of activity"), method='filter_year',
-        choices=(('', '---------'),)
+        choices=lambda: Project.objects.year_choices()
     )
     city = ProjectIntersectionFilterCity(label=_('City'), lookup_expr='intersects', required=False)
     district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)

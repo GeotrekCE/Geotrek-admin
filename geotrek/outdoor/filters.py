@@ -17,7 +17,7 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Site.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -26,10 +26,6 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             'published', 'sector', 'practice', 'labels', 'themes', 'portal', 'source', 'information_desks',
             'web_links', 'type', 'orientation', 'wind', 'provider'
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['provider'].choices = Site.objects.provider_choices()
 
     def filter_orientation(self, qs, name, values):
         q = Q()
@@ -62,7 +58,7 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Course.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -72,10 +68,6 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             'parent_sites__portal', 'parent_sites__source', 'parent_sites__type', 'orientation', 'wind',
             'height', 'provider'
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['provider'].choices = Course.objects.provider_choices()
 
     def filter_orientation(self, qs, name, values):
         q = Q()

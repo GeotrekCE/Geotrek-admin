@@ -12,9 +12,9 @@ from geotrek.zoning.filters import ZoningFilterSet
 class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = MultipleChoiceFilter(choices=(('', '---------'),))
+    implantation_year = MultipleChoiceFilter(choices=lambda: Infrastructure.objects.implantation_year_choices())
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
-                                             choices=(('', '---------'),))
+                                             choices=lambda: Intervention.objects.year_choices())
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
                                     choices=INFRASTRUCTURE_TYPES)
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
@@ -24,7 +24,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Infrastructure.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -39,9 +39,3 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         interventions = Intervention.objects.filter(target_type=infrastructure_ct, date__year__in=value) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['implantation_year'].choices = Infrastructure.objects.implantation_year_choices()
-        self.form.fields['provider'].choices = Infrastructure.objects.provider_choices()
-        self.form.fields['intervention_year'].choices = Intervention.objects.year_choices()

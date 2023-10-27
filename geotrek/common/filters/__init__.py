@@ -2,9 +2,12 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter, RangeFilter
 from mapentity.filters import MapEntityFilterSet
 
+from geotrek.common.filters.fields import ComaSeparatedMultipleModelChoiceField, OneLineRangeField
 from geotrek.common.models import HDViewPoint
 
-from .fields import OneLineRangeField
+
+class ComaSeparatedMultipleModelChoiceFilter(ModelMultipleChoiceFilter):
+    field_class = ComaSeparatedMultipleModelChoiceField
 
 
 class OptionalRangeFilter(RangeFilter):
