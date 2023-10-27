@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix filters tigger exception with data and not updated until application restart (#3812)
+- Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
 
 
 2.101.3     (2023-10-26)
