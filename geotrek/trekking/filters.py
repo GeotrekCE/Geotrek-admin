@@ -13,7 +13,7 @@ class TrekFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zon
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Trek.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -23,10 +23,6 @@ class TrekFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zon
             'practice', 'accessibilities', 'accessibility_level', 'route', 'labels',
             'source', 'portal', 'reservation_system', 'provider'
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['provider'].choices = Trek.objects.provider_choices()
 
 
 class POITrekFilter(TopologyFilter):
@@ -39,12 +35,8 @@ class POIFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilter
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: POI.objects.provider_choices()
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['provider'].choices = POI.objects.provider_choices()
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = POI
@@ -58,12 +50,8 @@ class ServiceFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: Service.objects.provider_choices()
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form.fields['provider'].choices = Service.objects.provider_choices()
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Service

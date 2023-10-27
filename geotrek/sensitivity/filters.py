@@ -13,7 +13,7 @@ class SensitiveAreaFilterSet(StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=(('', '---------'),)
+        choices=lambda: SensitiveArea.objects.provider_choices()
     )
 
     def __init__(self, *args, **kwargs):
