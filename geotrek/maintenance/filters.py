@@ -146,6 +146,10 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
             'status', 'type', 'stake', 'subcontracting', 'project', 'on',
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['year'].choices = Intervention.objects.year_choices()
+
 
 class ProjectFilterSet(StructureRelatedFilterSet):
     bbox = PythonPolygonFilter(field_name='geom')
@@ -170,3 +174,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
         for value in values:
             q |= Q(begin_year__lte=value, end_year__gte=value)
         return qs.filter(q)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form.fields['year'].choices = Project.objects.year_choices()
