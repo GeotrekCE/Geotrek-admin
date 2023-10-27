@@ -14,7 +14,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = MultipleChoiceFilter(choices=(('', '---------'),))
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
-                                             choices=Intervention.objects.year_choices())
+                                             choices=(('', '---------'),))
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
                                     choices=INFRASTRUCTURE_TYPES)
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
@@ -44,3 +44,4 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
         super().__init__(*args, **kwargs)
         self.form.fields['implantation_year'].choices = Infrastructure.objects.implantation_year_choices()
         self.form.fields['provider'].choices = Infrastructure.objects.provider_choices()
+        self.form.fields['intervention_year'].choices = Intervention.objects.year_choices()
