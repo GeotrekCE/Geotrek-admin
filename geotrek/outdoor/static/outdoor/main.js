@@ -5,9 +5,11 @@ $(window).on('entity:map', function (e, data) {
     var loaded_course = false;
     // Show outdoor layers in application maps
     $.each(['site', 'course'], function (i, modelname) {
+        var style = L.Util.extend({ clickable: false },
+            window.SETTINGS.map.styles[modelname] || {});
         var layer = new L.ObjectsLayer(null, {
             modelname: modelname,
-            style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, { clickable: false }),
+            style: style,
         });
         if (data.modelname != modelname) {
             map.layerscontrol.addOverlay(layer, tr(modelname), tr('Outdoor'));

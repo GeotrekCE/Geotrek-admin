@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
 - Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
+- Fix cannot click on objects after customizing map styles (#3800)
 
 
 2.101.3     (2023-10-26)
@@ -24,7 +25,6 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix UI bug when customizing intervention map style (#3800)
 - Fix Aggregator fails when updating Tour steps order (#3793)
 - Fix services list display error (refs ##3795)
 
