@@ -2449,6 +2449,14 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEquals(json_response.get('site').get('uuid'), str(self.site.uuid))
         self.assertEquals(json_response.get('site').get('id'), self.site.id)
 
+    def test_hdviewpoint_geom_on_related_lists(self):
+        response = self.get_poi_detail(self.poi.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['view_points'][0]['geometry'], {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]})
+        response = self.get_site_detail(self.site.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['view_points'][0]['geometry'], {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]})
+
 
 class APIAccessAdministratorTestCase(BaseApiTest):
     """ TestCase for administrator API profile """
