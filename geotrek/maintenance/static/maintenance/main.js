@@ -10,10 +10,13 @@ $(window).on('entity:map', function (e, data) {
     var map = data.map;
 
     // Show infrastructure layer in application maps
-	var layer = new L.ObjectsLayer(null, {
-		modelname: modelname,
-		style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, { clickable:false }),
-	});
+    var style = L.Util.extend({ clickable: false },
+        window.SETTINGS.map.styles[modelname] || {});
+
+    var layer = new L.ObjectsLayer(null, {
+        modelname: modelname,
+        style: style,
+    });
 
     if (data.modelname != modelname){
 	    map.layerscontrol.addOverlay(layer, tr('Intervention'), tr('Maintenance'));

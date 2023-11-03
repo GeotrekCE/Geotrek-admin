@@ -23,6 +23,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix UI bug when customizing intervention map style (#3800)
 - Fix Aggregator fails when updating Tour steps order (#3793)
 - Fix services list display error (refs ##3795)
 
