@@ -26,7 +26,7 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
             .prefetch_related(Prefetch('attachments',
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
                               Prefetch('view_points',
-                                       queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
+                                       queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
             .order_by('name')  # Required for reliable pagination
 
 

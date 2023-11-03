@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
+- Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
 
 
 2.101.3     (2023-10-26)

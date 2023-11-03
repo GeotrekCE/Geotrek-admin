@@ -172,7 +172,7 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
                           Prefetch('attachments',
                                    queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
                           Prefetch('view_points',
-                                   queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
+                                   queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 
