@@ -69,7 +69,7 @@ class SignageCommandTest(TestCase):
                 output_file_path,
                 type_default='label',
                 name_default='name',
-                condition_default='condition',
+                condition_default='conditions',
                 structure_default='structure',
                 description_default='description',
                 year_field='year',
@@ -118,8 +118,8 @@ class SignageCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         call_command('loadsignage', filename, type_field='label', name_field='name',
-                     condition_field='condition', manager_field='manager', sealing_field='sealing',
                      structure_default='structure',
+                     condition_field='conditions', manager_field='manager', sealing_field='sealing',
                      description_field='descriptio', year_field='year', code_field='name', verbosity=1, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())

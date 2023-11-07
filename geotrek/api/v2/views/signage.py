@@ -26,6 +26,11 @@ class SignageTypeViewSet(api_viewsets.GeotrekViewSet):
     queryset = signage_models.SignageType.objects.all().order_by('pk')
 
 
+class SignageConditionViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.SignageConditionSerializer
+    queryset = signage_models.SignageCondition.objects.all().order_by('pk')
+
+
 class DirectionViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.DirectionSerializer
     queryset = signage_models.Direction.objects.all().order_by('pk')

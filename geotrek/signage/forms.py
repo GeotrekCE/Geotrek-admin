@@ -48,7 +48,7 @@ class BaseBladeForm(CommonForm):
             'number',
             'direction',
             'type',
-            'condition',
+            'conditions',
             'color',
             Fieldset(_('Lines')),
         )
@@ -57,7 +57,7 @@ class BaseBladeForm(CommonForm):
             'number',
             'direction',
             'type',
-            'condition',
+            'conditions',
             'color',
         )
     ]
@@ -107,7 +107,7 @@ class BaseBladeForm(CommonForm):
 
     class Meta:
         model = Blade
-        fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
+        fields = ['id', 'number', 'direction', 'type', 'conditions', 'color']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -168,7 +168,7 @@ class SignageForm(BaseSignageForm):
             'name',
             'description',
             'type',
-            'condition',
+            'conditions',
             'implantation_year',
             'published',
             'code',
@@ -181,4 +181,4 @@ class SignageForm(BaseSignageForm):
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
-        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing', 'access']
+        fields = BaseInfrastructureForm.Meta.fields + ['code', 'conditions', 'printed_elevation', 'manager', 'sealing', 'access']

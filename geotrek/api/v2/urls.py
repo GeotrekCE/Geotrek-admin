@@ -80,6 +80,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     router.register('signage_sealing', api_views.SealingViewSet, basename='signage-sealing')
     router.register('signage_color', api_views.ColorViewSet, basename='signage-color')
     router.register('signage_direction', api_views.DirectionViewSet, basename='signage-direction')
+    router.register('signage_conditions', api_views.SignageConditionViewSet, basename='signage-condition')
     router.register('hdviewpoint', api_views.HDViewPointViewSet, basename='hdviewpoint')
 
 

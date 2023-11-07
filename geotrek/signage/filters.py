@@ -40,7 +40,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
+        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'conditions', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
                                                           'sealing', 'access', 'provider']
 
@@ -63,4 +63,4 @@ class BladeFilterSet(MapEntityFilterSet):
 
     class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']
+        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'conditions']

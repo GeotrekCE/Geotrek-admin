@@ -112,9 +112,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     access = models.ForeignKey(InfrastructureAccessMean,
                                verbose_name=_("Access mean"), blank=True, null=True,
                                on_delete=models.PROTECT)
-    condition = models.ForeignKey(InfrastructureCondition,
-                                  verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
@@ -176,7 +173,9 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
                                          on_delete=models.PROTECT,
                                          related_name='infrastructures_set')
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-
+    condition = models.ForeignKey(InfrastructureCondition,
+                                  verbose_name=_("Condition"), blank=True, null=True,
+                                  on_delete=models.PROTECT)
     geometry_types_allowed = ["LINESTRING", "POINT"]
 
     class Meta:

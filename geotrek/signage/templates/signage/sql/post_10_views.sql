@@ -18,19 +18,26 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS WITH v_signage_tmp AS
             t.code,
             t.printed_elevation,
             t.manager_id,
-            t.condition_id,
+            {% comment %} t.condition_id, {% endcomment %}
+            p.labels AS "Condition",
             t.sealing_id,
             t.access_id,
             t.structure_id,
             t.type_id,
             CONCAT (e.min_elevation, 'm') AS elevation,
             e.geom
-     FROM signage_signage t,
-          signage_signagetype b,
-          core_topology e
-     WHERE t.topo_object_id = e.id
-         AND t.type_id = b.id
-         AND e.deleted = FALSE )
+        FROM signage_signage t
+            left join core_topology e on t.topo_object_id = e.id
+            left join signage_signagetype b on t.type_id = b.id
+        -- FROM signage_signage t,
+        --   signage_signagetype b,
+        --   core_topology e
+        LEFT JOIN
+            (SELECT a.signagecondition_id, b.label AS labels, a.signage_id
+                FROM signage_signagecondition b
+                JOIN signage_signage_conditions a ON a.signagecondition_id = b.id) p
+                ON t.topo_object_id = p.signage_id
+        WHERE e.deleted = FALSE )
 SELECT a.id,
        e.name AS "Structure",
        f.zoning_city AS "City",
@@ -40,7 +47,7 @@ SELECT a.id,
        {% endfor %}
        a.code AS "Code",
        b.label AS "Type",
-       c.label AS "State",
+    --    c.label AS "State",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
@@ -63,7 +70,11 @@ SELECT a.id,
        a.geom
 FROM v_signage_tmp a
 LEFT JOIN signage_signagetype b ON a.type_id = b.id
-LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
+LEFT JOIN (SELECT a.signagecondition_id, b.label AS labels, a.signage_id
+                FROM signage_signagecondition b
+                JOIN signage_signage_conditions a ON a.signagecondition_id = b.id) c
+        ON a.id = c.signage_id
+-- LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
 LEFT JOIN signage_sealing d ON a.sealing_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
 LEFT JOIN infrastructure_infrastructureaccessmean i ON a.access_id = i.id

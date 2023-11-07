@@ -21,8 +21,15 @@
             <td>{{ object.type }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"condition" }}</th>
-            <td>{{ object.condition }}</td>
+            <th>{{ object|verbose:"conditions" }}</th>
+            <td>{% for condition in object.conditions.all %}
+                {% if not forloop.last %}
+                    <span>{{ condition.label }},<span>
+                {% else %}
+                    <span>{{ condition.label }}<span>
+                {% endif %}
+            {% endfor %}
+        </td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
@@ -85,7 +92,7 @@
                     {% if not is_direction_on_lines_enabled %}
                         <th>{% trans "Direction" %}</th>
                     {% endif %}
-                    <th>{% trans "Condition" %}</th>
+                    <th>{% trans "Conditions" %}</th>
                     {% if is_direction_on_lines_enabled %}
                         <th>{% trans "Direction" %}</th>
                     {% endif %}
@@ -111,7 +118,7 @@
                                 <td></td> <!-- type -->
                                 <td></td> <!-- color -->
                                 <td></td> <!-- direction -->
-                                <td></td> <!-- condition -->
+                                <td></td> <!-- conditions -->
                             {% endif %}
                             <td>{{ line.text }}</td>
                             <td>
@@ -141,7 +148,7 @@
                                 <td></td> <!-- blade -->
                                 <td></td> <!-- type -->
                                 <td></td> <!-- color -->
-                                <td></td> <!-- condition -->
+                                <td></td> <!-- conditions -->
                             {% endif %}
                             <td>{{ line.direction|default_if_none:"" }}</td>
                             <td>{{ line.text }}</td>

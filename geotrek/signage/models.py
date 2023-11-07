@@ -17,7 +17,7 @@ from geotrek.common.utils import (
 
 from geotrek.core.models import Topology, Path
 
-from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
+from geotrek.infrastructure.models import BaseInfrastructure
 from geotrek.signage.managers import SignageGISManager
 
 from geotrek.zoning.mixins import ZoningPropertiesMixin
@@ -71,6 +71,20 @@ class LinePictogram(TimeStampedModelMixin, OptionalPictogramMixin):
         return self.label
 
 
+class SignageCondition(TimeStampedModelMixin, StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Name"), max_length=250)
+
+    class Meta:
+        verbose_name = _("Signage Condition")
+        verbose_name_plural = _("Signage Conditions")
+        ordering = ["label"]
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
 class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
@@ -80,6 +94,10 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.PROTECT)
     coordinates_verbose_name = _("Coordinates")
+    conditions = models.ManyToManyField(
+        SignageCondition,
+        related_name='signages',
+        verbose_name=_("Condition"), blank=True)
 
     geometry_types_allowed = ["POINT"]
 
@@ -137,6 +155,10 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     @property
     def lng_value(self):
         return self.geomtransform.y
+
+    @property
+    def conditions_display(self):
+        return ", ".join([str(c) for c in self.conditions.all()])
 
     def distance(self, to_cls):
         """Distance to associate this signage to another class"""
@@ -202,6 +224,20 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
         return self.label
 
 
+class BladeCondition(TimeStampedModelMixin, StructureOrNoneRelated):
+    label = models.CharField(verbose_name=_("Name"), max_length=250)
+
+    class Meta:
+        verbose_name = _("Blade Condition")
+        verbose_name_plural = _("Blade Conditions")
+        ordering = ('label',)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
 class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, NoDeleteMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.CASCADE)
@@ -211,8 +247,12 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
     type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
-    condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
-                                  null=True, blank=True, on_delete=models.PROTECT)
+    # condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
+    #                               null=True, blank=True, on_delete=models.PROTECT)
+    conditions = models.ManyToManyField(
+        BladeCondition,
+        related_name='blades',
+        verbose_name=_("Condition"), blank=True)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
@@ -241,6 +281,10 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
         self.topology = topology
         if not self.is_signage:
             raise ValueError("Expecting a signage")
+
+    @property
+    def conditions_display(self):
+        return ", ".join([str(c) for c in self.conditions.all()])
 
     @property
     def paths(self):

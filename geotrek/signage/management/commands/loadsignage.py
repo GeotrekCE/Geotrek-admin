@@ -10,8 +10,7 @@ from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.common.models import Organism
 from geotrek.core.models import Topology
-from geotrek.signage.models import Sealing, Signage, SignageType
-from geotrek.infrastructure.models import InfrastructureCondition
+from geotrek.signage.models import Sealing, Signage, SignageType, SignageCondition
 from django.conf import settings
 
 
@@ -109,7 +108,7 @@ class Command(BaseCommand):
                     break
                 if not self.check_fields_available_with_default(available_fields, field_name, default_name, 'name'):
                     break
-                if not self.check_fields_available_without_default(available_fields, field_condition_type, 'condition'):
+                if not self.check_fields_available_without_default(available_fields, field_condition_type, 'conditions'):
                     break
                 if not self.check_fields_available_without_default(available_fields, field_manager, 'manager'):
                     break
@@ -154,7 +153,7 @@ class Command(BaseCommand):
 
                     condition = feature.get(field_condition_type) if field_condition_type in available_fields else default_condition_type
                     if condition:
-                        condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition, structure=structure if use_structure else None)
+                        condition_type, created = SignageCondition.objects.get_or_create(label=condition, structure=structure if use_structure else None)
                         if created and verbosity:
                             self.stdout.write("- Condition Type '{}' created".format(condition_type))
                     else:
@@ -194,7 +193,7 @@ class Command(BaseCommand):
                     fields_to_integrate = {
                         'type': signage_type,
                         'name': name,
-                        'condition': condition_type,
+                        'conditions': [condition_type] if condition_type else [],
                         'structure': structure,
                         'description': description,
                         'implantation_year': year,
@@ -217,16 +216,22 @@ class Command(BaseCommand):
     def create_signage(self, geometry, fields_to_integrate, verbosity):
 
         with transaction.atomic():
+            conditions = fields_to_integrate.pop('conditions')
             if fields_to_integrate['eid']:
                 eid = fields_to_integrate.pop('eid')
                 infra, created = Signage.objects.update_or_create(
                     eid=eid,
                     defaults=fields_to_integrate
                 )
+                if conditions:
+                    infra.conditions.add(conditions)
                 if verbosity > 0 and not created:
                     self.stdout.write("Update : %s with eid %s" % (fields_to_integrate['name'], eid))
             else:
                 infra = Signage.objects.create(**fields_to_integrate)
+                if conditions:
+                    for condition in conditions:
+                        infra.conditions.add(condition.pk)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
                 geometry = geometry.transform(settings.API_SRID, clone=True)
