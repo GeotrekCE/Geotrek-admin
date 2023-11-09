@@ -5,6 +5,10 @@ CHANGELOG
 2.101.3+dev (XXXX-XX-XX)
 ------------------------
 
+**Documentation**
+
+- Improve documentation for database restore
+
 **Bug fixes**
 
 - Fix: filters choices can raise exception in lists and not updated until application restart (#3812)

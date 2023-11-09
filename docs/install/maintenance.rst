@@ -42,9 +42,8 @@ Create an empty database (``geotrekdb`` in this example):
 
 .. code-block:: bash
 
-    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek ENCODING 'UTF8' TEMPLATE template0;"
+    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
-    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
 
 
@@ -52,11 +51,9 @@ Restore backup:
 
 .. code-block:: bash
 
-    sudo -u postgres pg_restore -d geotrekdb 20200510-geotrekdb.backup
+    pg_restore -U geotrek -h localhost --clean --no-acl --no-owner -d geotrekdb 20200510-geotrekdb.backup
 
-If errors occurs on restore, try to add ``--clean`` option.
-
-If errors persists, rename your database and recreate a fresh one, then restore.
+If errors persist, rename your database and recreate a fresh one, then restore.
 
 Extract media and configuration files:
 
