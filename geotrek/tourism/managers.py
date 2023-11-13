@@ -35,12 +35,12 @@ class TouristicContentTypeFilteringManager(MultilingualManager):
             q_category = Q(**{category_field_name: category})
 
         if language:
-            published_field_name = f"contents{i}__published_{language}"
+            published_field_name = f"contents{i}__published_{language.replace('-', '_')}"
             q_lang = Q(**{published_field_name: True})
         else:
             q_lang = Q()
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                published_field_name = f"contents{i}__published_{lang}"
+                published_field_name = f"contents{i}__published_{lang.replace('-', '_')}"
                 q_lang |= Q(**{published_field_name: True})
 
         deleted_field_name = f"contents{i}__deleted"
