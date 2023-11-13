@@ -188,7 +188,7 @@ class TrekForm(BaseTrekForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
-        self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
+        self.fields['name_%s' % settings.LANGUAGE_CODE.replace('-', '_')].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
