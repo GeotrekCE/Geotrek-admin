@@ -141,13 +141,13 @@ class GeotrekPublishedFilter(BaseFilterBackend):
                 # no language specified. Check for all.
                 q = Q()
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    field_name = 'published_{}'.format(lang)
+                    field_name = 'published_{}'.format(lang.replace('-', '_'))
                     if field_name in associated_published_fields:
                         q |= Q(**{field_name: True})
                 qs = qs.filter(q)
             else:
                 # one language is specified
-                field_name = 'published_{}'.format(language)
+                field_name = 'published_{}'.format(language.replace('-', '_'))
                 qs = qs.filter(**{field_name: True})
 
         return qs
@@ -991,12 +991,12 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
             language = request.GET.get('language')
             if language:
                 # one language is specified
-                related_field_name = '{}__published_{}'.format(related_name, language)
+                related_field_name = '{}__published_{}'.format(related_name, language.replace('-', '_'))
                 q &= Q(**{related_field_name: True})
             else:
                 # no language specified. Check for all.
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    related_field_name = '{}__published_{}'.format(related_name, lang)
+                    related_field_name = '{}__published_{}'.format(related_name, lang.replace('-', '_'))
                     q |= Q(**{related_field_name: True})
         q &= optional_query
         qs = qs.filter(q)
