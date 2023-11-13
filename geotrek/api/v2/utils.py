@@ -12,13 +12,13 @@ def get_translation_or_dict(model_field_name, serializer, instance):
     lang = serializer.context.get('request').GET.get('language', 'all') if serializer.context.get('request') else 'all'
 
     if lang != 'all':
-        data = getattr(instance, '{}_{}'.format(model_field_name, lang))
+        data = getattr(instance, '{}_{}'.format(model_field_name, lang.replace('-', '_')))
 
     else:
         data = {}
 
         for language in settings.MODELTRANSLATION_LANGUAGES:
-            data.update({language: getattr(instance, '{}_{}'.format(model_field_name, language), )})
+            data.update({language: getattr(instance, '{}_{}'.format(model_field_name, language.replace('-', '_')), )})
 
     return data
 
