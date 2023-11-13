@@ -9,7 +9,7 @@ from . import views
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}"
+    regex = "[a-z\-]{2,7}"
 
 
 register_converter(LangConverter, "lang")
