@@ -460,61 +460,77 @@ Import Infrastructure
 
 ::
 
-    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD]
-        [--type-field TYPE_FIELD] [--category-field CATEGORY_FIELD] [--condition-field CONDITION_FIELD]
-        [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD]
-        [--type-default TYPE_DEFAULT] [--category-default CATEGORY_DEFAULT] [--name-default NAME_DEFAULT]
-        [--condition-default CONDITION_DEFAULT] [--structure-default STRUCTURE_DEFAULT]
-        [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT] [--version]
-        [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
-        [--skip-checks] point_layer
+    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING]
+        [--name-field NAME_FIELD] [--name-default NAME_DEFAULT]
+        [--type-field TYPE_FIELD] [--type-default TYPE_DEFAULT]
+        [--category-field CATEGORY_FIELD] [--category-default CATEGORY_DEFAULT]
+        [--condition-field CONDITION_FIELD] [--condition-default CONDITION_DEFAULT]
+        [--structure-field STRUCTURE_FIELD] [--structure-default STRUCTURE_DEFAULT]
+        [--description-field DESCRIPTION_FIELD] [--description-default DESCRIPTION_DEFAULT]
+        [--year-field YEAR_FIELD] [--year-default YEAR_DEFAULT]
+        [--eid-field EID_FIELD]
+        [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback]
+        [--no-color] [--force-color] [--skip-checks]
+        point_layer
 
-    Load a layer with point geometries and import features as infrastructures objects (expected formats: shapefile or geojson)
+    Load a layer with point geometries and import features as infrastructures objects
+    (expected formats: shapefile or geojson)
 
     positional arguments:
       point_layer
 
     optional arguments:
       -h, --help            show this help message and exit
-      --use-structure       If set the given (or default) structure is used to select or create conditions and types of infrastructures.
+      --use-structure
+                            If set the given (or default) structure is used to select or create
+                            conditions and types of infrastructures.
       --encoding ENCODING, -e ENCODING
                             File encoding, default utf-8
       --name-field NAME_FIELD, -n NAME_FIELD
                             The field to be imported as the `name` of the infrastructure
-      --type-field TYPE_FIELD, -t TYPE_FIELD
-                            The field to select or create the type value of the infrastructure (field `InfrastructureType.label`)
-      --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
-                            The field to select or create the type value of the infrastructure (field `InfrastructureType.type`)
-      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
-                            The field to select or create the condition value of the infrastructure (field `InfrastructureCondition.label`)
-      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
-                            The field to be imported as the structure of the infrastructure
-      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
-                            The field to be imported as the description of the infrastructure
-      --year-field YEAR_FIELD, -y YEAR_FIELD
-                            The field to be imported as the `implantation_year` of the infrastructure
-      --type-default TYPE_DEFAULT
-                            Default type for all infrastructures, fallback for entries without a type.
-      --category-default CATEGORY_DEFAULT
-                            Default category for all infrastructures, "B" by default. Fallback for entries without a category
       --name-default NAME_DEFAULT
                             Default name for all infrastructures, fallback for entries without a name
+      --type-field TYPE_FIELD, -t TYPE_FIELD
+                            The field to select or create the type value of the infrastructure
+                            (field `InfrastructureType.label`)
+      --type-default TYPE_DEFAULT
+                            Default type for all infrastructures, fallback for entries without a type.
+      --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
+                            The field to select or create the type value of the infrastructure
+                            (field `InfrastructureType.type`)
+      --category-default CATEGORY_DEFAULT
+                            Default category for all infrastructures, "B" by default. Fallback for entries
+                            without a category
+      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
+                            The field to select or create the condition value of the infrastructure
+                            (field `InfrastructureCondition.label`)
       --condition-default CONDITION_DEFAULT
                             Default condition for all infrastructures, fallback for entries without a category
+      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
+                            The field to be imported as the structure of the infrastructure
       --structure-default STRUCTURE_DEFAULT
                             Default Structure for all infrastructures
+      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                            The field to be imported as the description of the infrastructure
       --description-default DESCRIPTION_DEFAULT
-                            Default description for all infrastructures, fallback for entries without a description
-      --eid-field EID_FIELD
-                            External ID field
+                            Default description for all infrastructures, fallback for entries
+                            without a description
+      --year-field YEAR_FIELD, -y YEAR_FIELD
+                            The field to be imported as the `implantation_year` of the infrastructure
       --year-default YEAR_DEFAULT
                             Default year for all infrastructures, fallback for entries without a year
+      --eid-field EID_FIELD
+                            The field to be imported as the `eid` of the infrastructure (external ID)
       --version             show program's version number and exit
       -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
+                            Verbosity level; 0=minimal output,
+                                1=normal output,
+                                2=verbose output,
+                                3=very verbose output
       --settings SETTINGS
-                            The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided,
-                            the DJANGO_SETTINGS_MODULE environment variable will be used.
+                            The Python path to a settings module, e.g. "myproject.settings.main".
+                            If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable
+                            will be used.
       --pythonpath PYTHONPATH
                             A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
       --traceback           Raise on CommandError exceptions

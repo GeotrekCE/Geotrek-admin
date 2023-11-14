@@ -31,37 +31,38 @@ class Command(BaseCommand):
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field',
                             help='The field to be imported as the `name` of the infrastructure')
+        parser.add_argument('--name-default', action='store', dest='name_default',
+                            help='Default name for all infrastructures, fallback for entries without a name')
         parser.add_argument('--type-field', '-t', action='store', dest='type_field',
                             help='The field to select or create the type value of the infrastructure '
                                  '(field `InfrastructureType.label`)')
+        parser.add_argument('--type-default', action='store', dest='type_default',
+                            help="Default type for all infrastructures, fallback for entries without a type.")
         parser.add_argument('--category-field', '-i', action='store', dest='category_field',
                             help='The field to select or create the type value of the infrastructure '
                                  '(field `InfrastructureType.type`)')
-        parser.add_argument('--condition-field', '-c', action='store', dest='condition_field',
-                            help='The field to select or create the condition value of the infrastructure '
-                                 '(field `InfrastructureCondition.label`)')
-        parser.add_argument('--structure-field', '-s', action='store', dest='structure_field',
-                            help='The field to be imported as the structure of the infrastructure')
-        parser.add_argument('--description-field', '-d', action='store', dest='description_field',
-                            help='The field to be imported as the description of the infrastructure')
-        parser.add_argument('--year-field', '-y', action='store', dest='year_field',
-                            help='The field to be imported as the `implantation_year` of the infrastructure')
-        parser.add_argument('--type-default', action='store', dest='type_default',
-                            help="Default type for all infrastructures, fallback for entries without a type.")
         parser.add_argument('--category-default', action='store', dest='category_default',
                             help='Default category for all infrastructures, "B" by default. Fallback for entries '
                                  'without a category', default='B')
-        parser.add_argument('--name-default', action='store', dest='name_default',
-                            help='Default name for all infrastructures, fallback for entries without a name')
+        parser.add_argument('--condition-field', '-c', action='store', dest='condition_field',
+                            help='The field to select or create the condition value of the infrastructure '
+                                 '(field `InfrastructureCondition.label`)')
         parser.add_argument('--condition-default', action='store', dest='condition_default',
                             help="Default condition for all infrastructures, fallback for entries without a category")
+        parser.add_argument('--structure-field', '-s', action='store', dest='structure_field',
+                            help='The field to be imported as the structure of the infrastructure')
         parser.add_argument('--structure-default', action='store', dest='structure_default',
                             help='Default Structure for all infrastructures')
+        parser.add_argument('--description-field', '-d', action='store', dest='description_field',
+                            help='The field to be imported as the description of the infrastructure')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
                             help='Default description for all infrastructures, fallback for entries without a description')
-        parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
+        parser.add_argument('--year-field', '-y', action='store', dest='year_field',
+                            help='The field to be imported as the `implantation_year` of the infrastructure')
         parser.add_argument('--year-default', action='store', dest='year_default',
                             help='Default year for all infrastructures, fallback for entries without a year')
+        parser.add_argument('--eid-field', action='store', dest='eid_field',
+                            help='The field to be imported as the `eid` of the infrastructure (external ID)')
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
