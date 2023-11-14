@@ -11,6 +11,10 @@ CHANGELOG
 - Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
 - Fix cannot click on objects after customizing map styles (#3800)
 
+**Documentation**
+
+- Improve help and doc for the `loadinfrastructure` command
+
 
 2.101.3     (2023-10-26)
 ------------------------
