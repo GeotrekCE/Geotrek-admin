@@ -460,63 +460,134 @@ Import Infrastructure
 
 ::
 
-    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--category-field CATEGORY_FIELD]
-                                        [--condition-field CONDITION_FIELD] [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD]
-                                        [--type-default TYPE_DEFAULT] [--category-default CATEGORY_DEFAULT] [--name-default NAME_DEFAULT] [--condition-default CONDITION_DEFAULT]
-                                        [--structure-default STRUCTURE_DEFAULT] [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT]
-                                        [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-                                        point_layer
+    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD]
+        [--type-field TYPE_FIELD] [--category-field CATEGORY_FIELD] [--condition-field CONDITION_FIELD]
+        [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD]
+        [--type-default TYPE_DEFAULT] [--category-default CATEGORY_DEFAULT] [--name-default NAME_DEFAULT]
+        [--condition-default CONDITION_DEFAULT] [--structure-default STRUCTURE_DEFAULT]
+        [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT] [--version]
+        [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
+        [--skip-checks] point_layer
 
-    Load a layer with point geometries in te structure model
+    Load a layer with point geometries and import features as infrastructures objects (expected formats: shapefile or geojson)
 
     positional arguments:
       point_layer
 
     optional arguments:
       -h, --help            show this help message and exit
-      --use-structure       Allow to use structure for condition and type of infrastructures
+      --use-structure       If set the given (or default) structure is used to select or create conditions and types of infrastructures.
       --encoding ENCODING, -e ENCODING
                             File encoding, default utf-8
       --name-field NAME_FIELD, -n NAME_FIELD
-                            Base url
+                            The field to be imported as the `name` of the infrastructure
       --type-field TYPE_FIELD, -t TYPE_FIELD
-                            Base url
+                            The field to select or create the type value of the infrastructure (field `InfrastructureType.label`)
       --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
-                            Base url
+                            The field to select or create the type value of the infrastructure (field `InfrastructureType.type`)
       --condition-field CONDITION_FIELD, -c CONDITION_FIELD
-                            Base url
+                            The field to select or create the condition value of the infrastructure (field `InfrastructureCondition.label`)
       --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
-                            Base url
+                            The field to be imported as the structure of the infrastructure
       --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
-                            Base url
+                            The field to be imported as the description of the infrastructure
       --year-field YEAR_FIELD, -y YEAR_FIELD
-                            Base url
+                            The field to be imported as the `implantation_year` of the infrastructure
       --type-default TYPE_DEFAULT
-                            Default type of infrastructure, it will create the type if it doesn't exist
+                            Default type for all infrastructures, fallback for entries without a type.
       --category-default CATEGORY_DEFAULT
-                            Category by default for all infrastructures, B by default
+                            Default category for all infrastructures, "B" by default. Fallback for entries without a category
       --name-default NAME_DEFAULT
-                            Base url
+                            Default name for all infrastructures, fallback for entries without a name
       --condition-default CONDITION_DEFAULT
-                            Default Condition for all infrastructures, it will create the condition if it doesn't exist
+                            Default condition for all infrastructures, fallback for entries without a category
       --structure-default STRUCTURE_DEFAULT
                             Default Structure for all infrastructures
       --description-default DESCRIPTION_DEFAULT
-                            Default description for all infrastructures
+                            Default description for all infrastructures, fallback for entries without a description
       --eid-field EID_FIELD
                             External ID field
       --year-default YEAR_DEFAULT
-                            Default year for all infrastructures
+                            Default year for all infrastructures, fallback for entries without a year
       --version             show program's version number and exit
       -v {0,1,2,3}, --verbosity {0,1,2,3}
                             Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
+      --settings SETTINGS
+                            The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided,
+                            the DJANGO_SETTINGS_MODULE environment variable will be used.
       --pythonpath PYTHONPATH
                             A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
       --traceback           Raise on CommandError exceptions
       --no-color            Don't colorize the command output.
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
+
+
+Load a layer with point geometries and import entities as infrastructures objects.
+
+- expected formats for the `point_layer` file are shapefile or geojson (other geodjango supported-formats may work but untested),
+- the command updates existing Infrastructure objects based on the `eid` field (external ID),
+- if the Infrastructure object does not exist (or if `eid` is not specified) it is created.
+
+
+**Usage example**
+
+::
+
+    sudo geotrek loadinfrastructure \
+        --name-field "shpname" \
+        --type-field "shptype" \
+        --description-field "shpdesc" \
+        --year-field "shpyear" \
+        --eid-field "shpid" \
+        --condition-default "Badly damaged" \
+        --year-default "2023" \
+        --category-default "A" \
+        ./infrastructures_to_be_imported.shp
+
+- The command expects entries from `point_layer` file to have the the following fields: `shpname`, `shptype`, `shpdesc`, `shpyear` and `shpid`.
+- A default value is provided for the condition. It will be set for all imported infrastructures.
+- A default value is provided for the year in addition to the field mapping. In case the shapefile entry does not have a year attribute the command will take the default value instead.
+- The command will select or create InfrastructureType values based on the `type` argument, taking the default value "A" for the category.
+
+**Required fields**
+
+The following fields are mandatory to create an Infrastructure object: `name`, `type` and `category`. For each of those fields either an import field and/or a default value MUST be provided. If the command is unable to determine values for those fields for a given layer, the layer is skipped with an error message.
+
+**Default values**
+
+- When a default value is provided without a fieldname to import the default value is set for all Infrastructure objects.
+- When a default value is provided in addition to a fieldname to import it is used as a fallback for entries without the specified import field.
+
+**Selection and addition of parameterized values**
+
+Infrastructure objects have several values from Geotrek's parameterized values sets:
+
+- `type` from InfrastructureType values (and `category` which is implied by the `type` value),
+- `condition` from InfrastructureCondition values.
+
+New parameterized values are created and added to Geotrek Admin if necessary. The command checks if the imported `type` value already exists by looking for an InfrastructureType with the right `type` + `category`.
+
+::
+
+    sudo geotrek loadinfrastructure  --type-field "type"  --category-field "cat" [...]
+
+Selected or added InfrastructureType value:
+
+	- label <- value of `type` import field
+	- type <- value of `cat` import field
+	- optionnally if `--use-structure`: structure <- the structure value (import field or default)
+
+For InfrastructureCondition the check uses the `condition` argument.
+
+::
+
+    sudo geotrek loadinfrastructure  --condition-field "cond" [...]
+
+Selected or added InfrastructureCondition value:
+
+ 	- label <- value of `cond` field
+	- optionnally if `--use-structure`: structure <- the structure value (import field or default)
 
 
 Import Dive
