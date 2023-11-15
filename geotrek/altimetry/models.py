@@ -1,5 +1,6 @@
 import os
 
+import cairosvg
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import get_language, gettext_lazy as _
@@ -108,13 +109,7 @@ class AltimetryMixin(models.Model):
         # Do nothing if image is up-to-date
         if is_file_uptodate(path, self.date_update):
             return False
-        # Download converted chart as png using convertit
-        source = smart_urljoin(rooturl, self.get_elevation_chart_url(language))
-        convertit_download(source,
-                           path,
-                           from_type=HttpSVGResponse.content_type,
-                           to_type='image/png',
-                           headers={'Accept-Language': language})
+        cairosvg.svg2png(bytestring=bytes(self.get_elevation_profile_svg(language)), write_to=path)
         return True
 
 

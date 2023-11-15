@@ -10,6 +10,7 @@ CHANGELOG
 - Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
 - Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
 - Fix cannot click on objects after customizing map styles (#3800)
+- Fix profile elevation PNG generation by using cairosvg instead of convertit (#3833)
 
 
 2.101.3     (2023-10-26)
