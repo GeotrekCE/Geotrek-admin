@@ -190,7 +190,7 @@ class TrekDocumentPublicMixin:
         # Prepare altimetric graph
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
-        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+        trek.prepare_elevation_chart(language)
         return super().render_to_response(context, **response_kwargs)
 
 

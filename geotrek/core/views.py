@@ -116,7 +116,7 @@ class PathDocument(MapEntityDocument):
 
     def get_context_data(self, *args, **kwargs):
         language = self.request.LANGUAGE_CODE
-        self.get_object().prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+        self.get_object().prepare_elevation_chart(language)
         return super().get_context_data(*args, **kwargs)
 
 

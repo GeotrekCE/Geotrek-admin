@@ -319,7 +319,7 @@ class Command(BaseCommand):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for lang in self.languages:
-            trek.prepare_elevation_chart(lang, self.referer)
+            trek.prepare_elevation_chart(lang)
             url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
             self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                            url_media, directory=url_trek, zipfile=trekid_zipfile)
@@ -330,7 +330,7 @@ class Command(BaseCommand):
             for desk in child.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
             for lang in self.languages:
-                child.prepare_elevation_chart(lang, self.referer)
+                child.prepare_elevation_chart(lang)
                 url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
                 self.sync_file(child.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                                url_media, directory=url_trek, zipfile=trekid_zipfile)

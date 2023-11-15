@@ -101,7 +101,7 @@ class AltimetryMixin(models.Model):
             os.mkdir(basefolder)
         return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, language))
 
-    def prepare_elevation_chart(self, language, rooturl):
+    def prepare_elevation_chart(self, language):
         """Converts SVG elevation URI to PNG on disk.
         """
         path = self.get_elevation_chart_path(language)
