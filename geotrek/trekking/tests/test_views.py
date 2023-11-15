@@ -1574,28 +1574,27 @@ class ServiceJSONTest(TrekkingManagerTest):
                               })
 
 
-class TestDepublishSignagesRemovedFromPDF(TestCase):
-
+class TrekPDFChangeAlongLinkedSignages(TestCase):
     def setUp(self):
         self.trek = TrekWithSignagesFactory.create()
 
     @mock.patch('mapentity.helpers.requests.get')
-    def test_depublish_signage_refreshes_pdf(self, mock_get):
+    def test_unpublish_signage_refreshes_pdf(self, mock_get):
         # Mock map screenshot
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         self.client.get(
             reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signages were changed will trigger screenshot
-        trek.signages[0].published = False
-        trek.signages[0].save()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.signages[0].published = False
+        self.trek.signages[0].save()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_delete_signage_refreshes_pdf(self, mock_get):
@@ -1603,40 +1602,39 @@ class TestDepublishSignagesRemovedFromPDF(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         self.client.get(
             reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signage was deleted will trigger screenshot
-        trek.signages[0].delete()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.signages[0].delete()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
 
-class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
-
+class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
     def setUp(self):
         self.trek = TrekWithInfrastructuresFactory.create()
 
     @mock.patch('mapentity.helpers.requests.get')
-    def test_depublish_infrastructure_refreshes_pdf(self, mock_get):
+    def test_unpublish_infrastructure_refreshes_pdf(self, mock_get):
         # Mock map screenshot
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         self.client.get(
             reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signages were changed will trigger screenshot
-        trek.infrastructures[0].published = False
-        trek.infrastructures[0].save()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.infrastructures[0].published = False
+        self.trek.infrastructures[0].save()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_delete_infrastructure_refreshes_pdf(self, mock_get):
@@ -1644,16 +1642,16 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         self.client.get(
             reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signage was deleted will trigger screenshot
-        trek.infrastructures[0].delete()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.infrastructures[0].delete()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
 
 class TrekFilterTest(TestCase):
