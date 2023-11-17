@@ -20,12 +20,6 @@ class SignageTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class ConditionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = signage_models.SignageCondition
-        fields = ('label',)
-
-
 class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
     structure = serializers.SlugRelatedField('name', read_only=True)

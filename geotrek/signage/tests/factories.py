@@ -61,7 +61,7 @@ class SignageConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SignageCondition
 
-    label = factory.Sequence(lambda n: "Conditions %s" % n)
+    label = factory.Sequence(lambda n: "Condition %s" % n)
 
 
 class SignageFactory(PointTopologyFactory):
@@ -95,7 +95,7 @@ class BladeConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BladeCondition
 
-    label = factory.Sequence(lambda n: "Conditions %s" % n)
+    label = factory.Sequence(lambda n: "Condition %s" % n)
 
 
 class BladeFactory(factory.django.DjangoModelFactory):
@@ -117,7 +117,7 @@ class BladeFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def conditions(obj, create, extracted=None, **kwargs):
         if create:
-            obj.conditions.add()
+            obj.conditions.add(BladeConditionFactory.create())
 
 
 class LinePictogramFactory(factory.django.DjangoModelFactory):

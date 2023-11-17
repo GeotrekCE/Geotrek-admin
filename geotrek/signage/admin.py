@@ -129,7 +129,7 @@ class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure', )
 
 
-class SignageSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
+class SignageConditionAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure__name')
     merge_field = "label"
 
@@ -171,4 +171,4 @@ admin.site.register(Sealing, SealingAdmin)
 admin.site.register(Direction, DirectionBladeAdmin)
 admin.site.register(BladeType, BladeTypeAdmin)
 admin.site.register(LinePictogram, LinePictogramAdmin)
-admin.site.register(SignageCondition, SignageSimpleFieldAdmin)
+admin.site.register(SignageCondition, SignageConditionAdmin)

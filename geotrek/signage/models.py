@@ -158,7 +158,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def conditions_display(self):
-        return ", ".join([str(c) for c in self.conditions.all()])
+        return ", ".join([str(c) for c in self.conditions.select_related('structure').all()])
 
     def distance(self, to_cls):
         """Distance to associate this signage to another class"""
@@ -247,8 +247,6 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
     type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
-    # condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
-    #                               null=True, blank=True, on_delete=models.PROTECT)
     conditions = models.ManyToManyField(
         BladeCondition,
         related_name='blades',
@@ -284,7 +282,7 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 
     @property
     def conditions_display(self):
-        return ", ".join([str(c) for c in self.conditions.all()])
+        return ", ".join([str(c) for c in self.conditions.select_related('structure').all()])
 
     @property
     def paths(self):

@@ -16,7 +16,7 @@ class GeotrekSignageParser(GeotrekParser):
     }
     url_categories = {
         'sealing': 'signage_sealing',
-        'conditions': 'signage_conditions',
+        'conditions': 'signage_condition',
         'type': 'signage_type',
     }
     categories_keys_api_v2 = {

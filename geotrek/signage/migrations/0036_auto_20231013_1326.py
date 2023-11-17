@@ -20,16 +20,14 @@ def copy_infrastructure_conditions(apps, schema_editor):
         BladeCondition.objects.get_or_create(label=condition.label)
 
     # Associate signage condition to signage condition_tmp
-    for signage in Signage.objects.all():
-        if (signage.condition is not None):
-            signage_condition, created = SignageCondition.objects.get_or_create(label=signage.condition.label)
-            signage.condition_tmp.add(signage_condition)
+    for signage in Signage.objects.exclude(condition__isnull=True):
+        signage_condition, created = SignageCondition.objects.get_or_create(label=signage.condition.label)
+        signage.condition_tmp.add(signage_condition)
 
     # Associate blade condition to blade condition_tmp
-    for blade in Blade.objects.all():
-        if (blade.condition is not None):
-            blade_condition, created = BladeCondition.objects.get_or_create(label=blade.condition.label)
-            blade.condition_tmp.add(blade_condition)
+    for blade in Blade.objects.exclude(condition__isnull=True):
+        blade_condition, created = BladeCondition.objects.get_or_create(label=blade.condition.label)
+        blade.condition_tmp.add(blade_condition)
 
 
 class Migration(migrations.Migration):

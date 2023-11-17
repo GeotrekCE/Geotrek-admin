@@ -3,9 +3,9 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
-from geotrek.authent.tests.factories import UserFactory
+from geotrek.authent.tests.factories import UserFactory, StructureFactory
 from geotrek.signage.models import Blade
-from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, LinePictogramFactory, SealingFactory, SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, LinePictogramFactory, SealingFactory, SignageFactory, SignageConditionFactory, BladeConditionFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 
 
@@ -57,6 +57,15 @@ class BladeModelTest(TestCase):
         self.assertEqual(blade_entry.change_message, f"Deleted by cascade from Signage {signa_pk} - {signa_repr}")
         self.assertEqual(blade_entry.action_flag, DELETION)
 
+    def test_str_bladecondition_with_structure(self):
+        structure = StructureFactory(name="This")
+        bladecondition = BladeConditionFactory(label="condition", structure=structure)
+        self.assertEqual(str(bladecondition), "condition ({})".format(structure.name))
+
+    def test_str_bladecondition_without_structure(self):
+        bladecondition = BladeConditionFactory(label="condition", structure=None)
+        self.assertEqual(str(bladecondition), "condition")
+
 
 class SignageModelTest(TestCase):
     def test_order_blades_C(self):
@@ -64,6 +73,15 @@ class SignageModelTest(TestCase):
         blade_2 = BladeFactory.create(number='A', signage=signage)
         blade = BladeFactory.create(number='*BL', signage=signage)
         self.assertEqual([blade, blade_2], list(signage.order_blades))
+
+    def test_str_signagecondition_with_structure(self):
+        structure = StructureFactory(name="This")
+        signagecondition = SignageConditionFactory(label="condition", structure=structure)
+        self.assertEqual(str(signagecondition), "condition ({})".format(structure.name))
+
+    def test_str_signagecondition_without_structure(self):
+        signagecondition = SignageConditionFactory(label="condition", structure=None)
+        self.assertEqual(str(signagecondition), "condition")
 
 
 class LinePictogramModelTest(TestCase):

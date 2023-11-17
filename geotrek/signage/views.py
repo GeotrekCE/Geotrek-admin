@@ -234,6 +234,8 @@ class BladeViewSet(GeotrekMapentityViewSet):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'number')
+        else:
+            qs = qs.select_related('signage', 'direction', 'type', 'color').prefetch_related('conditions')
         return qs
 
 

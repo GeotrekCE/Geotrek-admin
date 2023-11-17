@@ -1422,7 +1422,8 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
         )
 
         def get_condition(self, obj):
-            return str(obj.conditions.first())
+            condition = obj.conditions.first()
+            return condition.pk if condition else None
 
         class Meta:
             model = signage_models.Signage
