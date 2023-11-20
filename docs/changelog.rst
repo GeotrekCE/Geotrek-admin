@@ -5,12 +5,13 @@ CHANGELOG
 2.101.4+dev (XXXX-XX-XX)
 ------------------------
 
-2.101.4     (2023-11-15)
-------------------------
-
 **Documentation**
 
 - Improve documentation for database restore
+
+
+2.101.4     (2023-11-15)
+------------------------
 
 **Bug fixes**
 
