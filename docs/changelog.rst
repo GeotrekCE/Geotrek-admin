@@ -8,6 +8,10 @@ CHANGELOG
 2.101.4     (2023-11-15)
 ------------------------
 
+**Documentation**
+
+- Improve documentation for database restore
+
 **Bug fixes**
 
 - Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
