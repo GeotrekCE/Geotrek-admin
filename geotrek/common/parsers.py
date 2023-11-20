@@ -17,7 +17,7 @@ from collections import Iterable
 from time import sleep
 from PIL import Image, UnidentifiedImageError
 
-from ftplib import FTP
+from ftplib import FTP, FTP_TLS
 from os.path import dirname
 from urllib.parse import urlparse
 
@@ -696,6 +696,16 @@ class AttachmentParserMixin:
 
             ftp = FTP(parsed_url.hostname)
             ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+            ftp.cwd(directory)
+            size = ftp.size(parsed_url.path.split('/')[-1:][0])
+            return size != attachment.attachment_file.size
+
+        if parsed_url.scheme == 'ftps':
+            directory = dirname(parsed_url.path)
+
+            ftp = FTP_TLS(parsed_url.hostname)
+            ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+            ftp.prot_p()
             ftp.cwd(directory)
             size = ftp.size(parsed_url.path.split('/')[-1:][0])
             return size != attachment.attachment_file.size
