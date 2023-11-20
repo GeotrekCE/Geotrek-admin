@@ -44,6 +44,7 @@ Create an empty database (``geotrekdb`` in this example):
 
     sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
+    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
 
 
