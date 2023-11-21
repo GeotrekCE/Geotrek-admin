@@ -20,6 +20,10 @@ CHANGELOG
 - Fix cannot click on objects after customizing map styles (#3800)
 - Fix profile elevation PNG generation by using cairosvg instead of convertit (#3833)
 
+**Documentation**
+
+- Improve help and doc for the `loadinfrastructure` command
+
 
 2.101.3     (2023-10-26)
 ------------------------
