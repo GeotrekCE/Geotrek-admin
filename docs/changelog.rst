@@ -22,6 +22,12 @@ CHANGELOG
 
 - Improve documentation for database restore
 - Improve documentation aboute suricate's workflow (#3070)
+- Update layer section for maps since IGN updates
+
+**Maintenance**
+
+- Update check_ign_keys script to match new IGN urls
+- Update base.py configuratio for layers
 
 **Bug fixes**
 
