@@ -658,11 +658,12 @@ add the following code:
 See `sensitivity section <./sensitivity.html>`_ for settings and imports.
 
 
-You can insert rules of sensitive area with this command :
+You can insert rules of sensitive area with these commands :
 
 ::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 
 Feedback reports settings
