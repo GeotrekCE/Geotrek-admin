@@ -55,8 +55,11 @@ class LandFiltersTest(TestCase):
     def test_filter_by_land_edge(self):
         self._filter_by_edge(LandEdgeFactory, 'land_type', lambda edge: edge.land_type.pk)
 
-    def test_filter_by_circulation_edge(self):
+    def test_filter_by_circulation_type(self):
         self._filter_by_edge(CirculationEdgeFactory, 'circulation_type', lambda edge: edge.circulation_type.pk)
+
+    def test_filter_by_authorization_type(self):
+        self._filter_by_edge(CirculationEdgeFactory, 'authorization_type', lambda edge: edge.authorization_type.pk)
 
     def test_filter_by_competence_edge(self):
         self._filter_by_edge(CompetenceEdgeFactory, 'competence', lambda edge: edge.organization.pk)
