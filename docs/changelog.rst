@@ -5,6 +5,10 @@ CHANGELOG
 2.101.4+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Add rules fixture on sensitive area (#3470)
+
 **Documentation**
 
 - Improve documentation for database restore
@@ -68,7 +72,6 @@ CHANGELOG
 
 - Add organizer_id on TouristicEvent endpoint (#3587)
 - Sort API V2 by begin date by default on touristic events (#3597)
-- Add rules fixture on sensitive area (#3470)
 
 **Maintenance**
 
