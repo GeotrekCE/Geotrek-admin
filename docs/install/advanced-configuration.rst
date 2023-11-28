@@ -663,7 +663,7 @@ You can insert rules of sensitive area with these commands :
 ::
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
 
 Feedback reports settings
