@@ -52,12 +52,12 @@ SELECT a.id,
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
        {% endfor %}
-       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
+       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(a.geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
        a.length AS "Length",
-       st_length(geom_3d) AS "Length 3d",
+       st_length(a.geom_3d) AS "Length 3d",
        CASE
-           WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
-           WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
+           WHEN a.ascent > 0 THEN concat (a.descent,'m +',a.ascent,'m (',a.slope::numeric(10, 1),')')
+           WHEN a.ascent < 0 THEN concat (a.descent,'m -',a.ascent,'m (',a.slope::numeric(10, 1),')')
        END AS "Slope",
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
@@ -65,7 +65,7 @@ SELECT a.id,
        a.date_update AS "Update date",
        sg.geom AS geom
 FROM outdoor_course a
-JOIN outdoor_course sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
+JOIN outdoor_course_geom sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
