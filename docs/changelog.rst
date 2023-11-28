@@ -5,6 +5,10 @@ CHANGELOG
 2.101.4+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Add rules fixture on sensitive area (#3470)
+
 **Documentation**
 
 - Improve documentation for database restore
@@ -111,7 +115,7 @@ CHANGELOG
 
 **Documentation**
 
-- Replace broken link 
+- Replace broken link
 
 **Improvements**
 

@@ -657,6 +657,15 @@ add the following code:
 
 See `sensitivity section <./sensitivity.html>`_ for settings and imports.
 
+
+You can insert rules of sensitive area with these commands :
+
+::
+
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
+
+
 Feedback reports settings
 -------------------------
 
@@ -677,7 +686,7 @@ Geotrek reports can work together with Suricate API, using one of 3 modes. Proce
 
 **1** - No Suricate (default)
 
-This mode sends no report data to Suricate. 
+This mode sends no report data to Suricate.
 
 To initialize Report forms (Geotrek-admin, Geotrek-rando-v2, Geotrek-rando-v3) load lists for categories, activities, statuses and problem magnitude:
 
@@ -755,7 +764,7 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
-- Go to the Admin Site and 
+- Go to the Admin Site and
     - if you want to include the moderation steps (`SKIP_MANAGER_MODERATION = False`), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
     - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
     - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
@@ -776,7 +785,7 @@ Display reports with status defined colors
 .. code-block :: python
 
     ENABLE_REPORT_COLORS_PER_STATUS = True
- 
+
 Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
 
