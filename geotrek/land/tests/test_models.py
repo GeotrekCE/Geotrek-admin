@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from geotrek.authent.models import Structure
 from geotrek.land.models import LandType, PhysicalType, CirculationType, AuthorizationType
+from geotrek.land.tests.factories import CirculationEdgeFactory
 
 
 class TestModelLand(TestCase):
@@ -40,3 +41,7 @@ class TestModelLand(TestCase):
         structure = Structure.objects.create(name="Structure_1")
         pt = AuthorizationType.objects.create(name='AuthorizationType_1', structure=structure)
         self.assertEqual(str(pt), 'AuthorizationType_1 (Structure_1)')
+
+    def test_circulationedge_display(self):
+        circulation_edge = CirculationEdgeFactory()
+        self.assertEqual(circulation_edge.name_display, f'<a data-pk="{circulation_edge.pk}" href="/circulationedge/{circulation_edge.pk}/" >{circulation_edge.circulation_type}</a>')
