@@ -34,7 +34,7 @@ CREATE VIEW {{ schema_geotrek }}.v_workmanagements AS (
 );
 
 CREATE VIEW {{ schema_geotrek }}.v_circulations AS (
-	SELECT e.*, b.structure_id, b.name
+	SELECT e.*, b.structure_id, b.name AS "Type", c.name AS "Authorization"
 	FROM core_topology AS e, land_circulationedge AS f, land_circulationtype AS b, land_authorizationtype as c
 	WHERE f.topo_object_id = e.id AND f.circulation_type_id = b.id AND f.authorization_type_id = c.id
 	AND deleted = FALSE
