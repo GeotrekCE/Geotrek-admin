@@ -2,7 +2,7 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 
-from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageManagementEdge, WorkManagementEdge
+from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageManagementEdge, WorkManagementEdge, CirculationEdge
 
 
 class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -21,6 +21,26 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = LandEdge
+        fields = ["id", "name", "color_index"]
+
+
+class CirculationEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    circulation_type = serializers.CharField(source='circulation_type_display')
+    authorization_type = serializers.CharField(source='authorization_type_display')
+    length = serializers.FloatField(source='length_display')
+    length_2d = serializers.FloatField(source='length_2d_display')
+
+    class Meta:
+        model = CirculationEdge
+        fields = "__all__"
+
+
+class CirculationEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
+    color_index = serializers.IntegerField()
+    name = serializers.CharField()
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = CirculationEdge
         fields = ["id", "name", "color_index"]
 
 

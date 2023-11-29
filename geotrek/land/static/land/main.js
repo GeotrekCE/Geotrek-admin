@@ -4,6 +4,7 @@ $(window).on('entity:map', function (e, data) {
 
     var managementLayers = [{ url: window.SETTINGS.urls.landedge_layer, name: tr('Land type'), id: 'land' },
     { url: window.SETTINGS.urls.physicaledge_layer, name: tr('Physical type'), id: 'physical' },
+    { url: window.SETTINGS.urls.circulationedge_layer, name: tr('Circulation type'), id: 'circulation' },
     { url: window.SETTINGS.urls.competenceedge_layer, name: tr('Competence'), id: 'competence' },
     { url: window.SETTINGS.urls.signagemanagementedge_layer, name: tr('Signage management edges'), id: 'signagemanagement' },
     { url: window.SETTINGS.urls.workmanagementedge_layer, name: tr('Work management edges'), id: 'workmanagement' }];

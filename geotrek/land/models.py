@@ -360,3 +360,101 @@ Intervention.add_property('signage_edges', lambda self: self.target.signage_edge
 Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'), _("Signage management edges"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('signage_edges', lambda self: self.signage.signage_edges, _("Signage management edges"))
+
+
+class CirculationType(StructureOrNoneRelated):
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
+
+    class Meta:
+        verbose_name = _("Circulation type")
+        verbose_name_plural = _("Circulation types")
+        ordering = ['name']
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.name, self.structure.name)
+        return self.name
+
+
+class AuthorizationType(StructureOrNoneRelated):
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
+
+    class Meta:
+        verbose_name = _("Authorization type")
+        verbose_name_plural = _("Authorization types")
+        ordering = ['name']
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.name, self.structure.name)
+        return self.name
+
+
+class CirculationEdge(GeotrekMapEntityMixin, Topology):
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    circulation_type = models.ForeignKey(CirculationType, verbose_name=_("Circulation type"), on_delete=models.PROTECT)
+    authorization_type = models.ForeignKey(AuthorizationType, verbose_name=_("Authorization type"), on_delete=models.PROTECT)
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True)
+
+    geometry_types_allowed = ["LINESTRING"]
+
+    class Meta:
+        verbose_name = _("Circulation edge")
+        verbose_name_plural = _("Circulation edges")
+
+    def __str__(self):
+        return _("Circulation edge") + ": %s" % self.circulation_type
+
+    @property
+    def color_index(self):
+        return self.circulation_type_id
+
+    @property
+    def name(self):
+        return self.circulation_type_csv_display
+
+    @property
+    def name_display(self):
+        return self.circulation_type_display
+
+    @property
+    def circulation_type_display(self):
+        return '<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.circulation_type
+        )
+
+    @property
+    def authorization_type_display(self):
+        return '<a data-pk="%s" href="%s" >%s</a>' % (
+            self.pk,
+            self.get_detail_url(),
+            self.authorization_type
+        )
+
+    @property
+    def circulation_type_csv_display(self):
+        return str(self.circulation_type)
+
+    @classmethod
+    def path_circulations(cls, path):
+        return cls.objects.existing().select_related('circulation_type').filter(aggregations__path=path).distinct('pk')
+
+    @classmethod
+    def topology_circulations(cls, topology):
+        return cls.overlapping(topology).select_related('circulation_type')
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_circulationedge_topology(sender, instance, using, **kwargs):
+    # CirculationEdges are deleted when topologies are deleted
+    log_cascade_deletion(sender, instance, CirculationEdge, 'topo_object')
+
+
+Path.add_property('circulation_edges', CirculationEdge.path_circulations, _("Circulation edges"))
+Topology.add_property('circulation_edges', CirculationEdge.topology_circulations, _("Circulation edges"))
+Intervention.add_property('circulation_edges', lambda self: self.target.circulation_edges if self.target and hasattr(self.target, 'circulation_edges') else [], _("Circulation edges"))
+Project.add_property('circulation_edges', lambda self: self.edges_by_attr('circulation_edges'), _("Circulation edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('circulation_edges', lambda self: self.signage.circulation_edges, _("Circulation edges"))

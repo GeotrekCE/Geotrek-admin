@@ -21,6 +21,7 @@ class LandEdgeOptions(MapEntityOptions):
 
 urlpatterns = registry.register(models.PhysicalEdge, menu=False)
 urlpatterns += registry.register(models.LandEdge, menu=False)
+urlpatterns += registry.register(models.CirculationEdge, menu=False)
 urlpatterns += registry.register(models.Status, options=LandEdgeOptions, menu=settings.TREKKING_TOPOLOGY_ENABLED and settings.LANDEDGE_MODEL_ENABLED)
 urlpatterns += registry.register(models.CompetenceEdge, menu=False)
 urlpatterns += registry.register(models.WorkManagementEdge, menu=False)

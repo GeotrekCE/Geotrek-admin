@@ -9,6 +9,7 @@
             {% if modelname == 'competenceedge' %}{% trans "Competence edges" %}{% endif %}
             {% if modelname == 'signagemanagementedge' %}{% trans "Signage management edges" %}{% endif %}
             {% if modelname == 'workmanagementedge' %}{% trans "Work management edges" %}{% endif %}
+            {% if modelname == 'circulationedge' %}{% trans "Circulation edges" %}{% endif %}
         </strong>
     </a>
     <ul class="dropdown-menu">
@@ -17,6 +18,7 @@
         {% if modelname != 'competenceedge' %}<li class="dropdown-item"><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence edges" %}</a></li>{% endif %}
         {% if modelname != 'signagemanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:signagemanagementedge_list' %}">{% trans "Signage management edges" %}</a></li>{% endif %}
         {% if modelname != 'workmanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:workmanagementedge_list' %}">{% trans "Work management edges" %}</a></li>{% endif %}
+        {% if modelname != 'circulationedge' %}<li class="dropdown-item"><a href="{% url 'land:circulationedge_list' %}">{% trans "Circulation edges" %}</a></li>{% endif %}
     </ul>
 </div>
 {% endif %}

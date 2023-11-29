@@ -5,6 +5,10 @@ CHANGELOG
 2.101.4+dev (XXXX-XX-XX)
 ------------------------
 
+**New features**
+
+-Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+
 **Improvements**
 
 - Add rules fixture on sensitive area (#3470)

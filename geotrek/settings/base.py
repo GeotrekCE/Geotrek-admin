@@ -400,6 +400,7 @@ MAPENTITY_CONFIG = {
         'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
         'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
         'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
@@ -476,6 +477,7 @@ FORCED_LAYERS = []
 """
 COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+               'circulation': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
                'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
@@ -592,6 +594,7 @@ SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'physical': 0,
+                           'circulation': 15,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}

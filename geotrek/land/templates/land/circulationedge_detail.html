@@ -1,0 +1,18 @@
+{% extends "common/common_detail.html" %}
+{% load i18n mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ circulationedge|verbose:"circulation_type" }}</th>
+            <td>{{ circulationedge.circulation_type }}</td>
+        </tr>
+        <tr>
+            <th>{{ circulationedge|verbose:"authorization_type" }}</th>
+            <td>{{ circulationedge.authorization_type }}</td>
+        </tr>
+        {% include "altimetry/elevationinfo_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}
