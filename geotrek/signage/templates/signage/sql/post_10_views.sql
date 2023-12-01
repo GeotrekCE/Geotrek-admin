@@ -85,7 +85,7 @@ LEFT JOIN ( WITH signage_condition AS (
     GROUP BY signage_condition.signage_id) c ON a.id = c.signage_id
 LEFT JOIN signage_sealing d ON a.sealing_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
-LEFT JOIN infrastructure_infrastructureaccessmean i ON a.access_id = i.id
+LEFT JOIN common_accessmean i ON a.access_id = i.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id

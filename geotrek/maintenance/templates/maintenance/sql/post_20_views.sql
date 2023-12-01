@@ -32,6 +32,7 @@ SELECT a.id,
        CONCAT(a.max_elevation, ' m') AS "Elevation maximum",
        CONCAT ('h: ',height::numeric(10, 2), 'm , L: ', a.LENGTH::numeric(10, 2),'m , l: ', width::numeric(10, 2),'m : ', area::numeric(10, 1), 'm²') AS "Dimensions",
        a.description AS "Description",
+       accessmean.label AS "Access",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        a.geom_3d
@@ -41,6 +42,7 @@ LEFT JOIN maintenance_interventionstatus c ON a.status_id = c.id
 LEFT JOIN core_stake d ON a.stake_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
 LEFT JOIN maintenance_project h ON a.project_id = h.id
+LEFT JOIN common_accessmean accessmean ON a.access_id = accessmean.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id

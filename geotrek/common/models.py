@@ -380,3 +380,15 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
 
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
+
+
+class AccessMean(TimeStampedModelMixin):
+    label = models.CharField(max_length=128)
+
+    class Meta:
+        verbose_name = _("Access mean")
+        verbose_name_plural = _("Access means")
+        ordering = ('label',)
+
+    def __str__(self):
+        return self.label

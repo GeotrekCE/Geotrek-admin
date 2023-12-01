@@ -13,6 +13,7 @@ from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
 from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
                                           GeotrekMapEntityMixin)
+from geotrek.common.models import AccessMean
 from geotrek.core.models import Topology, Path
 from geotrek.infrastructure.managers import InfrastructureGISManager
 
@@ -109,7 +110,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                             help_text=_("Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True,
                                    verbose_name=_("Description"), help_text=_("Specificites"))
-    access = models.ForeignKey(InfrastructureAccessMean,
+    access = models.ForeignKey(AccessMean,
                                verbose_name=_("Access mean"), blank=True, null=True,
                                on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)

@@ -192,3 +192,10 @@ class HDViewPointFactory(factory.django.DjangoModelFactory):
             }
         ]
     }
+
+
+class AccessMeanFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AccessMean
+
+    label = factory.Sequence(lambda n: "Acces mean %s" % n)
