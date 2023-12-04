@@ -1,8 +1,218 @@
-geotrek-admin (2.86.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.101.4+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Célia PRAT <celia.prat@makina-corpus.com>  Mon, 05 Sep 2022 17:56:34 +0200
+ -- Joaquim <joaquim@joaquim-ThinkPad-P14s-Gen-2a>  Wed, 15 Nov 2023 14:47:02 +0100
+
+geotrek-admin (2.101.4) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 Nov 2023 14:14:01 +0100
+
+geotrek-admin (2.101.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 26 Oct 2023 10:57:23 +0200
+
+geotrek-admin (2.101.2) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 17 Oct 2023 17:12:13 +0200
+
+geotrek-admin (2.101.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 06 Oct 2023 14:41:57 +0200
+
+geotrek-admin (2.101.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 05 Oct 2023 11:20:46 +0200
+
+geotrek-admin (2.100.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 12 Sep 2023 17:40:13 +0200
+
+geotrek-admin (2.100.1) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Hugo Hasson <hugo.hasson@makina-corpus.com>  Tue, 05 Sep 2023 15:58:07 +0200
+
+geotrek-admin (2.100.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Hugo Hasson <hugo.hasson@makina-corpus.com>  Tue, 05 Sep 2023 11:11:20 +0200
+
+geotrek-admin (2.99.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 18 Jul 2023 16:07:49 +0200
+
+geotrek-admin (2.98.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 30 May 2023 10:55:19 +0200
+
+geotrek-admin (2.98.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothée de Montety <timothee.de-montety@makina-corpus.com>  Mon, 27 Mar 2023 17:56:00 +0100
+
+geotrek-admin (2.97.4) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothée de Montety <timothee.de-montety@makina-corpus.com>  Thu, 09 Mar 2023 18:25:59 +0100
+
+geotrek-admin (2.97.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 28 Feb 2023 15:28:06 +0100
+
+geotrek-admin (2.97.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Wed, 22 Feb 2023 09:18:17 +0100
+
+geotrek-admin (2.97.1) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 17 Feb 2023 18:02:20 +0100
+
+geotrek-admin (2.97.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 17 Feb 2023 09:46:13 +0100
+
+geotrek-admin (2.96.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 02 Feb 2023 11:49:08 +0100
+
+geotrek-admin (2.96.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothée de Montety <timothee.montety@gmail.com>  Tue, 01 Feb 2023 09:58:52 +0100
+
+geotrek-admin (2.95.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothée de Montety <timothee.montety@gmail.com>  Tue, 24 Jan 2023 11:18:52 +0100
+
+geotrek-admin (2.94.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Mon, 12 Dec 2022 18:04:40 +0100
+
+geotrek-admin (2.93.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 06 Dec 2022 15:03:20 +0100"
+
+geotrek-admin (2.92.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Fri, 2 Dec 2022 16:17:22 +0100
+
+geotrek-admin (2.92.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Thu, 1 Dec 2022 17:33:22 +0100
+
+geotrek-admin (2.92.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <j.e.castagnede@gmail.com>  Thu, 1 Dec 2022 15:24:22 +0100
+
+geotrek-admin (2.92.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothee de Montety <timothee.montety@gmail.com>  Tue, 29 Nov 2022 16:30:30 +0100
+
+geotrek-admin (2.91.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothee de Montety <timothee.montety@gmail.com>  Fri, 18 Nov 2022 16:18:30 +0100
+
+geotrek-admin (2.91.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothee de Montety <timothee.montety@gmail.com>  Thu, 17 Nov 2022 15:48:30 +0100
+
+geotrek-admin (2.90.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 04 Nov 2022 15:44:22 +0100
+
+geotrek-admin (2.90.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Timothee de Montety <timothee.montety@gmail.com>  Thu, 03 Nov 2022 18:33:30 +0100
+
+geotrek-admin (2.89.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 21 Oct 2022 16:01:54 +0200
+
+geotrek-admin (2.89.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 20 Oct 2022 14:34:04 +0200
+
+geotrek-admin (2.88.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 11 Oct 2022 15:49:05 +0200
+
+geotrek-admin (2.87.2) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 23 Sep 2022 14:32:13 +0200
+
+geotrek-admin (2.87.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>  Tue, 20 Sep 2022 19:40:58 +0200
+
+geotrek-admin (2.87.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 20 Sep 2022 10:13:06 +0200
 
 geotrek-admin (2.86.0) RELEASED; urgency=medium
 

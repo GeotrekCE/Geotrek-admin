@@ -1,15 +1,17 @@
 """
     Models to manage users and profiles
 """
-from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core.cache import cache
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from geotrek.common.mixins.models import TimeStampedModelMixin
 from geotrek.common.utils import reify
 
 
-class Structure(models.Model):
+class Structure(TimeStampedModelMixin, models.Model):
     """
     Represents an organisational structure, to which users are related.
     """
@@ -31,22 +33,23 @@ def default_structure():
 
 
 def default_structure_pk():
-    return default_structure().pk
-
-
-class StructureManager(models.Manager):
-    # Use this manager when walking through FK/M2M relationships
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset().select_related('structure')
+    if settings.TEST:
+        # test env can create multiple default structure and keep in cache already deleted
+        return default_structure().pk
+    structure_pk = cache.get("default_structure")
+    if structure_pk:
+        return int(structure_pk)
+    else:
+        pk = default_structure().pk
+        cache.set("default_structure", str(pk))
+        return pk
 
 
 class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure_pk, on_delete=models.CASCADE,
+    structure = models.ForeignKey(Structure, default=default_structure_pk, on_delete=models.PROTECT,
                                   verbose_name=_("Related structure"))
 
     check_structure_in_forms = True
@@ -68,10 +71,9 @@ class StructureOrNoneRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure or None entity
     """
-    structure = models.ForeignKey(Structure, on_delete=models.CASCADE,
+    structure = models.ForeignKey(Structure, on_delete=models.PROTECT,
                                   verbose_name=_("Related structure"), blank=True, null=True)
 
-    objects = StructureManager()
     check_structure_in_forms = True
 
     class Meta:

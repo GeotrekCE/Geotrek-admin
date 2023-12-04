@@ -36,13 +36,29 @@
             <th>{{ object|verbose:"implantation_year" }}</th>
             <td>{{ object.implantation_year|default:"" }}</td>
         </tr>
-                <tr>
+        <tr>
             <th>{{ object|verbose:"usage_difficulty" }}</th>
             <td>{{ object.usage_difficulty|default:"" }}</td>
         </tr>
-                <tr>
+        <tr>
             <th>{{ object|verbose:"maintenance_difficulty" }}</th>
             <td>{{ object.maintenance_difficulty|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"access" }}</th>
+            <td>{{ object.access|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if object.eid %}{{ object.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}{{ object.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}

@@ -54,6 +54,9 @@ DECLARE
     t_geom_3d geometry;
     tomerge geometry[];
     tomerge_3d geometry[];
+
+    smart_makeline line_infos;
+    smart_makeline_3d line_infos;
 BEGIN
     -- If Geotrek-light, don't do anything
     IF NOT {{ TREKKING_TOPOLOGY_ENABLED }} THEN
@@ -118,9 +121,10 @@ BEGIN
             tomerge := array_append(tomerge, t_geom);
             tomerge_3d := array_append(tomerge_3d, t_geom_3d);
         END LOOP;
-
-        egeom := ft_Smart_MakeLine(tomerge);
-        egeom_3d := ft_Smart_MakeLine(tomerge_3d);
+        SELECT * FROM ft_Smart_MakeLine(tomerge) INTO smart_makeline;
+        SELECT * FROM ft_Smart_MakeLine(tomerge_3d) INTO smart_makeline_3d;
+        egeom := smart_makeline.new_geometry;
+        egeom_3d := smart_makeline_3d.new_geometry;
         -- Add some offset if necessary.
         IF t_offset != 0 THEN
             egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);

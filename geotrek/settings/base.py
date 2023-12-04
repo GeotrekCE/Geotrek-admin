@@ -276,12 +276,10 @@ PROJECT_APPS += (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'clearcache',
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
-)
-
-PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'django_filters',
@@ -294,6 +292,7 @@ PROJECT_APPS += (
     'rest_framework_gis',
     'embed_video',
     'django_celery_results',
+    'django_large_image',
     'colorfield',
     'mptt',
 )
@@ -318,13 +317,20 @@ INSTALLED_APPS = PROJECT_APPS + (
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
         'TIMEOUT': 2592000,  # 30 days
+        'LOCATION': '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memcached'),
+                                   os.getenv('MEMCACHED_PORT', '11211'))
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': CACHE_ROOT,
+        'LOCATION': os.path.join(CACHE_ROOT, 'fat'),
+        'TIMEOUT': 2592000,  # 30 days
+    },
+    'api_v2': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(CACHE_ROOT, 'api_v2'),
         'TIMEOUT': 2592000,  # 30 days
     }
 }
@@ -394,9 +400,12 @@ MAPENTITY_CONFIG = {
         'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
         'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
         'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+        'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
 
         'detail': {'color': '#ffff00'},
         'others': {'color': '#ffff00'},
@@ -468,6 +477,7 @@ FORCED_LAYERS = []
 """
 COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+               'circulation': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
                'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
@@ -584,6 +594,7 @@ SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'physical': 0,
+                           'circulation': 15,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
@@ -676,6 +687,8 @@ API_IS_PUBLIC = True
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
+SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Aerien', ]  # List of Sport practices name used to filter data to export in OpenAir
+
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
@@ -688,8 +701,6 @@ FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
 
-CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -697,7 +708,7 @@ CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -709,49 +720,29 @@ LOGGING = {
         },
     },
     'handlers': {
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'log_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'simple',
+            'filename': os.path.join(VAR_DIR, 'log', 'geotrek.log'),
+            'when': 'midnight',
+            'backupCount': 30,
+        },
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'class': 'django.utils.log.AdminEmailHandler',
         },
     },
     'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
         '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
+            'handlers': ['console'],
         },
-    }
+    },
 }
 
 BLADE_ENABLED = True
@@ -761,6 +752,7 @@ LINE_ENABLED = True
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 LINE_DISTANCE_FORMAT = "{:0.1f} km"
 LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
+DIRECTION_ON_LINES_ENABLED = False
 SHOW_EXTREMITIES = False  # Show a bullet at path extremities
 SHOW_LABELS = True  # Show labels on status
 
@@ -801,8 +793,6 @@ ENABLE_REPORT_COLORS_PER_STATUS = True
 
 SURICATE_REPORT_ENABLED = False
 
-SURICATE_MANAGEMENT_ENABLED = False
-
 SURICATE_WORKFLOW_ENABLED = False
 
 SURICATE_REPORT_SETTINGS = {
@@ -820,9 +810,8 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "TIMER_FOR_WAITING_REPORTS_IN_DAYS": 5,
-    "TIMER_FOR_PROGRAMMED_REPORTS_IN_DAYS": 5,
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département"
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": False
 }
 
 REPORT_FILETYPE = "Report"
@@ -847,17 +836,54 @@ REST_FRAMEWORK = {
 
 ALLOW_PATH_DELETION_TOPOLOGY = True
 
+ENABLE_HD_VIEWS = True
+
+PAPERCLIP_ALLOWED_EXTENSIONS = [
+    'jpeg',
+    'jpg',
+    'mp3',
+    'mp4',
+    'odt',
+    'pdf',
+    'png',
+    'svg',
+    'txt',
+    'gif',
+    'tiff',
+    'tif',
+    'docx',
+    'webp',
+    'bmp',
+    'flac',
+    'mpeg',
+    'doc',
+    'ods',
+    'gpx',
+    'xls',
+    'xlsx',
+    'odg',
+]
+PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
+    'bmp': ['image/bmp'],
+    'gpx': ['text/xml'],
+    'webp': ['image/webp'],
+    'svg': ['image/svg']
+}
+PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
 env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
+    print("Read env configuration from {}".format(env_settings_file))
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
+        print("Read custom configuration from {}".format(custom_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
@@ -868,3 +894,11 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'api_v2',
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")

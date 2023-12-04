@@ -37,17 +37,19 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['target']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
 
+    @classmethod
     def build_cost_column_name(cls, job_name):
         return _normalize_annotation_column_name(f"{_('Cost')} {job_name}")
 
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
 
-        queryset = Intervention.objects.existing()
+        queryset = super().get_queryset()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
 
@@ -79,6 +81,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
                 queryset = queryset.annotate(**params)
         return queryset
 
+    @classmethod
     def get_mandatory_columns(cls):
         mandatory_columns = ['id']
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
@@ -171,15 +174,15 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
     filterset_class = InterventionFilterSet
+    mapentity_list_class = InterventionList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'name')
+        else:
+            qs = qs.select_related("stake", "status", "type", "target_type").prefetch_related('target')
         return qs
-
-    def get_columns(self):
-        return InterventionList.mandatory_columns + settings.COLUMNS_LISTS.get('intervention_view', InterventionList.default_extra_columns)
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
@@ -248,6 +251,7 @@ class ProjectViewSet(GeotrekMapentityViewSet):
     serializer_class = ProjectSerializer
     geojson_serializer_class = ProjectGeojsonSerializer
     filterset_class = ProjectFilterSet
+    mapentity_list_class = ProjectList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -256,6 +260,3 @@ class ProjectViewSet(GeotrekMapentityViewSet):
             qs = qs.filter(pk__in=non_empty_qs)
             qs = qs.only('id', 'name')
         return qs
-
-    def get_columns(self):
-        return ProjectList.mandatory_columns + settings.COLUMNS_LISTS.get('project_view', ProjectList.default_extra_columns)

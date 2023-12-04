@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-02 07:32+0000\n"
+"POT-Creation-Date: 2022-12-16 09:52+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -47,6 +47,9 @@ msgstr "Nom"
 msgid "Comments"
 msgstr "Commentaires"
 
+msgid "Provider"
+msgstr "Fournisseur"
+
 msgid "Departure"
 msgstr "Départ"
 
@@ -73,6 +76,9 @@ msgstr "La géométrie est non simple"
 
 msgid "Geometry overlaps another."
 msgstr "La géométrie en superpose une autre"
+
+msgid "Geometry is not valid."
+msgstr "La géométrie n'est pas valide"
 
 msgid "Certifications"
 msgstr "Labellisations"
@@ -275,7 +281,7 @@ msgid ""
 "with this path. Modify these topologies before deleting this path."
 msgstr ""
 "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies "
-"sont lié à ce tronçon. Modifié ces topologies avant de supprimer ce tronçon"
+"sont lié à ce tronçon. Modifiez ces topologies avant de supprimer ce tronçon"
 
 msgid "No, back to edit view"
 msgstr "Non, retour à la l'édition"

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q
+from django.db.models import Q, Prefetch
+from geotrek.common.models import HDViewPoint
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
@@ -27,7 +28,10 @@ class SiteList(CustomColumnsMixin, MapEntityList):
 
 
 class SiteDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Site.objects.all()
+    queryset = Site.objects.all().prefetch_related(
+        Prefetch('view_points',
+                 queryset=HDViewPoint.objects.select_related('content_type', 'license'))
+    )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -41,7 +45,7 @@ class SiteCreate(MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['site'] = self.request.GET.get('site')
+        kwargs['site'] = self.request.GET.get('parent_sites')
         return kwargs
 
 
@@ -55,11 +59,16 @@ class SiteUpdate(MapEntityUpdate):
 
 
 class SiteDelete(MapEntityDelete):
+    template_name = "outdoor/site_confirm_delete.html"
     model = Site
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    # Add support for browsers which only accept GET and POST for now.
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
 
 class SiteDocumentPublicMixin:
@@ -112,10 +121,7 @@ class SiteViewSet(GeotrekMapentityViewSet):
     serializer_class = SiteSerializer
     geojson_serializer_class = SiteGeojsonSerializer
     filterset_class = SiteFilterSet
-
-    def get_columns(self):
-        return SiteList.mandatory_columns + settings.COLUMNS_LISTS.get('site_view',
-                                                                       SiteList.default_extra_columns)
+    mapentity_list_class = SiteList
 
     def get_queryset(self):
         qs = self.model.objects.all()
@@ -231,10 +237,7 @@ class CourseViewSet(GeotrekMapentityViewSet):
     serializer_class = CourseSerializer
     geojson_serializer_class = CourseGeojsonSerializer
     filterset_class = CourseFilterSet
-
-    def get_columns(self):
-        return CourseList.mandatory_columns + settings.COLUMNS_LISTS.get('course_view',
-                                                                         CourseList.default_extra_columns)
+    mapentity_list_class = CourseList
 
     def get_queryset(self):
         qs = self.model.objects.all()

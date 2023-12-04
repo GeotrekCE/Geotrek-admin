@@ -72,6 +72,7 @@ json_test_species = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46.kml",
+            "openair_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46/openair",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],
@@ -102,6 +103,7 @@ json_test_species_page_2 = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
+            "openair_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47/openair",
             "geometry": {
                 "type": "MultiPolygon",
                 "coordinates": [[[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],
@@ -159,13 +161,13 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertTrue(species.period01)
         self.assertFalse(species.period06)
         self.assertEqual(species.eid, '7')
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
+        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area_1.species, species)
         self.assertEqual(area_1.description, "Blahblah")
         self.assertEqual(area_1.description_fr, "Blabla")
         self.assertEqual(area_1.eid, '1')
         area_2 = SensitiveArea.objects.last()
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
+        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area_2.species, species)
         self.assertEqual(area_2.description, "Blahblah2")
         self.assertEqual(area_2.description_fr, "Blabla2")
@@ -246,7 +248,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(species.name, "Black grouse")
         self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertEqual(species.eid, None)
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
+        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area.eid, '1')
 
     @mock.patch('requests.get')

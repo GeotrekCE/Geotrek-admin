@@ -1,30 +1,13 @@
-import datetime
-
 from django.conf import settings
-from django.test import TestCase
 
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
-from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory
-from geotrek.maintenance.tests.factories import InterventionFactory
-from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
+from geotrek.infrastructure.models import (Infrastructure, INFRASTRUCTURE_TYPES)
+from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
                                                     InfrastructureTypeFactory, InfrastructureConditionFactory,
                                                     PointInfrastructureFactory)
-from geotrek.infrastructure.filters import InfrastructureFilterSet
-
-
-class InfrastructureTest(TestCase):
-    def test_helpers(self):
-        p = PathFactory.create()
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(paths=[p])
-        else:
-            infra = InfrastructureFactory.create(geom=p.geom)
-
-        self.assertCountEqual(p.infrastructures, [infra])
 
 
 class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
@@ -35,6 +18,15 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     extra_column_list = ['type', 'eid']
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -61,7 +53,7 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'cities': '[]',
+            'cities': '',
             'condition': self.obj.condition.label,
             'id': self.obj.pk,
             'name': self.obj.name_display,
@@ -127,106 +119,26 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
         return good_data
 
 
-class InfrastructureConditionTest(TestCase):
-    def test_manager(self):
-        it1 = InfrastructureConditionFactory.create()
-        it2 = InfrastructureConditionFactory.create()
-        it3 = InfrastructureConditionFactory.create()
-
-        self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
-
-
-class InfraFilterTestMixin:
-    factory = None
-    filterset = None
-
-    def login(self):
-        user = PathManagerFactory(password='booh')
-        self.client.force_login(user=user)
-
-    def test_intervention_filter(self):
-        self.login()
-
-        model = self.factory._meta.model
-        # We will filter by this year
-        year = 2014
-        good_date_year = datetime.datetime(year=year, month=2, day=2)
-        bad_date_year = datetime.datetime(year=year + 2, month=2, day=2)
-
-        # Bad topology/infrastructure: No intervention
-        self.factory()
-
-        # Bad signage: intervention with wrong year
-        bad_topo = self.factory()
-        InterventionFactory(target=bad_topo, date=bad_date_year)
-
-        # Good signage: intervention with the good year
-        good_topo = self.factory()
-        InterventionFactory(target=good_topo, date=good_date_year)
-
-        data = {
-            'intervention_year': year
-        }
-        response = self.client.get(model.get_datatablelist_url(), data)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()['data']), 1)
-
-    def test_duplicate_implantation_year_filter(self):
-        self.login()
-
-        model = self.factory._meta.model
-        # We will check if this
-        year = 2014
-        year_t = datetime.datetime(year=year, month=2, day=2)
-
-        # Bad signage: intervention with wrong year
-        topo_1 = self.factory()
-        InterventionFactory(target=topo_1, date=year_t)
-
-        # Good signage: intervention with the good year
-        topo_2 = self.factory()
-        InterventionFactory(target=topo_2, date=year_t)
-
-        response = self.client.get(model.get_list_url())
-        self.assertContains(response, '<option value="2014">2014</option>', count=1)
-
-
-class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
+class InfrastructureFilterTest(CommonTest):
     factory = InfrastructureFactory
     filterset = InfrastructureFilterSet
 
-    def test_none_implantation_year_filter(self):
-        self.login()
-        model = self.factory._meta.model
-        InfrastructureFactory.create()
-        response = self.client.get(model.get_list_url())
-        self.assertFalse('option value="" selected>None</option' in str(response))
+    def test_provider_filter_without_provider(self):
+        filter_set = InfrastructureFilterSet(data={})
+        filter_form = filter_set.form
 
-    def test_implantation_year_filter(self):
-        self.login()
-        model = self.factory._meta.model
-        i = InfrastructureFactory.create(implantation_year=2015)
-        i2 = InfrastructureFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
 
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
+    def test_provider_filter_with_providers(self):
+        infrastructure1 = InfrastructureFactory.create(provider='my_provider1')
+        infrastructure2 = InfrastructureFactory.create(provider='my_provider2')
 
-        filter = InfrastructureFilterSet(data={'implantation_year': [2015]})
-        self.assertTrue(i in filter.qs)
-        self.assertFalse(i2 in filter.qs)
+        filter_set = InfrastructureFilterSet()
+        filter_form = filter_set.form
 
-    def test_implantation_year_filter_with_str(self):
-        filter = InfrastructureFilterSet(data={'implantation_year': 'toto'})
-        self.login()
-        model = self.factory._meta.model
-        i = InfrastructureFactory.create(implantation_year=2015)
-        i2 = InfrastructureFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
 
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
-
-        self.assertIn(i, filter.qs)
-        self.assertIn(i2, filter.qs)
+        self.assertIn(infrastructure1, filter_set.qs)
+        self.assertIn(infrastructure2, filter_set.qs)

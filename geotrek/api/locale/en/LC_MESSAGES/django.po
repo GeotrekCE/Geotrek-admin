@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-16 09:23+0000\n"
+"POT-Creation-Date: 2023-06-23 10:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -179,6 +179,12 @@ msgstr ""
 msgid "Omit specified fields to increase performance. Example: url,category."
 msgstr ""
 
+msgid "Identifiers"
+msgstr ""
+
+msgid "Filter by one or more object id, comma-separated."
+msgstr ""
+
 msgid "Format"
 msgstr ""
 
@@ -230,7 +236,7 @@ msgid "Trek"
 msgstr ""
 
 msgid ""
-"Filter by a trek id. It will show only the sensitive areas related to this "
+"Filter by a trek id. It will show only the sensitive areas intersecting this "
 "trek."
 msgstr ""
 
@@ -336,6 +342,18 @@ msgid "Categories"
 msgstr ""
 
 msgid "Filter by one or more category id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more Place id, comma-separated."
+msgstr ""
+
+msgid "Filter events on organizers"
+msgstr ""
+
+msgid "Filter events on bookable boolean : true/false expected"
+msgstr ""
+
+msgid "Filter events on cancelled boolean : true/false expected"
 msgstr ""
 
 msgid "Dates before"
@@ -544,4 +562,14 @@ msgid "Altitude (m)"
 msgstr ""
 
 msgid "Altimetry data not available"
+msgstr ""
+
+msgid ""
+"This field is deprecated and will be removed in next releases. Please start "
+"using 'start_time'"
+msgstr ""
+
+msgid ""
+"This field is deprecated and will be removed in next releases. Please start "
+"using 'capacity'"
 msgstr ""

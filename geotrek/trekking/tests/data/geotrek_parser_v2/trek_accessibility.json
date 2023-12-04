@@ -1,0 +1,34 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": {
+        "fr": "Fauteuil roulant",
+        "en": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/accessibility-wheelchair.png"
+    },
+    {
+      "id": 2,
+      "name": {
+        "fr": "Poussette",
+        "en": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/accessibility-troller.png"
+    },
+    {
+      "id": 3,
+      "name": {
+        "fr": "Joelette",
+        "en": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/accessibility-joelette.png"
+    }
+  ]
+}

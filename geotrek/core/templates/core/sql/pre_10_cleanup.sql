@@ -1,5 +1,6 @@
 -- 10
 
+DROP TYPE IF EXISTS line_infos CASCADE;
 DROP FUNCTION IF EXISTS ST_InterpolateAlong(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ST_Smart_Line_Substring(geometry, float, float) CASCADE;
 DROP FUNCTION IF EXISTS ST_SmartLineSubstring(geometry, float, float) CASCADE;

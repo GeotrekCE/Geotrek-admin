@@ -2,19 +2,15 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.test import TestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 
 from ..parsers import Parser
-from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
+from ..utils import uniquify, format_coordinates, spatial_reference, simplify_coords
 from ..utils.import_celery import create_tmp_destination, subclasses
+from ..utils.parsers import add_http_prefix
 
 
 class UtilsTest(TestCase):
-    def test_sqlextent(self):
-        ext = sql_extent(
-            "SELECT ST_Extent('LINESTRING(0 0, 10 10)'::geometry)")
-        self.assertEqual((0.0, 0.0, 10.0, 10.0), ext)
-
     def test_uniquify(self):
         self.assertEqual([3, 2, 1], uniquify([3, 3, 2, 1, 3, 1, 2]))
 
@@ -73,3 +69,34 @@ class UtilsTest(TestCase):
     @override_settings(DISPLAY_SRID=32631)
     def test_spatial_reference_wgs84(self):
         self.assertEqual(spatial_reference(), 'WGS 84 / UTM zone 31N')
+
+
+class SimplifyCoordsTest(TestCase):
+    def test_coords_float(self):
+        """ Test a float value is rounded at .0000007 """
+        arg_value = 0.00000008
+        simplified_value = simplify_coords(arg_value)
+        self.assertEqual(simplified_value, 0.0000001)
+
+    def test_coords_list_or_tuple_float(self):
+        arg_value = (0.00000008, 0.0000001)
+        simplified_value = simplify_coords(arg_value)
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+        simplified_value = simplify_coords(list(arg_value))
+        for value in simplified_value:
+            self.assertEqual(value, 0.0000001)
+
+    def test_coords_bad_arg(self):
+        arg_value = "test"
+        with self.assertRaises(Exception):
+            simplify_coords(arg_value)
+
+
+class UtilsParsersTest(SimpleTestCase):
+    def test_add_http_prefix_without_prefix(self):
+        self.assertEqual('http://test.com', add_http_prefix('test.com'))
+
+    def test_add_http_prefix_with_prefix(self):
+        self.assertEqual('http://test.com', add_http_prefix('http://test.com'))

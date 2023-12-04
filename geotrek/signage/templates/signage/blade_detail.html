@@ -2,6 +2,7 @@
 {% load i18n signage_tags mapentity_tags signage_tags %}
 
 {% block detailspanel %}
+    {% direction_on_lines_enabled as is_direction_on_lines_enabled %}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{% trans "Code" %}</th>
@@ -21,6 +22,12 @@
             <th>{{ object|verbose:"type" }}</th>
             <td>{{ object.type }}</td>
         </tr>
+        {% if not is_direction_on_lines_enabled %}
+        <tr>
+            <th>{{ object|verbose:"direction" }}</th>
+            <td>{{ object.direction }}</td>
+        </tr>
+        {% endif %}
         <tr>
             <th>{{ object|verbose:"condition" }}</th>
             <td>{% if object.condition %}{{ object.condition }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
@@ -42,6 +49,7 @@
             {% if object.order_lines.exists %}
                 <tr>
                     <th>{% trans "Code" %}</th>
+                    {% if is_direction_on_lines_enabled %}<th>{% trans "Direction" %}</th>{% endif %}
                     <th>{% trans "Text" %}</th>
                     <th>{% trans "Picto" %}</th>
                     <th>{% trans "Distance" %}</th>
@@ -51,8 +59,16 @@
             {% for line in object.order_lines.all %}
                 <tr>
                     <td>{{ line }}</td>
+                    {% if is_direction_on_lines_enabled %}<td>{{ line.direction }}</td>{% endif %}
                     <td>{{ line.text }}</td>
-                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                    <td>
+                        {% for pictogram in line.pictograms.all %}
+                            {{ pictogram.code|default_if_none:"" }} -
+                            {{ pictogram.label|default_if_none:"" }} -
+                            {{ pictogram.description|default_if_none:"" }}
+                            <br>
+                        {% endfor %}
+                    </td>
                     <td>{{ line.distance_pretty }}</td>
                     <td>{{ line.time_pretty }}</td>
                 </tr>

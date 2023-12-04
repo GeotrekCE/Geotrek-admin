@@ -1,37 +1,38 @@
+import logging
 from copy import deepcopy
 
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Button, Div, Layout, Submit
 from django import forms
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.checks.messages import Error
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.files.images import get_image_dimensions
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.db.models.query import QuerySet
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
+from mapentity.forms import MapEntityForm, SubmitButton
 
-from mapentity.forms import MapEntityForm
-
-from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
-from geotrek.common.models import AccessibilityAttachment
+from geotrek.authent.models import (StructureOrNoneRelated, StructureRelated,
+                                    default_structure)
 from geotrek.common.mixins.models import PublishableMixin
+from geotrek.common.models import AccessibilityAttachment, HDViewPoint
 from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, Submit, Button
-from crispy_forms.bootstrap import FormActions
-
-import logging
 
 logger = logging.getLogger(__name__)
 
 
 class CommonForm(MapEntityForm):
+
+    not_hideable_fields = []
 
     class Meta:
         fields = []
@@ -41,6 +42,10 @@ class CommonForm(MapEntityForm):
         'TrekForm': 'trek',
         'TrailForm': 'trail',
         'LandEdgeForm': 'landedge',
+        'PhysicalEdgeForm': 'physicaledge',
+        'CompetenceEdgeForm': 'competenceedge',
+        'WorkManagementEdgeForm': 'workmanagement',
+        'SignageManagementEdgeForm': 'signagemanagementedge',
         'InfrastructureForm': 'infrastructure',
         'InterventionForm': 'intervention',
         'SignageForm': 'signage',
@@ -127,6 +132,10 @@ class CommonForm(MapEntityForm):
                 if self.fields[field_to_hide].required:
                     logger.warning(
                         f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                    )
+                elif field_to_hide in self.not_hideable_fields:
+                    logger.warning(
+                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' cannot be hidden on form {self.__class__.__name__}."
                     )
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()
@@ -344,7 +353,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
             Div(
                 Div(
                     'parser',
-                    'zipfile',
+                    'file',
                     'encoding',
                 ),
                 FormActions(
@@ -377,12 +386,15 @@ class SyncRandoForm(forms.Form):
 
 
 class AttachmentAccessibilityForm(forms.ModelForm):
+    next = forms.CharField(widget=forms.HiddenInput())
+
     def __init__(self, request, *args, **kwargs):
         self._object = kwargs.pop('object', None)
 
         super().__init__(*args, **kwargs)
         self.fields['legend'].widget.attrs['placeholder'] = _('Overview of the tricky passage')
 
+        self.redirect_on_error = True
         # Detect fields errors without uploading (using HTML5)
         self.fields['author'].widget.attrs['pattern'] = r'^\S.*'
         self.fields['legend'].widget.attrs['pattern'] = r'^\S.*'
@@ -396,6 +408,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         self.helper.form_style = "default"
         self.helper.label_class = 'col-md-3'
         self.helper.field_class = 'col-md-9'
+        self.fields['next'].initial = f"{self._object.get_detail_url()}?tab=attachments-accessibility"
 
         if not self.instance.pk:
             form_actions = [
@@ -403,7 +416,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        _('Submit attachment'),
                        css_class="btn-primary")
             ]
-            self.form_url = reverse('add_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:add_attachment_accessibility', kwargs={
                 'app_label': self._object._meta.app_label,
                 'model_name': self._object._meta.model_name,
                 'pk': self._object.pk
@@ -416,7 +429,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        css_class="btn-primary")
             ]
             self.fields['title'].widget.attrs['readonly'] = True
-            self.form_url = reverse('update_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:update_attachment_accessibility', kwargs={
                 'attachment_pk': self.instance.pk
             })
 
@@ -452,4 +465,89 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         obj = self._object
         self.instance.creator = request.user
         self.instance.content_object = obj
+        if "attachment_accessibility_file" in self.changed_data:
+            # New file : regenerate new random name for this attachment
+            instance = super().save(commit=False)
+            instance.save(**{'force_refresh_suffix': True})
+            return instance
         return super().save(*args, **kwargs)
+
+
+class HDViewPointForm(MapEntityForm):
+    geomfields = ['geom']
+
+    def __init__(self, *args, content_type=None, object_id=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if content_type and object_id:
+            ct = ContentType.objects.get_for_id(content_type)
+            self.instance.content_type = ct
+            self.instance.content_object = ct.get_object_for_this_type(id=object_id)
+            self.instance.object_id = object_id
+            self.helper.form_action += f"?object_id={object_id}&content_type={content_type}"
+
+    class Meta:
+        model = HDViewPoint
+        fields = ('picture', 'geom', 'author', 'title', 'license', 'legend')
+
+
+class HDViewPointAnnotationForm(forms.ModelForm):
+    annotations = forms.JSONField(label=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['annotations'].required = False
+        self.fields['annotations'].widget = forms.Textarea(
+            attrs={
+                'name': 'annotations',
+                'rows': '15',
+                'type': 'textarea',
+                'autocomplete': 'off',
+                'autocorrect': 'off',
+                'autocapitalize': 'off',
+                'spellcheck': 'false',
+                # Do not show GEOJson textarea to users
+                'style': 'display: none;'
+            }
+        )
+        self._init_layout()
+
+    def _init_layout(self):
+        """ Setup form buttons, submit URL, layout """
+
+        actions = [
+            Button('cancel', _('Cancel'), css_class="btn btn-light ml-auto mr-2"),
+            SubmitButton('save_changes', _('Save changes')),
+        ]
+
+        leftpanel = Div(
+            'annotations',
+            css_id="modelfields",
+        )
+        formactions = FormActions(
+            *actions,
+            css_class="form-actions",
+            template='mapentity/crispy_forms/bootstrap4/layout/formactions.html'
+        )
+
+        # # Main form layout
+        self.helper.help_text_inline = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.form_style = "default"
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'controls col-md-9'
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    leftpanel,
+                    # *rightpanel,
+                    css_class="row"
+                ),
+                css_class="container-fluid"
+            ),
+            formactions,
+        )
+
+    class Meta:
+        model = HDViewPoint
+        fields = ('annotations', )

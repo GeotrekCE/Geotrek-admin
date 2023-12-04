@@ -14,3 +14,277 @@
   font-size: 20px;
   font-weight: bold;
 }
+
+fieldset {
+  margin-left: 80px;
+}
+
+#hdviewpoint-map {
+  width: 100%;
+  height: 550px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+}
+
+#hdviewpoint-map.large {
+  height: 800px;
+  margin-right: 10px;
+}
+
+.form-panel#annotations {
+  flex-basis: 55%;
+}
+
+.loader-wrapper {
+  display: table;
+  margin: 0 auto;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid green;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#controls {
+  border-radius: 5px;
+  border: 1px solid lightgrey;
+  color: black;
+  padding: 10px;
+  max-height: calc(100% - 100px);
+  min-width: 310px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#controls .form-group {
+  margin-bottom: 0;
+}
+#controls label {
+  min-width: 160px;
+}
+#controls.no-controls {
+  display: none;
+}
+
+.annotationtype{
+  justify-content: space-between;
+  display: flex;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.annotationtype button {
+  display: inline-block;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  background: #1e7e34;
+  color: #FFFFFF;
+  border-radius: 8px;
+  padding: 14px 24px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 200ms,background 200ms;
+}
+.annotationtype button:hover {
+  transform: translateY(-2px);
+}
+
+.annotationtype button.lastused {
+  color: #373a3c;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.annotationtype button.active {
+  color: #373a3c;
+  background-color: #dae0e5;;
+  border-color: #dae0e5;;
+}
+#annotationheader {
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 10px;
+}
+.shortlabel {
+  margin-bottom: 10px;
+  font-weight: bold;
+  display: inline-block;
+}
+#instructions .annotation {
+  display: none;
+  max-width: 300px;
+  font-size: 12px;
+  line-height: 1.42857em;
+  min-height: 2.85714em;
+}
+#instructions[annotation="polygon"] .annotation.polygon,
+#instructions[annotation="rectangle"] .annotation.rectangle,
+#instructions[annotation="square"] .annotation.square,
+#instructions[annotation="ellipse"] .annotation.ellipse,
+#instructions[annotation="circle"] .annotation.circle,
+#instructions[annotation="point"] .annotation.point,
+#instructions[annotation="line"] .annotation.line,
+#instructions[annotation="none"] .annotation.none {
+  display: block;
+}
+#controls a {
+  color: #333;
+  cursor: pointer;
+}
+#controls .form-group.compact label {
+  min-width: 0px;
+  padding-right: 5px;
+}
+#controls .form-group.compact select {
+  padding-right: 10px;
+}
+#controls .form-group.compact input[type="range"] {
+  width: 120px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.entry span, .entry a {
+  display: inline-block;
+}
+
+.entry {
+  margin-right: 10px;
+}
+.entry .entry-name {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+#tinybuttons {
+  float: right;
+}
+.entry .entry-edit {
+  font-weight: bold;
+}
+.entry-remove-all {
+  float: right;
+}
+#annotationheader, .entry#sample {
+  display: none;
+}
+#editdialog {
+  font-size: 14px;
+}
+#editdialog .form-group {
+  margin-bottom: 0px;
+}
+#editdialog #edit-update {
+  float: right;
+  margin-left: 10px;
+}
+#editdialog label {
+  min-width: 105px;
+}
+#editdialog #edit-validation-error {
+  color: red;
+  font-weight: bold;
+}
+#geojson {
+  width: 100%;
+  resize: vertical;
+}
+
+#label_input {
+  padding: 6px 12px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  appearance: none;
+  border-radius: 4px;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; 
+}
+#label_input:hover {
+  background-color: rgb(235, 236, 240);
+}
+#label_input:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+#viewpoint-tooltip {
+      display: inline-block;
+      text-align: center;
+      width: 1.8ex;
+      height: 1.8ex;
+      font-size: 1.4ex;
+      line-height: 1.5ex;
+      border-radius: 1.2ex;
+      padding: 1px;
+      margin-left: 10px;
+      border: 1px solid black;
+}
+#viewpoint-tooltip:hover:after{
+  border-color: white;
+}
+#viewpoint-tooltip {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+#viewpoint-tooltip:before,
+#viewpoint-tooltip:after {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Position tooltip above the element */
+#viewpoint-tooltip:before {
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -80px;
+  padding: 7px;
+  width: 500px;
+  border-radius: 3px;
+  background-color: #000;
+  background-color: hsla(0, 0%, 20%, 0.9);
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Show tooltip content on hover */
+#viewpoint-tooltip:hover:before,
+#viewpoint-tooltip:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+.form-actions {
+  z-index: 1000;
+}

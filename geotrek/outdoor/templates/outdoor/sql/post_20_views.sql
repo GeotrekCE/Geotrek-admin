@@ -1,6 +1,16 @@
 -- Parcours outdoor
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_courses AS
+WITH outdoor_course_geom AS (
+    SELECT  ST_CollectionExtract(geom, 3)  AS geom, id
+    FROM public.outdoor_course AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 2)  AS geom, id
+    FROM public.outdoor_course AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 1)  AS geom, id
+    FROM public.outdoor_course AS os
+  )
 SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
@@ -42,38 +52,39 @@ SELECT a.id,
                WHEN a.published_{{ lang }} IS TRUE THEN 'Yes'
            END AS "Published {{ lang }}",
        {% endfor %}
-       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
+       concat ('→ ', a.length::numeric(10, 1),' m (↝', st_length(a.geom_3d)::numeric(10, 1),' m)') AS "Humanize length",
        a.length AS "Length",
-       st_length(geom_3d) AS "Length 3d",
+       st_length(a.geom_3d) AS "Length 3d",
        CASE
-           WHEN ascent > 0 THEN concat (descent,'m +',ascent,'m (',slope::numeric(10, 1),')')
-           WHEN ascent < 0 THEN concat (descent,'m -',ascent,'m (',slope::numeric(10, 1),')')
+           WHEN a.ascent > 0 THEN concat (a.descent,'m +',a.ascent,'m (',a.slope::numeric(10, 1),')')
+           WHEN a.ascent < 0 THEN concat (a.descent,'m -',a.ascent,'m (',a.slope::numeric(10, 1),')')
        END AS "Slope",
        CONCAT (a.min_elevation, 'm') AS "Minimum elevation",
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 1) AS geom
+       sg.geom AS geom
 FROM outdoor_course a
+JOIN outdoor_course_geom sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          outdoor_course a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) c ON a.id = c.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          outdoor_course a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) d ON a.id = d.id 
+     GROUP BY a.id) d ON a.id = d.id
 LEFT JOIN outdoor_coursetype e ON a.type_id = d.id
 LEFT JOIN
     (SELECT b.id,
-            array_to_string(ARRAY_AGG (c.name), ', ', '_') site
+            array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') site
      FROM outdoor_course_parent_sites a
      JOIN outdoor_course b ON a.course_id = b.id
      JOIN outdoor_site c ON a.site_id = c.id
@@ -81,7 +92,7 @@ LEFT JOIN
 LEFT JOIN
     (WITH site_pratique AS
          (SELECT b.id,
-                 array_to_string(ARRAY_AGG (c.name), ', ', '_') site
+                 array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') site
           FROM outdoor_course_parent_sites a
           JOIN outdoor_course b ON a.course_id = b.id
           JOIN outdoor_site c ON a.site_id = c.id
@@ -92,7 +103,7 @@ LEFT JOIN
      JOIN
          (WITH pratique AS
               (SELECT c.id,
-                      array_to_string(ARRAY_AGG (c.name), ', ', '_') site
+                      array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') site
                FROM outdoor_course_parent_sites a
                JOIN outdoor_course b ON a.course_id = b.id
                JOIN outdoor_site c ON a.site_id = c.id
@@ -102,14 +113,14 @@ LEFT JOIN
           FROM pratique a
           JOIN
               (SELECT a.id,
-                      array_to_string(ARRAY_AGG (b.name), ', ', '_') pratique
+                      array_to_string(ARRAY_AGG (b.name ORDER BY b.id), ', ', '_') pratique
                FROM outdoor_site a
                JOIN outdoor_practice b ON a.practice_id = b.id
                GROUP BY a.id) b ON a.id = b.id) b ON a.site= b.site) h ON a.id = h.id
 LEFT JOIN
     (WITH site_filieres AS
          (SELECT b.id,
-                 array_to_string(ARRAY_AGG (c.name), ', ', '_') site
+                 array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') site
           FROM outdoor_course_parent_sites a
           JOIN outdoor_course b ON a.course_id = b.id
           JOIN outdoor_site c ON a.site_id = c.id
@@ -120,7 +131,7 @@ LEFT JOIN
      JOIN
          (WITH filieres AS
               (SELECT c.id,
-                      array_to_string(ARRAY_AGG (c.name), ', ', '_') site
+                      array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') site
                FROM outdoor_course_parent_sites a
                JOIN outdoor_course b ON a.course_id = b.id
                JOIN outdoor_site c ON a.site_id = c.id
@@ -130,7 +141,7 @@ LEFT JOIN
           FROM filieres a
           JOIN
               (SELECT a.id,
-                      array_to_string(ARRAY_AGG (c.name), ', ', '_') filieres
+                      array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') filieres
                FROM outdoor_site a
                JOIN outdoor_practice b ON a.practice_id = b.id
                JOIN outdoor_sector c ON b.sector_id = c.id
@@ -140,6 +151,16 @@ LEFT JOIN
 -- Sites outdoor
 
 CREATE VIEW {{ schema_geotrek }}.v_outdoor_sites AS
+WITH outdoor_site_geom AS (
+    SELECT  ST_CollectionExtract(geom, 3)  AS geom, id
+    FROM public.outdoor_site AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 2)  AS geom, id
+    FROM public.outdoor_site AS os
+    UNION
+    SELECT  ST_CollectionExtract(geom, 1)  AS geom, id
+    FROM public.outdoor_site AS os
+  )
 SELECT a.id,
        b.name AS "Structure",
        c.zoning_city AS "City",
@@ -190,27 +211,28 @@ SELECT a.id,
        CONCAT (a.max_elevation, 'm') AS "Maximum elevation",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       ST_CollectionExtract(a.geom, 1) AS geom
+       sg.geom AS geom
 FROM public.outdoor_site a
+JOIN outdoor_site_geom sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          outdoor_site a
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) c ON a.id = c.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          outdoor_site a
      JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) d ON a.id = d.id 
+     GROUP BY a.id) d ON a.id = d.id
 LEFT JOIN outdoor_sitetype e ON a.type_id = e.id
 LEFT JOIN outdoor_practice f ON a.practice_id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') lieux_renseignement,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.id), ', ', '_') lieux_renseignement,
             c.id
      FROM outdoor_site_information_desks a
      JOIN tourism_informationdesk b ON a.informationdesk_id =b.id
@@ -223,7 +245,7 @@ LEFT JOIN
      JOIN outdoor_site_source b ON a.id = b.recordsource_id
      JOIN outdoor_site c ON b.site_id = c.id) h ON a.id = h.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.url), ', ', '_') url,
+    (SELECT array_to_string(ARRAY_AGG (b.url ORDER BY b.id), ', ', '_') url,
             d.id
      FROM outdoor_site_web_links a
      JOIN trekking_weblink b ON a.weblink_id = b.id
@@ -231,14 +253,14 @@ LEFT JOIN
      JOIN outdoor_site d ON d.id = a.site_id
      GROUP BY d.id) i ON a.id = i.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') portail,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.id), ', ', '_') portail,
             c.id
      FROM outdoor_site_portal a
      JOIN common_targetportal b ON a.targetportal_id =b.id
      JOIN outdoor_site c ON a.site_id = c.id
      GROUP BY c.id) j ON a.id = j.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (c.name), ', ', '_') etiquettes,
+    (SELECT array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') etiquettes,
             d.id
      FROM outdoor_site_labels a
      JOIN trekking_trek_labels b ON a.label_id = b.id
@@ -246,7 +268,7 @@ LEFT JOIN
      JOIN outdoor_site d ON a.site_id = d.id
      GROUP BY d.id) k ON a.id = k.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.organism), ', ', '_') gestionnaire,
+    (SELECT array_to_string(ARRAY_AGG (b.organism ORDER BY b.id), ', ', '_') gestionnaire,
             c.id
      FROM outdoor_site_managers a
      JOIN common_organism b ON a.organism_id =b.id
@@ -266,19 +288,19 @@ LEFT JOIN
     SELECT id, array_to_string(array_agg(array["Name ratingscale", "Name as string"]), ' : ', NULL) AS "Ratings" FROM by_rating_scales group by id) m ON a.id = m.id
 LEFT JOIN
     (SELECT parent_id,
-            array_to_string(ARRAY_AGG (name), ', ', '_') enfants
+            array_to_string(ARRAY_AGG (name ORDER BY id), ', ', '_') enfants
      FROM public.outdoor_site
      WHERE parent_id IS NOT NULL
      GROUP BY parent_id) n ON a.id = n.parent_id
 LEFT JOIN
     (SELECT b.id,
-            array_to_string(ARRAY_AGG (a.name), ', ', '_') parents
+            array_to_string(ARRAY_AGG (a.name ORDER BY a.id), ', ', '_') parents
      FROM outdoor_site a
      JOIN outdoor_site b ON a.id = b.parent_id
      GROUP BY b.id) o ON a.id = o.id
 LEFT JOIN
     (SELECT a.id,
-            array_to_string(ARRAY_AGG (c.name), ', ', '_') filieres
+            array_to_string(ARRAY_AGG (c.name ORDER BY c.id), ', ', '_') filieres
      FROM outdoor_site a
      JOIN outdoor_practice b ON a.practice_id = b.id
      JOIN outdoor_sector c ON b.sector_id = c.id

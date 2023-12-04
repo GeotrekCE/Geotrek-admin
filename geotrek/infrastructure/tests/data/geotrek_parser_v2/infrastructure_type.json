@@ -1,0 +1,28 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 45,
+      "label": "Aire de stationnement",
+      "pictogram": null,
+      "structure": 3,
+      "type": "Ouvrage"
+    },
+    {
+      "id": 46,
+      "label": "Aire de stationnement Handicapés",
+      "pictogram": null,
+      "structure": null,
+      "type": "Ouvrage"
+    },
+    {
+      "id": 81,
+      "label": "Table",
+      "pictogram": null,
+      "structure": null,
+      "type": "Équipement"
+    }
+  ]
+}

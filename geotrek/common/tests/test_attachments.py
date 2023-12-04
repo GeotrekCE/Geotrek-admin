@@ -1,26 +1,28 @@
 import os
 from io import BytesIO
-from PIL import Image
 from unittest import mock
 
 from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-
 from mapentity.tests.factories import SuperUserFactory, UserFactory
-from geotrek.common.models import AccessibilityAttachment, Attachment
-from geotrek.common.tests.factories import AttachmentAccessibilityFactory, FileTypeFactory
+from paperclip.models import random_suffix_regexp
+from PIL import Image
+
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.models import AccessibilityAttachment
+from geotrek.common.tests.factories import (AttachmentAccessibilityFactory,
+                                            AttachmentFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import TrekFactory, PracticeFactory
+from geotrek.trekking.tests.factories import PracticeFactory, TrekFactory
 from geotrek.trekking.views import TrekDetail
 
 
 def add_url_for_obj(obj):
-    return reverse('add_attachment_accessibility', kwargs={
+    return reverse('common:add_attachment_accessibility', kwargs={
         'app_label': obj._meta.app_label,
         'model_name': obj._meta.model_name,
         'pk': obj.pk
@@ -28,13 +30,13 @@ def add_url_for_obj(obj):
 
 
 def update_url_for_obj(attachment):
-    return reverse('update_attachment_accessibility', kwargs={
+    return reverse('common:update_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
 
 def delete_url_for_obj(attachment):
-    return reverse('delete_attachment_accessibility', kwargs={
+    return reverse('common:delete_attachment_accessibility', kwargs={
         'attachment_pk': attachment.pk
     })
 
@@ -46,7 +48,7 @@ class EntityAttachmentTestCase(TestCase):
             return {'paperclip.add_attachment': False}.get(p, True)
         cls.user = UserFactory()
         cls.user.has_perm = mock.MagicMock(side_effect=user_perms)
-        cls.object = TrekFactory.create()
+        cls.object = TrekFactory.create(structure=StructureFactory(name="Another structure"))
         call_command('update_permissions_mapentity', verbosity=0)
 
     def createRequest(self):
@@ -56,28 +58,10 @@ class EntityAttachmentTestCase(TestCase):
         return request
 
     def createAttachmentAccessibility(self, obj):
-        kwargs = {
-            'content_type': ContentType.objects.get_for_model(obj),
-            'object_id': obj.pk,
-            'creator': self.user,
-            'title': "Attachment title",
-            'legend': "Attachment legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(),
-            'info_accessibility': 'slope'
-        }
-        return AccessibilityAttachment.objects.create(**kwargs)
+        return AttachmentAccessibilityFactory(content_object=obj, creator=self.user)
 
     def createAttachment(self, obj):
-        kwargs = {
-            'content_type': ContentType.objects.get_for_model(obj),
-            'object_id': obj.pk,
-            'filetype_id': FileTypeFactory.create().pk,
-            'creator': self.user,
-            'title': "Attachment title",
-            'legend': "Attachment legend",
-            'attachment_file': get_dummy_uploaded_image(),
-        }
-        return Attachment.objects.create(**kwargs)
+        return AttachmentFactory(content_object=obj, creator=self.user)
 
     def test_list_attachments_in_details(self):
         self.createAttachmentAccessibility(self.object)
@@ -119,7 +103,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
 
     def test_update_form_in_details_if_perms(self):
@@ -131,7 +115,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html.content)
         self.assertIn(
             '<form  action="/paperclip/add-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
@@ -141,6 +125,7 @@ class EntityAttachmentTestCase(TestCase):
         def user_perms(p):
             return {'authent.can_bypass_structure': False}.get(p, True)
         self.createAttachmentAccessibility(self.object)
+
         user = UserFactory()
         user.has_perm = mock.MagicMock(side_effect=user_perms)
         user.user_permissions.add(Permission.objects.get(codename='read_trek'))
@@ -155,9 +140,47 @@ class EntityAttachmentTestCase(TestCase):
 
         self.assertNotIn(b"Submit attachment", html)
         self.assertNotIn(
-            '<form  action="/trekking/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
+            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(self.object.pk).encode(),
             html)
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
+
+    def test_filename_generation(self):
+        # Prepare attachment
+        file = BytesIO(b"File content")
+        file.name = 'foo_file.txt'
+        file.seek(0)
+        attachment = AccessibilityAttachment.objects.create(content_object=self.object,
+                                                            creator=self.user,
+                                                            author="foo author",
+                                                            legend="foo legend")
+        # Assert filename and suffix are not computed if there is no file in attachment
+        self.assertIsNone(attachment.prepare_file_suffix())
+        # Assert filename is made of attachment file name plus random suffix
+        attachment.attachment_accessibility_file = SimpleUploadedFile(
+            file.name,
+            file.read(),
+            content_type='text/plain'
+        )
+        name_1 = attachment.prepare_file_suffix()
+        regexp = random_suffix_regexp()
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_file{attachment.random_suffix}.txt"
+        self.assertEqual(name_1, new_name)
+        # Assert filename would be made of basename argument plus random suffix
+        attachment.random_suffix = None
+        name_4 = attachment.prepare_file_suffix("basename.txt")
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"basename{attachment.random_suffix}.txt"
+        self.assertEqual(name_4, new_name)
+        # Assert filename is made of attachment title plus random suffix
+        attachment.title = "foo_title"
+        attachment.save(**{'force_refresh_suffix': True})
+        self.assertRegex(attachment.random_suffix, regexp)
+        new_name = f"foo_title{attachment.random_suffix}.txt"
+        _, name_2 = os.path.split(attachment.attachment_accessibility_file.name)
+        self.assertEqual(name_2, new_name)
+        name_3 = attachment.prepare_file_suffix()
+        self.assertEqual(new_name, name_3)
 
     def test_create_attachments_object_other_structure(self):
         def user_perms(p):
@@ -182,23 +205,32 @@ class EntityAttachmentTestCase(TestCase):
         self.assertIn(b"You are not allowed to modify attachments on this object, this object is not from the same structure.", html)
 
 
-class UploadAddAttachmentTestCase(TestCase):
-
+class SetUpTestDataMixin:
     @classmethod
     def setUpTestData(cls):
-        cls.user = SuperUserFactory.create()
+        cls.superuser = SuperUserFactory.create()
         cls.object = TrekFactory.create()
+        cls.user = UserFactory()
+        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+            cls.user.user_permissions.add(perm.pk)
+        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+        cls.object_other_structure = TrekFactory.create(structure=StructureFactory.create())
+        cls.attachment_other_structure = AttachmentAccessibilityFactory.create(content_object=cls.object_other_structure)
+
+
+class UploadAddAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def setUp(self):
-        self.client.force_login(user=self.user)
+        self.client.force_login(user=self.superuser)
 
     def attachmentPostData(self):
         data = {
-            'creator': self.user,
+            'creator': self.superuser,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
@@ -207,75 +239,91 @@ class UploadAddAttachmentTestCase(TestCase):
                                     data=self.attachmentPostData())
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(3, AccessibilityAttachment.objects.count())
+
+        self.client.force_login(user=self.user)
+        response = self.client.post(add_url_for_obj(self.object_other_structure),
+                                    data=self.attachmentPostData())
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
+        self.assertEqual(3, AccessibilityAttachment.objects.count())
 
     def test_upload_creates_attachment(self):
         data = self.attachmentPostData()
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="A title")
         self.assertEqual(att.title, data['title'])
         self.assertEqual(att.legend, data['legend'])
 
     def test_title_gives_name_to_file(self):
         data = self.attachmentPostData()
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="A title")
         self.assertTrue('a-title' in att.attachment_accessibility_file.name)
 
     def test_filename_is_used_if_no_title(self):
         data = self.attachmentPostData()
         data['title'] = ''
         self.client.post(add_url_for_obj(self.object), data=data)
-        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get()
+        att = AccessibilityAttachment.objects.attachments_for_object(self.object).get(title="")
         self.assertTrue('face' in att.attachment_accessibility_file.name)
 
 
-class UploadUpdateAttachmentTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = SuperUserFactory.create()
-        cls.object = TrekFactory.create()
-        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
-
-    def setUp(self):
-        self.client.force_login(user=self.user)
+class UploadUpdateAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def attachmentPostData(self):
         data = {
             'creator': self.user,
             'title': "A title",
             'legend': "A legend",
-            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.jpg'),
-            'info_accessibility': 'slope'
+            'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
+            'info_accessibility': 'slope',
+            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
         }
         return data
 
     def test_get_update_url(self):
+        self.client.force_login(user=self.superuser)
         response = self.client.get(update_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'value="Update attachment"', response.content)
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
 
     def test_post_update_url(self):
+        self.client.force_login(user=self.superuser)
         response = self.client.post(update_url_for_obj(self.attachment),
-                                    data=self.attachmentPostData())
+                                    data=self.attachmentPostData(),
+                                    )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
         self.attachment.refresh_from_db()
         self.assertEqual(self.attachment.legend, "A legend")
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment))
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], f"{self.object_other_structure.get_detail_url()}")
 
 
-class UploadDeleteAttachmentTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.object = TrekFactory.create()
-        cls.attachment = AttachmentAccessibilityFactory.create(content_object=cls.object)
+class UploadDeleteAttachmentTestCase(SetUpTestDataMixin, TestCase):
 
     def test_get_delete_with_perms_url(self):
         self.user = SuperUserFactory.create()
-        self.client.force_login(user=self.user)
+        self.client.force_login(user=self.superuser)
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
-        self.assertEqual(0, AccessibilityAttachment.objects.count())
+        self.assertEqual(1, AccessibilityAttachment.objects.count())
+
+        self.client.force_login(user=self.user)
+        response = self.client.get(update_url_for_obj(self.attachment_other_structure))
+        self.assertEqual(response.status_code, 200)
 
     @mock.patch('django.contrib.auth.models.PermissionsMixin.has_perm')
     def test_get_delete_without_perms_url(self, mocke):
@@ -287,7 +335,7 @@ class UploadDeleteAttachmentTestCase(TestCase):
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
-        self.assertEqual(1, AccessibilityAttachment.objects.count())
+        self.assertEqual(2, AccessibilityAttachment.objects.count())
         response = self.client.get(delete_url_for_obj(self.attachment), follow=True)
         self.assertIn(b'You are not allowed to delete this attachment.', response.content)
 
@@ -397,7 +445,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -412,8 +461,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': big_image,
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -436,7 +487,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -455,8 +507,10 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
@@ -480,7 +534,8 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'legend': "A legend",
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -499,10 +554,11 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
-            }
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            },
+            follow=True
         )
-
         self.assertEqual(response.status_code, 200)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
         self.assertIn(b'The uploaded file is not tall enough', response.content)
@@ -512,16 +568,16 @@ class ReduceSaveSettingsTestCase(TestCase):
         self.client.force_login(self.superuser)
         attachment = AttachmentAccessibilityFactory.create(content_object=self.object)
         os.remove(attachment.attachment_accessibility_file.path)
-
         response = self.client.post(
             update_url_for_obj(attachment),
             data={
                 'creator': self.superuser,
                 'title': "A title",
-                'attachment_accessibility_file': "file",
+                'attachment_accessibility_file': get_dummy_uploaded_image("title.png"),
                 'author': "newauthor",
                 'legend': "A legend",
-                'info_accessibility': 'slope'
+                'info_accessibility': 'slope',
+                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
             }
         )
         self.assertEqual(response.status_code, 302)

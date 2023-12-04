@@ -1,4 +1,5 @@
 import factory
+from geotrek.common.tests.factories import OrganismFactory
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PointTopologyFactory
@@ -43,6 +44,13 @@ class BladeDirectionFactory(factory.django.DjangoModelFactory):
     label = "Blade direction"
 
 
+class LineDirectionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Direction
+
+    label = "Line direction"
+
+
 class SealingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Sealing
@@ -57,6 +65,7 @@ class SignageFactory(PointTopologyFactory):
     name = "Signage"
     type = factory.SubFactory(SignageTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
+    manager = factory.SubFactory(OrganismFactory)
     sealing = factory.SubFactory(SealingFactory)
     printed_elevation = 4807
     published = True
@@ -87,13 +96,27 @@ class BladeFactory(factory.django.DjangoModelFactory):
             LineFactory.create(blade=obj)
 
 
+class LinePictogramFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.LinePictogram
+
+    label = factory.Sequence(lambda n: "Label %s" % n)
+    code = factory.Sequence(lambda n: "Code %s" % n)
+    description = factory.Sequence(lambda n: "Description %s" % n)
+
+
 class LineFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Line
 
     number = "1"
+    direction = factory.SubFactory(LineDirectionFactory)
     text = "Text"
     distance = 42.5
-    pictogram_name = "Pictogram name"
     time = "0:42:30"
     blade = factory.SubFactory(BladeFactory)
+
+    @factory.post_generation
+    def pictograms(obj, create, extracted=None, **kwargs):
+        if create:
+            obj.pictograms.add(LinePictogramFactory.create())

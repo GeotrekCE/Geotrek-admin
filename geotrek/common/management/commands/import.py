@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('parser', help='Parser class name in var/conf/parsers.py (or dotted syntax in python path)')
-        parser.add_argument('shapefile', nargs="?")
+        parser.add_argument('filename', nargs="?", help='Optional file used to feed database')
         parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
         parser.add_argument('--encoding', '-e', default='utf8')
 
@@ -41,7 +41,7 @@ class Command(BaseCommand):
             Parser = getattr(module, class_name)
         except AttributeError:
             raise CommandError("Failed to import parser class '{0}'".format(class_name))
-        if not Parser.filename and not Parser.url and not options['shapefile']:
+        if not Parser.filename and not Parser.url and not options['filename']:
             raise CommandError("File path missing")
 
         def progress_cb(progress, line, eid):
@@ -52,7 +52,7 @@ class Command(BaseCommand):
         parser = Parser(progress_cb=progress_cb, encoding=encoding)
 
         try:
-            parser.parse(options['shapefile'], limit=limit)
+            parser.parse(options['filename'], limit=limit)
         except ImportError as e:
             raise CommandError(e)
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-09 16:30+0000\n"
+"POT-Creation-Date: 2022-12-16 09:52+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -23,7 +23,13 @@ msgid "content type"
 msgstr "type d'objet"
 
 msgid "Linked content"
-msgstr ""
+msgstr "Contenu lié"
+
+msgid "Related to"
+msgstr "Associé à"
+
+msgid "Title"
+msgstr "Titre"
 
 msgid "Common"
 msgstr "Commun"
@@ -63,7 +69,7 @@ msgid "Import"
 msgstr "Importer"
 
 msgid "Data to import from Suricate"
-msgstr ""
+msgstr "Données à importer de Suricate"
 
 msgid "File"
 msgstr "Fichier"
@@ -88,6 +94,18 @@ msgstr "Annuler"
 
 msgid "Update attachment"
 msgstr "Modifier le fichier"
+
+msgid "The uploaded file is too large"
+msgstr "Le fichier sélectionné est trop lourd"
+
+msgid "The uploaded file is not wide enough"
+msgstr "L'image sélectionnée n'est pas assez large"
+
+msgid "The uploaded file is not tall enough"
+msgstr "L'image sélectionnée n'est pas assez haute"
+
+msgid "Save changes"
+msgstr "Sauvegarder"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -326,6 +344,30 @@ msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
 msgid "Color"
 msgstr "Couleur"
 
+msgid "Picture"
+msgstr "Image"
+
+msgid "Location"
+msgstr "Emplacement"
+
+msgid "Annotations"
+msgstr "Actions"
+
+msgid "Title for this view point"
+msgstr "Titre pour cette vue HD"
+
+msgid "Details about this view"
+msgstr "Détails de cette vue HD"
+
+msgid "HD View"
+msgstr "Vue HD"
+
+msgid "HD Views"
+msgstr "Vues HD"
+
+msgid "Add a new HD view"
+msgstr "Ajouter une nouvelle vue HD"
+
 #, python-brace-format
 msgid "Line {line}"
 msgstr "Ligne {line}"
@@ -378,8 +420,9 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
-#, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+#, fuzzy, python-brace-format
+#| msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être {values}"
 
@@ -394,7 +437,9 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
-msgid "Filename is required"
+#, fuzzy
+#| msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr "un nom de fichier est requis"
 
 #, python-brace-format
@@ -421,6 +466,33 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
 
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
+#, fuzzy
+#| msgid "Geotrek Rando"
+msgid "Geotrek-admin"
+msgstr "Geotrek Admin"
+
 msgid "Import from web."
 msgstr "Importer du web."
 
@@ -438,7 +510,9 @@ msgstr "Photos accessibilité"
 msgid ""
 "You are not allowed to modify attachments on this object, this object is not "
 "from the same structure."
-msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet objet n'est pas de la même structure"
+msgstr ""
+"Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet "
+"objet n'est pas de la même structure"
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
@@ -485,6 +559,65 @@ msgstr "Imports"
 
 msgid "Sync mobile"
 msgstr "Synchro mobile"
+
+msgid "Rectangle"
+msgstr "Rectangle"
+
+msgid "Square"
+msgstr "Carré"
+
+msgid "Ellipse"
+msgstr "Ellipse"
+
+msgid "Circle"
+msgstr "Cercle"
+
+msgid "Polygon"
+msgstr "Polygone"
+
+msgid "Point"
+msgstr "Point"
+
+msgid "Line"
+msgstr "Ligne"
+
+msgid "Created annotations"
+msgstr "Annotations créées"
+
+msgid "Properties"
+msgstr "Propriétés"
+
+msgid "History"
+msgstr "Historique"
+
+msgid "Annotate"
+msgstr "Annoter"
+
+msgid "Attributes"
+msgstr "Attributs"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "User"
+msgstr "Utilisateur"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Full history"
+msgstr "Historique complet"
+
+msgid ""
+"Add very high resolution images that will be automatically tiled and add "
+"annotations on it (points, lines, polygons and text)"
+msgstr ""
+"Ajouter des images de très haute résolution qui seront tuilées "
+"automatiquement et ajouter des annotations sur celles-ci (points, lignes, "
+"polygones et texte)"
+
+msgid "You are not allowed to see HD views."
+msgstr "Vous n'êtes pas autorisé à voir les vues HD."
 
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
 msgstr ""
@@ -548,8 +681,9 @@ msgstr "ces champs doivent être renseignés :"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
-#, python-format
-msgid "%(obj)s has changed  state, it needs a review to be published. "
+#, fuzzy, python-format
+#| msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr "%(obj)s a changé d'état, et a besoin d'être review pour être publié."
 
 msgid "Sync verifications"
@@ -616,7 +750,7 @@ msgid "W"
 msgstr "O"
 
 msgid "Reports"
-msgstr ""
+msgstr "Signalements"
 
 #, python-format
 msgid "Add attachment %s"

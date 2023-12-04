@@ -12,6 +12,8 @@ ALTER TABLE trekking_orderedtrekchild ALTER COLUMN "order" SET DEFAULT 0;
 -- cirkwi
 -- order
 ALTER TABLE trekking_practice ALTER COLUMN color SET DEFAULT '#444444';
+ALTER TABLE trekking_practice ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_practice ALTER COLUMN date_update SET DEFAULT now();
 -- pictogram
 
 
@@ -61,6 +63,7 @@ ALTER TABLE trekking_trek ALTER COLUMN accessibility_infrastructure SET DEFAULT 
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_signage SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_slope SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_width SET DEFAULT '';
+ALTER TABLE trekking_trek ALTER COLUMN provider SET DEFAULT '';
 -- route
 -- difficulty
 -- web_links
@@ -94,24 +97,29 @@ ALTER TABLE trekking_trekrelationship ALTER COLUMN is_circuit_step SET DEFAULT F
 --------------
 -- network
 -- pictogram
+ALTER TABLE trekking_treknetwork ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_treknetwork ALTER COLUMN date_update SET DEFAULT now();
 
 -- Accessibility
 ----------------
 -- name
 -- cirkwi
 -- pictogram
-
+ALTER TABLE trekking_accessibility ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_accessibility ALTER COLUMN date_update SET DEFAULT now();
 
 -- AccessibilityLevel
 ---------------------
 -- name
-
+ALTER TABLE trekking_accessibilitylevel ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_accessibilitylevel ALTER COLUMN date_update SET DEFAULT now();
 
 -- Route
 --------
 -- name
 -- pictogram
-
+ALTER TABLE trekking_route ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_route ALTER COLUMN date_update SET DEFAULT now();
 
 -- DifficultyLevel
 ------------------
@@ -119,7 +127,8 @@ ALTER TABLE trekking_trekrelationship ALTER COLUMN is_circuit_step SET DEFAULT F
 -- cirkwi_level
 -- cirkwi
 -- pictogram
-
+ALTER TABLE trekking_difficultylevel ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_difficultylevel ALTER COLUMN date_update SET DEFAULT now();
 
 -- WebLink
 ----------
@@ -132,7 +141,8 @@ ALTER TABLE trekking_trekrelationship ALTER COLUMN is_circuit_step SET DEFAULT F
 ------------------
 -- label
 -- pictogram
-
+ALTER TABLE trekking_weblinkcategory ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_weblinkcategory ALTER COLUMN date_update SET DEFAULT now();
 
 -- POI
 ------
@@ -147,6 +157,8 @@ ALTER TABLE trekking_poi ALTER COLUMN description SET DEFAULT '';
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
+ALTER TABLE trekking_poi ALTER COLUMN provider SET DEFAULT '';
+
 -- publication_date
 
 
@@ -155,7 +167,8 @@ ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 -- label
 -- cirkwi
 -- pictogram
-
+ALTER TABLE trekking_poitype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_poitype ALTER COLUMN date_update SET DEFAULT now();
 
 -- ServiceType
 --------------
@@ -164,6 +177,8 @@ ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
+ALTER TABLE trekking_servicetype ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE trekking_servicetype ALTER COLUMN date_update SET DEFAULT now();
 -- publication_date
 
 
@@ -173,3 +188,4 @@ ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 -- type
 --eid
 --structure
+ALTER TABLE trekking_service ALTER COLUMN provider SET DEFAULT '';

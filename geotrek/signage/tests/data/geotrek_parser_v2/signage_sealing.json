@@ -1,0 +1,17 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "label": "Socle béton",
+      "structure": null
+    },
+    {
+      "id": 2,
+      "label": "Applique",
+      "structure": null
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.filters import ModelMultipleChoiceFilter
+from django_filters.filters import ModelMultipleChoiceFilter, ChoiceFilter
 import django_filters.rest_framework
 from django.db.models import Q
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -23,27 +23,20 @@ class TypeFilter(ModelMultipleChoiceFilter):
 class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     type1 = TypeFilter(queryset=TouristicContentType1.objects.all())
     type2 = TypeFilter(queryset=TouristicContentType2.objects.all())
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=lambda: TouristicContent.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'category', 'type1', 'type2', 'themes',
             'approved', 'source', 'portal', 'reservation_system',
+            'provider'
         ]
-
-
-class AfterFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(end_date__gte=value)
-
-
-class BeforeFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(begin_date__lte=value)
 
 
 class CompletedFilter(django_filters.BooleanFilter):
@@ -69,15 +62,22 @@ class CompletedFilter(django_filters.BooleanFilter):
 
 
 class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    after = AfterFilter(label=_("After"))
-    before = BeforeFilter(label=_("Before"))
+    after = django_filters.DateFilter(label=_("After"), lookup_expr='gte', field_name='end_date')
+    before = django_filters.DateFilter(label=_("Before"), lookup_expr='lte', field_name='begin_date')
     completed = CompletedFilter(label=_("Completed"))
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=lambda: TouristicEvent.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'type', 'themes', 'after',
-            'before', 'approved', 'source', 'portal'
+            'before', 'approved', 'source', 'portal', 'provider',
+            'bookable', 'cancelled', 'place'
         ]
 
 

@@ -3,7 +3,13 @@
 
 
 {% block attributes %}
-
+<style>
+    .pictogram {
+        height: 50px;
+        width: 50px;
+        padding: 2px;
+    }
+</style>
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
@@ -47,8 +53,33 @@
             <th>{{ sensitivearea|verbose:"contact" }}</th>
             <td>{{ sensitivearea.contact|safe|linebreaks }}</td>
         </tr>
+        <tr>
+            <th>{{ sensitivearea|verbose:"rules" }}</th>
+            <td>
+                {% for rule in  sensitivearea.rules.all %}
+                <img
+                    class="pictogram"
+                    src="{{rule.pictogram.url}}"
+                    title="{{rule.name}}"
+                    alt="{{rule.name}}"
+                />
+                {%endfor%}
+            </td>
+        </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if sensitivearea.eid %}{{ sensitivearea.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if sensitivearea.provider %}{{ sensitivearea.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
     </table>
 
     {{ block.super }}

@@ -87,6 +87,8 @@ class PathForm(CommonForm):
             raise forms.ValidationError(_("Geometry is not simple."))
         if not Path.check_path_not_overlap(geom, pk):
             raise forms.ValidationError(_("Geometry overlaps another."))
+        if not geom.valid:
+            raise forms.ValidationError(_("Geometry is not valid."))
         return geom
 
     def save(self, commit=True):

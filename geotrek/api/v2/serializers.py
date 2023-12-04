@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import json
 
 from django.conf import settings
@@ -9,6 +10,7 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from PIL.Image import DecompressionBombError
@@ -21,7 +23,7 @@ from geotrek.api.v2.mixins import PDFSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
-from geotrek.core.models import simplify_coords
+from geotrek.common.utils import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -59,6 +61,14 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     class Meta:
         geo_field = 'geometry'
         auto_bbox = True
+
+
+class TimeStampedSerializer(serializers.ModelSerializer):
+    create_datetime = serializers.DateTimeField(source='date_insert')
+    update_datetime = serializers.DateTimeField(source='date_update')
+
+    class Meta:
+        fields = ('create_datetime', 'update_datetime')
 
 
 def override_serializer(format_output, base_serializer_class):
@@ -181,7 +191,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Service
-            fields = ('id', 'eid', 'geometry', 'structure', 'type', 'uuid')
+            fields = ('id', 'eid', 'geometry', 'provider', 'structure', 'type', 'uuid')
 
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -252,7 +262,7 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
         thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
-        except (IOError, InvalidImageFormatError, DecompressionBombError):
+        except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
             return ""
         thumbnail.author = obj.author
         thumbnail.legend = obj.legend
@@ -333,6 +343,54 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
+class HDViewPointSerializer(TimeStampedSerializer):
+    geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+    picture_tiles_url = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
+    metadata_url = serializers.SerializerMethodField()
+    trek = serializers.SerializerMethodField()
+    site = serializers.SerializerMethodField()
+    poi = serializers.SerializerMethodField()
+    license = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='label'
+    )
+
+    def get_picture_tiles_url(self, obj):
+        return build_url(self, obj.get_generic_picture_tile_url())
+
+    def get_thumbnail_url(self, obj):
+        return build_url(self, obj.thumbnail_url)
+
+    def get_metadata_url(self, obj):
+        return build_url(self, obj.metadata_url)
+
+    def get_trek(self, obj):
+        related_obj = obj.content_object
+        if isinstance(related_obj, trekking_models.Trek):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
+        return None
+
+    def get_site(self, obj):
+        related_obj = obj.content_object
+        if isinstance(related_obj, outdoor_models.Site):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
+        return None
+
+    def get_poi(self, obj):
+        related_obj = obj.content_object
+        if isinstance(related_obj, trekking_models.POI):
+            return {'uuid': related_obj.uuid, 'id': related_obj.id}
+        return None
+
+    class Meta(TimeStampedSerializer.Meta):
+        model = common_models.HDViewPoint
+        fields = TimeStampedSerializer.Meta.fields + (
+            'id', 'annotations', 'author', 'geometry', 'legend', 'license', 'metadata_url',
+            'picture_tiles_url', 'poi', 'title', 'site', 'trek', 'thumbnail_url', 'uuid'
+        )
+
+
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class LabelAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
@@ -381,13 +439,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.TouristicEventType
             fields = ('id', 'pictogram', 'type')
 
-    class TouristicModelSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class TouristicModelSerializer(PDFSerializerMixin, DynamicFieldsMixin, TimeStampedSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         accessibility = serializers.SerializerMethodField()
-        create_datetime = serializers.DateTimeField(source='date_insert')
-        update_datetime = serializers.DateTimeField(source='date_update')
         external_id = serializers.CharField(source='eid')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
@@ -403,6 +460,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
+
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
@@ -413,20 +473,20 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return get_translation_or_dict('description_teaser', self, obj)
 
     class TouristicContentSerializer(TouristicModelSerializer):
-        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        attachments = AttachmentSerializer(many=True)
         departure_city = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
 
-        class Meta:
+        class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicContent
-            fields = (
+            fields = TimeStampedSerializer.Meta.fields + (
                 'id', 'accessibility', 'attachments', 'approved', 'category', 'description',
                 'description_teaser', 'departure_city', 'geometry', 'label_accessibility',
-                'practical_info', 'url', 'cities', 'create_datetime',
-                'external_id', 'name', 'pdf', 'portal', 'published',
+                'practical_info', 'url', 'cities', 'districts',
+                'external_id', 'name', 'pdf', 'portal', 'provider', 'published',
                 'source', 'structure', 'themes',
-                'update_datetime', 'types', 'contact', 'email',
+                'types', 'contact', 'email',
                 'website', 'reservation_system', 'reservation_id', 'uuid'
             )
 
@@ -442,11 +502,35 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return city.code if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
+        organizer = serializers.SlugRelatedField(
+            read_only=True,
+            slug_field='label'
+        )
+        organizer_id = serializers.PrimaryKeyRelatedField(
+            read_only=True
+        )
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
-        end_date = serializers.DateField()
+        end_date = serializers.SerializerMethodField()
         type = serializers.SerializerMethodField()
+        cancellation_reason = serializers.SerializerMethodField()
+        place = serializers.SlugRelatedField(
+            read_only=True,
+            slug_field='name'
+        )
+        meeting_time = serializers.ReadOnlyField(
+            source='start_time',
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'start_time'")
+        )
+        participant_number = serializers.SerializerMethodField(
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'capacity'")
+        )
+
+        def get_cancellation_reason(self, obj):
+            if not obj.cancellation_reason:
+                return None
+            return get_translation_or_dict('label', self, obj.cancellation_reason)
 
         def get_type(self, obj):
             obj_type = obj.type
@@ -454,16 +538,36 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 return obj_type.pk
             return None
 
-        class Meta:
+        def get_participant_number(self, obj):
+            return str(obj.capacity)
+
+        def get_end_date(self, obj):
+            return obj.end_date or obj.begin_date
+
+        class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
-            fields = (
-                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'booking',
-                'cities', 'contact', 'create_datetime', 'description', 'description_teaser',
-                'duration', 'email', 'end_date', 'external_id', 'geometry', 'meeting_point',
-                'meeting_time', 'name', 'organizer', 'participant_number', 'pdf', 'portal',
-                'practical_info', 'published', 'source', 'speaker', 'structure',
-                'target_audience', 'themes', 'type', 'update_datetime', 'url', 'uuid', 'website'
+            fields = TimeStampedSerializer.Meta.fields + (
+                'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable',
+                'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
+                'contact', 'description', 'description_teaser', 'districts', 'duration',
+                'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
+                'meeting_time', 'name', 'organizer', 'organizer_id', 'participant_number', 'pdf', 'place',
+                'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
+                'start_time', 'structure', 'target_audience', 'themes', 'type',
+                'url', 'uuid', 'website'
             )
+
+    class TouristicEventPlaceSerializer(serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = tourism_models.TouristicEventPlace
+            fields = ('id', 'geometry', 'name')
+
+    class TouristicEventOrganizerSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = tourism_models.TouristicEventOrganizer
+            fields = ('id', 'label')
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
@@ -500,13 +604,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'accessibility', 'description', 'email', 'label_accessibility', 'latitude', 'longitude',
                 'municipality', 'name', 'phone', 'photo_url', 'uuid',
-                'postal_code', 'street', 'type', 'website'
+                'postal_code', 'provider', 'street', 'type', 'website'
             )
 
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+        url = HyperlinkedIdentityField(view_name='apiv2:path-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
@@ -517,8 +621,8 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
         class Meta:
             model = core_models.Path
             fields = (
-                'id', 'comments', 'geometry', 'length_2d', 'length_3d',
-                'name', 'url', 'uuid'
+                'arrival', 'comfort', 'comments', 'departure', 'geometry', 'id', 'length_2d',
+                'length_3d', 'name', 'networks', 'provider', 'source', 'stake', 'url', 'usages', 'uuid'
             )
 
 
@@ -546,8 +650,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         arrival = serializers.SerializerMethodField()
         external_id = serializers.CharField(source='eid')
         second_external_id = serializers.CharField(source='eid2')
-        create_datetime = serializers.SerializerMethodField()
-        update_datetime = serializers.SerializerMethodField()
+        create_datetime = serializers.DateTimeField(source='topo_object.date_insert')
+        update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
         gear = serializers.SerializerMethodField()
@@ -568,17 +672,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
+        labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+        view_points = HDViewPointSerializer(many=True)
 
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
-
-        def get_update_datetime(self, obj):
-            return obj.topo_object.date_update
-
-        def get_create_datetime(self, obj):
-            return obj.topo_object.date_insert
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
@@ -587,7 +688,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('name', self, obj)
 
         def get_description(self, obj):
-            return get_translation_or_dict('description', self, obj)
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description', self, obj))
 
         def get_access(self, obj):
             return get_translation_or_dict('access', self, obj)
@@ -611,7 +712,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('accessibility_width', self, obj)
 
         def get_ambiance(self, obj):
-            return get_translation_or_dict('ambiance', self, obj)
+            return self._replace_image_paths_with_urls(get_translation_or_dict('ambiance', self, obj))
 
         def get_disabled_infrastructure(self, obj):
             return get_translation_or_dict('accessibility_infrastructure', self, obj)
@@ -633,7 +734,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('arrival', self, obj)
 
         def get_description_teaser(self, obj):
-            return get_translation_or_dict('description_teaser', self, obj)
+            return self._replace_image_paths_with_urls(get_translation_or_dict('description_teaser', self, obj))
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
@@ -680,10 +781,35 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
 
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
+
+        def get_labels(self, obj):
+            return [label.pk for label in obj.published_labels]
+
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
             return city.code if city else None
+
+        def _replace_image_paths_with_urls(self, data):
+            def replace(html_content):
+                if not html_content:
+                    return html_content
+                soup = BeautifulSoup(html_content, features="html.parser")
+                imgs = soup.find_all('img')
+                for img in imgs:
+                    if img.attrs['src'][0] == '/':
+                        img['src'] = self.context.get("request").build_absolute_uri(img.attrs["src"])
+                return str(soup)
+
+            try:
+                for k, v in data.items():
+                    data[k] = replace(v)
+            except AttributeError:
+                data = replace(data)
+
+            return data
 
         class Meta:
             model = trekking_models.Trek
@@ -693,15 +819,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'accessibility_width', 'advice', 'advised_parking', 'altimetric_profile', 'ambiance', 'arrival',
                 'ascent', 'attachments', 'attachments_accessibility', 'children', 'cities', 'create_datetime',
                 'departure', 'departure_city', 'departure_geom', 'descent',
-                'description', 'description_teaser', 'difficulty',
+                'description', 'description_teaser', 'difficulty', 'districts',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
                 'elevation_svg_url', 'external_id', 'gear', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
                 'parents', 'parking_location', 'pdf', 'points_reference',
-                'portal', 'practice', 'ratings', 'ratings_description', 'previous', 'public_transport',
+                'portal', 'practice', 'provider', 'ratings', 'ratings_description', 'previous', 'public_transport',
                 'published', 'reservation_system', 'reservation_id', 'route', 'second_external_id',
-                'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'web_links'
+                'source', 'structure', 'themes', 'update_datetime', 'url', 'uuid', 'view_points', 'web_links'
             )
 
     class TourSerializer(TrekSerializer):
@@ -747,6 +873,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         update_datetime = serializers.DateTimeField(source='topo_object.date_update')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
+        view_points = HDViewPointSerializer(many=True)
 
         def get_type_label(self, obj):
             return get_translation_or_dict('label', self, obj.type)
@@ -764,9 +891,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             fields = (
                 'id', 'description', 'external_id',
-                'geometry', 'name', 'attachments', 'published', 'type',
+                'geometry', 'name', 'attachments', 'provider', 'published', 'type',
                 'type_label', 'type_pictogram', 'url', 'uuid',
-                'create_datetime', 'update_datetime',
+                'create_datetime', 'update_datetime', 'view_points'
             )
 
     class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -800,21 +927,37 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name')
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    class SensitiveAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class RuleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        class Meta:
+            model = sensitivity_models.Rule
+            fields = ('id', 'code', 'name', 'pictogram', 'description', 'url')
+
+    class SensitiveAreaSerializer(DynamicFieldsMixin, TimeStampedSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
         name = serializers.SerializerMethodField()
         elevation = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()
-        practices = serializers.SerializerMethodField()
+        practices = serializers.PrimaryKeyRelatedField(many=True, source='species.practices', read_only=True)
         info_url = serializers.URLField(source='species.url')
         structure = serializers.CharField(source='structure.name')
-        create_datetime = serializers.DateTimeField(source='date_insert')
-        update_datetime = serializers.DateTimeField(source='date_update')
         published = serializers.BooleanField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()
+        openair_url = serializers.SerializerMethodField(read_only=True)
+        rules = RuleSerializer(many=True)
+        attachments = AttachmentSerializer(many=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj.species)
@@ -825,28 +968,33 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         def get_period(self, obj):
             return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
 
-        def get_practices(self, obj):
-            return obj.species.practices.values_list('id', flat=True)
-
         def get_elevation(self, obj):
             return obj.species.radius
 
         def get_species_id(self, obj):
             if obj.species.category == sensitivity_models.Species.SPECIES:
-                return obj.species.id
+                return obj.species_id
             return None
 
         def get_kml_url(self, obj):
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return build_url(self, url)
 
-        class Meta:
+        def get_openair_url(self, obj):
+            is_aerial = obj.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
+            if is_aerial:
+                url = reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+                return self.context['request'].build_absolute_uri(url)
+            else:
+                return None
+
+        class Meta(TimeStampedSerializer.Meta):
             model = sensitivity_models.SensitiveArea
-            fields = (
-                'id', 'contact', 'create_datetime', 'description', 'elevation',
-                'geometry', 'info_url', 'kml_url', 'name', 'period',
-                'practices', 'published', 'species_id', 'structure',
-                'update_datetime', 'url'
+            fields = TimeStampedSerializer.Meta.fields + (
+                'id', 'contact', 'description', 'elevation',
+                'geometry', 'info_url', 'kml_url', 'openair_url', 'name', 'period',
+                'practices', 'published', 'species_id', 'provider', 'structure',
+                'url', 'attachments', 'rules'
             )
 
     class BubbleSensitiveAreaSerializer(SensitiveAreaSerializer):
@@ -1000,10 +1148,19 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         parent = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
+        labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
+        view_points = HDViewPointSerializer(many=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
+
+        def get_labels(self, obj):
+            return [label.pk for label in obj.published_labels]
 
         def get_courses(self, obj):
             courses = []
@@ -1054,9 +1211,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Site
             fields = (
                 'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
-                'description_teaser', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice',
-                'ratings', 'sector', 'source', 'structure', 'themes',
+                'description_teaser', 'districts', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
+                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
+                'ratings', 'sector', 'source', 'structure', 'themes', 'view_points',
                 'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
             )
 
@@ -1074,12 +1231,16 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
+        districts = serializers.SerializerMethodField()
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_districts(self, obj):
+            return [district.pk for district in obj.published_districts]
 
         def get_equipment(self, obj):
             return get_translation_or_dict('equipment', self, obj)
@@ -1113,9 +1274,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'duration', 'eid',
+                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'districts', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'ratings', 'ratings_description',
+                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
                 'sites', 'structure', 'type', 'url', 'uuid'
             )
 
@@ -1209,7 +1370,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
         class Meta:
             model = infrastructure_models.Infrastructure
             fields = ('id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name',
-                      'implantation_year', 'maintenance_difficulty', 'structure', 'type', 'usage_difficulty', 'uuid')
+                      'implantation_year', 'maintenance_difficulty', 'provider', 'structure', 'type', 'usage_difficulty', 'uuid')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
@@ -1236,7 +1397,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
         class Meta:
             model = signage_models.Line
-            fields = ('id', 'text', 'pictogram', 'distance', 'time')
+            fields = ('id', 'direction', 'text', 'pictogram', 'distance', 'time')
 
     class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         lines = LineSerializer(many=True)
@@ -1254,7 +1415,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
         class Meta:
             model = signage_models.Signage
             fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
-                      'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
+                      'geometry', 'implantation_year', 'name', 'printed_elevation', 'provider', 'sealing',
                       'structure', 'type', 'uuid')
 
     class SignageTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

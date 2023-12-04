@@ -25,11 +25,27 @@ server {
     access_log /var/log/nginx/geotrek_access.log;
     error_log /var/log/nginx/geotrek_error.log;
 
-    client_max_body_size 10M;
+    client_max_body_size 200M;
 
     location /static {
         expires 1d;
         alias /opt/geotrek-admin/var/static;
+    }
+
+    location ~ ^/mobile/(.*)$ {
+        add_header Vary "Accept-Language";
+	add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Methods "GET, OPTIONS";
+        root /opt/geotrek-admin/var/mobile/;
+        try_files /${DOLLAR}http_accept_language/$1 /nolang/$1 =404;
+        gzip on;
+        gzip_types text/text text/plain text/xml text/css application/x-javascript application/javascript application/json;
+        include mime.types;
+        types {
+            application/json geojson;
+            application/gpx+xml gpx;
+            application/x-font-ttf ttf;
+        }
     }
 
     location /media {

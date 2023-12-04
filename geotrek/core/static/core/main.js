@@ -17,10 +17,10 @@ $(window).on('entity:map', function (e, data) {
     var map = data.map;
     var loaded_path = false;
     // Show the path layer only if model is not path, and if we are not
-    // in an editing widget
+    // in an editing widget or when it's not a topology
     var is_form_view = /add|update/.test(data.viewname);
-
-    if (!is_form_view && (data.viewname == 'detail' || data.modelname != 'path')) {
+    var is_not_topology = /dive|report|touristiccontent|touristicevent|site|course/.test(data.modelname);
+    if (is_not_topology || (!is_form_view && (data.viewname == 'detail' || data.modelname != 'path'))) {
 
         var pathsLayer = MapEntity.pathsLayer({
             indexing: false,
@@ -86,7 +86,7 @@ $(window).on('entity:map', function (e, data) {
 
         var style = pathsLayer.options.style;
         var nameHTML = '<span style="color: '+ style['color'] + ';">&#9473;</span>&nbsp;' + tr('Paths');
-        map.layerscontrol.addOverlay(pathsLayer, nameHTML, tr('Objects'));
+        map.layerscontrol.addOverlay(pathsLayer, nameHTML, tr('Paths'));
 
         //
         // Print apparence of paths

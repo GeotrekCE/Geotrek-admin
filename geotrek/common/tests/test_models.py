@@ -1,9 +1,13 @@
-from geotrek.authent.models import default_structure
-from geotrek.common.tests.factories import LabelFactory, OrganismFactory
-from geotrek.common.models import Theme
+import os
+
 from django.core.files import File
 from django.test import TestCase
-import os
+
+from geotrek.authent.models import default_structure
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory, UserFactory
+from geotrek.common.models import Theme
+from geotrek.common.tests.factories import (HDViewPointFactory, LabelFactory, OrganismFactory)
+from geotrek.trekking.tests.factories import TrekFactory
 
 
 class ThemeModelTest(TestCase):
@@ -49,3 +53,27 @@ class OrganismTestCase(TestCase):
 
     def test_str_without_structure(self):
         self.assertEqual(f"{self.organism_without_structure}", self.organism_without_structure.organism)
+
+
+class HDViewPointTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        structure = StructureFactory(name="MyStructure")
+        cls.trek = TrekFactory(structure=structure)
+        cls.vp = HDViewPointFactory(content_object=cls.trek, title='Panorama')
+        cls.user = UserFactory()
+        UserProfileFactory(structure=structure, user=cls.user)
+
+    def test_thumbnail_url(self):
+        self.assertEqual(
+            self.vp.thumbnail_url, f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/data/thumbnail.png?source=vips"
+        )
+
+    def test_tiles_url(self):
+        self.assertEqual(
+            self.vp.get_generic_picture_tile_url(), f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/tiles/{{z}}/{{x}}/{{y}}.png?source=vips"
+        )
+
+    def test_properties(self):
+        self.assertEqual(str(self.vp), 'Panorama')
+        self.assertIn('admin/', self.vp.get_list_url())

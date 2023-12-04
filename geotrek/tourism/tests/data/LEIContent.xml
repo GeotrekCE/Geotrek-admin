@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LEI>
+    <Definition>
+        <Date fmt="DD/MM/YYYY HH:MM:SS">01/12/2022 13:00:56</Date>
+        <PRODUCTEUR>PROXIM-IT - teamlei@proximit.fr</PRODUCTEUR>
+        <utilisateur>2002084</utilisateur>
+        <CONNEXION>ID:79287223 Timeout (mn):20</CONNEXION>
+        <WARNING><![CDATA[]]></WARNING>
+        <Donnees>SIT_LISTECOMPLETE</Donnees>
+        <typeDeFichier>sit_listecomplete</typeDeFichier>
+        <utilisateur>2002084</utilisateur>
+        <URL_PARAMS>
+            <URL_PARAM NAME='tous'></URL_PARAM>
+            <URL_PARAM NAME='rfrom'>
+                <VALUE><![CDATA[1]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='rto'>
+                <VALUE><![CDATA[20]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='urlnames'>
+                <VALUE><![CDATA[tous]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='PVALUES'>
+                <VALUE><![CDATA[900000,1901749|1911105, 1900395,1911765]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='PNAMES'>
+                <VALUE><![CDATA[elcriterio0,modalidad0,elcriterio1,modalidad1]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='clause'>
+                <VALUE><![CDATA[2002084000008]]></VALUE>
+            </URL_PARAM>
+            <URL_PARAM NAME='SCHEMA'>
+                <VALUE><![CDATA[WEBACCESS_DE]]></VALUE>
+            </URL_PARAM>
+        </URL_PARAMS>
+        <Parametres_SQL><![CDATA[elcriterio0,modalidad0,elcriterio1,modalidad1]]></Parametres_SQL>
+        <Valeurs_par><![CDATA[900000,1901749|1911105,1900395,1911765]]></Valeurs_par>
+        <temps>0,062 s.</temps>
+        <nbrecords>1</nbrecords>
+    </Definition>
+    <Resultat TOTAL_FENETRE="1" LAPAGE="1" RFROM="1" RTO="20">
+        <sit_liste>
+            <PRODUIT>219006399</PRODUIT>
+            <NOM><![CDATA[Restaurant A]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <ENTITE_GESTIONNAIRE>219</ENTITE_GESTIONNAIRE>
+            <ADRPROD_NUM_VOIE><![CDATA[11]]></ADRPROD_NUM_VOIE>
+            <ADRPROD_LIB_VOIE><![CDATA[rue principale]]></ADRPROD_LIB_VOIE>
+            <ADRPROD_CP><![CDATA[67510]]></ADRPROD_CP>
+            <ADRPROD_LIBELLE_COMMUNE><![CDATA[Niedersteinbach]]></ADRPROD_LIBELLE_COMMUNE>
+            <INSEE><![CDATA[67334]]></INSEE>
+            <LATITUDE>49,031600691652</LATITUDE>
+            <LONGITUDE>7,71041727388229</LONGITUDE>
+            <COMMENTAIRE>
+                <![CDATA[Commentaire A]]></COMMENTAIRE>
+            <PREST_NOM_RESP><![CDATA[ZINCK]]></PREST_NOM_RESP>
+            <PREST_CIVILITE><![CDATA[M]]></PREST_CIVILITE>
+            <PREST_PRENOM_RESP><![CDATA[Michel]]></PREST_PRENOM_RESP>
+            <ADRPREST_TEL><![CDATA[03 88 09 55 31]]></ADRPREST_TEL>
+            <ADRPREST_FAX><![CDATA[03 88 09 50 24]]></ADRPREST_FAX>
+            <ADRPREST_EMAIL><![CDATA[contact@hotel-cheval-blanc.fr]]></ADRPREST_EMAIL>
+            <ADRPREST_URL><![CDATA[www.hotel-cheval-blanc.fr]]></ADRPREST_URL>
+            <DATMAJ fmt="DD/MM/YYYY HH:MM:SS">29/11/2022 11:32:41</DATMAJ>
+            <DATECREATION fmt="DD/MM/YYYY HH:MM:SS">30/09/2020 08:25:23</DATECREATION>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+                <Crit CLEF_CRITERE="1900013" CLEF_MODA="0"><![CDATA[18]]></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1900111"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1900113"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1907628"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1234000001"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1234000009"></Crit>
+                <Crit CLEF_CRITERE="1900049" CLEF_MODA="0"><![CDATA[220]]></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900128"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900134"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900159"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1903956"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1908154"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1908171"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1909127"></Crit>
+                <Crit CLEF_CRITERE="1900055" CLEF_MODA="1908245"></Crit>
+                <Crit CLEF_CRITERE="1900055" CLEF_MODA="1909565"></Crit>
+                <Crit CLEF_CRITERE="1900066" CLEF_MODA="1900233"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1900235"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1900236"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1908377"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1908829"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901140"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901154"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901157"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901158"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901322"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901329"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901335"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901337"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1904982"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906463"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906475"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906974"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1908785"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1911081"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901339"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901340"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901341"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901342"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903921"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903926"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903931"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905249"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905250"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905468"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1909201"></Crit>
+                <Crit CLEF_CRITERE="1900268" CLEF_MODA="1903674"></Crit>
+                <Crit CLEF_CRITERE="1900390" CLEF_MODA="1908125"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900395" CLEF_MODA="1911765"></Crit>
+                <Crit CLEF_CRITERE="1900421" CLEF_MODA="0">
+                    <![CDATA[url.url/photo5.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900480" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Vue extérieure]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903782"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903783"><![CDATA[30]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903784"><![CDATA[34]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903785"><![CDATA[26]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903787"><![CDATA[50]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1911974"><![CDATA[110]]></Crit>
+                <Crit CLEF_CRITERE="1900509" CLEF_MODA="1903796"><![CDATA[12:00 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900509" CLEF_MODA="1903797"><![CDATA[13:30 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900511" CLEF_MODA="1903800"><![CDATA[18:00 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900511" CLEF_MODA="1903801"><![CDATA[20:30 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903805"></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903806"></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903808"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903903"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903904"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903906"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903910"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903912"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903914"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903918"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903969"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904443"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904448"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904449"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1911080"></Crit>
+                <Crit CLEF_CRITERE="1900603" CLEF_MODA="0">
+                    <![CDATA[url.url/photo4.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904881"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904882"><![CDATA[17]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1911972"><![CDATA[2]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1911973"><![CDATA[37]]></Crit>
+                <Crit CLEF_CRITERE="1900631" CLEF_MODA="1905240"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900631" CLEF_MODA="1906702"><![CDATA[Reduzierung für die Gruppen]]></Crit>
+                <Crit CLEF_CRITERE="1900661" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant traditionnel]]></Crit>
+                <Crit CLEF_CRITERE="1900751" CLEF_MODA="0">
+                    <![CDATA[url.url/photo3.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900752" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Terrine de Lapereau]]></Crit>
+                <Crit CLEF_CRITERE="1900763" CLEF_MODA="1908016"></Crit>
+                <Crit CLEF_CRITERE="1900770" CLEF_MODA="1906279"></Crit>
+                <Crit CLEF_CRITERE="1900781" CLEF_MODA="0">
+                    <![CDATA[url.url/photo2.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900782" CLEF_MODA="0">
+                    <![CDATA[url.url/photo1.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900783" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant gastronomique]]></Crit>
+                <Crit CLEF_CRITERE="1900784" CLEF_MODA="0">
+                    <![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet risus nullam. Amet consectetur adipiscing elit pellentesque. Massa tincidunt dui ut ornare lectus sit amet. Et egestas quis ipsum suspendisse ultrices gravida. Mattis aliquam faucibus purus in massa. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Tristique senectus et netus et malesuada fames. Euismod elementum nisi quis eleifend quam adipiscing vitae proin. Ac felis donec et odio pellentesque. Nisl tincidunt eget nullam non nisi est. Ultrices mi tempus imperdiet nulla.]]></Crit>
+                <Crit CLEF_CRITERE="1901129" CLEF_MODA="1908717">
+                    <![CDATA[facebook/]]></Crit>
+                <Crit CLEF_CRITERE="30000100" CLEF_MODA="30000144"><![CDATA[Bar]]></Crit>
+            </CRITERES>
+        </sit_liste>
+        <sit_liste>
+            <PRODUIT>219006400</PRODUIT>
+            <NOM><![CDATA[Restaurant B]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <ENTITE_GESTIONNAIRE>219</ENTITE_GESTIONNAIRE>
+            <ADRPROD_NUM_VOIE><![CDATA[]]></ADRPROD_NUM_VOIE>
+            <ADRPROD_LIB_VOIE><![CDATA[]]></ADRPROD_LIB_VOIE>
+            <ADRPROD_CP><![CDATA[67510]]></ADRPROD_CP>
+            <ADRPROD_LIBELLE_COMMUNE><![CDATA[]]></ADRPROD_LIBELLE_COMMUNE>
+            <INSEE><![CDATA[67334]]></INSEE>
+            <LATITUDE>49,0316006</LATITUDE>
+            <LONGITUDE>7,71041729</LONGITUDE>
+            <COMMENTAIRE>
+                <![CDATA[]]></COMMENTAIRE>
+            <PREST_NOM_RESP><![CDATA[ZINCK]]></PREST_NOM_RESP>
+            <PREST_CIVILITE><![CDATA[M]]></PREST_CIVILITE>
+            <PREST_PRENOM_RESP><![CDATA[Michel]]></PREST_PRENOM_RESP>
+            <DATMAJ fmt="DD/MM/YYYY HH:MM:SS">29/11/2022 11:32:41</DATMAJ>
+            <DATECREATION fmt="DD/MM/YYYY HH:MM:SS">30/09/2020 08:25:23</DATECREATION>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+                <Crit CLEF_CRITERE="1900013" CLEF_MODA="0"><![CDATA[18]]></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1900111"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1900113"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1907628"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1234000001"></Crit>
+                <Crit CLEF_CRITERE="1900048" CLEF_MODA="1234000009"></Crit>
+                <Crit CLEF_CRITERE="1900049" CLEF_MODA="0"><![CDATA[220]]></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900128"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900134"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1900159"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1903956"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1908154"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1908171"></Crit>
+                <Crit CLEF_CRITERE="1900050" CLEF_MODA="1909127"></Crit>
+                <Crit CLEF_CRITERE="1900055" CLEF_MODA="1908245"></Crit>
+                <Crit CLEF_CRITERE="1900055" CLEF_MODA="1909565"></Crit>
+                <Crit CLEF_CRITERE="1900066" CLEF_MODA="1900233"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1900235"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1900236"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1908377"></Crit>
+                <Crit CLEF_CRITERE="1900067" CLEF_MODA="1908829"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901140"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901154"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901157"></Crit>
+                <Crit CLEF_CRITERE="1900187" CLEF_MODA="1901158"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901322"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901329"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901335"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1901337"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1904982"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906463"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906475"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1906974"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1908785"></Crit>
+                <Crit CLEF_CRITERE="1900208" CLEF_MODA="1911081"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901339"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901340"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901341"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1901342"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903921"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903926"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1903931"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905249"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905250"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1905468"></Crit>
+                <Crit CLEF_CRITERE="1900209" CLEF_MODA="1909201"></Crit>
+                <Crit CLEF_CRITERE="1900268" CLEF_MODA="1903674"></Crit>
+                <Crit CLEF_CRITERE="1900390" CLEF_MODA="1908125"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900395" CLEF_MODA="1911765"></Crit>
+                <Crit CLEF_CRITERE="1900421" CLEF_MODA="1">
+                    <![CDATA[url.url/photo5.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900480" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Vue extérieure]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903782"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903783"><![CDATA[30]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903784"><![CDATA[34]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903785"><![CDATA[26]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1903787"><![CDATA[50]]></Crit>
+                <Crit CLEF_CRITERE="1900507" CLEF_MODA="1911974"><![CDATA[110]]></Crit>
+                <Crit CLEF_CRITERE="1900509" CLEF_MODA="1903796"><![CDATA[12:00 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900509" CLEF_MODA="1903797"><![CDATA[13:30 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900511" CLEF_MODA="1903800"><![CDATA[18:00 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900511" CLEF_MODA="1903801"><![CDATA[20:30 Uhr]]></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903805"></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903806"></Crit>
+                <Crit CLEF_CRITERE="1900513" CLEF_MODA="1903808"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903903"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903904"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903906"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903910"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903912"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903914"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903918"></Crit>
+                <Crit CLEF_CRITERE="1900526" CLEF_MODA="1903969"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904443"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904448"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1904449"></Crit>
+                <Crit CLEF_CRITERE="1900569" CLEF_MODA="1911080"></Crit>
+                <Crit CLEF_CRITERE="1900603" CLEF_MODA="0">
+                    <![CDATA[url.url/photo4.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900604" CLEF_MODA="1904880"><![CDATA[]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904881"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1904882"><![CDATA[17]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1911972"><![CDATA[2]]></Crit>
+                <Crit CLEF_CRITERE="1900605" CLEF_MODA="1911973"><![CDATA[37]]></Crit>
+                <Crit CLEF_CRITERE="1900631" CLEF_MODA="1905240"><![CDATA[20]]></Crit>
+                <Crit CLEF_CRITERE="1900631" CLEF_MODA="1906702"><![CDATA[Reduzierung für die Gruppen]]></Crit>
+                <Crit CLEF_CRITERE="1900661" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant traditionnel]]></Crit>
+                <Crit CLEF_CRITERE="1900751" CLEF_MODA="0">
+                    <![CDATA[url.url/photo3.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900752" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Terrine de Lapereau]]></Crit>
+                <Crit CLEF_CRITERE="1900763" CLEF_MODA="1908016"></Crit>
+                <Crit CLEF_CRITERE="1900770" CLEF_MODA="1906279"></Crit>
+                <Crit CLEF_CRITERE="1900781" CLEF_MODA="0">
+                    <![CDATA[url.url/photo2.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900782" CLEF_MODA="0">
+                    <![CDATA[url.url/photo1.jpg]]></Crit>
+                <Crit CLEF_CRITERE="1900783" CLEF_MODA="0">
+                    <![CDATA[Restaurant Au Cheval Blanc, Niedersteinbach, Alsace, Restaurant gastronomique]]></Crit>
+                <Crit CLEF_CRITERE="1901129" CLEF_MODA="1908717">
+                    <![CDATA[facebook/]]></Crit>
+                <Crit CLEF_CRITERE="30000100" CLEF_MODA="30000144"><![CDATA[Bar]]></Crit>
+            </CRITERES>
+        </sit_liste>
+        <sit_liste>
+            <PRODUIT>219006401</PRODUIT>
+            <NOM><![CDATA[Restaurant C]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <INSEE><![CDATA[67334]]></INSEE>
+            <LATITUDE></LATITUDE>
+            <LONGITUDE>7,71041727388229</LONGITUDE>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+            </CRITERES>
+        </sit_liste>
+        <sit_liste>
+            <PRODUIT>219006401</PRODUIT>
+            <NOM><![CDATA[Restaurant C]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <COMMENTAIRE>
+                <![CDATA[Commentaire C]]>
+            </COMMENTAIRE>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+            </CRITERES>
+        </sit_liste>
+        <sit_liste>
+            <PRODUIT>219006401</PRODUIT>
+            <NOM><![CDATA[Restaurant C]]></NOM>
+            <TYPE_DE_PRODUIT>1900014</TYPE_DE_PRODUIT>
+            <TYPE_NOM><![CDATA[Restauration]]></TYPE_NOM>
+            <LATITUDE>900</LATITUDE>
+            <LONGITUDE>207,71041727388229</LONGITUDE>
+            <INSEE><![CDATA[67334]]></INSEE>
+            <COMMENTAIRE>
+                <![CDATA[Commentaire C]]>
+            </COMMENTAIRE>
+            <CRITERES>
+                <Crit CLEF_CRITERE="900000" CLEF_MODA="1901749"></Crit>
+            </CRITERES>
+        </sit_liste>
+        <Les_temps>
+            <TYPE>listeproduits</TYPE>
+            <overhead total="31 ms">
+                <prefn>0 ms</prefn>
+                <start>0 ms</start>
+                <params>0 ms</params>
+                <userex>31 ms</userex>
+                <usernorm>0 ms</usernorm>
+            </overhead>
+            <multicrit>16 ms</multicrit>
+            <admintable>47 ms</admintable>
+            <buildreq>0 ms</buildreq>
+            <liens>
+                <critex>16 ms</critex>
+                <horaires>0 ms</horaires>
+                <dispos>0 ms</dispos>
+                <couplages>0 ms</couplages>
+                <tarifs>0 ms</tarifs>
+            </liens>
+            <setparams>0 ms</setparams>
+            <REQ_CLEFS>62 ms</REQ_CLEFS>
+            <clearparams>0 ms</clearparams>
+            <prepaxml>0 ms</prepaxml>
+            <BOUCLE total="250 ms">
+                <LIENDATA>31 ms</LIENDATA>
+                <PREPAXML>47 ms</PREPAXML>
+                <LIENCRIT>172 ms</LIENCRIT>
+                <LIENHORAIRE>0 ms</LIENHORAIRE>
+                <LIENTARIF>0 ms</LIENTARIF>
+                <LIENDISPO>0 ms</LIENDISPO>
+                <LIENCOUPL>0 ms</LIENCOUPL>
+            </BOUCLE>
+            <NOMENC>188 ms</NOMENC>
+            <TEMPSTOTAL>609 ms</TEMPSTOTAL>
+        </Les_temps>
+    </Resultat>
+    <NOMENCLATURE>
+        <CRIT CLEF="30000100" QUAL="-1" TYPVAL="2" CLASSE="4">
+            <NOMCRIT><![CDATA[Tox]]></NOMCRIT>
+            <MODAL CLEF="30000144" ORDRE="3"><![CDATA[Foo]]></MODAL>
+            <MODAL CLEF="30000145" ORDRE="2"><![CDATA[American express]]></MODAL>
+            <MODAL CLEF="30000146" ORDRE="1"><![CDATA[Chèque vacances]]></MODAL>
+            <MODAL CLEF="30000147" ORDRE="13"><![CDATA[Visa]]></MODAL>
+            <MODAL CLEF="30000148" ORDRE="11"><![CDATA[Travellers]]></MODAL>
+            <MODAL CLEF="30000149" ORDRE="8"><![CDATA[Master-card]]></MODAL>
+            <MODAL CLEF="30000150" ORDRE="7"><![CDATA[Eurochèques]]></MODAL>
+            <MODAL CLEF="30000151" ORDRE="6"><![CDATA[Eurocard]]></MODAL>
+            <MODAL CLEF="30001615" ORDRE="10"><![CDATA[Tickets restaurant]]></MODAL>
+            <MODAL CLEF="30001841" ORDRE="4"><![CDATA[Chèque bancaire]]></MODAL>
+            <MODAL CLEF="30001842" ORDRE="12"><![CDATA[Virement]]></MODAL>
+            <MODAL CLEF="30001843" ORDRE="5"><![CDATA[Espèces]]></MODAL>
+            <MODAL CLEF="30003007" ORDRE="16"><![CDATA[Chèque cadeau - Gîtes de France]]></MODAL>
+            <MODAL CLEF="30003672" ORDRE="15"><![CDATA[Paypal]]></MODAL>
+            <MODAL CLEF="30003836" ORDRE="14"><![CDATA[Badges]]></MODAL>
+            <MODAL CLEF="30003843" ORDRE="9"><![CDATA[Chèque Déjeuner]]></MODAL>
+            <MODAL CLEF="30003866" ORDRE="17"><![CDATA[Pass/carte cadeau Patrivia]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000270" QUAL="-1" TYPVAL="2" CLASSE="16">
+            <NOMCRIT><![CDATA[Encadrement]]></NOMCRIT>
+            <MODAL CLEF="30001550" ORDRE="2"><![CDATA[Accompagnateur de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30001551" ORDRE="5"><![CDATA[Brevet d'Etat 1er degré]]></MODAL>
+            <MODAL CLEF="30001552" ORDRE="6"><![CDATA[Brevet d'Etat 2ème degré]]></MODAL>
+            <MODAL CLEF="30001555" ORDRE="9"><![CDATA[Guide accompagnateur]]></MODAL>
+            <MODAL CLEF="30001558" ORDRE="1"><![CDATA[Accompagnateur]]></MODAL>
+            <MODAL CLEF="30001559" ORDRE="10"><![CDATA[Guide de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30002177" ORDRE="12"><![CDATA[Maître nageur sauveteur]]></MODAL>
+            <MODAL CLEF="30002241" ORDRE="14"><![CDATA[Meneur de tourisme équestre]]></MODAL>
+            <MODAL CLEF="30002247" ORDRE="13"><![CDATA[Maître randonneur]]></MODAL>
+            <MODAL CLEF="30002732" ORDRE="15"><![CDATA[BPJEPS]]></MODAL>
+            <MODAL CLEF="30002733" ORDRE="16"><![CDATA[BAPAAT]]></MODAL>
+            <MODAL CLEF="30002777" ORDRE="8"><![CDATA[Brevet Fédéral d'Equitation Ethologique]]></MODAL>
+            <MODAL CLEF="30002778" ORDRE="3"><![CDATA[Brevet d'Animation Poney]]></MODAL>
+            <MODAL CLEF="30003772" ORDRE="0"><![CDATA[Oui]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000275" QUAL="2" TYPVAL="1" CLASSE="8">
+            <NOMCRIT><![CDATA[Accueil de groupes]]></NOMCRIT>
+            <MODAL CLEF="30001643" ORDRE="1"><![CDATA[Mini]]></MODAL>
+            <MODAL CLEF="30001644" ORDRE="2"><![CDATA[Maxi]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000276" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Accueil d'individuel]]></NOMCRIT>
+            <MODAL CLEF="30001646" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30001647" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000279" QUAL="2" TYPVAL="4" CLASSE="512">
+            <NOMCRIT><![CDATA[Photos]]></NOMCRIT>
+            <MODAL CLEF="30001664" ORDRE="4"><![CDATA[Photo 4]]></MODAL>
+            <MODAL CLEF="30001665" ORDRE="5"><![CDATA[Photo 5]]></MODAL>
+            <MODAL CLEF="30001666" ORDRE="6"><![CDATA[Photo 6]]></MODAL>
+            <MODAL CLEF="30001667" ORDRE="1"><![CDATA[Photo 1 d'appel]]></MODAL>
+            <MODAL CLEF="30001668" ORDRE="2"><![CDATA[Photo 2]]></MODAL>
+            <MODAL CLEF="30001669" ORDRE="3"><![CDATA[Photo 3]]></MODAL>
+            <MODAL CLEF="30002251" ORDRE="10"><![CDATA[Photo 10]]></MODAL>
+            <MODAL CLEF="30002252" ORDRE="11"><![CDATA[Photo 11]]></MODAL>
+            <MODAL CLEF="30002253" ORDRE="12"><![CDATA[Photo 12]]></MODAL>
+            <MODAL CLEF="30002828" ORDRE="7"><![CDATA[Photo 7]]></MODAL>
+            <MODAL CLEF="30002829" ORDRE="8"><![CDATA[Photo 8]]></MODAL>
+            <MODAL CLEF="30002830" ORDRE="9"><![CDATA[Photo 9]]></MODAL>
+            <MODAL CLEF="30003129" ORDRE="13"><![CDATA[Photo 13]]></MODAL>
+            <MODAL CLEF="30003130" ORDRE="14"><![CDATA[Photo 14]]></MODAL>
+            <MODAL CLEF="30003131" ORDRE="15"><![CDATA[Photo 15]]></MODAL>
+            <MODAL CLEF="30003132" ORDRE="16"><![CDATA[Photo 16]]></MODAL>
+            <MODAL CLEF="30003518" ORDRE="17"><![CDATA[T&H photo 1]]></MODAL>
+            <MODAL CLEF="30003519" ORDRE="18"><![CDATA[T&H photo 2]]></MODAL>
+            <MODAL CLEF="30003520" ORDRE="19"><![CDATA[T&H photo 3]]></MODAL>
+            <MODAL CLEF="30003521" ORDRE="20"><![CDATA[T&H photo 4]]></MODAL>
+            <MODAL CLEF="30003522" ORDRE="21"><![CDATA[T&H photo 5]]></MODAL>
+            <MODAL CLEF="30003574" ORDRE="22"><![CDATA[Spe Photo 1]]></MODAL>
+            <MODAL CLEF="30003581" ORDRE="23"><![CDATA[Spe Photo 2]]></MODAL>
+            <MODAL CLEF="30003582" ORDRE="24"><![CDATA[Spe Photo 3]]></MODAL>
+            <MODAL CLEF="30003583" ORDRE="25"><![CDATA[Spe Photo 4]]></MODAL>
+            <MODAL CLEF="30003584" ORDRE="26"><![CDATA[Spe Photo 5]]></MODAL>
+            <MODAL CLEF="30003585" ORDRE="27"><![CDATA[Spe Photo 6]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000291" QUAL="2" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Caractéristiques de la randonnée]]></NOMCRIT>
+            <MODAL CLEF="30001755" ORDRE="1"><![CDATA[Balisage pédestre]]></MODAL>
+            <MODAL CLEF="30001756" ORDRE="24"><![CDATA[Point de départ]]></MODAL>
+            <MODAL CLEF="30001757" ORDRE="40"><![CDATA[Référence carte IGN]]></MODAL>
+            <MODAL CLEF="30001758" ORDRE="3"><![CDATA[Intérêt pédestre]]></MODAL>
+            <MODAL CLEF="30001759" ORDRE="2"><![CDATA[Difficulté pédestre]]></MODAL>
+            <MODAL CLEF="30003001" ORDRE="26"><![CDATA[Audioguidage]]></MODAL>
+            <MODAL CLEF="30003429" ORDRE="5"><![CDATA[Balisage VTT]]></MODAL>
+            <MODAL CLEF="30003430" ORDRE="6"><![CDATA[Difficulté VTT]]></MODAL>
+            <MODAL CLEF="30003431" ORDRE="10"><![CDATA[Balisage équestre]]></MODAL>
+            <MODAL CLEF="30003432" ORDRE="12"><![CDATA[Difficulté équestre]]></MODAL>
+            <MODAL CLEF="30003433" ORDRE="7"><![CDATA[Intérêt VTT]]></MODAL>
+            <MODAL CLEF="30003434" ORDRE="14"><![CDATA[Intérêt équestre]]></MODAL>
+            <MODAL CLEF="30003669" ORDRE="16"><![CDATA[Difficulté Trail]]></MODAL>
+            <MODAL CLEF="30003674" ORDRE="8"><![CDATA[Difficulté vélo]]></MODAL>
+            <MODAL CLEF="30003891" ORDRE="9"><![CDATA[Difficulté VTTAE]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000303" QUAL="2" TYPVAL="5" CLASSE="4">
+            <NOMCRIT><![CDATA[Tarifs prestations]]></NOMCRIT>
+            <MODAL CLEF="30001880" ORDRE="1"><![CDATA[Individuel enfant]]></MODAL>
+            <MODAL CLEF="30001881" ORDRE="2"><![CDATA[Individuel adulte]]></MODAL>
+            <MODAL CLEF="30001882" ORDRE="4"><![CDATA[Groupe scolaires]]></MODAL>
+            <MODAL CLEF="30001883" ORDRE="5"><![CDATA[Groupe adultes]]></MODAL>
+            <MODAL CLEF="30001884" ORDRE="6"><![CDATA[Famille]]></MODAL>
+            <MODAL CLEF="30001885" ORDRE="3"><![CDATA[Individuel étudiant]]></MODAL>
+            <MODAL CLEF="30002533" ORDRE="7"><![CDATA[Chômeurs]]></MODAL>
+            <MODAL CLEF="30003218" ORDRE="8"><![CDATA[Passeport adultes]]></MODAL>
+            <MODAL CLEF="30003219" ORDRE="9"><![CDATA[Passeport enfants]]></MODAL>
+            <MODAL CLEF="30003322" ORDRE="0"><![CDATA[Gratuit]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000330" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Spécificités]]></NOMCRIT>
+            <MODAL CLEF="30002480" ORDRE="19"><![CDATA[PNR Millevaches]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000346" QUAL="1" TYPVAL="2" CLASSE="32">
+            <NOMCRIT><![CDATA[Communauté de communes]]></NOMCRIT>
+            <MODAL CLEF="30002273" ORDRE="20"><![CDATA[Com Com Elan]]></MODAL>
+            <MODAL CLEF="30002275" ORDRE="22"><![CDATA[Com Com Gartempe St-Pardoux]]></MODAL>
+            <MODAL CLEF="30002278" ORDRE="4"><![CDATA[Com Agglo Limoges]]></MODAL>
+            <MODAL CLEF="30002279" ORDRE="50"><![CDATA[Com Com Val de Vienne]]></MODAL>
+            <MODAL CLEF="30002281" ORDRE="24"><![CDATA[Com Com Haut Limousin en Marche]]></MODAL>
+            <MODAL CLEF="30002283" ORDRE="43"><![CDATA[Com Com Pays Sostranien]]></MODAL>
+            <MODAL CLEF="30002296" ORDRE="1"><![CDATA[Agglo du bassin de Brive]]></MODAL>
+            <MODAL CLEF="30002297" ORDRE="52"><![CDATA[Com Com Ventadour Egletons Monédières]]></MODAL>
+            <MODAL CLEF="30002305" ORDRE="42"><![CDATA[Com Com Pays d'Uzerche]]></MODAL>
+            <MODAL CLEF="30002306" ORDRE="36"><![CDATA[Com Com Pays de Lubersac Pompadour]]></MODAL>
+            <MODAL CLEF="30002307" ORDRE="40"><![CDATA[Com Com Pays de St Yrieix]]></MODAL>
+            <MODAL CLEF="30002308" ORDRE="6"><![CDATA[Tulle Agglo ]]></MODAL>
+            <MODAL CLEF="30002310" ORDRE="14"><![CDATA[Com Com Creuse Grand Sud]]></MODAL>
+            <MODAL CLEF="30002314" ORDRE="7"><![CDATA[Com Com Bénévent Grand Bourg]]></MODAL>
+            <MODAL CLEF="30002321" ORDRE="10"><![CDATA[Com Com Briance Sud Haute-Vienne]]></MODAL>
+            <MODAL CLEF="30002341" ORDRE="2"><![CDATA[Com Agglo Grand Guéret]]></MODAL>
+            <MODAL CLEF="30002342" ORDRE="28"><![CDATA[Com Com Midi Corrézien]]></MODAL>
+            <MODAL CLEF="30002360" ORDRE="44"><![CDATA[Com Com Porte Océane du Limousin]]></MODAL>
+            <MODAL CLEF="30002362" ORDRE="38"><![CDATA[Com Com Pays de Nexon Monts de Châlus]]></MODAL>
+            <MODAL CLEF="30002363" ORDRE="8"><![CDATA[Com Com Briance Combade]]></MODAL>
+            <MODAL CLEF="30002379" ORDRE="54"><![CDATA[Com Com Vézère Monédières Millesources]]></MODAL>
+            <MODAL CLEF="30002382" ORDRE="110">
+                <![CDATA[Com Com Chénéraille, Auzances Bellegarde, Haut Pays Marchois]]></MODAL>
+            <MODAL CLEF="30002383" ORDRE="16"><![CDATA[Com Com Creuse Sud Ouest]]></MODAL>
+            <MODAL CLEF="30002384" ORDRE="120"><![CDATA[Com Com C.I.A.T.E. Thaurion Gartempe]]></MODAL>
+            <MODAL CLEF="30002385" ORDRE="100"><![CDATA[Com Com Chambon Evaux les Bains]]></MODAL>
+            <MODAL CLEF="30002388" ORDRE="130"><![CDATA[Com Com Haut Pays Marchois]]></MODAL>
+            <MODAL CLEF="30002390" ORDRE="41"><![CDATA[Com Com Pays Dunois]]></MODAL>
+            <MODAL CLEF="30002391" ORDRE="140"><![CDATA[Com Com Pays de Boussac]]></MODAL>
+            <MODAL CLEF="30002392" ORDRE="46"><![CDATA[Com Com Portes de la Creuse en Marche]]></MODAL>
+            <MODAL CLEF="30002393" ORDRE="12"><![CDATA[Com Com Creuse Confluence]]></MODAL>
+            <MODAL CLEF="30002412" ORDRE="34"><![CDATA[Com Com Ouest Limousin]]></MODAL>
+            <MODAL CLEF="30002539" ORDRE="58"><![CDATA[Haute Corrèze Communauté]]></MODAL>
+            <MODAL CLEF="30002595" ORDRE="48"><![CDATA[Com Com Portes de Vassivière]]></MODAL>
+            <MODAL CLEF="30002610" ORDRE="32"><![CDATA[Com Com Noblat]]></MODAL>
+            <MODAL CLEF="30003211" ORDRE="56"><![CDATA[Com Com Xaintrie Val'Dordogne]]></MODAL>
+            <MODAL CLEF="30003627" ORDRE="3"><![CDATA[Grand Châtellerault]]></MODAL>
+            <MODAL CLEF="30003755" ORDRE="26"><![CDATA[Com Com Marche et Combraille en Aquitaine]]></MODAL>
+            <MODAL CLEF="30003756" ORDRE="18"><![CDATA[Com Com des Sources de la Creuse]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000361" QUAL="1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Type d'organisme]]></NOMCRIT>
+            <MODAL CLEF="30002425" ORDRE="1"><![CDATA[Communal]]></MODAL>
+            <MODAL CLEF="30002426" ORDRE="2"><![CDATA[Intercommunal]]></MODAL>
+            <MODAL CLEF="30002427" ORDRE="3"><![CDATA[Projet intercommunal]]></MODAL>
+            <MODAL CLEF="30002524" ORDRE="4"><![CDATA[Départemental]]></MODAL>
+            <MODAL CLEF="30002525" ORDRE="5"><![CDATA[Régional]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000392" QUAL="1" TYPVAL="2" CLASSE="4">
+            <NOMCRIT><![CDATA[Sur inscription]]></NOMCRIT>
+            <MODAL CLEF="30002699" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30002700" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000461" QUAL="2" TYPVAL="6" CLASSE="1">
+            <NOMCRIT><![CDATA[Réseaux sociaux]]></NOMCRIT>
+            <MODAL CLEF="30003220" ORDRE="1"><![CDATA[Compte Facebook]]></MODAL>
+            <MODAL CLEF="30003221" ORDRE="2"><![CDATA[Compte Twitter]]></MODAL>
+            <MODAL CLEF="30003623" ORDRE="3"><![CDATA[Instagram]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000462" QUAL="-1" TYPVAL="2" CLASSE="16">
+            <NOMCRIT><![CDATA[Wifi]]></NOMCRIT>
+            <MODAL CLEF="30003222" ORDRE="3"><![CDATA[Gratuit]]></MODAL>
+            <MODAL CLEF="30003223" ORDRE="4"><![CDATA[Payant]]></MODAL>
+            <MODAL CLEF="30003317" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30003318" ORDRE="2"><![CDATA[Non]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="900003" QUAL="0" TYPVAL="2" CLASSE="512">
+            <NOMCRIT><![CDATA[Dates et heures en texte]]></NOMCRIT>
+        </CRIT>
+        <CRIT CLEF="30000382" QUAL="-1" TYPVAL="2" CLASSE="8">
+            <NOMCRIT><![CDATA[Accessible en famille]]></NOMCRIT>
+            <MODAL CLEF="30002637" ORDRE="1"><![CDATA[Oui]]></MODAL>
+            <MODAL CLEF="30002638" ORDRE="30"><![CDATA[Non]]></MODAL>
+            <MODAL CLEF="30003554" ORDRE="3"><![CDATA[La Corrèze en famille]]></MODAL>
+            <MODAL CLEF="30003555" ORDRE="5"><![CDATA[La Creuse en famille]]></MODAL>
+            <MODAL CLEF="30003556" ORDRE="7"><![CDATA[Haute Vienne, Escapades en famille]]></MODAL>
+            <MODAL CLEF="30003557" ORDRE="9"><![CDATA[Charente en famille]]></MODAL>
+            <MODAL CLEF="30003559" ORDRE="25"><![CDATA[Quand il pleut]]></MODAL>
+            <MODAL CLEF="30003571" ORDRE="17"><![CDATA[Je suis aventurier]]></MODAL>
+            <MODAL CLEF="30003572" ORDRE="19"><![CDATA[Je suis curieux]]></MODAL>
+            <MODAL CLEF="30003825" ORDRE="12"><![CDATA[Calendrier familles]]></MODAL>
+        </CRIT>
+        <CRIT CLEF="30000376" QUAL="-1" TYPVAL="2" CLASSE="1">
+            <NOMCRIT><![CDATA[Jour de la semaine]]></NOMCRIT>
+            <MODAL CLEF="30002588" ORDRE="1"><![CDATA[Lundi]]></MODAL>
+            <MODAL CLEF="30002589" ORDRE="2"><![CDATA[Mardi]]></MODAL>
+            <MODAL CLEF="30002590" ORDRE="3"><![CDATA[Mercredi]]></MODAL>
+            <MODAL CLEF="30002591" ORDRE="4"><![CDATA[Jeudi]]></MODAL>
+            <MODAL CLEF="30002592" ORDRE="5"><![CDATA[Vendredi]]></MODAL>
+            <MODAL CLEF="30002593" ORDRE="6"><![CDATA[Samedi]]></MODAL>
+            <MODAL CLEF="30002594" ORDRE="7"><![CDATA[Dimanche]]></MODAL>
+        </CRIT>
+    </NOMENCLATURE>
+</LEI>

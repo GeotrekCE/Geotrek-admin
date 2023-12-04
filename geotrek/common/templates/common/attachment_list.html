@@ -1,10 +1,13 @@
 {% extends "paperclip/attachment_list.html" %}
 {% load i18n %}
 
+
 {% block info_list_attachments %}
-    <div class="alert alert-warning">
-        {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
-    </div>
+    {% if not user.profile.structure == object.structure and not perms.authent.can_bypass_structure %}
+        <div class="alert alert-warning">
+            {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
+        </div>
+    {% endif %}
 {% endblock info_list_attachments %}
 
 {% block permissions_add_attachment %}

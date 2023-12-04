@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 10:07+0000\n"
+"POT-Creation-Date: 2023-01-31 11:17+0100\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -33,6 +33,9 @@ msgid "Practices"
 msgstr "Pratiche"
 
 msgid "Trekking"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "Trek"
@@ -461,6 +464,17 @@ msgid ""
 "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
+msgid "You need to add a network of paths before importing POIs"
+msgstr ""
+
+msgid "Invalid geometry"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
+msgstr ""
+
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -472,6 +486,30 @@ msgid ""
 "{geom_type}"
 msgstr ""
 
+#, python-brace-format
+msgid ""
+"Trying to retrieve children for missing trek : could not find trek with UUID "
+"{key}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"One trek has not be generated for {trek_parent_instance[0].name} : could not "
+"find trek with UUID {child}"
+msgstr ""
+
+msgid ""
+"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+msgstr ""
+
+#, python-format
+msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
+msgstr ""
+
+msgid ""
+"The geometry cannot be converted to a single continuous LineString feature"
+msgstr ""
+
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
 msgstr ""
@@ -481,6 +519,9 @@ msgstr ""
 
 msgid "Hike"
 msgstr "Caminata"
+
+msgid "Attached files"
+msgstr ""
 
 msgid "Attributes"
 msgstr ""

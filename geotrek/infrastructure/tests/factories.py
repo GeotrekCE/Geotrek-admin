@@ -30,6 +30,13 @@ class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
     label = factory.Sequence(lambda n: "Condition %s" % n)
 
 
+class InfrastructureAccessMeanFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.InfrastructureAccessMean
+
+    label = factory.Sequence(lambda n: "Acces mean %s" % n)
+
+
 class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):
 
     class Meta:

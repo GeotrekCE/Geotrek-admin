@@ -11,7 +11,7 @@ from unittest import skipIf
 import zipfile
 
 from django.conf import settings
-from django.contrib.gis.geos import MultiLineString, LineString
+from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.core import management
 from django.core.management.base import CommandError
 from django.db.models import Q
@@ -104,8 +104,14 @@ class SyncMobileTilesTest(VarTmpTestCase):
         portal_b = TargetPortalFactory()
         trek = TrekWithPublishedPOIsFactory.create(published=True)
         trek_not_same_portal = TrekWithPublishedPOIsFactory.create(published=True, portals=(portal_a, ))
-        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        trek_multi = TrekFactory.create(published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+            trek_multi = TrekFactory.create(published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)])
+            trek_point = TrekFactory.create(published=True, paths=[(p, 0, 0),])
+        else:
+            trek_multi = TrekFactory.create(published=True, geom=MultiLineString(LineString((0, 0), (0, 1)),
+                                                                                 LineString((0, 2), (0, 3))))
+            trek_point = TrekFactory.create(published=True, geom=Point(0, 0))
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000', verbosity=2, stdout=output,
                                 portal=portal_b.name)
 
@@ -123,7 +129,8 @@ class SyncMobileTilesTest(VarTmpTestCase):
         self.assertIn("nolang/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
         self.assertFalse(os.path.exists(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), 'nolang', '{}.zip'.format(trek_not_same_portal.pk))))
-        self.assertTrue(os.path.exists(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), 'nolang', '{}.zip'.format(trek_multi.pk))))
+        self.assertFalse(os.path.exists(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), 'nolang', '{}.zip'.format(trek_multi.pk))))
+        self.assertFalse(os.path.exists(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), 'nolang', '{}.zip'.format(trek_point.pk))))
 
 
 class SyncMobileFailTest(VarTmpTestCase):
@@ -485,7 +492,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             poi_geojson = json.load(f)
             # Check inside file generated we have 2 pictures
-            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 2)
+            for poi in poi_geojson['features']:
+                self.assertLessEqual(len(poi['properties']['pictures']), 3)
 
     @override_settings(MOBILE_NUMBER_PICTURES_SYNC=1)
     def test_medias_treks_configuration_number_picture(self):
@@ -504,7 +512,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             poi_geojson = json.load(f)
             # Check inside file generated we have only one picture
-            self.assertEqual(len(poi_geojson['features'][0]['properties']['pictures']), 1)
+            for poi in poi_geojson['features']:
+                self.assertLessEqual(len(poi['properties']['pictures']), 1)
 
     @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):

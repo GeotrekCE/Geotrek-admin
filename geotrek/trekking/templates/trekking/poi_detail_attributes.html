@@ -28,7 +28,14 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ poi.eid }}</td>
+            <td>{% if poi.eid %}{{ poi.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if poi.provider %}{{ poi.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}

@@ -1,18 +1,21 @@
 from datetime import date, datetime
 from distutils.util import strtobool
-import coreschema
 
+import coreschema
 from coreapi.document import Field
 from django.conf import settings
+from django.contrib.gis.db.models import Collect
 from django.db.models import Exists, OuterRef
 from django.db.models.query_utils import Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+from django_filters import ModelMultipleChoiceFilter
+from django_filters import rest_framework as filters
+from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.common.utils import intersecting
-from geotrek.core.models import Topology
-from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventType
+from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
+    TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
@@ -22,6 +25,9 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        ids = request.GET.get('ids')
+        if ids:
+            queryset = queryset.filter(pk__in=ids.split(','))
         return queryset
 
     def get_schema_fields(self, view):
@@ -41,7 +47,12 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
                     title=_("Omit"),
                     description=_("Omit specified fields to increase performance. Example: url,category.")
                 )
-            ),
+            ), Field(
+                name='ids', required=False, location='query', schema=coreschema.String(
+                    title=_("Identifiers"),
+                    description=_("Filter by one or more object id, comma-separated.")
+                )
+            )
         )
 
 
@@ -114,9 +125,7 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
 
 
 class GeotrekPublishedFilter(BaseFilterBackend):
-    """
-    Filter with published state in combination with language
-    """
+    """ Filter with published state in combination with language """
 
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -169,12 +178,8 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 q |= Q(**{'species__period{:02}'.format(m): True})
             qs = qs.filter(q)
         trek_id = request.GET.get('trek')
-        trek = Trek.objects.filter(pk=trek_id)
-        if trek:
-            contents_intersecting = intersecting(qs,
-                                                 trek.get(),
-                                                 distance=settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
-            qs = contents_intersecting.order_by('id')
+        if trek_id:
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek_id)
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -199,7 +204,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('Filter by a trek id. It will show only the sensitive areas related to this trek.')
+                    description=_('(deprecated) Same as near_trek.')
                 )
             ),
         )
@@ -213,12 +218,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type__in=types.split(','))
         trek = request.GET.get('trek', None)
         if trek is not None:
-            t = Trek.objects.get(pk=trek)
-            if settings.TREKKING_TOPOLOGY_ENABLED:
-                qs = Topology.overlapping(t, qs)
-            else:
-                qs = intersecting(qs, t)
-            qs = qs.exclude(pk__in=t.pois_excluded.all())
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek)
         sites = request.GET.get('sites', None)
         if sites is not None:
             qs = qs.filter(pk__in=self.get_pois_to_filter_outdoor_objects(Site, sites))
@@ -229,11 +229,11 @@ class GeotrekPOIFilter(BaseFilterBackend):
 
     def get_pois_to_filter_outdoor_objects(self, model, elems):
         list_pois = POI.objects.none()
-        for obj in elems.split(','):
-            o = model.objects.get(pk=obj)
-            tmp = POI.outdoor_all_pois(o)
-            tmp = tmp.exclude(pk__in=o.pois_excluded.all())
-            list_pois |= tmp
+        objects_outdoor = model.objects.filter(pk__in=elems.split(','))
+        collected_geom = objects_outdoor.aggregate(collected_geom=Collect('geom'))['collected_geom']
+        if collected_geom:
+            list_pois = POI.objects.existing().filter(geom__dwithin=(collected_geom, settings.OUTDOOR_INTERSECTION_MARGIN))\
+                .exclude(pk__in=objects_outdoor.values_list('pois_excluded', flat=True).filter(pois_excluded__isnull=False))
         return list_pois.distinct()
 
     def get_schema_fields(self, view):
@@ -246,7 +246,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_("Filter by a trek id. It will show only the POIs related to this trek.")
+                    description=_("(deprecated) Same as near_trek.")
                 )
             ), Field(
                 name='sites', required=False, location='query', schema=coreschema.Integer(
@@ -262,41 +262,54 @@ class GeotrekPOIFilter(BaseFilterBackend):
         )
 
 
+def _filter_near(base_model, target_model, target_pk, queryset):
+    """Filter the queryset of base_model objects by keeping only the objects near the target.
+
+    The function uses the model properties to achieve the filtering. For instance it would find and use the `target_trek.pois` property to filter
+    q POI queryset near a target trek.
+
+    Return an empty queryset if the target does not exist.
+    """
+
+    def pluralize(name):
+        return name + 's'
+
+    try:
+        target = target_model.objects.get(pk=target_pk)
+    except target_model.DoesNotExist:
+        return queryset.none()
+    prop_name = getattr(base_model, "related_near_objects_property_name", None) or pluralize(base_model._meta.model_name)
+    prop = getattr(target_model, prop_name)
+    return prop.fget(target, queryset)
+
+
 class NearbyContentFilter(BaseFilterBackend):
 
-    def intersect_queryset_with_object(self, qs, model, obj_pk, ordering):
-        obj = model.objects.filter(pk=obj_pk).first()
-        if obj:
-            contents_intersecting = intersecting(qs, obj)
-            qs = contents_intersecting.order_by(*ordering)
-        else:
-            # Intersecting with a non-existing object results in empty data
-            qs = model.objects.none()
-        return qs
-
-    def filter_queryset(self, request, queryset, view):
-        ordering = ("name",)
-        if queryset.model.__name__ == "SensitiveArea":
-            ordering = ("-area", "pk")
-        elif queryset.model.__name__ == "Service":
-            ordering = ("id",)
-        qs = queryset
+    def filter_queryset(self, request, qs, view):
         near_touristicevent = request.GET.get('near_touristicevent')
         if near_touristicevent:
-            qs = self.intersect_queryset_with_object(qs, TouristicEvent, near_touristicevent, ordering)
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=TouristicEvent,
+                              target_pk=near_touristicevent)
+
         near_touristiccontent = request.GET.get('near_touristiccontent')
         if near_touristiccontent:
-            qs = self.intersect_queryset_with_object(qs, TouristicContent, near_touristiccontent, ordering)
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=TouristicContent,
+                              target_pk=near_touristiccontent)
+
         near_trek = request.GET.get('near_trek')
         if near_trek:
-            qs = self.intersect_queryset_with_object(qs, Trek, near_trek, ordering)
-        near_outdoorsite = request.GET.get('near_outdoorsite')
+            qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Trek, target_pk=near_trek)
+
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            near_outdoorsite = request.GET.get('near_outdoorsite')
             if near_outdoorsite:
-                qs = self.intersect_queryset_with_object(qs, Site, near_outdoorsite, ordering)
+                qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Site,
+                                  target_pk=near_outdoorsite)
+
             near_outdoorcourse = request.GET.get('near_outdoorcourse')
             if near_outdoorcourse:
-                qs = self.intersect_queryset_with_object(qs, Course, near_outdoorcourse, ordering)
+                qs = _filter_near(base_model=qs.model, queryset=qs, target_model=Course,
+                                  target_pk=near_outdoorcourse)
         return qs
 
     def get_schema_fields(self, view):
@@ -343,7 +356,7 @@ class NearbyContentFilter(BaseFilterBackend):
         return fields
 
 
-class GeotrekZoningAndThemeFilter(NearbyContentFilter):
+class GeotrekZoningAndThemeFilter(BaseFilterBackend):
     def _filter_queryset(self, request, queryset, view):
         qs = queryset
         cities = request.GET.get('cities')
@@ -483,6 +496,34 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
         )
 
 
+class TouristicEventFilterSet(filters.FilterSet):
+    place = ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventPlace.objects.all(),
+        help_text=_("Filter by one or more Place id, comma-separated.")
+    )
+    organizer = filters.ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventOrganizer.objects.all(),
+        help_text=_("Filter by one or more organizer, comma-separated."),
+    )
+
+    help_texts = {
+        'bookable': _("Filter events on bookable boolean : true/false expected"),
+        'cancelled': _("Filter events on cancelled boolean : true/false expected")
+    }
+
+    @classmethod
+    def filter_for_field(cls, f, name, lookup_expr):
+        field_filter = super().filter_for_field(f, name, lookup_expr)
+        field_filter.extra['help_text'] = cls.help_texts[name]
+        return field_filter
+
+    class Meta:
+        model = TouristicEvent
+        fields = ['cancelled', 'bookable', 'place', 'organizer']
+
+
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -500,10 +541,15 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
             dates_after = request.GET.get('dates_after')
             if dates_after:
                 dates_after = datetime.strptime(dates_after, "%Y-%m-%d").date()
-            else:
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
+            if not dates_after and not dates_before:
                 # Filter out past events by default
                 dates_after = date.today()
-            qs = qs.filter(Q(end_date__gte=dates_after))
+                qs = qs.filter(
+                    Q(end_date__gte=dates_after) | Q(end_date__isnull=True) & Q(begin_date__gte=dates_after)
+                )
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
@@ -919,7 +965,6 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
 class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
 
     def filter_queryset_related_objects_published_not_deleted(self, qs, request, related_name, optional_query=Q()):
-        # Exclude if no related objects exist
         qs = qs.exclude(**{'{}'.format(related_name): None})
         # Ensure no deleted content is taken in consideration in the filter
         related_field_name = '{}__deleted'.format(related_name)
@@ -1011,6 +1056,11 @@ class TouristicEventRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPorta
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
 
 
+class TouristicEventsRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevents')
+
+
 class SiteRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
@@ -1031,6 +1081,34 @@ class RelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNot
 class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'contents')
+
+
+class HDViewPointPublishedByPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+
+    def filter_queryset_related_objects_published_not_deleted_by_portal(self, qs, request, related_name):
+        # ####################################
+        # Should be :
+        #       qs = qs.exclude(**{'{}'.format(related_name): None})
+        # But we need to bypass this bug : https://code.djangoproject.com/ticket/26261
+        # TODO Revert when using Django > 4.2
+        qs = qs.filter(**{'{}__isnull'.format(related_name): False})
+        # ####################################
+        # Ensure no deleted content is taken in consideration in the filter
+        portal_query = self.filter_queryset_related_objects_by_portal(request, related_name)
+        related_field_name = '{}__deleted'.format(related_name)
+        portal_query &= Q(**{related_field_name: False})
+        return self.filter_queryset_related_objects_published(qs, request, related_name, portal_query)
+
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'trek')
+        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'poi')
+        set_3 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            related_name = 'site'
+            qs = qs.filter(**{'{}__isnull'.format(related_name): False})
+            portal_query = self.filter_queryset_related_objects_by_portal(request, related_name)
+            set_3 = self.filter_queryset_related_objects_published(qs, request, related_name, portal_query)
+        return (set_1 | set_2 | set_3).distinct()
 
 
 class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
@@ -1081,6 +1159,7 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekLabelFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        queryset = queryset.filter(published=True)
         filter_label = request.GET.get('only_filters')
         if filter_label:
             try:

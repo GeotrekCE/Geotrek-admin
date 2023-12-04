@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2023-09-06 15:28+0200\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -25,6 +25,9 @@ msgstr "Sensibilité"
 msgctxt "Singular"
 msgid "Species"
 msgstr "Espèce"
+
+msgid "Provider"
+msgstr "Fournisseur"
 
 msgid "Name"
 msgstr "Nom"
@@ -77,6 +80,18 @@ msgstr "Pratiques sportives"
 msgid "URL"
 msgstr "URL"
 
+msgid "Code"
+msgstr "Code"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Rule"
+msgstr "Règle"
+
+msgid "Rules"
+msgstr "Règles"
+
 msgid "Sport practice"
 msgstr "Pratique sportive"
 
@@ -109,9 +124,6 @@ msgstr "Visible sur Geotrek-rando"
 
 msgid "Publication date"
 msgstr "Date de publication"
-
-msgid "Description"
-msgstr "Description"
 
 msgid "Contact"
 msgstr "Contact"
@@ -164,6 +176,9 @@ msgstr "Évènements touristiques publiées"
 msgid "Attributes"
 msgstr "Informations"
 
+msgid "None"
+msgstr "Aucun(e)"
+
 msgid "Add a sensitive area (Species)"
 msgstr "Ajouter une zone espèce"
 
@@ -172,3 +187,6 @@ msgstr "Ajouter une zone réglementaire"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "This is not an aerial area"
+msgstr "Ce n'est pas une zone à enjeux aériens"

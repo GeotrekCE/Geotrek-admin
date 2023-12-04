@@ -51,6 +51,22 @@
             <th>{{ object|verbose:"manager" }}</th>
             <td>{{ object.manager|default:"" }}</td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"access" }}</th>
+            <td>{{ object.access|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{% if object.eid %}{{ object.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}{{ object.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
@@ -58,37 +74,95 @@
 
     {% blades_enabled as is_blades_enabled %}
     {% if is_blades_enabled and perms.signage.read_blade %}
+        {% direction_on_lines_enabled as is_direction_on_lines_enabled %}
         <h3>{% trans "Blades" %}</h3>
         <table class="table blades">
             {% if object.order_blades %}
                 <tr>
                     <th>{% trans "Code" %}</th>
+                    <th>{% trans "Type" %}</th>
                     <th>{% trans "Color" %}</th>
-                    <th>{% trans "Direction" %}</th>
+                    {% if not is_direction_on_lines_enabled %}
+                        <th>{% trans "Direction" %}</th>
+                    {% endif %}
                     <th>{% trans "Condition" %}</th>
+                    {% if is_direction_on_lines_enabled %}
+                        <th>{% trans "Direction" %}</th>
+                    {% endif %}
                     <th>{% trans "Text" %}</th>
                     <th>{% trans "Picto" %}</th>
                     <th>{% trans "Distance" %}</th>
                     <th>{% trans "Time" context "duration" %}</th>
+
                 </tr>
             {% endif %}
             {% for blade in object.order_blades %}
                 <tr {% if blade.order_lines.all|length > 1 %}class="dashed-line"{% endif %}>
-                    <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
-                    <td>{{ blade.color|default_if_none:"" }}</td>
-                    <td>{{ blade.direction }}</td>
-                    <td>{{ blade.condition|default_if_none:"" }}</td>
-                    {% for line in blade.order_lines.all %}
-                        {% if not forloop.first %}
-                            </tr><tr {% if not forloop.last %}class="dashed-line"{% endif %}><td></td><td></td><td></td><td></td>
-                        {% endif %}
-                        <td>{{ line.text }}</td>
-                        <td>{{ line.pictogram_name|default_if_none:"" }}</td>
-                        <td>{{ line.distance_pretty|default_if_none:"" }}</td>
-                        <td>{{ line.time_pretty|default_if_none:"" }}</td>
-                    {% empty %}
-                        <td></td><td></td><td></td><td></td>
-                    {% endfor %}
+                    {% if not is_direction_on_lines_enabled %}
+                        <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                        <td>{{ blade.type|default_if_none:"" }}</td>
+                        <td>{{ blade.color|default_if_none:"" }}</td>
+                        <td>{{ blade.direction }}</td>
+                        <td>{{ blade.condition|default_if_none:"" }}</td>
+                        {% for line in blade.order_lines.all %}
+                            {% if not forloop.first %}
+                                </tr><tr {% if not forloop.last %}class="dashed-line"{% endif %}>
+                                <td></td> <!-- blade -->
+                                <td></td> <!-- type -->
+                                <td></td> <!-- color -->
+                                <td></td> <!-- direction -->
+                                <td></td> <!-- condition -->
+                            {% endif %}
+                            <td>{{ line.text }}</td>
+                            <td>
+                                {% for pictogram in line.pictograms.all %}
+                                    {{ pictogram.label|default_if_none:"" }}
+                                    {{ pictogram.code|default_if_none:"" }}
+                                    {{ pictogram.description|default_if_none:"" }}
+                                    <br>
+                                {% endfor %}
+                            </td>
+                            <td>{{ line.distance_pretty|default_if_none:"" }}</td>
+                            <td>{{ line.time_pretty|default_if_none:"" }}</td>
+                        {% empty %}
+                            <td></td> <!-- text -->
+                            <td></td> <!-- pictograms -->
+                            <td></td> <!-- distance -->
+                            <td></td> <!-- description -->
+                        {% endfor %}
+                    {% else %}
+                        <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                        <td>{{ blade.type|default_if_none:"" }}</td>
+                        <td>{{ blade.color|default_if_none:"" }}</td>
+                        <td>{{ blade.condition|default_if_none:"" }}</td>
+                        {% for line in blade.order_lines.all %}
+                            {% if not forloop.first %}
+                                </tr><tr {% if not forloop.last %}class="dashed-line"{% endif %}>
+                                <td></td> <!-- blade -->
+                                <td></td> <!-- type -->
+                                <td></td> <!-- color -->
+                                <td></td> <!-- condition -->
+                            {% endif %}
+                            <td>{{ line.direction|default_if_none:"" }}</td>
+                            <td>{{ line.text }}</td>
+                            <td>
+                                {% for pictogram in line.pictograms.all %}
+                                    {{ pictogram.label|default_if_none:"" }}
+                                    {{ pictogram.code|default_if_none:"" }}
+                                    {{ pictogram.description|default_if_none:"" }}
+                                    <br>
+                                {% endfor %}
+                            </td>
+                            <td>{{ line.distance_pretty|default_if_none:"" }}</td>
+                            <td>{{ line.time_pretty|default_if_none:"" }}</td>
+                        {% empty %}
+                            <td></td> <!-- direction -->
+                            <td></td> <!-- text -->
+                            <td></td> <!-- pictogram -->
+                            <td></td> <!-- distance -->
+                            <td></td> <!-- time -->
+                        {% endfor %}
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>

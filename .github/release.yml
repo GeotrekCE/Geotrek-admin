@@ -1,0 +1,62 @@
+changelog:
+  exclude:
+    labels:
+      - 'backlog PNE'
+      - backlog
+      - easy-picking
+      - 'feature: later'
+      - 'feature: must-have'
+      - 'feature: planned'
+      - 'in progress'
+      - mapentity_conflict
+      - 'next release'
+      - question
+      - 'status: duplicate'
+      - 'status: invalid'
+      - 'status: wontfix'
+      - 'to check'
+      - 'to do'
+  categories:
+    - title: 💥 Breaking changes
+      labels:
+        - '💥 Breaking changes'
+    - title: ✨ New features
+      labels:
+        - '✨ Feature'
+    - title: 💫 Improvements
+      labels:
+        - '💫 Improvements'
+        - '💄 UI/UX'
+    - title: 🐛 Bug fixes
+      labels:
+        - '🐛 bug'
+        - '🚑 Hotfix'
+    - title: ⚡ Performances
+      labels:
+        - '⚡ Performances'
+    - title: 🔒 Security
+      labels:
+        - '🔒 Security'
+    - title: 📝 Documentation
+      labels:
+        - '📝 Documentation'
+        - 'scope: docs'
+        - '🌐 Translations'
+    - title: ♻️ Refactoring
+      labels:
+        - '♻️ Refactoring'
+    - title: ✅ Tests
+      labels:
+        - '✅ Tests'
+    - title: 👷 CI
+      labels:
+        - '👷 CI'
+        - github_actions
+        - 'scope: deployment'
+    - title: 🏗️ Maintenance
+      labels:
+        - dependencies
+        - '🏗️ Maintenance'
+    - title: Other Changes
+      labels:
+        - "*"

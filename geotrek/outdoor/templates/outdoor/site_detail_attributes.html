@@ -112,7 +112,12 @@
         <tr>
             <th>{{ object|verbose:"labels" }}</th>
             <td>
-                {% valuelist object.labels.all %}
+                {% for label in object.labels.all %}
+                    {% if label.published %}
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                    {% endif %}
+                    {{ label.name }}<br>
+                {% endfor %}
             </td>
         </tr>
         <tr>
@@ -159,7 +164,15 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.eid %}{{ object.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}{{ object.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "altimetry/elevationinfo_fragment.html" %}

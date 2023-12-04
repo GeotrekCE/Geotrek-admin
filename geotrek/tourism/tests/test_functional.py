@@ -10,14 +10,20 @@ from geotrek.authent.tests.factories import TrekkingManagerFactory
 from geotrek.common.tests.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.tourism.models import TouristicContent, TouristicEvent
+from geotrek.tourism.models import (TouristicContent,
+                                    TouristicEvent)
 from geotrek.tourism.tests.factories import (TouristicContentFactory,
                                              TouristicContentCategoryFactory,
-                                             TouristicEventFactory)
+                                             TouristicEventFactory,
+                                             TouristicEventParticipantCountFactory,
+                                             TouristicEventParticipantCategoryFactory)
 from geotrek.zoning.tests.factories import CityFactory
 
 from unittest.mock import patch
 import os
+import csv
+from io import StringIO
+from operator import attrgetter
 
 
 class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
@@ -26,6 +32,15 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
     extra_column_list = ['type1', 'type2', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -164,6 +179,15 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
     expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
     extra_column_list = ['type', 'eid', 'themes']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'accessibility': '',
@@ -192,10 +216,11 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'files': [],
             'map_image_url': '/image/touristicevent-{}.png'.format(self.obj.pk),
             'meeting_point': '',
-            'meeting_time': None,
+            'start_time': None,
+            'end_time': None,
             'name': 'Touristic event',
-            'organizer': '',
-            'participant_number': '',
+            'organizer': None,
+            'capacity': None,
             'pictures': [],
             'pois': [],
             'portal': [],
@@ -256,6 +281,8 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
             'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
+            'begin_date': '2002-02-20',
+            'end_date': '2002-02-20'
         }
 
     @patch('mapentity.helpers.requests')
@@ -290,3 +317,62 @@ class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
         with override_settings(COLUMNS_LISTS={'touristic_event_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'type', 'eid', 'themes'])
+
+    def test_participant_models(self):
+        category = TouristicEventParticipantCategoryFactory()
+        self.assertEqual(str(category), category.label)
+
+        count = TouristicEventParticipantCountFactory()
+        self.assertEqual(str(count), f"{count.count} {count.category}")
+
+    def test_form_with_participant_categories(self):
+        category = TouristicEventParticipantCategoryFactory()
+        event = self.modelfactory.create()
+        response = self.client.get(event.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, category.label)
+
+    def test_event_with_participant_categories(self):
+        categories = TouristicEventParticipantCategoryFactory.create_batch(2)
+
+        data = self.get_good_data()
+        data.update({
+            'participant_count_{}'.format(categories[0].pk): 10,
+        })
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        event = TouristicEvent.objects.last()
+        self.assertEqual(event.participants.count(), 1)
+        count = event.participants.first()
+        self.assertEqual(count.count, 10)
+        self.assertEqual(count.category, categories[0])
+
+        data.update({
+            'participant_count_{}'.format(categories[1].pk): 20,
+        })
+        response = self.client.post(event.get_update_url(), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(event.participants.count(), 2)
+
+        data.pop('participant_count_{}'.format(categories[0].pk))
+        response = self.client.post(event.get_update_url(), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(event.participants.count(), 1)
+        count = event.participants.first()
+        self.assertEqual(count.count, 20)
+        self.assertEqual(count.category, categories[1])
+
+    def test_csv_participants_count(self):
+        event = self.modelfactory.create()
+        counts = TouristicEventParticipantCountFactory.create_batch(2, event=event)
+        total_count = sum(map(attrgetter('count'), counts))
+        self.assertEqual(event.participants_total, total_count)
+        self.assertEqual(event.participants_total_verbose_name, "Number of participants")
+        with self.assertNumQueries(15):
+            response = self.client.get(event.get_format_list_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            if row['ID'] == event.pk:
+                self.assertEqual(row['Number of participants'], total_count)

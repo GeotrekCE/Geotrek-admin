@@ -1,19 +1,27 @@
 from collections import OrderedDict
+import csv
+from io import StringIO
+import json
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.test import TestCase
+from django.test.utils import override_settings
+from django.utils.translation import gettext
 
 from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.signage.models import Signage, Blade
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                             InfrastructureConditionFactory, LineFactory)
-from geotrek.signage.filters import SignageFilterSet
-from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
+                                             InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
+from geotrek.signage.filters import BladeFilterSet, SignageFilterSet
+from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
+
+from mapentity.tests.factories import SuperUserFactory
 
 
 class SignageTest(TestCase):
@@ -29,15 +37,58 @@ class SignageTest(TestCase):
         self.assertCountEqual(p.signages, [sign])
 
 
+class SignageTemplatesTest(TestCase):
+
+    def setUp(self):
+        self.login()
+
+    def login(self):
+        user = User.objects.create_superuser('test', 'test@example.com', password='test')
+        self.client.force_login(user=user)
+
+    def tearDown(self):
+        self.client.logout()
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_on_each_line_on_detail_page_when_direction_on_lines_enabled(self):
+        line_1 = LineFactory.create(
+            number=2,
+            direction=LineDirectionFactory.create(label="A direction on the line 1")
+        )
+        line_2 = LineFactory.create(
+            number=3,
+            direction=LineDirectionFactory.create(label="A direction on the line 2")
+        )
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade"),
+        )
+        blade.lines.add(line_1, line_2)
+
+        response = self.client.get(blade.signage.get_detail_url())
+
+        self.assertNotContains(response, "A direction on the blade")
+        self.assertContains(response, gettext("Direction"))
+        self.assertContains(response, "A direction on the line 1")
+        self.assertContains(response, "A direction on the line 2")
+
+
 class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
     expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
     extra_column_list = ['type', 'eid']
-    expected_column_list_extra = ['id', 'number', 'direction', 'type', 'color']
-    expected_column_formatlist_extra = ['id', 'city', 'signage', 'printedelevation', 'bladecode', 'type',
-                                        'color', 'direction', 'condition', 'coordinates']
+    expected_column_list_extra = ['id', 'number', 'type', 'eid']
+    expected_column_formatlist_extra = ['id', 'type', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -166,9 +217,12 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
-                                                             b"Direction,Condition,Coordinates (WGS 84 / Pseudo-Mercator),Number 1,Text 1,"
-                                                             b"Distance 1,Time 1,Pictogram 1,Number 2,Text 2,"
-                                                             b"Distance 2,Time 2,Pictogram 2")
+                                                             b"Direction,Condition,"
+                                                             b"Coordinates (WGS 84 / Pseudo-Mercator),"
+                                                             b"Number 1,Text 1,"
+                                                             b"Distance 1,Time 1,Pictograms 1,"
+                                                             b"Number 2,Text 2,"
+                                                             b"Distance 2,Time 2,Pictograms 2")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
@@ -195,6 +249,90 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
 
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_datatablelist_url())
+
+        data = json.loads(response.content)
+        blade_repr = data['data'][0]
+        self.assertNotIn('direction', blade_repr)
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'condition']})
+    def test_direction_custom_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_datatablelist_url())
+
+        data = json.loads(response.content)
+        blade_repr = data['data'][0]
+        self.assertNotIn('direction', blade_repr)
+        self.assertIn('condition', blade_repr)
+
+    def test_direction_field_visibility_on_blade_csv_format(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_format_list_url() + '?format=csv')
+
+        lines = list(csv.reader(StringIO(response.content.decode("utf-8")), delimiter=','))
+        self.assertIn('Direction', lines[0])
+        self.assertIn('Blade direction', lines[1])
+        self.assertNotIn('Direction 1', lines[0])
+        self.assertNotIn('Line direction', lines[1])
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_visibility_on_blade_csv_format_when_direction_on_lines_enabled(self):
+        BladeFactory.create()
+
+        response = self.client.get(Blade.get_format_list_url() + '?format=csv')
+
+        lines = list(csv.reader(StringIO(response.content.decode("utf-8")), delimiter=','))
+        self.assertNotIn('Direction', lines[0])
+        self.assertNotIn('Blade direction', lines[1])
+        self.assertIn('Direction 1', lines[0])
+        self.assertIn('Line direction', lines[1])
+
+
+class BladeTemplatesTest(TestCase):
+
+    def setUp(self):
+        self.login()
+
+    def login(self):
+        user = User.objects.create_superuser('test', 'test@example.com', password='test')
+        self.client.force_login(user=user)
+
+    def tearDown(self):
+        self.client.logout()
+
+    def test_direction_field_visibility_on_detail_page(self):
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade")
+        )
+        line = blade.lines.first()
+        line.direction = BladeDirectionFactory.create(label="A direction on the line")
+        line.save()
+
+        response = self.client.get(blade.get_detail_url())
+
+        self.assertContains(response, "A direction on the blade")
+        self.assertNotContains(response, "A direction on the line")
+
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True)
+    def test_direction_field_visibility_on_detail_page_when_direction_on_lines_enabled(self):
+        blade = BladeFactory.create(
+            direction=BladeDirectionFactory.create(label="A direction on the blade")
+        )
+        line = blade.lines.first()
+        line.direction = BladeDirectionFactory.create(label="A direction on the line")
+        line.save()
+
+        response = self.client.get(blade.get_detail_url())
+
+        self.assertNotContains(response, "A direction on the blade")
+        self.assertContains(response, "A direction on the line")
+
 
 class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     model = Signage
@@ -205,11 +343,20 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'code': '',
             'condition': self.obj.condition.pk,
-            'manager': None,
+            'manager': self.obj.manager.pk,
             'name': 'Signage',
             'printed_elevation': 4807,
             'publication_date': '2020-03-17',
@@ -305,15 +452,64 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         self.assertFalse(i2 in filter.qs)
 
     def test_implantation_year_filter_with_str(self):
-        filter = SignageFilterSet(data={'implantation_year': 'toto'})
-        self.login()
-        model = self.factory._meta.model
         i = SignageFactory.create(implantation_year=2015)
         i2 = SignageFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
+        filter_set = SignageFilterSet(data={'implantation_year': 'toto'})
+        filter_form = filter_set.form
 
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
+        self.assertIn('<option value="2015">2015</option>', filter_form.as_p())
+        self.assertIn('<option value="2016">2016</option>', filter_form.as_p())
 
-        self.assertIn(i, filter.qs)
-        self.assertIn(i2, filter.qs)
+        self.assertIn(i, filter_set.qs)
+        self.assertIn(i2, filter_set.qs)
+
+    def test_provider_filter_without_provider(self):
+        filter_set = SignageFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        signage1 = SignageFactory.create(provider='my_provider1')
+        signage2 = SignageFactory.create(provider='my_provider2')
+
+        filter_set = SignageFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(signage1, filter_set.qs)
+        self.assertIn(signage2, filter_set.qs)
+
+
+class BladeFilterSetTest(TestCase):
+    factory = BladeFactory
+    filterset = BladeFilterSet
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.model = cls.factory._meta.model
+        cls.user = SuperUserFactory.create()
+
+        cls.manager = OrganismFactory()
+        cls.manager2 = OrganismFactory()
+
+        cls.signage = SignageFactory(manager=cls.manager, code="COUCOU")
+        cls.signage2 = SignageFactory(manager=cls.manager2, code="ADIEU")
+
+        cls.blade = cls.factory(signage=cls.signage)
+        cls.blade2 = cls.factory(signage=cls.signage2)
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_filter_by_organism(self):
+        filter = BladeFilterSet(data={'manager': [self.manager.pk,]})
+        response = self.client.get(self.model.get_list_url())
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertIn(self.blade, filter.qs)
+        self.assertNotIn(self.blade2, filter.qs)

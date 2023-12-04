@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-08 13:46+0000\n"
+"POT-Creation-Date: 2023-06-22 13:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,6 +42,9 @@ msgstr ""
 msgid "Usage difficulty"
 msgstr ""
 
+msgid "Provider"
+msgstr "Fournisseur"
+
 msgid "Implantation year"
 msgstr ""
 
@@ -55,6 +58,12 @@ msgid "Infrastructure Type"
 msgstr ""
 
 msgid "Infrastructure Types"
+msgstr ""
+
+msgid "Access mean"
+msgstr ""
+
+msgid "Access means"
 msgstr ""
 
 msgid "Infrastructure Condition"

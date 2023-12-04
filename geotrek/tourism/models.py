@@ -1,11 +1,14 @@
 import logging
 import os
 import uuid
+
 from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
-from django.db.models.query_utils import Q
+from django.core.validators import MinValueValidator
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
@@ -15,23 +18,28 @@ from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
-                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin)
+                                          PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import ReservationSystem, Theme
-from geotrek.common.utils import intersecting
+from geotrek.common.signals import log_cascade_deletion
+from geotrek.common.utils import intersecting, classproperty, queryset_or_model
 from geotrek.core.models import Topology
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
+from geotrek.tourism.managers import TouristicContentTypeFilteringManager, TouristicContentType1Manager, \
+    TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
+
 from mapentity.serializers import plain_text
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.manager import MultilingualManager
+    pass
 else:
-    from django.db.models import Manager as MultilingualManager
+    pass
 
 logger = logging.getLogger(__name__)
 
 
-class InformationDeskType(PictogramMixin):
+class InformationDeskType(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
@@ -44,7 +52,7 @@ class InformationDeskType(PictogramMixin):
         return self.label
 
 
-class LabelAccessibility(PictogramMixin):
+class LabelAccessibility(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
 
@@ -57,10 +65,11 @@ class LabelAccessibility(PictogramMixin):
         return self.label
 
 
-class InformationDesk(models.Model):
+class InformationDesk(TimeStampedModelMixin, models.Model):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     name = models.CharField(verbose_name=_("Title"), max_length=256)
-    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.CASCADE,
+    type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"), on_delete=models.PROTECT,
                              related_name='desks')
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Brief description"))
@@ -147,7 +156,7 @@ GEOMETRY_TYPES = Choices(
 )
 
 
-class TouristicContentCategory(PictogramMixin):
+class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
@@ -175,52 +184,6 @@ class TouristicContentCategory(PictogramMixin):
         return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
-class TouristicContentTypeFilteringManager(MultilingualManager):
-    def has_content_published_not_deleted_in_list(self, list_index, category=None, portals=None, language=None):
-        """ Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)
-        """
-        i = list_index
-        q_total = Q()
-        qs = super().get_queryset().filter(in_list=i)
-        # Building following logic :
-        # return type1 if:
-        #            (contents1__portal__in==portals)
-        #          & (contents1__category==category)
-        #          & (contents1_published_fr | contents1_published_en)
-        #          & not(contents1_deleted)
-        #
-        # q_total  =      q_portal
-        #               & q_category
-        #               & q_lang
-        #               & q_deleted
-
-        q_portal = Q()
-        if portals:
-            portal_field_name = f"contents{i}__portal__in"
-            q_portal = Q(**{portal_field_name: portals})
-
-        q_category = Q()
-        if category:
-            category_field_name = f"contents{i}__category"
-            q_category = Q(**{category_field_name: category})
-
-        if language:
-            published_field_name = f"contents{i}__published_{language}"
-            q_lang = Q(**{published_field_name: True})
-        else:
-            q_lang = Q()
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                published_field_name = f"contents{i}__published_{lang}"
-                q_lang |= Q(**{published_field_name: True})
-
-        deleted_field_name = f"contents{i}__deleted"
-        q_deleted = Q(**{deleted_field_name: False})
-
-        q_total = q_portal & q_category & q_lang & q_deleted
-
-        return qs.filter(q_total).distinct()
-
-
 class TouristicContentType(OptionalPictogramMixin):
     objects = TouristicContentTypeFilteringManager()
     label = models.CharField(verbose_name=_("Label"), max_length=128)
@@ -238,14 +201,10 @@ class TouristicContentType(OptionalPictogramMixin):
         return self.label
 
 
-class TouristicContentType1Manager(MultilingualManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(in_list=1)
-
-
-class TouristicContentType2Manager(MultilingualManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(in_list=2)
+@receiver(pre_delete, sender=TouristicContentCategory)
+def log_cascade_deletion_from_touristiccontenttype_category(sender, instance, using, **kwargs):
+    # TouristicContentTypes are deleted when TouristicContentCategories are deleted
+    log_cascade_deletion(sender, instance, TouristicContentType, 'category')
 
 
 class TouristicContentType1(TouristicContentType):
@@ -274,8 +233,8 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
-class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-                       TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
+class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
+                       StructureRelated, TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
@@ -286,7 +245,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
-    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.CASCADE,
+    category = models.ForeignKey(TouristicContentCategory, related_name='contents', on_delete=models.PROTECT,
                                  verbose_name=_("Category"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True,
                                help_text=_("Address, phone, etc."))
@@ -310,16 +269,21 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
                                     verbose_name=_("Portal"))
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     label_accessibility = models.ForeignKey(LabelAccessibility, verbose_name=_("Label accessibility"),
-                                            on_delete=models.CASCADE, related_name='contents', blank=True,
+                                            on_delete=models.PROTECT, related_name='contents', blank=True,
                                             null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
-                                           on_delete=models.CASCADE, blank=True, null=True)
+                                           on_delete=models.SET_NULL, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False,
                                    help_text=_("Indicates whether the content has a label or brand"))
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    objects = TouristicContentManager()
+
+    # Name of the property on other models to get related nearby touristic contents
+    related_near_objects_property_name = "touristic_contents"
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -365,15 +329,28 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
 
+    @classmethod
+    def topology_touristic_contents(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+    @classmethod
+    def outdoor_touristic_contents(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def tourism_touristic_contents(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
+
+
+Topology.add_property('touristic_contents', TouristicContent.topology_touristic_contents, _("Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+TouristicContent.add_property('touristic_contents', TouristicContent.tourism_touristic_contents, _("Touristic contents"))
 TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+TouristicContent.add_property('signages', Signage.tourism_signages, _("Signages"))
+TouristicContent.add_property('infrastructures', Infrastructure.tourism_infrastructures, _("Infrastructures"))
 
 
-class TouristicEventType(OptionalPictogramMixin):
-
+class TouristicEventType(TimeStampedModelMixin, OptionalPictogramMixin):
     type = models.CharField(verbose_name=_("Type"), max_length=128)
 
     class Meta:
@@ -385,8 +362,44 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
-class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-                     PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
+class CancellationReason(TimeStampedModelMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Cancellation reason")
+        verbose_name_plural = _("Cancellation reasons")
+
+    def __str__(self):
+        return self.label
+
+
+class TouristicEventPlace(TimeStampedModelMixin):
+    name = models.CharField(null=False, max_length=256)
+    geom = models.PointField(srid=settings.SRID)
+
+    class Meta:
+        verbose_name = _("Event place")
+        verbose_name_plural = _("Event places")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class TouristicEventOrganizer(TimeStampedModelMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=256)
+
+    class Meta:
+        verbose_name = _("Organizer")
+        verbose_name_plural = _("Organizers")
+        ordering = ['label']
+
+    def __str__(self):
+        return self.label
+
+
+class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
+                     StructureRelated, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
@@ -397,24 +410,27 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.PointField(verbose_name=_("Location"), srid=settings.SRID)
-    begin_date = models.DateField(blank=True, null=True, verbose_name=_("Begin date"))
+    begin_date = models.DateField(blank=False, null=False, verbose_name=_("Begin date"))
     end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True,
                                 help_text=_("3 days, season, ..."))
     meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
                                      help_text=_("Where exactly ?"))
-    meeting_time = models.TimeField(verbose_name=_("Meeting time"), blank=True, null=True,
-                                    help_text=_("11:00, 23:30"))
+    start_time = models.TimeField(verbose_name=_("Start time"), blank=True, null=True,
+                                  help_text=_("11:00, 23:30"))
+    end_time = models.TimeField(verbose_name=_("End time"), blank=True, null=True,
+                                help_text=_("11:00, 23:30"))
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
+    organizer = models.ForeignKey('tourism.TouristicEventOrganizer', verbose_name=_("Organizer"), blank=True, null=True,
+                                  on_delete=models.PROTECT, related_name="touristicevent")
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
-    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.CASCADE)
+    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-    participant_number = models.CharField(verbose_name=_("Number of participants"), max_length=256, blank=True)
+    capacity = models.IntegerField(verbose_name=_("Capacity"), blank=True, null=True)
     booking = models.TextField(verbose_name=_("Booking"), blank=True)
     target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True)
     practical_info = models.TextField(verbose_name=_("Practical info"), blank=True,
@@ -426,10 +442,41 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                                     blank=True, related_name='touristicevents',
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-
+    bookable = models.BooleanField(verbose_name=_("Bookable"), default=False)
+    cancelled = models.BooleanField(default=False, verbose_name=_("Cancelled"), help_text=_("Boolean indicating if Event is cancelled"))
+    cancellation_reason = models.ForeignKey(CancellationReason, verbose_name=_("Cancellation reason"), related_name="touristic_events", null=True, blank=True, on_delete=models.PROTECT)
+    preparation_duration = models.FloatField(
+        verbose_name=_("Preparation duration"), blank=True, null=True,
+        help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+        validators=[MinValueValidator(0)]
+    )
+    intervention_duration = models.FloatField(
+        verbose_name=_("Intervention duration"), blank=True, null=True,
+        help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+        validators=[MinValueValidator(0)]
+    )
+    objects = TouristicEventManager()
+    place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place in the list or locate the event directly on the map"))
     id_prefix = 'E'
+
+    # Name of the property on other models to get related nearby touristic events
+    related_near_objects_property_name = "touristic_events"
+
+    @property
+    def participants_total(self):
+        return self.participants.aggregate(participants_total=models.Sum('count'))['participants_total']
+
+    @classproperty
+    def total_participants_verbose_name(cls):
+        # Specific for annotated exports
+        return _("Number of participants")
+
+    @classproperty
+    def participants_total_verbose_name(cls):
+        return _("Number of participants")
 
     class Meta:
         verbose_name = _("Touristic event")
@@ -449,14 +496,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
     @property
     def dates_display(self):
-        if not self.begin_date and not self.end_date:
-            return ""
-        elif not self.end_date:
+        if not self.end_date:
             return _("starting from {begin}").format(
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'))
-        elif not self.begin_date:
-            return _("up to {end}").format(
-                end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
         elif self.begin_date == self.end_date:
             return date_format(self.begin_date, 'SHORT_DATE_FORMAT')
         else:
@@ -480,12 +522,52 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     def meta_description(self):
         return plain_text(self.description_teaser or self.description)[:500]
 
+    @classmethod
+    def topology_touristic_events(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology)
 
-TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
+    @classmethod
+    def topology_published_touristic_events(cls, topology):
+        return cls.topology_touristic_events(topology).filter(published=True)
+
+    @classmethod
+    def tourism_touristic_events(cls, tourism_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
+
+    @classmethod
+    def outdoor_touristic_events(cls, outdoor_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_object)
+
+
+class TouristicEventParticipantCategory(TimeStampedModelMixin):
+    label = models.CharField(verbose_name=_("Label"), max_length=255)
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True, verbose_name=_("Display order"))
+
+    class Meta:
+        verbose_name = _("Participant category")
+        verbose_name_plural = _("Participant categories")
+        ordering = ['order', 'label']
+
+    def __str__(self):
+        return self.label
+
+
+class TouristicEventParticipantCount(TimeStampedModelMixin):
+    count = models.PositiveIntegerField(verbose_name=_("Number of participants"))
+    category = models.ForeignKey(TouristicEventParticipantCategory, verbose_name=_("Category"), on_delete=models.PROTECT, related_name="participants")
+    event = models.ForeignKey(TouristicEvent, verbose_name=_("Touristic event"), on_delete=models.CASCADE, related_name="participants")
+
+    def __str__(self):
+        return f"{self.count} {self.category}"
+
+
+TouristicEvent.add_property('touristic_contents', TouristicContent.tourism_touristic_contents, _("Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _("Published touristic contents"))
-Topology.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
-Topology.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
-TouristicContent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Topology.add_property('touristic_events', TouristicEvent.topology_touristic_events, _("Touristic events"))
+Topology.add_property('published_touristic_events', TouristicEvent.topology_published_touristic_events, _("Published touristic events"))
+TouristicContent.add_property('touristic_events', TouristicEvent.tourism_touristic_events, _("Touristic events"))
 TouristicContent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
-TouristicEvent.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+TouristicEvent.add_property('touristic_events', TouristicEvent.tourism_touristic_events, _("Touristic events"))
 TouristicEvent.add_property('published_touristic_events', lambda self: intersecting(TouristicEvent, self).filter(published=True), _("Published touristic events"))
+TouristicEvent.add_property('signages', Signage.tourism_signages, _("Signages"))
+TouristicEvent.add_property('infrastructures', Infrastructure.tourism_infrastructures, _("Infrastructures"))

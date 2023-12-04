@@ -1,5 +1,7 @@
+import csv
 import json
 from datetime import datetime
+from io import StringIO
 from unittest import mock
 
 from django.conf import settings
@@ -8,23 +10,30 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
+from paperclip.models import random_suffix_regexp
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.common.tests import CommonTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
+                                  TranslationResetMixin)
+from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
-from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory, ReportInterventionFactory
+from geotrek.maintenance.tests.factories import (
+    InfrastructureInterventionFactory, ReportInterventionFactory)
+
 from . import factories as feedback_factories
-from .test_suricate_sync import SURICATE_REPORT_SETTINGS, test_for_all_suricate_modes, \
-    test_for_management_mode, test_for_report_and_basic_modes, test_for_workflow_mode
+from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
+                                 test_for_all_suricate_modes,
+                                 test_for_report_and_basic_modes,
+                                 test_for_workflow_mode)
 
 
 class ReportViewsetMailSend(TestCase):
@@ -76,7 +85,7 @@ class ReportSerializationOptimizeTests(TestCase):
         cache = caches[settings.MAPENTITY_CONFIG['GEOJSON_LAYERS_CACHE_BACKEND']]
 
         # There are 5 queries to get layer
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(reverse("feedback:report-drf-list",
                                                format="geojson"))
         self.assertEqual(len(response.json()['features']), 4)
@@ -89,7 +98,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.assertEqual(response.content, cache_content.content)
 
         # We have 1 less query because the generation of report was cached
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
@@ -98,7 +107,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.classified_report_4.save_no_suricate()
 
         # Cache is updated when we add a report
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(reverse("feedback:report-drf-list",
                                     format="geojson"))
 
@@ -113,7 +122,21 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         'type': 'Point',
         'coordinates': [3.0, 46.5],
     }
-    extra_column_list = ['email', 'comment', 'advice']
+    extra_column_list = ['comment', 'advice']
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        feedback_factories.WorkflowManagerFactory(user=UserFactory())
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -198,14 +221,16 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 302)
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
             return
         with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'eid', 'activity', 'email', 'comment', 'advice'])
+                             ['id', 'eid', 'activity', 'comment', 'advice'])
 
+    @test_for_all_suricate_modes
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
@@ -254,7 +279,7 @@ class CreateReportsAPITest(BaseAPITest):
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'email': 'yeah@you.com',
             'activity': feedback_factories.ReportActivityFactory.create().pk,
-            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk
         }
 
     def post_report_data(self, data):
@@ -262,6 +287,7 @@ class CreateReportsAPITest(BaseAPITest):
         response = client.post(self.add_url, data=data,
                                allow_redirects=False)
         self.assertEqual(response.status_code, 201, self.add_url)
+        return response
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
@@ -276,13 +302,36 @@ class CreateReportsAPITest(BaseAPITest):
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
 
     def test_reports_with_file(self):
-        self.data['file'] = get_dummy_uploaded_file()
-        self.data['csv'] = get_dummy_uploaded_image_svg()
         self.data['image'] = get_dummy_uploaded_image()
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get()
-        self.assertEqual(report.attachments.count(), 3)
+        self.assertEqual(report.attachments.count(), 1)
+        regexp = f"dummy_img{random_suffix_regexp()}.jpeg"
+        self.assertRegex(report.attachments.first().attachment_file.name, regexp)
+        self.assertTrue(report.attachments.first().is_image)
+
+    @mock.patch('geotrek.feedback.views.logger')
+    def test_reports_with_failed_image(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_image_svg()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>")
+        self.assertEqual(report.attachments.count(), 0)
+
+    @mock.patch('geotrek.feedback.views.logger')
+    def test_reports_with_bad_file_format(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_document()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id} : {{\'attachment_file\': ['File mime type “text/plain” is not allowed for “odt”.']}}")
+        self.assertEqual(report.attachments.count(), 0)
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
@@ -351,8 +400,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.report = feedback_factories.ReportFactory(assigned_user=cls.workflow_manager_user, status=cls.classified_status)
         cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains='Can read Report')
+        permission_export = Permission.objects.get(name__contains='Can export Report')
         cls.workflow_manager_user.user_permissions.add(permission)
+        cls.workflow_manager_user.user_permissions.add(permission_export)
         cls.normal_user.user_permissions.add(permission)
+        cls.normal_user.user_permissions.add(permission_export)
         cls.intervention = ReportInterventionFactory()
         cls.unrelated_intervention = InfrastructureInterventionFactory()
 
@@ -419,7 +471,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
 
     @test_for_report_and_basic_modes
-    @test_for_management_mode
     def test_can_delete_report_intervention(self):
         self.client.force_login(user=self.admin)
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
@@ -435,13 +486,54 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.assertIn("delete", response.content.decode("utf-8"))
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
 
-    @test_for_management_mode
-    def test_normal_user_sees_everything_2(self):
-        self.client.force_login(user=self.normal_user)
-        response = self.client.get(reverse('feedback:report_list'), follow=True)
+    @test_for_workflow_mode
+    def test_csv_superuser_sees_emails(self):
+        '''Test CSV job costs export does contain emails for superuser'''
+        translation.activate('fr')
+        self.client.force_login(user=self.super_user)
+        response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data['object_list'].count(), 4)
-        response = self.client.get(reverse("feedback:report-drf-list",
-                                           format="geojson"),
-                                   data={"status": self.classified_status.pk})
-        self.assertEqual(len(response.json()['features']), 3)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_hidden_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertNotIn("Courriel", column_names)
+
+    @test_for_workflow_mode
+    def test_csv_manager_sees_emails(self):
+        '''Test CSV job costs export does contain emails for manager'''
+        translation.activate('fr')
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)
+
+    @test_for_report_and_basic_modes
+    def test_normal_csv_emails(self):
+        '''Test CSV job costs export do not contain emails for supervisor'''
+        translation.activate('fr')
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/list/export/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        dict_from_csv = dict(list(reader)[0])
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Courriel", column_names)

@@ -1,31 +1,34 @@
 import uuid
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
 from django.db.models import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
+from geotrek.common.signals import log_cascade_deletion
 from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin,
-                                          TimeStampedModelMixin)
+from geotrek.common.mixins.models import (AddPropertyMixin, OptionalPictogramMixin, PicturesMixin, PublishableMixin, TimeStampedModelMixin, GeotrekMapEntityMixin)
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.templatetags import geotrek_tags
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, queryset_or_model
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.models import Intervention
+from geotrek.outdoor.managers import SiteManager, CourseOrderedChildManager, CourseManager
 from geotrek.outdoor.mixins import ExcludedPOIsMixin
 from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
-from mapentity.models import MapEntityMixin
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -36,7 +39,7 @@ class AltimetryMixin(BaseAltimetryMixin):
         abstract = True
 
 
-class Sector(models.Model):
+class Sector(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
@@ -48,9 +51,9 @@ class Sector(models.Model):
         return self.name
 
 
-class Practice(OptionalPictogramMixin, models.Model):
+class Practice(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
+    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.SET_NULL,
                                verbose_name=_("Sector"), null=True, blank=True)
 
     class Meta:
@@ -63,7 +66,7 @@ class Practice(OptionalPictogramMixin, models.Model):
 
 
 class RatingScale(RatingScaleMixin):
-    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"))
 
     class Meta:
@@ -72,8 +75,14 @@ class RatingScale(RatingScaleMixin):
         ordering = ('practice', 'order', 'name')
 
 
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_ratingscale_practice(sender, instance, using, **kwargs):
+    # RatingScale are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, RatingScale, 'practice')
+
+
 class Rating(RatingMixin):
-    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.CASCADE,
                               verbose_name=_("Scale"))
 
     class Meta:
@@ -82,9 +91,15 @@ class Rating(RatingMixin):
         ordering = ('order', 'name')
 
 
-class SiteType(models.Model):
+@receiver(pre_delete, sender=RatingScale)
+def log_cascade_deletion_from_rating_ratingscale(sender, instance, using, **kwargs):
+    # Ratings are deleted when RatingScale are deleted
+    log_cascade_deletion(sender, instance, Rating, 'scale')
+
+
+class SiteType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="site_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -96,9 +111,15 @@ class SiteType(models.Model):
         return self.name
 
 
-class CourseType(models.Model):
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_sitetype_practice(sender, instance, using, **kwargs):
+    # SiteType are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, SiteType, 'practice')
+
+
+class CourseType(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.PROTECT,
+    practice = models.ForeignKey('Practice', related_name="course_types", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"), null=True, blank=True)
 
     class Meta:
@@ -110,8 +131,24 @@ class CourseType(models.Model):
         return self.name
 
 
-class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_coursetype_practice(sender, instance, using, **kwargs):
+    # CourseType are deleted when Practice are deleted
+    log_cascade_deletion(sender, instance, CourseType, 'practice')
+
+
+class ChildSitesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child sites linked to this site")
+
+
+class ChildCoursesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child courses linked to this site")
+
+
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
+           StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
         ('NE', _("↗ NE")),
@@ -171,10 +208,14 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    view_points = GenericRelation('common.HDViewPoint', related_query_name='site')
 
     check_structure_in_forms = False
+
+    objects = SiteManager()
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -276,6 +317,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
     @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def all_pois(self):
         return POI.outdoor_all_pois(self)
 
@@ -295,32 +340,47 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         qs |= Q(target_id__in=topologies) & ~Q(target_type__in=not_topology_content_types)
         return Intervention.objects.existing().filter(qs).distinct('pk')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.refresh_from_db()
+
+    def delete(self, *args, **kwargs):
+        if self.children.exists():
+            raise ChildSitesExistError()
+        elif self.children_courses.exists():
+            raise ChildCoursesExistError()
+        else:
+            super().delete(*args, **kwargs)
+
+    @classmethod
+    def outdoor_sites(cls, outdoor_obj, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def topology_sites(cls, topology, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=topology)
+
+    @classmethod
+    def tourism_sites(cls, tourism_obj, queryset=None):
+        return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-TouristicContent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-TouristicEvent.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
+Topology.add_property('sites', Site.topology_sites, _("Sites"))
+TouristicContent.add_property('sites', Site.tourism_sites, _("Sites"))
+TouristicEvent.add_property('sites', Site.tourism_sites, _("Sites"))
 Blade.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 
-Site.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Site.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
-Site.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Site.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+Site.add_property('sites', Site.outdoor_sites, _("Sites"))
+Site.add_property('treks', Trek.outdoor_treks, _("Treks"))
+Site.add_property('services', Service.outdoor_services, _("Services"))
 Site.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
-Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
-Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
-Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
-Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Site.add_property('infrastructures', Infrastructure.outdoor_infrastructures, _("Infrastructures"))
+Site.add_property('signages', Signage.outdoor_signages, _("Signages"))
+Site.add_property('touristic_contents', TouristicContent.outdoor_touristic_contents, _("Touristic contents"))
+Site.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Site.add_property('interventions', lambda self: Site.site_interventions(self), _("Interventions"))
-
-
-class CourseOrderedChildManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
 
 
 class OrderedCourseChild(models.Model):
@@ -337,8 +397,8 @@ class OrderedCourseChild(models.Model):
         )
 
 
-class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated, PicturesMixin,
-             AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
+class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
+             StructureRelated, PicturesMixin, AltimetryMixin, TimeStampedModelMixin, ExcludedPOIsMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent_sites = models.ManyToManyField(Site, related_name="children_courses", verbose_name=_("Sites"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -355,6 +415,7 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     ratings = models.ManyToManyField(Rating, related_name='courses', blank=True, verbose_name=_("Ratings"))
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     type = models.ForeignKey(CourseType, related_name="courses", on_delete=models.PROTECT,
                              verbose_name=_("Type"), null=True, blank=True)
     pois_excluded = models.ManyToManyField('trekking.Poi', related_name='excluded_courses', verbose_name=_("Excluded POIs"),
@@ -364,6 +425,8 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     check_structure_in_forms = False
+
+    objects = CourseManager()
 
     class Meta:
         verbose_name = _("Outdoor course")
@@ -447,21 +510,35 @@ class Course(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntit
             return geojson
         return None
 
+    @classmethod
+    def outdoor_courses(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def topology_courses(cls, topology, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=topology)
+
+    @classmethod
+    def tourism_courses(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
 
 Path.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-Topology.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-TouristicContent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
-TouristicEvent.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
+Topology.add_property('courses', Course.topology_courses, _("Courses"))
+TouristicContent.add_property('courses', Course.tourism_courses, _("Courses"))
+TouristicEvent.add_property('courses', Course.tourism_courses, _("Courses"))
 Blade.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
-Course.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
-Course.add_property('courses', lambda self: intersecting(Course, self), _("Parcours"))
-Course.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
-Course.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+Course.add_property('sites', Site.outdoor_sites, _("Sites"))
+Course.add_property('courses', Course.outdoor_courses, _("Courses"))
+Course.add_property('treks', Trek.outdoor_treks, _("Treks"))
+Course.add_property('services', Service.outdoor_services, _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
-Course.add_property('infrastructures', lambda self: intersecting(Infrastructure, self), _("Infrastructures"))
-Course.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
-Course.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
-Course.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
+Course.add_property('infrastructures', Infrastructure.outdoor_infrastructures, _("Infrastructures"))
+Course.add_property('signages', Signage.outdoor_signages, _("Signages"))
+Course.add_property('touristic_contents', TouristicContent.outdoor_touristic_contents, _("Touristic contents"))
+Course.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
+
+Site.add_property('courses', Course.outdoor_courses, _("Courses"))

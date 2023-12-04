@@ -12,6 +12,7 @@ describe('Create path', () => {
   beforeEach(() => {
     cy.setCookie('django_language', 'en');
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"})
   });
 
   it('Create path', () => {
@@ -76,8 +77,7 @@ describe('Create path', () => {
     cy.get("a[href='#confirm-merge']").click()
     cy.get("button").contains('Merge').click()
     cy.url().should('include', '/path/list/')
-    cy.get("a[title='Path number 1']").should('have.length', 1)
-    cy.get("a[title='Path number 2']").should('have.length', 0)
+    cy.get("table#objects-list tbody tr").should('have.length', 1)
   })
   // One last path
 })

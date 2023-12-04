@@ -2,26 +2,26 @@
 
 set -e
 
-cd /opt/geotrek-admin
-
-mkdir -p var/static \
-         var/conf/extra_static \
-         var/media/upload \
-         var/data \
-         var/cache \
-         var/log \
-         var/conf/extra_templates \
-         var/conf/extra_locale \
-         var/tmp
+mkdir -p /opt/geotrek-admin/var/static \
+         /opt/geotrek-admin/var/conf/extra_static \
+         /opt/geotrek-admin/var/media/upload \
+         /opt/geotrek-admin/var/data \
+         /opt/geotrek-admin/var/cache/sessions \
+         /opt/geotrek-admin/var/cache/api_v2 \
+         /opt/geotrek-admin/var/cache/fat \
+         /opt/geotrek-admin/var/log \
+         /opt/geotrek-admin/var/conf/extra_templates \
+         /opt/geotrek-admin/var/conf/extra_locale \
+         /opt/geotrek-admin/var/tmp
 
 # if not custom.py present, create it
-if [ ! -f var/conf/custom.py ]; then
-    cp geotrek/settings/custom.py.dist var/conf/custom.py
+if [ ! -f /opt/geotrek-admin/var/conf/custom.py ]; then
+    cp /opt/geotrek-admin/geotrek/settings/custom.py.dist /opt/geotrek-admin/var/conf/custom.py
 fi
 
 # if not parsers.py present, create it
-if [ ! -f var/conf/parsers.py ]; then
-    touch var/conf/parsers.py
+if [ ! -f /opt/geotrek-admin/var/conf/parsers.py ]; then
+    touch /opt/geotrek-admin/var/conf/parsers.py
 fi
 
 # Activate venv
@@ -31,7 +31,7 @@ fi
 export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
 
 # Defaults SECRET_KEY to a random value
-SECRET_KEY_FILE=var/conf/secret_key
+SECRET_KEY_FILE=/opt/geotrek-admin/var/conf/secret_key
 if [ -z $SECRET_KEY ]; then
     if [ ! -f $SECRET_KEY_FILE ]; then
         echo "Generate a secret key"

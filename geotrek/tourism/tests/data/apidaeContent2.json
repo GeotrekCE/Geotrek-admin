@@ -1,0 +1,322 @@
+{
+  "query": {
+    "selectionIds": [
+      57600
+    ],
+    "searchFields": "NOM_DESCRIPTION_CRITERES",
+    "first": 0,
+    "count": 100,
+    "order": "IDENTIFIANT",
+    "asc": true,
+    "responseFields": [
+      "id",
+      "nom",
+      "presentation.descriptifCourt",
+      "presentation.descriptifDetaille",
+      "localisation.adresse",
+      "localisation.geolocalisation.geoJson.coordinates",
+      "localisation.geolocalisation.complement.libelleFr",
+      "informations.moyensCommunication",
+      "ouverture.periodeEnClair",
+      "informationsHebergementCollectif.capacite.capaciteTotale",
+      "informationsHebergementCollectif.hebergementCollectifType.libelleFr",
+      "descriptionTarif.tarifsEnClair",
+      "descriptionTarif.modesPaiement",
+      "prestations.services",
+      "gestion.dateModification",
+      "gestion.membreProprietaire.nom",
+      "illustrations"
+    ],
+    "apiKey": "qw2WWF0q",
+    "projetId": 2161
+  },
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "type": "COMMERCE_ET_SERVICE",
+      "id": 479744,
+      "nom": {
+        "libelleFr": "Quey' Raft",
+        "libelleEs": "Test ES",
+        "libelleEn": "Test EN"
+      },
+      "gestion": {
+        "dateModification": "2017-11-24T15:52:27.974+0000",
+        "membreProprietaire": {
+          "nom": "Office de tourisme du Guillestrois et du Queyras"
+        }
+      },
+      "informations": {
+        "moyensCommunication": [
+          {
+            "identifiant": 20180007,
+            "type": {
+              "elementReferenceType": "MoyenCommunicationType",
+              "id": 201,
+              "libelleFr": "Téléphone",
+              "ordre": 1
+            },
+            "coordonnees": {
+              "fr": "06 10 15 13 28"
+            }
+          },
+          {
+            "identifiant": 20180008,
+            "type": {
+              "elementReferenceType": "MoyenCommunicationType",
+              "id": 205,
+              "libelleFr": "Site web (URL)",
+              "ordre": 3
+            },
+            "coordonnees": {
+              "fr": "http://www.queyraft.com"
+            }
+          },
+          {
+            "identifiant": 26838352,
+            "type": {
+              "elementReferenceType": "MoyenCommunicationType",
+              "id": 204,
+              "libelleFr": "Mél",
+              "ordre": 2
+            },
+            "coordonnees": {
+              "fr": "info@queyraft.com"
+            }
+          }
+        ]
+      },
+      "presentation": {
+        "descriptifCourt": {
+          "libelleFr": "Des descentes familiales ou plus sportives l'été, un parcours plus engagé au printemps...",
+          "libelleEs": "Descriptif Court ES",
+          "libelleEn": "Descriptif Court EN",
+          "libelleIt": "Descriptif Court IT"
+        },
+        "descriptifDetaille": {
+          "libelleFr": "Au pied du château médiéval, l'enchaînement de rapides variés sur 25 km dans les gorges font du Guil une des rivières les plus appréciées dans le monde de l'eau vive.\r\nLes sensations et les émotions sont multiples.",
+          "libelleEn": "Descriptif Détaillé EN"
+        }
+      },
+      "localisation": {
+        "adresse": {
+          "adresse1": "Château Queyras",
+          "codePostal": "05350",
+          "commune": {
+            "id": 1791,
+            "code": "05038",
+            "nom": "Château-Ville-Vieille",
+            "pays": {
+              "elementReferenceType": "Pays",
+              "id": 532,
+              "libelleFr": "France",
+              "ordre": 78
+            },
+            "codePostal": "05350"
+          }
+        },
+        "geolocalisation": {
+          "complement": {
+            "libelleFr": "TestFr",
+            "libelleEn": "TestEn"
+          },
+          "geoJson": {
+            "coordinates": [
+              6.794103,
+              44.756403
+            ]
+          }
+        }
+      },
+      "prestations": {
+        "services": [
+          {
+            "elementReferenceType": "Testserv",
+            "id": 1300,
+            "libelleFr": "Test",
+            "libelleEn": "Test EN",
+            "ordre": 9
+          },
+          {
+            "elementReferenceType": "Testserv",
+            "id": 1301,
+            "libelleFr": "Test2",
+            "libelleEn": "Test2 EN",
+            "ordre": 14
+          },
+          {
+            "elementReferenceType": "Testserv",
+            "id": 1302,
+            "libelleFr": "Test3",
+            "libelleEn": "Test3 EN",
+            "ordre": 18
+          },
+          {
+            "elementReferenceType": "Testserv",
+            "id": 1303,
+            "libelleFr": "Test4",
+            "libelleEn": "Test4 EN",
+            "ordre": 4
+          }
+        ]
+      },
+      "ouverture": {
+        "periodeEnClair": {
+          "libelleFr": "Du 01/05 au 31/10.",
+          "libelleEn": "From 01/05 to 31/10."
+        }
+      },
+      "descriptionTarif": {
+        "tarifsEnClair": {
+          "libelleFr": "A partir de 30 € par personne",
+          "libelleEn": "From 30 € per person"
+        },
+        "modesPaiement": [
+          {
+            "elementReferenceType": "ModePaiement",
+            "id": 1271,
+            "libelleFr": "Chèque",
+            "ordre": 9
+          },
+          {
+            "elementReferenceType": "ModePaiement",
+            "id": 1274,
+            "libelleFr": "Chèque Vacances",
+            "ordre": 14
+          },
+          {
+            "elementReferenceType": "ModePaiement",
+            "id": 1277,
+            "libelleFr": "Espèces",
+            "ordre": 18
+          },
+          {
+            "elementReferenceType": "ModePaiement",
+            "id": 1268,
+            "libelleFr": "Carte bancaire/crédit",
+            "ordre": 4
+          }
+        ]
+      },
+      "informationsHebergementCollectif": {
+        "capacite": {
+          "capaciteTotale": 10
+        }
+      },
+      "illustrations": [
+        {
+          "identifiant": 1609636,
+          "link": false,
+          "type": "IMAGE",
+          "nom": {
+            "libelleFr": "Quey'Raft"
+          },
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/207/130/1540815.jpg",
+              "urlListe": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/207/130/1540815-liste.jpg",
+              "urlFiche": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/207/130/1540815-fiche.jpg",
+              "urlDiaporama": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/207/130/1540815-diaporama.jpg",
+              "extension": "jpg",
+              "fileName": "raft1-web-600-438",
+              "taille": 268575,
+              "hauteur": 400,
+              "largeur": 600,
+              "lastModifiedDate": "2016-03-23T13:56:49.000+0000"
+            }
+          ],
+          "locked": false
+        },
+        {
+          "identifiant": 1609638,
+          "link": false,
+          "type": "IMAGE",
+          "nom": {
+            "libelleFr": "Quey'Raft"
+          },
+          "legende": {
+            "libelleFr": "img.bmp"
+          },
+          "copyright": {
+            "libelleFr": "Copyright"
+          },
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/209/130/1540817.jpg",
+              "urlListe": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/209/130/1540817-liste.jpg",
+              "urlFiche": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/209/130/1540817-fiche.jpg",
+              "urlDiaporama": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/209/130/1540817-diaporama.jpg",
+              "extension": "jpg",
+              "fileName": "raft-web-600-439",
+              "taille": 108179,
+              "hauteur": 450,
+              "largeur": 600,
+              "lastModifiedDate": "2016-03-23T13:56:50.000+0000"
+            }
+          ],
+          "locked": false
+        },
+        {
+          "identifiant": 1609640,
+          "link": false,
+          "type": "IMAGE",
+          "nom": {
+            "libelleFr": "Quey'Raft"
+          },
+          "legende": {
+            "libelleFr": "rafting sur le Guil"
+          },
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819.jpg",
+              "urlListe": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-liste.jpg",
+              "urlFiche": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-fiche.jpg",
+              "urlDiaporama": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-diaporama.jpg",
+              "extension": "jpg",
+              "fileName": "raft2-600-web-495",
+              "taille": 272514,
+              "hauteur": 400,
+              "largeur": 600,
+              "lastModifiedDate": "2016-03-23T13:56:49.000+0000"
+            }
+          ],
+          "locked": false
+        },
+        {
+          "identifiant": 1609641,
+          "link": false,
+          "type": "IMAGE",
+          "nom": {
+            "libelleFr": "Foo bar"
+          },
+          "legende": {
+            "libelleFr": "rafting sur le Guil"
+          },
+          "copyright": {
+            "libelleFr": "Bar"
+          },
+          "traductionFichiers": [
+            {
+              "locale": "fr",
+              "url": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819.jpg",
+              "urlListe": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-liste.jpg",
+              "urlFiche": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-fiche.jpg",
+              "urlDiaporama": "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/211/130/1540819-diaporama.jpg",
+              "extension": "jpg",
+              "fileName": "raft2-600-web-495",
+              "taille": 272514,
+              "hauteur": 400,
+              "largeur": 600,
+              "lastModifiedDate": "2016-03-23T13:56:49.000+0000"
+            }
+          ],
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "formatVersion": "v002"
+}

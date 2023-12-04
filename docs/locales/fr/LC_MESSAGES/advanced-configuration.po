@@ -81,7 +81,7 @@ msgstr ""
 msgid ""
 "Email configuration takes place in ``/opt/geotrek-"
 "admin/var/conf/custom.py``, where you control recipients emails "
-"(``ADMINS``, ``MAIL_MANAGERS``) and email server configuration."
+"(``ADMINS``, ``MANAGERS``) and email server configuration."
 msgstr ""
 
 #: ../../advanced-configuration.rst:53

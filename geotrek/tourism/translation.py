@@ -19,6 +19,13 @@ class InformationDeskTypeTO(TranslationOptions):
 translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
 
 
+class CancellationReasonTO(TranslationOptions):
+    fields = ('label',)
+
+
+translator.register(tourism_models.CancellationReason, CancellationReasonTO)
+
+
 class LabelAccessibilityTO(TranslationOptions):
     fields = ('label',)
 

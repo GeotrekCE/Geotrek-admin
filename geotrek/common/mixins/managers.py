@@ -17,3 +17,13 @@ class NoDeleteManager(DefaultManager):
     # Filter out deleted objects
     def existing(self):
         return self.get_queryset().filter(deleted=False)
+
+
+class ProviderChoicesMixin:
+    def provider_choices(self):
+        qs = self.get_queryset()
+        if hasattr(qs, "existing"):
+            qs = qs.existing()
+        values = qs.exclude(provider__exact='') \
+            .distinct('provider').order_by("provider").values_list('provider', flat=True)
+        return tuple((value, value) for value in values)

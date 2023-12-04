@@ -1,37 +1,39 @@
-import os
 import hashlib
 import json
+import os
+from datetime import datetime
 from shutil import rmtree
 from tempfile import mkdtemp
-
 from unittest import mock
 
-from datetime import datetime
+from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from django.conf import settings
-from django.test.utils import override_settings
 from django.test import TestCase
-
-from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory, UserFactory
-from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.trekking.tests.base import TrekkingManagerTest
-from geotrek.core.tests import factories as core_factories
-from geotrek.trekking.tests import factories as trekking_factories
-from geotrek.zoning.tests import factories as zoning_factories
-from geotrek.common.tests import factories as common_factories
-from geotrek.common.models import FileType, Attachment
-from geotrek.common.tests import TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
-from geotrek.tourism.tests.factories import (InformationDeskFactory,
-                                             TouristicContentFactory,
-                                             TouristicEventFactory,
-                                             TouristicContentCategoryFactory,
-                                             TouristicContentType1Factory,
-                                             TouristicContentType2Factory)
+from django.test.utils import override_settings
+from django.urls import reverse
 from embed_video.backends import detect_backend
+from paperclip.models import random_suffix_regexp
 
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import (StructureFactory, UserFactory,
+                                             UserProfileFactory)
+from geotrek.common.models import Attachment, FileType
+from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.tests import factories as common_factories
+from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
+                                           get_dummy_uploaded_image)
+from geotrek.core.tests import factories as core_factories
+from geotrek.tourism.tests.factories import (InformationDeskFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicContentFactory,
+                                             TouristicContentType1Factory,
+                                             TouristicContentType2Factory,
+                                             TouristicEventFactory)
+from geotrek.tourism.filters import TouristicContentFilterSet, TouristicEventFilterSet
+from geotrek.trekking.tests import factories as trekking_factories
+from geotrek.trekking.tests.base import TrekkingManagerTest
+from geotrek.zoning.tests import factories as zoning_factories
 
 PNG_BLACK_PIXEL = bytes.fromhex(
     '89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c0200'
@@ -368,8 +370,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
-            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
-            'organizer', 'participant_number', 'pictures', 'pois', 'portal', 'practical_info',
+            'id', 'map_image_url', 'meeting_point', 'start_time', 'end_time', 'name',
+            'organizer', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
             'slug', 'source', 'speaker', 'structure', 'target_audience', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
@@ -467,10 +469,8 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response['X-Accel-Redirect'],
-            '/media_secure/paperclip/tourism_touristiccontent/{}/external.pdf'.format(content.pk)
-        )
+        regexp = f"/media_secure/paperclip/tourism_touristiccontent/{content.pk}/external{random_suffix_regexp()}.pdf"
+        self.assertRegex(response['X-Accel-Redirect'], regexp)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_only_external_public_document_pdf(self):
@@ -518,7 +518,6 @@ class TouristicEventViewSetTest(TestCase):
         7 events with end date before relative date
                  ->  only events with no end or end in after relative date must be included
         """
-
         TouristicEventFactory.create_batch(5, end_date=None, published=True)
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
         TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
@@ -568,3 +567,53 @@ class TrekInformationDeskAPITest(TestCase):
         self.assertEqual(result['features'][0]['type'], 'Feature')
         self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
         self.assertEqual(result['features'][0]['properties']['name'], desk.name)
+
+
+class TouristicContentFilterTest(TestCase):
+    factory = TouristicContentFactory
+    filterset = TouristicContentFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TouristicContentFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        touristic_content1 = TouristicContentFactory.create(provider='my_provider1')
+        touristic_content2 = TouristicContentFactory.create(provider='my_provider2')
+
+        filter_set = TouristicContentFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(touristic_content1, filter_set.qs)
+        self.assertIn(touristic_content2, filter_set.qs)
+
+
+class TouristicEventFilterTest(TestCase):
+    factory = TouristicEventFactory
+    filterset = TouristicEventFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TouristicEventFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        touristic_event1 = TouristicEventFactory.create(provider='my_provider1')
+        touristic_event2 = TouristicEventFactory.create(provider='my_provider2')
+
+        filter_set = TouristicEventFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(touristic_event1, filter_set.qs)
+        self.assertIn(touristic_event2, filter_set.qs)

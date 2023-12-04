@@ -46,12 +46,10 @@
                     {% block extra_column_data %}{% endblock %}
                     {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
                         <td>
-
                             {% if perms|change_attachment %}
-                                &nbsp;
                                 <a href="#"
                                    class="update-accessibility-action"
-                                   data-update-url="{% url 'update_attachment_accessibility' att.pk %}">
+                                   data-update-url="{% url 'common:update_attachment_accessibility' att.pk %}">
                                     {% trans "Update" %}
                                 </a>
                             {% endif %}
@@ -60,7 +58,7 @@
                                 &nbsp;
                                 <a href="#"
                                    class="delete-accessibility-action"
-                                   data-delete-url="{% url 'delete_attachment_accessibility' att.pk %}">
+                                   data-delete-url="{% url 'common:delete_attachment_accessibility' att.pk %}">
                                     {% trans "Delete" %}
                                 </a>
                             {% endif %}

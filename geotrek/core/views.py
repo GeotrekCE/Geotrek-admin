@@ -116,7 +116,7 @@ class PathDocument(MapEntityDocument):
 
     def get_context_data(self, *args, **kwargs):
         language = self.request.LANGUAGE_CODE
-        self.get_object().prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+        self.get_object().prepare_elevation_chart(language)
         return super().get_context_data(*args, **kwargs)
 
 
@@ -232,6 +232,7 @@ class PathViewSet(GeotrekMapentityViewSet):
     serializer_class = PathSerializer
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
+    mapentity_list_class = PathList
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
@@ -271,9 +272,6 @@ class PathViewSet(GeotrekMapentityViewSet):
             qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')
         return qs
 
-    def get_columns(self):
-        return PathList.mandatory_columns + settings.COLUMNS_LISTS.get('path_view', PathList.default_extra_columns)
-
     def get_filter_count_infos(self, qs):
         """ Add total path length to count infos in List dropdown menu """
         data = super().get_filter_count_infos(qs)
@@ -310,9 +308,9 @@ class PathViewSet(GeotrekMapentityViewSet):
 
             if len(ids_path_merge) != 2:
                 raise Exception(_("You should select two paths"))
-
-            path_a = Path.objects.get(pk=ids_path_merge[0])
-            path_b = Path.objects.get(pk=ids_path_merge[1])
+            paths = [int(path) for path in ids_path_merge]
+            path_a = Path.objects.get(pk=min(paths))
+            path_b = Path.objects.get(pk=max(paths))
 
             if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
                 raise Exception(_("You don't have the right to change these paths"))
@@ -431,9 +429,7 @@ class TrailViewSet(GeotrekMapentityViewSet):
     serializer_class = TrailSerializer
     geojson_serializer_class = TrailGeojsonSerializer
     filterset_class = TrailFilterSet
-
-    def get_columns(self):
-        return TrailList.mandatory_columns + settings.COLUMNS_LISTS.get('trail_view', TrailList.default_extra_columns)
+    mapentity_list_class = TrailList
 
     def get_queryset(self):
         qs = self.model.objects.existing()

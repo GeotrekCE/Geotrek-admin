@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 17:15+0000\n"
+"POT-Creation-Date: 2023-08-24 11:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,6 +21,9 @@ msgstr ""
 msgid "Tourism"
 msgstr ""
 
+msgid "Provider"
+msgstr ""
+
 msgid "After"
 msgstr ""
 
@@ -30,10 +33,33 @@ msgstr ""
 msgid "Completed"
 msgstr ""
 
+msgid "Event"
+msgstr ""
+
+msgid "Assessment"
+msgstr ""
+
+msgid "Participants"
+msgstr ""
+
 msgid "dd/mm/yyyy"
 msgstr ""
 
 msgid "HH:MM"
+msgstr ""
+
+msgid ""
+"Please add a participant category in admin interface in order to complete "
+"the number of participants."
+msgstr ""
+
+msgid "Start time is unset"
+msgstr ""
+
+msgid "Start time is after end time"
+msgstr ""
+
+msgid "Start date is after end date"
 msgstr ""
 
 msgid "Label"
@@ -49,6 +75,9 @@ msgid "Label accessibility"
 msgstr ""
 
 msgid "Labels accessibility"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Title"
@@ -202,9 +231,6 @@ msgstr ""
 msgid "Portal"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Reservation system"
 msgstr ""
 
@@ -235,6 +261,24 @@ msgstr ""
 msgid "Touristic event types"
 msgstr ""
 
+msgid "Cancellation reason"
+msgstr ""
+
+msgid "Cancellation reasons"
+msgstr ""
+
+msgid "Event place"
+msgstr ""
+
+msgid "Event places"
+msgstr ""
+
+msgid "Organizer"
+msgstr ""
+
+msgid "Organizers"
+msgstr ""
+
 msgid "Begin date"
 msgstr ""
 
@@ -253,19 +297,19 @@ msgstr ""
 msgid "Where exactly ?"
 msgstr ""
 
-msgid "Meeting time"
+msgid "Start time"
 msgstr ""
 
 msgid "11:00, 23:30"
 msgstr ""
 
-msgid "Organizer"
+msgid "End time"
 msgstr ""
 
 msgid "Speaker"
 msgstr ""
 
-msgid "Number of participants"
+msgid "Capacity"
 msgstr ""
 
 msgid "Booking"
@@ -275,6 +319,30 @@ msgid "Target audience"
 msgstr ""
 
 msgid "Recommandations / To plan / Advices"
+msgstr ""
+
+msgid "Bookable"
+msgstr ""
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Boolean indicating if Event is cancelled"
+msgstr ""
+
+msgid "Preparation duration"
+msgstr ""
+
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr ""
+
+msgid "Intervention duration"
+msgstr ""
+
+msgid "Select a place in the list or locate the event directly on the map"
+msgstr ""
+
+msgid "Number of participants"
 msgstr ""
 
 msgid "Touristic event"
@@ -288,14 +356,19 @@ msgid "starting from {begin}"
 msgstr ""
 
 #, python-brace-format
-msgid "up to {end}"
-msgstr ""
-
-#, python-brace-format
 msgid "from {begin} to {end}"
 msgstr ""
 
 msgid "touristic-event"
+msgstr ""
+
+msgid "Display order"
+msgstr ""
+
+msgid "Participant category"
+msgstr ""
+
+msgid "Participant categories"
 msgstr ""
 
 msgid "Published touristic events"
@@ -330,13 +403,19 @@ msgstr ""
 msgid "Print"
 msgstr ""
 
+msgid "Public print booklet"
+msgstr ""
+
+msgid "Print booklet"
+msgstr ""
+
 msgid "Attributes"
 msgstr ""
 
-msgid "None"
+msgid "yes,no"
 msgstr ""
 
-msgid "yes,no"
+msgid "None"
 msgstr ""
 
 msgid "Thumbnail"
@@ -355,6 +434,15 @@ msgid "Geographical location"
 msgstr ""
 
 msgid "All useful information"
+msgstr ""
+
+msgid "Yes,No"
+msgstr ""
+
+msgid "Number"
+msgstr ""
+
+msgid "Total"
 msgstr ""
 
 msgid "Date"

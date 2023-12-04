@@ -18,12 +18,14 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
 
 function display_message_fields_on_status_change() {
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
-    var workflow_manager = JSON.parse($('#workflow_manager').text())['pk'];
+    var workflow_manager = JSON.parse($('#workflow_manager').text());
     var selected = $('#id_status').val() || null;
-    do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified"))
+    do_display = ((status_ids_and_colors[selected]['id'] == "solved") || (status_ids_and_colors[selected]['id'] == "classified") || (status_ids_and_colors[selected]['id'] == "waiting"))
     $('#div_id_message_sentinel').prop('hidden', !do_display);
     $('#div_id_message_administrators').prop('hidden', !do_display);
     $('#div_id_message_sentinel_predefined').prop('hidden', !do_display);
+    do_display_timer = (status_ids_and_colors[selected]['id'] == "waiting")
+    $('#div_id_uses_timers').prop('hidden', !do_display_timer);
     // Prevent assigning and classifying at the same time - or rejecting and assigning
     if ((status_ids_and_colors[selected]['id'] == "classified") || (status_ids_and_colors[selected]['id'] == "rejected")) {
         $('#id_assigned_user').val(workflow_manager);
@@ -39,7 +41,7 @@ function display_message_fields_on_status_change() {
 
 function display_message_fields_on_supervisor_change() {
     var selected = $('#id_assigned_user').val() || null;
-    var workflow_manager = JSON.parse($('#workflow_manager').text())['pk'];
+    var workflow_manager = JSON.parse($('#workflow_manager').text());
     $('#div_id_message_sentinel').prop('hidden', (selected == workflow_manager));
     $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager));
     $('#div_id_message_sentinel_predefined').prop('hidden', (selected == workflow_manager));
@@ -58,14 +60,12 @@ function display_predefined_email_in_email_field() {
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
     var selected = $('#id_message_sentinel_predefined').val() || null;
     if (selected == null) {
-        $('#id_message_supervisor').val("");
         $('#id_message_sentinel').val("");
         $('#id_message_administrators').val("");
     } else {
         text = predefined_emails[selected]["text"];
         text = text.replace(/##supervisor##/g, resolved_intervention_info["username"]);
         text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"]);
-        $('#id_message_supervisor').val(text);
         $('#id_message_sentinel').val(text);
         $('#id_message_administrators').val(text);
     }

@@ -1,0 +1,67 @@
+name: Check deps
+
+on:
+  pull_request:
+    paths:
+      - setup.py
+      - requirements.txt
+      - dev-requirements.in
+      - dev-requirements.txt
+      - .github/workflows/dependencies.yml
+
+env:
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+  quality:
+    name: Checking dependency graph
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-20.04']
+        python-version: ['3.8']
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.wheel_dir
+
+          key: pip-${{ matrix.python-version }}
+          restore-keys: |
+            pip-${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
+          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
+          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c dev-requirements.txt
+          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
+
+      - name: Check dependency graph
+        run: |
+          pip-compile -q
+          pip-compile -q dev-requirements.in
+
+      - name: Verify dependency graph is ok
+        uses: tj-actions/verify-changed-files@v16
+        id: verify-changed-files
+        with:
+          files: |
+             requirements.txt
+             dev-requirements.txt
+
+      - name: Validating graph
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
+          git diff
+          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')

@@ -33,16 +33,17 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        {% for label in labels %}
-            <tr>
-                <th>{{ label.name }}</th>
-                {% if label in trek.labels.all %}
-                    <td>{% trans "yes" %}</td>
-                {% else %}
-                    <td>{% trans "no" %}</td>
-                {% endif %}
-            </tr>
-        {% endfor %}
+        <tr>
+            <th>{{ trek|verbose:"labels" }}</th>
+            <td>
+                {% for label in trek.labels.all %}
+                    {% if label.published %}
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                    {% endif %}
+                    {{ label.name }}<br>
+                {% endfor %}
+            </td>
+        </tr>
         <tr>
             <th>{{ trek|verbose:"description_teaser" }}</th>
             <td>{% if trek.description_teaser %}{{ trek.description_teaser|safe|linebreaks }}
@@ -177,6 +178,12 @@
         <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if trek.eid %}{{ trek.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if trek.provider %}{{ trek.provider|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

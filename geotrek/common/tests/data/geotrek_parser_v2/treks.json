@@ -1,0 +1,218 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 8702,
+            "access": {
+                "fr": "Acc&egrave;s",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibilities": [],
+            "accessibility_advice": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibility_covering": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibility_exposure": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibility_level": null,
+            "accessibility_signage": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibility_slope": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "accessibility_width": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "advice": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "advised_parking": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "altimetric_profile": "https://foo.fr/api/v2/trek/8702/profile/",
+            "ambiance": {
+                "fr": "Ambiance",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "arrival": {
+                "fr": "Étangs de Picot",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "ascent": 797,
+            "attachments": [],
+            "attachments_accessibility": [],
+            "children": [],
+            "cities": [
+                "09030"
+            ],
+            "create_datetime": "2019-04-01T13:04:06.795861Z",
+            "departure": {
+                "fr": "Barrage de Soulcem",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "departure_city": "09030",
+            "departure_geom": [
+                1.4526560730280935,
+                42.677959776888834
+            ],
+            "descent": -65,
+            "description": {
+                "fr": "<div style=\"text-align: justify; text-justify: inter-word;\"><strong>Description</strong> Lorem ipsum sit dolor amet Description Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit <span style=\"color: #e03e2d;\">dolor</span> ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor amet<br /><br /></div>\r\n<ol>\r\n<li>\r\n<div style=\"text-align: justify; text-justify: inter-word;\">2tape num&eacute;ro 1 sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDesc</div>\r\n</li>\r\n<li>\r\n<div style=\"text-align: justify; text-justify: inter-word;\">Prendre &agrave; droite ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lor</div>\r\n</li>\r\n<li>Terminer tout droit</li>\r\n</ol>\r\n<div style=\"text-align: justify; text-justify: inter-word;\">Description Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor ametDescription Lorem ipsum sit dolor amet</div>",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "description_teaser": {
+                "fr": "Chapeau",
+                "en": "Header",
+                "es": "",
+                "it": ""
+            },
+            "difficulty": 3,
+            "disabled_infrastructure": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "duration": 5.0,
+            "elevation_area_url": "https://foo.fr/api/v2/trek/8702/dem/",
+            "elevation_svg_url": "https://foo.fr/api/v2/trek/8702/profile/?language=fr&format=svg",
+            "external_id": null,
+            "gear": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        1.4526561,
+                        42.6779598,
+                        1552.0
+                    ],
+                    [
+                        1.4526694,
+                        42.6779712,
+                        1554.0
+                    ]
+                ]
+            },
+            "gpx": "https://foo.fr/api/fr/treks/8702/etangs-du-picot.gpx",
+            "information_desks": [],
+            "kml": "https://foo.fr/api/fr/treks/8702/etangs-du-picot.kml",
+            "labels": [],
+            "length_2d": 3347.5,
+            "length_3d": 3536.2,
+            "max_elevation": 2298,
+            "min_elevation": 1537,
+            "name": {
+                "fr": "Étangs du Picot",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "provider": "",
+            "networks": [],
+            "next": {},
+            "parents": [],
+            "parking_location": null,
+            "pdf": {
+                "fr": "https://foo.fr/api/fr/treks/8702/etangs-du-picot.pdf",
+                "en": "https://foo.fr/api/en/treks/8702/etangs-du-picot.pdf",
+                "es": "https://foo.fr/api/es/treks/8702/etangs-du-picot.pdf",
+                "it": "https://foo.fr/api/it/treks/8702/etangs-du-picot.pdf"
+            },
+            "points_reference": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        1.451697349548341,
+                        42.6817728861541
+                    ],
+                    [
+                        1.456890106201172,
+                        42.68590558513195
+                    ],
+                    [
+                        1.465902328491211,
+                        42.68448598671003
+                    ]
+                ]
+            },
+            "portal": [],
+            "practice": 4,
+            "ratings": [],
+            "ratings_description": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "previous": {},
+            "public_transport": {
+                "fr": "",
+                "en": "",
+                "es": "",
+                "it": ""
+            },
+            "published": {
+                "fr": true,
+                "en": false,
+                "es": false,
+                "it": false
+            },
+            "reservation_system": null,
+            "reservation_id": "",
+            "route": 2,
+            "second_external_id": null,
+            "source": [],
+            "structure": 3,
+            "themes": [],
+            "update_datetime": "2022-04-11T14:52:42.637165Z",
+            "url": "https://foo.fr/api/v2/trek/8702/",
+            "uuid": "58ed4fc1-645d-4bf6-b956-71f0a01a5eec",
+            "web_links": []
+        }
+    ]
+}

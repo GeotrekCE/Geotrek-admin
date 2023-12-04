@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-12-16 09:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,9 @@ msgstr "Statuts"
 msgid "Land edge"
 msgstr "Type foncier"
 
+msgid "Circulation edge"
+msgstr "Circulation"
+
 msgid "Physical edge"
 msgstr "Type de voie"
 
@@ -37,7 +40,6 @@ msgstr "Gestionnaire travaux"
 
 msgid "Status"
 msgstr "Statuts"
-
 
 msgid "Statuses"
 msgstr "Statuts"
@@ -75,6 +77,21 @@ msgstr "Conventionné"
 msgid "Land edges"
 msgstr "Types fonciers"
 
+msgid "Circulation edges"
+msgstr "Circulations"
+
+msgid "Circulation type"
+msgstr "Type de circulation"
+
+msgid "Circulation types"
+msgstr "Types de circulation"
+
+msgid "Authorization type"
+msgstr "Type d'autorisation"
+
+msgid "Authorization types"
+msgstr "Types d'autorisation"
+
 msgid "Organism"
 msgstr "Organisme"
 
@@ -89,6 +106,9 @@ msgstr "Gestionnaires signalétique"
 
 msgid "Add a new land edge"
 msgstr "Ajouter un type foncier"
+
+msgid "Add a new circulation edge"
+msgstr "Ajouter une nouvelle circulation"
 
 msgid "Add a new physical edge"
 msgstr "Ajouter un type de voie"

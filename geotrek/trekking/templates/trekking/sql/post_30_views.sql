@@ -153,7 +153,7 @@ LEFT JOIN authent_structure e ON a.structure_id = e.id
 LEFT JOIN trekking_route f ON a.route_id = f.id
 LEFT JOIN
     (SELECT b.id,
-            array_to_string(ARRAY_AGG (d.label), ',') labels
+            array_to_string(ARRAY_AGG (d.label ORDER BY d.id), ',') labels
      FROM trekking_trek a
      JOIN core_topology b ON a.topo_object_id = b.id
      AND b.deleted = FALSE
@@ -162,7 +162,7 @@ LEFT JOIN
      GROUP BY b.id) g ON a.id = g.id
 {% for lang in MODELTRANSLATION_LANGUAGES %}
     LEFT JOIN
-        (SELECT array_to_string(ARRAY_AGG (a.name_{{ lang }}), ',', '_') name_label_{{ lang }},
+        (SELECT array_to_string(ARRAY_AGG (a.name_{{ lang }} ORDER BY a.id), ',', '_') name_label_{{ lang }},
                 c.topo_object_id
          FROM common_label a
          JOIN trekking_trek_labels b ON a.id = b.label_id
@@ -176,7 +176,7 @@ LEFT JOIN
      JOIN trekking_trek_source b ON a.id = b.recordsource_id
      JOIN trekking_trek c ON b.trek_id = c.topo_object_id) i ON a.topo_object_id = i.topo_object_id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (a.url), ',', '_') url,
+    (SELECT array_to_string(ARRAY_AGG (a.url ORDER BY a.id), ',', '_') url,
             d.topo_object_id
      FROM trekking_weblink a
      JOIN trekking_weblinkcategory b ON a.category_id = b.id
@@ -184,21 +184,21 @@ LEFT JOIN
      JOIN trekking_trek d ON d.topo_object_id = c.trek_id
      GROUP BY topo_object_id) j ON a.topo_object_id = j.topo_object_id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (a.name), ',', '_') information_desks,
+    (SELECT array_to_string(ARRAY_AGG (a.name ORDER BY a.id), ',', '_') information_desks,
             topo_object_id
      FROM tourism_informationdesk a
      JOIN trekking_trek_information_desks b ON a.id = b.informationdesk_id
      JOIN trekking_trek c ON b.trek_id = c.topo_object_id
      GROUP BY topo_object_id) k ON a.topo_object_id = k.topo_object_id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (a.network), ',', '_') network,
+    (SELECT array_to_string(ARRAY_AGG (a.network ORDER BY a.id), ',', '_') network,
             c.topo_object_id
      FROM trekking_treknetwork a
      JOIN trekking_trek_networks b ON a.id = b.treknetwork_id
      JOIN trekking_trek c ON b.trek_id = c.topo_object_id
      GROUP BY topo_object_id) l ON a.topo_object_id = l.topo_object_id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (a.name), ',', '_') accessibility,
+    (SELECT array_to_string(ARRAY_AGG (a.name ORDER BY a.id), ',', '_') accessibility,
             c.topo_object_id
      FROM trekking_accessibility a
      JOIN trekking_trek_accessibilities b ON a.id = b.accessibility_id
@@ -206,7 +206,7 @@ LEFT JOIN
      GROUP BY topo_object_id) m ON a.topo_object_id = m.topo_object_id
 LEFT JOIN
     (SELECT b.topo_object_id,
-            array_to_string(ARRAY_AGG (b.name), ',', '_') itinerancy
+            array_to_string(ARRAY_AGG (b.name ORDER BY a.id), ',', '_') itinerancy
      FROM trekking_orderedtrekchild a
      JOIN trekking_trek b ON a.parent_id = b.topo_object_id
      GROUP BY topo_object_id) n ON a.topo_object_id = n.topo_object_id ;
@@ -260,7 +260,7 @@ FROM v_poi a
 LEFT JOIN trekking_poitype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          (SELECT e.geom,
@@ -272,7 +272,7 @@ LEFT JOIN
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          (SELECT e.geom,
@@ -319,7 +319,7 @@ FROM v_services a
 LEFT JOIN trekking_servicetype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_city,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id
      FROM
          (SELECT e.geom,
@@ -331,7 +331,7 @@ LEFT JOIN
      JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
      GROUP BY a.id) f ON a.id = f.id
 LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name), ', ', '_') zoning_district,
+    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
             a.id
      FROM
          (SELECT e.geom,

@@ -1,6 +1,7 @@
 from django.urls import reverse
 from django.utils.translation import get_language
 from drf_dynamic_fields import DynamicFieldsMixin
+from geotrek.api.v2.serializers import AttachmentSerializer
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
@@ -8,6 +9,13 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
 from . import models as sensitivity_models
+
+
+class RuleSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
+
+    class Meta:
+        model = sensitivity_models.Rule
+        fields = ('id', 'code', 'name', 'pictogram', 'description', 'url')
 
 
 class SportPracticeSerializer(TranslatedModelSerializer):
@@ -49,13 +57,22 @@ class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
 class SensitiveAreaAPISerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField()
+    openair_url = rest_serializers.SerializerMethodField()
+    attachments = AttachmentSerializer(many=True)
+    rules = RuleSerializer(many=True)
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
 
+    def get_openair_url(self, obj):
+        return reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')
+        fields = (
+            'id', 'species', 'description', 'contact', 'published', 'publication_date',
+            'kml_url', 'openair_url', 'attachments', 'rules'
+        )
 
 
 class SensitiveAreaAPIGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaAPISerializer):

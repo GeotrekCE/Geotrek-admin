@@ -29,7 +29,8 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     default_extra_columns = [
         'id', 'name', 'type', 'condition', 'description', 'accessibility',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty', 'maintenance_difficulty', 'uuid',
+        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty',
+        'maintenance_difficulty', 'access', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -73,10 +74,7 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer
     filterset_class = InfrastructureFilterSet
-
-    def get_columns(self):
-        return InfrastructureList.mandatory_columns + settings.COLUMNS_LISTS.get('infrastructure_view',
-                                                                                 InfrastructureList.default_extra_columns)
+    mapentity_list_class = InfrastructureList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -84,7 +82,7 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('type', 'maintenance_difficulty', 'usage_difficulty')
+            qs = qs.select_related('type', 'condition', 'maintenance_difficulty', 'access', 'usage_difficulty')
         return qs
 
 

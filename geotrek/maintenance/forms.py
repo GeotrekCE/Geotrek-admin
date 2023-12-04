@@ -155,9 +155,11 @@ class InterventionForm(CommonForm):
             elif 'status' in self.changed_data and self.instance.status.order == 30:
                 resolved_status = ReportStatus.objects.get(identifier='solved_intervention')
                 target.status = resolved_status
-                target.assigned_user = WorkflowManager.objects.first().user
+                if not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+                    target.assigned_user = WorkflowManager.objects.first().user
                 target.save()
-                WorkflowManager.objects.first().notify_report_to_solve(target)
+                if not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
+                    WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
         topology = self.cleaned_data.get('topology')
@@ -205,3 +207,9 @@ class ProjectForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_tag = False
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+
+        if clean_data.get("end_year") and clean_data.get("end_year") < clean_data.get("begin_year"):
+            self.add_error('end_year', _('Start year is after end year'))

@@ -1,0 +1,11 @@
+{% load i18n l10n feedback_tags %}
+{% autoescape off %}
+
+{% app_title as app_title %}
+{% trans "A report's processing is late on" %} {{ app_title }} :
+{% trans "Report" %} {% if report.eid|length %}{{report.eid}}{%else%}{{report.id}}{%endif%}
+    https://{{report.full_url}}
+
+{% trans "The corresponding intervention must be resolved." %} 
+
+{% endautoescape %}

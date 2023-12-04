@@ -1,0 +1,27 @@
+{
+  "URL_1": {
+    "url": "URL_1",
+    "data_to_import": [
+      "Trek",
+      "POI",
+      "InformationDesk"
+    ],
+    "mapping": {
+      "trek_practice": {
+        "Randonnée Pédestre": [
+          "Pédestre"
+        ],
+        "Vélo": [
+          "VTT",
+          "Vélo"
+        ]
+      },
+      "trek_difficulty": {
+        "Moyen": [
+          "Facile"
+        ]
+      }
+    },
+    "create": true
+  }
+}

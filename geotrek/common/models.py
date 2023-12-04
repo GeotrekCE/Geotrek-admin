@@ -1,32 +1,38 @@
 import os
+import random
+import string
 import uuid
 
 from colorfield.fields import ColorField
-from PIL import Image
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.db.models import Q
 from django.template.defaultfilters import slugify
+from django.urls import reverse
+from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
-from paperclip.models import Attachment as BaseAttachment, FileType as BaseFileType, License as BaseLicense
+from mapentity.models import MapEntityMixin
+from paperclip.models import Attachment as BaseAttachment
+from paperclip.models import FileType as BaseFileType
+from paperclip.models import License as BaseLicense
+from paperclip.validators import FileMimetypeValidator
+from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import OptionalPictogramMixin, PictogramMixin
 
-
-class AccessibilityAttachmentManager(models.Manager):
-    def attachments_for_object(self, obj):
-        object_type = ContentType.objects.get_for_model(obj)
-        return self.filter(content_type__pk=object_type.id,
-                           object_id=obj.id)
+from .managers import AccessibilityAttachmentManager
+from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
+                            TimeStampedModelMixin)
 
 
 def attachment_accessibility_upload(instance, filename):
     """Stores the attachment in a "per module/appname/primary key" folder"""
-    name, ext = os.path.splitext(filename)
-    renamed = slugify(instance.title or name) + ext
+    _, name = os.path.split(filename)
+    name, ext = os.path.splitext(name)
+    renamed = slugify(name) + ext
     return 'attachments_accessibility/%s/%s/%s' % (
         '%s_%s' % (instance.content_object._meta.app_label,
                    instance.content_object._meta.model_name),
@@ -50,13 +56,13 @@ class AccessibilityAttachment(models.Model):
 
     objects = AccessibilityAttachmentManager()
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
     attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
                                                       upload_to=attachment_accessibility_upload,
-                                                      max_length=512, null=False)
+                                                      max_length=512, null=False, validators=[FileMimetypeValidator()])
     info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
                                           max_length=7,
                                           choices=InfoAccessibilityChoices.choices,
@@ -64,13 +70,13 @@ class AccessibilityAttachment(models.Model):
     license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
                                 verbose_name=_("License"),
                                 null=True, blank=True,
-                                on_delete=models.SET_NULL)
+                                on_delete=models.PROTECT)
     creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="created_attachments_accessibility",
                                 verbose_name=_('Creator'),
-                                help_text=_("User that uploaded"), on_delete=models.CASCADE)
+                                help_text=_("User that uploaded"), on_delete=models.PROTECT)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
                               help_text=_("Original creator"))
@@ -84,6 +90,7 @@ class AccessibilityAttachment(models.Model):
                                        verbose_name=_("Insertion date"))
     date_update = models.DateTimeField(editable=False, auto_now=True,
                                        verbose_name=_("Update date"))
+    random_suffix = models.CharField(null=False, blank=True, default='', max_length=128)
 
     class Meta:
         ordering = ['-date_insert']
@@ -97,6 +104,15 @@ class AccessibilityAttachment(models.Model):
             self.attachment_accessibility_file.name
         )
 
+    def save(self, *args, **kwargs):
+        force_refresh_suffix = kwargs.pop("force_refresh_suffix", False)
+        if self.attachment_accessibility_file:
+            if self.pk is None or force_refresh_suffix:
+                self.random_suffix = None
+                name = self.prepare_file_suffix()
+                self.attachment_accessibility_file.name = attachment_accessibility_upload(self, name)
+        super().save(*args, **kwargs)
+
     @property
     def info_accessibility_display(self):
         return self.get_info_accessibility_display()
@@ -105,8 +121,38 @@ class AccessibilityAttachment(models.Model):
     def filename(self):
         return os.path.split(self.attachment_accessibility_file.name)[1]
 
+    def prepare_file_suffix(self, basename=None):
+        """ Add random file suffix and return new filename to use in attachment_accessibility_file.save
+        """
+        if self.attachment_accessibility_file or basename:
+            if not self.random_suffix:
+                # Create random suffix
+                # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
+                self.random_suffix = '-' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=settings.PAPERCLIP_RANDOM_SUFFIX_SIZE))
+                # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
+                if basename:
+                    _, basename = os.path.split(basename)
+                    basename, ext = os.path.splitext(basename)
+                else:
+                    _, name = os.path.split(self.attachment_accessibility_file.name)
+                    name, ext = os.path.splitext(name)
+                subfolder = '%s/%s' % (
+                    '%s_%s' % (self.content_object._meta.app_label,
+                               self.content_object._meta.model_name),
+                    self.content_object.pk)
+                # Compute maximum size left for filename
+                max_filename_size = self._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - settings.PAPERCLIP_RANDOM_SUFFIX_SIZE - len(subfolder) - len(ext) - 1
+                # In case PAPERCLIP_RANDOM_SUFFIX_SIZE is too big
+                max_filename_size = max(0, max_filename_size)
+                # Create new name with suffix and proper size
+                name = slugify(basename or self.title or name)[:max_filename_size]
+                return name + self.random_suffix + ext
+            _, name = os.path.split(self.attachment_accessibility_file.name)
+            return name
+        return None
 
-class Organism(StructureOrNoneRelated):
+
+class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
     organism = models.CharField(max_length=128, verbose_name=_("Organism"))
 
     class Meta:
@@ -120,7 +166,7 @@ class Organism(StructureOrNoneRelated):
         return self.organism
 
 
-class FileType(StructureOrNoneRelated, BaseFileType):
+class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
     """ Attachment FileTypes, related to structure and with custom table name."""
     class Meta(BaseFileType.Meta):
         pass
@@ -141,9 +187,9 @@ class Attachment(BaseAttachment):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 
-class Theme(PictogramMixin):
+class Theme(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("Theme")
@@ -177,8 +223,8 @@ class Theme(PictogramMixin):
         return open(output, 'rb')
 
 
-class RecordSource(OptionalPictogramMixin):
-    name = models.CharField(verbose_name=_("Name"), max_length=50)
+class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=80)
     website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
     class Meta:
@@ -190,7 +236,7 @@ class RecordSource(OptionalPictogramMixin):
         return self.name
 
 
-class TargetPortal(models.Model):
+class TargetPortal(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
     website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
     title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"),
@@ -218,7 +264,7 @@ class TargetPortal(models.Model):
         return self.name
 
 
-class ReservationSystem(models.Model):
+class ReservationSystem(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=256,
                             blank=False, null=False, unique=True)
 
@@ -231,9 +277,11 @@ class ReservationSystem(models.Model):
         ordering = ('name',)
 
 
-class Label(OptionalPictogramMixin):
+class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    published = models.BooleanField(verbose_name=_("Published"), default=False,
+                                    help_text=_("Visible on Geotrek-rando"))
     filter = models.BooleanField(verbose_name=_("Filter"), default=False,
                                  help_text=_("Show this label as a filter in public portal"))
 
@@ -246,7 +294,7 @@ class Label(OptionalPictogramMixin):
         return self.name
 
 
-class RatingScaleMixin(models.Model):
+class RatingScaleMixin(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Within a practice. Alphabetical order if blank"))
@@ -258,7 +306,7 @@ class RatingScaleMixin(models.Model):
         abstract = True
 
 
-class RatingMixin(OptionalPictogramMixin, models.Model):
+class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
@@ -270,3 +318,65 @@ class RatingMixin(OptionalPictogramMixin, models.Model):
 
     class Meta:
         abstract = True
+
+
+class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
+    picture = models.FileField(verbose_name=_("Picture"), upload_to="hdviewpoints/")
+    geom = gis_models.PointField(verbose_name=_("Location"),
+                                 srid=settings.SRID)
+    object_id = models.PositiveIntegerField()
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    author = models.CharField(blank=True, default='', max_length=128,
+                              verbose_name=_('Author'),
+                              help_text=_("Original creator"))
+    title = models.CharField(max_length=1024,
+                             verbose_name=_("Title"),
+                             help_text=_("Title for this view point"))
+    legend = models.CharField(blank=True, default='', max_length=1024,
+                              verbose_name=_("Legend"),
+                              help_text=_("Details about this view"))
+    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
+                                verbose_name=_("License"),
+                                null=True, blank=True,
+                                on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name = _("HD View")
+        verbose_name_plural = _("HD Views")
+        permissions = (
+            ("read_hdviewpoint", "Can read hd view point"),
+        )
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def full_url(self):
+        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
+
+    @property
+    def metadata_url(self):
+        return reverse('common:hdviewpoint-metadata', kwargs={'pk': self.pk})
+
+    @classmethod
+    def get_list_url(cls):
+        return reverse('admin:common_hdviewpoint_changelist')
+
+    def get_picture_tile_url(self, x, y, z):
+        url = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+        return f"{url}?{urlencode({'source': 'vips'})}"
+
+    def get_generic_picture_tile_url(self):
+        url = self.get_picture_tile_url(0, 0, 0).replace("/0/0/0.png", "/{z}/{x}/{y}.png")
+        return url
+
+    @property
+    def thumbnail_url(self):
+        url = reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+        return f"{url}?{urlencode({'source': 'vips'})}"
+
+    def get_annotate_url(self):
+        return reverse('common:hdviewpoint_annotate', args=[self.pk])

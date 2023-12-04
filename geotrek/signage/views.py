@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
+from django.utils.functional import classproperty
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -42,7 +43,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
         'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
-        'printed_elevation', 'sealing', 'manager', 'uuid',
+        'printed_elevation', 'sealing', 'access', 'manager', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -86,6 +87,7 @@ class SignageViewSet(GeotrekMapentityViewSet):
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
     filterset_class = SignageFilterSet
+    mapentity_list_class = SignageList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
@@ -93,12 +95,8 @@ class SignageViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('structure', 'manager', 'sealing', 'type', 'condition')
+            qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type', 'condition')
         return qs
-
-    def get_columns(self):
-        return SignageList.mandatory_columns + settings.COLUMNS_LISTS.get('signage_view',
-                                                                          SignageList.default_extra_columns)
 
 
 class SignageAPIViewSet(APIViewSet):
@@ -111,7 +109,7 @@ class SignageAPIViewSet(APIViewSet):
 
 
 class BladeDetail(MapEntityDetail):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -150,7 +148,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
 
 
 class BladeUpdate(LineMixin, MapEntityUpdate):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     form_class = BladeForm
 
     @same_structure_required('signage:blade_detail')
@@ -174,24 +172,38 @@ class BladeDelete(MapEntityDelete):
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
-    default_extra_columns = ['direction', 'type', 'color']
+    default_extra_columns = ['type', 'color', 'direction']
     searchable_columns = ['id', 'number']
+
+    @classproperty
+    def columns(cls):
+        columns = super().columns
+        if not settings.DIRECTION_ON_LINES_ENABLED:
+            return columns
+        columns.remove('direction')
+        if 'direction' in cls.get_custom_columns():
+            logger.warning(
+                f"Ignoring entry 'direction' in COLUMNS_LISTS for view {cls.__name__} because the setting "
+                "DIRECTION_ON_LINES is enabled."
+            )
+        return columns
 
 
 class BladeFormatList(MapEntityFormat, BladeList):
     mandatory_columns = ['id']
     default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
                              'condition', 'coordinates']
-    columns_line = ['number', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
+    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictograms']
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()
         response = HttpResponse(content_type='text/csv')
+        columns_line = self._adapt_direction_on_lines_visibility(self.columns_line)
         serializer.serialize(queryset=self.get_queryset(), stream=response,
-                             model=self.get_model(), fields=self.columns, line_fields=self.columns_line,
+                             model=self.get_model(), fields=self.columns, line_fields=columns_line,
                              ensure_ascii=True)
         return response
 
@@ -203,19 +215,23 @@ class BladeFormatList(MapEntityFormat, BladeList):
         response['Content-length'] = str(len(response.content))
         return response
 
+    @staticmethod
+    def _adapt_direction_on_lines_visibility(columns):
+        columns = columns.copy()
+        if not settings.DIRECTION_ON_LINES_ENABLED and 'direction' in columns:
+            columns.remove('direction')
+        return columns
+
 
 class BladeViewSet(GeotrekMapentityViewSet):
     model = Blade
     serializer_class = BladeSerializer
     geojson_serializer_class = BladeGeojsonSerializer
     filterset_class = BladeFilterSet
-
-    def get_columns(self):
-        return BladeList.mandatory_columns + settings.COLUMNS_LISTS.get('blade_view',
-                                                                        BladeList.default_extra_columns)
+    mapentity_list_class = BladeList
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'number')
         return qs
@@ -227,4 +243,4 @@ class BladeAPIViewSet(APIViewSet):
     geojson_serializer_class = BladeAPIGeojsonSerializer
 
     def get_queryset(self):
-        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
+        return Blade.objects.existing().annotate(api_geom=Transform("signage__geom", settings.API_SRID))

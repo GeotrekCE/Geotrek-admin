@@ -1,15 +1,23 @@
+import os
+
+from crispy_forms.helper import FormHelper
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models.functions import Transform
+from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import send_mail
-from django.db.models import F, Value, CharField
+from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
 from django.urls.base import reverse
-from django.utils.translation import gettext as _, get_language
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
 from django.views.generic.list import ListView
 from mapentity import views as mapentity_views
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from PIL import Image
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication)
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -20,9 +28,15 @@ from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from . import models as feedback_models, serializers as feedback_serializers
-from .filters import ReportFilterSet
+
+from . import models as feedback_models
+from . import serializers as feedback_serializers
+from .filters import ReportFilterSet, ReportNoEmailFilterSet
 from .forms import ReportForm
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
@@ -41,19 +55,41 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
 
     def get_queryset(self):
         qs = super().get_queryset()  # Filtered by FilterSet
-        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+        if settings.SURICATE_WORKFLOW_ENABLED and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and not (self.request.user.is_superuser or self.request.user.pk in list(
                 feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Remove email from available filters in workflow mode for supervisors
+        if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            self._filterform = ReportNoEmailFilterSet()
+            self._filterform.helper = FormHelper()
+            self._filterform.helper.field_class = 'form-control-sm'
+            self._filterform.helper.submit = None
+        context['filterform'] = self._filterform
+        return context
+
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
-    mandatory_columns = ['id']
+    mandatory_columns = ['id', 'email']
     default_extra_columns = [
-        'email', 'activity', 'comment', 'category',
+        'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
         'date_insert', 'date_update', 'assigned_user'
     ]
+
+    def get_context_data(self, **kwargs):
+        # Remove email from exports in workflow mode for user that are neither superusers or workflow manager
+        if settings.SURICATE_WORKFLOW_ENABLED and 'email' in self.mandatory_columns and not (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            self.mandatory_columns.remove('email')
+        elif settings.SURICATE_WORKFLOW_ENABLED and 'email' not in self.mandatory_columns and (self.request.user.is_superuser or self.request.user.pk in list(
+                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
+            self.mandatory_columns.append('email')
+        return super().get_context_data(**kwargs)
 
 
 class CategoryList(mapentity_views.JSONResponseMixin, ListView):
@@ -113,21 +149,18 @@ class ReportViewSet(GeotrekMapentityViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
     filterset_class = ReportFilterSet
-
-    def get_columns(self):
-        return ReportList.mandatory_columns + settings.COLUMNS_LISTS.get('feedback_view',
-                                                                         ReportList.default_extra_columns)
+    mapentity_list_class = ReportList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
-        if settings.SURICATE_WORKFLOW_ENABLED and not (
+        if settings.SURICATE_WORKFLOW_ENABLED and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and not (
             self.request.user.is_superuser or self.request.user.pk in
             list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))
         ):
             qs = qs.filter(assigned_user=self.request.user)
 
         if self.format_kwarg == 'geojson':
-            number = 'eid' if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else 'id'
+            number = 'eid' if settings.SURICATE_WORKFLOW_ENABLED else 'id'
             qs = qs.annotate(name=Concat(Value(_("Report")), Value(" "), F(number), output_field=CharField()),
                              api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'status')
@@ -174,7 +207,7 @@ class ReportAPIViewSet(APIViewSet):
             username="feedback", defaults={"is_active": False}
         )
         for file in request._request.FILES.values():
-            Attachment.objects.create(
+            attachment = Attachment(
                 filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[
                     0
                 ],
@@ -183,6 +216,28 @@ class ReportAPIViewSet(APIViewSet):
                 creator=creator,
                 attachment_file=file,
             )
+            name, extension = os.path.splitext(file.name)
+            try:
+                attachment.full_clean()  # Check that file extension and mimetypes are allowed
+            except ValidationError as e:
+                logger.error(f"Invalid attachment {name}{extension} for report {response.data.get('id')} : " + str(e))
+            else:
+                try:
+                    # Reencode file to bitmap then back to jpeg lfor safety
+                    if not os.path.exists(f"{settings.TMP_DIR}/report_file/"):
+                        os.mkdir(f"{settings.TMP_DIR}/report_file/")
+                    tmp_bmp_path = os.path.join(f"{settings.TMP_DIR}/report_file/", f"{name}.bmp")
+                    tmp_jpeg_path = os.path.join(f"{settings.TMP_DIR}/report_file/", f"{name}.jpeg")
+                    Image.open(file).save(tmp_bmp_path)
+                    Image.open(tmp_bmp_path).save(tmp_jpeg_path)
+                    with open(tmp_jpeg_path, 'rb') as converted_file:
+                        attachment.attachment_file = File(converted_file, name=f"{name}.jpeg")
+                        attachment.save()
+                    os.remove(tmp_bmp_path)
+                    os.remove(tmp_jpeg_path)
+                except Exception as e:
+                    logger.error(f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}: " + str(e))
+
         if settings.SEND_REPORT_ACK and response.status_code == 201:
             send_mail(
                 _("Geotrek : Signal a mistake"),

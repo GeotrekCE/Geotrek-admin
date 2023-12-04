@@ -15,9 +15,16 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ service.eid }}</td>
+            <td>{% if service.eid %}{{ service.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
-
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if service.provider %}{{ service.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

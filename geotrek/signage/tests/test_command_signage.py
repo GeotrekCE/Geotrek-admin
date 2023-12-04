@@ -1,5 +1,6 @@
 import os
 from io import StringIO
+import tempfile
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
@@ -10,6 +11,7 @@ from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.tests.utils import update_gis
 
 
 class SignageCommandTest(TestCase):
@@ -51,6 +53,57 @@ class SignageCommandTest(TestCase):
         self.assertEqual(2010, value.implantation_year)
         self.assertEqual(Signage.objects.count(), 1)
 
+    def test_load_signage_none_year(self):
+        '''Loading a signage with a year set to None should not fail.'''
+
+        input_file_path = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
+            update_gis(input_file_path, output_file_path, {'year': None})
+
+            output = StringIO()
+            StructureFactory.create(name='structure')
+            call_command(
+                'loadsignage',
+                output_file_path,
+                type_default='label',
+                name_default='name',
+                condition_default='condition',
+                structure_default='structure',
+                description_default='description',
+                year_field='year',
+                stdout=output
+            )
+
+            value = Signage.objects.first()
+            self.assertEqual(None, value.implantation_year)
+
+    def test_load_signage_bad_year(self):
+        '''Loading a signage with an invalid year should fail.'''
+
+        input_file_path = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_file_path = os.path.join(tmp_dir, 'signage_none_year.shp')
+            update_gis(input_file_path, output_file_path, {'year': 'not a number'})
+
+            output = StringIO()
+            StructureFactory.create(name='structure')
+
+            with self.assertRaisesRegex(CommandError, 'Invalid year: "not a number" is not a number.'):
+                call_command(
+                    'loadsignage',
+                    output_file_path,
+                    type_default='label',
+                    name_default='name',
+                    condition_default='condition',
+                    structure_default='structure',
+                    description_default='description',
+                    year_field='year',
+                    stdout=output
+                )
+
     def test_load_signage_bad_multipoints_error(self):
         output = StringIO()
         StructureFactory.create(name='structure')
@@ -65,11 +118,16 @@ class SignageCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         call_command('loadsignage', filename, type_field='label', name_field='name',
-                     condition_field='condition', structure_default='structure',
+                     condition_field='condition', manager_field='manager', sealing_field='sealing',
+                     structure_default='structure',
                      description_field='descriptio', year_field='year', code_field='name', verbosity=1, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
+        self.assertIn("Organism 'manager' created", output.getvalue())
+        self.assertIn("Organism 'manager2' created", output.getvalue())
+        self.assertIn("Sealing 'sealing' created", output.getvalue())
+        self.assertIn("Sealing 'sealing2' created", output.getvalue())
         value = Signage.objects.all()
         names = [val.name for val in value]
         years = [val.implantation_year for val in value]
@@ -108,6 +166,10 @@ class SignageCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_field='name',
                      condition_field='wrong_condition_field', stdout=output)
         call_command('loadsignage', filename, type_default='label', name_field='name',
+                     manager_field='wrong_manager_field', stdout=output)
+        call_command('loadsignage', filename, type_default='label', name_field='name',
+                     sealing_field='wrong_sealing_field', stdout=output)
+        call_command('loadsignage', filename, type_default='label', name_field='name',
                      description_field='wrong_description_field', stdout=output)
         call_command('loadsignage', filename, type_default='label', name_field='name',
                      year_field='wrong_implantation_year_field', stdout=output)
@@ -119,9 +181,9 @@ class SignageCommandTest(TestCase):
                      eid_field='wrong_eid_field', stdout=output)
         elements_to_check = ['wrong_type_field', 'wrong_name_field', 'wrong_condition_field', 'wrong_code_field',
                              'wrong_description_field', 'wrong_implantation_year_field', 'wrong_structure_field',
-                             'wrong_eid_field']
+                             'wrong_eid_field', 'wrong_sealing_field', 'wrong_manager_field']
         self.assertEqual(output.getvalue().count("set a default value"), 2)
-        self.assertEqual(output.getvalue().count("Change your"), 6)
+        self.assertEqual(output.getvalue().count("Change your"), 8)
         for element in elements_to_check:
             self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())

@@ -1,9 +1,10 @@
-from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter
+from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.models import Structure
+from geotrek.common.models import Organism
 from geotrek.core.models import Topology
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -26,16 +27,22 @@ class PolygonTopologyFilter(PolygonFilter):
 class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = MultipleChoiceFilter(choices=Signage.objects.implantation_year_choices())
+    implantation_year = MultipleChoiceFilter(choices=lambda: Signage.objects.implantation_year_choices())
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
-                                             choices=Intervention.objects.year_choices())
+                                             choices=lambda: Intervention.objects.year_choices())
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
+    provider = ChoiceFilter(
+        field_name='provider',
+        empty_label=_("Provider"),
+        label=_("Provider"),
+        choices=lambda: Signage.objects.provider_choices()
+    )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
-                                                          'sealing']
+                                                          'sealing', 'access', 'provider']
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)
@@ -46,7 +53,10 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 
 class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
-    structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
+    structure = ModelMultipleChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all(),
+                                          help_text=_("Filter by one or more structure."))
+    manager = ModelMultipleChoiceFilter(field_name='signage__manager', queryset=Organism.objects.all(),
+                                        help_text=_("Filter by one or more manager."))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

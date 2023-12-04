@@ -19,13 +19,38 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['description', 'contact']
 
-    def get_expected_json_attrs(self):
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
         return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
+    def get_expected_json_attrs(self):
+
+        return {
+            'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
+            'rules': [
+                {'code': 'R1',
+                 'description': '',
+                 'id': self.obj.rules.all()[0].pk,
+                 'name': 'Rule1',
+                 'pictogram': '/media/picto_rule1.png',
+                 'url': 'http://url.com'},
+                {'code': 'R2',
+                 'description': 'abcdefgh',
+                 'id': self.obj.rules.all()[1].pk,
+                 'name': 'Rule2',
+                 'pictogram': '/media/picto_rule2.png',
+                 'url': 'http://url.com'}],
             'species': {
                 'id': self.obj.species.pk,
                 'name': "Species",
@@ -43,7 +68,7 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
         return {
             'category': self.obj.category_display,
             'id': self.obj.pk,
-            'species': self.obj.species_display
+            'species': self.obj.species_display,
         }
 
     def setUp(self):
@@ -89,13 +114,37 @@ class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['description', 'contact']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
+            'attachments': [],
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             'description': 'Blabla',
             'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
             'publication_date': '2020-03-17',
             'published': True,
+            'rules': [
+                {'code': 'R1',
+                 'description': '',
+                 'id': self.obj.rules.all()[0].pk,
+                 'name': 'Rule1',
+                 'pictogram': '/media/picto_rule1.png',
+                 'url': 'http://url.com'},
+                {'code': 'R2',
+                 'description': 'abcdefgh',
+                 'id': self.obj.rules.all()[1].pk,
+                 'name': 'Rule2',
+                 'pictogram': '/media/picto_rule2.png',
+                 'url': 'http://url.com'}],
             'species': {
                 'id': self.obj.species.pk,
                 'name': "Species",

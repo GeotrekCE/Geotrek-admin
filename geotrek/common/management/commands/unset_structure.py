@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
     def get_new_fk(self, old_fk, RelatedModel, related_fields):
         if old_fk and old_fk.structure:
-            kwargs = {field.name: getattr(old_fk, field.name) for field in related_fields}
+            kwargs = {field.name: getattr(old_fk, field.name) for field in related_fields if field.name not in ['date_insert', 'date_update']}
             kwargs['structure'] = None
             return RelatedModel.objects.get(**kwargs)
         return old_fk
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # Create related objects with structure=None
         related_fields = [field for field in RelatedModel._meta.get_fields() if not field.auto_created]
         for obj in RelatedModel.objects.all():
-            kwargs = {field.name: getattr(obj, field.name) for field in related_fields}
+            kwargs = {field.name: getattr(obj, field.name) for field in related_fields if field.name not in ['date_insert', 'date_update']}
             kwargs['structure'] = None
             new_obj, created = RelatedModel.objects.get_or_create(**kwargs)
             if created and self.options['verbosity'] > 0:

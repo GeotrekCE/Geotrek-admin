@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
-from geotrek.api.v2.functions import StartPoint, EndPoint
+from geotrek.common.functions import StartPoint, EndPoint
 from geotrek.zoning.models import City, District
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

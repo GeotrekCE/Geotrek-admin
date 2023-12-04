@@ -1,10 +1,13 @@
-[{
+[
+{
     "pk": 1,
     "model": "tourism.informationdesktype",
     "fields": {
         "pictogram": "upload/desktype-info.svg",
         "label_fr": "Maisons du parc",
-        "label": "Park Center"
+        "label": "Park Center",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -13,7 +16,9 @@
     "fields": {
         "pictogram": "upload/desktype-info.svg",
         "label_fr": "Relais d'information",
-        "label": "Information Point"
+        "label": "Information Point",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -22,7 +27,9 @@
     "fields": {
         "pictogram": "upload/desktype-info.svg",
         "label_fr": "Office du tourisme",
-        "label": "Tourist Office"
+        "label": "Tourist Office",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -30,7 +37,9 @@
     "model": "tourism.labelaccessibility",
     "fields": {
         "pictogram": "upload/handicap-auditif.jpg",
-        "label": "Marque Tourisme et Handicap - déficience auditive"
+        "label": "Marque Tourisme et Handicap - déficience auditive",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -38,7 +47,9 @@
     "model": "tourism.labelaccessibility",
     "fields": {
         "pictogram": "upload/handicap-mental.jpg",
-        "label": "Marque Tourisme et Handicap - déficience mentale"
+        "label": "Marque Tourisme et Handicap - déficience mentale",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -46,7 +57,9 @@
     "model": "tourism.labelaccessibility",
     "fields": {
         "pictogram": "upload/handicap-moteur.jpg",
-        "label": "Marque Tourisme et Handicap - déficience motrice"
+        "label": "Marque Tourisme et Handicap - déficience motrice",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -54,7 +67,9 @@
     "model": "tourism.labelaccessibility",
     "fields": {
         "pictogram": "upload/handicap-visuel.jpg",
-        "label": "Marque Tourisme et Handicap - déficience visuelle"
+        "label": "Marque Tourisme et Handicap - déficience visuelle",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -70,7 +85,9 @@
         "type1_label_en": "Type of use",
         "type2_label": "Label",
         "type2_label_fr": "Label",
-        "type2_label_en": "Label"
+        "type2_label_en": "Label",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -83,7 +100,9 @@
         "label_fr": "Pleine Nature",
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
-        "type1_label_en": "Type of use"
+        "type1_label_en": "Type of use",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -99,7 +118,9 @@
         "type1_label_en": "Type of use",
         "type2_label": "Prestation",
         "type2_label_fr": "Service",
-        "type2_label_en": "Prestation"
+        "type2_label_en": "Prestation",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -112,7 +133,9 @@
         "label_fr": "Sites recommand\u00e9s",
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
-        "type1_label_en": "Type of use"
+        "type1_label_en": "Type of use",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -125,7 +148,9 @@
         "label_fr": "Restaurants",
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
-        "type1_label_en": "Type of use"
+        "type1_label_en": "Type of use",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -138,7 +163,9 @@
         "label_fr": "Produits",
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
-        "type1_label_en": "Type of use"
+        "type1_label_en": "Type of use",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -151,7 +178,9 @@
         "label_fr": "S\u00e9jours",
         "type1_label": "Th\u00e9matique",
         "type1_label_fr": "Th\u00e9matique",
-        "type1_label_en": "Theme"
+        "type1_label_en": "Theme",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -164,7 +193,9 @@
         "label_fr": "Mus\u00e9e",
         "type1_label": "Type d'usage",
         "type1_label_fr": "Type d'usage",
-        "type1_label_en": "Type of use"
+        "type1_label_en": "Type of use",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -789,7 +820,9 @@
     "fields": {
         "type": "Exposition",
         "type_en": "Exposition",
-        "type_fr": "Exposition"
+        "type_fr": "Exposition",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -798,7 +831,9 @@
     "fields": {
         "type": "Randonn\u00e9e",
         "type_en": "Trek",
-        "type_fr": "Randonn\u00e9e"
+        "type_fr": "Randonn\u00e9e",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -807,7 +842,9 @@
     "fields": {
         "type": "Atelier",
         "type_en": "Workshop",
-        "type_fr": "Atelier"
+        "type_fr": "Atelier",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -816,7 +853,9 @@
     "fields": {
         "type": "Visite",
         "type_en": "Visit",
-        "type_fr": "Visite"
+        "type_fr": "Visite",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -825,7 +864,9 @@
     "fields": {
         "type": "Conf\u00e9rence",
         "type_en": "Conference",
-        "type_fr": "Conf\u00e9rence"
+        "type_fr": "Conf\u00e9rence",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -834,7 +875,77 @@
     "fields": {
         "type": "Spectacle",
         "type_en": "Show",
-        "type_fr": "Spectacle"
+        "type_fr": "Spectacle",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Autre",
+        "label_en": "Other",
+        "label_fr": "Other",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "M\u00e9t\u00e9o",
+        "label_en": "Weather",
+        "label_fr": "Météo",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Animateur indisponible",
+        "label_en": "Host unavailable",
+        "label_fr": "Animateur indisponible",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Incendie",
+        "label_en": "Fire",
+        "label_fr": "Incendie",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.cancellationreason",
+    "fields": {
+        "label": "Nombre d'inscrits",
+        "label_en": "Few participants",
+        "label_fr": "Nombre d'inscrits",
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Adultes",
+        "order": 1,
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
+    }
+},
+{
+    "model": "tourism.touristiceventparticipantcategory",
+    "fields": {
+        "label": "Enfants",
+        "order": 2,
+        "date_insert": "2022-10-06T13:22:51.802Z",
+        "date_update": "2022-10-06T13:22:51.802Z"
     }
 }
 ]

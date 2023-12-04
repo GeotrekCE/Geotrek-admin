@@ -1,15 +1,22 @@
+import datetime
 import os
 
-from django.test import TestCase
 from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.test import TestCase
 from django.test.utils import override_settings
+from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
+from geotrek.tourism.models import TouristicContentType
 from geotrek.tourism.tests import factories as tourism_factories
+from geotrek.tourism.tests.factories import (InformationDeskFactory,
+                                             InformationDeskTypeFactory,
+                                             TouristicContentCategoryFactory,
+                                             TouristicContentType1Factory,
+                                             TouristicEventPlaceFactory)
 from geotrek.trekking.tests import factories as trekking_factories
-from geotrek.tourism.tests.factories import InformationDeskFactory, InformationDeskTypeFactory
-
-import datetime
 
 
 class InformationDeskTypeTest(TestCase):
@@ -24,7 +31,7 @@ class InformationDeskTypeTest(TestCase):
 class InformationDeskTest(TestCase):
     def setUp(self):
         self.type_informationdesk = InformationDeskTypeFactory(label="Office")
-        self.information_desk = InformationDeskFactory(name="Test")
+        self.information_desk = InformationDeskFactory(name="Test", type=self.type_informationdesk)
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
@@ -40,6 +47,19 @@ class InformationDeskTest(TestCase):
     def test_thumbnail_photo_not_on_disk(self):
         os.remove(os.path.join(settings.MEDIA_ROOT, str(self.information_desk.photo)))
         self.assertIsNone(self.information_desk.thumbnail)
+
+    def test_cascading_deletions(self):
+        categ = TouristicContentCategoryFactory()
+        contenttype = TouristicContentType1Factory(category=categ)
+        clear_internal_user_cache()
+        contenttype_pk = contenttype.pk
+        caregory_pk = categ.pk
+        category_repr = str(categ)
+        categ.delete()
+        model_num = ContentType.objects.get_for_model(TouristicContentType).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=contenttype_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from TouristicContentCategory {caregory_pk} - {category_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
 
 class TourismRelations(TestCase):
@@ -124,12 +144,13 @@ class TourismRelations(TestCase):
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content)
 
 
-class TouristicEventModelTest(TestCase):
-    def test_dates_display_no_begin_date(self):
-        date = datetime.datetime(year=2000, month=1, day=12)
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=date)
-        self.assertEqual('up to 01/12/2000', event.dates_display)
+class OrganizerModelTest(TestCase):
+    def test_str(self):
+        organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
+        self.assertEqual('foo bar', str(organizer))
 
+
+class TouristicEventModelTest(TestCase):
     def test_dates_display_no_end_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
@@ -140,10 +161,6 @@ class TouristicEventModelTest(TestCase):
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)
         self.assertEqual('01/12/2000', event.dates_display)
 
-    def test_dates_display_no_end_begin_date(self):
-        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=None)
-        self.assertEqual('', event.dates_display)
-
     def test_dates_display_end_begin_date_different(self):
         date_1 = datetime.datetime(year=2000, month=1, day=12)
         date_2 = datetime.datetime(year=2001, month=1, day=12)
@@ -153,8 +170,21 @@ class TouristicEventModelTest(TestCase):
 
 class TouristicContentModelTest(TestCase):
     def tests_type_poi_mobilev1(self):
-        category = tourism_factories.TouristicContentCategoryFactory(label="Test")
-        content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                            category=category)
+        self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
+        self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                                 category=self.category)
 
-        self.assertEqual(str(content.type), "Test")
+        self.assertEqual(str(self.content.type), "Test")
+
+
+class TouristicEventCancellationReasonModelTest(TestCase):
+    def tests_cancellation_reason_label(self):
+        reason = tourism_factories.CancellationReasonFactory(label="Arson")
+        event = tourism_factories.TouristicEventFactory(cancelled=True, cancellation_reason=reason)
+        self.assertEqual(str(event.cancellation_reason), "Arson")
+
+
+class TourtisticEventPlaceModelTest(TestCase):
+    def test_place_label(self):
+        place = TouristicEventPlaceFactory(name="Place to be")
+        self.assertEqual(str(place), "Place to be")

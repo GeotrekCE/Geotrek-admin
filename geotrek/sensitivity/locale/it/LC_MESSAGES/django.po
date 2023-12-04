@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2023-09-06 15:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,9 @@ msgstr ""
 
 msgctxt "Singular"
 msgid "Species"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "Name"
@@ -76,6 +79,18 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
+msgid "Code"
+msgstr "Codice"
+
+msgid "Description"
+msgstr "Descrizione"
+
+msgid "Rule"
+msgstr "Regola"
+
+msgid "Rules"
+msgstr "Regole"
+
 msgid "Sport practice"
 msgstr ""
 
@@ -107,9 +122,6 @@ msgid "Visible on Geotrek-rando"
 msgstr ""
 
 msgid "Publication date"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Contact"
@@ -163,6 +175,9 @@ msgstr ""
 msgid "Attributes"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
 msgid "Add a sensitive area (Species)"
 msgstr ""
 
@@ -170,4 +185,7 @@ msgid "Add a sensitive area (Regulatory)"
 msgstr ""
 
 msgid "Invalid geometry value."
+msgstr ""
+
+msgid "This is not an aerial area"
 msgstr ""

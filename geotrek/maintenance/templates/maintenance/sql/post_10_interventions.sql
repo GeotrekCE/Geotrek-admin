@@ -25,6 +25,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE FUNCTION {{ schema_geotrek }}.delete_related_intervention_report() RETURNS trigger SECURITY DEFINER AS $$
+BEGIN
+    UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id AND target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'report');
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE FUNCTION {{ schema_geotrek }}.delete_related_intervention_blade() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id AND target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade');
@@ -36,6 +43,10 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER maintenance_topology_interventions_d_tgr
 AFTER UPDATE OF deleted ON core_topology
 FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention();
+
+CREATE TRIGGER maintenance_report_interventions_d_tgr
+AFTER UPDATE OF deleted ON feedback_report
+FOR EACH ROW EXECUTE PROCEDURE delete_related_intervention_report();
 
 -------------------------------------------------------------------------------
 -- Denormalized altimetry information

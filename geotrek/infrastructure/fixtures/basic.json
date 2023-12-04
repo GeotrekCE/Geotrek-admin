@@ -5,7 +5,9 @@
         "fields": {
             "type": "A",
             "label": "Aire de stationnement",
-            "pictogram": "upload/infra-parking.png"
+            "pictogram": "upload/infra-parking.png",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -13,7 +15,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Aire de stationnement Handicap\u00e9s"
+            "label": "Aire de stationnement Handicap\u00e9s",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -21,7 +25,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Enrochement de sout\u00e8nement"
+            "label": "Enrochement de sout\u00e8nement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -29,7 +35,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Gabions de rivi\u00e8re"
+            "label": "Gabions de rivi\u00e8re",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -37,7 +45,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Gabions de sout\u00e8nement"
+            "label": "Gabions de sout\u00e8nement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -45,7 +55,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Madriers assembl\u00e9s pos\u00e9s sur rive"
+            "label": "Madriers assembl\u00e9s pos\u00e9s sur rive",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -53,7 +65,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Mur de sout\u00e8nement"
+            "label": "Mur de sout\u00e8nement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -61,7 +75,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Passerelle aubann\u00e9e"
+            "label": "Passerelle aubann\u00e9e",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -69,7 +85,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Passerelle d\u00e9montable"
+            "label": "Passerelle d\u00e9montable",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -77,7 +95,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Passerelle fixe"
+            "label": "Passerelle fixe",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -85,7 +105,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Platelage sur pilotis"
+            "label": "Platelage sur pilotis",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -93,7 +115,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Pont \u00e0 poutrelles"
+            "label": "Pont \u00e0 poutrelles",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -101,7 +125,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Pont \u00e0 voute"
+            "label": "Pont \u00e0 voute",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -109,7 +135,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Radier enroch\u00e9"
+            "label": "Radier enroch\u00e9",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -117,7 +145,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Seuil de rivi\u00e8re"
+            "label": "Seuil de rivi\u00e8re",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -125,7 +155,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Sout\u00e8nement gabion bois"
+            "label": "Sout\u00e8nement gabion bois",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -133,7 +165,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Banc"
+            "label": "Banc",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -141,7 +175,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Barri\u00e8re levante"
+            "label": "Barri\u00e8re levante",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -149,7 +185,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Barri\u00e8res animaux"
+            "label": "Barri\u00e8res animaux",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -157,7 +195,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Compteur pi\u00e9tons"
+            "label": "Compteur pi\u00e9tons",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -165,7 +205,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Compteur routier"
+            "label": "Compteur routier",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -173,7 +215,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Dispositif anti-stationnement"
+            "label": "Dispositif anti-stationnement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -181,7 +225,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Emmarchement m\u00e9tallique"
+            "label": "Emmarchement m\u00e9tallique",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -189,7 +235,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Fontaine"
+            "label": "Fontaine",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -197,7 +245,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Main courante \u00e0 c\u00e2ble"
+            "label": "Main courante \u00e0 c\u00e2ble",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -205,7 +255,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Parc \u00e0 v\u00e9lo"
+            "label": "Parc \u00e0 v\u00e9lo",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -213,7 +265,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Point d'assurance"
+            "label": "Point d'assurance",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -221,7 +275,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Poubelles"
+            "label": "Poubelles",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -229,7 +285,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Table"
+            "label": "Table",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -237,7 +295,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Table d'orientation"
+            "label": "Table d'orientation",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -245,7 +305,9 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Toilettes \u00e0 \u00e9vacuation"
+            "label": "Toilettes \u00e0 \u00e9vacuation",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
@@ -253,84 +315,144 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "label": "Toilettes s\u00e8ches"
+            "label": "Toilettes s\u00e8ches",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "Neuf"
+            "label": "Neuf",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "Bon \u00e9tat"
+            "label": "Bon \u00e9tat",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "D\u00e9grad\u00e9"
+            "label": "D\u00e9grad\u00e9",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 4,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "En ruines"
+            "label": "En ruines",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 5,
         "model": "infrastructure.infrastructurecondition",
         "fields": {
-            "label": "Tagu\u00e9"
+            "label": "Tagu\u00e9",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "infrastructure.infrastructureusagedifficultylevel",
         "fields": {
-            "label": "Familial"
+            "label": "Familial",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "infrastructure.infrastructureusagedifficultylevel",
         "fields": {
-            "label": "Randonneurs moyens"
+            "label": "Randonneurs moyens",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "infrastructure.infrastructureusagedifficultylevel",
         "fields": {
-            "label": "Randonneurs sportifs, signal\u00e9tique de prudence au besoin"
+            "label": "Randonneurs sportifs, signal\u00e9tique de prudence au besoin",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 1,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Prudence habituelle"
+            "label": "Prudence habituelle",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 2,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Protection recommand\u00e9e"
+            "label": "Protection recommand\u00e9e",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     },
     {
         "pk": 3,
         "model": "infrastructure.infrastructuremaintenancedifficultylevel",
         "fields": {
-            "label": "Agents form\u00e9s seulement"
+            "label": "Agents form\u00e9s seulement",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Pédestre",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Véhicule léger",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "Quad",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "infrastructure.infrastructureaccessmean",
+        "fields": {
+            "label": "4x4",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
         }
     }
 ]

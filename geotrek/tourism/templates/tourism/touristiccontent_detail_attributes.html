@@ -78,7 +78,15 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ object.eid }}</td>
+            <td>{% if object.eid %}{{ object.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}{{ object.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Reservation system" %}</th>

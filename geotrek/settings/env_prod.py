@@ -12,10 +12,4 @@ CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.PyMemcacheC
 CACHES['default']['LOCATION'] = '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memcached'),
                                                os.getenv('MEMCACHED_PORT', '11211'))
 
-LOGGING['handlers']['mail_admins']['class'] = 'django.utils.log.AdminEmailHandler'
-LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
-                                  'formatter': 'simple',
-                                  'filename': os.path.join(VAR_DIR, 'log', 'geotrek.log')}
-
-LOGGING['loggers']['geotrek']['handlers'].append('logfile')
-LOGGING['loggers']['mapentity']['handlers'].append('logfile')
+LOGGING['loggers']['']['handlers'] = ('mail_admins', 'console', 'log_file')

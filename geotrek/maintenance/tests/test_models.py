@@ -1,20 +1,25 @@
+from unittest import skipIf
+
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.utils import translation
-from django.conf import settings
-from unittest import skipIf
+from mapentity.middleware import clear_internal_user_cache
 
+from geotrek.core.tests.factories import (PathFactory, StakeFactory,
+                                          TopologyFactory, TrailFactory)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import SignageFactory
-from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.tests.factories import (InterventionFactory,
-                                                 InfrastructureInterventionFactory,
-                                                 InfrastructurePointInterventionFactory,
-                                                 SignageInterventionFactory,
-                                                 ProjectFactory, ManDayFactory, InterventionJobFactory,
-                                                 InterventionDisorderFactory)
-from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory, TrailFactory
+from geotrek.maintenance.models import Funding, Intervention, ManDay
+from geotrek.maintenance.tests.factories import (
+    FundingFactory, InfrastructureInterventionFactory,
+    InfrastructurePointInterventionFactory, InterventionDisorderFactory,
+    InterventionFactory, InterventionJobFactory, ManDayFactory, ProjectFactory,
+    SignageInterventionFactory)
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -53,9 +58,18 @@ class InterventionTest(TestCase):
 
     def test_mandays(self):
         i = InterventionFactory.create()
-        ManDayFactory.create(intervention=i, nb_days=5)
+        md = ManDayFactory.create(intervention=i, nb_days=5)
         ManDayFactory.create(intervention=i, nb_days=8)
         self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
+        clear_internal_user_cache()
+        manday_pk = md.pk
+        interv_pk = i.pk
+        obj_repr = str(i)
+        i.delete(force=True)
+        model_num = ContentType.objects.get_for_model(ManDay).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=manday_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Intervention {interv_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_path_helpers(self):
         p = PathFactory.create()
@@ -87,7 +101,23 @@ class InterventionTest(TestCase):
         TrailFactory.create(paths=[p], name='trail_2')
         infra = InfrastructureFactory.create(paths=[p])
         intervention = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention.trails, ['<Trail: trail_1>', '<Trail: trail_2>'])
+        self.assertQuerysetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
+
+    def test_paths_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+        self.assertQuerysetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
+
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+        self.assertQuerysetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+        self.assertQuerysetEqual(intervention_course.paths, [], transform=str)
 
     def test_helpers(self):
         """
@@ -127,6 +157,17 @@ class InterventionTest(TestCase):
         self.assertFalse(interv.in_project)
         interv.project = proj
         self.assertTrue(interv.in_project)
+        interv.save()
+        funding = FundingFactory(project=proj, amount=6)
+        clear_internal_user_cache()
+        project_pk = proj.pk
+        funding_pk = funding.pk
+        obj_repr = str(proj)
+        proj.delete(force=True)
+        model_num = ContentType.objects.get_for_model(Funding).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=funding_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()
@@ -227,6 +268,28 @@ class InterventionTest(TestCase):
         name = interv.target.name
         self.assertIn(name, interv.target_display)
 
+    def test_target_deleted_display_previous_object(self):
+        course = CourseFactory.create()
+        site = SiteFactory.create()
+        interv_course = InterventionFactory.create(target=course)
+        interv_site = InterventionFactory.create(target=site)
+        course.delete()
+        site.delete()
+
+        self.assertIn('Deleted', interv_course.target_display)
+        self.assertIn('Deleted', interv_site.target_display)
+
+    def test_target_deleted_display_csv_previous_object(self):
+        course = CourseFactory.create()
+        site = SiteFactory.create()
+        interv_course = InterventionFactory.create(target=course)
+        interv_site = InterventionFactory.create(target=site)
+        course.delete()
+        site.delete()
+
+        self.assertIn('Deleted', interv_course.target_csv_display)
+        self.assertIn('Deleted', interv_site.target_csv_display)
+
     def test_total_cost(self):
         interv = InfrastructureInterventionFactory.create(
             material_cost=1,
@@ -247,3 +310,54 @@ class InterventionTest(TestCase):
         ManDayFactory(nb_days=3, job=job, intervention=interv)
         interv.jobs.add(job)
         self.assertEqual(interv.jobs_display, f'{interv.jobs.first().job}, Worker')
+
+    def test_target_display_none(self):
+        infra = InterventionFactory.create(target=None, target_id=None, target_type=None)
+        self.assertEqual(infra.target_display, '-')
+
+    def test_target_display_csv_none(self):
+        interv = InterventionFactory.create(target=None)
+        self.assertIn('-', interv.target_csv_display)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class ProjectModelTest(TestCase):
+    def test_paths_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+
+        project = ProjectFactory.create()
+        project.interventions.add(intervention_infra)
+        project.interventions.add(intervention_blade)
+        project.interventions.add(intervention_course)
+        self.assertQuerysetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
+
+    def test_trails_property(self):
+        p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        infra = InfrastructureFactory.create(paths=[p_infra])
+        intervention_infra = InterventionFactory.create(target=infra)
+        TrailFactory.create(paths=[p_infra], name='trail_1')
+        TrailFactory.create(paths=[p_infra], name='trail_2')
+        p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
+        TrailFactory.create(paths=[p_signage], name='trail_signage')
+        signage = SignageFactory.create(paths=[p_signage])
+        blade = BladeFactory.create(signage=signage)
+        intervention_blade = InterventionFactory.create(target=blade)
+
+        course = CourseFactory.create()
+        intervention_course = InterventionFactory.create(target=course)
+
+        project = ProjectFactory.create()
+        project.interventions.add(intervention_infra)
+        project.interventions.add(intervention_blade)
+        project.interventions.add(intervention_course)
+        self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)

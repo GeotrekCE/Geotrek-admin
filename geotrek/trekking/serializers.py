@@ -363,7 +363,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
     structure = StructureSerializer()
 
     class Meta:
-        model = trekking_models.Trek
+        model = trekking_models.POI
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         fields = (
             'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure'
@@ -371,7 +371,7 @@ class POIAPISerializer(PublishableSerializerMixin, PicturesSerializerMixin, Zoni
             PicturesSerializerMixin.Meta.fields
 
 
-class POIAPIGeojsonSerializer(GeoFeatureModelSerializer, POIAPISerializer):
+class POIAPIGeojsonSerializer(DynamicFieldsMixin, GeoFeatureModelSerializer, POIAPISerializer):
     # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
@@ -388,7 +388,7 @@ class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer)
 
 class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='name_display')
-    type = serializers.CharField(source='name_display')
+    type = serializers.CharField(source='type_display')
 
     class Meta:
         model = trekking_models.Service

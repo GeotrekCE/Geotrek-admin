@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 16:02+0000\n"
+"POT-Creation-Date: 2022-12-16 09:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,18 @@ msgstr ""
 
 msgid "Maintenance"
 msgstr "Maintenance"
+
+msgid "length 3d"
+msgstr "Longueur 3D"
+
+msgid "ascent"
+msgstr ""
+
+msgid "descent"
+msgstr ""
+
+msgid "slope"
+msgstr ""
 
 msgid "Infrastructure"
 msgstr "Aménagement"
@@ -335,3 +347,6 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
+
+msgid "Start year is after end year"
+msgstr "L'année de début est après l'année de fin"

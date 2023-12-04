@@ -92,6 +92,11 @@
                 ["change_geom_landedge", "land", "landedge"],
                 ["delete_landedge", "land", "landedge"],
                 ["export_landedge", "land", "landedge"],
+                ["add_circulationedge", "land", "circulationedge"],
+                ["change_circulationedge", "land", "circulationedge"],
+                ["change_geom_circulationedge", "land", "circulationedge"],
+                ["delete_circulationedge", "land", "circulationedge"],
+                ["export_circulationedge", "land", "circulationedge"],
                 ["add_physicaledge", "land", "physicaledge"],
                 ["change_physicaledge", "land", "physicaledge"],
                 ["change_geom_physicaledge", "land", "physicaledge"],
@@ -114,8 +119,13 @@
                 ["add_landtype", "land", "landtype"],
                 ["change_landtype", "land", "landtype"],
                 ["delete_landtype", "land", "landtype"],
-
-
+                ["add_circulationtype", "land", "circulationtype"],
+                ["change_circulationtype", "land", "circulationtype"],
+                ["delete_circulationtype", "land", "circulationtype"],
+                ["add_authorizationtype", "land", "authorizationtype"],
+                ["change_authorizationtype", "land", "authorizationtype"],
+                ["delete_authorizationtype", "land", "authorizationtype"],
+                
 
                 ["add_intervention", "maintenance", "intervention"],
                 ["change_intervention", "maintenance", "intervention"],
@@ -173,6 +183,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
@@ -274,6 +285,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
@@ -344,6 +356,11 @@
                 ["change_geom_landedge", "land", "landedge"],
                 ["delete_landedge", "land", "landedge"],
                 ["export_landedge", "land", "landedge"],
+                ["add_circulationedge", "land", "circulationedge"],
+                ["change_circulationedge", "land", "circulationedge"],
+                ["change_geom_circulationedge", "land", "circulationedge"],
+                ["delete_circulationedge", "land", "circulationedge"],
+                ["export_circulationedge", "land", "circulationedge"],
                 ["add_physicaledge", "land", "physicaledge"],
                 ["change_physicaledge", "land", "physicaledge"],
                 ["change_geom_physicaledge", "land", "physicaledge"],
@@ -381,6 +398,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
@@ -428,6 +446,11 @@
                 ["change_geom_landedge", "land", "landedge"],
                 ["delete_landedge", "land", "landedge"],
                 ["export_landedge", "land", "landedge"],
+                ["add_circulationedge", "land", "circulationedge"],
+                ["change_circulationedge", "land", "circulationedge"],
+                ["change_geom_circulationedge", "land", "circulationedge"],
+                ["delete_circulationedge", "land", "circulationedge"],
+                ["export_circulationedge", "land", "circulationedge"],
                 ["add_physicaledge", "land", "physicaledge"],
                 ["change_physicaledge", "land", "physicaledge"],
                 ["change_geom_physicaledge", "land", "physicaledge"],
@@ -465,6 +488,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
@@ -557,6 +581,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 
@@ -672,6 +697,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 

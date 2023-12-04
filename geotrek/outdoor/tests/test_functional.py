@@ -17,6 +17,15 @@ class SiteViewsTests(GeotrekAPITestCase, CommonTest):
     }
     extra_column_list = ['orientation', 'ratings', 'period']
 
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
+
     def get_expected_json_attrs(self):
         return {
             'accessibility': 'Accessible',
@@ -114,6 +123,15 @@ class CourseViewsTests(GeotrekAPITestCase, CommonTest):
         'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
     }
     extra_column_list = ['equipment', 'ratings', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {

@@ -1,0 +1,40 @@
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": {
+        "fr": "VTT",
+        "en": "Mountain Bike",
+        "es": null,
+        "it": null
+      },
+      "order": 3,
+      "pictogram": "https://foo.fr/media/upload/practice-mountainbike.svg"
+    },
+    {
+      "id": 3,
+      "name": {
+        "fr": "Cheval",
+        "en": "Horse",
+        "es": null,
+        "it": null
+      },
+      "order": 4,
+      "pictogram": "https://foo.fr/media/upload/practice-horse.svg"
+    },
+    {
+      "id": 4,
+      "name": {
+        "fr": "Pédestre",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "order": 1,
+      "pictogram": "https://foo.fr/media/upload/practice-foot.svg"
+    }
+  ]
+}

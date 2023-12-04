@@ -1,25 +1,13 @@
 [
 {
-    "model": "auth.group",
-    "pk": 8,
-    "fields": {
-        "name": "Outdoor",
-        "permissions": [
-            ["add_site", "outdoor", "site"],
-            ["change_site", "outdoor", "site"],
-            ["delete_site", "outdoor", "site"],
-            ["read_site", "outdoor", "site"],
-            ["export_site", "outdoor", "site"]
-        ]
-    }
-},
-{
     "model": "outdoor.sector",
     "pk": 1,
     "fields": {
         "name": "Eau vive",
         "name_fr": "Eau vive",
-        "name_en": "White water"
+        "name_en": "White water",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -28,7 +16,9 @@
     "fields": {
         "name": "Escalade",
         "name_fr": "Escalade",
-        "name_en": "Climbing"
+        "name_en": "Climbing",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -38,7 +28,9 @@
         "sector": 1,
         "name": "Canoë-kayak",
         "name_fr": "Canoë-kayak",
-        "name_en": "Canoe-kayak"
+        "name_en": "Canoe-kayak",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -47,7 +39,9 @@
     "fields": {
         "name": "Via ferrata",
         "name_fr": "Via ferrata",
-        "name_en": "Via ferrata"
+        "name_en": "Via ferrata",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -56,7 +50,9 @@
     "fields": {
         "name": "Vol libre",
         "name_fr": "Vol libre",
-        "name_en": "Hang-gliding"
+        "name_en": "Hang-gliding",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -66,7 +62,9 @@
         "sector": 1,
         "name": "Canyoning",
         "name_fr": "Canyoning",
-        "name_en": "Canyoning"
+        "name_en": "Canyoning",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -76,7 +74,9 @@
         "name": "Classe",
         "name_fr": "Classe",
         "name_en": "Class",
-        "practice": 2
+        "practice": 2,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -87,7 +87,9 @@
         "name_fr": "Caractère vertical",
         "name_en": null,
         "order": 1,
-        "practice": 6
+        "practice": 6,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -98,7 +100,9 @@
         "name_fr": "Caractère aquatique",
         "name_en": null,
         "order": 2,
-        "practice": 6
+        "practice": 6,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -109,7 +113,9 @@
         "name_fr": "Engagement / envergure",
         "name_en": null,
         "order": 3,
-        "practice": 6
+        "practice": 6,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -119,7 +125,9 @@
         "name": "Niveau",
         "name_fr": "Niveau",
         "name_en": null,
-        "practice": 4
+        "practice": 4,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -129,7 +137,9 @@
         "name": "Cotation",
         "name_fr": "Cotation",
         "name_en": null,
-        "practice": 1
+        "practice": 1,
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -144,7 +154,9 @@
         "description_fr": "Facile (Passage libre). Cours régulier, vagues régulières, petits remous. Obstacles simples.",
         "description_en": "",
         "order": 1,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -159,7 +171,9 @@
         "description_fr": "Moyennement difficile (Passage libre). Cours irrégulier, vagues irrégulières, remous moyens, faibles tourbillons et rapides. Obstacles simples dans le courant, petits seuils.",
         "description_en": "",
         "order": 2,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -174,7 +188,9 @@
         "description_fr": "Difficile (Passage libre). Vagues hautes irrégulières, gros remous, tourbillons et rapides. Blocs de roche, petites chutes, obstacles divers dans le courant.",
         "description_en": "",
         "order": 3,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -189,7 +205,9 @@
         "description_fr": "Très difficile (Passage non visible d’avance, reconnaissance généralement nécessaire). Grosses vagues continuelles, rouleaux puissants et rapides. Roches obstruant le courant, chutes plus élevées avec appels (Considérés comme environnement spécifique).",
         "description_en": "",
         "order": 4,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -204,7 +222,9 @@
         "description_fr": "Extrêmement difficile (Reconnaissance inévitable). Vagues, tourbillons, rapides à l’extrême. Passages étroits, chutes très élevées avec entrées et sorties difficiles (Considérés comme environnement spécifique).",
         "description_en": "",
         "order": 5,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -219,7 +239,9 @@
         "description_fr": "Limite de navigabilité (Généralement impossible). Éventuellement navigable selon le niveau des eaux. Grands risques (Considérés comme environnement spécifique).",
         "description_en": "",
         "order": 6,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -234,7 +256,9 @@
         "description_fr": "Absence d’obstacle vertical obligatoire. Absence de rappe et de main courante, corde et baudrier inutiles pour la progression normale en sécurité. Absence de passage d’escalade/désescalade.",
         "description_en": "",
         "order": 1,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -249,7 +273,9 @@
         "description_fr": "Rappel(s) d’accès et d’exécution facile, inf. ou égal à 10 m. Main courante de sécurité. Passage d'escalade/désescalade facile et peu exposé.",
         "description_en": "",
         "order": 2,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -264,7 +290,9 @@
         "description_fr": "Verticales à faible débit. Réception en vasque avec nage en eau calme. Rappels d’accès et d’exécution simple, inf. ou égal à 30 m, séparés, au minimum, par des paliers permettant le regroupement. Main courante de progression facile. « Marche » technique qui nécessite une attention particulière (pose des appuis précis) et une recherche d’itinéraire sur terrain pouvant être glissant ou instable ou accidenté ou encombré ou dans l’eau. Passages d'escalade/désescalade (jusqu’au 3c), peu exposés, pouvant nécessiter l'usage d'une corde.",
         "description_en": "",
         "order": 3,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -279,7 +307,9 @@
         "description_fr": "Verticales de débit faible à moyen pouvant commencer à poser des problèmes de déséquilibre ou de blocage. Rappel (s) d’accès difficile et/ou sup. à 30 m. Enchaînement de rappels en paroi avec relais confortables. Présence de frottements de corde. Main courante de progression complexe, rappel ou bas du rappel non visible du départ, réception en vasque avec mouvements d'eau. Passages d'escalade / désescalade jusqu’au 4c ou A0, exposés et/ou nécessitant l’usage des techniques d’assurage et de progression.",
         "description_en": "",
         "order": 4,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -294,7 +324,9 @@
         "description_fr": "Verticales de débit moyen à fort, franchissement difficile nécessitant une gestion de la trajectoire et/ou de l’équilibre. Enchaînement de rappels en paroi avec relais aériens. Franchissement de vasque suspendue déversante durant la descente. Support glissant ou présence d’obstacle. Désinstallation de la corde difficile (en position de nage, etc.) Passages d'escalade / désescalade exposés, jusqu’au 5c ou A1.",
         "description_en": "",
         "order": 5,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -309,7 +341,9 @@
         "description_fr": "Verticales de débit très fort à extrêmement fort. Cascade très consistante. Franchissement extrêmement difficile nécessitant l’anticipation et la gestion spécifique de la corde, de la trajectoire, de l’équilibre, des appuis et du rythme. Passages d'escalade / désescalade exposés, au-­dessus de 6a ou A2. Visibilité limitée et obstacles fréquents. Passage possible en fin de rappel ou en cours de rappel dans une (des) vasque(s) avec mouvements d’eau puissants. Contrôle de la respiration : passage(s) en apnée.",
         "description_en": "",
         "order": 7,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -324,7 +358,9 @@
         "description_fr": "Verticales de débit fort à très fort. Cascade consistante. Franchissement très difficile, nécessitant la gestion efficace de la trajectoire et/ou de l’équilibre. Installation de relais difficile : mise en place délicate d’amarrage naturel (bloc coincé, ...) Accès au départ du rappel difficile (installation de main courante très délicate...) Passage d'escalade / désescalade exposé, jusqu’au 6a ou A2. Support très glissant ou instable. Vasque d’arrivée fortement émulsionnée.",
         "description_en": "",
         "order": 6,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -339,7 +375,9 @@
         "description_fr": "Absence d’eau ou marche en eau calme. Nage facultative. Absence de saut. Absence de toboggan.",
         "description_en": "",
         "order": 1,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -354,7 +392,9 @@
         "description_fr": "Nage ne dépassant pas 10 m de longueur en eau calme. Saut d’exécution simple inf. à 3 m. Toboggan court ou à faible pente.",
         "description_en": "",
         "order": 2,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -369,7 +409,9 @@
         "description_fr": "Nage ne dépassant pas 30 m en eau calme. Progression en courant faible. Saut d’exécution simple de 3 à 5 m. Toboggan long ou à pente moyenne.",
         "description_en": "",
         "order": 3,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -384,7 +426,9 @@
         "description_fr": "Immersion prolongée entraînant une perte calorifique assez importante. Courant moyen. Siphon large de moins d’1m de longueur et/ou de profondeur. Saut d’exécution simple de 5 à 8 m. Saut avec difficulté d'appel, de trajectoire ou de réception inf. à 5 m. Grand toboggan ou à forte pente.",
         "description_en": "",
         "order": 4,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -399,7 +443,9 @@
         "description_fr": "Immersion prolongée en eau froide entraînant une perte calorifique importante. Progression en courant assez fort, pouvant perturber les trajectoires de nage, les bacs, les arrêts ou les reprises de courant. Difficultés obligatoires liées à des phénomènes d'eau vive ponctuels (tourbillons, rappels, marmites, drossages ...) pouvant entraîner un blocage ponctuel du canyoniste. Siphon large et jusqu’à 2 m de longueur et/ou de profondeur. Saut d’exécution simple de 8 à 10 m. Saut avec difficulté d’appel, de trajectoire ou de réception de 5 à 8 m.",
         "description_en": "",
         "order": 5,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -414,7 +460,9 @@
         "description_fr": "Progression en courant fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant difficiles à exécuter. Mouvements d’eau bien marqués (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage assez prolongé du canyoniste. Siphon technique jusqu’à 1 m maxi avec courant éventuel ou cheminement. Siphon large jusqu’à 3 m de profondeur et/ou de longueur.",
         "description_en": "",
         "order": 6,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -429,7 +477,9 @@
         "description_fr": "Progression en courant très fort rendant les trajectoires de nage, les bacs, les arrêts ou les reprises de courant extrêmement difficiles à exécuter. Mouvements d’eau violents (drossages, contre-­‐courant, rappels, vagues, tourbillons ...) pouvant entraîner un blocage prolongé du canyoniste. Siphon de plus de 3m de longueur et/ou de profondeur. Siphon technique et engagé de plus de 1m avec courant ou cheminement ou sans visibilité.",
         "description_en": "",
         "order": 7,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -444,7 +494,9 @@
         "description_fr": "Engagement : possibilité de se mettre hors crue facilement et rapidement. Échappatoires faciles présentes sur toutes les portions du parcours. Envergure : temps de parcours du canyon (approche, descente, retour) inférieur à 2 heures.",
         "description_en": "",
         "order": 1,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -459,7 +511,9 @@
         "description_fr": "Engagement : possibilité de se mettre hors crue en ¼ heure de progression maxi. Échappatoire(s) en ½ heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 2 et 4 heures.",
         "description_en": "",
         "order": 2,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -474,7 +528,9 @@
         "description_fr": "Engagement : possibilité de se mettre hors crue en ½ heure de progression maxi. Échappatoire(s) en 1 heure de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 4 et 8 heures.",
         "description_en": "",
         "order": 3,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -489,7 +545,9 @@
         "description_fr": "Engagement : possibilité de se mettre hors crue en 1 heure de progression maxi. Échappatoire(s) en 2 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 8 heures et 1 jour.",
         "description_en": "",
         "order": 4,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -504,7 +562,9 @@
         "description_fr": "Engagement : possibilité de se mettre hors crue en 2 heures de progression maxi. Échappatoire(s) en 4 heures de progression maxi. Envergure : temps de parcours du canyon (approche, descente, retour) entre 1 et 2 jours.",
         "description_en": "",
         "order": 5,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -519,7 +579,9 @@
         "description_fr": "Engagement : la possibilité de se mettre hors crue peut demander plus de 2 heures de progression. Échappatoire(s) le temps nécessaire pour s’échapper est supérieur à 4 heures de progression. Envergure : temps de parcours du canyon (approche, descente, retour) supérieur à 2 jours.",
         "description_en": "",
         "order": 6,
-        "color": ""
+        "color": "",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -534,7 +596,9 @@
         "description_fr": "- Niveau d’itinéraire le plus facile, souvent conçu pour les enfants, mais peut être tout aussi amusant pour les débutants.\r\n- Il n’y a pas de mouvements difficiles et ce ne sera pas très physique.",
         "description_en": "",
         "order": 1,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -549,7 +613,9 @@
         "description_fr": "- Généralement courtes et n'exigent pas d'engagement important.\r\n- En règle générale leur durée totale (accès, parcours et retour) ne dépasse pas 3 heures.\r\n- Accès et d'un retour facile et relativement court.\r\n- Nécessitent une bonne coordination des mouvements de jambes et de bras.\r\n- Ne présentent pas de passages vraiment athlétiques.\r\n- Bien que ne présentant pas de passages vraiment vertigineux, ils exigent une certaine insensibilité au vide.",
         "description_en": "",
         "order": 2,
-        "color": "#00B050"
+        "color": "#00B050",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -564,7 +630,9 @@
         "description_fr": "- Capacité de fournir un effort modéré, marche d'approche, parcours de la Via Ferrata et retour, durant 4 heures (hors pauses).\r\n- Être complètement indifférent au vide vertigineux.\r\n- Être en mesure de franchir :\r\n - Quelques passages athlétiques verticaux.\r\n - Quelques rares passages surplombants.",
         "description_en": "",
         "order": 3,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -579,7 +647,9 @@
         "description_fr": "- Avoir des capacités physiques définissant les niveaux précédents.\r\n- Être en mesure de fournir un effort important et soutenu (marche d'approche, parcours de la Via Ferrata et retour, durant plusieurs heures (hors pauses).\r\n- Être en mesure de franchir plusieurs passages :\r\n - Très aériens\r\n - Athlétiques et verticaux\r\n - Surplombants",
         "description_en": "",
         "order": 4,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -594,7 +664,9 @@
         "description_fr": "- Avoir les capacités physiques définissant les niveaux précédents\r\n- Avoir en plus, la capacité de franchir des passages exceptionnels (physique et émotionnel).",
         "description_en": "",
         "order": 5,
-        "color": "#000000"
+        "color": "#000000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -609,7 +681,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 301,
-        "color": "#D9D9D9"
+        "color": "#D9D9D9",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -624,7 +698,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 302,
-        "color": "#D9D9D9"
+        "color": "#D9D9D9",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -639,7 +715,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 411,
-        "color": "#D9D9D9"
+        "color": "#D9D9D9",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -654,7 +732,9 @@
         "description_fr": "",
         "description_en": "",
         "order": 421,
-        "color": "#D9D9D9"
+        "color": "#D9D9D9",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -669,7 +749,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 431,
-        "color": "#D9D9D9"
+        "color": "#D9D9D9",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -684,7 +766,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 511,
-        "color": "#00B050"
+        "color": "#00B050",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -699,7 +783,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 521,
-        "color": "#00B050"
+        "color": "#00B050",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -714,7 +800,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 531,
-        "color": "#00B050"
+        "color": "#00B050",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -729,7 +817,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 611,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -744,7 +834,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 612,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -759,7 +851,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 621,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -774,7 +868,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 622,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -789,7 +885,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 631,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -804,7 +902,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 632,
-        "color": "#0070C0"
+        "color": "#0070C0",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -819,7 +919,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 711,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -834,7 +936,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 712,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -849,7 +953,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 721,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -864,7 +970,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 722,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -879,7 +987,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 731,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -894,7 +1004,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 732,
-        "color": "#FFFF00"
+        "color": "#FFFF00",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -909,7 +1021,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 811,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -924,7 +1038,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 812,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -939,7 +1055,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 821,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -954,7 +1072,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 822,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -969,7 +1089,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 831,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -984,7 +1106,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 832,
-        "color": "#FFC000"
+        "color": "#FFC000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -999,7 +1123,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 911,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -1014,7 +1140,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 912,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -1029,7 +1157,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 921,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -1044,7 +1174,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 922,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -1059,7 +1191,9 @@
         "description_fr": null,
         "description_en": null,
         "order": 931,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 },
 {
@@ -1074,6 +1208,8 @@
         "description_fr": null,
         "description_en": null,
         "order": 932,
-        "color": "#FF0000"
+        "color": "#FF0000",
+        "date_update": "2014-02-12T11:21:48.961Z",
+        "date_insert": "2014-02-12T11:21:48.961Z"
     }
 }]

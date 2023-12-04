@@ -83,37 +83,104 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
 
 
+Extra steps
+------------------------------------------
+
+We highly recommend installing an antivirus software to regularly scan uploaded files located under ``/opt/geotrek-admin/var/media/``.
+
+Here is the installation process for `ClamAV <https://www.clamav.net/>`_ :
+
+::
+
+   apt install clamav
+
+Prepare quarantine folder for suspicious files :
+
+::
+
+   mkdir /var/lib/clamav/quarantine/
+   chmod 700 /var/lib/clamav/quarantine/
+
+
+Configure ClamAV via cron, to scan the folder once a day, put suspicious files in quarantine, and raise email alerts, by creating file ``/etc/cron.daily/clamscan`` with the following content :
+
+::
+
+   #!/bin/sh
+
+   nice -n 15 ionice -c 3 clamscan --recursive --allmatch --suppress-ok-results --no-summary --infected --scan-mail=no --log=/var/log/clamav/scan-report.$(date -Iseconds) /opt/geotrek-admin/var/media/ |mail -E -s "ClamAV report for $(hostname)" admin@example.com
+
+   # Cleanup old files in quarantine (> 90 days)
+   find /var/lib/clamav/quarantine/ -type f -mtime +90 -delete
+
+   # Cleanup old scan reports (> 365 days)
+   find /var/log/clamav/ -type f -name "scan-report.*" -mtime +365 -delete
+
+
+Make sure to change alert recepient (``admin@example.com`` above) and make this cron file executable :
+
+::
+
+   chmod 700 /etc/cron.daily/clamscan
+
+If a suspicious file is put in quarantine, you will need to manually delete the corresponding attachment from Geotrek-Admin (since the file for this attachment has moved to the quarantine folder, it will no longer be found).
+
+
 Upgrade
 -------
 
 From Geotrek-admin >= 2.33
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To upgrade the whole server, including Geotrek-admin, run:
+Beforehand you shoud update your system's catalog:
 
 ::
 
    sudo apt-get update
-   sudo apt-get upgrade
 
 If your current version is <= 2.40.1 you should run instead:
 
 ::
 
    sudo apt-get update  --allow-releaseinfo-change
-   sudo apt-get upgrade
 
-To prevent upgrading Geotrek-admin with the whole distribution, you can run:
+To display the installed version and the latest upgradeable version, run:
 
 ::
 
-   sudo apt-mark hold geotrek-admin
+   apt list --all-versions geotrek-admin
 
-To upgrade only Geotrek-admin and its dependencies, run:
+To upgrade only geotrek-admin and its dependencies, run:
 
 ::
 
    sudo apt-get install geotrek-admin
+
+To upgrade geotrek-admin to a **specific version**, run:
+
+::
+
+   sudo apt-get install geotrek-admin=<version>
+
+For instance:
+
+::
+
+   sudo apt-get install geotrek-admin=2.97.4.ubuntu18.04
+
+or
+
+::
+
+   sudo apt-get install geotrek-admin=2.98.0.ubuntu20.04
+
+**Note:** all package versions remain available. Even when not listed with ``apt list``.
+
+Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
+
+::
+
+   sudo apt-mark hold geotrek-admin
 
 
 From Geotrek-admin <= 2.32
@@ -184,6 +251,7 @@ Geotrek-admin requires at least PostGIS 2.5.
 
 If you installed Geotrek-admin on bionic ubuntu with provided install method, you should update your database :
 ::
+
     # Firstly, backup your database (see previous section)
     # install postgresql APT repository
     # (from https://wiki.postgresql.org/wiki/Apt)

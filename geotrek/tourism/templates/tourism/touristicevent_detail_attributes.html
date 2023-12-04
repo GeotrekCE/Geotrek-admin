@@ -18,12 +18,9 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"description_teaser" }}</th>
-            <td>{{ object.description_teaser|safe }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{{ object.description|safe }}</td>
+            <th>{{ object|verbose:"place" }}</th>
+            <td>{% if object.place %}{{ object.place }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"themes" }}</th>
@@ -38,6 +35,14 @@
             <td>{{ object.end_date }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"start_time" }}</th>
+            <td>{{ object.start_time|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"end_time" }}</th>
+            <td>{{ object.end_time|default:"" }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"duration" }}</th>
             <td>{{ object.duration }}</td>
         </tr>
@@ -46,8 +51,20 @@
             <td>{{ object.meeting_point }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"meeting_time" }}</th>
-            <td>{{ object.meeting_time|default:"" }}</td>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{{ object.description_teaser|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"target_audience" }}</th>
+            <td>{{ object.target_audience|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{{ object.practical_info|safe }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"contact" }}</th>
@@ -63,36 +80,36 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"organizer" }}</th>
-            <td>{{ object.organizer }}</td>
+            <td>{% if object.organizer %}{{ object.organizer }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"speaker" }}</th>
             <td>{{ object.speaker }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"target_audience" }}</th>
-            <td>{{ object.target_audience|default:"" }}</td>
-        </tr>
-        <tr>
             <th>{{ object|verbose:"accessibility" }}</th>
             <td>{% if object.accessibility %}{{ object.accessibility|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
-
         </tr>
         <tr>
-            <th>{{ object|verbose:"participant_number" }}</th>
-            <td>{{ object.participant_number }}</td>
+            <th>{{ object|verbose:"bookable" }}</th>
+            <td>{{ object.bookable|yesno:_("Yes,No") }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"booking" }}</th>
             <td>{{ object.booking|safe }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"practical_info" }}</th>
-            <td>{{ object.practical_info|safe }}</td>
+            <th>{{ object|verbose:"capacity" }}</th>
+            <td>{{ object.capacity }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"approved" }}</th>
-            <td>{{ object.approved|yesno:_("yes,no") }}</td>
+            <th>{{ object|verbose:"cancelled" }}</th>
+            <td>{{ object.cancelled|yesno:_("Yes,No") }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"cancellation_reason" }}</th>
+            <td>{{ object.cancellation_reason|safe }}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
@@ -106,14 +123,60 @@
                 {% valuelist object.portal.all %}
             </td>
         </tr>
+
+
+        <tr>
+            <th>{{ object|verbose:"approved" }}</th>
+            <td>{{ object.approved|yesno:_("Yes,No") }}</td>
+        </tr>
+
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}{{ object.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ object.eid }}</td>
+            <td>{% if object.eid %}{{ object.eid|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>
+        <tr>
+            <th>{% trans "Participants" %}</th>
+            <td>
+                {% for participant in object.participants.all %}
+                    {% if forloop.first %}
+                        <table>
+                            <thead>
+                                <th>{% trans "Category" %}</th><th>{% trans "Number" %}</th>
+                            </thead>
+                            <tbody>
+                    {% endif %}
+                            <tr><td>{{ participant.category }}</td><td>{{ participant.count }}</td></tr>
+                    {% if forloop.last %}
+                            <tr class="total"><td>{% trans "Total" %}<td>{{ object.participants_total }}</td></tr>
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"preparation_duration" }}</th>
+            <td>{{ object.preparation_duration }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"intervention_duration" }}</th>
+            <td>{{ object.intervention_duration }}</td>
+        </tr>
+
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

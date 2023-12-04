@@ -4,48 +4,82 @@ import mimetypes
 import os
 import re
 from datetime import timedelta
-from zipfile import is_zipfile, ZipFile
+from zipfile import ZipFile, is_zipfile
 
+import logging
 import redis
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.decorators import permission_required
+from django.contrib.admin.models import CHANGE, LogEntry
+from django.contrib.auth.decorators import (login_required,
+                                            permission_required,
+                                            user_passes_test)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.gis.db.models import Extent, GeometryField
+from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import JsonResponse, Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.db.models.functions import Cast
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
-from django.views.decorators.http import require_POST, require_http_methods
-from django.views.generic import RedirectView, View
-from django.views.generic import TemplateView
+from django.views.defaults import page_not_found
+from django.views.decorators.http import require_http_methods, require_POST
+from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
+from django_large_image.rest import LargeImageFileDetailMixin
+from geotrek.common.filters import HDViewPointFilterSet
+from large_image import config
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
-from mapentity.registry import registry, app_settings
+from mapentity.registry import app_settings, registry
+from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
-from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework import mixins
+from rest_framework import permissions as rest_permissions
+from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
+from geotrek.common.mixins.api import APIViewSet
+from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.parsers import SuricateParser
-from .forms import AttachmentAccessibilityForm, ImportDatasetForm, ImportSuricateForm, ImportDatasetFormWithFile, \
-    SyncRandoForm
-from .mixins.views import MetaMixin, DocumentPortalMixin, DocumentPublicMixin, BookletMixin
-from .models import TargetPortal, AccessibilityAttachment, Theme
-from .permissions import PublicOrReadPermMixin
-from .serializers import ThemeSerializer
+
+from ..altimetry.models import Dem
+from ..core.models import Path
+from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
+                    HDViewPointForm, ImportDatasetForm,
+                    ImportDatasetFormWithFile, ImportSuricateForm,
+                    SyncRandoForm)
+from .mixins.views import (BookletMixin, CompletenessMixin,
+                           DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
+from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
+from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
+from .serializers import (HDViewPointAPIGeoJSONSerializer,
+                          HDViewPointAPISerializer,
+                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
+                          ThemeSerializer)
 from .tasks import import_datas, import_datas_from_web, launch_sync_rando
-from .utils import sql_extent
-from .utils.import_celery import create_tmp_destination, discover_available_parsers
+from .utils import leaflet_bounds
+from .utils.import_celery import (create_tmp_destination,
+                                  discover_available_parsers)
+
+logger = logging.getLogger(__name__)
+
+
+def handler404(request, exception, template_name="404.html"):
+    if "api/v2" in request.get_full_path():
+        logger.warning(f'{request.get_full_path()} has been tried')
+        return JsonResponse({"page": 'does not exist'}, status=404)
+    return page_not_found(request, exception, template_name="404.html")
 
 
 class Meta(MetaMixin, TemplateView):
@@ -132,9 +166,7 @@ class JSSettings(mapentity_views.JSSettings):
         return dictsettings
 
 
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def admin_check_extents(request):
+class CheckExtentsView(LoginRequiredMixin, TemplateView):
     """
     This view allows administrators to visualize data and configured extents.
 
@@ -142,40 +174,37 @@ def admin_check_extents(request):
     to be more admin tools like this one. Move this to a separate Django app and
     style HTML properly.
     """
-    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
-    path_extent = api_bbox(path_extent_native)
-    dem_extent_native = sql_extent(
-        "SELECT ST_Extent(rast::geometry) FROM altimetry_dem;")
-    dem_extent = api_bbox(dem_extent_native)
-    tiles_extent_native = settings.SPATIAL_EXTENT
-    tiles_extent = api_bbox(tiles_extent_native)
-    viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
-    viewport = api_bbox(viewport_native, srid=settings.API_SRID)
+    template_name = 'common/check_extents.html'
 
-    def leafletbounds(bbox):
-        return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+    def get_context_data(self, **kwargs):
+        path_extent_native = Path.include_invisible.aggregate(extent=Extent('geom')) \
+            .get('extent')
+        path_extent = api_bbox(path_extent_native or (0, 0, 0, 0))
+        dem_extent_native = Dem.objects.aggregate(extent=Extent(Cast('rast',
+                                                                     output_field=GeometryField(srid=settings.SRID)))) \
+            .get('extent')
+        dem_extent = api_bbox(dem_extent_native or (0, 0, 0, 0))
+        tiles_extent_native = settings.SPATIAL_EXTENT
+        tiles_extent = api_bbox(tiles_extent_native)
+        viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
+        viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
-    context = dict(
-        path_extent=leafletbounds(path_extent),
-        path_extent_native=path_extent_native,
-        dem_extent=leafletbounds(dem_extent) if dem_extent else None,
-        dem_extent_native=dem_extent_native,
-        tiles_extent=leafletbounds(tiles_extent),
-        tiles_extent_native=tiles_extent_native,
-        viewport=leafletbounds(viewport),
-        viewport_native=viewport_native,
-        SRID=settings.SRID,
-        API_SRID=settings.API_SRID,
-    )
-    return render(request, 'common/check_extents.html', context)
+        return dict(
+            path_extent=leaflet_bounds(path_extent),
+            path_extent_native=path_extent_native,
+            dem_extent=leaflet_bounds(dem_extent) if dem_extent else None,
+            dem_extent_native=dem_extent_native,
+            tiles_extent=leaflet_bounds(tiles_extent),
+            tiles_extent_native=tiles_extent_native,
+            viewport=leaflet_bounds(viewport),
+            viewport_native=viewport_native,
+            SRID=settings.SRID,
+            API_SRID=settings.API_SRID,
+        )
 
-
-class UserArgMixin:
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 def import_file(uploaded, parser, encoding, user_pk):
@@ -187,11 +216,12 @@ def import_file(uploaded, parser, encoding, user_pk):
             zfile = ZipFile(f)
             for name in zfile.namelist():
                 zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
-                if name.endswith('shp'):
-                    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
-                                       module=parser.__module__, encoding=encoding, user=user_pk)
-                    return
-    import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, str(uploaded.name))),
+            filename = os.path.join(destination_dir, f'{os.path.basename(os.path.splitext(f.name)[0])}.shp')
+            if os.path.exists(filename):
+                import_datas.delay(name=parser.__name__, filename=filename,
+                                   module=parser.__module__, encoding=encoding, user=user_pk)
+            return
+    import_datas.delay(name=parser.__name__, filename=os.path.join(destination_dir, str(uploaded.name)),
                        module=parser.__module__, encoding=encoding, user=user_pk)
 
 
@@ -237,7 +267,7 @@ def import_view(request):
 
         if 'import-suricate' in request.POST:
             form_suricate = ImportSuricateForm(choices_suricate, request.POST)
-            if form_suricate.is_valid() and (settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED):
+            if form_suricate.is_valid() and settings.SURICATE_WORKFLOW_ENABLED:
                 parser = SuricateParser()
                 parser.get_statuses()
                 parser.get_activities()
@@ -248,7 +278,7 @@ def import_view(request):
         render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
-    if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
+    if settings.SURICATE_WORKFLOW_ENABLED:
         render_dict['form_suricate'] = form_suricate
 
     return render(request, 'common/import_dataset.html', render_dict)
@@ -313,6 +343,87 @@ class ParametersView(View):
             'geotrek_admin_version': settings.VERSION,
         }
         return JsonResponse(response)
+
+
+class HDViewPointList(MapEntityList):
+    queryset = HDViewPoint.objects.all()
+    filterform = HDViewPointFilterSet
+    columns = ['id', 'title']
+
+
+class HDViewPointViewSet(GeotrekMapentityViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointSerializer
+    geojson_serializer_class = HDViewPointGeoJSONSerializer
+    mapentity_list_class = HDViewPointList
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        if self.format_kwarg == 'geojson':
+            qs = qs.only('id', 'title')
+        return qs
+
+
+class HDViewPointAPIViewSet(APIViewSet):
+    model = HDViewPoint
+    serializer_class = HDViewPointAPISerializer
+    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
+
+    def get_queryset(self):
+        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+
+class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):
+    model = HDViewPoint
+    queryset = HDViewPoint.objects.all().select_related('content_type', 'license')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().content_object.same_structure(self.request.user)
+        return context
+
+
+class HDViewPointCreate(mapentity_views.MapEntityCreate, LoginRequiredMixin):
+    model = HDViewPoint
+    form_class = HDViewPointForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['content_type'] = self.request.GET.get('content_type')
+        kwargs['object_id'] = self.request.GET.get('object_id')
+        return kwargs
+
+
+class HDViewPointUpdate(mapentity_views.MapEntityUpdate, LoginRequiredMixin):
+    queryset = HDViewPoint.objects.all()
+    form_class = HDViewPointForm
+
+
+class HDViewPointDelete(mapentity_views.MapEntityDelete, LoginRequiredMixin):
+    model = HDViewPoint
+
+    def get_success_url(self):
+        return self.get_object().content_object.get_detail_url()
+
+
+class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
+    model = HDViewPoint
+    form_class = HDViewPointAnnotationForm
+    template_name_suffix = '_annotation_form'
+
+
+class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
+
+    def __init__(self, **kwargs):
+        # Initial value is r'(^[^.]*|\.(yml|yaml|json|png|svs))$ which prevents from processing PNGs
+        config.setConfig('source_vips_ignored_names', r'(^[^.]*|\.(yml|yaml|json|svs))$')
+        super().__init__(**kwargs)
+
+    queryset = HDViewPoint.objects.all()
+    serializer_class = HDViewPointAPISerializer
+    permission_classes = [RelatedPublishedPermission]
+    # for `django-large-image`: the name of the image FileField on your model
+    FILE_FIELD_NAME = 'picture'
 
 
 @login_required
@@ -440,51 +551,58 @@ class ServeAttachmentAccessibility(View):
 
 @require_POST
 @permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def add_attachment_accessibility(request, app_label, model_name, pk,
                                  attachment_form=AttachmentAccessibilityForm,
                                  extra_context=None):
     model = apps.get_model(app_label, model_name)
     obj = get_object_or_404(model, pk=pk)
-
-    form = attachment_form(request, request.POST, request.FILES, object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Add attachment %s'),
-                                   _('Your attachment was uploaded.'),
-                                   extra_context)
+    if obj.same_structure(request.user):
+        form = attachment_form(request, request.POST, request.FILES, object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Add attachment %s'),
+                                       _('Your attachment was uploaded.'),
+                                       extra_context)
+    else:
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @require_http_methods(["GET", "POST"])
 @permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def update_attachment_accessibility(request, attachment_pk,
                                     attachment_form=AttachmentAccessibilityForm,
                                     extra_context=None):
     attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = attachment.content_object
-    if request.method == 'POST':
-        form = attachment_form(
-            request, request.POST, request.FILES,
-            instance=attachment,
-            object=obj)
+    if obj.same_structure(request.user):
+        if request.method == 'POST':
+            form = attachment_form(
+                request, request.POST, request.FILES,
+                instance=attachment,
+                object=obj)
+        else:
+            form = attachment_form(
+                request,
+                instance=attachment,
+                object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Update attachment %s'),
+                                       _('Your attachment was updated.'),
+                                       extra_context)
     else:
-        form = attachment_form(
-            request,
-            instance=attachment,
-            object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Update attachment %s'),
-                                   _('Your attachment was updated.'),
-                                   extra_context)
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
-    can_delete = (request.user.has_perm(
+    can_delete = ((request.user.has_perm(
         settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
+        and obj.same_structure(request.user))
     if can_delete:
         g.delete()
         if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:

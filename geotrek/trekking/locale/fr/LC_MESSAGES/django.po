@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 10:07+0000\n"
+"POT-Creation-Date: 2023-01-31 11:17+0100\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -35,6 +35,9 @@ msgstr "Pratiques"
 
 msgid "Trekking"
 msgstr "Itinéraire"
+
+msgid "Provider"
+msgstr "Fournisseur"
 
 msgid "Trek"
 msgstr "Itinéraire"
@@ -485,6 +488,19 @@ msgstr ""
 "Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à '2h30', "
 "'2,5' ou '2.5'"
 
+msgid "You need to add a network of paths before importing POIs"
+msgstr "Tu as besoin d'ajouter un réseau de tronçons avant d'importer des POIs"
+
+msgid "Invalid geometry"
+msgstr "Geométrie invalide"
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
+msgstr ""
+"Le type de géométrie du champ '{src}' est invalide. Il devrait être un "
+"Point, pas {geom_type}"
+
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -500,6 +516,30 @@ msgstr ""
 "Le type de géométrie du champ '{src}' est invalide. Il devrait être "
 "LineString, pas {geom_type}"
 
+#, python-brace-format
+msgid ""
+"Trying to retrieve children for missing trek : could not find trek with UUID "
+"{key}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"One trek has not be generated for {trek_parent_instance[0].name} : could not "
+"find trek with UUID {child}"
+msgstr ""
+
+msgid ""
+"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+msgstr ""
+
+#, python-format
+msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
+msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
+
+msgid ""
+"The geometry cannot be converted to a single continuous LineString feature"
+msgstr "La géométrie ne peut pas être convertie en une unique feature continue de type LineString"
+
 #. Translators: This is a slug (without space, accent or special char)
 msgid "itinerancy"
 msgstr "itinerance"
@@ -509,6 +549,9 @@ msgstr "Itinérance"
 
 msgid "Hike"
 msgstr "Randonnée"
+
+msgid "Attached files"
+msgstr ""
 
 msgid "Attributes"
 msgstr "Informations"

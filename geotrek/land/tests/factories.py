@@ -35,6 +35,28 @@ class LandEdgeFactory(TopologyFactory):
     land_type = factory.SubFactory(LandTypeFactory)
 
 
+class CirculationTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.CirculationType
+
+    name = factory.Sequence(lambda n: "CirculationType %s" % n)
+
+
+class AuthorizationTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AuthorizationType
+
+    name = factory.Sequence(lambda n: "AuthorizationType %s" % n)
+
+
+class CirculationEdgeFactory(TopologyFactory):
+    class Meta:
+        model = models.CirculationEdge
+
+    circulation_type = factory.SubFactory(CirculationTypeFactory)
+    authorization_type = factory.SubFactory(AuthorizationTypeFactory)
+
+
 class CompetenceEdgeFactory(TopologyFactory):
     class Meta:
         model = models.CompetenceEdge

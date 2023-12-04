@@ -48,7 +48,11 @@ fi
 mkdir -p /opt/geotrek-admin/var/conf/extra_static || true
 mkdir -p /opt/geotrek-admin/var/log || true
 mkdir -p /opt/geotrek-admin/var/media/upload || true
+mkdir -p /opt/geotrek-admin/var/cache/sessions || true
+mkdir -p /opt/geotrek-admin/var/cache/api_v2 || true
+mkdir -p /opt/geotrek-admin/var/cache/fat || true
 mkdir -p /opt/geotrek-admin/var/pid || true
+mkdir -p /opt/geotrek-admin/var/mobile || true
 chown -R geotrek.geotrek /opt/geotrek-admin/var || true
 
 # Create database (only on a new install)
@@ -113,10 +117,13 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	geotrek loaddata -v0 minimal || true
 	geotrek loaddata -v0 cirkwi || true
 	geotrek loaddata -v0 basic || true
+	geotrek loaddata -v0 licenses || true
+	geotrek loaddata -v0 circulations || true
 	for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
 		cd $dir > /dev/null
 		cp -r * /opt/geotrek-admin/var/media/upload/
 	done
+	chown --recursive geotrek:geotrek /opt/geotrek-admin/var/media/upload/*
 fi
 
 echo "Reload" >&2

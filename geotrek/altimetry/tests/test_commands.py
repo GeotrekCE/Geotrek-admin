@@ -1,7 +1,8 @@
 import os
 from io import StringIO
-from unittest import mock
+from unittest import mock, skipIf
 
+from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command, CommandError
 from django.test import TransactionTestCase
@@ -11,6 +12,8 @@ from geotrek.altimetry.models import Dem
 
 from geotrek.core.models import Path
 from geotrek.core.tests.factories import PathFactory
+from geotrek.trekking.models import Trek
+from geotrek.trekking.tests.factories import TrekFactory
 
 from django.contrib.gis.geos import LineString
 
@@ -44,11 +47,14 @@ class CommandLoadDemTest(TransactionTestCase):
         value = dems.first()
         self.assertAlmostEqual(value.int, 343.600006103516)
 
-    def test_success_without_replace_update_altimetry(self):
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_success_without_replace_update_altimetry_ds(self):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         self.path = PathFactory.create(geom=LineString((605600, 6650000), (605900, 6650010), srid=2154))
-        call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
+        trek = TrekFactory.create(paths=[self.path], published=False)
+        with self.assertNumQueries(8):  # 5 for loaddem initial + path + outdoor (2)
+            call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
         self.assertIn('Updating 3d geometries.', output_stdout.getvalue())
@@ -57,6 +63,24 @@ class CommandLoadDemTest(TransactionTestCase):
         self.assertAlmostEqual(value.int, 343.600006103516)
         path = Path.objects.get(pk=self.path.pk)
         self.assertAlmostEqual(path.geom_3d.coords[-1][-1], 188)
+        trek = Trek.objects.get(pk=trek.pk)
+        self.assertAlmostEqual(trek.geom_3d.coords[-1][-1], 188)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_success_without_replace_update_altimetry_nds(self):
+        output_stdout = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        self.trek = TrekFactory.create(geom=LineString((605600, 6650000), (605900, 6650010), srid=2154))
+        with self.assertNumQueries(22):  # 5 for loaddem initial + 17 with selects and update geom
+            call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
+        self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
+        self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
+        self.assertIn('Updating 3d geometries.', output_stdout.getvalue())
+        dems = Dem.objects.all().annotate(int=RasterValue('rast', Point(x=605600, y=6650000, srid=2154)))
+        value = dems.first()
+        self.assertAlmostEqual(value.int, 343.600006103516)
+        trek = Trek.objects.get(pk=self.trek.pk)
+        self.assertAlmostEqual(trek.geom_3d.coords[-1][-1], 188)
 
     def test_fail_table_altimetry_dem(self):
         """ DEM data already exist """

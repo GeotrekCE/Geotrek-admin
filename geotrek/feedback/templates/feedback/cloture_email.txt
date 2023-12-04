@@ -1,0 +1,9 @@
+{% load i18n l10n feedback_tags %}
+{% autoescape off %}
+
+{% app_title as app_title %}
+{% trans "A report on" %} {{ app_title }} {% trans "has to be marked as resolved, since the corresponding intervention was completed" %} :
+{% trans "Report" %} {% if report.eid|length %}{{report.eid}}{%else%}{{report.id}}{%endif%}
+    https://{{report.full_url}}
+
+{% endautoescape %}

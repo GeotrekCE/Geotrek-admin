@@ -8,8 +8,7 @@ from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, Restric
 
 class ZoningPropertiesMixinTest(TestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
                          '200000 300000)))'
         cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((900000 300000, 1100000 300000, 1100000 1200000, 900000 1200000, ' \
@@ -18,7 +17,7 @@ class ZoningPropertiesMixinTest(TestCase):
         cls.district = DistrictFactory.create(geom=cls.geom_1_wkt)
         cls.area = RestrictedAreaFactory.create(geom=cls.geom_1_wkt)
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
         if settings.TREKKING_TOPOLOGY_ENABLED:
             self.trek = TrekFactory.create(paths=[self.path], published=False)

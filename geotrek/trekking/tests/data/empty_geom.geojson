@@ -1,0 +1,13 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"NAME": "Nom", "TYPE": "équipement"},
+      "geometry": {
+        "src": "2154",
+        "type": "Point"
+      }
+    }
+  ]
+}

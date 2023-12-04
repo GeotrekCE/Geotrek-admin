@@ -72,6 +72,15 @@ class PathFormTest(TestCase):
         self.assertIsInstance(form.fields['name'].widget, HiddenInput)
         self.assertIsInstance(form.fields['departure'].widget, HiddenInput)
 
+    def test_invalid_geom_path(self):
+        user = UserFactory()
+        # Just intersecting
+        form1 = PathForm(
+            user=user,
+            data={'geom': '{"geom": "LINESTRING(2.5 45.5, 2.5 45.5)", "snap": [null, null]}'}
+        )
+        self.assertFalse(form1.is_valid(), str(form1.errors))
+
 
 class TrailFormTest(TestCase):
 

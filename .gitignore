@@ -25,6 +25,8 @@ docs/_build/
 *.egg-info/
 /node_modules/
 /salt.cfg
+*.swp
+*.swo
 
 /sync_trek/
 
@@ -57,3 +59,4 @@ docs/_build/
 /debian/geotrek-admin.prerm.debhelper
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
+/dpkg/

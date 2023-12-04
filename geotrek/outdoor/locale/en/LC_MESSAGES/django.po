@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 17:18+0000\n"
+"POT-Creation-Date: 2023-08-28 07:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,9 @@ msgid "Sector"
 msgstr ""
 
 msgid "Manager"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "Orientation"
@@ -229,9 +232,6 @@ msgstr ""
 msgid "Sites"
 msgstr ""
 
-msgid "Parcours"
-msgstr ""
-
 msgid "Treks"
 msgstr ""
 
@@ -328,9 +328,6 @@ msgstr ""
 msgid "Powered by geotrek.fr"
 msgstr ""
 
-msgid "Attribution"
-msgstr ""
-
 msgid "Useful information"
 msgstr ""
 
@@ -340,7 +337,10 @@ msgstr ""
 msgid "All useful information"
 msgstr ""
 
-msgid "Advices"
+msgid "On your path..."
+msgstr ""
+
+msgid "Attribution"
 msgstr ""
 
 msgid "Add a course"
@@ -352,7 +352,39 @@ msgstr ""
 msgid "Add a brother site"
 msgstr ""
 
+#, python-format
+msgid ""
+"You can't delete <strong>%(object)s</strong> because it has child outdoor "
+"sites associated with it. Modify or delete these child outdoor sites before "
+"proceeding."
+msgstr ""
+
+msgid "Child outdoor sites linked to this site"
+msgstr ""
+
+msgid "Child outdoor courses linked to this site"
+msgstr ""
+
+#, python-format
+msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+msgstr ""
+
+msgid "Yes, delete"
+msgstr ""
+
+msgid "No, back to edit view"
+msgstr ""
+
+msgid "Attached files"
+msgstr ""
+
 msgid "Parents"
+msgstr ""
+
+msgid "Published"
+msgstr ""
+
+msgid "Advices"
 msgstr ""
 
 msgid "Invalid geometry value."

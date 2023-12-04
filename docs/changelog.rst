@@ -2,18 +2,715 @@
 CHANGELOG
 =========
 
-2.86.0+dev (XXXX-XX-XX)
+2.101.4+dev (XXXX-XX-XX)
+------------------------
+
+**New features**
+
+-Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+
+**Improvements**
+
+- Add rules fixture on sensitive area (#3470)
+
+**Documentation**
+
+- Improve documentation for database restore
+
+**Bug fixes**
+
+- Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
+
+
+2.101.4     (2023-11-15)
+------------------------
+
+**Bug fixes**
+
+- Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
+- Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
+- Fix cannot click on objects after customizing map styles (#3800)
+- Fix profile elevation PNG generation by using cairosvg instead of convertit (#3833)
+
+**Documentation**
+
+- Improve help and doc for the `loadinfrastructure` command
+
+
+2.101.3     (2023-10-26)
+------------------------
+
+**Bug fixes**
+
+- Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
+- Fix provider choices in list filter forms
+
+2.101.2     (2023-10-17)
+------------------------
+
+**Bug fixes**
+
+- Fix Aggregator fails when updating Tour steps order (#3793)
+- Fix services list display error (refs ##3795)
+
+
+2.101.1     (2023-10-06)
+------------------------
+
+**Bug fixes**
+
+- POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
+
+
+2.101.0     (2023-10-05)
+------------------------
+
+**New features**
+
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
+
+**Bug fixes**
+
+- Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
+- Allow to load a signage with the year set to None, raise error if set to NaN (#3611)
+- Fix filters on Intervention exports (resolve #3749)
+- Fix cities display on string (refs #3585)
+
+**Improvements**
+
+- Add organizer_id on TouristicEvent endpoint (#3587)
+- Sort API V2 by begin date by default on touristic events (#3597)
+
+**Maintenance**
+
+- Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+- Refactor code for accessibility attachments
+
+**Documentation**
+
+- Add new contributors to the authors list in documentation
+- Reorganize settings section (related to PR #3669)
+- Update WYSIWYG link to help user when creating labels
+
+
+2.100.2     (2023-09-12)
+------------------------
+
+**Improvements**
+
+- Remove 'review' field on ServiceType (#1669)
+
+**Documentation**
+
+- Update loading_data section to add information about MNT values that needs to be integer (#1891)
+- Add details and template for the pull requests process
+- Update documentation fr translation files
+- Uniformize documentation section
+- Move user management section to user manual (#3709)
+
+**CI**
+
+- Reorganize generated release notes
+
+**Bug fixes**
+
+- Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
+- Increase length size of label on TouristicEventOrganizer model to fix migrations problems (#3719)
+
+
+2.100.1      (2023-09-05)
+-------------------------
+
+**Documentation**
+
+- Replace broken link
+
+**Improvements**
+
+- Add rules data on ``v_sensitivearea`` view  (#3613)
+
+**Clean**
+
+- Remove unused folder 'bulkimport' from project (#3673)
+
+
+2.100.0    (2023-09-05)
+-----------------------
+
+**DO NOT USE**
+
+**Bug fixes**
+
+- Fix: unable to search within a list of services (#3521)
+- Fix: Unpublish trek in all languages when path is deleted (#1321)
+- Fix: duplication on sites now does not duplicate children sites (#3665)
+
+**New features**
+
+- Filter trek and outdoor site labels according to whether they are published or not (#3529)
+- Respond 404 JSON if page not found in API v2
+
+**Improvements**
+
+- Filter by multiple structures on Blades list (#3646)
+- Add a multiselect to filter the Blades by more than one manager
+- Filter by end date by default on touristic events in APIv2 (#3597)
+- Add model LinePictogram for each line (#3327)
+- Create Organizer model for touristic events, configurable in admin site (#3625)
+- Improve CSS of the altitude profile of altimetry (#3657)
+- Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
+- Serve GeoJS script locally
+- To delete parent outdoor sites you must first delete their children (#3151)
+
+
+**Documentation**
+
+- Add configuration file for readthedocs
+- Update architecture schema
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
+
+
+2.99.0     (2023-07-18)
+-----------------------
+
+**New features**
+
+- Add field ``access`` to Signage and Infrastructure models (#3605)
+- Enable filtering lists by objects IDs on APIv2 (#3458)
+- Add information desks link on Treks with AggregatorParsers
+- Add filter by manager to Blades module
+- Add filter "Published" to outdoor course and outdoor site (#2810)
+- Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
+- Make signage blade lines text optional (#3326)
+- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
+
+
+**Improvements**
+
+- Published by language depending on each portals and languages.
+- Use default value with parsers when no value is found
+- Improve filter popover (#2968)
+- Add a scroll bar into filter form and module list (#2849)
+- In projects, start year must be before end year (#3567)
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
+
+
+2.98.1     (2023-05-30)
+-----------------------
+
+**Bug fixes**
+
+- Fix: Remove user group creation in Outdoor fixture (#3524)
+- Fix: Configure nginx to invalidate mobile cache on language change
+- Fix: service pictograms' URLs are made absolute in the API output of Trek descriptions (#3321)
+- Fix: APIDAE Events parser now handles integer values for capacity (`#3573 <https://github.com/GeotrekCE/Geotrek-admin/issues/3573>`_)
+- Fix: Configure `large_image` to use `libvips` even for PNG images (fixes HD Views for PNGs)
+- Fix: Deleting signages must also delete their blades
+
+**Maintenance**
+
+- Upgrade `django-large-image` and `pip-tools`
+
+**Improvements**
+
+- Improve cascading deletions logic, and log them to LogEntry model to maintain history of deletions
+
+
+2.98.0     (2023-03-27)
+-----------------------
+
+**Bug fixes**
+
+- Fix: trekparser allowed to create trek with other geometry than linestrings
+- Fix: do not prevent activity mappings overriding in subclasses of APIDAE Trek parser
+- Fix permissions bypass structure was always needed on accessibility attachments (#3396)
+- Fix default pictogram for mountainbike practice (it was blurry on mobile apps)
+- Fix: `delete=True` mode now works for APIDAE Trek parser
+- Fix missing insert and update date in fixtures for Sensitivity and Outdoor modules
+- Fix target should not be ordonnable for interventions
+- Fix: filter geometries on right geometry types in synchro mobile
+- Fix: trek deletion was not possible without removing report link to this trek
+- Fix: duplication attachments
+
+**Improvements**
+
+- Add arguments loadsignage : sealing / manager (#3377)
+- Various minor improvements for APIDAE Trek parser
+- The "near_xxx" API filters now use the topological link regarding topological objects. This will provide better performances for those endpoints when topologies are enabled. See Issues `#3472 <https://github.com/GeotrekCE/Geotrek-admin/issues/3472>`_ and `#3505 <https://github.com/GeotrekCE/Geotrek-admin/issues/3505>`_.
+- Enable using Suricate workflow without moderation steps
+
+**Minor changes**
+
+- The "trek" API filter on POI and SensitiveArea list views now provide the same treatment as "near_trek" and is marked as deprecated.
+- `/api/v2/sensitive_area/?trek=123` now returns an empty list when trek does not exist instead of 404 - Not Found.
+- `/api/v2/sensitive_area/` results are no longer sorted by ID when the "trek" filter is used.
+- `/api/v2/sensitive_area/?trek=123` now uses the configured intersection margin for sensitive areas (previously returned intersections w/o margin).
+- The "near_trek" API filter now removes from results the trek's excluded POIs.
+
+**Performances**
+
+- Improve performance zoning filter interventions
+
+**Documentation**
+
+- Update UML diagrams in documentation
+
+
+2.97.4     (2023-03-09)
+-----------------------
+
+**Performances**
+
+- Fix interventions list loading
+
+
+2.97.3 (2023-02-28)
+-----------------------
+
+**Bug fixes**
+
+- Fix: nearby sensitive areas now appears in outdoor details pages (and the other way too) (`Issue #3494 <https://github.com/GeotrekCE/Geotrek-admin/issues/3494>`_)
+- Fix Interventions list datatable is empty
+
+**Improvements**
+
+- Set max zoom on HD Views depending on tiles depth
+
+
+2.97.2 (2023-02-22)
+-----------------------
+
+**Bug fixes**
+
+- Fix link between attachment and file is lost when updating old attachment without title and suffix
+
+
+2.97.1 (2023-02-17)
+-----------------------
+
+**Bug fixes**
+
+- Fix link between attachment and file is lost when updating old attachment without suffix
+
+
+2.97.0 (2023-02-17)
+-----------------------
+
+**New feature**
+
+- Add rules (with pictograms, descriptions and url) on regulatory sensitive areas (#3386)
+
+**Bug fixes**
+
+- Fix intervention filter when outdoor or signage is not installed
+- Fix intervention's geojson
+- Fix pictogram's for interventions on lands
+
+**Documentation**
+
+- Update Suricate documentation
+- Add HD Views documentation
+
+**Security**
+
+- Add safety checks on uploaded files
+
+**Warning**
+
+- Attachment filenames are now suffixed with a random string. This might cause duplication of old attachment files that previously did not have a suffix. Make sure to run `clean_attachments` command regularly to save disk space.
+
+
+
+2.96.1 (2022-02-02)
+-----------------------
+
+**Bug fixes**
+
+- Fix APIv2 filters deteriorated performances
+
+**Improvements**
+
+- Sensitivity: Add missing attachments list to sensitive areas API
+
+
+2.96.0     (2023-02-01)
+-----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- APIv2 filters performances are deteriorated - Skip to 2.96.1 instead
+
+**New feature**
+
+- Handle very high resolution images (HD Views) that will automatically be tiled, for ``Trek``, ``POI`` and ``Site`` (#3378)
+- Handle annotations on HD Views (points, lines, polygons and text)
+
+**Improvements**
+
+- APIDAE Trek Parser output now shows APIDAE IDs of entities triggering warnings during import
+- Update maximum request size in Nginx from 10M to 200M to allow uploading HD pictures (#3378)
+
+**Bug fixes**
+
+- Fix intervention datatable list if one intervention has no target
+- Fix intervention datatable list with interventions on lands
+- Fix signage's blade detail
+- APIDAE Trek parser now raises an import error on geometry with not continuous segments
+
+**Development**
+
+- New contributing guide (docs/CONTRIBUTING.rst).
+- Development dependencies are now split in dedicated file.
+- pip-tools and flake8 are now available in developer environment.
+- Dependency graph is now checked in CI (see docs/contribute/development to how add a new dependency).
+- New git pre-commit hook to check all is alright before commit (see docs/contribute/development).
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/3298/commits/f9c72d95c1fd7eee2dee26dc73a5927966a812bf) to allow uploading big images. It is highly recommanded to apply changes to your Nginx configuration template (in /opt/geotrek-admin/var/conf/nginx.conf.in).
+
+
+2.95.0     (2023-01-24)
+-----------------------
+
+**New features**
+
+- Add possibility to duplicate objects with geometries
+
+**Minor improvements**
+
+- Add blade type on signage detail view (#3325)
+
+**Warning**
+
+Bionic (Ubuntu 18.04) instances need to install deadsnakes PPA to handle python3.8 updates:
+
+``apt-get install software-properties-common``
+
+``add-apt-repository --yes ppa:deadsnakes/ppa``
+
+``apt-get install python3.8``
+
+**Maintenance**
+
+In preparation for HD Views developments (PR #3298)
+
+- Bump Python to 3.8
+
+- Bump MapEntity to 8.4.0
+
+- Bump Pillow to 9.3.0
+
+- Bump Celery to 5.2.1
+
+- Bump django-celery-results to 2.4.0
+
+- Bump django-clearcache to 1.2.1
+
+- Add libvips to dependencies
+
+**Improvements**
+
+- Apidae trek parser supports geometry import from kml or kmz attachment
+- More checks on Apidae trek parser in order not to import trek without a geometry
+
+**Bug fixes**
+
+- Fix loaddem command update other types of geometry
+- Recreate cache folders if missing. (#3384)
+- Modify site's geometry before saving to avoid edition and export of shapefiles (#3399)
+- Fix API V2 cache key with X-Forwarded-Proto header (#3404)
+- Check pictogram exist on categories during generation of pdfs
+- Prevent "Internal Error" on API v2 when wrong url parameter is provided on courses and sites filter for pois
+- Fix ApidaeParsers does not update every time
+- Add fixtures licenses initial install
+- Fix default conf nginx for mobile
+- Replace image's relative URLs with absolute URLs in API v2 trek descriptions (#3321)
+- Disable scroll propagation on layers list to avoid zoom changes on map (#2687)
+
+
+2.94.0     (2022-12-12)
+-----------------------
+
+**New feature**
+
+- New ``LEIParser`` to import touristic content and event from LEI touristic data system
+- New ``XMLParser`` to import content from XML
+- ApidaeTrekParser: import trek's contact info into description
+- New ``Parser`` subclass to import POIs from the APIDAE touristic data system.
+- New ``POIParser`` to import POIs from files (with and without dynamic segmentation)
+- Change default color of imported filelayer (#306)
+
+**Bug fixes**
+
+- Fix shp zipfile import
+- ApidaeTrekParser: round computed duration
+- ApidaeTrekParser: fix attached pictures import
+
+
+2.93.0     (2022-12-06)
+-----------------------
+
+**New feature**
+
+- New ``Parser`` subclass to import treks from the APIDAE touristic data system.
+
+**Improvements**
+
+- Use MapEntity widget for geometries even without setting ``TREKKING_TOPOLOGY_ENABLED`` (to always display file layer leaflet plugin)
+
+
+2.92.3     (2022-12-02)
+-----------------------
+
+**Improvements**
+
+- API v2:
+  - revert ``?trek filter`` by direct intersecting geometry on sensitive area endpoint.
+  - improve ``?near_xxx`` filters by direct intersecting buffered geometry on sensitive area endpoint.
+
+
+2.92.2     (2022-12-01)
+-----------------------
+
+**Bug fixes**
+
+- Fix cache management in API v2
+
+
+2.92.1     (2022-12-01)
+-----------------------
+
+**Improvements**
+
+- Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
+- Add mobile nginx configuration directly on Geotrek-admin
+
+**Bug fixes**
+
+- Fix display lines on signage with setting ``DIRECTION_ON_LINES_ENABLED``
+- Show required's style for lines in blade form
+- Fix cache management in API v2
+
+
+2.92.0     (2022-11-29)
+-----------------------
+
+**Warning**
+
+!!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
+
+**Improvements**
+
+- Cache API v2 Detail endpoints and themes list endpoint
+- Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.
+- Zoning informations are now cached until instance or zoning is updated.
+- Show more decimal for coordinates in signage sql view
+
+**New feature**
+
+- Separate application and API v2 cache, ability to purge them with command or via admin
+
+**Bug fixes**
+
+- Check geom is valid before save
+- Fix old migration script of Topology.geom (actually causes Django to falsely detect model changes not yet with a migration in NDS mode)
+- Check that the Spatial Reference Identifier (SRID) unit is in meters before launching application (was during migration)
+- Fix filter_type1 and filter_type2 for EspritParcParser when val is a list
+- Fix "'NoneType' object is not iterable" when responseData is null for EspritParcParser
+
+**Documentation**
+
+- Fix parameter name ``MAIL_MANAGERS`` in documentation
+
+
+2.91.1     (2022-11-18)
+-----------------------
+
+**Bug fixes**
+
+- Fix flatpages can't be saved
+
+2.91.0     (2022-11-17)
 -----------------------
 
 **Minor improvements**
 
+- Add paths in overlays for elements which are not topologies
+
+**Bug fixes**
+
+- Add missing file field in Imports form layout
+- Add missing help texts and validators on ``TouristicEvent`` ``intervention_duration`` and ``preparation_duration``
+- Fix flatpages can't be saved
+
+
+2.90.1 (2022-11-04)
+-----------------------
+
+**Bug fixes**
+
+- Prevent providers from APIv2 from overriding local providers when using ``GeotrekParser``
+- Add missing sources parsing to ``GeotrekParser`` (for ``Trek``, ``Touristic Content``, ``Touristic Event``)
+
+2.90.0     (2022-11-03)
+-----------------------
+
+**New features**
+
+- Add new command to reorder pathaggregations of topologies
+
+**Bug fixes**
+
+- Fix APIv2 does not return sources related to published sites
+
+
+2.89.1 (2022-10-20)
+-----------------------
+
+**Bug fixes**
+
+- Prevent migration ``0033_auto_20220929_0840`` from failing by escaping Touristic Events ``participant_number``
+- Fix signage details page with DIRECTION_ON_LINES enabled (hide "Direction" column header)
+
+2.89.0 (2022-10-20)
+-----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
+**New features**
+
+- Add fields ``preparation_duration``, ``intervention_duration``  to TouristicEvents
+- Add new setting ``DIRECTION_ON_LINES_ENABLED`` to have the ``direction`` field on lines instead of blades
+- Partially handle translated fields: when setting ``fill_empty_translated_fields`` to True,
+  all empty translation fields for all languages will be set with the parsed value
+
+**Bug fixes**
+
+- Blade list view now takes into account custom columns from ``COLUMNS_LISTS`` setting
+- Fix Suricate Workflow : do not unlock reports when resolving them
+- Fix Suricate Workflow : display clickable links in report related emails
+
+
+2.88.0 (2022-10-11)
+-----------------------
+
+**DO NOT USE IT!**
+
+**Warning**
+
+- Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
+
+**New features**
+
+- Add optional places to TouristicEvents, using place selector to locate TouristicEvent on form map (#3266)
+- Add fields ``end_time``, ``cancelled``, ``cancellation_reason``, ``bookable`` and ``place`` to TouristicEvents (#3237)
+- ``cancellation_reason`` selector is displayed in Event form if ``bookable`` is checked (#3237)
+- ``booking`` text box is displayed in Event form if ``bookable`` is checked (#3237)
+- Create ``Assessment`` tab in Event form to input retrospective information such as number of attendees per category (#3237)
+- Create ``TouristicEventParticipantCategory`` model to define types of attendees for Events (#3237)
+
+**Breaking changes**
+
+- Rename ``meeting_time`` to ``start_time`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``start_time`` instead of ``meeting_time`` (#3237)
+- Rename ``participant_number`` to ``capacity`` for TouristicEvent. APIv2 serialisation for TouristicEvent now exposes ``capacity`` instead of ``participant_number`` (#3237)
+- These fields are still available in API v2 for retrocompatibility but should not be used by default (#3237)
+- If you have specific parsers importing into TouristicEvents, you should rename ``meeting_time`` to ``start_time`` and ``participant_number`` to ``capacity`` (#3237)
+
+**Bug fixes**
+
+- Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
+
+**Minor improvements**
+
+- Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
+- Set ``begin_date`` not null for TouristicEvents (#3237)
+- Change order of attributes in Event forms and detail view (#3237)
+- Update Event SQL view ``v_touristicevents`` according to above changes (#3237)
+
+**Suricate Workflow**  (#2366)
+
+- Show sentinel email addresses only to workflow manager
+
+
+**New features**
+
+- Add new setting `DIRECTION_ON_LINES_ENABLED` to have the `direction` field on lines instead of blades
+
+
+2.87.2 (2022-09-23)
+-----------------------
+
+**New features**
+
+- Add `default_language` attribute to Parsers to specify which language to update
+
+**Minor improvements**
+
+- Ensure attachments from parsers have generated thumbnails
+
+**Bug fixes**
+
+- Fix `provider` is not used properly when parsing TouristicContents
+- Improve Aggregator translation management
+- Fix PermissionError during sync-rando on fresh install from .deb package
+
+
+2.87.1 (2022-09-20)
+-----------------------
+
+**Bug fixes**
+
+- Fix acces rights on files after synchronization
+
+
+2.87.0 (2022-09-20)
+-----------------------
+
+**New features**
+
+- Add `provider` field to Trek, POI, Service, Signage, Infrastructure, TouristicContent, TouristicEvent, InformationDesk,
+  Path, Trail, Course, Site, SensitiveArea (#3189)
+- Add parser using api v2 (InformationDesk, TouristicContent, TouristicEvent, POI, Trek, Service, Signage, Infrastructure)
+- Add aggregator parser with a conductor using json file
+
+
+**Minor improvements**
+
 - Disable debug log in debian package post installation script.
+- Improve and fix error logging, now errors and warnings are logged to var/geotrek.log and console.
+- Allow configuring email alerts for late reports (generalized from Suricate Workflow #2366)
+
+**Bug fixes**
+
+- Fix filtering on Services List does not filter
+- Fix Site creation form is initialized with parent Site
+- Fix memory leak and optimize SQL queries on zoning intersections
+- Fix error message should not be displayed on attachments from the same structure as user
 
 **Maintenance**
 
 - Upgrade dependencies. The detail for the main dependencies:
-  + django to 3.2.13
-  + celery[redis] to 5.1.2
+
+  - django to 3.2.15
+  - celery[redis] to 5.1.2
+
+**Suricate Workflow**  (#2366)
+
+- Do not unlock reports when resolving them
+- Improve Suricate workflow alert emails
 
 
 2.86.0 (2022-09-05)
@@ -28,6 +725,7 @@ CHANGELOG
 - Add possibility to use different type of file with import form
 - Add setting MAX_CHARACTERS for rich text fields with Mapentity 8.2.1 (#2901)
 - Set map resizable with Mapentity 8.2.1 (#3162)
+- Add Category, certification label and status fields on trails (#2900 & #3152)
 
 **Minor improvements**
 
@@ -50,14 +748,18 @@ CHANGELOG
 
 - Upgrade mapentity to 8.2.1
 
+**! Regression !**
+
+- System permissions on files output by `sync_rando` and `sync_mobile` commands were inadvertently changed to more restricted
+  with no reading allowed by group or other. This may cause trouble if your deployment relies on those permissions.
+  The original broader permissions have been restored with `v2.87.1`.
+
 
 2.85.0     (2022-07-26)
 -----------------------
 
 **New features**
 
-- Add category field on trail model
-- Add certification label and status fields on trails (#2900)
 - Fix downgrade user permissions (is_staff, is_superuser) for external authent (#3156)
 - Use permission bypass_structure on attachments and accessibility attachments (#2899)
 - Add boolean field 'display_in_legend' to Report Status model
@@ -129,11 +831,6 @@ CHANGELOG
     - See documentation https://geotrek.readthedocs.io/en/latest/install/installation.html#ubuntu-bionic-postgis-2.5-upgrade)
 
 **Warning**
-
-- You need to delete cache after this release upgrade.
-
-  - ``rm -r /opt/geotrek-admin/var/cache/*`` (or in <geotrek directory>/var/cache/* on docker)
-  - ``sudo dpkg-reconfigure geotrek-admin`` (or ``docker-compose restart``)
 
 - From now, Geotrek-admin is not installable on Ubuntu 18.04 bionic anymore. But upgrade are still available.
 - The default Nginx configuration template `has been improved <https://github.com/GeotrekCE/Geotrek-admin/commit/3d44447893037944f35cd4280e89021f693b3a1f>`_ to increase data loading performances. It is highly recommanded to apply changes to your Nginx configuration template (in ``/opt/geotrek-admin/var/conf/nginx.conf.in``).
@@ -3840,8 +4537,7 @@ In order to enable those features under construction, add ``experimental = True`
 :notes:
 
     Give related permissions to the managers group in order to allow edition
-    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,
-     ``add_touristiccontent`` ...).
+    (``add_flatpage``, ``change_flatpage``, ``delete_flatpage``, ``add_touristiccontent`` ...).
 
 
 0.27.2 (2010-10-14)
@@ -4025,6 +4721,7 @@ Since the map export have changed, empty the cache :
 * Rework display of lists in detail pages, better factorization
 * Removed links in logbook list for certain models
 * Display messages in login page too (useful for redirections)
+
 Support edition of several fields on the same map, via django-leaflet new feature (fixes #53)
 
 

@@ -8,8 +8,8 @@ register = template.Library()
 
 
 @register.simple_tag
-def suricate_management_enabled():
-    return settings.SURICATE_MANAGEMENT_ENABLED
+def app_title():
+    return settings.TITLE
 
 
 @register.simple_tag
@@ -72,7 +72,6 @@ def resolved_intervention_info(report):
 
 @register.simple_tag
 def workflow_manager():
-    workflow_manager_json = {
-        'pk': WorkflowManager.objects.first().user.pk
-    }
-    return json.dumps(workflow_manager_json)
+    if WorkflowManager.objects.exists():
+        return WorkflowManager.objects.first().user.pk
+    return None

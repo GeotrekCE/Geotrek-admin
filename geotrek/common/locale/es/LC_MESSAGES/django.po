@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-09 16:30+0000\n"
+"POT-Creation-Date: 2022-12-16 09:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,12 @@ msgid "content type"
 msgstr ""
 
 msgid "Linked content"
+msgstr ""
+
+msgid "Related to"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 msgid "Common"
@@ -82,6 +88,18 @@ msgid "Cancel"
 msgstr ""
 
 msgid "Update attachment"
+msgstr ""
+
+msgid "The uploaded file is too large"
+msgstr ""
+
+msgid "The uploaded file is not wide enough"
+msgstr ""
+
+msgid "The uploaded file is not tall enough"
+msgstr ""
+
+msgid "Save changes"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -318,6 +336,32 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
+#, fuzzy
+#| msgid "Pictogram"
+msgid "Picture"
+msgstr "Pictograma"
+
+msgid "Location"
+msgstr ""
+
+msgid "Annotations"
+msgstr ""
+
+msgid "Title for this view point"
+msgstr ""
+
+msgid "Details about this view"
+msgstr ""
+
+msgid "HD View"
+msgstr ""
+
+msgid "HD Views"
+msgstr ""
+
+msgid "Add a new HD view"
+msgstr ""
+
 #, python-brace-format
 msgid "Line {line}"
 msgstr ""
@@ -366,7 +410,7 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 
 #, python-brace-format
-msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 
 #, python-brace-format
@@ -378,7 +422,7 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr ""
 
-msgid "Filename is required"
+msgid "Filename or url is required"
 msgstr ""
 
 #, python-brace-format
@@ -401,6 +445,31 @@ msgstr ""
 
 #, python-brace-format
 msgid "Failed to download '{url}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"too large"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not wide enough"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
+"not tall enough"
+msgstr ""
+
+#, python-brace-format
+msgid "Model {model}"
+msgstr ""
+
+msgid "Geotrek-admin"
 msgstr ""
 
 msgid "Import from web."
@@ -466,6 +535,62 @@ msgstr ""
 msgid "Sync mobile"
 msgstr ""
 
+msgid "Rectangle"
+msgstr ""
+
+msgid "Square"
+msgstr ""
+
+msgid "Ellipse"
+msgstr ""
+
+msgid "Circle"
+msgstr ""
+
+msgid "Polygon"
+msgstr ""
+
+msgid "Point"
+msgstr ""
+
+msgid "Line"
+msgstr ""
+
+msgid "Created annotations"
+msgstr ""
+
+msgid "Properties"
+msgstr ""
+
+msgid "History"
+msgstr ""
+
+msgid "Annotate"
+msgstr ""
+
+msgid "Attributes"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Full history"
+msgstr ""
+
+msgid ""
+"Add very high resolution images that will be automatically tiled and add "
+"annotations on it (points, lines, polygons and text)"
+msgstr ""
+
+msgid "You are not allowed to see HD views."
+msgstr ""
+
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
 msgstr ""
 
@@ -527,7 +652,7 @@ msgid "has invalid geometry;"
 msgstr "tiene una geometría invalida;"
 
 #, python-format
-msgid "%(obj)s has changed  state, it needs a review to be published. "
+msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr ""
 
 msgid "Sync verifications"

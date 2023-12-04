@@ -1,0 +1,12 @@
+{% load i18n l10n feedback_tags %}
+{% autoescape off %}
+
+{% app_title as app_title %}
+{% trans "New reports have been imported from Suricate." %} 
+{% trans "Please consult your reports in" %} {{app_title}}.
+
+{% for url in reports_urls %}
+    {{ url }}
+{% endfor %}
+
+{% endautoescape %}

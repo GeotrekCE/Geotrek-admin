@@ -1,0 +1,200 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 10,
+      "accessibility": {
+        "fr": "",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "attachments": [
+        {
+          "backend": "",
+          "type": "image",
+          "author": "Wikimedia Common",
+          "license": null,
+          "thumbnail": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg.400x0_q85.jpg",
+          "legend": "Ânes",
+          "title": "anes-01",
+          "url": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-01.jpg",
+          "uuid": "1f9887b3-dc75-46a3-a93e-e2c1a8ef7105"
+        },
+        {
+          "backend": "",
+          "type": "image",
+          "author": "Wikimedia Commons",
+          "license": null,
+          "thumbnail": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg.400x0_q85.jpg",
+          "legend": "Ânes",
+          "title": "anes-02",
+          "url": "https://foo.fr/media/paperclip/tourism_touristiccontent/10/anes-02.jpg",
+          "uuid": "36d83840-ed78-4d2e-9937-d259930f053e"
+        },
+        {
+          "backend": "Attachment",
+          "type": "video",
+          "author": "",
+          "license": null,
+          "thumbnail": "",
+          "legend": "",
+          "title": "",
+          "url": "https://soundcloud.com/festivalnumerozero/radio-petit-zero-3-sortir-balade-jaune",
+          "uuid": "1918257f-19fb-4387-b117-d5ceb4a0f4ab"
+        }
+      ],
+      "approved": false,
+      "category": 3,
+      "description": {
+        "fr": "<p>Vacances &agrave; la ferme, Activit&eacute;s en pleine nature dans les Pyr&eacute;n&eacute;es.</p>\r\n<p>Nous vous accueillons en pleine montagne entre le massif des Trois Seigneurs et l&rsquo;&Eacute;tang de Lers en Ari&egrave;ge, Midi-Pyr&eacute;n&eacute;es. Passionn&eacute;s par les &acirc;nes et la randonn&eacute;e, nous &eacute;levons nos &acirc;nes depuis</p>\r\n<p>1998, qui sont &eacute;duqu&eacute;s et c&acirc;lin&eacute;s depuis tout petit.</p>\r\n<p>Partagez le plaisir de randonn&eacute;e l&eacute;ger et libre avec nous et permettez aux enfants de d&eacute;couvrir</p>\r\n<p>une autre monde au milieu de la nature.</p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "description_teaser": {
+        "fr": "<p>&Eacute;levage et &Eacute;ducation d'&acirc;nes, S&eacute;jours nature et montagne en Ari&egrave;ge, Accueil Cavaliers.</p>",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "departure_city": "09231",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.3877974,
+          42.8597065
+        ]
+      },
+      "label_accessibility": null,
+      "practical_info": {
+        "fr": "",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "url": "https://foo.fr/api/v2/touristiccontent/10/",
+      "cities": [
+        "09231"
+      ],
+      "create_datetime": "2015-12-30T14:12:50.965428+01:00",
+      "external_id": "",
+      "name": {
+        "fr": "Balad'âne",
+        "en": "",
+        "es": "",
+        "it": null
+      },
+      "pdf": {
+        "fr": "https://foo.fr/api/fr/touristiccontents/10/baladane.pdf",
+        "en": "https://foo.fr/api/en/touristiccontents/10/baladane.pdf",
+        "es": "https://foo.fr/api/es/touristiccontents/10/baladane.pdf",
+        "it": "https://foo.fr/api/it/touristiccontents/10/baladane.pdf"
+      },
+      "portal": [],
+      "published": true,
+      "source": [
+        2
+      ],
+      "structure": 1,
+      "themes": [
+        1,
+        6
+      ],
+      "update_datetime": "2015-12-30T14:17:31.483686+01:00",
+      "types": {
+        "301": [
+          24
+        ],
+        "302": [
+          38
+        ]
+      },
+      "contact": "<p>Balad'&acirc;ne - Salbis - 09320 Le Port - Tel : 33 (0)5 61 04 41 35</p>",
+      "email": "",
+      "website": "http://www.baladane.com/fr/",
+      "reservation_system": null,
+      "reservation_id": "",
+      "uuid": "921f9859-94b5-447a-ad20-946697323569"
+    },
+    {
+      "id": 22,
+      "accessibility": {
+        "fr": "",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "attachments": [],
+      "approved": false,
+      "category": 5,
+      "description": {
+        "fr": "<span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.&nbsp;</span>",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "description_teaser": {
+        "fr": "Ce magnifique bar a requin est au beau milieu des pyr&eacute;n&eacute;es.",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "departure_city": "09322",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.2808534,
+          42.735508
+        ]
+      },
+      "label_accessibility": null,
+      "practical_info": {
+        "fr": "Attention &agrave; l'&eacute;pilepsie",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "url": "https://foo.fr/api/v2/touristiccontent/22/",
+      "cities": [
+        "09322"
+      ],
+      "create_datetime": "2019-09-17T14:55:46.308511+02:00",
+      "external_id": null,
+      "name": {
+        "fr": "Bar à requin",
+        "en": "",
+        "es": "",
+        "it": ""
+      },
+      "pdf": {
+        "fr": "https://foo.fr/api/fr/touristiccontents/22/bar-a-requin.pdf",
+        "en": "https://foo.fr/api/en/touristiccontents/22/bar-a-requin.pdf",
+        "es": "https://foo.fr/api/es/touristiccontents/22/bar-a-requin.pdf",
+        "it": "https://foo.fr/api/it/touristiccontents/22/bar-a-requin.pdf"
+      },
+      "portal": [],
+      "published": true,
+      "source": [],
+      "structure": 3,
+      "themes": [
+        1
+      ],
+      "update_datetime": "2019-09-17T15:04:54.043628+02:00",
+      "types": {
+        "501": [
+          43
+        ],
+        "502": []
+      },
+      "contact": "Contacter Jean",
+      "email": null,
+      "website": "http://make-everything-ok.com/",
+      "reservation_system": null,
+      "reservation_id": "",
+      "uuid": "a9bf823a-a472-4eb2-b273-3db1355602d0"
+    }
+  ]
+}

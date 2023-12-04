@@ -38,6 +38,44 @@ Exemple : ajouter une pratique
 
 |image5|
 
+Exemple : ajouter une étiquette
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages : 
+- ne pas avoir à saisir à chaque itinéraire les même informations
+- permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
+
+Pour les configurer, vous devez :
+- vous rendre dans l'interface d'administration
+- dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ Ajouter`
+
+Via cette interface vous pourrez créer des étiquettes puis, une fois créées, les rattacher à des itinéraires.
+
+* Créer une étiquette :
+
+.. image :: ../images/admin/creation_etiquette.png
+
+Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil libre `Summernote <https://summernote.org/>`_.
+
+* Associer une étiquette à un itinéraire :
+
+Une fois l'étiquette créée il faut l'associer à un itinéraire pour qu'elle soit visible sur le site. 
+Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet :guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu déroulant l'étiquette de votre choix (si vous en avez défini plusieurs). 
+
+.. image :: ../images/admin/associer_etiquette_itineraire.png
+
+.. tip::
+    * L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
+    * Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
+    * Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
+
+Rendu dans **Geotrek Rando** (onglet :guilabel:`Infos pratiques` d'une fiche randonnée) :
+
+.. image :: ../images/admin/rendu_etiquette.png
+
+Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
+
+.. image :: ../images/admin/rendu_etiquette2.png
 
 .. _sites-et-parcours-outdoor-1:
 
@@ -72,14 +110,14 @@ Tourisme
 |image6|
 
 
-Exemple : catégorie de contenu touristique et ses sous-type
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Exemple : catégorie de contenu touristique et ses sous-types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |image7|
 
 
 Pour chaque catégorie il est possible de définir deux listes de
-sous-type et leur nom.
+sous-types et leur nom.
 
 Édition des sous-types de la catégorie “Hébergements”
 
@@ -102,67 +140,113 @@ Zones
 -  Zones sensibles et types de zones
 
 
-Gestion des utilisateurs
-========================
+.. _user-management-section:
 
-Dans Geotrek, il est possible de créer et de paramétrer des profils d'utilisateurs, possédants chacun des droits spécifiques et rattachés à des structures. La gestion des utilisateurs et des groupes est basé sur le `système d'authentification de Django <https://docs.djangoproject.com/fr/4.0/topics/auth/>`_.
-Pour cela les objets suivants dans l'interface d'administration doivent être utilisés :
+Users management
+================
+
+Geotrek-admin relies on `Django authentication and permissions system <https://docs.djangoproject.com/en/4.2/topics/auth/default/>`_.
+Users belong to groups, and permissions can be assigned at user or group-level.
+
+With groups, you can create and configure user profile, each owning specific permissions.
+
+The whole configuration of users, groups and permissions is available in the *AdminSite*,
+if you did not enable *External authent* (see below).
 
 |image9|
 
-Utilisateurs et droits
-----------------------
+Users and permissions
+---------------------
 
-Une fois un utilisateur créé avec les informations minimales, il est possible de lui octroyer un certain nombre de permissions :
+A given user can have three basic status level:
 
--  **Actif** : permet de déterminer si l'utilisateur peut se connecter à Geotrek-Admin ou non. 
-  Il est préférable de désactiver un compte lorsqu'un utilisateur n'intervient plus sur Geotrek, plutôt que de le supprimer. 
-  En effet supprimer le compte supprimera également par exemple toutes les entrées dans l'historique de Geotrek associées à ce compte.
--  **Statut équipe** : si la case est cochée l'utilisateur pourra accéder à l'interface d'administration de Geotrek-Admin
--  **Statut super-utilisateur** : permet d'octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
+-  **Active**: if checked, the user can connect to Geotrek-admin
 
-Il est possible pour un utilisateur, de lui donner des permissions spécifiques. Celles-ci sont déterminées par type d'objet. 
-  Pour cela il faut sélectionner les permissions dans l'écran de gauche pour les positionner dans l'écran de droite.
-  Par exemple sur la capture ci-dessous l'utilisateur possède les permissions pour consulter uniquement et exporter les informations relatives aux 
-  signalétiques sans possibilité d'accéder aux autres modules ou de modifier les contenus.
+  It is better to deactivate an account when the user won't user Geotrek anymore, instead of supress it.
+  Deleting the account will delete also all entries created by this account.
+
+-  **Staff**: if checked, the user is authorized to access Geotrek-Admin administration interface
+
+-  **Superuser**: if checked, the user has all permission, without having to define them specifically
+
+A user can get specific permissions by object type.
+
+To do so, select permissions from left box and move them in the right box.
+Snapshot below shows a user with permissions allowing him/her to view and export signage,
+without the ability to access to others modules. or edit signage objects.
 
 |image10|
 
-Cette gestion fine des droits permet de déterminer les différents accès aux modules pour chaque utilisateur. On retrouve généralement pour chaque type d'objet les permissions suivantes qu'il est possible de donner ou non à un utilisateur :
--  Lecture
--  Ecriture
--  Modification
--  Modification de la géométrie de l'objet
--  Publication
--  Export
+Permissions fall into four main types of actions:
 
-Groupes
--------
+* add
+* change
+* delete
+* read / view
 
-Pour faciliter l'opération de création d'utilisateurs et d'affectation de permissions, il existe un système de groupes dans Geotrek.
-Pour chaque groupe il est possible d'associer un certain nombre de permissions.
+Each data type is at least associated with the four basic actions (*add*, *change*, *delete*, *read*). One data type corresponds to  a database table (*signage_signage*, *trekking_trek*...)
 
-Ensuite, dans la vue de modification de cet utilisateur, il suffira d'associer un utilisateur à un groupe pour bénéficier des permissions correspondantes.
+Here is the signification of actions allowed through permissions:
 
-Certains groupes existent par défaut dans Geotrek (Geotrek-rando, Lecteurs, Outdoor, Rédacteurs, Référents communication, Référents ronçons, Référents sentiers), mais il est bien entendu possible d'en ajouter d'autres pour refléter l'organisation de votre territoire.
+* *view*: see the data in Django *AdminSite* (for data of "category" type such as POI types, or difficulty level)
+* *read*: see the data in Geotrek-admin interface (button and data list)
+* *add*: adding of a new data (trek, theme...)
+* *change*: modify the data
+* *change_geom*: modify the data geometry
+* *publish*: publish the data
+* *export*: export the data thrgough Geotrek-admin interface (CSV, JSON...)
 
+
+Groups
+------
+
+Groups allows to manage easily users and permissions. Each group is associated
+to some permissions.
+
+In user modification view, you can associate a user to one ore more groupes to
+get their permissions.
+
+By default six groups are created:
+
+* Readers ("Lecteurs")
+* Path managers ("Référents sentiers")
+* Trek managers ("Référents communication")
+* Editors ("Rédacteurs")
+* Geotrek-rando ("Geotrek-rando")
+* Trek and management editors ("Rédacteurs rando et gestion")
+
+Once the application is installed, it is possible to modify the default permissions
+of these existing groups, create new ones etc.
+
+If you want to allow the users to access the *AdminSite*, give them the *staff*
+status using the dedicated checkbox. The *AdminSite* allows users to edit data categories such as *trek difficulty levels*, *POI types*, etc.
 
 Structures
 ----------
 
-Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l'installation, Geotrek crée une structure à laquelle les premiers utilisateurs seront rattachés.
-Il est possible d'ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront ammenés à travailler à vos côté sur Geotrek.
+Each user has to be linked to a structure. During the installation, Geotrek create a default structure to which first users are linked.
+You can add new structures, according to territorial partners, companies, other organisations which work with you on Geotrek.
 
-Les utilisateurs d'une structure ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n'auront pas le droit de les modifier.
+Users of a given structure can work only on objects related to the same structure in Geotrek.
+They can view objects from others structures, but won't be able to edit them.
 
-Exemple : Si on imagine un Geotrek déployé sur l'ensemble du territoire français, il serait alors envisageable d'avoir des structures correspondantes aux régions. Chaque utilisateur sera rattaché à sa région correspondante. 
- Il y aura alors la garantie qu'un utilisateur de Bretagne ne puisse pas modifier les objets saisis par un utilisateur de Normandie.
+*Exemple : Imagine a Geotrek deployed in the whole french territory, there could be structure related to "regions".
+Each user would be linked to its region, through the structure.
+Thus it would guarantee that a user from Bretagne could not edit objects created by a user from Normandie.*
 
-Cette notion de structures permet de segmenter les périmètres d'action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin, tout en garantissant une cohérence des données.
+The structure concept allows to  divide users actions fields, and allows several organisation to work on a same Geotrek-admin,
+while data keep coherence.
 
-Deux précisions :
-- Un utilisateur d'une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
-- Pour qu'un utilisateur puisse modifier les objets d'une autre structure il y a deux possibilités : soit celui-ci est super-utilisateur, soit il devra posséder la permission "Can by structure" qui permet d'outrepasser la restriction des structures.
+.. note ::
+
+    A user of a given structure will be able to create treks on paths related to another structure
+
+.. note ::
+
+    To allow an user to modify objects from another structure, there are two ways:
+
+    - this user has superuser rights
+    - this user owns "Can bypass structure" permission, which allows him to override structure restriction
 
 
 Configuration des portails
@@ -172,7 +256,7 @@ Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pou
 
 Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire apparaitre une information.
 
-Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour ditinguer les contenus à afficher dans un widget ou dans un autre.
+Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
 
 Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
 

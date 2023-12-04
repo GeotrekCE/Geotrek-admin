@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import translation
+from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 from django.views import static
 from mapentity import views as mapentity_views
@@ -20,7 +21,7 @@ from geotrek.common.utils.portals import smart_get_template_by_portal
 class CustomColumnsMixin:
     """ Customize columns in List views """
 
-    MAP_SETTINGS = {
+    _MAP_SETTINGS = {
         'PathList': 'path_view',
         'PathJsonList': 'path_view',
         'PathFormatList': 'path_export',
@@ -33,6 +34,9 @@ class CustomColumnsMixin:
         'PhysicalEdgeList': 'physicaledge_view',
         'PhysicalEdgeJsonList': 'physicaledge_view',
         'PhysicalEdgeFormatList': 'physicaledge_export',
+        'CirculationEdgeList': 'circulationedge_view',
+        'CirculationEdgeJsonList': 'circulationedge_view',
+        'CirculationEdgeFormatList': 'circulationedge_export',
         'CompetenceEdgeList': 'competenceedge_view',
         'CompetenceEdgeJsonList': 'competenceedge_view',
         'CompetenceEdgeFormatList': 'competenceedge_export',
@@ -48,6 +52,9 @@ class CustomColumnsMixin:
         'SignageList': 'signage_view',
         'SignageJsonList': 'signage_view',
         'SignageFormatList': 'signage_export',
+        'BladeList': 'blade_view',
+        'BladeJsonList': 'blade_view',
+        'BladeFormatList': 'blade_export',
         'InterventionList': 'intervention_view',
         'InterventionJsonList': 'intervention_view',
         'InterventionFormatList': 'intervention_export',
@@ -86,11 +93,12 @@ class CustomColumnsMixin:
         'CourseFormatList': 'outdoor_course_export',
     }
 
-    def get_mandatory_columns(self):
-        mandatory_cols = getattr(self, 'mandatory_columns', None)
+    @classmethod
+    def get_mandatory_columns(cls):
+        mandatory_cols = getattr(cls, 'mandatory_columns', None)
         if (mandatory_cols is None):
             logger.error(
-                f"Cannot build columns for class {self.__class__.__name__}.\n"
+                f"Cannot build columns for class {cls.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
@@ -98,11 +106,12 @@ class CustomColumnsMixin:
             )
         return mandatory_cols
 
-    def get_default_extra_columns(self):
-        default_extra_columns = getattr(self, 'default_extra_columns', None)
+    @classmethod
+    def get_default_extra_columns(cls):
+        default_extra_columns = getattr(cls, 'default_extra_columns', None)
         if (default_extra_columns is None):
             logger.error(
-                f"Cannot build columns for class {self.__class__.__name__}.\n"
+                f"Cannot build columns for class {cls.__name__}.\n"
                 + "Please define on this class either : \n"
                 + "  - a field 'columns'\n"  # If we ended up here, then we know 'columns' is not defined higher in the MRO
                 + "OR \n"
@@ -110,16 +119,20 @@ class CustomColumnsMixin:
             )
         return default_extra_columns
 
-    @property
-    def columns(self):
-        mandatory_cols = self.get_mandatory_columns()
-        default_extra_cols = self.get_default_extra_columns()
-        settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, '')
-        if (mandatory_cols is None or default_extra_cols is None):
+    @classmethod
+    def get_custom_columns(cls):
+        settings_key = cls._MAP_SETTINGS.get(cls.__name__, '')
+        return settings.COLUMNS_LISTS.get(settings_key, [])
+
+    @classproperty
+    def columns(cls):
+        mandatory_cols = cls.get_mandatory_columns()
+        default_extra_cols = cls.get_default_extra_columns()
+        if mandatory_cols is None or default_extra_cols is None:
             return []
         else:
             # Get extra columns names from instance settings, or use default extra columns
-            extra_columns = settings.COLUMNS_LISTS.get(settings_key, default_extra_cols)
+            extra_columns = cls.get_custom_columns() or default_extra_cols
             # Some columns are mandatory to prevent crashes
             columns = mandatory_cols + extra_columns
             return columns

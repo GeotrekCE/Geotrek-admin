@@ -33,12 +33,14 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==3.2.*',
-        'mapentity==8.2.1',
+        'mapentity',
         'cairosvg',
-        'cairocffi==0.9.0',  # Latest version dh-virtualenv can handle to build the .deb package
+        'cairocffi',
         'env_file',
         # pinned by requirements.txt
         'pymemcache',
+        'coreschema',
+        'coreapi',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -55,23 +57,22 @@ setup(
         'drf-yasg',
         'xlrd',
         'landez',
-        'celery[redis]',
-        'django-celery-results==2.2.*',  # Latest version supporting python3.6
+        'large-image-source-vips',
+        'django-large-image',
+        'celery',
+        'redis',
+        'django-celery-results',
         'drf-extensions',
         'django-colorfield',
         'Fiona',
+        'markdown',
         "weasyprint==52.5",  # newer version required libpango (not available in bionic)
         'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
+        "django-clearcache",
+        "pyopenair",
         # prod,
         'gunicorn',
         'sentry-sdk',
-        # tests
-        'freezegun',
-        'coverage',
-        'factory_boy',
-        # dev,
-        'django-extensions',
-        'django-debug-toolbar',
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,

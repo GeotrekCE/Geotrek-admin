@@ -8,11 +8,12 @@ $(window).on('entity:map', function (e, data) {
 	var url = window.SETTINGS.urls[layername];
     var loaded_infrastructure = false;
     var map = data.map;
-
+    var style = L.Util.extend({ clickable: false },
+        window.SETTINGS.map.styles[modelname] || {});
     // Show infrastructure layer in application maps
 	var layer = new L.ObjectsLayer(null, {
 		modelname: modelname,
-		style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, { clickable:false }),
+		style: style,
 	});
 
     if (data.modelname != modelname){

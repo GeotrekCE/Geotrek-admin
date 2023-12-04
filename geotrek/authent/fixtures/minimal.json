@@ -17,6 +17,7 @@
                 ["read_competenceedge", "land", "competenceedge"],
                 ["read_landedge", "land", "landedge"],
                 ["read_physicaledge", "land", "physicaledge"],
+                ["read_circulationedge", "land", "circulationedge"],
                 ["read_signagemanagementedge", "land", "signagemanagementedge"],
                 ["read_workmanagementedge", "land", "workmanagementedge"],
 

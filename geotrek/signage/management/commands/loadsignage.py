@@ -8,14 +8,15 @@ from django.db import transaction
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
+from geotrek.common.models import Organism
 from geotrek.core.models import Topology
-from geotrek.signage.models import Signage, SignageType
+from geotrek.signage.models import Sealing, Signage, SignageType
 from geotrek.infrastructure.models import InfrastructureCondition
 from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Load a layer with point geometries in te structure model\n'
+    help = 'Load a layer with point geometries in the structure model\n'
     can_import_settings = True
     counter = 0
 
@@ -28,19 +29,42 @@ class Command(BaseCommand):
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Name of the field that will be mapped to the Name field in Geotrek')
         parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Name of the field that will be mapped to the Type field in Geotrek')
         parser.add_argument('--condition-field', '-c', action='store', dest='condition_field', help='Name of the field that will be mapped to the Condition field in Geotrek')
+        parser.add_argument('--manager-field', '-m', action='store', dest='manager_field', help='Name of the field that will be mapped to the Manager field in Geotrek')
+        parser.add_argument('--sealing-field', action='store', dest='sealing_field', help='Name of the field that will be mapped to the sealing field in Geotrek')
         parser.add_argument('--structure-field', '-s', action='store', dest='structure_field', help='Name of the field that will be mapped to the Structure field in Geotrek')
         parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Name of the field that will be mapped to the Description field in Geotrek')
         parser.add_argument('--year-field', '-y', action='store', dest='year_field', help='Name of the field that will be mapped to the Year field in Geotrek')
         parser.add_argument('--code-field', action='store', dest='code_field', help='Name of the field that will be mapped to the Code field in Geotrek')
+        parser.add_argument('--eid-field', action='store', dest='eid_field', help='Name of the field that will be mapped to the External ID in Geotrek')
         parser.add_argument('--type-default', action='store', dest='type_default', help='Default value for Type field')
         parser.add_argument('--name-default', action='store', dest='name_default', help='Default value for Name field')
         parser.add_argument('--condition-default', action='store', dest='condition_default', help='Default value for Condition field')
+        parser.add_argument('--manager-default', action='store', dest='manager_default', help='Default value for the Manager field')
+        parser.add_argument('--sealing-default', action='store', dest='sealing_default', help='Default value for the Sealing field')
         parser.add_argument('--structure-default', action='store', dest='structure_default', help='Default value for Structure field')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
                             help='Default value for Description field')
-        parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
         parser.add_argument('--year-default', action='store', dest='year_default', help='Default value for Year field')
         parser.add_argument('--code-default', action='store', dest='code_default', default="", help='Default value for Code field')
+
+    def check_fields_available_with_default(self, available_fields, name_field, default_field, prefix_argument):
+        if (name_field and name_field not in available_fields) \
+                or (not name_field and not default_field):
+            self.stdout.write(self.style.ERROR(
+                f"Field '{name_field}' not found in data source."))
+            self.stdout.write(self.style.ERROR(
+                f"Set it with --{prefix_argument}-field, or set a default value with --{prefix_argument}-default"))
+            return False
+        return True
+
+    def check_fields_available_without_default(self, available_fields, name_field, prefix_argument):
+        if name_field and name_field not in available_fields:
+            self.stdout.write(self.style.ERROR(
+                f"Field '{name_field}' not found in data source."))
+            self.stdout.write(self.style.ERROR(
+                f"Change your --{prefix_argument}-field option"))
+            return False
+        return True
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
@@ -54,12 +78,22 @@ class Command(BaseCommand):
 
         use_structure = options.get('use_structure')
         field_name = options.get('name_field')
+        default_name = options.get('name_default')
         field_infrastructure_type = options.get('type_field')
+        default_infrastructure_type = options.get('type_default')
         field_condition_type = options.get('condition_field')
+        default_condition_type = options.get('condition_default')
+        field_manager = options.get('manager_field')
+        default_manager = options.get('manager_default')
+        field_sealing = options.get('sealing_field')
+        default_sealing = options.get('default_sealing')
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
+        default_description = options.get('description_default')
         field_implantation_year = options.get('year_field')
+        default_year = options.get('year_default')
         field_code = options.get('code_field')
+        default_code = options.get('code_default')
         field_eid = options.get('eid_field')
 
         sid = transaction.savepoint()
@@ -67,34 +101,21 @@ class Command(BaseCommand):
 
         try:
             for layer in data_source:
+                available_fields = layer.fields
                 if verbosity >= 2:
                     self.stdout.write("- Layer '{}' with {} objects found".format(layer.name, layer.num_feat))
-                available_fields = layer.fields
-                if (field_infrastructure_type and field_infrastructure_type not in available_fields)\
-                        or (not field_infrastructure_type and not options.get('type_default')):
-                    self.stdout.write(self.style.ERROR(
-                        "Field '{}' not found in data source.".format(field_infrastructure_type)))
-                    self.stdout.write(self.style.ERROR(
-                        "Set it with --type-field, or set a default value with --type-default"))
+                if not self.check_fields_available_with_default(available_fields, field_infrastructure_type,
+                                                                default_infrastructure_type, 'type'):
                     break
-                if (field_name and field_name not in available_fields)\
-                        or (not field_name and not options.get('name_default')):
-                    self.stdout.write(self.style.ERROR(
-                        "Field '{}' not found in data source.".format(field_name)))
-                    self.stdout.write(self.style.ERROR(
-                        "Set it with --name-field, or set a default value with --name-default"))
+                if not self.check_fields_available_with_default(available_fields, field_name, default_name, 'name'):
                     break
-                if field_condition_type and field_condition_type not in available_fields:
-                    self.stdout.write(self.style.ERROR(
-                        "Field '{}' not found in data source.".format(field_condition_type)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --condition-field option"))
+                if not self.check_fields_available_without_default(available_fields, field_condition_type, 'condition'):
                     break
-                if field_structure_type and field_structure_type not in available_fields:
-                    self.stdout.write(self.style.ERROR(
-                        "Field '{}' not found in data source.".format(field_structure_type)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --structure-field option"))
+                if not self.check_fields_available_without_default(available_fields, field_manager, 'manager'):
+                    break
+                if not self.check_fields_available_without_default(available_fields, field_sealing, 'sealing'):
+                    break
+                if not self.check_fields_available_without_default(available_fields, field_structure_type, 'structure'):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
@@ -106,63 +127,83 @@ class Command(BaseCommand):
                     except Structure.DoesNotExist:
                         self.stdout.write("Structure {} set in options doesn't exist".format(structure_default))
                         break
-                if field_description and field_description not in available_fields:
-                    self.stdout.write(self.style.ERROR(
-                        "Field '{}' not found in data source.".format(field_description)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --description-field option"))
-                    break
 
-                if field_implantation_year and field_implantation_year not in available_fields:
-                    self.stdout.write(
-                        self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --year-field option"))
+                if not self.check_fields_available_without_default(available_fields, field_description, 'description'):
                     break
-
-                if field_eid and field_eid not in available_fields:
-                    self.stdout.write(
-                        self.style.ERROR("Field '{}' not found in data source.".format(field_eid)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --eid-field option"))
+                if not self.check_fields_available_without_default(available_fields, field_implantation_year, 'year'):
                     break
-
-                if field_code and field_code not in available_fields:
-                    self.stdout.write(
-                        self.style.ERROR("Field '{}' not found in data source.".format(field_code)))
-                    self.stdout.write(self.style.ERROR(
-                        "Change your --code-field option"))
+                if not self.check_fields_available_without_default(available_fields, field_eid, 'eid'):
+                    break
+                if not self.check_fields_available_without_default(available_fields, field_code, 'code'):
                     break
 
                 for feature in layer:
                     feature_geom = feature.geom
-                    name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
+                    name = feature.get(field_name) if field_name in available_fields else default_name
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE("This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
                             raise CommandError("One of your geometry is a MultiPoint object with multiple points")
-                    type = feature.get(
-                        field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
-                        'type_default')
-                    if field_condition_type in available_fields:
-                        condition = feature.get(field_condition_type)
-                    else:
-                        condition = options.get('condition_default')
-                    structure = Structure.objects.get(name=feature.get(field_structure_type)) \
-                        if field_structure_type in available_fields else structure
-                    description = feature.get(
-                        field_description) if field_description in available_fields else options.get(
-                        'description_default')
-                    year = int(feature.get(
-                        field_implantation_year)) if field_implantation_year in available_fields and feature.get(
-                        field_implantation_year).isdigit() else options.get('year_default')
-                    eid = feature.get(field_eid) if field_eid in available_fields else None
-                    code = feature.get(field_code) if field_code in available_fields else options.get('code_default')
 
-                    self.create_signage(feature_geom, name, type, condition, structure, description, year,
-                                        verbosity, eid, use_structure, code)
+                    tmp_signage_type = feature.get(field_infrastructure_type) if field_infrastructure_type in available_fields else default_infrastructure_type
+                    signage_type, created = SignageType.objects.get_or_create(label=tmp_signage_type, structure=structure if use_structure else None)
+                    if created and verbosity:
+                        self.stdout.write("- SignageType '{}' created".format(signage_type))
+
+                    condition = feature.get(field_condition_type) if field_condition_type in available_fields else default_condition_type
+                    if condition:
+                        condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition, structure=structure if use_structure else None)
+                        if created and verbosity:
+                            self.stdout.write("- Condition Type '{}' created".format(condition_type))
+                    else:
+                        condition_type = None
+
+                    sealing = feature.get(field_sealing) if field_sealing in available_fields else default_sealing
+                    if sealing:
+                        sealing, created = Sealing.objects.get_or_create(label=sealing, structure=structure if use_structure else None)
+                        if created and verbosity:
+                            self.stdout.write("- Sealing '{}' created".format(sealing))
+                    else:
+                        sealing = None
+
+                    manager = feature.get(field_manager) if field_manager in available_fields else default_manager
+                    if manager:
+                        manager, created = Organism.objects.get_or_create(organism=manager, structure=structure if use_structure else None)
+                        if created and verbosity:
+                            self.stdout.write("- Organism '{}' created".format(manager))
+                    else:
+                        manager = None
+
+                    structure = Structure.objects.get(name=feature.get(field_structure_type)) if field_structure_type in available_fields else structure
+                    description = feature.get(field_description) if field_description in available_fields else default_description
+
+                    year = feature.get(field_implantation_year) if field_implantation_year in available_fields else default_year
+                    if year:
+                        if str(year).isdigit():
+                            year = int(year)
+                        else:
+                            raise CommandError('Invalid year: "%s" is not a number.' % year)
+                    else:
+                        year = None
+
+                    eid = feature.get(field_eid) if field_eid in available_fields else None
+                    code = feature.get(field_code) if field_code in available_fields else default_code
+
+                    fields_to_integrate = {
+                        'type': signage_type,
+                        'name': name,
+                        'condition': condition_type,
+                        'structure': structure,
+                        'description': description,
+                        'implantation_year': year,
+                        'sealing': sealing,
+                        'manager': manager,
+                        'code': code,
+                        'eid': eid
+                    }
+                    self.create_signage(feature_geom, fields_to_integrate, verbosity)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -173,42 +214,19 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_signage(self, geometry, name, type,
-                       condition, structure, description, year, verbosity, eid, use_structure, code):
-
-        infra_type, created = SignageType.objects.get_or_create(label=type,
-                                                                structure=structure if use_structure else None)
-        if created and verbosity:
-            self.stdout.write("- SignageType '{}' created".format(infra_type))
-
-        if condition:
-            condition_type, created = InfrastructureCondition.objects.get_or_create(
-                label=condition,
-                structure=structure if use_structure else None)
-            if created and verbosity:
-                self.stdout.write("- Condition Type '{}' created".format(condition_type))
-        else:
-            condition_type = None
+    def create_signage(self, geometry, fields_to_integrate, verbosity):
 
         with transaction.atomic():
-            fields_without_eid = {
-                'type': infra_type,
-                'name': name,
-                'condition': condition_type,
-                'structure': structure,
-                'description': description,
-                'implantation_year': year,
-                'code': code,
-            }
-            if eid:
+            if fields_to_integrate['eid']:
+                eid = fields_to_integrate.pop('eid')
                 infra, created = Signage.objects.update_or_create(
                     eid=eid,
-                    defaults=fields_without_eid
+                    defaults=fields_to_integrate
                 )
                 if verbosity > 0 and not created:
-                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+                    self.stdout.write("Update : %s with eid %s" % (fields_to_integrate['name'], eid))
             else:
-                infra = Signage.objects.create(**fields_without_eid)
+                infra = Signage.objects.create(**fields_to_integrate)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
                 geometry = geometry.transform(settings.API_SRID, clone=True)

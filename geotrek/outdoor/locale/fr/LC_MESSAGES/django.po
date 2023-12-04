@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 17:18+0000\n"
+"POT-Creation-Date: 2023-08-28 07:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,9 @@ msgstr "Filière"
 
 msgid "Manager"
 msgstr "Gestionnaire"
+
+msgid "Provider"
+msgstr "Fournisseur"
 
 msgid "Orientation"
 msgstr "Orientation"
@@ -231,9 +234,6 @@ msgstr "Ajouter un nouveau site outdoor"
 msgid "Sites"
 msgstr "Sites"
 
-msgid "Parcours"
-msgstr "Parcours"
-
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -330,9 +330,6 @@ msgstr "Choisir une ou des valeur(s)"
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
-msgid "Attribution"
-msgstr "Crédit photo"
-
 msgid "Useful information"
 msgstr "Infos pratiques"
 
@@ -341,6 +338,12 @@ msgstr "Situation géographique"
 
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
+
+msgid "On your path..."
+msgstr ""
+
+msgid "Attribution"
+msgstr "Crédit photo"
 
 msgid "Add a course"
 msgstr "Ajouter un parcours outdoor"
@@ -351,8 +354,43 @@ msgstr "Ajouter site enfant"
 msgid "Add a brother site"
 msgstr "Ajouter un site frère"
 
+#, python-format
+msgid ""
+"You can't delete <strong>%(object)s</strong> because it has children courses "
+"or sites. To be able to delete a parent site, you need to delete the children "
+"first."
+msgstr ""
+"Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites "
+"ou parcours enfants lui sont associés. Pour pouvoir supprimer un site "
+"parent, il faut au préalable supprimer ses enfants."
+
+msgid "Child outdoor sites linked to this site"
+msgstr "Sites outdoor enfants de ce site"
+
+msgid "Child outdoor courses linked to this site"
+msgstr "Courses outdoor enfants de ce site"
+
+#, python-format
+msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+msgstr "Voulez-vous réellement supprimer <strong>%(object)s</strong> ?"
+
+msgid "Yes, delete"
+msgstr "Oui, supprimer"
+
+msgid "No, back to edit view"
+msgstr "Non, retour à l'édition"
+
+msgid "Attached files"
+msgstr "Pièces jointes"
+
 msgid "Parents"
 msgstr "Parents"
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Advices"
+msgstr "Recommandations"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

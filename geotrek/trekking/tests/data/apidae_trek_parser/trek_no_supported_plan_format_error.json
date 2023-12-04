@@ -1,0 +1,31 @@
+{
+  "numFound": 1,
+  "objetsTouristiques": [
+    {
+      "id": 123123,
+      "multimedias": [
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/un_plan.foo",
+              "extension": "foo"
+            }
+          ]
+        },
+        {
+          "type": "PLAN",
+          "traductionFichiers": [
+            {
+              "url": "https://example.net/et_un_autre_plan.bar",
+              "extension": "bar"
+            }
+          ]
+        }
+      ],
+      "nom": {
+        "libelleFr": "Une belle randonnée de test mais avec des plans aux formats non supportés"
+      }
+    }
+  ]
+}

@@ -25,8 +25,8 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.templatetags import geotrek_tags
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
-                                            RecordSourceFactory, TargetPortalFactory)
+from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory, RecordSourceFactory,
+                                            TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -37,13 +37,14 @@ from geotrek.tourism.tests import factories as tourism_factories
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
 from geotrek.trekking import views as trekking_views
+from geotrek.trekking.filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from .base import TrekkingManagerTest
 from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
-                        TrekWithSignagesFactory)
+                        TrekWithSignagesFactory, PracticeFactory)
 from ..models import POI, Trek, Service, OrderedTrekChild
 
 
@@ -55,6 +56,15 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     extra_column_list = ['type', 'eid']
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -172,18 +182,19 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(self.model.get_datatablelist_url())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             self.client.get(self.model.get_format_list_url())
 
     def test_list_in_csv(self):
         self.modelfactory.create()
         DistrictFactory.create(name="Refouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
-        DistrictFactory.create(name="Trifouilli", geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
-                                                       "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
+        DistrictFactory.create(name="Trifouilli",
+                               geom="SRID=2154;MULTIPOLYGON (((200000 750000, 699991 6600005, 700005 "
+                                    "6600005, 650000 1200000, 650000 750000, 200000 750000)))")
         response = self.client.get(self.model.get_format_list_url())
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         for row in reader:
@@ -192,14 +203,16 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     def test_pois_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_pois_on_treks_not_public(self):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_pois_on_treks_not_public_anonymous(self):
@@ -207,7 +220,8 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(
+            reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -220,6 +234,15 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'name', 'type', 'eid']
     length = 141.42135623731
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'name': self.obj.name
+        }
 
     def get_expected_json_attrs(self):
         return {
@@ -338,7 +361,7 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             'duration': 1.5,
             'id': self.obj.pk,
             'name': self.obj.name_display,
-            'thumbnail': 'None'
+            'thumbnail': 'None',
         }
 
     def get_bad_data(self):
@@ -495,6 +518,19 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
         for row in reader:
             self.assertEqual(row['Cities'], "Trifouilli, Refouilli")
             self.assertEqual(row['Districts'], self.district.name)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_public_export_without_pictogram(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+        practice = PracticeFactory.create(pictogram=None)
+        obj = self.modelfactory.create(practice=practice)
+        response = self.client.get(
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
 
 
 class TrekViewsLiveTests(CommonLiveTest):
@@ -859,6 +895,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     """ Since we migrated some code to Django REST Framework, we should test
     the migration extensively. Geotrek-rando mainly relies on this view.
     """
+
     def test_related_urls(self):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
@@ -1439,7 +1476,7 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_datatables_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name_display
+            'name': self.obj.name_display,
         }
 
     def get_good_data(self):
@@ -1478,25 +1515,25 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(self.model.get_datatablelist_url())
 
-        # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(self.model.get_format_list_url())
 
     def test_services_on_treks_do_not_exist(self):
         self.modelfactory.create()
 
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': 0}))
         self.assertEqual(response.status_code, 404)
 
     def test_services_on_treks_not_public(self):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 200)
 
     def test_services_on_treks_not_public_anonymous(self):
@@ -1504,7 +1541,8 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
-        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        response = self.client.get(reverse('trekking:trek_service_geojson',
+                                           kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -1536,27 +1574,27 @@ class ServiceJSONTest(TrekkingManagerTest):
                               })
 
 
-class TestDepublishSignagesRemovedFromPDF(TestCase):
-
+class TrekPDFChangeAlongLinkedSignages(TestCase):
     def setUp(self):
         self.trek = TrekWithSignagesFactory.create()
 
     @mock.patch('mapentity.helpers.requests.get')
-    def test_depublish_signage_refreshes_pdf(self, mock_get):
+    def test_unpublish_signage_refreshes_pdf(self, mock_get):
         # Mock map screenshot
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signages were changed will trigger screenshot
-        trek.signages[0].published = False
-        trek.signages[0].save()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.signages[0].published = False
+        self.trek.signages[0].save()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_delete_signage_refreshes_pdf(self, mock_get):
@@ -1564,38 +1602,39 @@ class TestDepublishSignagesRemovedFromPDF(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signage was deleted will trigger screenshot
-        trek.signages[0].delete()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.signages[0].delete()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
 
-class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
-
+class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
     def setUp(self):
         self.trek = TrekWithInfrastructuresFactory.create()
 
     @mock.patch('mapentity.helpers.requests.get')
-    def test_depublish_infrastructure_refreshes_pdf(self, mock_get):
+    def test_unpublish_infrastructure_refreshes_pdf(self, mock_get):
         # Mock map screenshot
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signages were changed will trigger screenshot
-        trek.infrastructures[0].published = False
-        trek.infrastructures[0].save()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.infrastructures[0].published = False
+        self.trek.infrastructures[0].save()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_delete_infrastructure_refreshes_pdf(self, mock_get):
@@ -1603,12 +1642,88 @@ class TestDepublishInfrastructuresRemovedFromPDF(TestCase):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
-        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path(), self.trek.get_date_update()))
-        self.client.get(reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
+        self.client.get(
+            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
         # Assert second access to PDF will not trigger screenshot
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertTrue(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.refresh_from_db()
+        self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
         # Assert access to PDF if signage was deleted will trigger screenshot
-        trek.infrastructures[0].delete()
-        trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(is_file_uptodate(trek.get_map_image_path(), trek.get_date_update()))
+        self.trek.infrastructures[0].delete()
+        self.trek.refresh_from_db()
+        self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
+
+
+class TrekFilterTest(TestCase):
+    factory = TrekFactory
+    filterset = TrekFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TrekFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        trek1 = TrekFactory.create(provider='my_provider1')
+        trek2 = TrekFactory.create(provider='my_provider2')
+
+        filter_set = TrekFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(trek1, filter_set.qs)
+        self.assertIn(trek2, filter_set.qs)
+
+
+class POIFilterTest(TestCase):
+    factory = POIFactory
+    filterset = POIFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = POIFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        poi1 = POIFactory.create(provider='my_provider1')
+        poi2 = POIFactory.create(provider='my_provider2')
+
+        filter_set = POIFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(poi1, filter_set.qs)
+        self.assertIn(poi2, filter_set.qs)
+
+
+class ServiceFilterTest(TestCase):
+    factory = ServiceFactory
+    filterset = ServiceFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = ServiceFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        service1 = ServiceFactory.create(provider='my_provider1')
+        service2 = ServiceFactory.create(provider='my_provider2')
+
+        filter_set = ServiceFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(service1, filter_set.qs)
+        self.assertIn(service2, filter_set.qs)
