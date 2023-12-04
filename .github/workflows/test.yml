@@ -361,9 +361,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cypress-22.04
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-docker
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
