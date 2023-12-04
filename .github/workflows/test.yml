@@ -167,26 +167,26 @@ jobs:
           image: "geotrek:latest"
 
   build_deb_22_04:
-      name: Build 22.04 package
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Prepare debian 22.04 versioning
-          run: |
-            sed -i 's/+dev/.ubuntu22.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu22.04\2) jammy;/' debian/changelog
+    name: Build 22.04 package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare debian 22.04 versioning
+        run: |
+          sed -i 's/+dev/.ubuntu22.04~dev'$GITHUB_RUN_ID'/' debian/changelog
+          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu22.04\2) jammy;/' debian/changelog
 
-        - name: Building package debian 22.04
-          run: |
-            DISTRO=ubuntu:jammy make build_deb
-            cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
+      - name: Building package debian 22.04
+        run: |
+          DISTRO=ubuntu:jammy make build_deb
+          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
-        - name: Archive package artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: debian-22-04
-            path: |
-              /home/runner/work/Geotrek-admin/*.deb
+      - name: Archive package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: debian-22-04
+          path: |
+            /home/runner/work/Geotrek-admin/*.deb
 
   build_deb_20_04:
     name: Build 20.04 package
