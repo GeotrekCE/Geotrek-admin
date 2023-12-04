@@ -1,5 +1,4 @@
-ARG BASE_IMAGE_TAG=jammy-3.10
-FROM makinacorpus/geodjango:${BASE_IMAGE_TAG}
+FROM makinacorpus/geodjango:jammy-3.10
 
 ENV ENV=prod
 ENV SERVER_NAME="localhost"
