@@ -7,7 +7,7 @@ RUN apt-get update -qq -o Acquire::Languages=none && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq lsb-release && \
     if test "$(lsb_release -cs)" = 'focal' ; then \
        env DEBIAN_FRONTEND=noninteractive apt-get install -yqq software-properties-common wget && \
-       printf "deb [arch=amd64] https://packages.geotrek.fr/ubuntu bionic main" > /etc/apt/sources.list.d/geotrek.list && \
+       printf "deb [arch=amd64] https://packages.geotrek.fr/ubuntu focal main" > /etc/apt/sources.list.d/geotrek.list && \
        wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | apt-key add - && \
        add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv; fi &&\
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
