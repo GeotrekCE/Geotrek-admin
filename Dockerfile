@@ -42,7 +42,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN python3.8 -m venv /opt/venv
+RUN python3.10 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
