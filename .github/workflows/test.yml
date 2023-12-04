@@ -114,6 +114,8 @@ jobs:
         ./venv/bin/pip3 install --upgrade pip wheel setuptools
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
+        ./venv/bin/python -V
+        ./venv/bin/python3 -V
 
     - name: Create test required directories
       run: |
