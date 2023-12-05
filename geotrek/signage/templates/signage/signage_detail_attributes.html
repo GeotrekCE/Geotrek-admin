@@ -110,7 +110,7 @@
                         <td>{{ blade.type|default_if_none:"" }}</td>
                         <td>{{ blade.color|default_if_none:"" }}</td>
                         <td>{{ blade.direction }}</td>
-                        <td>{% for condition in object.conditions.all %}
+                        <td>{% for condition in blade.conditions.all %}
                             {% if not forloop.last %}
                                 <span>{{ condition.label }},<span>
                             {% else %}
