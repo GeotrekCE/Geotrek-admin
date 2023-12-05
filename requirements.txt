@@ -185,8 +185,6 @@ easy-thumbnails==2.8.5
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-env-file==2020.12.3
-    # via geotrek (setup.py)
 filelock==3.8.0
     # via django-large-image
 fiona==1.9.4.post1
@@ -291,6 +289,8 @@ pyphen==0.11.0
     # via weasyprint
 python-dateutil==2.8.2
     # via celery
+python-dotenv==1.0.0
+    # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
 pytz==2023.3.post1
@@ -368,9 +368,7 @@ urllib3==2.2.1
     # via
     #   requests
     #   sentry-sdk
-values==2020.12.3
-    # via env-file
-vine==5.1.0
+vine==5.0.0
     # via
     #   amqp
     #   celery
