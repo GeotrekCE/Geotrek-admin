@@ -4,6 +4,14 @@ else
   docker_compose=docker-compose
 endif
 
+###########################
+#          colors         #
+###########################
+PRINT_COLOR = printf
+COLOR_SUCCESS = \033[1;32m
+COLOR_DEBUG = \033[36m
+COLOR_RESET = \033[0m
+
 build:
 	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
@@ -29,6 +37,17 @@ flake8:
 
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location
+
+###########################
+#        coverage         #
+###########################
+verbose_level ?= 1
+.PHONY: coverage
+coverage:
+	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
+	$(docker_compose) run -e ENV=tests web coverage run ./manage.py test $(test_name) -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests_nds web coverage run -a ./manage.py test $(test_name) -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests web coverage lcov
 
 test:
 	$(docker_compose) run -e ENV=tests --rm web ./manage.py test
