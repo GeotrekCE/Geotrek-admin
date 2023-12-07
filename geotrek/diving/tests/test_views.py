@@ -130,6 +130,17 @@ class DiveViewsTests(GeotrekAPITestCase, CommonTest):
         response = self.client.get(reverse('diving:dive_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': dive.pk}))
         self.assertEqual(response.status_code, 404)
 
+    def test_lang_in_detail_page(self):
+        dive = self.modelfactory.create(name_fr='une plongée', name_en='a dive')
+
+        response = self.client.get(dive.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'une plongée')
+        self.assertNotContains(response, 'a dive')
+
+        response = self.client.get(dive.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a dive')
+        self.assertNotContains(response, 'une plongée')
+
 
 class DiveViewsLiveTests(CommonLiveTest):
     model = Dive

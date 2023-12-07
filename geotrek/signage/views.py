@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
+from django.utils import translation
 from django.utils.functional import classproperty
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -49,6 +50,13 @@ class SignageFormatList(MapEntityFormat, SignageList):
 
 class SignageDetail(MapEntityDetail):
     queryset = Signage.objects.existing()
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

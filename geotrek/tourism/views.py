@@ -6,6 +6,7 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Q, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils import translation
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -64,6 +65,13 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
 
 class TouristicContentDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicContent.objects.existing()
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -216,6 +224,13 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
     queryset = TouristicEvent.objects.existing().select_related('place', 'cancellation_reason').prefetch_related('participants')
+
+    def dispatch(self, *args, **kwargs):
+        lang = self.request.GET.get('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

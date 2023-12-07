@@ -407,6 +407,17 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertContains(response, "<b>Beautiful !</b>")
         self.assertContains(response, "(WGS 84 / Pseudo-Mercator)")
 
+    def test_lang_in_detail_page(self):
+        signage = SignageFactory.create(name_fr='une signalétique', name_en='a signage')
+
+        response = self.client.get(signage.get_detail_url() + '?lang=fr')
+        self.assertContains(response, 'une signalétique')
+        self.assertNotContains(response, 'a signage')
+
+        response = self.client.get(signage.get_detail_url() + '?lang=en')
+        self.assertContains(response, 'a signage')
+        self.assertNotContains(response, 'une signalétique')
+
     def test_check_structure_or_none_related_are_visible(self):
         signagetype = SignageTypeFactory.create(structure=None)
         response = self.client.get(self.model.get_add_url())
