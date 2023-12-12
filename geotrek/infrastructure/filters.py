@@ -36,6 +36,6 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
 
     def filter_intervention_year(self, qs, name, value):
         infrastructure_ct = ContentType.objects.get_for_model(Infrastructure)
-        interventions = Intervention.objects.filter(target_type=infrastructure_ct, date__year__in=value) \
+        interventions = Intervention.objects.filter(target_type=infrastructure_ct, begin_date__year__in=value) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()

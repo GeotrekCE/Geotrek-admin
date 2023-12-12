@@ -74,7 +74,8 @@ class InterventionForm(CommonForm):
         Div(
             'structure',
             'name',
-            'date',
+            'begin_date',
+            'end_date',
             'status',
             'disorders',
             'type',
@@ -97,7 +98,7 @@ class InterventionForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Intervention
         fields = CommonForm.Meta.fields + \
-            ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
+            ['structure', 'name', 'begin_date', 'end_date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'access', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
@@ -142,6 +143,10 @@ class InterventionForm(CommonForm):
         editable = bool(self.instance.geom and (self.instance.geom.geom_type == 'Point'
                         or self.instance.geom.geom_type == 'LineString'))
         self.fields['length'].widget.attrs['readonly'] = editable
+
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
+            if self.instance.pk and self.instance.target and hasattr(self.instance.target, "report_interventions"):
+                self.fields["end_date"].required = True
 
     def save(self, *args, **kwargs):
         target = self.instance.target

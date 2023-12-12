@@ -35,7 +35,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
+    default_extra_columns = ['begin_date', 'end_date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
     unorderable_columns = ['target']
 
@@ -97,7 +97,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return mandatory_columns
 
     default_extra_columns = [
-        'name', 'date', 'type', 'target', 'status', 'stake',
+        'name', 'begin_date', 'end_date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',

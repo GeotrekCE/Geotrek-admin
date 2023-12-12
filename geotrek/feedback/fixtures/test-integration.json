@@ -246,7 +246,7 @@
         "pk": 1,
         "fields": {
             "label": "Intervention résolue",
-            "text": "Pris en charge par ##supervisor## le ##intervention_date##"
+            "text": "Pris en charge par ##supervisor## le ##intervention_end_date##"
         }
     },
     {
@@ -299,7 +299,8 @@
             ],
             "target_id": 12,
             "name": "Intervention on report",
-            "date": "2022-05-17",
+            "begin_date": "2022-05-17",
+            "end_date": "2022-05-17",
             "status": 3,
             "date_insert": "2012-05-17T14:33:34.307Z",
             "date_update": "2012-05-17T14:33:34.307Z"
