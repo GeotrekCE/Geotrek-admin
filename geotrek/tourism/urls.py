@@ -22,6 +22,8 @@ urlpatterns = [
     path('api/<lang:lang>/touristiccategories.json', tourism_views.TouristicCategoryView.as_view(), name="touristic_categories_json"),
     path('api/<lang:lang>/touristiccontents/<int:pk>/meta.html', tourism_views.TouristicContentMeta.as_view(), name="touristiccontent_meta"),
     path('api/<lang:lang>/touristicevents/<int:pk>/meta.html', tourism_views.TouristicEventMeta.as_view(), name="touristicevent_meta"),
+    path('popup/add/organizer/', tourism_views.TouristicEventOrganizerCreatePopup.as_view(), name='organizer_add'),
+
 ]
 
 

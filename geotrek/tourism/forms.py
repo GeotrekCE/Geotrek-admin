@@ -4,9 +4,11 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.tourism.widgets import AutoLocateMapWidget
 
 from crispy_forms.layout import Div, HTML, Fieldset
+from mapentity.widgets import SelectMultipleWithPop
+
 
 from .models import (TouristicContent, TouristicEvent, TouristicEventParticipantCount,
-                     TouristicEventParticipantCategory)
+                     TouristicEventParticipantCategory, TouristicEventOrganizer)
 from geotrek.common.forms import CommonForm
 
 
@@ -142,6 +144,11 @@ class TouristicEventForm(CommonForm):
         self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['start_time'].widget.attrs['placeholder'] = _('HH:MM')
         self.fields['end_time'].widget.attrs['placeholder'] = _('HH:MM')
+        if self.user.has_perm("tourism.add_touristiceventorganizer"):
+            self.fields['organizer'].widget = SelectMultipleWithPop(
+                choices=self.fields['organizer'].choices,
+                add_url=TouristicEventOrganizer.get_add_url()
+            )
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
@@ -189,3 +196,9 @@ class TouristicEventForm(CommonForm):
                 TouristicEventParticipantCount.objects.update_or_create(event=self.instance, category=category, defaults={'count': count})
             else:
                 TouristicEventParticipantCount.objects.filter(event=self.instance, category=category).delete()
+
+
+class TouristicEventOrganizerFormPopup(CommonForm):
+    class Meta:
+        model = TouristicEventOrganizer
+        fields = ['label']

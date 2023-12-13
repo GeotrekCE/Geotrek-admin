@@ -2,12 +2,16 @@ import logging
 import os
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q, Sum
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import DetailView
+from django.utils.html import escape
+from django.views.generic import DetailView, CreateView
 from django_filters.rest_framework import DjangoFilterBackend
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
@@ -25,8 +29,8 @@ from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPu
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.models import Trek
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
-from .forms import TouristicContentForm, TouristicEventForm
-from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
+from .forms import TouristicContentForm, TouristicEventForm, TouristicEventOrganizerFormPopup
+from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, TouristicEventOrganizer, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           TouristicContentAPIGeojsonSerializer, TouristicEventAPIGeojsonSerializer,
                           InformationDeskGeojsonSerializer, TouristicContentAPISerializer, TouristicEventAPISerializer,
@@ -273,6 +277,23 @@ class TouristicEventDocumentPublicMixin:
                 pass
 
         return context
+
+
+class TouristicEventOrganizerCreatePopup(CreateView):
+    model = TouristicEventOrganizer
+    form_class = TouristicEventOrganizerFormPopup
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.has_perm("tourism.add_touristiceventorganizer"):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return HttpResponse("""
+            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
+        """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
 
 
 class TouristicEventDocumentPublic(TouristicEventDocumentPublicMixin, DocumentPublic):
