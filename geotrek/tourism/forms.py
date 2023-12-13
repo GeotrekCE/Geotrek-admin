@@ -86,6 +86,7 @@ class TouristicEventForm(CommonForm):
                     'start_time',
                     'end_time',
                     'duration',
+                    'price',
                     'place',
                     'meeting_point',
                     'description_teaser',
@@ -134,7 +135,7 @@ class TouristicEventForm(CommonForm):
                   'start_time', 'end_time', 'contact', 'email', 'website', 'organizers', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
-                  'cancelled', 'cancellation_reason', 'preparation_duration', 'intervention_duration']
+                  'cancelled', 'cancellation_reason', 'preparation_duration', 'intervention_duration', 'price']
         model = TouristicEvent
         widgets = {'geom': AutoLocateMapWidget()}
 

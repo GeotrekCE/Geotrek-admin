@@ -230,7 +230,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'description', 'description_teaser', 'districts', 'duration', 'email', 'end_date', 'external_id', 'geometry',
     'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'organizers', 'organizers_id', 'capacity', 'pdf', 'place', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
-    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
+    'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number', 'price'
 ])
 
 TOURISTIC_EVENT_PLACE_DETAIL_JSON_STRUCTURE = sorted([

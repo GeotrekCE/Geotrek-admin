@@ -135,6 +135,7 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- preparation_duration
 -- intervention_duration
 ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
+--price
 
 
 -- TouristicEventParticipantCount

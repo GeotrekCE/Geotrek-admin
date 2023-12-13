@@ -464,6 +464,13 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
         validators=[MinValueValidator(0)]
     )
+    price = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name=_("Price"),
+        help_text=_("0 mean free"),
+        validators=[MinValueValidator(0)]
+    )
     objects = TouristicEventManager()
     place = models.ForeignKey(TouristicEventPlace, related_name="touristicevents", verbose_name=_("Event place"), on_delete=models.PROTECT, null=True, blank=True, help_text=_("Select a place in the list or locate the event directly on the map"))
     id_prefix = 'E'

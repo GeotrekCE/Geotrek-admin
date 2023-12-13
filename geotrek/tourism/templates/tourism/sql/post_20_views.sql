@@ -209,6 +209,7 @@ SELECT a.id,
             WHEN a.bookable IS TRUE THEN 'Yes'
         END AS "Bookable {{ lang }}",
        a.cancelled AS "Canceled", 
+       a.price AS "Price",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         cr.label_{{ lang }} AS "Cancellation reason {{ lang }}",
        {% endfor %}
