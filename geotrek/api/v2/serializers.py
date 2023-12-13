@@ -555,7 +555,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'meeting_time', 'name', 'organizer', 'organizer_id', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
                 'start_time', 'structure', 'target_audience', 'themes', 'type',
-                'url', 'uuid', 'website'
+                'url', 'uuid', 'website', 'price'
             )
 
     class TouristicEventPlaceSerializer(serializers.ModelSerializer):
