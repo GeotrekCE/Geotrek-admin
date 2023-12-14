@@ -12,6 +12,7 @@ CHANGELOG
 **Improvements**
 
 - Add rules fixture on sensitive area (#3470)
+- Change condition on signage & blade to select many of them (#3847)
 
 **Documentation**
 

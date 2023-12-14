@@ -1406,15 +1406,28 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
             model = signage_models.Blade
             fields = ('id', 'number', 'color', 'direction', 'lines')
 
+    class SignageConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+        class Meta:
+            model = signage_models.SignageCondition
+            fields = ('id', 'label', 'structure')
+
     class SignageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         structure = serializers.CharField(source='structure.name')
         attachments = AttachmentSerializer(many=True)
         blades = BladeSerializer(source='blades_set', many=True)
+        condition = serializers.SerializerMethodField(
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'conditions'")
+        )
+
+        def get_condition(self, obj):
+            condition = obj.conditions.first()
+            return condition.pk if condition else None
 
         class Meta:
             model = signage_models.Signage
-            fields = ('id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
+            fields = ('id', 'attachments', 'blades', 'code', 'condition', 'conditions', 'description', 'eid',
                       'geometry', 'implantation_year', 'name', 'printed_elevation', 'provider', 'sealing',
                       'structure', 'type', 'uuid')
 

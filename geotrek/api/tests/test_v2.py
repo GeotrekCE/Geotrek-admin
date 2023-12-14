@@ -246,7 +246,7 @@ TOURISTIC_EVENT_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 SIGNAGE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'attachments', 'blades', 'code', 'condition', 'description', 'eid',
+    'id', 'attachments', 'blades', 'code', 'condition', 'conditions', 'description', 'eid',
     'geometry', 'implantation_year', 'name', 'printed_elevation', 'sealing',
     'provider', 'structure', 'type', 'uuid'
 ])

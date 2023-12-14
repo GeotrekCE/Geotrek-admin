@@ -3,7 +3,6 @@ from geotrek.common.tests.factories import OrganismFactory
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PointTopologyFactory
-from geotrek.infrastructure.tests.factories import InfrastructureConditionFactory
 
 from .. import models
 
@@ -58,17 +57,31 @@ class SealingFactory(factory.django.DjangoModelFactory):
     label = "Sealing"
 
 
+class SignageConditionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.SignageCondition
+
+    label = factory.Sequence(lambda n: "Condition %s" % n)
+
+
 class SignageFactory(PointTopologyFactory):
     class Meta:
         model = models.Signage
 
     name = "Signage"
     type = factory.SubFactory(SignageTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     manager = factory.SubFactory(OrganismFactory)
     sealing = factory.SubFactory(SealingFactory)
     printed_elevation = 4807
     published = True
+
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                obj.conditions.set(extracted)
+            else:
+                obj.conditions.add(SignageConditionFactory.create())
 
 
 class SignageNoPictogramFactory(SignageFactory):
@@ -78,13 +91,19 @@ class SignageNoPictogramFactory(SignageFactory):
     type = factory.SubFactory(SignageTypeNoPictogramFactory)
 
 
+class BladeConditionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.BladeCondition
+
+    label = factory.Sequence(lambda n: "Condition %s" % n)
+
+
 class BladeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
     number = 1
     type = factory.SubFactory(BladeTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
     color = factory.SubFactory(BladeColorFactory)
     topology = factory.SubFactory(PointTopologyFactory)
@@ -94,6 +113,11 @@ class BladeFactory(factory.django.DjangoModelFactory):
     def lines(obj, create, extracted=None, **kwargs):
         if create:
             LineFactory.create(blade=obj)
+
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            obj.conditions.add(BladeConditionFactory.create())
 
 
 class LinePictogramFactory(factory.django.DjangoModelFactory):

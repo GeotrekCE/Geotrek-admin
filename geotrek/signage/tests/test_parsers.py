@@ -15,7 +15,7 @@ class TestGeotrekSignageParser(GeotrekSignageParser):
 
     field_options = {
         'sealing': {'create': True, },
-        'condition': {'create': True, },
+        'conditions': {'create': True, },
         'type': {'create': True},
         'geom': {'required': True}
     }
@@ -34,7 +34,7 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('signage', 'signage_sealing.json'),
-                                ('signage', 'signage_condition.json'),
+                                ('signage', 'signage_conditions.json'),
                                 ('signage', 'signage_type.json'),
                                 ('signage', 'signage_ids.json'),
                                 ('signage', 'signage.json')]
@@ -50,5 +50,7 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(signage.name), 'test gard')
         self.assertEqual(str(signage.type), 'Limite Cœur')
         self.assertEqual(str(signage.sealing), 'Socle béton')
+        conditions = [str(c.label) for c in signage.conditions.all()]
+        self.assertEqual(conditions, ["Dégradé"])
         self.assertAlmostEqual(signage.geom.x, 572941.1308660918, places=5)
         self.assertAlmostEqual(signage.geom.y, 6189000.155980503, places=5)
