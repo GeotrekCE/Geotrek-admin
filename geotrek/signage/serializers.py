@@ -24,7 +24,7 @@ class SignageSerializer(DynamicFieldsMixin, BasePublishableSerializerMixin, seri
     name = serializers.CharField(source='name_display')
     structure = serializers.SlugRelatedField('name', read_only=True)
     type = serializers.CharField(source='type_display')
-    condition = serializers.SlugRelatedField('label', read_only=True)
+    conditions = serializers.CharField(source='conditions_display')
     manager = serializers.SlugRelatedField('organism', read_only=True)
     sealing = serializers.SlugRelatedField('label', read_only=True)
 
@@ -46,7 +46,7 @@ class SignageAPISerializer(BasePublishableSerializerMixin):
     class Meta:
         model = signage_models.Signage
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
+        fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'conditions',
                   'manager', 'sealing') + BasePublishableSerializerMixin.Meta.fields
 
 
@@ -70,7 +70,7 @@ class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     structure = serializers.SlugRelatedField('name', read_only=True)
     direction = serializers.SlugRelatedField('label', read_only=True)
     color = serializers.SlugRelatedField('label', read_only=True)
-    condition = serializers.SlugRelatedField('label', read_only=True)
+    conditions = serializers.CharField(source='conditions_display')
     number = serializers.CharField(source='number_display')
 
     class Meta:
@@ -100,7 +100,7 @@ class BladeAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = signage_models.Blade
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
+        fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'conditions', 'direction')
         # TODO: Do a lineserializer for order_lines
 
 

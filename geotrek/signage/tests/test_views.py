@@ -15,9 +15,9 @@ from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.signage.models import Signage, Blade
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
+from geotrek.signage.tests.factories import (SignageConditionFactory, SignageFactory, SignageTypeFactory, BladeConditionFactory, BladeFactory, BladeTypeFactory,
                                              SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                             InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
+                                             LineFactory, LineDirectionFactory)
 from geotrek.signage.filters import BladeFilterSet, SignageFilterSet
 from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
 
@@ -93,7 +93,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_json_attrs(self):
         return {
             'color': self.obj.color.pk,
-            'condition': self.obj.condition.pk,
+            'conditions': list(self.obj.conditions.values_list("pk", flat=True)),
             'direction': self.obj.direction.pk,
             'number': '1',
             'order_lines': [self.obj.lines.get().pk],
@@ -124,7 +124,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         good_data = {
             'number': '2',
             'type': BladeTypeFactory.create().pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': BladeConditionFactory.create().pk,
             'direction': BladeDirectionFactory.create().pk,
             'color': BladeColorFactory.create().pk,
             'lines-TOTAL_FORMS': '2',
@@ -259,7 +259,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         blade_repr = data['data'][0]
         self.assertNotIn('direction', blade_repr)
 
-    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'condition']})
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'conditions']})
     def test_direction_custom_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
         BladeFactory.create()
 
@@ -268,7 +268,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         data = json.loads(response.content)
         blade_repr = data['data'][0]
         self.assertNotIn('direction', blade_repr)
-        self.assertIn('condition', blade_repr)
+        self.assertIn('conditions', blade_repr)
 
     def test_direction_field_visibility_on_blade_csv_format(self):
         BladeFactory.create()
@@ -355,7 +355,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_json_attrs(self):
         return {
             'code': '',
-            'condition': self.obj.condition.pk,
+            'conditions': list(self.obj.conditions.values_list("pk", flat=True)),
             'manager': self.obj.manager.pk,
             'name': 'Signage',
             'printed_elevation': 4807,
@@ -379,7 +379,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_datatables_attrs(self):
         return {
             'code': self.obj.code,
-            'condition': self.obj.condition.label,
+            'conditions': ", ".join(list(self.obj.conditions.values_list("label", flat=True))),
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'type': self.obj.type.label
@@ -392,7 +392,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
             'description_fr': 'oh',
             'publication_date': '2020-03-17',
             'type': SignageTypeFactory.create().pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': SignageConditionFactory.create().pk,
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()

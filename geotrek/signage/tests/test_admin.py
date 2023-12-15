@@ -6,9 +6,9 @@ from django.urls import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
+from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType, SignageCondition
 from geotrek.signage.tests.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
-                                             BladeDirectionFactory, BladeTypeFactory)
+                                             BladeDirectionFactory, BladeTypeFactory, SignageConditionFactory)
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
@@ -220,3 +220,104 @@ class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<select name="structure" id="id_structure">')
+
+
+class SignageConditionAdminTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        structure = StructureFactory(name="First structure")
+        cls.second_structure = StructureFactory(name="Second structure")
+
+        # User without "can_bypass_structure" permission
+
+        cls.user_withoutperm = UserFactory.create(is_staff=True)
+        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+            cls.user_withoutperm.user_permissions.add(perm)
+
+        p = cls.user_withoutperm.profile
+        p.structure = structure
+        p.save()
+
+        # User with "can_bypass_structure" permission
+        cls.user_perm = UserFactory.create(is_staff=True)
+        for perm in Permission.objects.all():
+            cls.user_perm.user_permissions.add(perm)
+        p = cls.user_perm.profile
+        p.structure = structure
+        p.save()
+        cls.signage_condition = SignageConditionFactory.create(structure=structure)
+        SignageConditionFactory.create(structure=cls.second_structure)
+
+    def test_get_queryset_signage_conditions_withpermission(self):
+        self.client.force_login(self.user_perm)
+        change_url = reverse('admin:signage_signagecondition_change', args=[self.signage_condition.pk])
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SignageCondition.objects.count(), 2)
+
+    def test_get_queryset_signage_conditions_withoutpermission(self):
+        self.client.force_login(self.user_withoutperm)
+        change_url = reverse('admin:signage_signagecondition_change', args=[self.signage_condition.pk])
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(SignageCondition.objects.filter(structure=self.second_structure.pk).count(), 1)
+
+    def test_formfield_for_foreignkey_signage_conditions_withpermission(self):
+        self.client.force_login(self.user_perm)
+        structure = StructureFactory(name="Other structure")
+        signagecondition = SignageConditionFactory.create(structure=structure)
+        change_url = reverse('admin:signage_signagecondition_change', args=[signagecondition.pk])
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<select name="structure" id="id_structure">')
+        self.assertContains(response, '<input type="text" name="label" value="{}" class="vTextField" maxlength="250" required id="id_label">'.format(signagecondition.label))
+
+    def test_formfield_for_foreignkey_signage_conditions_withoutpermission(self):
+        self.client.force_login(self.user_withoutperm)
+        structure = StructureFactory(name="Other structure")
+        signagecondition = SignageConditionFactory.create(structure=structure)
+        change_url = reverse('admin:signage_signagecondition_change', args=[signagecondition.pk])
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_save_model_signage_conditions_withpermission(self):
+        self.client.force_login(self.user_perm)
+        change_url = reverse('admin:signage_signagecondition_add')
+        response = self.client.post(change_url, data={
+            "structure": StructureFactory(name="Other structure").pk,
+            "label": "New condition"
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(SignageCondition.objects.count(), 3)
+
+    def test_save_model_signage_conditions_withoutpermission(self):
+        self.client.force_login(self.user_withoutperm)
+        change_url = reverse('admin:signage_signagecondition_add')
+        response = self.client.post(change_url, data={
+            "structure": StructureFactory(name="Other structure").pk,
+            "label": "New condition"
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(SignageCondition.objects.count(), 3)
+
+    def test_get_list_display_signage_conditions_withpermission(self):
+        self.client.force_login(self.user_perm)
+        change_url = reverse('admin:signage_signagecondition_changelist')
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="/admin/signage/signagecondition/{}/change/">{}</a>'.format(self.signage_condition.pk, self.signage_condition.label))
+
+    def test_get_list_display_signage_conditions_withoutpermission(self):
+        self.client.force_login(self.user_withoutperm)
+        change_url = reverse('admin:signage_signagecondition_changelist')
+        response = self.client.get(change_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="/admin/signage/signagecondition/{}/change/">{}</a>'.format(self.signage_condition.pk, self.signage_condition.label))

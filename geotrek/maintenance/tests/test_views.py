@@ -32,7 +32,8 @@ from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory)
 from geotrek.outdoor.tests.factories import CourseFactory
-from geotrek.signage.tests.factories import BladeFactory, SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory, SignageTypeFactory
+from geotrek.signage.forms import SignageForm
 from geotrek.signage.models import Signage
 from geotrek.maintenance.tests.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                                  InterventionDisorderFactory, InterventionStatusFactory, ManDayFactory,
@@ -260,6 +261,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_update_signage(self):
+        """Test updating signage also updates intervention"""
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = SignageInterventionFactory.create()
@@ -267,22 +269,26 @@ class InterventionViewsTest(CommonTest):
             intervention = SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signa = intervention.target
         # Save infrastructure form
-        response = self.client.get(signa.get_update_url())
-        form = response.context['form']
-        data = form.initial
-        data['name_en'] = 'modified'
-        data['implantation_year'] = target_year
         access_mean = InfrastructureAccessMeanFactory()
-        data['access'] = access_mean.pk
+        data = {
+            'name_en': "modified",
+            'implantation_year': target_year,
+            'type': SignageTypeFactory.create(),
+            "structure": StructureFactory.create(),
+            'access': access_mean.pk,
+            'manager': OrganismFactory.create().pk
+        }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
             data['geom'] = 'SRID=4326;POINT (2.0 6.6)'
-        data['manager'] = OrganismFactory.create().pk
-        response = self.client.post(signa.get_update_url(), data)
-        self.assertEqual(response.status_code, 302)
+        self.super_user = SuperUserFactory.create()
+        form = SignageForm(instance=signa, data=data, user=self.super_user)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        intervention.refresh_from_db()
+
         # Check that intervention was not deleted (bug #783)
-        intervention = Intervention.objects.first()
         self.assertFalse(intervention.deleted)
         self.assertEqual(str(intervention.target.access), access_mean.label)
         self.assertEqual(intervention.target.name, 'modified')
