@@ -4,6 +4,8 @@ else
   docker_compose=docker-compose
 endif
 
+-include Makefile.perso.mk
+
 ###########################
 #          colors         #
 ###########################
