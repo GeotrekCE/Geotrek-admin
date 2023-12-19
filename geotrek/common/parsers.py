@@ -97,6 +97,7 @@ class Parser:
     natural_keys = {}
     field_options = {}
     default_language = None
+    user_agent = "Geotrek"
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -558,7 +559,8 @@ class Parser:
         assert try_get > 0
         while try_get:
             action = getattr(requests, verb)
-            response = action(url, allow_redirects=True, **kwargs)
+            headers = {"User-Agent": self.user_agent}
+            response = action(url, headers=headers, allow_redirects=True, **kwargs)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                 logger.info("Failed to fetch url {}. Retrying ...".format(url))
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)
