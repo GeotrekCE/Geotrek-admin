@@ -73,6 +73,7 @@ class Parser:
     """
     provider: Allow to differentiate multiple Parser for the same model
     default_language: Allow to define which language this parser will populate by default
+    headers: Allow to configure headers on parser requests
     """
     label = None
     model = None
@@ -97,6 +98,7 @@ class Parser:
     natural_keys = {}
     field_options = {}
     default_language = None
+    headers = {"User-Agent": "Geotrek-Admin"}
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -558,7 +560,7 @@ class Parser:
         assert try_get > 0
         while try_get:
             action = getattr(requests, verb)
-            response = action(url, allow_redirects=True, **kwargs)
+            response = action(url, headers=self.headers, allow_redirects=True, **kwargs)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                 logger.info("Failed to fetch url {}. Retrying ...".format(url))
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)
