@@ -12,6 +12,7 @@ __pycache__/
 /.vscode/
 geotrek/settings/custom.py
 geotrek/cypress/node_modules
+Makefile.perso.mk
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
