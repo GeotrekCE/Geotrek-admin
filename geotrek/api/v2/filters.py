@@ -507,6 +507,7 @@ class TouristicEventFilterSet(filters.FilterSet):
         widget=CSVWidget(),
         queryset=TouristicEventOrganizer.objects.all(),
         help_text=_("Filter by one or more organizer, comma-separated."),
+        field_name="organizers"
     )
 
     help_texts = {

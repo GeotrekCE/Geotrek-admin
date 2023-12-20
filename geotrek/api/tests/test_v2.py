@@ -3241,8 +3241,8 @@ class TouristicEventTestCase(BaseApiTest):
             capacity=12,
             bookable=False,
             place=cls.place,
-            organizer=cls.organizer
         )
+        cls.touristic_event5.organizers.set([cls.organizer])
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
     def test_touristic_event_list(self):

@@ -18,240 +18,368 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: geotrek/tourism/apps.py:8
+#: geotrek/tourism/templates/tourism/tourism_detail_fragment.html:6
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:13
 msgid "Tourism"
 msgstr ""
 
+#: geotrek/tourism/filters.py:28 geotrek/tourism/filters.py:29
+#: geotrek/tourism/filters.py:70 geotrek/tourism/filters.py:71
+#: geotrek/tourism/models.py:71 geotrek/tourism/models.py:276
+#: geotrek/tourism/models.py:450
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:86
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:134
 msgid "Provider"
 msgstr ""
 
+#: geotrek/tourism/filters.py:65
 msgid "After"
 msgstr ""
 
+#: geotrek/tourism/filters.py:66
 msgid "Before"
 msgstr ""
 
+#: geotrek/tourism/filters.py:67
 msgid "Completed"
 msgstr ""
 
+#: geotrek/tourism/forms.py:73
 msgid "Event"
 msgstr ""
 
+#: geotrek/tourism/forms.py:73
 msgid "Assessment"
 msgstr ""
 
+#: geotrek/tourism/forms.py:117
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:150
 msgid "Participants"
 msgstr ""
 
+#: geotrek/tourism/forms.py:143 geotrek/tourism/forms.py:144
 msgid "dd/mm/yyyy"
 msgstr ""
 
+#: geotrek/tourism/forms.py:145 geotrek/tourism/forms.py:146
 msgid "HH:MM"
 msgstr ""
 
+#: geotrek/tourism/forms.py:156
 msgid ""
 "Please add a participant category in admin interface in order to complete "
 "the number of participants."
 msgstr ""
 
+#: geotrek/tourism/forms.py:172
 msgid "Start time is unset"
 msgstr ""
 
+#: geotrek/tourism/forms.py:177 geotrek/tourism/forms.py:182
 msgid "Start time is after end time"
 msgstr ""
 
+#: geotrek/tourism/forms.py:185
 msgid "Start date is after end date"
 msgstr ""
 
+#: geotrek/tourism/models.py:45 geotrek/tourism/models.py:58
+#: geotrek/tourism/models.py:162 geotrek/tourism/models.py:190
+#: geotrek/tourism/models.py:367 geotrek/tourism/models.py:391
+#: geotrek/tourism/models.py:548
 msgid "Label"
 msgstr ""
 
+#: geotrek/tourism/models.py:48
 msgid "Information desk type"
 msgstr ""
 
+#: geotrek/tourism/models.py:49
 msgid "Information desk types"
 msgstr ""
 
+#: geotrek/tourism/models.py:61 geotrek/tourism/models.py:94
+#: geotrek/tourism/models.py:272
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:120
 msgid "Label accessibility"
 msgstr ""
 
+#: geotrek/tourism/models.py:62
 msgid "Labels accessibility"
 msgstr ""
 
+#: geotrek/tourism/models.py:70 geotrek/tourism/models.py:275
+#: geotrek/tourism/models.py:449
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:80
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:140
 msgid "External id"
 msgstr ""
 
+#: geotrek/tourism/models.py:72
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:7
 msgid "Title"
 msgstr ""
 
+#: geotrek/tourism/models.py:73 geotrek/tourism/models.py:355
+#: geotrek/tourism/models.py:436
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:94
 msgid "Type"
 msgstr ""
 
+#: geotrek/tourism/models.py:75 geotrek/tourism/models.py:243
+#: geotrek/tourism/models.py:412
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:8
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:131
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:148
 msgid "Description"
 msgstr ""
 
+#: geotrek/tourism/models.py:76
 msgid "Brief description"
 msgstr ""
 
+#: geotrek/tourism/models.py:77
 msgid "Phone"
 msgstr ""
 
+#: geotrek/tourism/models.py:79 geotrek/tourism/models.py:253
+#: geotrek/tourism/models.py:429
 msgid "Email"
 msgstr ""
 
+#: geotrek/tourism/models.py:81 geotrek/tourism/models.py:255
+#: geotrek/tourism/models.py:431
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:9
 msgid "Website"
 msgstr ""
 
+#: geotrek/tourism/models.py:83
 msgid "Photo"
 msgstr ""
 
+#: geotrek/tourism/models.py:86
 msgid "Street"
 msgstr ""
 
+#: geotrek/tourism/models.py:88
 msgid "Postal code"
 msgstr ""
 
+#: geotrek/tourism/models.py:90
 msgid "Municipality"
 msgstr ""
 
+#: geotrek/tourism/models.py:93 geotrek/tourism/models.py:271
+#: geotrek/tourism/models.py:437
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:167
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:204
 msgid "Accessibility"
 msgstr ""
 
+#: geotrek/tourism/models.py:96
 msgid "Emplacement"
 msgstr ""
 
+#: geotrek/tourism/models.py:104
 msgid "Information desk"
 msgstr ""
 
+#: geotrek/tourism/models.py:105
 msgid "Information desks"
 msgstr ""
 
+#: geotrek/tourism/models.py:130 geotrek/tourism/models.py:141
 #, python-format
 msgid "Image %s invalid or missing from disk."
 msgstr ""
 
+#: geotrek/tourism/models.py:153
 msgid "Point"
 msgstr ""
 
+#: geotrek/tourism/models.py:154
 msgid "Line"
 msgstr ""
 
+#: geotrek/tourism/models.py:155
 msgid "Polygon"
 msgstr ""
 
+#: geotrek/tourism/models.py:156
 msgid "Any"
 msgstr ""
 
+#: geotrek/tourism/models.py:164
 msgid "First list label"
 msgstr ""
 
+#: geotrek/tourism/models.py:166
 msgid "Second list label"
 msgstr ""
 
+#: geotrek/tourism/models.py:168
 msgid "Order"
 msgstr ""
 
+#: geotrek/tourism/models.py:169
 msgid "Alphabetical order if blank"
 msgstr ""
 
+#: geotrek/tourism/models.py:170
 msgid "Color"
 msgstr ""
 
+#: geotrek/tourism/models.py:171
 msgid "Color of the category, only used in mobile."
 msgstr ""
 
+#: geotrek/tourism/models.py:176
 msgid "Touristic content category"
 msgstr ""
 
+#: geotrek/tourism/models.py:177
 msgid "Touristic content categories"
 msgstr ""
 
+#: geotrek/tourism/models.py:192 geotrek/tourism/models.py:250
+#: geotrek/tourism/models.py:562
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:95
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:156
 msgid "Category"
 msgstr ""
 
+#: geotrek/tourism/models.py:194
 msgid "First"
 msgstr ""
 
+#: geotrek/tourism/models.py:194
 msgid "Second"
 msgstr ""
 
+#: geotrek/tourism/models.py:197 geotrek/tourism/models.py:198
 msgid "Touristic content type"
 msgstr ""
 
+#: geotrek/tourism/models.py:220
 msgid "Type1"
 msgstr ""
 
+#: geotrek/tourism/models.py:221
 msgid "First list types"
 msgstr ""
 
+#: geotrek/tourism/models.py:233
 msgid "Type2"
 msgstr ""
 
+#: geotrek/tourism/models.py:234
 msgid "Second list types"
 msgstr ""
 
+#: geotrek/tourism/models.py:241 geotrek/tourism/models.py:410
 msgid "Description teaser"
 msgstr ""
 
+#: geotrek/tourism/models.py:242 geotrek/tourism/models.py:411
 msgid "A brief summary"
 msgstr ""
 
+#: geotrek/tourism/models.py:244 geotrek/tourism/models.py:413
 msgid "Complete description"
 msgstr ""
 
+#: geotrek/tourism/models.py:246 geotrek/tourism/models.py:415
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:114
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:137
 msgid "Themes"
 msgstr ""
 
+#: geotrek/tourism/models.py:247 geotrek/tourism/models.py:416
 msgid "Main theme(s)"
 msgstr ""
 
+#: geotrek/tourism/models.py:248 geotrek/tourism/models.py:417
 msgid "Location"
 msgstr ""
 
+#: geotrek/tourism/models.py:251 geotrek/tourism/models.py:428
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:156
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:174
 msgid "Contact"
 msgstr ""
 
+#: geotrek/tourism/models.py:252
 msgid "Address, phone, etc."
 msgstr ""
 
+#: geotrek/tourism/models.py:257 geotrek/tourism/models.py:441
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:150
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:167
 msgid "Practical info"
 msgstr ""
 
+#: geotrek/tourism/models.py:258
 msgid "Anything worth to know"
 msgstr ""
 
+#: geotrek/tourism/models.py:260
 msgid "Type 1"
 msgstr ""
 
+#: geotrek/tourism/models.py:263
 msgid "Type 2"
 msgstr ""
 
+#: geotrek/tourism/models.py:267 geotrek/tourism/models.py:445
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:68
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:176
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:115
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:213
 msgid "Source"
 msgstr ""
 
+#: geotrek/tourism/models.py:270 geotrek/tourism/models.py:448
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:74
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:121
 msgid "Portal"
 msgstr ""
 
+#: geotrek/tourism/models.py:277
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:92
 msgid "Reservation system"
 msgstr ""
 
+#: geotrek/tourism/models.py:279
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:96
 msgid "Reservation ID"
 msgstr ""
 
+#: geotrek/tourism/models.py:281 geotrek/tourism/models.py:451
 msgid "Approved"
 msgstr ""
 
+#: geotrek/tourism/models.py:282
 msgid "Indicates whether the content has a label or brand"
 msgstr ""
 
+#: geotrek/tourism/models.py:290
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:19
 msgid "Touristic content"
 msgstr ""
 
+#: geotrek/tourism/models.py:291 geotrek/tourism/models.py:346
+#: geotrek/tourism/models.py:348 geotrek/tourism/models.py:569
+#: geotrek/tourism/templates/tourism/tourism_detail_fragment.html:9
 msgid "Touristic contents"
 msgstr ""
 
+#: geotrek/tourism/models.py:326 geotrek/tourism/serializers.py:85
 msgid "touristic-content"
 msgstr ""
 
+#: geotrek/tourism/models.py:347 geotrek/tourism/models.py:349
+#: geotrek/tourism/models.py:570
 msgid "Published touristic contents"
 msgstr ""
 
@@ -264,195 +392,298 @@ msgstr ""
 msgid "Touristic event type"
 msgstr ""
 
+#: geotrek/tourism/models.py:359
 msgid "Touristic event types"
 msgstr ""
 
+#: geotrek/tourism/models.py:370 geotrek/tourism/models.py:455
 msgid "Cancellation reason"
 msgstr ""
 
+#: geotrek/tourism/models.py:371
 msgid "Cancellation reasons"
 msgstr ""
 
+#: geotrek/tourism/models.py:382 geotrek/tourism/models.py:467
 msgid "Event place"
 msgstr ""
 
+#: geotrek/tourism/models.py:383
 msgid "Event places"
 msgstr ""
 
+#: geotrek/tourism/models.py:394 geotrek/tourism/models.py:433
 msgid "Organizer"
 msgstr ""
 
+#: geotrek/tourism/models.py:395
 msgid "Organizers"
 msgstr ""
 
+#: geotrek/tourism/models.py:418
 msgid "Begin date"
 msgstr ""
 
+#: geotrek/tourism/models.py:419
 msgid "End date"
 msgstr ""
 
+#: geotrek/tourism/models.py:420
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:124
 msgid "Duration"
 msgstr ""
 
+#: geotrek/tourism/models.py:421
 msgid "3 days, season, ..."
 msgstr ""
 
+#: geotrek/tourism/models.py:422
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:106
 msgid "Meeting point"
 msgstr ""
 
+#: geotrek/tourism/models.py:423
 msgid "Where exactly ?"
 msgstr ""
 
+#: geotrek/tourism/models.py:424
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:112
 msgid "Start time"
 msgstr ""
 
+#: geotrek/tourism/models.py:425 geotrek/tourism/models.py:427
 msgid "11:00, 23:30"
 msgstr ""
 
+#: geotrek/tourism/models.py:426
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:118
 msgid "End time"
 msgstr ""
 
+#: geotrek/tourism/models.py:435
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:184
 msgid "Speaker"
 msgstr ""
 
+#: geotrek/tourism/models.py:438
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:190
 msgid "Capacity"
 msgstr ""
 
+#: geotrek/tourism/models.py:439
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:196
 msgid "Booking"
 msgstr ""
 
+#: geotrek/tourism/models.py:440
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:130
 msgid "Target audience"
 msgstr ""
 
+#: geotrek/tourism/models.py:442
 msgid "Recommandations / To plan / Advices"
 msgstr ""
 
+#: geotrek/tourism/models.py:453
 msgid "Bookable"
 msgstr ""
 
+#: geotrek/tourism/models.py:454
 msgid "Cancelled"
 msgstr ""
 
+#: geotrek/tourism/models.py:454
 msgid "Boolean indicating if Event is cancelled"
 msgstr ""
 
+#: geotrek/tourism/models.py:457
 msgid "Preparation duration"
 msgstr ""
 
+#: geotrek/tourism/models.py:458 geotrek/tourism/models.py:463
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr ""
 
+#: geotrek/tourism/models.py:462
 msgid "Intervention duration"
 msgstr ""
 
+#: geotrek/tourism/models.py:467
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
+#: geotrek/tourism/models.py:480 geotrek/tourism/models.py:484
+#: geotrek/tourism/models.py:561
 msgid "Number of participants"
 msgstr ""
 
+#: geotrek/tourism/models.py:487 geotrek/tourism/models.py:563
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:20
 msgid "Touristic event"
 msgstr ""
 
+#: geotrek/tourism/models.py:488 geotrek/tourism/models.py:571
+#: geotrek/tourism/models.py:573 geotrek/tourism/models.py:575
+#: geotrek/tourism/templates/tourism/tourism_detail_fragment.html:21
+#: geotrek/tourism/views.py:490
 msgid "Touristic events"
 msgstr ""
 
+#: geotrek/tourism/models.py:505
 #, python-brace-format
 msgid "starting from {begin}"
 msgstr ""
 
+#: geotrek/tourism/models.py:510
 #, python-brace-format
 msgid "from {begin} to {end}"
 msgstr ""
 
+#: geotrek/tourism/models.py:523 geotrek/tourism/serializers.py:222
 msgid "touristic-event"
 msgstr ""
 
+#: geotrek/tourism/models.py:549
 msgid "Display order"
 msgstr ""
 
+#: geotrek/tourism/models.py:552
 msgid "Participant category"
 msgstr ""
 
+#: geotrek/tourism/models.py:553
 msgid "Participant categories"
 msgstr ""
 
+#: geotrek/tourism/models.py:572 geotrek/tourism/models.py:574
+#: geotrek/tourism/models.py:576
 msgid "Published touristic events"
 msgstr ""
 
+#: geotrek/tourism/parsers.py:632
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
 
+#: geotrek/tourism/parsers.py:646
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/tourism_detail_fragment.html:13
 msgid "Add a new touristic content"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/tourism_detail_fragment.html:25
 msgid "Add a new touristic event"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:14
 msgid "Data sources"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:16
 msgid "No result"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/tourism_extrabody_fragment.html:17
 msgid "Choose value(s)"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail.html:10
+#: geotrek/tourism/templates/tourism/touristicevent_detail.html:10
 msgid "Public print"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail.html:10
+#: geotrek/tourism/templates/tourism/touristicevent_detail.html:10
 msgid "Print"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail.html:11
 msgid "Public print booklet"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail.html:11
 msgid "Print booklet"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:5
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:5
 msgid "Attributes"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:29
 msgid "yes,no"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:61
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:82
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:88
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:18
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:23
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:84
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:92
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:136
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:142
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:167
 msgid "None"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_detail_attributes.html:100
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:146
 msgid "Thumbnail"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:42
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:42
 msgid "Powered by geotrek.fr"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:76
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:75
 msgid "Attribution"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:91
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:90
 msgid "Useful information"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:139
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:156
 msgid "Geographical location"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiccontent_public_pdf_base.html:145
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:162
 msgid "All useful information"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:96
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:108
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:130
 msgid "Yes,No"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:156
 msgid "Number"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristicevent_detail_attributes.html:162
 msgid "Total"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristicevent_public_pdf_base.html:100
 msgid "Date"
 msgstr ""
 
+#: geotrek/tourism/templates/tourism/touristiceventorganizer_form.html:4
+#: geotrek/tourism/templates/tourism/touristiceventorganizer_form.html:9
+msgid "Add Organizer"
+msgstr ""
+
+#: geotrek/tourism/tests/test_functional.py:131
+#: geotrek/tourism/tests/test_functional.py:277
 msgid "Invalid geometry value."
 msgstr ""

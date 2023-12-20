@@ -232,6 +232,14 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
+class TouristicOrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = tourism_models.TouristicEventOrganizer
+        fields = (
+            'id',
+        )
+
+
 class OrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='organism')
 
@@ -503,13 +511,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return city.code if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
-        organizer = serializers.SlugRelatedField(
-            read_only=True,
-            slug_field='label'
-        )
-        organizer_id = serializers.PrimaryKeyRelatedField(
-            read_only=True
-        )
+        organizers = serializers.SerializerMethodField()
+        organizers_id = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
@@ -544,6 +547,16 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_end_date(self, obj):
             return obj.end_date or obj.begin_date
+
+        def get_organizers(self, obj):
+            return ", ".join(
+                map(lambda org: org.label, obj.organizers.all())
+            )
+        
+        def get_organizers_id(self, obj):
+            return ", ".join(
+                map(lambda org: org.label, obj.organizers.all())
+            )
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
