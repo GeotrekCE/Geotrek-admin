@@ -18,8 +18,9 @@ from geotrek.common.parsers import (
 )
 from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
+import logging
 
-
+logger = logging.getLogger(__name__)
 class DurationParserMixin:
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
@@ -188,33 +189,28 @@ class GeotrekTrekParser(GeotrekParser):
         super().end()
         self.next_url = f"{self.url}/api/v2/tour"
         try:
-            params = {
-                'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'steps,uuid'
-            }
-            response = self.request_or_retry(f"{self.next_url}", params=params)
+            response = self.request_or_retry(f"{self.next_url}")
             results = response.json()['results']
-            final_children = {}
+            logger.error("get tours")
             for result in results:
-                final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
+                logger.error("tour :")
+                trek_parent_instance = Trek.objects.get(eid=result['uuid'])
+                order = 0
+                for step in result['steps']:
+                    logger.error(f"step :{order +1}")
+                    try:
+                        trek_child_instance = Trek.objects.get(eid=step['uuid'])
+                    except Trek.DoesNotExist:
+                        logger.error(f"parsing step :{order + 1} - {step}")
+                        self.parse_row(step)
+                        logger.error(f"row parsed :{order + 1}")
+                        trek_child_instance = Trek.objects.get(eid=step['uuid'])
+                        logger.error(f"row parsed :{trek_child_instance}")
+                    OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance,
+                                                              child=trek_child_instance,
+                                                              defaults={'order': order})
+                    order += 1
 
-            for key, value in final_children.items():
-                if value:
-                    trek_parent_instance = Trek.objects.filter(eid=key)
-                    if not trek_parent_instance:
-                        self.add_warning(_(f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"))
-                        return
-                    order = 0
-                    for child in value:
-                        try:
-                            trek_child_instance = Trek.objects.get(eid=child)
-                        except Trek.DoesNotExist:
-                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
-                            continue
-                        OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
-                                                                  child=trek_child_instance,
-                                                                  defaults={'order': order})
-                        order += 1
         except Exception as e:
             self.add_warning(_(f"An error occured in children generation : {getattr(e, 'message', repr(e))}"))
 
