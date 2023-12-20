@@ -95,7 +95,7 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return tourism_models.TouristicEvent.objects.existing()\
             .select_related('type') \
-            .prefetch_related('themes', 'source', 'portal',
+            .prefetch_related('themes', 'source', 'portal', 'organizers',
                               Prefetch('attachments',
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
                               ) \

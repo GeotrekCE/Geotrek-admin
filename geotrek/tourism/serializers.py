@@ -182,6 +182,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
     structure = StructureSerializer()
+    organizer = rest_serializers.SerializerMethodField(source="organizers")
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -192,6 +193,11 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
     category = rest_serializers.SerializerMethodField()
+
+    def get_organizers(self, obj):
+        return ", ".join(
+            map(lambda org: org.label, obj.organizers.all())
+        )
 
     def __init__(self, instance=None, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)

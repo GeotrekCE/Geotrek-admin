@@ -196,7 +196,7 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.meeting_point_{{ lang }} AS "Meeting point {{ lang }}",
        {% endfor %}
-       d.label AS "Organizer",
+       o.labels AS "Organizers",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
@@ -218,7 +218,6 @@ SELECT a.id,
 FROM public.tourism_touristicevent a
 LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
 LEFT JOIN public.authent_structure c ON a.structure_id = c.id
-LEFT JOIN public.tourism_touristiceventorganizer d ON a.organizer_id = d.id
 LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
 LEFT JOIN public.tourism_touristiceventplace p ON a.place_id = p.id
 LEFT JOIN LATERAL (
@@ -240,6 +239,13 @@ LEFT JOIN
      JOIN tourism_touristicevent_themes b ON a.id = b.theme_id
      JOIN tourism_touristicevent c ON b.touristicevent_id = c.id
      GROUP BY c.id) h ON a.id = h.id
+LEFT JOIN
+    (SELECT c.id,
+            array_to_string(ARRAY_AGG (a.label ORDER BY a.id), ', ', '_') labels
+     FROM tourism_touristiceventorganizer a
+     JOIN tourism_touristicevent_organizers b ON a.id = b.touristiceventorganizer_id
+     JOIN tourism_touristicevent c ON b.touristicevent_id = c.id
+     GROUP BY c.id) o ON a.id = o.id
 WHERE deleted IS FALSE 
 ;
 
