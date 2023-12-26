@@ -17,6 +17,6 @@ urlpatterns = [
     path('api/<lang:lang>/feedback/options.json', FeedbackOptionsView.as_view(), name="options_json"),
 ]
 router = DefaultRouter(trailing_slash=False)
-router.register(r'^api/(?P<lang>[a-z]{2})/reports', ReportAPIViewSet, basename='report')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/reports', ReportAPIViewSet, basename='report')
 urlpatterns += router.urls
 urlpatterns += registry.register(feedback_models.Report, menu=settings.REPORT_MODEL_ENABLED)

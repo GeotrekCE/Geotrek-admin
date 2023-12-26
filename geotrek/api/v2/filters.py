@@ -13,6 +13,7 @@ from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
     TouristicEventPlace, TouristicEventType
@@ -141,13 +142,13 @@ class GeotrekPublishedFilter(BaseFilterBackend):
                 # no language specified. Check for all.
                 q = Q()
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    field_name = 'published_{}'.format(lang.replace('-', '_'))
+                    field_name = build_localized_fieldname('published', lang)
                     if field_name in associated_published_fields:
                         q |= Q(**{field_name: True})
                 qs = qs.filter(q)
             else:
                 # one language is specified
-                field_name = 'published_{}'.format(language.replace('-', '_'))
+                field_name = build_localized_fieldname('published', language)
                 qs = qs.filter(**{field_name: True})
 
         return qs
@@ -991,12 +992,12 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
             language = request.GET.get('language')
             if language:
                 # one language is specified
-                related_field_name = '{}__published_{}'.format(related_name, language.replace('-', '_'))
+                related_field_name = '{}__{}'.format(related_name, build_localized_fieldname('published', language))
                 q &= Q(**{related_field_name: True})
             else:
                 # no language specified. Check for all.
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    related_field_name = '{}__published_{}'.format(related_name, lang.replace('-', '_'))
+                    related_field_name = '{}__{}'.format(related_name, build_localized_fieldname('published', lang))
                     q |= Q(**{related_field_name: True})
         q &= optional_query
         qs = qs.filter(q)

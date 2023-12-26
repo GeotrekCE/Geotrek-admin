@@ -1,23 +1,27 @@
-from datetime import date, timedelta
-from decimal import Decimal
 import io
 import json
-from collections import defaultdict
 import re
-from tempfile import NamedTemporaryFile
 import zipfile
+from collections import defaultdict
+from datetime import date, timedelta
+from decimal import Decimal
+from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point, GEOSGeometry, MultiLineString
-from django.utils.translation import gettext as _, get_language
+from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.models import Label, Theme
-from geotrek.common.parsers import (
-    ShapeParser, AttachmentParserMixin, GeotrekParser, GlobalImportError, RowImportError, Parser, ApidaeBaseParser
-)
+from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin,
+                                    GeotrekParser, GlobalImportError, Parser,
+                                    RowImportError, ShapeParser)
 from geotrek.core.models import Path, Topology
-from geotrek.trekking.models import OrderedTrekChild, POI, Service, Trek, DifficultyLevel, TrekNetwork, Accessibility
+from geotrek.trekking.models import (POI, Accessibility, DifficultyLevel,
+                                     OrderedTrekChild, Service, Trek,
+                                     TrekNetwork)
 
 
 class DurationParserMixin:
@@ -333,7 +337,7 @@ class ApidaeBaseTrekkingParser(ApidaeBaseParser):
             src = self.fields[translated_field]
             del self.fields[translated_field]
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                self.fields[f'{translated_field}_{lang}'] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
+                self.fields[build_localized_fieldname(translated_field, lang)] = f'{src}.{self.apidae_translation_prefix}{lang.capitalize()}'
 
     @classmethod
     def _get_default_translation_src(cls):
@@ -1082,12 +1086,12 @@ class ApidaeReferenceElementParser(Parser):
 
     def _add_multi_languages_fields_mapping(self):
         self.fields = {
-            f'{self.name_field}_{lang}': f'libelle{lang.capitalize()}'
+            build_localized_fieldname(self.name_field, lang): f'libelle{lang.capitalize()}'
             for lang in settings.MODELTRANSLATION_LANGUAGES
         }
 
     def _set_eid_fieldname(self):
-        self.eid = f'{self.name_field}_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}'
+        self.eid = build_localized_fieldname(self.name_field, settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     @property
     def items(self):

@@ -41,6 +41,7 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from mapentity.views import MapEntityList
+from modeltranslation.utils import build_localized_fieldname
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
@@ -95,29 +96,29 @@ class Meta(MetaMixin, TemplateView):
         if portal:
             try:
                 target_portal = TargetPortal.objects.get(name=portal)
-                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
+                context['META_DESCRIPTION'] = getattr(target_portal, build_localized_fieldname('description', lang))
             except TargetPortal.DoesNotExist:
                 pass
 
         if 'geotrek.trekking' in settings.INSTALLED_APPS:
             from geotrek.trekking.models import Trek
             context['treks'] = Trek.objects.existing().order_by('pk').filter(
-                Q(**{'published_{lang}'.format(lang=lang): True})
-                | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                Q(**{build_localized_fieldname('published', lang): True})
+                | Q(**{'trek_parents__parent__{published_lang}'.format(published_lang=build_localized_fieldname('published', lang)): True,
                        'trek_parents__parent__deleted': False})
             )
         if 'geotrek.tourism' in settings.INSTALLED_APPS:
             from geotrek.tourism.models import TouristicContent, TouristicEvent
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
             context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
         if 'geotrek.diving' in settings.INSTALLED_APPS:
             from geotrek.diving.models import Dive
             context['dives'] = Dive.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
         return context
 

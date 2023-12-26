@@ -17,10 +17,10 @@ def forward(apps, schema_editor):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             for model, old, new in FIELDS:
                 cursor.execute(
-                    "SELECT 1 FROM information_schema.columns WHERE table_name='common_{}' AND column_name='{}_{}'".format(model, old, lang)
+                    "SELECT 1 FROM information_schema.columns WHERE table_name='common_{}' AND column_name='{}_{}'".format(model, old, lang.replace('-', '_'))
                 )
                 if cursor.fetchone():
-                    cursor.execute('ALTER TABLE common_{} RENAME {}_{} TO {}_{}'.format(model, old, lang, new, lang))
+                    cursor.execute('ALTER TABLE common_{} RENAME {}_{} TO {}_{}'.format(model, old, lang.replace('-', '_'), new, lang.replace('-', '_')))
 
 
 class Migration(migrations.Migration):

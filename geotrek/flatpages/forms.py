@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
@@ -7,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.common.forms import CommonForm
 from geotrek.common.models import Attachment, FileType
 from geotrek.flatpages.models import FlatPage
-if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.settings import AVAILABLE_LANGUAGES
+from modeltranslation.settings import AVAILABLE_LANGUAGES
+from modeltranslation.utils import build_localized_fieldname
 
 
 class FlatPageForm(CommonForm):
@@ -53,7 +52,7 @@ class FlatPageForm(CommonForm):
 
             # Test if HTML was filled
             # Use strip_tags() to catch empty tags (e.g. ``<p></p>``)
-            html_content = cleaned_data.get('content_{}'.format(lang), None) or ''
+            html_content = cleaned_data.get(build_localized_fieldname('content', lang), None) or ''
             if external_url and external_url.strip() and strip_tags(html_content):
                 raise ValidationError(_('Choose between external URL and HTML content'))
 
