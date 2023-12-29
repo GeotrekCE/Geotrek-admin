@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('common', '0036_accessmean'),
-        ('signage', '0038_auto_20231023_1233'),
+        ('signage', '0039_alter_bladetype_options'),
     ]
 
     operations = [

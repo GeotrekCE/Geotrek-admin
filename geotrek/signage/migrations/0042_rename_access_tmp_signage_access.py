@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('signage', '0040_remove_signage_access'),
+        ('signage', '0041_remove_signage_access'),
     ]
 
     operations = [
