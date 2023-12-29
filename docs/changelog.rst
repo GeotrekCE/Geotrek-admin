@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 -Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+- Generalize``AccessMean`` model and add field ``access`` to ``Intervention`` (#3819)
 
 **Improvements**
 
