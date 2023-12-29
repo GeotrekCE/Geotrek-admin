@@ -64,8 +64,15 @@ class InterventionForm(CommonForm):
 
     topology = TopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
-    project = forms.ModelChoiceField(required=False, label=_("Project"),
-                                     queryset=Project.objects.existing())
+    project = forms.ModelChoiceField(
+        required=False, label=_("Project"),
+        queryset=Project.objects.existing()
+    )
+    end_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"data-date-orientation": "bottom auto"}),
+    )
+
 
     geomfields = ['topology']
     leftpanel_scrollable = False
