@@ -21,13 +21,13 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
-from geotrek.common.tests.factories import OrganismFactory
+from geotrek.common.tests.factories import OrganismFactory, AccessMeanFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.tests.factories import InfrastructureAccessMeanFactory, InfrastructureFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory)
@@ -255,6 +255,8 @@ class InterventionViewsTest(CommonTest):
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
         })
+        access_mean = AccessMeanFactory()
+        data['access'] = access_mean.pk
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get_for_model(Signage).pk)
         response = self.client.post(formurl, data)
@@ -269,7 +271,7 @@ class InterventionViewsTest(CommonTest):
             intervention = SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signa = intervention.target
         # Save infrastructure form
-        access_mean = InfrastructureAccessMeanFactory()
+        access_mean = AccessMeanFactory()
         data = {
             'name_en': "modified",
             'implantation_year': target_year,
@@ -343,6 +345,8 @@ class InterventionViewsTest(CommonTest):
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
+        if data["access"] is None:
+            data["access"] = ""
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
         data.update(**{

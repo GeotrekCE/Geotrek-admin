@@ -74,7 +74,7 @@ LEFT JOIN infrastructure_infrastructuretype b ON a.type_id = b.id
 LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
 LEFT JOIN infrastructure_infrastructureusagedifficultylevel d ON a.usage_difficulty_id = d.id
 LEFT JOIN infrastructure_infrastructuremaintenancedifficultylevel e ON a.maintenance_difficulty_id = e.id
-LEFT JOIN infrastructure_infrastructureaccessmean j ON a.access_id = j.id
+LEFT JOIN common_accessmean j ON a.access_id = j.id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
             a.id

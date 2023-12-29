@@ -84,6 +84,7 @@ class InterventionForm(CommonForm):
             'height',
             'stake',
             'project',
+            'access',
             'description',
             'material_cost',
             'heliport_cost',
@@ -97,7 +98,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
+             'height', 'stake', 'project', 'access', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
         super().__init__(*args, **kwargs)

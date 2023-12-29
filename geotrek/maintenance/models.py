@@ -15,7 +15,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
                                           GeotrekMapEntityMixin, get_uuid_duplication)
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, AccessMean
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
@@ -70,6 +70,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
                                 on_delete=models.SET_NULL, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
+    access = models.ForeignKey(AccessMean,
+                               verbose_name=_("Access mean"), blank=True, null=True,
+                               on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     objects = InterventionManager()

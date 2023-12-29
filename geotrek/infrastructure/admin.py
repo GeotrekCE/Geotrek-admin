@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.db.models import Q
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from geotrek.infrastructure.models import InfrastructureAccessMean, InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
+from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
 
 
 @admin.register(InfrastructureType)
@@ -78,12 +78,6 @@ class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure',)
 
 
-class InfrastructureAccessMeanAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ('label',)
-    merge_field = 'label'
-
-
-admin.site.register(InfrastructureAccessMean, InfrastructureAccessMeanAdmin)
 admin.site.register(InfrastructureCondition, InfrastructureSimpleFieldAdmin)
 admin.site.register(InfrastructureMaintenanceDifficultyLevel, InfrastructureSimpleFieldAdmin)
 admin.site.register(InfrastructureUsageDifficultyLevel, InfrastructureSimpleFieldAdmin)
