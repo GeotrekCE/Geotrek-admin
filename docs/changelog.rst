@@ -14,6 +14,7 @@ CHANGELOG
 - Add rules fixture on sensitive area (#3470)
 - Change condition on signage & blade to select many of them (#3847)
 - Allow to set headers in requests from Parsers (#3861)
+- Sort bladeType alphabetically #3821
 
 **Documentation**
 

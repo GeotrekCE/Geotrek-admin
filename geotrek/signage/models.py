@@ -217,6 +217,7 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Blade type")
         verbose_name_plural = _("Blade types")
+        ordering = ('label',)
 
     def __str__(self):
         if self.structure:
