@@ -118,6 +118,9 @@ msgstr "Tronçons"
 msgid "On {}"
 msgstr "Sur {}"
 
+msgid "Begin date is after end date"
+msgstr "La date de début est après la date de fin"
+
 msgid "Fundings"
 msgstr "Financements"
 

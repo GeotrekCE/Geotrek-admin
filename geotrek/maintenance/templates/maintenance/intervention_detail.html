@@ -13,7 +13,9 @@
         </tr>
         <tr>
             <th>{{ intervention|verbose:"end_date" }}</th>
-            <td>{{ intervention.end_date }}</td>
+            <td>{% if intervention.end_date %}{{ intervention.end_date }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ intervention|verbose:"stake" }}</th>

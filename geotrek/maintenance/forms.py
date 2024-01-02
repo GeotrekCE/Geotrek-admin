@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.forms import FloatField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
-
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
@@ -153,6 +152,14 @@ class InterventionForm(CommonForm):
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
             if self.instance.pk and self.instance.target and hasattr(self.instance.target, "report_interventions"):
                 self.fields["end_date"].required = True
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+        begin_date = clean_data.get('begin_date')
+        end_date = clean_data.get('end_date')
+        if end_date and begin_date > end_date:
+            self.add_error('end_date', _('Begin date is after end date'))
+        return clean_data
 
     def save(self, *args, **kwargs):
         target = self.instance.target

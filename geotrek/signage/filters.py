@@ -51,7 +51,7 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         for subvalue in value:
             # Intervention started in year 'subvalue', ended in year 'subvalue',
             # or was ongoing in year 'subvalue'
-            q_1 = q_1 | Q(begin_date__year__lt=subvalue, end_date__year__gt=subvalue) 
+            q_1 = q_1 | Q(begin_date__year__lt=subvalue, end_date__year__gt=subvalue)
         q = Q(begin_date__year__in=value) | Q(end_date__year__in=value) | q_1
         q = Q(q, target_type=signage_ct)
         interventions = Intervention.objects.filter(q) \
