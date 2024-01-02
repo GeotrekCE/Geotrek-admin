@@ -59,7 +59,7 @@ class LightInterventionFactory(factory.django.DjangoModelFactory):
 
 
 class InterventionFactory(LightInterventionFactory):
-    date = '2022-03-30'
+    begin_date = '2022-03-30'
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):

@@ -65,7 +65,7 @@ function display_predefined_email_in_email_field() {
     } else {
         text = predefined_emails[selected]["text"];
         text = text.replace(/##supervisor##/g, resolved_intervention_info["username"]);
-        text = text.replace(/##intervention_date##/g, resolved_intervention_info["date"]);
+        text = text.replace(/##intervention_end_date##/g, resolved_intervention_info["end_date"]);
         $('#id_message_sentinel').val(text);
         $('#id_message_administrators').val(text);
     }

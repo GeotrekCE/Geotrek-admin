@@ -37,7 +37,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     target = GenericForeignKey('target_type', 'target_id')
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, help_text=_("Brief summary"))
-    date = models.DateField(default=datetime.now, verbose_name=_("Date"), help_text=_("When ?"))
+    begin_date = models.DateField(default=datetime.now, blank=False, null=False, verbose_name=_("Begin date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     subcontracting = models.BooleanField(verbose_name=_("Subcontracting"), default=False)
 
     # Technical information
@@ -260,7 +261,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         return self.name
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.date)
+        return "%s (%s)" % (self.name, self.begin_date)
 
     @classmethod
     def get_interventions(cls, obj):

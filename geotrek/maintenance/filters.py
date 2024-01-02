@@ -2,13 +2,14 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter, MultipleChoiceFilter
+from django_filters import ChoiceFilter, MultipleChoiceFilter, DateFromToRangeFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import OptionalRangeFilter, RightFilter
+from geotrek.common.widgets import OneLineRangeWidget
 from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDistrict,
                                     IntersectionFilterRestrictedArea, IntersectionFilterRestrictedAreaType,
                                     ZoningFilterSet)
@@ -121,6 +122,13 @@ class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
     slope = OptionalRangeFilter(label=_('slope'))
 
 
+class CustomDateFromToRangeFilter(DateFromToRangeFilter):
+    def __init__(self, *args, **kwargs):
+        super(DateFromToRangeFilter, self).__init__(*args, **kwargs)
+        self.field.fields[0].label = _('min %s') % self.field.label
+        self.field.fields[1].label = _('max %s') % self.field.label
+
+
 class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
@@ -130,8 +138,8 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
 
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
-    year = MultipleChoiceFilter(choices=lambda: Intervention.objects.year_choices(),
-                                field_name='date', lookup_expr='year', label=_("Year"))
+    begin_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by begin date range')},), label=_('begin date'))
+    end_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by end date range')},), label=_('end date'))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
     area_type = InterventionIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False,
                                                                  lookup_expr='intersects')
@@ -148,7 +156,6 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.form.fields['year'].choices = Intervention.objects.year_choices()
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):

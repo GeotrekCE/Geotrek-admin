@@ -74,7 +74,8 @@ class InterventionViewsTest(CommonTest):
         InterventionStatusFactory.create()
         good_data = {
             'name': 'test',
-            'date': '2012-08-23',
+            'begin_date': '2012-08-23',
+            'end_date': "",
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
@@ -112,7 +113,8 @@ class InterventionViewsTest(CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'date': '30/03/2022',
+            'begin_date': '30/03/2022',
+            'end_date': None,
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'stake': self.obj.stake.stake,
@@ -254,6 +256,7 @@ class InterventionViewsTest(CommonTest):
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
         access_mean = AccessMeanFactory()
         data['access'] = access_mean.pk
@@ -353,6 +356,7 @@ class InterventionViewsTest(CommonTest):
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),

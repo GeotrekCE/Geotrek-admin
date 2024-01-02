@@ -42,7 +42,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report_1 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4())
         cls.filed_report_2 = ReportFactory(status=cls.filed_status, external_uuid=uuid.uuid4())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4())
-        cls.intervention = ReportInterventionFactory(date=datetime(year=1997, month=4, day=4).date())
+        cls.intervention = ReportInterventionFactory(begin_date=datetime(year=1997, month=11, day=10).date(), end_date=datetime(year=1997, month=11, day=11).date())
         cls.waiting_report = ReportFactory(status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4())
         cls.solved_intervention_report = ReportFactory(status=cls.solved_intervention_status, external_uuid=uuid.uuid4())
         cls.predefined_email_1 = PredefinedEmailFactory()
@@ -257,7 +257,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         user = SuperUserFactory(username="admin", password="dadadad")
         data = {
             'name': "test_interv",
-            'date': "2025-12-12",
+            'begin_date': "2025-12-12",
             'status': 2,
             'structure': user.profile.structure.pk,
         }
@@ -283,9 +283,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Trigger resolving intervention
         user = SuperUserFactory(username="admin", password="dadadad")
+        end_date = interv.begin_date
         data = {
             'name': interv.name,
-            'date': interv.date,
+            'begin_date': interv.begin_date,
+            'end_date': end_date,
             'status': 3,    # pk for "Terminée" from fixtures
             'structure': user.profile.structure.pk
         }
