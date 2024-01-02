@@ -73,7 +73,6 @@ class InterventionForm(CommonForm):
         widget=forms.DateInput(attrs={"data-date-orientation": "bottom auto"}),
     )
 
-
     geomfields = ['topology']
     leftpanel_scrollable = False
 
