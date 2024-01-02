@@ -1109,7 +1109,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
     ]
     COLUMNS_LISTS["intervention_view"] = [
-        "date",
+        "begin_date",
+        "end_date",
         "type",
         "target",
         "status",
@@ -1579,7 +1580,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
     ]
     COLUMNS_LISTS["intervention_export"] = [
         "name",
-        "date",
+        "begin_date",
+        "end_date",
         "type",
         "target",
         "status",
@@ -2028,6 +2030,7 @@ An exhaustive list of form fields hideable in each module.
             "description",
             "type",
             "subcontracting",
+            "end_date",
             "length",
             "width",
             "height",
@@ -2038,7 +2041,6 @@ An exhaustive list of form fields hideable in each module.
             "subcontract_cost",
         ],
     HIDDEN_FORM_FIELDS["project"] = [
-            "type",
             "type",
             "domain",
             "end_year",
