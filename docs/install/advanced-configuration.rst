@@ -200,7 +200,7 @@ Example with IGN and OSM basemaps:
             '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
             {
                 'attribution': 'Plan IGNV2 - Carte © IGN/Geoportail',
-                'maxNativeZoom': 19,
+                'maxNativeZoom': 16,
                 'maxZoom': 22
             }
         ),
@@ -209,15 +209,6 @@ Example with IGN and OSM basemaps:
             '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
             {
                 'attribution': 'Orthophotos - Carte © IGN/Geoportail',
-                'maxNativeZoom': 19,
-                'maxZoom': 22
-            }
-        ),
-        (
-            'IGN Cadastre',
-            '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-            {
-                'attribution': 'Cadastre - Carte © IGN/Geoportail',
                 'maxNativeZoom': 19,
                 'maxZoom': 22
             }
@@ -245,7 +236,7 @@ Example with IGN and OSM basemaps:
             '//data.geopf.fr/private/wmts?apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
             {
                 'attribution': 'Plan Scan 25 Touristique - Carte © IGN/Geoportail',
-                'maxNativeZoom': 19,
+                'maxNativeZoom': 17,
                 'maxZoom': 22
             }
         ),

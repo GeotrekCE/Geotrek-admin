@@ -150,8 +150,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
 
-    @override_settings(FORCED_LAYERS=[('OSM', [(42, 100000), (43.87017822557581, 7.506408691406249),
-                                               (43.90185050527358, 7.555847167968749), (42, 100000)])])
+    @override_settings(FORCED_LAYERS=[('OpenStreetMap', [(42, 100000), (43.87017822557581, 7.506408691406249),
+                                                         (43.90185050527358, 7.555847167968749), (42, 100000)])])
     def test_forced_layers(self):
         if self.model is None:
             return  # Abstract test should not run

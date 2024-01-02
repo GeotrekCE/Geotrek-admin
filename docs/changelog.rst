@@ -26,8 +26,8 @@ CHANGELOG
 
 **Maintenance**
 
-- Update check_ign_keys script to match new IGN urls
-- Update base.py configuratio for layers
+- Update ``check_ign_keys`` script to match new IGN urls
+- Update ``base.py`` configuratio for layers
 
 **Bug fixes**
 
