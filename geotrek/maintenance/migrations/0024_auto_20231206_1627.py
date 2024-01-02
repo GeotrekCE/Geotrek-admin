@@ -16,7 +16,7 @@ def copy_date_into_begin_date(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('maintenance', '0022_auto_20230503_0837'),
+        ('maintenance', '0023_intervention_access'),
     ]
 
     operations = [
