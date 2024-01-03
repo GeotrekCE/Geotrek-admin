@@ -20,6 +20,7 @@ CHANGELOG
 **Documentation**
 
 - Improve documentation for database restore
+- Integration of sensitivity module notices (import and public api usage)
 
 **Bug fixes**
 
