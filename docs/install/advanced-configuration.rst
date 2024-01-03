@@ -694,9 +694,11 @@ If false, no email will be sent to the sender of any feedback on Geotrek-rando w
 Suricate support
 ~~~~~~~~~~~~~~~~
 
+Suricate is the French national database gathering such reports. It exposes an API for external software to connect to. For Geotrek to connect to Suricate, you need to request two pairs of API keys allowing access.
+
 Geotrek reports can work together with Suricate API, using one of 3 modes. Proceed through a mode full configuration before proceeding to the next mode.
 
-**1** - No Suricate (default)
+**1 - No Suricate (default)**
 
 This mode sends no report data to Suricate.
 
@@ -709,7 +711,7 @@ To initialize Report forms (Geotrek-admin, Geotrek-rando-v2, Geotrek-rando-v3) l
 To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 
-**2** - Suricate Standard
+**2 - Suricate Standard**
 
 This mode simply forwards all reports to Suricate, using the Standard API to post reports.
 
@@ -726,10 +728,103 @@ Set your account settings in ``custom.py``:
         'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
     }
 
-**3** - Suricate Management (Workflow)
+**3 - Suricate Management (Workflow)**
 
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It is used to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Report mode as well.
-You can find a detailled explanation on the workflow here : https://github.com/GeotrekCE/Geotrek-admin/issues/2366#issuecomment-1113435035
+
+.. image :: /images/advanced-configuration/suricate.png
+
+Suricate Workflow mode defines a strict process, composed of several steps representing the lifecycle of a user report, from creation to closing. A report is always characterized with a status, depicting how far in the process the report is, and displayed using a specific color on the map.
+
+**Reports**
+
+A report consists of the following information :
+    * A GPS position
+    * A message describing the problem
+    * A category : environment, security, usage conflit, signages
+    * A magnitude : usage is possible, difficult, or impossible
+    * A practice : trekking, cycling, horse-riding…
+    * Up to 3 pictures
+
+**Stakeholders and responsibility**
+
+This workflow defines three stakeholders categories :
+
+    * The sentinel : the person who submitted the report. They do not have a Geotrek user account nor intervene in the workflow, but they are kept updated on the processing of their report via semi-automatic e-mails.
+    * Supervisors : they are assigned (a) report(s) for treatment. They are tasked with planning an Intervention on Geotrek and enter information about it.
+    * The manager : they maintain a global view of all reports on the territory, assign reports to supervisors, handle messaging to the sentinel, and confirm reports resolution.
+
+Any Geotrek user account can be used as a supervisor, as long as they have proper access and modification rights on both Report and Intervention modules. There can only be one Manager.
+
+**Report processing**
+
+Every night, Geotrek fetches new reports and updates through Suricate API. The manager receives an e-mail listing new reports (with “Filed” status). They can visualize them on Geotrek.
+
+**1** - Qualification
+
+The manager has three options when handling a newly filed report:
+
+    * Classify : The report isn’t relevant. The manager sets the report to “Classified” and enters a message for the sentinel, explaining their choice. The report is considered closed.
+    * Reject treatment : The report does not involve an area or an equipment under responsibility of the workflow users, but could be handled by another member of the Suricate community. The report is excluded from Geotrek workflow but is still accessible to the community via other applications using Suricate API.
+    * Assignation : The manager selects a supervisor from a drop-down selector, and enters a message with instructions or further information. The supervisor receives an e-mail notifying them about the newly assigned report, along with the manager’s message. * The manager also enters a message destined to the sentinel, to notify them that the report is about to be handled. The report is set to status “Waiting”. Only after assignation can we proceed to the following steps.
+
+
+**2** - Planification
+
+The supervisor logs onto Geotrek and creates an Intervention linked to the assigned report, with a planification date. The intervention has status “Plannified”. If too many days have passed between report assignation and intervention creation, the report is automatically set to “Late intervention” status, marked with color red, and the supervisor receives a reminder by e-mail.
+
+**3** - Resolution
+
+The supervisor sets their intervention to “Resolved” status. The manager receives an e-mail notifying that a report is ready to be closed. If too many days have passed between intervention creation and intervention resolution, the report is automatically set to “Late resolution” status, marked with color red, and the supervisor receives a reminder e-mail.
+
+**4** - Closing
+
+Following the intervention’s resolution, the manager has to confirm the report was handled and sets it to “Resolved”. They enter a message for the sentinel to inform them that the report’s processing is over. The report is considered closed.
+
+**5** - GPS relocalisation
+
+At any point, the manager or the supervisor can re-define GPS location for the report. Relocating it outside of the district marked as workflow responsibility area causes the treatment to be rejected (see part 1 Qualification).
+Furthermore, it is now possible to display the report layer on other Geotrek modules, for instance to compare positions between reports and signages or treks.
+
+**6** - Reports visibility
+
+When a supervisor logs in to Geotrek, they can only see reports that are currently assigned to them. Both the manager and administrators can see all existing reports.
+
+**7** - Predefined messages
+
+As we have seen above, the manager enters messages destined to the sentinel or to supervisors. These messages can be predefined in the administration interface and picked from a drop-down selector, then modified before sending. It is possible to automatically retrieve in a message the intervention date and the username of the supervisor that handled it.
+
+**Workflow configuration**
+
+Even though the workflow is a strict process, the following items are customisable.
+Through administration interface :
+
+    * Colors for each status
+    * Selecting the manager
+    * Selecting the workflow responsibility area
+    * Predefined messages
+
+**Through application configuration**:
+
+    * API keys to connect to Suricate
+    * Enabling of Workflow mode or any other mode
+    * Enabling/disabling status colors on map
+    * Duration of timers setting reports to “late” statuses
+
+**Synchronization and network losses**
+
+Communication between Suricate and Geotrek operates as follows :
+
+    * Suricate to Geotrek : new information is fetched once a night
+    * Geotrek to Suricate : every report update on Geotrek is immediately forwarded to Suricate
+
+Maintaining synchronization between Suricate and Geotrek confronts us to the challenges of distributed software architecture. At any point, the connection between both applications can be lost, meaning that Suricate and Geotrek will no longer agree on a report’s status. Most of the time, this is simply due to temporary network failure.
+A system is in place to compensate for such failures. If a request to Suricate API fails, it is stored in the database and resent a few hours later. In case of a long term loss of connection, Django commands are available for an administrator to run some connection tests and resend stored information once connection is recovered.
+
+
+For technical documentation refer to : https://geotrek.ecrins-parcnational.fr/ressources/technique/2023-02-Geotrek-Suricate-configuration.pdf
+
+You can find the same detailled explanation on the workflow in this article in french : https://makina-corpus.com/geotrek/gestion-territoires-naturels-geotrek-traitement-signalements-suricate
 
 - Set your settings in ``custom.py`` :
 
@@ -779,7 +874,7 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
 - Go to the Admin Site and
     - if you want to include the moderation steps (`SKIP_MANAGER_MODERATION = False`), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
     - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
-    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
+    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
     - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
 Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate, when the synchronization command is run. Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :

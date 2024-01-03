@@ -21,6 +21,7 @@ CHANGELOG
 **Documentation**
 
 - Improve documentation for database restore
+- Improve documentation aboute suricate's workflow (#3070)
 
 **Bug fixes**
 
