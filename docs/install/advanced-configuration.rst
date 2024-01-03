@@ -795,6 +795,7 @@ As we have seen above, the manager enters messages destined to the sentinel or t
 **Workflow configuration**
 
 Even though the workflow is a strict process, the following items are customisable.
+
 Through administration interface :
     * Colors for each status
     * Selecting the manager
