@@ -66,21 +66,7 @@ or:
 
     sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
 
-Attributes for "zones sensibles espèce" are:
- 
-* espece : species name. Mandatory. A species with this name must have been previously created.
-* contact : contact (text or HTML format). Optional.
-* descriptio : description (text or HTML format). Optional.
-
-Attributes for "zones sensibles réglementaires" are:
-
-* name: zone name.
-* contact : contact (text or HTML format). Optional.
-* descriptio : description (text or HTML format). Optional.
-* periode : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
-* pratiques : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
-* url : card url. Optional.
-
+You can refer to sensitivy module usage to format correctly the import files (:ref:`Import`)
 
 Sync to Geotrek-rando
 ---------------------

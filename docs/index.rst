@@ -17,7 +17,7 @@ Welcome to Geotrek's documentation!
     usage/configuration-ttw.rst
     usage/externals-apis.rst
     usage/qgis.rst
-    usage/sensitivity-usage.rst
+    usage/sensitivity.rst
     faq.rst
 
 .. toctree::
