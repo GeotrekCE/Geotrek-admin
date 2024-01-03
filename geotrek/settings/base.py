@@ -448,20 +448,20 @@ LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
         (
-            'OpenStreetMap',
-            '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
-                'maxNativeZoom': 19,
-                'maxZoom': 22
-            }
-        ),
-        (
             'OpenTopoMap',
             '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
             {
                 'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
                 'maxNativeZoom': 17,
+                'maxZoom': 22
+            }
+        ),
+        (
+            'OpenStreetMap',
+            '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
+                'maxNativeZoom': 19,
                 'maxZoom': 22
             }
         )
