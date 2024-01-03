@@ -749,7 +749,6 @@ A report consists of the following information :
 **Stakeholders and responsibility**
 
 This workflow defines three stakeholders categories :
-
     * The sentinel : the person who submitted the report. They do not have a Geotrek user account nor intervene in the workflow, but they are kept updated on the processing of their report via semi-automatic e-mails.
     * Supervisors : they are assigned (a) report(s) for treatment. They are tasked with planning an Intervention on Geotrek and enter information about it.
     * The manager : they maintain a global view of all reports on the territory, assign reports to supervisors, handle messaging to the sentinel, and confirm reports resolution.
@@ -763,7 +762,6 @@ Every night, Geotrek fetches new reports and updates through Suricate API. The m
 **1** - Qualification
 
 The manager has three options when handling a newly filed report:
-
     * Classify : The report isn’t relevant. The manager sets the report to “Classified” and enters a message for the sentinel, explaining their choice. The report is considered closed.
     * Reject treatment : The report does not involve an area or an equipment under responsibility of the workflow users, but could be handled by another member of the Suricate community. The report is excluded from Geotrek workflow but is still accessible to the community via other applications using Suricate API.
     * Assignation : The manager selects a supervisor from a drop-down selector, and enters a message with instructions or further information. The supervisor receives an e-mail notifying them about the newly assigned report, along with the manager’s message. * The manager also enters a message destined to the sentinel, to notify them that the report is about to be handled. The report is set to status “Waiting”. Only after assignation can we proceed to the following steps.
@@ -798,14 +796,12 @@ As we have seen above, the manager enters messages destined to the sentinel or t
 
 Even though the workflow is a strict process, the following items are customisable.
 Through administration interface :
-
     * Colors for each status
     * Selecting the manager
     * Selecting the workflow responsibility area
     * Predefined messages
 
 **Through application configuration**:
-
     * API keys to connect to Suricate
     * Enabling of Workflow mode or any other mode
     * Enabling/disabling status colors on map
@@ -814,7 +810,6 @@ Through administration interface :
 **Synchronization and network losses**
 
 Communication between Suricate and Geotrek operates as follows :
-
     * Suricate to Geotrek : new information is fetched once a night
     * Geotrek to Suricate : every report update on Geotrek is immediately forwarded to Suricate
 
