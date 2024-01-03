@@ -122,8 +122,10 @@
             }
 
             function interventionUrl(properties, layer) {
-                return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), 'intervention')
-                                      .replace('0', properties.pk);
+                var fake_detail_url = "{% url 'maintenance:intervention_detail' '0' %}";
+                id_pos = fake_detail_url.lastIndexOf('0');
+                // replace the last occurence of the fake id "0" in the intervention detail url
+                return fake_detail_url.slice(0, id_pos) + properties.id + fake_detail_url.slice(id_pos + 1);
             };
         });
     </script>
