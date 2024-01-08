@@ -112,7 +112,7 @@ class ProjectIntersectionFilterRestrictedAreaType(PolygonProjectFilterMixin, Rig
         restricted_areas = RestrictedArea.objects.filter(area_type__in=values)
         if not restricted_areas and values:
             return qs.none()
-        return super().filter(qs, list(restricted_areas))
+        return super().filter(qs, list(restricted_areas)).distinct()
 
 
 class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
