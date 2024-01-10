@@ -32,7 +32,7 @@ CHANGELOG
 **Bug fixes**
 
 - Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
-
+- Maintenance appears several times on some zoning filters (#3881)
 
 2.101.4     (2023-11-15)
 ------------------------
