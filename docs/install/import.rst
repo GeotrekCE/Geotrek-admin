@@ -851,6 +851,52 @@ You have to run ``sudo geotrek remove_duplicate_paths``
 During the process of the command, every topology on a duplicate path will be set on the original path, and the duplicate path will be deleted.
 
 
+Merge segmented paths
+----------------------
+
+A path network is most optimized when there is only one path between intersections.
+If the path database includes many fragmented paths, they could be merged to improve performances.
+
+You can run ``sudo geotrek merge_segmented_paths``. 
+
+.. danger::
+    This command can take several hours to run. During the process, every topology on a path will be set on the path it is merged with, but it would still be more efficient (and safer) to run it before creating topologies. 
+
+Before :
+::
+
+       p1      p2      p3      p5     p6     p7      p8     p9     p14
+    +-------+------+-------+------+-------+------+-------+------+------+
+                   |                             |
+                   |  p4                         |  p13
+                   |                             |
+                   +                             +-------
+                   |                             |       |
+                   |  p10                        |   p16 |
+             p11   |                             |       |
+            +------+------+ p15                  --------
+                   |
+                   |  p12
+                   |
+
+After :
+::
+
+           p1                     p6                       p14
+    +--------------+-----------------------------+---------------------+
+                   |                             |
+                   |                             |  p13
+                   |                             |
+                   |  p10                        +-------
+                   |                             |       |
+                   |                             |   p16 |
+             p11   |                             |       |
+            +------+------+ p15                  --------
+                   |
+                   |  p12
+                   |
+
+
 Unset structure on categories
 -----------------------------
 

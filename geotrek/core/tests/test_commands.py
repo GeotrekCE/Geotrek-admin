@@ -626,3 +626,110 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         output = StringIO()
         call_command('reorder_topologies', stdout=output)
         self.assertIn(f'Topologies with errors :\nTREK id: {topo.pk}\n', output.getvalue())
+
+
+class MergePathsTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        geom_1 = LineString((0, 0), (1, 1))
+        cls.p1 = Path.objects.create(geom=geom_1)
+        geom_2 = LineString((1, 1), (2, 2))
+        cls.p2 = Path.objects.create(geom=geom_2)
+        geom_3 = LineString((2, 2), (3, 3))
+        cls.p3 = Path.objects.create(geom=geom_3)
+        geom_4 = LineString((2, 2), (6, 1))
+        cls.p4 = Path.objects.create(geom=geom_4)
+        geom_5 = LineString((3, 3), (4, 4))
+        cls.p5 = Path.objects.create(geom=geom_5)
+        geom_6 = LineString((4, 4), (5, 5))
+        cls.p6 = Path.objects.create(geom=geom_6)
+        geom_7 = LineString((5, 5), (6, 6))
+        cls.p7 = Path.objects.create(geom=geom_7)
+        geom_8 = LineString((6, 6), (7, 7))
+        cls.p8 = Path.objects.create(geom=geom_8)
+        geom_9 = LineString((7, 7), (8, 8))
+        cls.p9 = Path.objects.create(geom=geom_9)
+        geom_10 = LineString((6, 1), (4, 1))
+        cls.p10 = Path.objects.create(geom=geom_10)
+        geom_11 = LineString((4, 1), (4, 0))
+        cls.p11 = Path.objects.create(geom=geom_11)
+        geom_12 = LineString((4, 1), (6, 1))
+        cls.p12 = Path.objects.create(geom=geom_12)
+        geom_13 = LineString((6, 6), (7, 5))
+        cls.p13 = Path.objects.create(geom=geom_13)
+        geom_14 = LineString((8, 8), (9, 9))
+        cls.p14 = Path.objects.create(geom=geom_14)
+        geom_15 = LineString((5, 3), (4, 1))
+        cls.p15 = Path.objects.create(geom=geom_15)
+        geom_16 = LineString((7, 5), (8, 5), (8, 6), (7, 6), (7, 5))
+        cls.p16 = Path.objects.create(geom=geom_16)
+
+    @override_settings(PATH_SNAPPING_DISTANCE=0, PATH_MERGE_SNAPPING_DISTANCE=0)
+    def test_find_and_merge_paths(self):
+        # Before call
+        #    p1      p2      p3      p5     p6     p7      p8     p9     p14
+        # +-------+------+-------+------+-------+------+-------+------+------+
+        #                |                             |
+        #                |  p4                         |  p13
+        #                |                             |
+        #                +                             +-------
+        #                |                             |       |
+        #                |  p10                        |   p16 |
+        #          p11   |                             |       |
+        #         +------+------+ p15                  --------
+        #                |
+        #                |  p12
+        #                |
+        #                +
+        self.assertEqual(Path.objects.count(), 16)
+        output = StringIO()
+        call_command('merge_segmented_paths', stdout=output)
+        # After call
+        #        p1                     p6                       p14
+        # +--------------+-----------------------------+---------------------+
+        #                |                             |
+        #                |  p4                         |  p13
+        #                |                             |
+        #                +                             +-------
+        #                |                             |       |
+        #                |  p10                        |   p16 |
+        #          p11   |                             |       |
+        #         +------+------+ p15                  --------
+        #                |
+        #                |  p12
+        #                |
+        #
+        output_str = (f"┌ STEP 1\n"
+                      f"├ Merged {self.p2.pk} into {self.p1.pk}\n"
+                      f"├ Merged {self.p9.pk} into {self.p14.pk}\n"
+                      f"├ Cannot merge {self.p16.pk} and {self.p13.pk}\n"
+                      f"├ Merged {self.p8.pk} into {self.p14.pk}\n"
+                      f"├ Already discarded {self.p16.pk} and {self.p13.pk}\n"
+                      f"└ 3 merges\n"
+                      f"┌ STEP 2\n"
+                      f"├ Cannot merge {self.p1.pk} and {self.p3.pk}\n"
+                      f"├ Merged {self.p3.pk} into {self.p5.pk}\n"
+                      f"├ Merged {self.p5.pk} into {self.p6.pk}\n"
+                      f"├ Cannot merge {self.p14.pk} and {self.p7.pk}\n"
+                      f"└ 2 merges\n"
+                      f"┌ STEP 3\n"
+                      f"├ Cannot merge {self.p6.pk} and {self.p1.pk}\n"
+                      f"├ Cannot merge {self.p6.pk} and {self.p4.pk}\n"
+                      f"├ Merged {self.p7.pk} into {self.p6.pk}\n"
+                      f"├ Cannot merge {self.p7.pk} and {self.p6.pk}\n"
+                      f"├ Cannot merge {self.p7.pk} and {self.p13.pk}\n"
+                      f"├ Already discarded {self.p7.pk} and {self.p14.pk}\n"
+                      f"├ Cannot merge {self.p10.pk} and {self.p4.pk}\n"
+                      f"├ Cannot merge {self.p10.pk} and {self.p11.pk}\n"
+                      f"├ Cannot merge {self.p10.pk} and {self.p15.pk}\n"
+                      f"├ Cannot merge {self.p12.pk} and {self.p4.pk}\n"
+                      f"├ Cannot merge {self.p12.pk} and {self.p11.pk}\n"
+                      f"├ Cannot merge {self.p12.pk} and {self.p15.pk}\n"
+                      f"├ Already discarded {self.p13.pk} and {self.p7.pk}\n"
+                      f"├ Cannot merge {self.p13.pk} and {self.p14.pk}\n"
+                      f"├ Already discarded {self.p13.pk} and {self.p16.pk}\n"
+                      f"└ 1 merges\n"
+                      f"\n"
+                      f"--- RAN 6 MERGES - FROM 16 TO 10 PATHS ---\n")
+        self.assertEqual(Path.objects.count(), 10)
+        self.assertIn(output_str, output.getvalue())

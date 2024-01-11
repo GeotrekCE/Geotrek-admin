@@ -28,6 +28,7 @@ CHANGELOG
 
 - Update ``check_ign_keys`` script to match new IGN urls
 - Update ``base.py`` configuration for layers
+- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
 
 **Bug fixes**
 
