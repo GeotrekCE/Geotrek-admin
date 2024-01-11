@@ -9,7 +9,7 @@ from . import views
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}"
+    regex = "[a-z]{2}(-[a-z]{2,4})?"   # noqa
 
 
 register_converter(LangConverter, "lang")

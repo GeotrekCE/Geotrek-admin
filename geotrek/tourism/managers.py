@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db.models import Q
 from modeltranslation.manager import MultilingualManager
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
 
@@ -35,12 +36,12 @@ class TouristicContentTypeFilteringManager(MultilingualManager):
             q_category = Q(**{category_field_name: category})
 
         if language:
-            published_field_name = f"contents{i}__published_{language}"
+            published_field_name = f"contents{i}__{build_localized_fieldname('published', language)}"
             q_lang = Q(**{published_field_name: True})
         else:
             q_lang = Q()
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                published_field_name = f"contents{i}__published_{lang}"
+                published_field_name = f"contents{i}__{build_localized_fieldname('published', lang)}"
                 q_lang |= Q(**{published_field_name: True})
 
         deleted_field_name = f"contents{i}__deleted"

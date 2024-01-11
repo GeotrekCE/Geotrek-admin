@@ -1,12 +1,12 @@
-from django.conf import settings
-from django.db.models import Q
-
 import os
 from zipfile import ZipFile
 
+from django.conf import settings
+from django.db.models import Q
+from modeltranslation.utils import build_localized_fieldname
+
 from geotrek.common import views as common_views
-from geotrek.trekking import views
-from geotrek.trekking import models
+from geotrek.trekking import models, views
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import views as tourism_views
@@ -31,8 +31,8 @@ class SyncRando:
 
         treks = models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
-            Q(**{'published_{lang}'.format(lang=lang): True})
-            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+            Q(**{build_localized_fieldname('published', lang): True})
+            | Q(**{'trek_parents__parent__{published_lang}'.format(published_lang=build_localized_fieldname('published', lang)): True,
                    'trek_parents__parent__deleted': False})
         )
         if self.global_sync.source:

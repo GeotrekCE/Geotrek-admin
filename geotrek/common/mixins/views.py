@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.views import static
 from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
+from modeltranslation.utils import build_localized_fieldname
 from pdfimpose import PageList
 
 from geotrek.common.models import TargetPortal, FileType, Attachment
@@ -182,7 +183,7 @@ class MetaMixin:
                 context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
                 context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
                 context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+                context['META_TITLE'] = getattr(target_portal, build_localized_fieldname('title', lang))
             except TargetPortal.DoesNotExist:
                 pass
         return context

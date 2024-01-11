@@ -12,6 +12,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop, MapWidget
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -188,7 +189,7 @@ class TrekForm(BaseTrekForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
-        self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
+        self.fields[build_localized_fieldname('name', settings.LANGUAGE_CODE)].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
@@ -419,7 +420,7 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
-        arg_list = [f'name_{language[0]}' for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        arg_list = [build_localized_fieldname('name', language[0]) for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),

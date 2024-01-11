@@ -1,9 +1,13 @@
 from django.conf import settings
 from django.db.models import Q
+
+from modeltranslation.utils import build_localized_fieldname
+
 import os
 
 from geotrek.diving import models
 from geotrek.diving import views as diving_views
+
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import views as sensitivity_views
@@ -21,7 +25,7 @@ class SyncRando:
         self.global_sync.sync_geojson(lang, diving_views.DiveAPIViewSet, 'dives.geojson')
 
         dives = models.Dive.objects.existing().order_by('pk')
-        dives = dives.filter(**{'published_{lang}'.format(lang=lang): True})
+        dives = dives.filter(**{build_localized_fieldname('published', lang): True})
 
         if self.global_sync.source:
             dives = dives.filter(source__name__in=self.global_sync.source)

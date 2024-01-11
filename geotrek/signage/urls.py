@@ -17,11 +17,11 @@ urlpatterns = registry.register(models.Signage, menu=settings.SIGNAGE_MODEL_ENAB
 router = DefaultRouter(trailing_slash=False)
 
 
-router.register(r'^api/(?P<lang>[a-z]{2})/signages', SignageAPIViewSet, basename='signage')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/signages', SignageAPIViewSet, basename='signage')
 
 if settings.BLADE_ENABLED:
     urlpatterns += registry.register(models.Blade, menu=False)
-    router.register(r'^api/(?P<lang>[a-z]{2})/blades', BladeAPIViewSet, basename='blade')
+    router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/blades', BladeAPIViewSet, basename='blade')
 
 urlpatterns += router.urls
 

@@ -18,7 +18,7 @@ urlpatterns = registry.register(models.Infrastructure, menu=settings.INFRASTRUCT
 router = DefaultRouter(trailing_slash=False)
 
 
-router.register(r'^api/(?P<lang>[a-z]{2})/infrastructures', InfrastructureAPIViewSet, basename='infrastructrure')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/infrastructures', InfrastructureAPIViewSet, basename='infrastructrure')
 urlpatterns += router.urls
 
 urlpatterns += [

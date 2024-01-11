@@ -25,6 +25,7 @@ from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
 
 from mapentity.models import MapEntityMixin
+from modeltranslation.utils import build_localized_fieldname
 
 
 class CheckBoxActionMixin:
@@ -288,7 +289,7 @@ class BasePublishableMixin(models.Model):
             return self.published
 
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if getattr(self, 'published_%s' % language[0], False):
+            if getattr(self, build_localized_fieldname('published', language[0]), False):
                 return True
         return False
 
@@ -298,7 +299,7 @@ class BasePublishableMixin(models.Model):
         status = []
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % language[0], None) or False
+                published = getattr(self, build_localized_fieldname('published', language[0]), None) or False
             else:
                 published = self.published
             status.append({
@@ -313,7 +314,7 @@ class BasePublishableMixin(models.Model):
         """ Returns languages in which the object is published. """
         langs = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
-            return [language for language in langs if getattr(self, 'published_%s' % language, None)]
+            return [language for language in langs if getattr(self, build_localized_fieldname('published', language), None)]
         elif self.published:
             return langs
         else:

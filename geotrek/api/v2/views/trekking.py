@@ -6,6 +6,7 @@ from django.utils.translation import activate
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.api.v2 import filters as api_filters, serializers as api_serializers, viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
@@ -63,15 +64,15 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
             # no language specified. Check for all.
             q = Q()
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                field_name = 'published_{}'.format(lang)
+                field_name = build_localized_fieldname('published', lang)
                 if field_name in associated_published_fields:
-                    field_name_parent = 'trek_parents__parent__published_{}'.format(lang)
+                    field_name_parent = 'trek_parents__parent__{}'.format(build_localized_fieldname('published', lang))
                     q |= Q(**{field_name: True}) | Q(**{field_name_parent: True})
             qs = qs.filter(q)
         else:
             # one language is specified
-            field_name = 'published_{}'.format(language)
-            field_name_parent = 'trek_parents__parent__published_{}'.format(language)
+            field_name = build_localized_fieldname('published', language)
+            field_name_parent = 'trek_parents__parent__{}'.format(build_localized_fieldname('published', language))
             qs = qs.filter(Q(**{field_name: True}) | Q(**{field_name_parent: True}))
         return qs.distinct()
 

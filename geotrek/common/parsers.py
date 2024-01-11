@@ -36,6 +36,7 @@ from django.utils.translation import gettext as _
 from django.utils.encoding import force_str
 from django.conf import settings
 from paperclip.models import attachment_upload, random_suffix_regexp
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License
@@ -260,7 +261,7 @@ class Parser:
         old_values = {}
         # We keep every old values for each langs to get tracability during filter or apply filter
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            dst_field_lang = build_localized_fieldname(dst, lang)
             old_values[lang] = getattr(self.obj, dst_field_lang)
         # If during filter, the traduction of the field has been changed
         # we can still check if this value has been changed
@@ -270,7 +271,7 @@ class Parser:
             val_default_language = self.apply_filter(dst, src, val)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            dst_field_lang = '{field}_{lang}'.format(field=dst, lang=lang)
+            dst_field_lang = build_localized_fieldname(dst, lang)
             new_value = getattr(self.obj, dst_field_lang)
             old_value = old_values[lang]
             # Field not translated, use same val for all translated
@@ -308,7 +309,7 @@ class Parser:
             updated.append(dst)
             if dst in self.translated_fields:
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+                    updated.append(build_localized_fieldname(dst, lang))
 
     def parse_fields(self, row, fields, non_field=False):
         updated = []

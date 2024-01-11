@@ -31,7 +31,7 @@ urlpatterns = [
 ]
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'^api/(?P<lang>[a-z]{2})/sensitiveareas', views.SensitiveAreaAPIViewSet, basename='sensitivearea')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/sensitiveareas', views.SensitiveAreaAPIViewSet, basename='sensitivearea')
 urlpatterns += router.urls
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

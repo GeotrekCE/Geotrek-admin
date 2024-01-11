@@ -1,17 +1,13 @@
 import errno
-from io import StringIO
-
 import json
-from landez.sources import DownloadError
-from unittest import mock
 import os
-from PIL import Image
 import shutil
-from unittest import skipIf
 import zipfile
+from io import StringIO
+from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import MultiLineString, LineString, Point
+from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import management
 from django.core.management.base import CommandError
 from django.db.models import Q
@@ -19,18 +15,28 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
+from landez.sources import DownloadError
+from modeltranslation.utils import build_localized_fieldname
+from PIL import Image
 
-from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.common.tests.factories import (AttachmentFactory,
+                                            RecordSourceFactory,
+                                            TargetPortalFactory)
+from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
+                                           get_dummy_uploaded_image,
+                                           get_dummy_uploaded_image_svg)
 from geotrek.core.tests.factories import PathFactory
-from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import Trek, OrderedTrekChild
-from geotrek.trekking.tests.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
-from geotrek.tourism.tests.factories import (InformationDeskFactory, InformationDeskTypeFactory,
-                                             TouristicContentFactory, TouristicEventFactory)
+from geotrek.flatpages.tests.factories import FlatPageFactory
 from geotrek.tourism.models import TouristicEventType
+from geotrek.tourism.tests.factories import (InformationDeskFactory,
+                                             InformationDeskTypeFactory,
+                                             TouristicContentFactory,
+                                             TouristicEventFactory)
+from geotrek.trekking.models import OrderedTrekChild, Trek
+from geotrek.trekking.tests.factories import (PracticeFactory, TrekFactory,
+                                              TrekWithPublishedPOIsFactory)
 
 
 class VarTmpTestCase(TestCase):
@@ -251,7 +257,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
-                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_filtering_portal(self):
@@ -280,7 +286,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
-                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_flatpage_content(self):
@@ -291,7 +297,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
-                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
 
@@ -400,7 +406,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), lang, 'treks.geojson'), 'r') as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
-                                 Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 Trek.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
         self.assertIn('en/treks.geojson', output.getvalue())
 
     def test_sync_treks_by_pk(self):
@@ -426,7 +432,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', lang, 'treks.geojson'), 'r') as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
-                                 Trek.objects.filter(**{'published_{}'.format(lang): True})
+                                 Trek.objects.filter(**{build_localized_fieldname('published', lang): True})
                                  .filter(Q(portal__name__in=(self.portal_a,)) | Q(portal=None)).count())
         with open(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync', 'en', str(self.trek_1.pk), 'touristic_contents.geojson'), 'r') as f:
             tc_geojson = json.load(f)
@@ -563,7 +569,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), lang, 'treks.geojson'), 'r') as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
-                                 Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 Trek.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
 
     def test_sync_treks_informationdesk_photo_missing(self):
         os.remove(self.info_desk.photo.path)

@@ -34,7 +34,7 @@ class DiveEntityOptions(PublishableEntityOptions):
 router = DefaultRouter(trailing_slash=False)
 
 
-router.register(r'^api/(?P<lang>[a-z]{2})/dives', DiveAPIViewSet, basename='dive')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/dives', DiveAPIViewSet, basename='dive')
 urlpatterns += router.urls
 
 urlpatterns += registry.register(models.Dive, DiveEntityOptions, menu=settings.DIVE_MODEL_ENABLED)
