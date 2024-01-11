@@ -28,6 +28,7 @@ CHANGELOG
 
 - Update ``check_ign_keys`` script to match new IGN urls
 - Update ``base.py`` configuration for layers
+- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
 
 **Bug fixes**
 
@@ -77,10 +78,6 @@ CHANGELOG
 **Bug fixes**
 
 - POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
-
-**Maintenance**
-
-- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
 
 
 2.101.0     (2023-10-05)
