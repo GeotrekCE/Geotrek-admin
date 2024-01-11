@@ -33,10 +33,8 @@ CHANGELOG
 **Bug fixes**
 
 - Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
+- Display only related interventions on project detail map (#3878)
 - Maintenance appears several times on some zoning filters (#3881)
-
-**Bug fixes**
-
 - Fix sub-language usage (en-US, zh-hant, ...) (#3801)
 
 

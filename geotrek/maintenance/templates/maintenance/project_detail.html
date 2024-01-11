@@ -102,14 +102,13 @@
 
             //
             // Load intervention layer filtered on project
-            var layer_url = "{% url 'maintenance:intervention-drf-list' %}?project={{ object.pk}}";
+            var layer_url = "{% url 'maintenance:intervention-drf-list' format='geojson' %}?project={{ object.pk}}";
             var DETAIL_STYLE = L.Util.extend(window.SETTINGS.map.styles.detail, {clickable: true});
 
             var layer = new L.ObjectsLayer(layer_url, {
                 style: DETAIL_STYLE,
                 objectUrl: interventionUrl,
                 onEachFeature: showInterventionLabel,
-                modelname: 'intervention',
             });
             layer.addTo(map);
             layer.on('data:load', function (e) {
@@ -123,7 +122,7 @@
 
             function interventionUrl(properties, layer) {
                 return window.SETTINGS.urls.detail.replace(new RegExp('modelname', 'g'), 'intervention')
-                                      .replace('0', properties.pk);
+                                      .replace('0', properties.id);
             };
         });
     </script>
