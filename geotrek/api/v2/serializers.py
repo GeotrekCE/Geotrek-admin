@@ -1,6 +1,6 @@
-from bs4 import BeautifulSoup
 import json
 
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import MultiLineString, Point
@@ -13,6 +13,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from modeltranslation.utils import build_localized_fieldname
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -1144,8 +1145,11 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
         sector = serializers.SerializerMethodField()
         courses = serializers.SerializerMethodField()
+        courses_uuids = serializers.SerializerMethodField()
         children = serializers.SerializerMethodField()
+        children_uuids = serializers.SerializerMethodField()
         parent = serializers.SerializerMethodField()
+        parent_uuid = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
@@ -1168,11 +1172,24 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             language = request.GET.get('language')
             for course in obj.children_courses.all():
                 if language:
-                    if getattr(course, f"published_{language}"):
+                    if getattr(course, build_localized_fieldname('published', language)):
                         courses.append(course.pk)
                 else:
                     if course.published:
                         courses.append(course.pk)
+            return courses
+
+        def get_courses_uuids(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            for course in obj.children_courses.all():
+                if language:
+                    if getattr(course, build_localized_fieldname('published', language)):
+                        courses.append(course.uuid)
+                else:
+                    if course.published:
+                        courses.append(course.uuid)
             return courses
 
         def get_parent(self, obj):
@@ -1181,11 +1198,24 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             language = request.GET.get('language')
             if obj.parent:
                 if language:
-                    if getattr(obj.parent, f"published_{language}"):
+                    if getattr(obj.parent, build_localized_fieldname('published', language)):
                         parent = obj.parent.pk
                 else:
                     if obj.parent.published:
                         parent = obj.parent.pk
+            return parent
+
+        def get_parent_uuid(self, obj):
+            parent = None
+            request = self.context['request']
+            language = request.GET.get('language')
+            if obj.parent:
+                if language:
+                    if getattr(obj.parent, build_localized_fieldname('published', language)):
+                        parent = obj.parent.uuid
+                else:
+                    if obj.parent.published:
+                        parent = obj.parent.uuid
             return parent
 
         def get_children(self, obj):
@@ -1194,12 +1224,26 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             language = request.GET.get('language')
             if language:
                 for site in obj.get_children():
-                    if getattr(site, f"published_{language}"):
+                    if getattr(site, build_localized_fieldname('published', language)):
                         children.append(site.pk)
             else:
                 for site in obj.get_children():
                     if site.published:
                         children.append(site.pk)
+            return children
+
+        def get_children_uuids(self, obj):
+            children = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for site in obj.get_children():
+                    if getattr(site, build_localized_fieldname('published', language)):
+                        children.append(site.uuid)
+            else:
+                for site in obj.get_children():
+                    if site.published:
+                        children.append(site.uuid)
             return children
 
         def get_sector(self, obj):
@@ -1210,24 +1254,27 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
+                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'children_uuids', 'description',
                 'description_teaser', 'districts', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
+                'name', 'orientation', 'pdf', 'period', 'parent', 'parent_uuid', 'portal', 'practice', 'provider',
                 'ratings', 'sector', 'source', 'structure', 'themes', 'view_points',
-                'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
+                'type', 'url', 'uuid', 'courses', 'courses_uuids', 'web_links', 'wind',
             )
 
     class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
-        children = serializers.ReadOnlyField(source='children_id')
-        parents = serializers.ReadOnlyField(source='parents_id')
+        children = serializers.SerializerMethodField()
+        parents = serializers.SerializerMethodField()
+        parents_uuids = serializers.SerializerMethodField()
+        children_uuids = serializers.SerializerMethodField()
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         equipment = serializers.SerializerMethodField()
         gear = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         sites = serializers.SerializerMethodField()
+        sites_uuids = serializers.SerializerMethodField()
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
@@ -1257,12 +1304,90 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             language = request.GET.get('language')
             if language:
                 for site in obj.parent_sites.all():
-                    if getattr(site, f"published_{language}"):
+                    if getattr(site, build_localized_fieldname('published', language)):
                         sites.append(site.pk)
             else:
                 for site in obj.parent_sites.all():
                     if getattr(site, "published"):
                         sites.append(site.pk)
+            return sites
+
+        def get_children(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for ordered_child in obj.course_children.order_by('order'):
+                    course = ordered_child.child
+                    if getattr(course, build_localized_fieldname('published', language)):
+                        courses.append({'order': ordered_child.order, 'course': course.pk})
+            else:
+                for ordered_child in obj.course_children.order_by('order'):
+                    course = ordered_child.child
+                    if getattr(course, "published"):
+                        courses.append({'order': ordered_child.order, 'course': course.pk})
+            return courses
+
+        def get_parents(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for ordered_parent in obj.course_parents.order_by('order'):
+                    course = ordered_parent.parent
+                    if getattr(course, build_localized_fieldname('published', language)):
+                        courses.append({'order': ordered_parent.order, 'course': course.pk})
+            else:
+                for ordered_parent in obj.course_parents.order_by('order'):
+                    course = ordered_parent.parent
+                    if getattr(course, "published"):
+                        courses.append({'order': ordered_parent.order, 'course': course.pk})
+            return courses
+
+        def get_children_uuids(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for ordered_child in obj.course_children.order_by('order'):
+                    course = ordered_child.child
+                    if getattr(course, build_localized_fieldname('published', language)):
+                        courses.append({'order': ordered_child.order, 'course': course.uuid})
+            else:
+                for ordered_child in obj.course_children.order_by('order'):
+                    course = ordered_child.child
+                    if getattr(course, "published"):
+                        courses.append({'order': ordered_child.order, 'course': course.uuid})
+            return courses
+
+        def get_parents_uuids(self, obj):
+            courses = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for ordered_parent in obj.course_parents.order_by('order'):
+                    course = ordered_parent.parent
+                    if getattr(course, build_localized_fieldname('published', language)):
+                        courses.append({'order': ordered_parent.order, 'course': course.uuid})
+            else:
+                for ordered_parent in obj.course_parents.order_by('order'):
+                    course = ordered_parent.parent
+                    if getattr(course, "published"):
+                        courses.append({'order': ordered_parent.order, 'course': course.uuid})
+            return courses
+
+        def get_sites_uuids(self, obj):
+            sites = []
+            request = self.context['request']
+            language = request.GET.get('language')
+            if language:
+                for site in obj.parent_sites.all():
+                    if getattr(site, build_localized_fieldname('published', language)):
+                        sites.append(site.uuid)
+            else:
+                for site in obj.parent_sites.all():
+                    if getattr(site, "published"):
+                        sites.append(site.uuid)
             return sites
 
         def get_points_reference(self, obj):
@@ -1274,10 +1399,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'districts', 'duration', 'eid',
+                'id', 'accessibility', 'advice', 'attachments', 'children', 'children_uuids', 'cities', 'description', 'districts', 'duration', 'eid',
                 'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
-                'sites', 'structure', 'type', 'url', 'uuid'
+                'min_elevation', 'name', 'parents', 'parents_uuids', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
+                'sites', 'sites_uuids', 'structure', 'type', 'url', 'uuid'
             )
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
