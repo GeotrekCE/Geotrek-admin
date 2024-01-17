@@ -90,7 +90,7 @@ Si ce n'est pas le cas, vérifiez l'IP du domaine
 
 .. code-block :: bash
 
-    ping demo-admin.geotrek.fr
+    ping mon-geotrek-admin.fr
 
 
 La réponse doit être une IP publique, idéalement la même que depuis votre poste de travail.
