@@ -76,6 +76,14 @@ Tout d'abord, vérifiez que l'URL de votre geotrek-admin est accessible depuis l
     wget https://mon-geotrek-admin.fr/trek/1/
 
 
+Depuis docker :
+
+.. code-block :: bash
+
+    docker compose run --user root --rm screamshotter bash
+    wget https://mon-geotrek-admin.fr/trek/1/
+
+
 la réponse devrait ressemble à une page html de login.
 
 Si ce n'est pas le cas, vérifiez l'IP du domaine
