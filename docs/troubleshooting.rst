@@ -84,7 +84,7 @@ Depuis docker :
     wget https://mon-geotrek-admin.fr/trek/1/
 
 
-la réponse devrait ressemble à une page html de login.
+la réponse devrait ressembler à une page HTML de connexion.
 
 Si ce n'est pas le cas, vérifiez l'IP du domaine
 
