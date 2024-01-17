@@ -9,6 +9,7 @@ from geotrek.common.models import Attachment, FileType
 from geotrek.flatpages.models import FlatPage
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.settings import AVAILABLE_LANGUAGES
+from tinymce.widgets import TinyMCE
 
 
 class FlatPageForm(CommonForm):
@@ -22,7 +23,7 @@ class FlatPageForm(CommonForm):
         # Revert widget modifications done by MapentityForm.__init__()
         for fieldname in self.fields.keys():
             if fieldname.startswith('content_'):
-                self.fields[fieldname].widget = forms.Textarea()
+                self.fields[fieldname].widget = TinyMCE()
         self.fields['source'].help_text = None
         self.fields['portal'].help_text = None
         if self.instance.pk:
