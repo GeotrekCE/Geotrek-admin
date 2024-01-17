@@ -1,9 +1,13 @@
-==========================
-Frequently asked questions
-==========================
+=============================
+10 Frequently asked questions
+=============================
 
-How are 3D informations obtained ?
-----------------------------------
+.. contents::
+   :local:
+   :depth: 2
+
+10.1 How are 3D informations obtained ?
+---------------------------------------
 
 All paths geometries are *"draped"* on a Digital Elevation Model, when created
 or updated.
@@ -12,8 +16,8 @@ All linear objects that defined using topologies (*treks, ...*) take their 3D in
 from their related paths, instead of reading the DEM.
 
 
-How is the ascent computed on treks ?
--------------------------------------
+10.2 How is the ascent computed on treks ?
+-------------------------------------------
 
 We compute the `cumulative elevation gain <http://en.wikipedia.org/wiki/Cumulative_elevation_gain>`_.
 
@@ -27,10 +31,8 @@ For more details :
 * `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_
   (or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
 
-
-
-How are POIs related to treks ?
--------------------------------
+10.3 How are POIs related to treks ?
+------------------------------------
 
 POIs are considered as an *editorial* information, and are created carefully
 along treks.
@@ -53,8 +55,8 @@ POIs are thus related to treks using a basic spatial intersection, with a
 distance set in setting ``TREK_POI_INTERSECTION_MARGIN`` (default to 500 meters).
 
 
-Can I have overlapping districts ?
-----------------------------------
+10.4 Can I have overlapping districts ?
+---------------------------------------
 
 Districts are a generic notion to qualify your territory. They can be valleys,
 mounts, ...
@@ -64,8 +66,8 @@ resulting in overlapping geometries. Geotrek-admin will associate them all to yo
 objects.
 
 
-Why does Makina Corpus sell Geotrek, released under an Open-Source license ?
-----------------------------------------------------------------------------
+10.5 Why does Makina Corpus sell Geotrek, released under an Open-Source license ?
+---------------------------------------------------------------------------------
 
 In the early years of the Free Software movement, it was quite common to pay
 in order to receive a physical copy (on floppy disks) of some GNU programs and source
@@ -102,9 +104,8 @@ which represents a substantial cost for a company like ours.
 To conclude, we don't really sell *Geotrek*, since you can get it on Github and install it easily, but
 we ask for a financial contribution regarding the above responsabilities. It is not only legal, but also recommended by the funders of the Free and Open Source Software movement.
 
-
-How can I help and contribute ?
--------------------------------
+10.6 How can I help and contribute ?
+-------------------------------------
 
 There are many ways to contribute to a Free Software. And modifying
 the source code is probably the least common action. For example :

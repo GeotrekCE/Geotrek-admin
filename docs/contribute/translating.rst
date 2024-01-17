@@ -2,6 +2,10 @@
 Translating
 ============
 
+.. contents::
+   :local:
+   :depth: 2
+
 Geotrek-admin can be translated online on
 `Makina Corpus Weblate instance <https://weblate.makina-corpus.net/projects/geotrek-admin/>`_
 

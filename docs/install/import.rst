@@ -2,6 +2,11 @@
 Import data
 ===========
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Import paths
 ============
 
@@ -48,6 +53,7 @@ To import a shapefile containing your paths, use the command ``loadpaths``::
         --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
         --encoding latin9 -i
 
+.. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)
 =============================================
@@ -374,6 +380,8 @@ To get help about a command:
 ::
 
     sudo geotrek help <subcommand>
+    
+.. _import-dem-altimetry:
 
 
 Import DEM (altimetry)
@@ -407,6 +415,7 @@ Import DEM (altimetry)
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
+.. _import-pois:
 
 Import POIs
 -----------
@@ -451,7 +460,7 @@ Import POIs
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-infrastructure:
 
 Import Infrastructure
 ---------------------
@@ -644,7 +653,7 @@ Import Dive
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-signage:
 
 Import Signage
 --------------

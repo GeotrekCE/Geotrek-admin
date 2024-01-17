@@ -65,6 +65,7 @@ CHANGELOG
 - Improve documentation for database restore
 - Improve documentation aboute suricate's workflow (#3070)
 - Update layer section for maps since IGN updates
+- Improve documentation with new sections (about, touristic modules)
 
 **Maintenance**
 

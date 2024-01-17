@@ -2,6 +2,10 @@
 Authors
 =======
 
+.. contents::
+   :local:
+   :depth: 2
+
 Makina Corpus
 -------------
 
