@@ -2,6 +2,10 @@
 Geotrek
 =======
 
+.. contents::
+   :local:
+   :depth: 2
+
 Qu'est ce que Geotrek ?
 =======================
 
@@ -13,7 +17,7 @@ C’est l’**application de référence** des parcs naturels, mais aussi de nom
 
 **Utiliser Geotrek vous permettra** :
 
-* d’intégrer une **communauté de gestionnaires de randonnées très active **
+* d’intégrer une **communauté de gestionnaires de randonnées très active**
 * de **bénéficier de l’ensemble des évolutions** commandées par les autres utilisateurs. Le service est vivant et s’améliore sans cesse
 * de disposer d’une **offre complète** qui pourrait également être utilisée par d’autres acteurs du territoire
 * de facilement pouvoir **accéder à d’autres fonctionnalités** quand le besoin s’en fera ressentir : site web, impression de fiches de parcours, gestion de la signalétique, organisation des travaux…
@@ -42,10 +46,10 @@ Composants libres
 
 L’application Geotrek utilise les technologies open source suivantes :
 
-- **Python / Django**, l'épine dorsale de l'application qui prend en charge les principales fonctionnalités comme l'interface d'administration, l'exploitation de la base de données, la gestion des utilisateurs et de leurs droits ou l'intégration avec les bibliothèques cartographiques.
-La richesse de son écosystème permet de concevoir des applications aux possibilités infinies, en favorisant la production d'applications sécurisées, solides (tests automatiques) et robustes (Python).
-- **PostgreSQL / PostGIS** pour la base de données. La totalité des données de l'application est stockée dans une instance PostgreSQL avec l'extension spatiale PostGIS :
-  - attributs, comptes utilisateurs…,
-  - géométries,
-  - raster (Modèle Numérique Terrain).
-- **JavaScript / React**, **Next.js**, **Leaflet**, **SVG** et **WebGL** pour l'interaction avec les utilisateurs et la visualisation, **HTML5** pour la structure du site, **CSS3** pour l’apparence.
+* **Python / Django**, l'épine dorsale de l'application qui prend en charge les principales fonctionnalités comme l'interface d'administration, l'exploitation de la base de données, la gestion des utilisateurs et de leurs droits ou l'intégration avec les bibliothèques cartographiques. La richesse de son écosystème permet de concevoir des applications aux possibilités infinies, en favorisant la production d'applications sécurisées, solides (tests automatiques) et robustes (Python).
+* **PostgreSQL / PostGIS** pour la base de données. La totalité des données de l'application est stockée dans une instance PostgreSQL avec l'extension spatiale PostGIS :
+
+  * attributs, comptes utilisateurs…,
+  * géométries,
+  * raster (Modèle Numérique Terrain).
+* **JavaScript / React**, **Next.js**, **Leaflet**, **SVG** et **WebGL** pour l'interaction avec les utilisateurs et la visualisation, **HTML5** pour la structure du site, **CSS3** pour l’apparence.

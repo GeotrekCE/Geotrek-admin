@@ -1,6 +1,10 @@
-========
-Overview
-========
+=====================
+Présentation générale
+=====================
+
+.. contents::
+   :local:
+   :depth: 2
 
 Architecture
 =============
@@ -18,10 +22,12 @@ L’application est composée :
 Page d'accueil
 ==============
 
-.. image :: ../images/user-manual/geotrek-login.png
+.. figure:: ../images/user-manual/geotrek-login.png
    :alt: Accès à Geotrek-admin via un login et un mot de passe
+   :align: center
 
    Accès à Geotrek-admin via un login et un mot de passe
+
 
 Interface de consultation des modules
 =====================================
@@ -78,8 +84,9 @@ Tous les modules sont construits de la même façon :
 * une carte dans laquelle il est possible de naviguer (déplacer, zoomer), d'afficher en plein écran, de mesurer une longueur, d'exporter une image de la carte, de réinitialiser l'étendue, de zommer sur une commune ou un secteur et de superposer des données externes (contours communes / secteurs / physique / foncier / responsabilités…)
 * l'accès à la vue détail d'un objet au clic
 
-.. image :: /images/user-manual/01-liste-fr.jpg
+.. figure:: ../images/user-manual/01-liste-fr.jpg
    :alt: Vue liste avec la carte
+   :align: center
 
    Vue liste avec la carte 
 
@@ -103,8 +110,9 @@ Voici les possibilités de la fiche détail :
 - l'accès à la vue d’édition selon les droits de l’utilisateur connecté
 - l'export GPX, KML, OpenDocument, Word, PDF
 
-.. image :: ../images/user-manual/fiche-detail.png
+.. figure:: ../images/user-manual/fiche-detail.png
    :alt: Fiche détail d'un itinéraire
+   :align: center
 
    Fiche détail d'un itinéraire
 
@@ -123,8 +131,9 @@ Vue édition
 - Ajout de couches locales en superposition à partir de fichiers GPX ou KML (aide à la saisie)
 - Outils de mesure
 
-.. image :: ../images/user-manual/vue-edition.png
+.. figure:: ../images/user-manual/vue-edition.png
    :alt: Fiche détail d'un itinéraire en édition
+   :align: center
 
    Fiche détail d'un itinéraire en édition
 
@@ -145,15 +154,16 @@ Paramètres d'administration
 
 Toutes les listes de choix (thématiques, pratiques, parcours…) sont administrables depuis l'outil d'administration Django, selon les droits dont dispose l’utilisateur connecté.
 
-
-.. image :: ../images/user-manual/admin-django.png
+.. figure:: ../images/user-manual/admin-django.png
    :alt: Interface de l'administration Django
+   :align: center
 
    Interface de l'administration Django
 
-.. image :: ../images/user-manual/django-pratique.png
-   :alt: Exemple d’édition des pratiques et de leur pictogramme
+.. figure:: ../images/user-manual/django-pratique.png
+   :alt: Exemple d’édition des pratiques et de leur pictogramm
+   :align: center
 
-  Exemple d’édition des pratiques et de leur pictogramme
+   Exemple d’édition des pratiques et de leur pictogramme
 
-Voir la section :doc:`/usage/configuration-ttw` pour connaître le détail des paramétrages des modules.
+Voir la section :ref:`parametrages-des-modules` pour connaître le détail des paramétrages des modules.
