@@ -102,7 +102,8 @@ SELECT a.id,
        i.financement AS "Fundings",
        a.comments AS "Comments",
        a.date_insert AS "Insertion date",
-       a.date_update AS "Update date"
+       a.date_update AS "Update date",
+       l.projectgeom
 FROM maintenance_project a
 LEFT JOIN maintenance_projecttype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
@@ -126,6 +127,14 @@ LEFT JOIN
                                                                  array_to_string(ARRAY_AGG (financement  ORDER BY financements.id), ', ', '_') financement
      FROM financements
      GROUP BY project_id) i ON a.id = i.project_id
+LEFT JOIN 
+     (WITH projectsgeoms AS 
+         (SELECT ST_union(mi.geom_3d) AS projectgeom,
+                 mi.project_id
+          FROM maintenance_intervention mi
+          GROUP BY mi.project_id)
+        SELECT projectsgeoms.project_id, projectsgeoms.projectgeom
+        FROM projectsgeoms) l ON a.id = l.project_id
 LEFT JOIN
     (SELECT a.contractor,
             b.contractor_id,
