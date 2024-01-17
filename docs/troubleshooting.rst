@@ -69,7 +69,26 @@ Sur certaines infrastructures, en particulier en entreprise ou derrière certain
 Comment débloquer le bon fonctionnement ?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Tout d'abord, vérifiez que l'URL de votre geotrek-admin est accessible depuis le serveur ou le container.
+Tout d'abord, vérifiez que vous utilisez bien les dernières versions des outils screamshotter et convertit.
+
+
+.. code-block :: bash
+
+    sudo apt update
+    sudo apt install screamshotter convertit
+
+
+Pour docker
+
+.. code-block :: bash
+
+    docker compose pull screamshotter
+    docker compose pull convertit
+
+puis relancer toute l'application (down / up)
+
+
+Vérifiez que l'URL de votre geotrek-admin est accessible depuis le serveur ou le container.
 
 .. code-block :: bash
 
