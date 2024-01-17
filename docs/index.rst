@@ -4,6 +4,12 @@ Welcome to Geotrek's documentation!
 .. _contents:
 
 .. toctree::
+    :caption: About
+    :maxdepth: 2
+
+    about/geotrek.rst
+
+.. toctree::
     :caption: User manual
     :maxdepth: 2
 
@@ -11,6 +17,7 @@ Welcome to Geotrek's documentation!
     usage/screencasts.rst
     usage/editing-objects.rst
     usage/management-modules.rst
+    usage/touristic-modules.rst   
     usage/treks.rst
     usage/outdoor.rst
     usage/static-pages.rst
