@@ -7,7 +7,7 @@ Segmentation dynamique
 
 Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
 
-La **segmentation dynamique** consiste en un ensemble de déclencheurs calculant automatiquement les géométries résultantes à la création et lors de modifications sur le réseau de tronçons. Cela permet de garantir une cohérence géométrique et topologique entre les tronçons et les itinéraires, mais aussi d'associer tous les objets entre eux en vérifiant leur superposition sur le réseau.
+La **segmentation dynamique** permet de saisir et stocker des informations relatives aux tronçons. Elle s'accompagne d'un ensemble de déclencheurs calculant automatiquement les géométries résultantes à la création et lors de modifications sur le réseau de tronçons. Cela permet de garantir une cohérence géométrique et topologique entre les tronçons et les objets liés (travaux, aménagements, statuts, itinéraires...), mais aussi d'associer tous les objets entre eux en vérifiant leur superposition sur le réseau.
 
 C'est pourquoi, modifier un tronçon peut entrainer des modifications des objets qui lui sont rattachés (interventions, itinéraires, POIs...). Supprimer un tronçon, supprime les objets qui lui sont rattachés par segmentation dynamique.
 
