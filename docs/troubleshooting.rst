@@ -4,7 +4,7 @@ Troubleshouting
 
 Geotrek-admin logs are stored in ``/opt/geotrek-admin/var/log/geotrek.log`` file.
 
-But if Geotrek-admin does not start, take a look to systemd logs for each of the 3 Geotrek-admin services
+But if Geotrek-admin does not start, take a look at systemd logs for each of the 3 Geotrek-admin services
 (user web interface, API and asynchronous tasks):
 
 ::
@@ -21,7 +21,7 @@ Type Q to quit. If you want to copy the log to a file, do:
    sudo journalctl -u geotrek-ui > systemd-geotrek-ui.log
 
 
-Frequent problems encountered
+Frequently encountered problems
 -----------------------------
 
 Error 500 with `django.db.utils.IntegrityError … NOT NULL for column "language"`
@@ -57,14 +57,14 @@ Image docker :
   - l'URL utilisée depuis le navigateur (https://mon-geotrek-admin.fr/trek/1/) doit être accessible depuis le container de l'application screamshotter (et convertit).
 
 .. warning::
-   Faites attention aux pares-feux, proxy et domaine privés. L'hôte (ou le container docker) doit pouvoir correctement résoudre l'adresse IP du domaine utilisé.
+   Faites attention aux pare-feux, proxy et domaines privés. L'hôte (ou le container docker) doit pouvoir correctement résoudre l'adresse IP du domaine utilisé.
 
 Sur certaines infrastructures, en particulier en entreprise ou derrière certains proxy, il se peut que la configuration de base empêche le bon fonctionnement.
 
 **Exemple :**
 
-- l'IP derriere le domaine demo-admin.geotrek.fr depuis mon poste de travail est 88.77.66.55, il s'affiche bien, mais depuis le serveur c'est 172.16.0.10, les captures de carte ne fonctionnent pas. Il faut jouer avec la configuration de la machine, les serveurs DNS, les paramètres network/alias ou extra_hosts du docker-compose.yml afin de le rendre accéssible.
-- le Proxy qui gère les certificats SSL ne transmet pas les bons en-tête à geotrek-admin. De ce fait, geotrek-admin pense tourner en http et génère des url en http:// à screamshotter (ex: prend une capture de http://mon-geotrek-admin.fr/trek/1/ au lieu de https://mon-geotrek-admin.fr/trek/1/). Il faut penser à bien transmettre l'en-tête **X-Forwarded-Proto https** .
+- l'IP derriere le domaine demo-admin.geotrek.fr depuis mon poste de travail est 88.77.66.55, il s'affiche bien, mais depuis le serveur c'est 172.16.0.10, les captures de carte ne fonctionnent pas. Il faut jouer avec la configuration de la machine, les serveurs DNS, les paramètres network/alias ou extra_hosts du docker-compose.yml afin de le rendre accessible.
+- le Proxy qui gère les certificats SSL ne transmet pas les bons en-têtes à geotrek-admin. De ce fait, geotrek-admin pense tourner en http et génère des url en http:// à screamshotter (ex: prend une capture de http://mon-geotrek-admin.fr/trek/1/ au lieu de https://mon-geotrek-admin.fr/trek/1/). Il faut penser à bien transmettre l'en-tête **X-Forwarded-Proto https** .
 
 Comment débloquer le bon fonctionnement ?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -116,11 +116,11 @@ La réponse doit être une IP publique, idéalement la même que depuis votre po
 
 Testez la capture de carte depuis geotrek-admin, sur une carte, le bouton avec un appareil photo.
 
-Si çà ne fonctionne pas, vérifiez le message d'erreur :
+Si ça ne fonctionne pas, vérifiez le message d'erreur :
 
 Request on http://screamshotter:8000/?url=http%3A//mon-geotrek-admin.fr/trek/1/xxxx failed (status=500)
 
-On peut voir que l'URL est **http** et non **https**, c'est un problème d'en-tête non transmis. Il faut régler çà au niveau du proxy.
+On peut voir que l'URL est **http** et non **https**, c'est un problème d'en-tête non transmis. Il faut régler ça au niveau du proxy.
 
 
 Signature check for debian packages
