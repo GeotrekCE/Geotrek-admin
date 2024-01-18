@@ -22,10 +22,10 @@ C’est le cas des applications de :
     • IGNrando'
     • Outdooractive
 
-Pour changer les paramètres d'accès de l'API , référez vous à cette section 
+Pour changer les paramètres d'accès de l'API , référez vous à cette section :ref:`APIs <apis>`
 
 ..  Comment.
-    :ref:`API <API>`   
+    :ref:`APIs <APIs>`   
 
 APIs externes
 =============
