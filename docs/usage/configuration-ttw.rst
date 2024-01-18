@@ -349,7 +349,10 @@ Il convient ensuite de configurer chaque flux dans Geotrek-Admin afin que ceux-c
 La fonctionnalité consiste à absorber le flux XML, afin de le remettre à disposition sous une forme optimisée et épurée. Les données sont alors exposées sous la forme d’une web API, au format GeoJSON.
 L’obtention d’un flux de données GeoJSON (agnostique et standard) présente de nombreux avantages pour l’intégration dans les applications tierces. Ce format est compatible nativement avec Rando V3, mais également avec la plupart des bibliothèques de cartographie (web et natives mobile).
 
-Pour configurer l'import de SIT, référez vous à cette section :doc:`/install/import.html#import-data-from-touristic-data-systems-sit`
+Pour configurer l'import de SIT, référez vous à cette section 
+
+..  Comment.
+    :ref:`Import data from touristic data systems (SIT) <import-data-from-touristic-data-systems-sit>`
 
 Intégration des fonds de cartes
 ===============================
@@ -360,8 +363,10 @@ Il est possible d'intégrer dans Geotrek différents fonds de carte comme :
 * OpenTopoMap : https://opentopomap.org/#map=5/49.000/10.000 
 * ou les données IGN : https://geoservices.ign.fr/services-geoplateforme-diffusion
 
-Pour configurer l'ajout de fonds de plan, référez vous à cette section :doc:`/install/advanced-configuration.html#map-settings`
+Pour configurer l'ajout de fonds de plan, référez vous à cette section 
 
+..  Comment.
+    :ref:`Map settings <map-settings>`   
 
 Pictogrammes
 ============
