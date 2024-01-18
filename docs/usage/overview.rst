@@ -161,4 +161,8 @@ Toutes les listes de choix (thématiques, pratiques, parcours…) sont administr
 
    Exemple d’édition des pratiques et de leur pictogramme
 
-Voir la section :ref:`parametrages-des-modules` pour connaître le détail des paramétrages des modules.
+Voir la section 
+
+..  Comment.
+    :ref:`Paramétrage des modules <parametrages-des-modules>`   
+
