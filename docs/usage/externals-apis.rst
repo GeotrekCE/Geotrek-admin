@@ -16,11 +16,11 @@ Cette API, désormais dans sa version 2 permet à toute structure tiers de récu
 A ce jour de nombreux partenaires des structures utilisatrices de l’application Geotrek ont déjà utilisé cette API pour intégrer les données dans leurs outils.
 
 C’est le cas des applications de :
-    • VisoRando
+    • Visorando
     • Kalkin
-    • Whympr
-    • UtagawaVTT
-    • Décathlon Outdoor
+    • Apidae
+    • IGNrando'
+    • Outdooractive
 
 Pour changer les paramètres d'accès de l'API , référez vous à cette section 
 
