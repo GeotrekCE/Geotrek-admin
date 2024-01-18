@@ -37,11 +37,6 @@ Modules
 
 Geotrek est composé de différents modules.
 
-.. csv-table:: Gestion des sentiers
-   :file: /usage/modules-gestion.csv
-   :widths: 30, 70
-   :header-rows: 1
-
 **Gestion des sentiers** :
 
 * Tronçons (linéaire entre 2 intersections)
