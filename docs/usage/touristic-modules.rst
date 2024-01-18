@@ -2,9 +2,16 @@
 Modules de valorisation
 =======================
 
+.. contents::
+   :local:
+   :depth: 2
+
 
 Itinéraires
 ============
+
+Les itinéraires sont des tracés présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
+L’ajout, la modification ou la dé-publication sont fréquents.
 
 Fiche détaillée
 ---------------
@@ -97,10 +104,10 @@ Basique
 
 **Description de cotation [fr]**
 
-- Description : précision sur la cotation de l'itinéraire spécifique à la pratique
+- Description : précision sur la valeur de cotation de l'itinéraire spécifique à la pratique
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Il s’agit de la difficulté technique et motrice (présence et taille d’obstacles).
+- Exemple : La technicité de cet itinéraire est moyenne car elle ne comprend pas de passages délicats.
 
 **Parcours**
 
@@ -151,14 +158,14 @@ Avancé
 - Description : nom du lieu recommandé pour se garer en voiture
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Parking du refuge de les Caussis
+- Exemple : Parking du refuge de les Caussis.
 
 **Transport en commun [fr]**
 
 - Description : indications du ou des transports en commun pour se rendre au départ
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Ce GR est accessible en train, il démarre de la gare SNCF de Boussenac (ligne Seix - Boussenac)
+- Exemple : Ce GR est accessible en train, il démarre de la gare SNCF de Boussenac (ligne Seix - Boussenac).
 
 **Recommandations [fr]**
 
@@ -206,7 +213,7 @@ Avancé
 
 **Liens web**
 
-- Description : liens web approtant des compléments d'informations utiles
+- Description : liens web apportant des compléments d'informations utiles
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
@@ -250,7 +257,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Visibilité : publique
-- Exemple : Etape GR09 Refuge les Caussis-Étang Rond, Etape GR09 Étang Rond-Refuge les Caussis
+- Exemple : Etape GR09 Refuge les Caussis-Étang Rond, Etape GR09 Étang Rond-Refuge les Caussis.
 
 **ID externe**
 
@@ -319,49 +326,49 @@ Accessibilité
 - Description : infrastructure d'accessibilité spécifique à disposition
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Rampes d'accès amovibles
+- Exemple : Rampes d'accès amovibles.
 
 **Pente accessibilité [fr]**
 
-- Description : description de la pente : supérieure à 10 % (Nécessite une assistance quand la pente est supérieur à 8%) 
+- Description : description de la pente : supérieure à 10 % (Nécessite une assistance quand la pente est supérieure à 8%) 
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Pente supérieure à 12%12%
+- Exemple : Pente supérieure à 12%.
 
 **Revêtement accessibilité [fr]**
 
 - Description : description des revêtements rencontrés sur la totalité d’un itinéraire
 - Type : liste déroulante
 - Visibilité : publique
-- Exemple : Piste ensablée à partir des Estagnous
+- Exemple : Piste ensablée à partir des Estagnous.
 
 **Exposition accessibilité [fr]**
 
 - Description : description des expositions et des zones ombragées
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Piste ombragée
+- Exemple : Piste ombragée.
 
 **Largeur accessibilité [fr]**
 
 - Description : description des rétrécissements des sentiers et la largueur minimum
 - Type : champ libre
 - Visibilité : publique
-- Exemple : Sentier étroit demandant une forte technique de conduite
+- Exemple : Sentier étroit demandant une forte technique de conduite, avec un passage d'un mètre de large. Passage resserré sur le pont traversant la rivière.
 
 **Conseil d'accessibilité [fr]**
 
 - Description : éléments particuliers permettant d’apprécier le contexte de l’itinéraire pour les PMR (conseils, passages délicats, etc.)
 - Type : liste déroulante
 - Visibilité : publique
-- Exemple : Passage resserré sur le pont traversant la rivière.
+- Exemple : La montée du Saut du Laire, particulièrement les 150 derniers mètres, sont déconseillés aux joëlettes, notamment dans la perspective du retour en descente sur pavé pouvant être glissant.
 
 **Signalétique accessiiblité [fr]**
 
 - Description : description de taille, forme et couleurs des signalétiques d'accessibilité
 - Type : liste déroulante
 - Visibilité : publique
-- Exemple : Panneau de signalisation PMR rampe d'accès amovible
+- Exemple : Panneau de signalisation PMR rampe d'accès amovible.
 
 Points d'intérêts (POI)
 =======================
