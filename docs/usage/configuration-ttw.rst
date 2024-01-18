@@ -2,16 +2,21 @@
 Paramétrage
 =============
 
+.. contents::
+   :local:
+   :depth: 2
+
 
 Accès interface admin
 =====================
 
 Menu à droite > admin
 
-.. figure:: /images/admin/capture-admin.png
+.. figure:: ../images/admin/capture-admin.png
    :alt: Capture lien admin
+   :align: center
 
-   Capture lien admin
+   Lien vers l'interface d'administration django
 
 Paramétrages des modules
 ========================
@@ -26,7 +31,11 @@ Itinéraires
 -  Types de services
 -  Types de POIs
 
-|image4|
+.. figure:: ../images/admin/django-admin-params-itineraires.png
+   :alt: Ensemble des champs paramétrables du module Itinéraires
+   :align: center
+
+   Ensemble des champs paramétrables du module Itinéraires
 
 Exemple : ajouter une pratique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,7 +45,11 @@ Exemple : ajouter une pratique
 
 (note : la couleur n’est utilisée que pour le mobile actuellement)
 
-|image5|
+.. figure:: ../images/admin/django-admin-ajout-pratique.png
+   :alt: Ajout d'une nouvelle pratique
+   :align: center
+
+   Ajout d'une nouvelle pratique
 
 Exemple : ajouter une étiquette
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +66,11 @@ Via cette interface vous pourrez créer des étiquettes puis, une fois créées,
 
 * Créer une étiquette :
 
-.. image :: ../images/admin/creation_etiquette.png
+.. figure:: ../images/admin/creation_etiquette.png
+   :alt: Création d'une étiquette
+   :align: center
+
+   Création d'une étiquette
 
 Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des outils permettant de formater du contenu et d'obtenir le résultat en HTML directement. Par exemple via l'outil libre `Summernote <https://summernote.org/>`_.
 
@@ -62,7 +79,11 @@ Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du `
 Une fois l'étiquette créée il faut l'associer à un itinéraire pour qu'elle soit visible sur le site. 
 Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet :guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu déroulant l'étiquette de votre choix (si vous en avez défini plusieurs). 
 
-.. image :: ../images/admin/associer_etiquette_itineraire.png
+.. figure:: ../images/admin/associer_etiquette_itineraire.png
+   :alt: Ajout d'une étiquette à un itinéraire
+   :align: center
+
+   Ajout d'une étiquette à un itinéraire
 
 .. tip::
     * L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
@@ -71,11 +92,19 @@ Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cli
 
 Rendu dans **Geotrek Rando** (onglet :guilabel:`Infos pratiques` d'une fiche randonnée) :
 
-.. image :: ../images/admin/rendu_etiquette.png
+.. figure:: ../images/admin/rendu_etiquette.png
+   :alt: Rendu d'une étiquette dans Geotrek-rando
+   :align: center
+
+   Rendu d'une étiquette dans Geotrek-rando
 
 Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 
-.. image :: ../images/admin/rendu_etiquette2.png
+.. figure:: ../images/admin/rendu_etiquette2.png
+   :alt: Rendu des étiquettes dans les filtres de Geotrek-rando
+   :align: center
+
+   Rendu des étiquettes dans les filtres de Geotrek-rando
 
 .. _sites-et-parcours-outdoor-1:
 
@@ -107,30 +136,40 @@ Tourisme
 -  Types d’événement touristiques
 -  Systèmes de réservation
 
-|image6|
+.. figure:: ../images/admin/django-admin-params-tourisme.png
+   :alt: Ensemble des champs paramétrables des modules Contenus et Évènements touristiques
+   :align: center
 
+   Ensemble des champs paramétrables des modules Contenus et Évènements touristiques
 
 Exemple : catégorie de contenu touristique et ses sous-types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-|image7|
 
+.. figure:: ../images/admin/django-admin-categorie-contenu-touristique.png
+   :alt: Création de catégorie de contenu touristique et ses sous-types
+   :align: center
+
+   Création de catégorie de contenu touristique et ses sous-types
 
 Pour chaque catégorie il est possible de définir deux listes de
 sous-types et leur nom.
 
 Édition des sous-types de la catégorie “Hébergements”
 
-.. figure:: /images/admin/django-admin-categorie-contenu-touristique-sous-types.png
+.. figure:: ../images/admin/django-admin-categorie-contenu-touristique-sous-types.png
    :alt: Sous-types de la catégorie “Hébergements”
+   :align: center
 
    Sous-types de la catégorie “Hébergements”
 
-
 Dans l’édition d’un contenu touristique de catégorie “Hébergement”
 
-|image8|
+.. figure:: ../images/admin/contenu-touristique-categorie-sous-type.png
+   :alt: Ajout d'un type d'usage à la catégorie “Hébergements”
+   :align: center
 
+   Ajout d'un type d'usage à la catégorie “Hébergements”
 
 Zones
 -----
@@ -145,7 +184,7 @@ Zones
 Gestion des utilisateurs
 ========================
 
-Geotrek-admin s'appuie sur le `système d'authentification et de permissions Django<https://docs.djangoproject.com/en/4.2/topics/auth/default/>`.
+Geotrek-admin s'appuie sur le `système d'authentification et de permissions Django <https://docs.djangoproject.com/en/4.2/topics/auth/default>`_ .
 
 Les utilisateurs appartiennent à des groupes et les permissions peuvent être attribuées au niveau de l'utilisateur ou du groupe.
 
@@ -153,7 +192,11 @@ Avec les groupes, vous pouvez créer et configurer un profil utilisateur, chacun
 
 Toute la configuration des utilisateurs, groupes et permissions est disponible depuis l'interface d'administration Django, si vous n'avez pas activé *Authentification externe* (voir ci-dessous).
 
-|image9|
+.. figure:: ../images/admin/django-admin-params-users.png
+   :alt: Interface de configuration des utilisateurs/groupes
+   :align: center
+
+   Interface de configuration des utilisateurs/groupes
 
 Utilisateurs et permissions
 ---------------------------
@@ -187,7 +230,11 @@ Un utilisateur peut avoir des permissions spécifiques, définies par type d’o
 
 Pour cela, sélectionner les permissions dans l’écran de gauche pour les positionner dans l’écran de droite. Par exemple sur la capture ci-dessous l’utilisateur possède les permissions pour consulter uniquement et exporter les informations relatives aux signalétiques sans possibilité d’accéder aux autres modules ou de modifier les contenus.
 
-|image10|
+.. figure:: ../images/admin/django-admin-user-right.png
+   :alt: Choix des permissions de l'utilisateur
+   :align: center
+
+   Choix des permissions de l'utilisateur
 
 Il existe quatre principaux types de permissions :
 
@@ -208,7 +255,6 @@ Voici la signification des actions autorisées dans les permissions :
 * *change_geom* : modifier la géométrie d’une donnée
 * *publish* : publier la donnée
 * *export* : exporter les données via l’interface de Geotrek-admin (CSV, JSON…)
-
 
 Groupes
 -------
@@ -268,8 +314,9 @@ Ceci est à distinguer des langues dans lesquelles sont traduits les éléments 
 
 Il est par exemple possible d'intégrer des textes dans différentes langues (à minima français, anglais) dans Geotrek-Admin.
 
-.. image :: /images/user-manual/multilangue.png
+.. figure:: ../images/user-manual/multilangue.png
    :alt: Gestion multilingue dans la fiche détail
+   :align: center
 
    Gestion multilingue dans la fiche détail
 
@@ -284,7 +331,11 @@ Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il es
 
 Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
 
-|image11|
+.. figure:: ../images/admin/portals.png
+   :alt: Configuration des portails
+   :align: center
+
+   Configuration des portails
 
 Il est possible de choisir de publier sur un ou plusieurs portails les objets suivants : itinéraires, contenus et évènements touristiques, pages statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans le champ "portail" à l'édition de l'objet.
 
@@ -298,17 +349,18 @@ Il convient ensuite de configurer chaque flux dans Geotrek-Admin afin que ceux-c
 La fonctionnalité consiste à absorber le flux XML, afin de le remettre à disposition sous une forme optimisée et épurée. Les données sont alors exposées sous la forme d’une web API, au format GeoJSON.
 L’obtention d’un flux de données GeoJSON (agnostique et standard) présente de nombreux avantages pour l’intégration dans les applications tierces. Ce format est compatible nativement avec Rando V3, mais également avec la plupart des bibliothèques de cartographie (web et natives mobile).
 
-Pour configurer l'import de SIT, référez vous à cette section :doc:`/install/import.html#import-data-from-touristic-data-systems-sit`.
+Pour configurer l'import de SIT, référez vous à cette section :ref:`import-data-from-touristic-data-systems-sit`
 
 Intégration des fonds de cartes
 ===============================
 
 Il est possible d'intégrer dans Geotrek différents fonds de carte comme :
-- OpenStreetMap : https://www.openstreetmap.org/#map=6/46.449/2.210
-- OpenTopoMap : https://opentopomap.org/#map=5/49.000/10.000 
-- ou les données IGN : https://geoservices.ign.fr/services-geoplateforme-diffusion
 
-Pour configurer l'ajout de fonds de plan, référez vous à cette section :doc:`/install/advanced-configuration.html#map-settings`.
+* OpenStreetMap : https://www.openstreetmap.org/#map=6/46.449/2.210
+* OpenTopoMap : https://opentopomap.org/#map=5/49.000/10.000 
+* ou les données IGN : https://geoservices.ign.fr/services-geoplateforme-diffusion
+
+Pour configurer l'ajout de fonds de plan, référez vous à cette section :ref:`map-settings`
 
 
 Pictogrammes
@@ -326,7 +378,7 @@ Il doivent :
   marge si nécessaire.
 * Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG
 
-Si vous utilisez Inkscape, vous devez définir une viewBox. Voir http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML
+Si vous utilisez Inkscape, vous devez définir une viewBox. Voir `la documentation d'Inkscape <http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML>`_ 
 
 Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes sont recommandées :
 
@@ -334,12 +386,3 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 * Gris sur fond transparent pour les thèmes,
 * Blanc sur fond orange pour les types de POI.
 
-
-.. |image4| image:: /images/admin/django-admin-params-itineraires.png
-.. |image5| image:: /images/admin/django-admin-ajout-pratique.png
-.. |image6| image:: /images/admin/django-admin-params-tourisme.png
-.. |image7| image:: /images/admin/django-admin-categorie-contenu-touristique.png
-.. |image8| image:: /images/admin/contenu-touristique-categorie-sous-type.png
-.. |image9| image:: /images/admin/django-admin-params-users.png
-.. |image10| image:: /images/admin/django-admin-user-right.png
-.. |image11| image:: /images/admin/portals.png
