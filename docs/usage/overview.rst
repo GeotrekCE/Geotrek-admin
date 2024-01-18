@@ -109,7 +109,6 @@ Tous les modules sont construits de la même façon :
 
 .. note::
 	Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur la carte.
-	Au survol d'un objet sur la carte, celui-ci est mis en évidence dans la liste.
 	La liste des résultats est filtrée en fonction de l'étendue de la carte affichée.
 	C'est aussi depuis un module qu'il est possible d'ajouter de nouveaux objets.
 	Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
