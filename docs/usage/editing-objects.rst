@@ -2,6 +2,10 @@
 Edition d'un objet
 ==================
 
+.. contents::
+   :local:
+   :depth: 2
+
 Segmentation dynamique
 ======================
 
