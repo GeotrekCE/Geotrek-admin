@@ -4,13 +4,13 @@ Welcome to Geotrek's documentation!
 .. _contents:
 
 .. toctree::
-    :caption: About
+    :caption: 💡 About
     :maxdepth: 2
 
     about/geotrek.rst
 
 .. toctree::
-    :caption: User manual
+    :caption: 🚀 User manual
     :maxdepth: 2
 
     usage/overview.rst
@@ -27,7 +27,7 @@ Welcome to Geotrek's documentation!
     faq.rst
 
 .. toctree::
-    :caption: Installation & configuration
+    :caption: 🔧 Installation & configuration
     :maxdepth: 2
 
     install/installation
@@ -41,7 +41,7 @@ Welcome to Geotrek's documentation!
     install/sensitivity
 
 .. toctree::
-    :caption: Contribute
+    :caption: ✨ Contribute
     :maxdepth: 2
 
     CONTRIBUTING
@@ -51,7 +51,7 @@ Welcome to Geotrek's documentation!
     contribute/design
 
 .. toctree::
-    :caption: Others
+    :caption: 📝 Others
     :maxdepth: 2
 
     troubleshooting
