@@ -14,10 +14,10 @@ Basique
 
 **Structure liée** ~ requis
 
-- Description : nom de la :doc:`usage/configuration-ttw.html#structures` d'appartenance de l'itinéraire
+- Description : nom de la structure d'appartenance de l'itinéraire
 - Type : liste déroulante
 - Choix : unique
-- URl de configuration : /admin/authent/structure/
+- URl de configuration : `/admin/authent/structure/ </admin/authent/structure/>`_
 - Visibilité : interne
 - Exemple : CD09
 
@@ -38,12 +38,10 @@ Basique
 
 **Publié [fr]**
 
-- Description : Itinéraire publié ou en boruillon
+- Description : Itinéraire publié ou en brouillon
 - Type : case à cocher
 - Valeur par défaut (décoché) : brouillon 
-- Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/authent/structure/
-- Visibilité : publique
+- Visibilité : interne
 
 **Départ [fr]** ~ Recommandé
 
@@ -72,7 +70,7 @@ Basique
 - Type : liste déroulante
 - Choix : unique
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/difficultylevel/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/difficultylevel/ </admin/trekking/difficultylevel/>`_ 
 - Visibilité : publique
 - Exemple : Intermédiaire
 
@@ -82,7 +80,7 @@ Basique
 - Type : liste déroulante
 - Choix : unique
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/practice/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/practice/ </admin/trekking/practice/>`_  
 - Visibilité : publique
 - Exemple : Pédestre
 
@@ -93,7 +91,7 @@ Basique
 - Choix : unique
 - Conditionnel : selon la pratique choisie
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/ratingscale/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/ratingscale/ </admin/trekking/ratingscale/>`_ 
 - Visibilité : publique
 - Exemple : Technicité : 3 - Moyen
 
@@ -110,7 +108,7 @@ Basique
 - Type : liste déroulante
 - Choix : unique
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/route/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/route/ </admin/trekking/route/>`_ 
 - Visibilité : publique
 - Exemple : Boucle
 
@@ -118,8 +116,6 @@ Basique
 
 - Description : accès routier jusqu'au point de départ
 - Type : champ libre
-- Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/authent/structure/
 - Visibilité : publique
 - Exemple : Depuis Savines-Le-Lac (17km), prendre la D41 jusqu'à Réallon. Suivre ensuite la D241 jusqu'au hameau des Gourniers au fond de la vallée.
 
@@ -184,7 +180,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/common/theme/
+- Chemin d'accès dans l'outil d'administration : `/admin/common/theme/ <//admin/common/theme/>`_
 - Visibilité : publique
 - Exemple : Lacs et glaciers, Géologie, Point de vue
 
@@ -194,7 +190,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/common/label/
+- Chemin d'accès dans l'outil d'administration : `/admin/common/label/ </admin/common/label/>`_ 
 - Visibilité : publique
 - Exemple : Chien autorisé
 
@@ -204,7 +200,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/authent/structure/
+- Chemin d'accès dans l'outil d'administration : `/admin/core/network/ </admin/core/network/>`_ 
 - Visibilité : publique
 - Exemple : GR
 
@@ -214,9 +210,9 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/weblink/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/weblink/ </admin/trekking/weblink/>`_ 
 - Visibilité : publique
-- Exemple : [Consulter la météo locale de Boussenac](https://meteofrance.com/previsions-meteo-france/boussenac/09320)
+- Exemple : `Consulter la météo locale de Boussenac <https://meteofrance.com/previsions-meteo-france/boussenac/09320>`_ 
 
 **Lieux de renseignement**
 
@@ -224,7 +220,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/tourism/informationdesk/
+- Chemin d'accès dans l'outil d'administration : `/admin/tourism/informationdesk/ </admin/tourism/informationdesk/>`_
 - Visibilité : publique
 - Exemple : Office de tourisme de Seix, Office du tourisme de Boussenac
 
@@ -234,7 +230,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/common/recordsource/
+- Chemin d'accès dans l'outil d'administration : `/admin/common/recordsource/ </admin/common/recordsource/>`_
 - Visibilité : publique
 - Exemple : Conseil départemental de l'Ariège
 
@@ -244,7 +240,7 @@ Avancé
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/common/targetportal/
+- Chemin d'accès dans l'outil d'administration : `/admin/common/targetportal/ </admin/common/targetportal/>`_
 - Visibilité : publique
 - Exemple : CD09
 
@@ -276,7 +272,7 @@ Avancé
 - Type : liste déroulante
 - Choix : unique
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/common/reservationsystem/
+- Chemin d'accès dans l'outil d'administration : `/admin/common/reservationsystem/ </admin/common/reservationsystem/>`_ 
 - Visibilité : publique
 - Exemple : Open system
 
@@ -304,7 +300,7 @@ Accessibilité
 - Type : liste déroulante
 - Choix : multiple
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/accessibility/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/accessibility/ </admin/trekking/accessibility/>`_ 
 - Visibilité : publique
 - Exemple : Fauteuil roulant, poussette
 
@@ -314,7 +310,7 @@ Accessibilité
 - Type : liste déroulante
 - Choix : unique
 - Valeurs de champ paramétrables dans l'outil d'administration : oui
-- Chemin d'accès dans l'outil d'administration : /admin/trekking/accessibilitylevel/
+- Chemin d'accès dans l'outil d'administration : `/admin/trekking/accessibilitylevel/ </admin/trekking/accessibilitylevel/>`_  
 - Visibilité : publique
 - Exemple : Débutant
 
