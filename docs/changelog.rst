@@ -5,6 +5,10 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Add interventions geometries union in projects database view (``v_projects``) (#3892)
+
 2.101.5 (2024-01-11)
 --------------------
 
