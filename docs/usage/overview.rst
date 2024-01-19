@@ -37,49 +37,105 @@ L’application est composée :
 
 Geotrek est composé de différents modules.
 
-**Gestion des sentiers** :
+.. list-table:: Modules de gestion
+   :widths: 25 25 50
+   :header-rows: 1
 
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Icone | Module        | Description                                                                                                                                                                          |
-+=======+===============+======================================================================================================================================================================================+
-|       | Tronçon       | C'est l’équivalent du réseau routier : ils constituent le support des tracés des itinéraires. Leur modification est relativement rare (fermeture d’un chemin, éboulement...).        |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Sentier       | Les itinéraires, non pas de randonnée, mais de gestion, correspondent au départ et à l'arrivée d'un sentier.                                                                         |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Statut        | Gestion des communes, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique, zones protégées, secteurs. Type physique (route, piste, sente, etc.) |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Aménagement   | Décrit et localise les ouvrages, le mobilier, les équipements                                                                                                                        |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Signalétique  | Reprend l'ensemble de la signalétique d'accueil, d'information et d'orientation à destination des randonneurs. Gestion des fichiers associés comme les BAT, les maquettes…           |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Interventions | Répertorie les travaux liés à l'entretien courant des ouvrages.                                                                                                                      |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Chantiers     | Correspond aux exemples d'interventions. Cela permet d'avoir une approche globale de chantiers significatifs et des informations administratives associées.                          |
-+-------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+   * - Icône
+     - Module
+     - Description
+   * - .. figure:: ../images/user-manual/modules/troncons.png
+     - Tronçon
+     - | C'est l’équivalent du réseau routier : ils constituent le support des tracés
+       | des itinéraires. Leur modification est relativement rare (fermeture d’un
+       | chemin, éboulement...).
+   * - .. figure:: ../images/user-manual/modules/sentier.png
+     - Sentier
+     - | Les itinéraires, non pas de randonnée, mais de gestion, correspondent au 
+       | départ et à l'arrivée d'un sentier.
+   * - .. figure:: ../images/user-manual/modules/statut.png
+     - Statut
+     - | Gestion des communes, organismes ayant la compétence sentiers,  
+       | gestionnaires des travaux et de la signalétique, zones protégées, secteurs.  
+       | Type physique (route, piste, sente, etc.)
+   * - .. figure:: ../images/user-manual/modules/amenagement.png
+     - Aménagement
+     - | Décrit et localise les ouvrages, le mobilier, les équipements.
+   * - .. figure:: ../images/user-manual/modules/signaletique.png
+     - Signalétique
+     - | Reprend l'ensemble de la signalétique d'accueil, d'information et 
+       | d'orientation à destination des randonneurs.
+       | Gestion des fichiers associés comme les BAT, les maquettes…
+   * - .. figure:: ../images/user-manual/modules/intervention.png
+     - Intervention
+     - | Répertorie les travaux liés à l'entretien courant des ouvrages.
+   * - .. figure:: ../images/user-manual/modules/chantier.png
+     - Chantier
+     - | Correspond aux exemples d'interventions. Cela permet d'avoir une 
+       | approche globale de chantiers significatifs et des informations 
+       | administratives associées.
 
 **Valorisation de l'offre touristique** :
 
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Icone | Module                  | Description                                                                                                                                                                                                                                                                                                                                                              |
-+=======+=========================+==========================================================================================================================================================================================================================================================================================================================================================================+
-|       | Itinéraire              | Tracés présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés. L’ajout, la modification ou la dé-publication sont fréquents.                                                                                                                                                                                                      |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Points d'intérêts (POI) | Ponctuels associés aux randonnées : en fonction de leur emplacement, ils sont associés automatiquement aux randonnées. Leur catégorie détermine leur pictogramme (faune, flore, patrimoine, équipements...). L’ajout, la modification ou la suppression sont fréquents.                                                                                                  |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Services                | informations pratiques comme les points d'eau, passages délicats... selon la typologie souhaitée. Ils n'ont pas de description ni de nom, ni de photo et sont uniquement affichés sur la carte de l'itinéraire sous forme de pictogramme.                                                                                                                                |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Contenus touristiques   | Correspond aux informations issues des Systèmes d'Informations Touristiques (SIT), qui permettent d'alimenter automatiquement la base de données Geotrek. Celles-ci sont regroupées dans des catégories de type : dormir pour les campings, gîtes… ou manger pour les restaurants… ou déguster pour mettre en évidence les produits locaux … ou visiter pour les musées… |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Évènements touristiques | Correspond aux informations issues des Systèmes d'Informations Touristiques (SIT), qui permettent d'alimenter automatiquement la base de données Geotrek. Celles-ci sont regroupées dans des catégories de type : animations, expositions, sorties…                                                                                                                      |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Signalements            | Contient les informations saisies par un internautes via le formulaire dédié sur Geotrek-Rando                                                                                                                                                                                                                                                                           |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Zones sensibles         | Module non activé par défaut permettant de saisir et de gérer des zones de sensibilité de la faune sauvage pour les afficher sur Geotrek-rando ou les diffuser avec l'API de Geotrek-admin).                                                                                                                                                                             |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Sites outdoor           | Permet de définir des sites (sites d'escalade, rivières, aires de vol libre…)                                                                                                                                                                                                                                                                                            |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|       | Parcours outdoor        | Couplé au module « site outdoor», permet de saisir et renseigner des activités de pleines natures diverses (kayak, rafting, parapente, course d'orientation, voie d'escalade, parcours d'eau vive…etc.)                                                                                                                                                                  |
-+-------+-------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+.. list-table:: Modules de valorisation
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Icône
+     - Module
+     - Description
+   * - .. figure:: ../images/user-manual/modules/itineraire.png
+     - Itinéraire
+     - | Tracés présentés au grand public : l’itinéraire est défini selon 
+       | la géométrie des tronçons empruntés. L’ajout, la modification 
+       | ou la dé-publication sont fréquents
+   * - .. figure:: ../images/user-manual/modules/poi.png
+     - Points d'intérêts (POI)
+     - | Ponctuels associés aux randonnées : en fonction de leur 
+       | emplacement, ils sont associés automatiquement aux randonnées. 
+       | Leur catégorie détermine leur pictogramme (faune, flore,  
+       | patrimoine, équipements...).
+   * - .. figure:: ../images/user-manual/modules/service.png
+     - Services
+     - | Informations pratiques comme les points d'eau, passages 
+       | délicats... selon la typologie souhaitée. Ils n'ont pas de 
+       | description ni de nom, ni de photo et sont uniquement affichés 
+       | sur la carte de l'itinéraire sous forme de pictogramme. 
+       | Type physique (route, piste, sente, etc.)
+   * - .. figure:: ../images/user-manual/modules/contenustouristiques.png
+     - Contenus touristiques
+     - | Correspond aux informations issues des Systèmes d'Informations 
+       | Touristiques (SIT), qui permettent d'alimenter automatiquement 
+       | la base de données Geotrek. Celles-ci sont regroupées dans des 
+       | catégories de type : dormir pour les campings, gîtes… ou manger 
+       | pour les restaurants… ou déguster pour mettre en évidence les 
+       | produits locaux … ou visiter pour les musées…
+   * - .. figure:: ../images/user-manual/modules/evenementstouristiques.png
+     - Évènements touristiques
+     - | Correspond aux informations issues des Systèmes d'Informations 
+       | Touristiques (SIT), qui permettent d'alimenter automatiquement 
+       | la base de données Geotrek. Celles-ci sont regroupées dans des 
+       | catégories de type : animations, expositions, sorties…
+   * - .. figure:: ../images/user-manual/modules/signalements.png
+     - Signalements
+     - | Contient les informations saisies par un internautes via le
+       | formulaire dédié sur Geotrek-Rando
+   * - .. figure:: ../images/user-manual/modules/zonessensibles.png
+     - Zones sensibles
+     - | Module non activé par défaut permettant de saisir et de gérer  
+       | des zones de sensibilité de la faune sauvage pour les afficher 
+       | sur Geotrek-rando ou les diffuser avec l'API de Geotrek-admin). 
+   * - .. figure:: ../images/user-manual/modules/sitesoutdoor.png
+     - Sites outdoor
+     - | Permet de définir des sites (sites d'escalade, rivières, aires 
+       | de vol libre…) 
+   * - .. figure:: ../images/user-manual/modules/parcoursoutdoor.png
+     - Parcours outdoor
+     - | Couplé au module « site outdoor», permet de saisir et renseigner 
+       | des activités de pleines natures diverses (kayak, rafting, 
+       | parapente, course d'orientation, voie d'escalade, parcours d'eau 
+       | vive…etc.) 
+
 
 Chaque module est accessible depuis le bandeau vertical.
 

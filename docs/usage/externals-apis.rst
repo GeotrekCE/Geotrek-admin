@@ -1,13 +1,13 @@
-====
-APIs
-====
+=======
+7. APIs
+=======
 
 .. contents::
    :local:
    :depth: 2
 
-API interne
-===========
+7.1 API interne
+===============
 
 Geotrek dispose d’une API (Application Programming Interface) qui sert à exposer les informations de Geotrek-Admin dans le but de pouvoir faire communiquer des systèmes entre eux pour échanger des données.
 
@@ -24,11 +24,11 @@ C’est le cas des applications de :
 
 Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
 
-APIs externes
-=============
+7.2 APIs externes
+==================
 
-Geotrek et IGNrando'
---------------------
+7.2.1 Geotrek et IGNrando'
+--------------------------
 
 Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' (https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne).
 
@@ -57,7 +57,6 @@ Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'inter
    :align: center
 
    Ensemble des champs paramétrables pour le référentiel CIKWI
-
 
 Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806.
 

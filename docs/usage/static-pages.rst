@@ -1,6 +1,6 @@
-===============
-Pages statiques
-===============
+==================
+8. Pages statiques
+==================
 
 .. contents::
    :local:
@@ -23,8 +23,8 @@ Elles sont gérées depuis l'Adminsite de Geotrek-admin et sont ensuite publiée
 
 .. image :: /images/user-manual/flatpages-adminsite.jpg
 
-Créer une page statique
-=======================
+8.1 Créer une page statique
+============================
 
 Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
 
@@ -33,8 +33,8 @@ Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique 
 Vous accédez alors à la liste des pages statiques. 
 Cliquer sur "Ajouter Page statique" en haut à droite de l'écran pour créer une première page.
 
-Construire une page statique
-============================
+8.2 Construire une page statique
+================================
 
 Sélectionnez la langue du contenu que vous souhaitez saisir : en / fr / it...
 
@@ -68,8 +68,8 @@ Une fois que vous avez ajusté vos blocs de contenu pour un affichage sur ordina
 
 .. image :: /images/user-manual/flatpages-blocks-edit.jpg
 
-Ajouter du contenu dans un bloc
-===============================
+8.3 Ajouter du contenu dans un bloc
+===================================
 
 En cliquant dans la zone de texte, une barre d'édition apparaît. Sur un format classique comme dans les logiciels de traitement texte, plusieurs menus et outils sont alors disponibles :
 
@@ -96,8 +96,8 @@ Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs à 
 - Table : insertion de tableau
 - Tools : Afficher le code source de la page
 
-Astuces
-=======
+8.4 Astuces
+============
 
 1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder.
 2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Vous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.

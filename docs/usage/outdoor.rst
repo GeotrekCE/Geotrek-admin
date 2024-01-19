@@ -1,14 +1,14 @@
-=================
-Activités outdoor
-=================
+=====================
+6. Activités outdoor
+=====================
 
 .. contents::
    :local:
    :depth: 2
 
 
-Sites et parcours
-=================
+6.1 Sites et parcours
+=====================
 
 Geotrek-admin dédie 2 modules aux activités outdoor : les sites et les parcours. Un site correspond à une zone ou à un réseau hydrographique
 à gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, zone de vol libre…
@@ -34,8 +34,8 @@ Les 2 modules outdoor permettent de :
 - Associer des POI à un site ou parcours, automatiquement par intersection géographique
 - Associer des accès au site, automatiquement par intersection géographique des itinéraires à proximité
 
-Arborescence
-------------
+6.1.1 Arborescence
+-------------------
 
 Les fiches détail des sites et des parcours présentent les liens entre eux sous forme d'une arborescence. Pour ne pas surcharger,
 tous les éléments ne sont pas repris, mais uniquement :
@@ -46,8 +46,8 @@ tous les éléments ne sont pas repris, mais uniquement :
 
 Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
 
-Nomenclatures
-=============
+6.2 Nomenclatures
+==================
 
 En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
 
@@ -58,11 +58,11 @@ En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin 
   Par exemple « Site école » pour l'escalade.
 * Échelle de cotation : permet de regrouper les cotations faisant partie de la même échelle. Elles sont spécifiques à chaque pratique.
 
-Filières
-========
+6.3 Filières
+============
 
-Escalade
---------
+6.3.1 Escalade
+---------------
 
 La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
 Il est possible (mais pas obligatoire) de créer des sous-sites pour représenter des secteurs.
@@ -75,8 +75,8 @@ il est également possible de créer autant de parcours que de longueurs dans la
 Lors de la saisie de la grande voie, il faudra préciser les différentes longueurs dans le champ « Enfants », dans le bon ordre.
 Le nom de chaque longueur pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur 2 », etc.
 
-Vol libre
----------
+6.3.2 Vol libre
+----------------
 
 La zone de vol n'est pas définie géographiquement de manière précise mais fait quand même l'objet d'un site avec un nom
 (ex: « massif de … ») et un polygone approximatif ou bien un point (de préférence celui de départ). Cela n'a pas une importance
@@ -88,8 +88,8 @@ Afin de les identifier, il faut créer les types de site « Aire de décollage �
 Comme le vol est libre, il n'est pas nécessaire de définir des parcours. Cependant, il est possible d'en définir pour donner
 des exemples de trajectoires.
 
-Eau vive
---------
+6.3.3 Eau vive
+--------------
 
 Le site est généralement constitué par une rivière ou une portion de rivière. Il est possible d'y adjoindre des affluents.
 La géométrie du site est donc un linéraire correspondant à un réseau hydrographique.
@@ -99,8 +99,8 @@ ou d'un polygone.
 Les parcours sont automatiquement attachés à une aire d'embarquement et une aire de débarquement qui sont les aires les plus
 proches respectivement du début et de la fin du parcours.
 
-Représentation verticale : les vues HD
-======================================
+6.4 Représentation verticale : les vues HD
+==========================================
 
 Pour aller au-delà de la localisation sur une carte dans la représentation des sites d'activité Outdoor, notamment celles verticales (escalade, via-ferrata, alpinisme...), nous avons la possibilité d'ajouter des photos très haute définition (gigapixel) sur les itinéraires, POI et sites outdoor, et d'annoter celles-ci pour les enrichir.
 

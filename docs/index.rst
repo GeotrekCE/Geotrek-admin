@@ -16,14 +16,12 @@ Welcome to Geotrek's documentation!
     usage/overview.rst
     usage/management-modules.rst
     usage/touristic-modules.rst 
-    usage/screencasts.rst
     usage/editing-objects.rst
-    usage/treks.rst
-    usage/outdoor.rst
-    usage/static-pages.rst
     usage/configuration-ttw.rst
+    usage/outdoor.rst
     usage/externals-apis.rst
-    usage/qgis.rst
+    usage/static-pages.rst
+    usage/screencasts.rst
     faq.rst
 
 .. toctree::
