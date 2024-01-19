@@ -14,7 +14,7 @@ But if Geotrek-admin does not start, take a look at systemd logs for each of the
    sudo journalctl -eu geotrek-celery
 
 The output is paginated. With -e option you are at the end of the logs but you can go up an down with arrows.
-Type Q to quit. If you want to copy the log to a file, do:
+Type Q to quit. If you want to copy the log to a file, run:
 
 ::
 
