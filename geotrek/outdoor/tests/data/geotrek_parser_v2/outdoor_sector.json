@@ -1,0 +1,21 @@
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": {
+                "en": "White water",
+                "fr": "Eau vive"
+            }
+        },
+        {
+            "id": 2,
+            "name": {
+                "en": "Vertical",
+                "fr": "Vertical"
+            }
+        }
+    ]
+}

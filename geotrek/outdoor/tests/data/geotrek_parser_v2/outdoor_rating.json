@@ -1,0 +1,49 @@
+{
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 35,
+            "name": {
+                "en": null,
+                "fr": "3+"
+            },
+            "description": {
+                "en": null,
+                "fr": null
+            },
+            "scale": 6,
+            "order": 302,
+            "color": "#D9D9D9"
+        },
+        {
+            "id": 36,
+            "name": {
+                "en": null,
+                "fr": "4a"
+            },
+            "description": {
+                "en": null,
+                "fr": null
+            },
+            "scale": 6,
+            "order": 411,
+            "color": "#D9D9D9"
+        },
+        {
+            "id": 38,
+            "name": {
+                "en": null,
+                "fr": "4c"
+            },
+            "description": {
+                "en": null,
+                "fr": null
+            },
+            "scale": 6,
+            "order": 431,
+            "color": "#D9D9D9"
+        }
+    ]
+}

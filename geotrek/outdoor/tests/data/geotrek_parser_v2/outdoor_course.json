@@ -1,0 +1,406 @@
+{
+    "count": 5,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 5,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            6.8225098,
+                            44.9492493
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Unrelated",
+                "fr": ""
+            },
+            "parents": [
+                4,
+                1
+            ],
+            "parents_uuids": [
+                "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc",
+                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
+            ],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/5/unrelated.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/5/unrelated.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                3
+            ],
+            "sites_uuids": [
+                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/5/",
+            "uuid": "43ce926d-9236-4a62-ac7f-799d1c024b5a"
+        },
+        {
+            "id": 4,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [
+                5
+            ],
+            "children_uuids": [
+                "43ce926d-9236-4a62-ac7f-799d1c024b5a"
+            ],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            7.3150635,
+                            44.0105955
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Leaf 1 bis",
+                "fr": "Feuille 1 bis"
+            },
+            "parents": [],
+            "parents_uuids": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/4/feuille-1-bis.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/4/feuille-1-bis.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                3
+            ],
+            "sites_uuids": [
+                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/4/",
+            "uuid": "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc"
+        },
+        {
+            "id": 1,
+            "accessibility": {
+                "en": "Test access en",
+                "fr": "Test access fr"
+            },
+            "advice": {
+                "en": "Test reco en",
+                "fr": "Test reco fr"
+            },
+            "attachments": [],
+            "children": [
+                5
+            ],
+            "children_uuids": [
+                "43ce926d-9236-4a62-ac7f-799d1c024b5a"
+            ],
+            "cities": [],
+            "description": {
+                "en": "Test descr en",
+                "fr": "Test descr fr"
+            },
+            "districts": [],
+            "duration": 100.0,
+            "eid": null,
+            "equipment": {
+                "en": "Test &eacute;quipement en",
+                "fr": "Test &eacute;quipement fr"
+            },
+            "gear": {
+                "en": "Test mat&eacute;riel en",
+                "fr": "Test mat&eacute;riel fr"
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            6.6888428,
+                            44.1634893
+                        ]
+                    }
+                ]
+            },
+            "height": 100,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Leaf 1",
+                "fr": "Leaf 1"
+            },
+            "parents": [],
+            "parents_uuids": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/1/leaf-1.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/1/leaf-1.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "Test descr en",
+                "fr": "Test descr fr"
+            },
+            "sites": [
+                5
+            ],
+            "sites_uuids": [
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+            ],
+            "structure": 1,
+            "type": 2,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/1/",
+            "uuid": "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
+        },
+        {
+            "id": 2,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            6.6238404,
+                            44.0481157
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Leaf 2",
+                "fr": "Leaf 2"
+            },
+            "parents": [],
+            "parents_uuids": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/2/leaf-2.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/2/leaf-2.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                5
+            ],
+            "sites_uuids": [
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/2/",
+            "uuid": "b43a1f53-a810-4703-aad6-3e0327610230"
+        },
+        {
+            "id": 3,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            6.5332032,
+                            43.9453724
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Leaf 3",
+                "fr": "Leaf 3"
+            },
+            "parents": [],
+            "parents_uuids": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/3/leaf-3.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/3/leaf-3.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                5
+            ],
+            "sites_uuids": [
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/3/",
+            "uuid": "1d6f5bd3-3559-4484-bd78-f8a091ab81a2"
+        }
+    ]
+}

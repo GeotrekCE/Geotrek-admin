@@ -1,0 +1,15 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 2,
+            "name": {
+                "en": "Type 1",
+                "fr": null
+            },
+            "practice": 1
+        }
+    ]
+}
