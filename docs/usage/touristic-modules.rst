@@ -1,23 +1,23 @@
-=======================
-Modules de valorisation
-=======================
+==========================
+3. Modules de valorisation
+==========================
 
 .. contents::
    :local:
    :depth: 2
 
 
-Itinéraires
-============
+3.1 Itinéraires
+===============
 
 Les itinéraires sont des tracés présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout, la modification ou la dé-publication sont fréquents.
 
-Fiche détaillée
----------------
+3.1.1 Fiche détaillée
+---------------------
 
-Basique
-~~~~~~~
+3.1.1.1 Basique
+~~~~~~~~~~~~~~~
 
 **Structure liée** ~ requis
 
@@ -150,8 +150,8 @@ Basique
 1. Prendre le sentier à droite direction l'Oussella
 2. Après la marmite de Géant et le pont, continuer à gauche direction l'Oussella.
 
-Avancé
-~~~~~~
+3.1.1.2 Avancé
+~~~~~~~~~~~~~~
 
 **Parking conseillé [fr]**
 
@@ -298,8 +298,8 @@ Avancé
 - Visibilité : interne
 - Exemple : les Estagnous
 
-Accessibilité
-~~~~~~~~~~~~~
+3.1.1.3 Accessibilité
+~~~~~~~~~~~~~~~~~~~~~~
 
 **Type d'accessibilité**
 
@@ -370,30 +370,30 @@ Accessibilité
 - Visibilité : publique
 - Exemple : Panneau de signalisation PMR rampe d'accès amovible.
 
-Points d'intérêts (POI)
-=======================
+3.2 Points d'intérêts (POI)
+==========================
 
 
-Services
-========
-
-
-Contenus touristiques
-=====================
-
-
-Signalements
+3.3 Services
 ============
 
 
-Zones sensibles
-===============
+3.4 Contenus touristiques
+=========================
 
 
-Sites outdoor
-=============
-
-
-Parcours outdoor
+3.5 Signalements
 ================
+
+
+3.6 Zones sensibles
+===================
+
+
+3.7 Sites outdoor
+=================
+
+
+3.8 Parcours outdoor
+====================
 

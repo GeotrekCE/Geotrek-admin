@@ -1,13 +1,13 @@
-=====================
-Présentation générale
-=====================
+========================
+1. Présentation générale
+========================
 
 .. contents::
    :local:
    :depth: 2
 
-Architecture
-=============
+1.1 Architecture
+================
 
 L’application est composée : 
 
@@ -19,8 +19,8 @@ L’application est composée :
   - un bouton déconnexion de l’application
 - de **paramètres d’administration** (gestion des droits, des listes déroulantes…).
 
-Page d'accueil
-==============
+1.2 Page d'accueil
+==================
 
 .. figure:: ../images/user-manual/geotrek-login.png
    :alt: Accès à Geotrek-admin via un login et un mot de passe
@@ -29,11 +29,11 @@ Page d'accueil
    Accès à Geotrek-admin via un login et un mot de passe
 
 
-Interface de consultation des modules
-=====================================
+1.3 Interface de consultation des modules
+==========================================
 
-Modules
--------
+1.3.1 Modules
+-------------
 
 Geotrek est composé de différents modules.
 
@@ -83,13 +83,13 @@ Geotrek est composé de différents modules.
 
 Chaque module est accessible depuis le bandeau vertical.
 
-Navigation et saisie
---------------------
+1.3.2 Navigation et saisie
+--------------------------
 
 Les résultats sont affichés sous forme de liste puis on accède aux détails des objets.
 
-Vue liste
-~~~~~~~~~~
+1.3.2.1 Vue liste
+~~~~~~~~~~~~~~~~~
 
 Tous les modules sont construits de la même façon :
 
@@ -113,8 +113,8 @@ Tous les modules sont construits de la même façon :
 	C'est aussi depuis un module qu'il est possible d'ajouter de nouveaux objets.
 	Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
 
-Vue détail
-~~~~~~~~~~~
+1.3.2.2 Vue détail
+~~~~~~~~~~~~~~~~~~
 
 A partir de chaque module, il est possible d'afficher la fiche détail d'un objet en cliquant sur celui-ci dans la liste ou la carte du module. Les objets de chaque module peuvent ainsi être affichés individuellement dans une fiche détail pour en consulter tous les attributs, tous les objets des autres modules qui intersectent l'objet, les fichiers qui y sont attachés et l'historique des modifications de l'objet.
 
@@ -137,8 +137,8 @@ Voici les possibilités de la fiche détail :
 	À tout moment et ce sur chaque module, les informations peuvent être soit mises en ligne, soit désactivées, voire supprimées.
 	Ne sont mises en ligne que les informations choisies et disponibles. Les catégories non encore alimentées ne seront pas visibles pour le grand public.
 
-Vue édition
-~~~~~~~~~~~
+1.3.2.3 Vue édition
+~~~~~~~~~~~~~~~~~~~~
 
 - Saisie des champs multilingues
 - Saisie des tracés
@@ -153,8 +153,8 @@ Vue édition
 
    Fiche détail d'un itinéraire en édition
 
-Fichiers liés
-~~~~~~~~~~~~~
+1.3.2.4 Fichiers liés
+~~~~~~~~~~~~~~~~~~~~~
 
 L’ajout, la modification ou la suppression des illustrations et photos s’effectuent depuis l’onglet « Fichiers liés » de la fiche détail.
 
@@ -165,8 +165,8 @@ Les contenus saisis sont publiés automatiquement.
 
 Il est possible de limiter la gestion des fichiers liés à un groupe restreint d’utilisateurs.
 
-Paramètres d'administration
-===========================
+1.4 Paramètres d'administration
+===============================
 
 Toutes les listes de choix (thématiques, pratiques, parcours…) sont administrables depuis l'outil d'administration Django, selon les droits dont dispose l’utilisateur connecté.
 
@@ -182,8 +182,4 @@ Toutes les listes de choix (thématiques, pratiques, parcours…) sont administr
 
    Exemple d’édition des pratiques et de leur pictogramme
 
-Voir la section 
-
-..  Comment.
-    :ref:`Paramétrage des modules <parametrages-des-modules>`   
-
+Voir la section :ref:`Paramétrage des modules <parametrages-des-modules>`

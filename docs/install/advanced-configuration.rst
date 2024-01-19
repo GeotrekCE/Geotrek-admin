@@ -4,6 +4,11 @@
 Advanced configuration
 ======================
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Application settings
 --------------------
 
@@ -37,7 +42,8 @@ be sent to the managers:
 .. code-block :: bash
 
     sudo geotrek sendtestemail --managers
-
+    
+.. _API:
 
 API
 ~~~
@@ -166,6 +172,7 @@ Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app 
 * ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names
 
+.. _map-settings:
 
 Map settings
 ------------
@@ -2372,7 +2379,6 @@ For each module, configure fields to be needed or required on review or publicat
         'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
         'dive': ['practice', 'difficulty', 'description_teaser'],
     }
-
 
 Edition
 -------

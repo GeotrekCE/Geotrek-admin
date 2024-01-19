@@ -14,10 +14,10 @@ Welcome to Geotrek's documentation!
     :maxdepth: 2
 
     usage/overview.rst
+    usage/management-modules.rst
+    usage/touristic-modules.rst 
     usage/screencasts.rst
     usage/editing-objects.rst
-    usage/management-modules.rst
-    usage/touristic-modules.rst   
     usage/treks.rst
     usage/outdoor.rst
     usage/static-pages.rst

@@ -2,6 +2,11 @@
 Activités outdoor
 =================
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Sites et parcours
 =================
 

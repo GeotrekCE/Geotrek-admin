@@ -2,6 +2,11 @@
 Import data
 ===========
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Import paths
 ============
 
@@ -48,6 +53,7 @@ To import a shapefile containing your paths, use the command ``loadpaths``::
         --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
         --encoding latin9 -i
 
+.. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)
 =============================================

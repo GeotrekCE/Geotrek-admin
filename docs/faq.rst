@@ -2,6 +2,10 @@
 Frequently asked questions
 ==========================
 
+.. contents::
+   :local:
+   :depth: 2
+
 How are 3D informations obtained ?
 ----------------------------------
 

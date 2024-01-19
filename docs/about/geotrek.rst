@@ -23,10 +23,10 @@ C’est l’**application de référence** des parcs naturels, mais aussi de nom
 * de facilement pouvoir **accéder à d’autres fonctionnalités** quand le besoin s’en fera ressentir : site web, impression de fiches de parcours, gestion de la signalétique, organisation des travaux…
 * d’exporter facilement vos contenus valorisables (itinéraires, POIs, contenus touristiques …) vers d’autres **plateformes touristiques nationales** (IGN Rando, VisoRando, OutdoorActive, Apidae, Cirkwi, etc.)
 
-Les quatre modules
+Les quatre briques
 ==================
 
-Geotrek dispose de quatre modules à la fois distincts et complémentaires :
+Geotrek dispose de quatre briques à la fois distincts et complémentaires :
 
 * **Geotrek Admin** : outil de gestion et de saisie de l’ensemble des informations, intégrant les données des Systèmes d’Informations Touristiques (SIT) et pouvant se relier à votre SIG ou à des systèmes d’information transport
 * **Geotrek Rando** : site web, reprenant les informations saisies dans Geotrek Admin, à destination des internautes grand public

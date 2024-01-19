@@ -1,6 +1,6 @@
-==================
-Modules de gestion
-==================
+=====================
+2. Modules de gestion
+=====================
 
 .. contents::
    :local:
@@ -21,8 +21,8 @@ Un compte utilisateur appartenant à une structure X n'aura accès qu'aux typolo
 
 Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche SIG ou un relevé GPX sur la carte lors de la création d'un objet sur la carte pour pouvoir le visualiser et le localiser sur la carte (``Charger un fichier local (GPX, KML, GeoJSON)``).
 
-Les tronçons
-============
+2.1 Les tronçons
+================
 
 C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
@@ -49,8 +49,8 @@ Comme pour tous les modules, il est aussi possible d'attacher des documents à c
 
 Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en afficher l'historique des modifications.
 
-Les sentiers
-============
+2.2 Les sentiers
+================
 
 Il s'agit d'un ensemble linéaire composés d'un ou plusieurs tronçons (entiers ou partiels) grâce à la segmentation dynamique.
 
@@ -60,13 +60,13 @@ Ils permettent également de préciser une ou plusieurs certifications ainsi que
 
 A ne pas confondre avec le module Itinéraires qui permet de créer des randonnées publiées sur un portail Geotrek-rando.
 
-Les statuts
-===========
+2.3 Les statuts
+================
 
 Ils permettent de renseigner des informations sur le linéaire (type physique, statut foncier, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique) sans avoir à le faire tronçon par tronçon grâce à la segmentation dynamique qui permet de localiser le départ et l'arrivée sur un ou plusieurs tronçons.
 
-Les aménagements
-================
+2.4 Les aménagements
+====================
 
 Ils permettent d'inventorier les aménagements sur les sentiers (passerelles, mains courantes, cunettes, soutènements, bancs, parkings...) en les localisant, les typant, les décrivant, renseignant leur état et leur année d'implantation.
 
@@ -78,8 +78,8 @@ Comme pour les autres modules, il sont intersectés avec les autres modules pour
 
 Il est aussi possible de les exporter, de leur attacher des fichiers (images, PDF, tableurs, ZIP...) et d'en consulter l'historique des modifications.
 
-La signalétique
-===============
+2.5 La signalétique
+===================
 
 Centralise les informations sur la signalétique d'accueil, d'information et d'orientation des randonneurs. Permet de localiser, décrire l'implantation, et gérer les fichiers concernant la signalétique (BAT, maquettes, photos, etc.).
 
@@ -87,8 +87,8 @@ Pour une signalétique, il est possible de définir chaque lame et chaque ligne 
 
 .. image :: /images/user-manual/signage.png
 
-Les interventions
-=================
+2.6 Les interventions
+=====================
 
 Les interventions permettent d'inventorier et suivre les travaux réalisés sur les sentiers. Chaque intervention correspond à une action sur un tronçon, sentier, aménagement ou signalétique.
 
@@ -104,8 +104,8 @@ Plusieurs interventions peuvent être rattachées à un même chantier pour avoi
 
 L'onglet `Avancé` du formulaire permet de renseigner des informations financières sur chaque intervention (coût direct et indirect lié au nombre de jours/agents dissocié par fonction).
 
-Les chantiers
-=============
+2.7 Les chantiers
+=================
 
 Les chantiers permettent de grouper plusieurs interventions pour en avoir une vision globale et d'y renseigner globalement des informations administratives (contraintes, financeurs, prestataires, cout global, maitrise d'ouvrage...) et éventuellement d'y attacher des documents (cahier des charges, recette, plans...).
 

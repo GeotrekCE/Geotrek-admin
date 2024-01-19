@@ -2,6 +2,11 @@
 Valorisation des sentiers
 =========================
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 .. todo::
 
     Détailler le fonctionnement des modules de valorisation (itinéraires, POI, contenus et évenements touristiques, services, signalement et zones de sensibilité).

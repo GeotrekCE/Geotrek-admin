@@ -2,6 +2,11 @@
 Visualiser les données dans QGIS
 ================================
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 .. image :: ../images/qgis/Qgis_projet.png
 
 Création de vues SQL pour afficher des couches dans QGIS
