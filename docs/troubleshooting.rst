@@ -22,7 +22,7 @@ Type Q to quit. If you want to copy the log to a file, do:
 
 
 Frequently encountered problems
------------------------------
+-------------------------------
 
 Error 500 with `django.db.utils.IntegrityError … NOT NULL for column "language"`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
