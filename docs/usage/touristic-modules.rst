@@ -412,7 +412,7 @@ Il est aussi possible d'éclater les randonnées pour que chaque pratique soit u
 
 
 3.2 Points d'intérêts (POI)
-==========================
+===========================
 
 
 3.3 Services
