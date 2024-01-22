@@ -34,6 +34,7 @@ setup(
     install_requires=[
         'Django==3.2.*',
         'mapentity',
+        'chardet',
         'cairosvg',
         'cairocffi',
         'env_file',

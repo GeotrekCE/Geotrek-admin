@@ -5,6 +5,10 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Allow Apidae Trek parser to handle traces not in utf-8
+
 **Documentation**
 
 - Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
