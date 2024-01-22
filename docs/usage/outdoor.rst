@@ -34,6 +34,8 @@ Les 2 modules outdoor permettent de :
 - Associer des POI à un site ou parcours, automatiquement par intersection géographique
 - Associer des accès au site, automatiquement par intersection géographique des itinéraires à proximité
 
+Pour activer le module Outdoor, se référer à la section :ref:`Outdoor <outdoor>`
+
 6.1.1 Arborescence
 -------------------
 

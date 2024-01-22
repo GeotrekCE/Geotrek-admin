@@ -36,7 +36,6 @@ Welcome to Geotrek's documentation!
     install/synchronization
     install/import
     install/docker
-    install/sensitivity
 
 .. toctree::
     :caption: ✨ Contribute

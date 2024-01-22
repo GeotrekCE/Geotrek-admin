@@ -6,6 +6,7 @@
    :local:
    :depth: 2
 
+.. _itineraires:
 
 3.1 Itinéraires
 ===============
@@ -410,31 +411,53 @@ Pour l'ordre d'affichage des catégorie Randonnées, Itinérance et Evènements 
 
 Il est aussi possible d'éclater les randonnées pour que chaque pratique soit une catégorie en surcouchant le paramètre ``SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False``, d'éclater les types d'accessibilité en catégories avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False`` et de séparer les randonnées itinérantes dans une catégorie avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False``.
 
+.. _points-d-interets-poi:
 
 3.2 Points d'intérêts (POI)
 ===========================
 
+Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import POIs <import-pois>`
+
+.. _services:
 
 3.3 Services
 ============
 
+.. _contenus-touristiques:
 
 3.4 Contenus touristiques
 =========================
 
+.. _evenements-touristiques:
 
-3.5 Signalements
+3.5 Évènements touristiques
+===========================
+
+.. _signalements:
+
+3.6 Signalements
 ================
 
+Pour configurer Suricate, se référer à cette section :ref:`Suricate support <suricate-support>`
 
-3.6 Zones sensibles
+.. _zones-sensibles:
+
+3.7 Zones sensibles
 ===================
 
+Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitive-areas>`
 
-3.7 Sites outdoor
+.. _sites-outdoor:
+
+3.8 Sites outdoor
 =================
 
+Pour activer le module Zones sensibles, se référer à cette section :ref:`Outdoor <outdoor>`
 
-3.8 Parcours outdoor
+.. _parcours-outdoor:
+
+3.9 Parcours outdoor
 ====================
+
+Pour activer le module Zones sensibles, se référer à cette section :ref:`Outdoor <outdoor>`
 

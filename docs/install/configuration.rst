@@ -94,6 +94,7 @@ Spatial reference identifier of your database. Default 2154 is RGF93 / Lambert-9
 
 *Choose wisely with epsg.io for example*
 
+.. _default-structure:
 
 Default Structure
 ~~~~~~~~~~~~~~~~~

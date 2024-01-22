@@ -380,6 +380,8 @@ To get help about a command:
 ::
 
     sudo geotrek help <subcommand>
+    
+.. _import-dem-altimetry:
 
 
 Import DEM (altimetry)
@@ -413,6 +415,7 @@ Import DEM (altimetry)
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
+.. _import-pois:
 
 Import POIs
 -----------
@@ -457,7 +460,7 @@ Import POIs
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-infrastructure:
 
 Import Infrastructure
 ---------------------
@@ -650,7 +653,7 @@ Import Dive
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-signage:
 
 Import Signage
 --------------

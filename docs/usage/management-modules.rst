@@ -21,6 +21,8 @@ Un compte utilisateur appartenant à une structure X n'aura accès qu'aux typolo
 
 Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche SIG ou un relevé GPX sur la carte lors de la création d'un objet sur la carte pour pouvoir le visualiser et le localiser sur la carte (``Charger un fichier local (GPX, KML, GeoJSON)``).
 
+.. _les-troncons:
+
 2.1 Les tronçons
 ================
 
@@ -49,6 +51,8 @@ Comme pour tous les modules, il est aussi possible d'attacher des documents à c
 
 Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en afficher l'historique des modifications.
 
+.. _les-sentiers:
+
 2.2 Les sentiers
 ================
 
@@ -60,10 +64,14 @@ Ils permettent également de préciser une ou plusieurs certifications ainsi que
 
 A ne pas confondre avec le module Itinéraires qui permet de créer des randonnées publiées sur un portail Geotrek-rando.
 
+.. _les-statuts:
+
 2.3 Les statuts
 ================
 
 Ils permettent de renseigner des informations sur le linéaire (type physique, statut foncier, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique) sans avoir à le faire tronçon par tronçon grâce à la segmentation dynamique qui permet de localiser le départ et l'arrivée sur un ou plusieurs tronçons.
+
+.. _les-amenagements:
 
 2.4 Les aménagements
 ====================
@@ -78,6 +86,10 @@ Comme pour les autres modules, il sont intersectés avec les autres modules pour
 
 Il est aussi possible de les exporter, de leur attacher des fichiers (images, PDF, tableurs, ZIP...) et d'en consulter l'historique des modifications.
 
+Pour importer automatiquement des éléments d'aménagements, se référer à la section :ref:`Import Infrastructure <import-infrastructure>`
+
+.. _la-signaletique:
+
 2.5 La signalétique
 ===================
 
@@ -86,6 +98,10 @@ Centralise les informations sur la signalétique d'accueil, d'information et d'o
 Pour une signalétique, il est possible de définir chaque lame et chaque ligne de lame. L'image ci-dessous montre un exemple de correspondance entre une signalétique terrain et sa saisie dans Geotrek.
 
 .. image :: /images/user-manual/signage.png
+
+Pour importer automatiquement des éléments de signalétiques, se référer à la section :ref:`Import Signage <import-signage>`
+
+.. _les-interventions:
 
 2.6 Les interventions
 =====================
@@ -103,6 +119,8 @@ Chaque intervention correspond à un type. On peut aussi renseigner si celle-ci 
 Plusieurs interventions peuvent être rattachées à un même chantier pour avoir une vision globale de plusieurs interventions correspondant à une opération commune.
 
 L'onglet `Avancé` du formulaire permet de renseigner des informations financières sur chaque intervention (coût direct et indirect lié au nombre de jours/agents dissocié par fonction).
+
+.. _les-chantiers:
 
 2.7 Les chantiers
 =================

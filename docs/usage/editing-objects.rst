@@ -48,3 +48,5 @@ Cette information est visible à travers le profil altimétrique pour les tronç
    :align: center
 
    Profil altimétrique d'un itinéraire
+
+Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`

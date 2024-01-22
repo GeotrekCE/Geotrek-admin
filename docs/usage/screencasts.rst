@@ -66,13 +66,15 @@ Les modifications se font directement dans Geotrek-admin pour chaque projet, et 
 
 * Dans l'Explorateur > PostgreSQL > Nouvelle connexion
 * Renseigner les informations suivantes :
-  * Nom de la connexion 
-  * Hôte 
-  * Port 
-  * Base de données 
-  * SSL mode : permet
-  * Nom d’utilisateur 
-  * Mot de passe 
+
+    * Nom de la connexion 
+    * Hôte 
+    * Port 
+    * Base de données 
+    * SSL mode : permet
+    * Nom d’utilisateur 
+    * Mot de passe 
+
 * Cliquer sur « Tester la connexion »
 * Si la connexion est réussi, cliquer sur OK pour enregistrer la connexion
 
