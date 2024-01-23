@@ -4522,7 +4522,9 @@ class OutdoorFilterByPortal(BaseApiTest):
         cls.course.parent_sites.set([cls.site.pk])
         cls.course2 = outdoor_factory.CourseFactory()
         cls.course3 = outdoor_factory.CourseFactory()
+        cls.course4 = outdoor_factory.CourseFactory()
         outdoor_models.OrderedCourseChild.objects.create(parent=cls.course, child=cls.course2)
+        outdoor_models.OrderedCourseChild.objects.create(parent=cls.course, child=cls.course4, order=1)
         outdoor_models.OrderedCourseChild.objects.create(parent=cls.course3, child=cls.course)
         cls.information_desk = tourism_factory.InformationDeskFactory()
         cls.site.information_desks.set([cls.information_desk])
@@ -4548,14 +4550,24 @@ class OutdoorFilterByPortal(BaseApiTest):
         children_courses_pk = response.json()['children']
         self.assertEqual(parent_sites_pk, [self.site.pk])
         self.assertEqual(parent_sites_uuid, [str(self.site.uuid)])
-        self.assertEqual(parent_courses_pk, [{'order': 0, 'course': self.course3.pk}])
-        self.assertEqual(parent_courses_uuid, [{'order': 0, 'course': str(self.course3.uuid)}])
-        self.assertEqual(children_courses_pk, [{'order': 0, 'course': self.course2.pk}])
-        self.assertEqual(children_courses_uuid, [{'order': 0, 'course': str(self.course2.uuid)}])
+        self.assertEqual(parent_courses_pk, [self.course3.pk])
+        self.assertEqual(parent_courses_uuid, [str(self.course3.uuid)])
+        self.assertEqual(children_courses_pk, [self.course2.pk, self.course4.pk])
+        self.assertEqual(children_courses_uuid, [str(self.course2.uuid), str(self.course4.uuid)])
         response = self.get_course_detail(self.course.pk, params={'language': 'en'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(parent_courses_uuid, [{'order': 0, 'course': str(self.course3.uuid)}])
-        self.assertEqual(children_courses_uuid, [{'order': 0, 'course': str(self.course2.uuid)}])
+        parent_sites_pk = response.json()['sites']
+        parent_sites_uuid = response.json()['sites_uuids']
+        parent_courses_uuid = response.json()['parents_uuids']
+        parent_courses_pk = response.json()['parents']
+        children_courses_uuid = response.json()['children_uuids']
+        children_courses_pk = response.json()['children']
+        self.assertEqual(parent_sites_pk, [self.site.pk])
+        self.assertEqual(parent_sites_uuid, [str(self.site.uuid)])
+        self.assertEqual(parent_courses_pk, [self.course3.pk])
+        self.assertEqual(parent_courses_uuid, [str(self.course3.uuid)])
+        self.assertEqual(children_courses_pk, [self.course2.pk, self.course4.pk])
+        self.assertEqual(children_courses_uuid, [str(self.course2.uuid), str(self.course4.uuid)])
 
     def test_site_serialized_children_course(self):
         response = self.get_site_detail(self.site.pk)

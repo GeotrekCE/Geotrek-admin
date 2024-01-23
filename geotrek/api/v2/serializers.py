@@ -20,7 +20,7 @@ from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.v2.functions import Length3D
-from geotrek.api.v2.mixins import PDFSerializerMixin
+from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
@@ -1139,7 +1139,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Practice
             fields = ('id', 'name')
 
-    class SiteSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class SiteSerializer(PDFSerializerMixin, DynamicFieldsMixin, PublishedRelatedObjectsSerializerMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         attachments = AttachmentSerializer(many=True)
@@ -1167,84 +1167,22 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             return [label.pk for label in obj.published_labels]
 
         def get_courses(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            for course in obj.children_courses.all():
-                if language:
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append(course.pk)
-                else:
-                    if course.published:
-                        courses.append(course.pk)
-            return courses
+            return self.get_values_on_published_related_objects(obj.children_courses.all(), 'pk')
 
         def get_courses_uuids(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            for course in obj.children_courses.all():
-                if language:
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append(course.uuid)
-                else:
-                    if course.published:
-                        courses.append(course.uuid)
-            return courses
+            return self.get_values_on_published_related_objects(obj.children_courses.all(), 'uuid')
 
         def get_parent(self, obj):
-            parent = None
-            request = self.context['request']
-            language = request.GET.get('language')
-            if obj.parent:
-                if language:
-                    if getattr(obj.parent, build_localized_fieldname('published', language)):
-                        parent = obj.parent.pk
-                else:
-                    if obj.parent.published:
-                        parent = obj.parent.pk
-            return parent
+            return self.get_value_on_published_related_object(obj.parent, 'pk')
 
         def get_parent_uuid(self, obj):
-            parent = None
-            request = self.context['request']
-            language = request.GET.get('language')
-            if obj.parent:
-                if language:
-                    if getattr(obj.parent, build_localized_fieldname('published', language)):
-                        parent = obj.parent.uuid
-                else:
-                    if obj.parent.published:
-                        parent = obj.parent.uuid
-            return parent
+            return self.get_value_on_published_related_object(obj.parent, 'uuid')
 
         def get_children(self, obj):
-            children = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for site in obj.get_children():
-                    if getattr(site, build_localized_fieldname('published', language)):
-                        children.append(site.pk)
-            else:
-                for site in obj.get_children():
-                    if site.published:
-                        children.append(site.pk)
-            return children
+            return self.get_values_on_published_related_objects(obj.get_children(), 'pk')
 
         def get_children_uuids(self, obj):
-            children = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for site in obj.get_children():
-                    if getattr(site, build_localized_fieldname('published', language)):
-                        children.append(site.uuid)
-            else:
-                for site in obj.get_children():
-                    if site.published:
-                        children.append(site.uuid)
-            return children
+            return self.get_values_on_published_related_objects(obj.get_children(), 'uuid')
 
         def get_sector(self, obj):
             if obj.practice and obj.practice.sector:
@@ -1261,7 +1199,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'type', 'url', 'uuid', 'courses', 'courses_uuids', 'web_links', 'wind',
             )
 
-    class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, PublishedRelatedObjectsSerializerMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         children = serializers.SerializerMethodField()
@@ -1298,97 +1236,41 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         def get_ratings_description(self, obj):
             return get_translation_or_dict('ratings_description', self, obj)
 
-        def get_sites(self, obj):
-            sites = []
+        def get_values_on_published_related_ordered_course(self, ordered_course_queryset, related_course, field):
+            """
+            Retrieve dict of values for `field` on objects from `ordered_course_queryset` only if they are published according to requested language
+            """
             request = self.context['request']
             language = request.GET.get('language')
             if language:
-                for site in obj.parent_sites.all():
-                    if getattr(site, build_localized_fieldname('published', language)):
-                        sites.append(site.pk)
+                published_by_lang = f"{related_course}__{build_localized_fieldname('published', language)}"
+                all_values = ordered_course_queryset.filter(**{published_by_lang: True}).values_list(f"{related_course}__{field}", flat=True)
+                return list(all_values)
             else:
-                for site in obj.parent_sites.all():
-                    if getattr(site, "published"):
-                        sites.append(site.pk)
-            return sites
+                all_values = []
+                for item in ordered_course_queryset:
+                    related_object = getattr(item, related_course)
+                    if getattr(related_object, "any_published"):
+                        all_values.append(getattr(related_object, field))
+            return all_values
+
+        def get_sites(self, obj):
+            return self.get_values_on_published_related_objects(obj.parent_sites.all(), 'pk')
 
         def get_children(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for ordered_child in obj.course_children.order_by('order'):
-                    course = ordered_child.child
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append({'order': ordered_child.order, 'course': course.pk})
-            else:
-                for ordered_child in obj.course_children.order_by('order'):
-                    course = ordered_child.child
-                    if getattr(course, "published"):
-                        courses.append({'order': ordered_child.order, 'course': course.pk})
-            return courses
+            return self.get_values_on_published_related_ordered_course(obj.course_children.order_by('order'), 'child', 'pk')
 
         def get_parents(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for ordered_parent in obj.course_parents.order_by('order'):
-                    course = ordered_parent.parent
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append({'order': ordered_parent.order, 'course': course.pk})
-            else:
-                for ordered_parent in obj.course_parents.order_by('order'):
-                    course = ordered_parent.parent
-                    if getattr(course, "published"):
-                        courses.append({'order': ordered_parent.order, 'course': course.pk})
-            return courses
-
-        def get_children_uuids(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for ordered_child in obj.course_children.order_by('order'):
-                    course = ordered_child.child
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append({'order': ordered_child.order, 'course': course.uuid})
-            else:
-                for ordered_child in obj.course_children.order_by('order'):
-                    course = ordered_child.child
-                    if getattr(course, "published"):
-                        courses.append({'order': ordered_child.order, 'course': course.uuid})
-            return courses
-
-        def get_parents_uuids(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for ordered_parent in obj.course_parents.order_by('order'):
-                    course = ordered_parent.parent
-                    if getattr(course, build_localized_fieldname('published', language)):
-                        courses.append({'order': ordered_parent.order, 'course': course.uuid})
-            else:
-                for ordered_parent in obj.course_parents.order_by('order'):
-                    course = ordered_parent.parent
-                    if getattr(course, "published"):
-                        courses.append({'order': ordered_parent.order, 'course': course.uuid})
-            return courses
+            return self.get_values_on_published_related_ordered_course(obj.course_parents.order_by('order'), 'parent', 'pk')
 
         def get_sites_uuids(self, obj):
-            sites = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for site in obj.parent_sites.all():
-                    if getattr(site, build_localized_fieldname('published', language)):
-                        sites.append(site.uuid)
-            else:
-                for site in obj.parent_sites.all():
-                    if getattr(site, "published"):
-                        sites.append(site.uuid)
-            return sites
+            return self.get_values_on_published_related_objects(obj.parent_sites.all(), 'uuid')
+
+        def get_children_uuids(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_children.order_by('order'), 'child', 'uuid')
+
+        def get_parents_uuids(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_parents.order_by('order'), 'parent', 'uuid')
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
