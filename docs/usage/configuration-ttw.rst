@@ -388,3 +388,18 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 * Gris sur fond transparent pour les thèmes,
 * Blanc sur fond orange pour les types de POI.
 
+Voici quelques ressources en ligne proposant des pictogrammes (sous licence libre) :
+
+- `https://pictogrammers.com/library/mdi/ <https://pictogrammers.com/library/mdi/>`_
+- `https://thenounproject.com/ <https://thenounproject.com/>`_
+- `http://map-icons.com/ <http://map-icons.com/>`_
+- `https://www.opensymbols.org/ <https://www.opensymbols.org/>`_
+- `https://www.svgrepo.com/ <https://www.svgrepo.com/>`_
+- `http://www.entypo.com/ <http://www.entypo.com/>`_
+- `https://icons.getbootstrap.com/ <https://icons.getbootstrap.com/>`_
+- `https://icongr.am/ <https://icongr.am/>`_
+- `https://cocomaterial.com/ <https://cocomaterial.com/>`_
+- `https://icofont.com/ <https://icofont.com/>`_
+- `https://fontello.com/ <https://fontello.com/>`_
+- `https://iconmonstr.com/ <https://iconmonstr.com/>`_
+- `https://fontawesome.com/icons <https://fontawesome.com/icons>`_
