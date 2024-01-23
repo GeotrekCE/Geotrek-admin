@@ -766,6 +766,16 @@ On command line, run
 In user interface, in the top-right menu, go to Imports and choose "Shapefile zone sensible espèce"
 or "Shapefile zone sensible réglementaire".
 
+.. note::
+  The file must be a zip containing all the shapefile extensions (.shp, .shx, .prj, .dbf, .cpg)
+
+.. figure:: ../images/advanced-configuration/import_shapefile.png
+   :alt: Import shapefile in user interface
+   :align: center
+
+   Import shapefile in user interface
+
+
 On command line, run:
 
 .. code-block :: bash
@@ -860,7 +870,12 @@ Set your account settings in ``custom.py``:
 
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It is used to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Report mode as well.
 
-.. image :: ../images/advanced-configuration/suricate.png
+.. figure:: ../images/advanced-configuration/suricate.png
+   :alt: Suricate workflow
+   :align: center
+
+   Suricate workflow
+
 
 Suricate Workflow mode defines a strict process, composed of several steps representing the lifecycle of a user report, from creation to closing. A report is always characterized with a status, depicting how far in the process the report is, and displayed using a specific color on the map.
 
