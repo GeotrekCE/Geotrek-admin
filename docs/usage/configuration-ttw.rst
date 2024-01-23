@@ -45,7 +45,8 @@ Menu à droite > admin
 -  Dans admin, à la ligne “Pratiques” cliquer sur “+ ajouter”
 -  Remplir les champs (en gras les champs obligatoires)
 
-(note : la couleur n’est utilisée que pour le mobile actuellement)
+.. note::
+  La couleur n’est utilisée que pour le mobile actuellement.
 
 .. figure:: ../images/admin/django-admin-ajout-pratique.png
    :alt: Ajout d'une nouvelle pratique

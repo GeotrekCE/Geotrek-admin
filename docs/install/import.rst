@@ -169,14 +169,11 @@ Sensitive areas import
 
 When sensitive areas module is enabled, Geotrek provides 3 parsers to import data:
 
-* Import sensitive areas from http://biodiv-sports.fr (``geotrek.sensitivity.parsers.BiodivParser``). By default this
+* **Import sensitive areas from http://biodiv-sports.fr** (``geotrek.sensitivity.parsers.BiodivParser``). By default this
   parser imports all sensitive areas in configured spatial extent.
-* Import species sensitive areas from a ziped shapefile. Imported field names are: ``espece`` (required), ``contact``
-  and ``descriptio``.
-  Species with corresponding names have to be created manually before import.
-* Import regulatory sensitive areas from a ziped shapefile. Imported field names are: ``nom`` (required), ``contact``,
-  ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``.
-  Practices with corresponding names have to be created manually before import.
+* **Import species sensitive areas from a zipped shapefile**. 
+  Imported field names are: ``espece`` (required), ``contact`` and ``descriptio``. Species with corresponding names have to be created manually before import.
+* **Import regulatory sensitive areas from a zipped shapefile**. Imported field names are: ``nom`` (required), ``contact``, ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``. Practices with corresponding names have to be created manually before import.
 
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
@@ -553,7 +550,6 @@ Load a layer with point geometries and import entities as infrastructures object
 - expected formats for the `point_layer` file are shapefile or geojson (other geodjango supported-formats may work but untested),
 - the command updates existing Infrastructure objects based on the `eid` field (external ID),
 - if the Infrastructure object does not exist (or if `eid` is not specified) it is created.
-
 
 **Usage example**
 
