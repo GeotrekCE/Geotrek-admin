@@ -72,3 +72,30 @@ Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirk
 :Note:
 
     Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``
+
+7.2.2 Geotrek et APIDAE
+---------------------------
+
+Il existe plusieurs passerelles entre la plateforme d'informations touristiques APIDAE et Geotrek. 
+
+7.2.2.1 APIDAE vers Geotrek
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Actuellement, certains contenus touristiques sont synchronisés automatiquement avec une base APIDAE, il s'agit des contenus situés dans les catégories suivantes :
+- Hébergement
+- Point info
+
+Les autres contenus touristiques sont synchronisés avec un flux Esprit Parc National et sont situés dans une catégorie du même nom.
+
+Il est également possible de mettre en place une passerelle pour les POIs, les Lieux de Renseignement, les Aménagements. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
+
+7.2.2.2 Geotrek vers APIDAE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Il existe aussi un lien dans l'autre sens, permettant d'envoyer vers APDIAE les itinéraires pédestres existants dans Geotrek.
+
+L'API permet de connecter une instance Geotrek vers les "Équipements" contenant le critère "itinéraire de randonnée pédestre" dans APIDAE.
+
+Les randonnées VTT, trail, vélo et les tours itinérants ne sont pas intégrés à ce jour dans la passerelle
+
+Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 

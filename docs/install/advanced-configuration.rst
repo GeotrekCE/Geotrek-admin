@@ -2772,6 +2772,7 @@ Path on your server where the data for Geotrek-rando website will be generated
 
 Options of the sync_rando command in Geotrek-admin interface.
 
+.. _distances:
 
 Distances
 ~~~~~~~~~

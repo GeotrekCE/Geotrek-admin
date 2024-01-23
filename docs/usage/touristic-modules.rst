@@ -411,6 +411,13 @@ Pour l'ordre d'affichage des catégorie Randonnées, Itinérance et Evènements 
 
 Il est aussi possible d'éclater les randonnées pour que chaque pratique soit une catégorie en surcouchant le paramètre ``SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False``, d'éclater les types d'accessibilité en catégories avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False`` et de séparer les randonnées itinérantes dans une catégorie avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False``.
 
+3.1.5 Zone tampon pour contenus à proximité
+----------------------------------------------
+
+La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques, POIs et services.
+
+Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Distances <distances>`
+
 .. _points-d-interets-poi:
 
 3.2 Points d'intérêts (POI)
@@ -444,6 +451,14 @@ Pour configurer Suricate, se référer à cette section :ref:`Suricate support <
 
 3.7 Zones sensibles
 ===================
+
+Ce module permet d’inventorier, de localiser des zonages réglementaires et/ou patrimoniaux (de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope (APPB), sites classés, sites d'intérêt écologique) ou des surfaces liées à la présence d’une ou plusieurs espèces patrimoniales.
+
+La saisie peut se faire sous forme de polygone ou de cercle pour les zones de sensibilité. Le diamètre du cercle est généré automatiquement selon la zone ou l’espèce, avec une valeur définie préalablement.
+
+Si la randonnée intersecte une ou plusieurs zones zones de sensibilité, alors celles-ci sont affichées après les recommandations dans Geotrek-Rando.
+
+Il est également possible d’importer directement les zonages depuis un format Shapefile (SHP).
 
 Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitive-areas>`
 
