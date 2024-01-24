@@ -161,7 +161,7 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'children_uuids', 'cities', 'courses', 'courses_uuids', 'description',
     'description_teaser', 'districts', 'eid', 'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent',
     'parent_uuid', 'period', 'portal', 'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid',
-    'view_points', 'wind', 'web_links'
+    'view_points', 'published', 'wind', 'web_links'
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
@@ -188,7 +188,7 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'cities', 'description', 'districts', 'eid', 'equipment', 'geometry', 'height', 'id',
     'length', 'name', 'ratings', 'ratings_description', 'sites', 'sites_uuids', 'structure',
     'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'parents_uuids', 'provider',
-    'pdf', 'points_reference', 'children', 'children_uuids', 'duration', 'gear', 'uuid'
+    'pdf', 'points_reference', 'published', 'children', 'children_uuids', 'duration', 'gear', 'uuid'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
