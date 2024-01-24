@@ -552,7 +552,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return ", ".join(
                 map(lambda org: org.label, obj.organizers.all())
             )
-        
+
         def get_organizers_id(self, obj):
             return ", ".join(
                 map(lambda org: org.label, obj.organizers.all())
@@ -565,7 +565,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
                 'contact', 'description', 'description_teaser', 'districts', 'duration',
                 'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
-                'meeting_time', 'name', 'organizer', 'organizer_id', 'participant_number', 'pdf', 'place',
+                'meeting_time', 'name', 'organizers', 'organizers_id', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
                 'start_time', 'structure', 'target_audience', 'themes', 'type',
                 'url', 'uuid', 'website'
