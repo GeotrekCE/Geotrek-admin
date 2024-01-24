@@ -6,10 +6,10 @@
    :local:
    :depth: 2
 
-7.1 API interne
+7.1 API Geotrek
 ===============
 
-Geotrek dispose d’une API (Application Programming Interface) qui sert à exposer les informations de Geotrek-Admin dans le but de pouvoir faire communiquer des systèmes entre eux pour échanger des données.
+Geotrek dispose d’une API (Application Programming Interface) qui sert à exposer les données stockées dans une instance de Geotrek-admin, dans le but de pouvoir la faire communiquer avec d'autres outils, systèmes et plateforme et ainsi échanger des données.
 
 Cette API, désormais dans sa version 2 permet à toute structure tiers de récupérer des données et de les intégrer dans son système ou ses applications.
 
@@ -56,10 +56,10 @@ Il est possible de cumuler ces différents filtres, en séparant les valeurs par
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'interface d'administration Django (à ne pas modifier) :
 
 .. figure:: ../images/user-manual/cirkwi-tables.png
-   :alt: Ensemble des champs paramétrables pour le référentiel CIKWI
+   :alt: Ensemble des champs paramétrables pour le référentiel CIRKWI
    :align: center
 
-   Ensemble des champs paramétrables pour le référentiel CIKWI
+   Ensemble des champs paramétrables pour le référentiel CIRKWI
 
 Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806.
 
@@ -84,21 +84,22 @@ Il existe plusieurs passerelles entre la plateforme d'informations touristiques 
 7.2.2.1 APIDAE vers Geotrek
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Actuellement, certains contenus touristiques sont synchronisés automatiquement avec une base APIDAE, il s'agit des contenus situés dans les catégories suivantes :
-- Hébergement
-- Point info
+Actuellement, certains contenus touristiques peuvent être synchronisés automatiquement avec une base APIDAE. Il s'agit des contenus situés dans les catégories suivantes :
 
-Les autres contenus touristiques sont synchronisés avec un flux Esprit Parc National et sont situés dans une catégorie du même nom.
+* Contenus touristiques (hébergements, restaurants, produits du territoire, lieux de visites...)
+* Evénements touristiques (expositions, conférences, sorties...)
 
-Il est également possible de mettre en place une passerelle pour les POIs, les Lieux de Renseignement, les Aménagements. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
+Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tourinsoft ou Esprit Parc National.
+
+Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
 7.2.2.2 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Il existe aussi un lien dans l'autre sens, permettant d'envoyer vers APDIAE les itinéraires pédestres existants dans Geotrek.
+Il existe aussi un lien dans l'autre sens, permettant d'importer automatiquement vers APDIAE les itinéraires existants dans une instance Geotrek.
 
-L'API permet de connecter une instance Geotrek vers les "Équipements" contenant le critère "itinéraire de randonnée pédestre" dans APIDAE.
+L'API permet de connecter une instance Geotrek pour importer des itinéraires vers les objets de type "Équipements" dans APIDAE.
 
-Les randonnées VTT, trail, vélo et les tours itinérants ne sont pas intégrés à ce jour dans la passerelle
+Les randonnées VTT, trail, vélo et les tours itinérants sont également intégrés dans la passerelle.
 
 Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 

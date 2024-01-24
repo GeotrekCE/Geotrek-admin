@@ -11,8 +11,8 @@
 3.1 Itinéraires
 ===============
 
-Les itinéraires sont des tracés présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
-L’ajout, la modification ou la dé-publication sont fréquents.
+Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
+L’ajout ou la modification sont fréquents.
 
 3.1.1 Fiche détaillée
 ---------------------
@@ -377,7 +377,7 @@ L’ajout, la modification ou la dé-publication sont fréquents.
 
 Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : https://www.grand-tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-Ecrins.
 
-Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y ajouter des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet.
+Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y associer des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet.
 
 Le séjour complet ainsi que chaque étape sont donc chacunes des randonnées comme les autres. La seule différence est que les étapes (itinéraires enfants) sont rattachées à l'itinéraire parent.
 
@@ -401,20 +401,12 @@ Pour que des puces numérotées sous forme de pastilles rouges soient affichées
 
 Dans le portail Geotrek-rando, les différents types de contenus sont éclatés en catégories.
 
-Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis l'Adminsite de Geotrek-admin.
-
-Pour l'ordre d'affichage des catégorie Randonnées, Itinérance et Evènements touristiques, il est possible de modifier les valeurs par défaut définies dans le fichier ``geotrek/settings/base.py`` en surcouchant les paramètres correspondant dans le fichier de configuration avancée ``geotrek/settings/custom.py`` :
-
-- ``TREK_CATEGORY_ORDER = 1``
-- ``ITINERANCY_CATEGORY_ORDER = 2``
-- ``TOURISTIC_EVENT_CATEGORY_ORDER = 99``
-
-Il est aussi possible d'éclater les randonnées pour que chaque pratique soit une catégorie en surcouchant le paramètre ``SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False``, d'éclater les types d'accessibilité en catégories avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False`` et de séparer les randonnées itinérantes dans une catégorie avec le paramètre ``SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False``.
+Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques des itinéraires et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis l'Adminsite de Geotrek-admin.
 
 3.1.5 Zone tampon pour contenus à proximité
 ----------------------------------------------
 
-La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques, POIs et services.
+La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques et services.
 
 Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Distances <distances>`
 
@@ -422,6 +414,8 @@ Pour modifier la distance de la zone tampon (buffer), se référer à la section
 
 3.2 Points d'intérêts (POI)
 ===========================
+
+Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmentation dynamique, en fonction des tronçons communs de l'itinéraire et des POIs.
 
 Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import POIs <import-pois>`
 
@@ -452,27 +446,113 @@ Pour configurer Suricate, se référer à cette section :ref:`Suricate support <
 3.7 Zones sensibles
 ===================
 
-Ce module permet d’inventorier, de localiser des zonages réglementaires et/ou patrimoniaux (de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope (APPB), sites classés, sites d'intérêt écologique) ou des surfaces liées à la présence d’une ou plusieurs espèces patrimoniales.
+Ce module permet d’inventorier, de localiser des zonages réglementaires (de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope (APPB), sites classés, sites d'intérêt écologique) ou des surfaces liées à la présence d’une ou plusieurs espèces protégées ou patrimoniales.
 
 La saisie peut se faire sous forme de polygone ou de cercle pour les zones de sensibilité. Le diamètre du cercle est généré automatiquement selon la zone ou l’espèce, avec une valeur définie préalablement.
 
-Si la randonnée intersecte une ou plusieurs zones zones de sensibilité, alors celles-ci sont affichées après les recommandations dans Geotrek-Rando.
+Si une randonnée ou un site outdoor intersecte une ou plusieurs zones zones de sensibilité, alors celles-ci sont affichées à la suite des recommandations dans Geotrek-Rando.
 
 Il est également possible d’importer directement les zonages depuis un format Shapefile (SHP).
 
 Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitive-areas>`
 
-.. _sites-outdoor:
+.. _pleinenature:
 
-3.8 Sites outdoor
-=================
+3.8 Activités outdoor
+======================
 
-Pour activer le module Zones sensibles, se référer à cette section :ref:`Outdoor <outdoor>`
 
-.. _parcours-outdoor:
+3.8.1 Sites et parcours
+------------------------
 
-3.9 Parcours outdoor
-====================
+Geotrek-admin dédie deux modules aux activités outdoor : les sites et les parcours. Un site correspond à une zone ou à un réseau hydrographique à gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, zone de vol libre…
 
-Pour activer le module Zones sensibles, se référer à cette section :ref:`Outdoor <outdoor>`
+Les sites peuvent être subdivisés en sous-sites (dits enfants), qui peuvent eux-mêmes être subdivisés en sous-sites :
+secteurs d'escalade (groupe de blocs ou falaise), aires de décollage ou d'atterrissage…
 
+Chaque site (ou sous-site) peut contenir différents parcours : voie d'escalade, parcours d'eau vive…
+
+Il est possible de regrouper un enchaînement de parcours sous forme d'un parcours particulier appelé itinérance :
+grande voie d'escalade, enchainement entre différentes pratiques…
+
+Les deux modules outdoor permettent de :
+
+- **Lister, filtrer, créer, modifier et exporter des sites et des parcours outdoor** de manière générique pour gérer tout type de pratiques (escalade, alpinisme, via ferrata, canyoning, kayak, vol libre, plongée...)
+- **Ajouter les pratiques** que l'on souhaite de manière générique, et de définir leurs propres types et leurs propres niveaux et valeurs de cotation
+- **Lier des sites entre eux** de manière hiérarchisée, pour avoir des sites, des sous-sites, des sous-sous-sites... Par exemple pour un site global avec différentes pratiques, pour un site d'escalade avec des secteurs, des sous-secteurs...
+- **Agréger des informations au niveau d'un site**, en fonction des sous-sites qui lui sont rattachés. Par exemple les pratiques d'un grand site outdoor sont l'agrégation des pratiques des sous-sites qui le composent
+- **Lier des parcours à des sites** et leur appliquer une cotation en fonction de la pratique du site auquel ils sont rattachés
+- **Lier des parcours entre eux pour faire de l'itinérance** avec une fiche mère et des fiches enfants (étapes), comme c'est déjà la cas pour les itinéraires
+- **Associer des aménagements aux sites** (parking, toilettes, banc...) automatiquement par intersection géographique
+- **Associer des interventions à des sites ou parcours**, automatiquement par intersection géographique, ou explicitement en passant par le site ou le parcours sur lequel l'intervention a été réalisée
+- **Associer des POI à un site ou parcours**, automatiquement par intersection géographique
+- **Associer des accès au site**, automatiquement par intersection géographique des itinéraires à proximité
+
+Pour activer le module Outdoor, se référer à la section :ref:`Outdoor <outdoor>`
+
+3.8.1.1 Arborescence
+~~~~~~~~~~~~~~~~~~~~~
+
+Les fiches détail des sites et des parcours présentent les liens entre eux sous forme d'une arborescence. Pour ne pas surcharger,
+tous les éléments ne sont pas repris, mais uniquement :
+
+- le site/parcours courant,
+- le site auquel il appartient (parent), ainsi que le grand-parent, etc. jusqu'à remonter au plus haut niveau,
+- les différents sous-sites et/ou parcours (enfants) le cas échéant.
+
+Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
+
+3.8.2 Nomenclatures
+--------------------
+
+En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
+
+* **Filières** : elles servent à regrouper les pratiques pour pouvoir filtrer rapidement les sites ou parcours.
+  Par exemple la filière « eau vive » peut regrouper « kayak » et « canyoning ».
+* **Pratiques** : les pratiques sportives. Vous pouvez préciser à quelle filière elle appartient.
+* **Types de sites** : ces catégories permettent d'étiqueter et de filtrer les sites. Elles sont spécifiques à chaque pratique.
+  Par exemple « Site école » pour l'escalade.
+* **Échelle de cotation** : permet de regrouper les cotations faisant partie de la même échelle. Elles sont spécifiques à chaque pratique.
+
+3.8.3 Filières
+---------------
+
+3.8.3.1 Escalade
+~~~~~~~~~~~~~~~~~
+
+La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
+Il est possible (mais pas obligatoire) de créer des sous-sites pour représenter des secteurs.
+Ou pour des falaises, elles-mêmes divisées en sous-sous sites pour les différents secteurs.
+
+Chaque voie correspond à un parcours. La voie étant verticale et la carte horizontale,
+le plus pertinent est de définir géographiquement la voie par un simple point.
+Une grande voie peut être décrite simplement par un parcours mais, pour plus de détails,
+il est également possible de créer autant de parcours que de longueurs dans la grande voie.
+Lors de la saisie de la grande voie, il faudra préciser les différentes longueurs dans le champ « Enfants », dans le bon ordre.
+Le nom de chaque longueur pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur 2 », etc.
+
+3.8.3.2 Vol libre
+~~~~~~~~~~~~~~~~~
+
+La zone de vol n'est pas définie géographiquement de manière précise mais fait quand même l'objet d'un site avec un nom
+(ex: « massif de … ») et un polygone approximatif ou bien un point (de préférence celui de départ). Cela n'a pas une importance
+déterminante. Ce qui compte c'est 1) de rendre cela lisible sur une carte et 2) d'être cohérent entre les différents sites.
+
+Pour chaque zone de vol, les différentes aires de décollage et d'atterrissage sont définies à l'aide de sous-sites.
+Afin de les identifier, il faut créer les types de site « Aire de décollage » et « Aire d'atterrissage » pour la catégorie
+« Vol libre » dans la nomenclature et associer ces types aux aires.
+Comme le vol est libre, il n'est pas nécessaire de définir des parcours. Cependant, il est possible d'en définir pour donner
+des exemples de trajectoires.
+
+3.8.3.3 Eau vive
+~~~~~~~~~~~~~~~~~
+
+Le site est généralement constitué par une rivière ou une portion de rivière. Il est possible d'y adjoindre des affluents.
+La géométrie du site est donc un linéraire correspondant à un réseau hydrographique.
+
+Les aires d'embarquement/débarquement sont définies par des sous-sites. Leur géométrie peut être définie sous forme d'un point
+ou d'un polygone.
+Les parcours sont automatiquement attachés à une aire d'embarquement et une aire de débarquement qui sont les aires les plus
+proches respectivement du début et de la fin du parcours.
+
+Pour activer le module Outdoor, se référer à cette section :ref:`Outdoor <outdoor>`

@@ -39,9 +39,9 @@ Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouv
 4.3 Informations altimétriques
 ==============================
 
-L'édition des objets s'effectue en 2D, et leur géométrie est “drapée” automatiquement en 3D sur un Modèle Numérique de Terrain stocké en base au format raster.
+L'édition des objets s'effectue en 2D, et leur géométrie est “drapée” automatiquement en 3D sur un Modèle Numérique de Terrain (MNT) stocké dans la base de données au format raster.
 
-Cette information est visible à travers le profil altimétrique pour les tronçons et les itinéraires.
+Cette information est visible à travers le profil altimétrique pour les tronçons, les itinéraires et les autres objets linéaires.
 
 .. figure:: ../images/user-manual/altimetrie.png
    :alt: Profil altimétrique d'un itinéraire
@@ -49,4 +49,4 @@ Cette information est visible à travers le profil altimétrique pour les tronç
 
    Profil altimétrique d'un itinéraire
 
-Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`
+Pour importer automatiquement un MNT, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`

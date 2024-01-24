@@ -26,7 +26,7 @@ Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche
 2.1 Les tronçons
 ================
 
-C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
+C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre deux intersections. Le mécanisme de segmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
 Les tronçons peuvent être soit numérisés dans Geotrek-admin, soit importés directement dans l'outil via :
 
