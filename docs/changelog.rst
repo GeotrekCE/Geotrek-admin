@@ -5,6 +5,10 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Signage & Blade conditions translations + admin BladeCondition entry (#3847)
+
 **Documentation**
 
 - Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
