@@ -1,5 +1,5 @@
 ==============
-5. Paramétrage
+6. Paramétrage
 ==============
 
 .. contents::
@@ -7,7 +7,7 @@
    :depth: 2
 
 
-5.1 Accès interface admin
+6.1 Accès interface admin
 =========================
 
 Menu à droite > admin
@@ -20,10 +20,10 @@ Menu à droite > admin
 
 .. _parametrages-des-modules:
 
-5.2 Paramétrages des modules
+6.2 Paramétrages des modules
 ============================
 
-5.2.1 Itinéraires
+6.2.1 Itinéraires
 -----------------
 
 -  Pratiques
@@ -39,7 +39,7 @@ Menu à droite > admin
 
    Ensemble des champs paramétrables du module Itinéraires
 
-5.2.1.1 Exemple : ajouter une pratique
+6.2.1.1 Exemple : ajouter une pratique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Dans admin, à la ligne “Pratiques” cliquer sur “+ ajouter”
@@ -54,7 +54,7 @@ Menu à droite > admin
 
    Ajout d'une nouvelle pratique
 
-5.2.1.2 Exemple : ajouter une étiquette
+6.2.1.2 Exemple : ajouter une étiquette
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages : 
@@ -111,7 +111,7 @@ Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 
 .. _sites-et-parcours-outdoor-1:
 
-5.2.2 Sites et parcours outdoor
+6.2.2 Sites et parcours outdoor
 -------------------------------
 
 -  Cotations
@@ -122,7 +122,7 @@ Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 -  Échelles de cotation
 
 
-5.2.3 Plongées
+6.2.3 Plongées
 --------------
 
 -  Niveau de difficulté
@@ -130,7 +130,7 @@ Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 -  Pratique
 
 
-5.2.4 Tourisme
+6.2.4 Tourisme
 --------------
 
 -  Autres sports : catégorie activités → Types de contenus touristiques
@@ -145,7 +145,7 @@ Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 
    Ensemble des champs paramétrables des modules Contenus et Évènements touristiques
 
-5.2.4.1 Exemple : catégorie de contenu touristique et ses sous-types
+6.2.4.1 Exemple : catégorie de contenu touristique et ses sous-types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -174,7 +174,7 @@ Dans l’édition d’un contenu touristique de catégorie “Hébergement”
 
    Ajout d'un type d'usage à la catégorie “Hébergements”
 
-5.2.5 Zones
+6.2.6.Zones
 -----------
 
 -  Communes
@@ -184,7 +184,7 @@ Dans l’édition d’un contenu touristique de catégorie “Hébergement”
 
 .. _user-management-section:
 
-5.3 Gestion des utilisateurs
+6.3 Gestion des utilisateurs
 ============================
 
 Geotrek-admin s'appuie sur le `système d'authentification et de permissions Django <https://docs.djangoproject.com/en/4.2/topics/auth/default>`_ .
@@ -201,7 +201,7 @@ Toute la configuration des utilisateurs, groupes et permissions est disponible d
 
    Interface de configuration des utilisateurs/groupes
 
-5.3.1 Utilisateurs et permissions
+6.3.1 Utilisateurs et permissions
 ---------------------------------
 
 L’application permet d’attribuer des droits à autant de groupes que souhaité.
@@ -259,7 +259,7 @@ Voici la signification des actions autorisées dans les permissions :
 * *publish* : publier la donnée
 * *export* : exporter les données via l’interface de Geotrek-admin (CSV, JSON…)
 
-5.3.2 Groupes
+6.3.2 Groupes
 -------------
 
 Les groupes facilitent la gestion des utilisateurs et des permissions.Chaque groupe est configuré avec un certain nombre de permissions.
@@ -284,7 +284,7 @@ De même qu’il est possible d’ajouter, modifier ou supprimer des itinéraire
 
 Les éditeurs et les administrateurs peuvent travailler en simultané sur des fiches balades, mais pas en même temps sur la même fiche, car il y aurait sinon un risque de perte d’informations lors de la validation / enregistrement des informations saisies.
 
-5.3.3 Structures
+6.3.3 Structures
 ----------------
 
 Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l’installation, Geotrek crée une structure par défaut à laquellles premiers utilisateurs seront rattachés.Il est possible d’ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront amenés à travailler à vos côtés sur Geotrek.
@@ -309,7 +309,7 @@ Cette notion de structures permet de segmenter les périmètres d’action des u
 
 Pour définir la structure par défaut, se référer à la section :ref:`Default structure <default-structure>`
 
-5.4 Gestion multilingue
+6.4 Gestion multilingue
 =======================
 
 La configuration des langues de la plate-forme est réalisée au travers du fichier de configuration principal. 
@@ -324,7 +324,7 @@ Il est par exemple possible d'intégrer des textes dans différentes langues (à
 
    Gestion multilingue dans la fiche détail
 
-5.5 Configuration des portails
+6.6.Configuration des portails
 ==============================
 
 Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pour référencer un site grand public sur lequel seront visibles les objets publiés de Geotrek.
@@ -343,7 +343,7 @@ Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'ad
 
 Il est possible de choisir de publier sur un ou plusieurs portails les objets suivants : itinéraires, contenus et évènements touristiques, pages statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans le champ "portail" à l'édition de l'objet.
 
-5.6 Intégration des données SIT
+6.6 Intégration des données SIT
 ================================
 
 Des développements ont déjà été réalisés dans Geotrek pour intégrer des données de divers SIT (Système d’Informations Touristiques), notamment APIDAE, Tourinsoft, LEI, SITLOR... si les flux sont disponibles dans des formats ouverts.
@@ -355,18 +355,18 @@ L’obtention d’un flux de données GeoJSON (agnostique et standard) présente
 
 Pour configurer l'import de SIT, référez vous à cette section :ref:`Import data from touristic data systems (SIT) <import-data-from-touristic-data-systems-sit>`
 
-5.7 Intégration des fonds de cartes
+6.7 Intégration des fonds de cartes
 ====================================
 
 Il est possible d'intégrer dans Geotrek différents fonds de carte comme :
 
 * OpenStreetMap : https://www.openstreetmap.org/#map=6/46.449/2.210
-* OpenTopoMap : https://opentopomap.org/#map=5/49.000/10.000 
+* OpenTopoMap : https://opentopomap.org/#map=6.49.000/10.000 
 * ou les données IGN : https://geoservices.ign.fr/services-geoplateforme-diffusion
 
 Pour configurer l'ajout de fonds de plan, référez vous à cette section :ref:`Map settings <map-settings>`
 
-5.8 Intégration de pictogrammes
+6.8 Intégration de pictogrammes
 ================================
 
 Les pictogrammes contribués dans Geotrek doivent être au format :
@@ -379,7 +379,7 @@ Il doivent :
 * Avoir un viewport carré afin de ne pas être déformés sur le portail,
 * Ne pas déborder du cercle inscrit pour les pratiques et les catégories de contenus touristiques, en prévoyant une
   marge si nécessaire.
-* Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG
+* Avoir une dimension minimale de 6.x6. pixels en ce qui concerne les PNG
 
 Si vous utilisez Inkscape, vous devez définir une viewBox. Voir `la documentation d'Inkscape <http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML>`_ 
 

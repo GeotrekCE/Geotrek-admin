@@ -17,11 +17,11 @@ Welcome to Geotrek's documentation!
     usage/management-modules.rst
     usage/touristic-modules.rst 
     usage/editing-objects.rst
+    usage/vues-hd.rst
     usage/configuration-ttw.rst
-    usage/outdoor.rst
-    usage/externals-apis.rst
+    usage/apis.rst
     usage/static-pages.rst
-    usage/screencasts.rst
+    usage/tutorials.rst
     faq.rst
 
 .. toctree::

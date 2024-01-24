@@ -1,48 +1,52 @@
-=======
-Geotrek
-=======
+===========
+1. Geotrek
+===========
 
 .. contents::
    :local:
    :depth: 2
 
-Qu'est ce que Geotrek ?
-=======================
+.. _qu-est-ce-que-geotrek:
 
-Geotrek est un outil dédié à la **gestion et la valorisation** des activités de randonnées et des informations touristiques.
+1.1 Qu'est ce que Geotrek ?
+============================
 
-La plate-forme permet la gestion de **nombreuses pratiques sportives** liées à des linéaires (randonnée pédestre, à vélo, en VTT, à cheval, avec poussette, etc.) mais également pour **contenus outdoor** non linéaires (escalade, vol libre, sports d’eau vive, etc.).
+Geotrek est un ensemble d'outils web dédiés à la **gestion et la valorisation** des activités de randonnées, de sports de pleine nature et des informations touristiques.
+
+Ils sont open source et peuvent ainsi être déployés librement par les structures et territoires qui le souhaitent, mais aussi les faire évoluer, ou bénéficier des évolutions réalisées par d'autres structures sans avoir à les re-financer.
+
+Ces outils permettent la gestion de **nombreuses pratiques sportives** liées à des linéaires (randonnée pédestre, à vélo, en VTT, à cheval, avec poussette, etc.) mais également à des **contenus outdoor** non linéaires (escalade, vol libre, sports d’eau vive, etc.).
 
 C’est l’**application de référence** des parcs naturels, mais aussi de nombreuses structures publiques (conseils départementaux, communautés de communes, comités régionaux du tourisme, offices du tourisme, etc.).
 
 **Utiliser Geotrek vous permettra** :
 
 * d’intégrer une **communauté de gestionnaires de randonnées très active**
-* de **bénéficier de l’ensemble des évolutions** commandées par les autres utilisateurs. Le service est vivant et s’améliore sans cesse
-* de disposer d’une **offre complète** qui pourrait également être utilisée par d’autres acteurs du territoire
+* de **bénéficier de l’ensemble des évolutions** réalisées par les autres utilisateurs. Le projet est vivant et les outils s’améliorent sans cesse
+* de disposer d’une **offre complète** qui pourra également être utilisée par d’autres acteurs du territoire
 * de facilement pouvoir **accéder à d’autres fonctionnalités** quand le besoin s’en fera ressentir : site web, impression de fiches de parcours, gestion de la signalétique, organisation des travaux…
-* d’exporter facilement vos contenus valorisables (itinéraires, POIs, contenus touristiques …) vers d’autres **plateformes touristiques nationales** (IGN Rando, VisoRando, OutdoorActive, Apidae, Cirkwi, etc.)
+* d’exporter facilement vos contenus valorisables (itinéraires, POIs, contenus touristiques …) vers d’autres **plateformes touristiques nationales** (IGNrando', Visorando, Outdooractive, Apidae, Cirkwi, etc.)
 
-Les quatre briques
-==================
+1.2 Les quatre briques
+======================
 
 Geotrek dispose de quatre briques à la fois distincts et complémentaires :
 
-* **Geotrek Admin** : outil de gestion et de saisie de l’ensemble des informations, intégrant les données des Systèmes d’Informations Touristiques (SIT) et pouvant se relier à votre SIG ou à des systèmes d’information transport
-* **Geotrek Rando** : site web, reprenant les informations saisies dans Geotrek Admin, à destination des internautes grand public
-* **Geotrek Mobile** : application mobile fonctionnant sous Android et iOS, reprenant des informations saisies dans Geotrek Admin et optimisées pour l’usage mobile (volume, impact sur la batterie…)
-* **Geotrek Widget** : nouveau composant web permettant de valoriser une offre de contenus touristiques et de randonnées auprès des usagers du territoire
+* :ref:`Geotrek-admin <qu-est-ce-que-geotrek>`: outil de gestion et de saisie de l’ensemble des informations, intégrant les données des Systèmes d’Informations Touristiques (SIT) et pouvant être connecté à votre SIG ou à des systèmes d’information transport
+* `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando-v3/blob/main/docs/presentation-fr.md>`_ : site web, reprenant les informations saisies dans Geotrek-admin, à destination des internautes grand public
+* `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile#geotrek-mobile>`_ : application mobile fonctionnant sous Android et iOS, reprenant des informations saisies dans Geotrek-admin et optimisées pour l’usage mobile (volume, impact sur la batterie, hors-ligne, géolocalisation…)
+* `Geotrek-rando-widget <https://github.com/GeotrekCE/Geotrek-rando-widget#geotrek-rando-widget>`_ : nouveau composant web permettant de valoriser une offre de contenus touristiques et de randonnées auprès des usagers du territoire, en l'intégrant dans un site internet existant
 
-Utilisateurs
-============
+1.3 Utilisateurs
+=================
 
 L’application Geotrek, **destinée à deux types de public**, est une solution web qui apporte :
 
-* des fonctionnalités de gestion des informations (itinéraires, destinations, points d’intérêts, description, interprétation…) et de gestion des infrastructures (signalétique, aménagement, travaux, réglementation…) pour les utilisateurs administrant un territoire (**Geotrek-Admin**) 
-* des fonctionnalités simples et ludiques de recherche et de parcours d’itinéraires pour les internautes et les mobinautes (**Geotrek-Rando V3**, **Geotrek-Mobile** et **Geotrek-Widget**).
+* des fonctionnalités de gestion des informations (itinéraires, sites outdoor, points d’intérêts, description, interprétation, médias…) et de gestion des infrastructures (signalétique, aménagements, travaux, réglementation…) pour les utilisateurs gérant un territoire (**Geotrek-admin**) 
+* des fonctionnalités simples et ludiques de recherche et de consultation d’itinéraires pour les internautes et les mobinautes (**Geotrek-rando V3**, **Geotrek-mobile** et **Geotrek-rando-widget**).
 
-Composants libres
-=================
+1.4 Composants libres
+======================
 
 L’application Geotrek utilise les technologies open source suivantes :
 

@@ -11,8 +11,8 @@
 
 L’application est composée : 
 
-* d’une **page d’accueil**, demandant la saisie d’un login et d’un mot de passe 
-* d’une **interface de consultation des modules** 
+* d’une **page d'authentification**, demandant la saisie d’un login et d’un mot de passe
+* d’une **interface de consultation des objets de chaque module** 
 
     * avec la liste de sélection déroulante des modules avec compteur des résultats
     * un onglet latéral de sélection des modules
@@ -21,8 +21,8 @@ L’application est composée :
 
 * de **paramètres d’administration** (gestion des droits, des listes déroulantes…)
 
-1.2 Page d'accueil
-==================
+1.2 Page d'authentification
+===========================
 
 .. figure:: ../images/user-manual/geotrek-login.png
    :alt: Accès à Geotrek-admin via un login et un mot de passe
@@ -39,6 +39,9 @@ L’application est composée :
 
 Geotrek est composé de différents modules.
 
+1.3.1.1 Modules de gestion
+---------------------------
+
 .. list-table:: Modules de gestion
    :widths: 25 25 50
    :header-rows: 1
@@ -49,16 +52,17 @@ Geotrek est composé de différents modules.
    * - .. figure:: ../images/user-manual/modules/troncons.png
      - :ref:`Tronçon <les-troncons>`
      - | C'est l’équivalent du réseau routier : ils constituent le support des tracés
-       | des itinéraires. Leur modification est relativement rare (fermeture d’un
-       | chemin, éboulement...).
+       | des objets linéaires (itinéraires, statuts, interventions, aménagements...). 
+       | Leur modification est relativement rare (fermeture d’un chemin, 
+       | éboulement...).
    * - .. figure:: ../images/user-manual/modules/sentier.png
      - :ref:`Sentier <les-sentiers>`
      - | Les itinéraires, non pas de randonnée, mais de gestion, correspondent au 
        | départ et à l'arrivée d'un sentier.
    * - .. figure:: ../images/user-manual/modules/statut.png
      - :ref:`Statut <les-statuts>`
-     - | Gestion des communes, organismes ayant la compétence sentiers,  
-       | gestionnaires des travaux et de la signalétique, zones protégées, secteurs.  
+     - | Gestion des organismes ayant la compétence sentiers,  
+       | gestionnaires des travaux et de la signalétique.  
        | Type physique (route, piste, sente, etc.)
    * - .. figure:: ../images/user-manual/modules/amenagement.png
      - :ref:`Aménagement <les-amenagements>`
@@ -70,14 +74,17 @@ Geotrek est composé de différents modules.
        | Gestion des fichiers associés comme les BAT, les maquettes…
    * - .. figure:: ../images/user-manual/modules/intervention.png
      - :ref:`Intervention <les-interventions>`
-     - | Répertorie les travaux liés à l'entretien courant des ouvrages.
+     - | Répertorie les travaux liés à l'entretien courant des ouvrages,
+       | l'entretien sur les sentiers, la mise en place et l'entretien 
+       | de la signalétique, etc...
    * - .. figure:: ../images/user-manual/modules/chantier.png
      - :ref:`Chantier <les-chantiers>`
-     - | Correspond aux exemples d'interventions. Cela permet d'avoir une 
+     - | Correspond à des ensembles d'interventions. Cela permet d'avoir une 
        | approche globale de chantiers significatifs et des informations 
        | administratives associées.
 
-**Valorisation de l'offre touristique** :
+1.3.1.2 Modules de valorisation
+--------------------------------
 
 .. list-table:: Modules de valorisation
    :widths: 25 25 50
@@ -88,63 +95,64 @@ Geotrek est composé de différents modules.
      - Description
    * - .. figure:: ../images/user-manual/modules/itineraire.png
      - :ref:`Itinéraire <itineraires>`
-     - | Tracés présentés au grand public : l’itinéraire est défini selon 
-       | la géométrie des tronçons empruntés. L’ajout, la modification 
-       | ou la dé-publication sont fréquents
+     - | Randonnées présentées au grand public : l’itinéraire est 
+       | défini selon la géométrie des tronçons empruntés. L’ajout, 
+       | la modification sont fréquents. La dé-publication est fortement
+       | déconseillée pour le référencement et les passerelles 
+       | avec d'autres outils.
    * - .. figure:: ../images/user-manual/modules/poi.png
      - :ref:`Points d'intérêts (POI) <points-d-interets-poi>`
-     - | Ponctuels associés aux randonnées : en fonction de leur 
-       | emplacement, ils sont associés automatiquement aux randonnées. 
-       | Leur catégorie détermine leur pictogramme (faune, flore,  
-       | patrimoine, équipements...).
+     - | Ponctuels à découvrir associés aux randonnées : en fonction 
+       | de leur  emplacement, ils sont associés automatiquement aux 
+       | randonnées. Leur catégorie détermine leur pictogramme (faune,  
+       | flore, patrimoine, équipements...).
    * - .. figure:: ../images/user-manual/modules/service.png
      - :ref:`Services <services>`
      - | Informations pratiques comme les points d'eau, passages 
        | délicats... selon la typologie souhaitée. Ils n'ont pas de 
        | description ni de nom, ni de photo et sont uniquement affichés 
        | sur la carte de l'itinéraire sous forme de pictogramme. 
-       | Type physique (route, piste, sente, etc.)
    * - .. figure:: ../images/user-manual/modules/contenustouristiques.png
      - :ref:`Contenus touristiques <contenus-touristiques>`
-     - | Correspond aux informations issues des Systèmes d'Informations 
-       | Touristiques (SIT), qui permettent d'alimenter automatiquement 
-       | la base de données Geotrek. Celles-ci sont regroupées dans des 
-       | catégories de type : dormir pour les campings, gîtes… ou manger 
-       | pour les restaurants… ou déguster pour mettre en évidence les 
-       | produits locaux … ou visiter pour les musées…
+     - | Correspond aux services touristiques pouvant être importés 
+       | depuis des Systèmes d'Informations Touristiques (SIT),  
+       | qui permettent d'alimenter automatiquement la base de
+       | données Geotrek. Celles-ci sont regroupées dans des 
+       | catégories de type : hébergements, musées, restaurants, 
+       | produits du terroir...
    * - .. figure:: ../images/user-manual/modules/evenementstouristiques.png
      - :ref:`Évènements touristiques <evenements-touristiques>`
-     - | Correspond aux informations issues des Systèmes d'Informations 
-       | Touristiques (SIT), qui permettent d'alimenter automatiquement 
-       | la base de données Geotrek. Celles-ci sont regroupées dans des 
-       | catégories de type : animations, expositions, sorties…
+     - | Correspond aux animations pouvant être importées depuis 
+       | des Systèmes d'Informations Touristiques (SIT), qui permettent
+       | d'alimenter automatiquement la base de données Geotrek. 
+       | Celles-ci sont regroupées dans des catégories de type : 
+       | conférences, expositions, sorties…
    * - .. figure:: ../images/user-manual/modules/signalements.png
      - :ref:`Signalements <signalements>`
-     - | Contient les informations saisies par un internautes via le
-       | formulaire dédié sur Geotrek-Rando
+     - | Contient les problèmes remontés par les internautes, par 
+       | exemple via le formulaire dédié sur Geotrek-rando
    * - .. figure:: ../images/user-manual/modules/zonessensibles.png
      - :ref:`Zones sensibles <zones-sensibles>`
      - | Module non activé par défaut permettant de saisir et de gérer  
        | des zones de sensibilité de la faune sauvage pour les afficher 
        | sur Geotrek-rando ou les diffuser avec l'API de Geotrek-admin). 
    * - .. figure:: ../images/user-manual/modules/sitesoutdoor.png
-     - :ref:`Sites outdoor <sites-outdoor>`
-     - | Permet de définir des sites (sites d'escalade, rivières, aires 
-       | de vol libre…) 
+     - :ref:`Sites outdoor <pleinenature>`
+     - | Permet de définir des sites d'activités de pleine nature 
+       | (sites d'escalade, rivières, aires de vol libre)
    * - .. figure:: ../images/user-manual/modules/parcoursoutdoor.png
-     - :ref:`Parcours outdoor <parcours-outdoor>`
-     - | Couplé au module « site outdoor», permet de saisir et renseigner 
-       | des activités de pleines natures diverses (kayak, rafting, 
-       | parapente, course d'orientation, voie d'escalade, parcours d'eau 
-       | vive…etc.) 
-
+     - :ref:`Parcours outdoor <pleinenature>`
+     - | Couplé au module « site outdoor», permet de les détailler en 
+       | renseignant des activités de pleine nature diverses (kayak, 
+       | rafting, parapente, course d'orientation, voie d'escalade, 
+       | parcours d'eau vive…etc.) 
 
 Chaque module est accessible depuis le bandeau vertical.
 
 1.3.2 Navigation et saisie
 --------------------------
 
-Les résultats sont affichés sous forme de liste puis on accède aux détails des objets.
+Les résultats sont affichés sous forme de carte et liste puis on accède aux détails des objets.
 
 1.3.2.1 Vue liste
 ~~~~~~~~~~~~~~~~~
@@ -156,8 +164,8 @@ Tous les modules sont construits de la même façon :
 * la possibilité de filtrer selon l'étendu de la carte
 * la sélection coordonnée (liste → carte, carte → liste)
 * la possibilité d'exporter les résultats en CSV (pour EXCEL ou CALC), en SHAPEFILE (pour QGIS) et en GPX (pour l'importer dans un GPS)
-* une carte dans laquelle il est possible de naviguer (déplacer, zoomer), d'afficher en plein écran, de mesurer une longueur, d'exporter une image de la carte, de réinitialiser l'étendue, de zommer sur une commune ou un secteur et de superposer des données externes (contours communes / secteurs / physique / foncier / responsabilités…)
-* l'accès à la vue détail d'un objet au clic
+* une carte dans laquelle il est possible de naviguer (déplacer, zoomer), d'afficher en plein écran, de mesurer une longueur, d'exporter une image de la carte, de réinitialiser l'étendue, de zoomer sur une commune ou un secteur et de superposer des données des autres modules (contours communes / secteurs / physique / foncier / gestionnaires…)
+* l'accès à la vue détail d'un objet au clic sur celui-ci
 
 .. figure:: ../images/user-manual/01-liste-fr.jpg
    :alt: Vue liste avec la carte
@@ -214,9 +222,9 @@ Voici les possibilités de la fiche détail :
 1.3.2.4 Fichiers liés
 ~~~~~~~~~~~~~~~~~~~~~
 
-L’ajout, la modification ou la suppression des illustrations et photos s’effectuent depuis l’onglet « Fichiers liés » de la fiche détail.
+L’ajout, la modification ou la suppression des documents, illustrations et photos s’effectuent depuis l’onglet « Fichiers liés » de la fiche détail.
 
-Pour chaque fichier lié, l’auteur, le titre, la légende et sa catégorie sont saisis. Les fichiers liés peuvent être de tout type (photo, dessin, PDF, fichier audio…). Pour les images, un aperçu est présenté.
+Pour chaque fichier lié, l’auteur, le titre, la légende et sa catégorie sont saisis. Les fichiers liés peuvent être de tout type (photo, vidéo, dessin, PDF, tableur, fichier audio…). Pour les images, un aperçu est présenté.
 
 Les vignettes et versions redimensionnées des photos sont créées automatiquement lors de l’ajout.
 Les contenus saisis sont publiés automatiquement.
