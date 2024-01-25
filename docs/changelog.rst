@@ -5,6 +5,10 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
+**Documentation**
+
+- Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
+
 2.101.5 (2024-01-11)
 --------------------
 
