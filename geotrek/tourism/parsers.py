@@ -246,7 +246,6 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         ),
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
-        'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
@@ -284,12 +283,13 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'illustrations'
     ]
     m2m_fields = {
-        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr'
+        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr',
+        'organizers': 'informations.structureGestion.nom.libelleFr',
     }
     natural_keys = {
         'themes': 'label',
         'type': 'type',
-        'organizer': 'label',
+        'organizers': 'label',
         'source': 'name',
         'portal': 'name',
     }

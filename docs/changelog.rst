@@ -4,6 +4,7 @@ CHANGELOG
 
 2.102.1+dev (XXXX-XX-XX)
 ------------------------
+- Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
 
 2.102.1 (2024-02-20)
 --------------------
