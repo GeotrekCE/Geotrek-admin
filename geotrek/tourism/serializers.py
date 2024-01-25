@@ -182,7 +182,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
     structure = StructureSerializer()
-    organizer = rest_serializers.SerializerMethodField(source="organizers")
+    organizers = rest_serializers.SerializerMethodField(source="organizers")
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -211,7 +211,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
         fields = (
             'id', 'accessibility', 'approved', 'begin_date', 'booking',
             'capacity', 'category', 'contact', 'description', 'description_teaser',
-            'duration', 'email', 'end_date', 'end_time', 'meeting_point', 'organizer',
+            'duration', 'email', 'end_date', 'end_time', 'meeting_point', 'organizers',
             'pois', 'portal', 'practical_info', 'source', 'speaker', 'start_time',
             'structure', 'target_audience', 'themes', 'touristic_contents', 'touristic_events',
             'treks', 'type', 'type1', 'website'

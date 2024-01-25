@@ -4,11 +4,15 @@ CHANGELOG
 
 2.102.1+dev (XXXX-XX-XX)
 ------------------------
-- Add popup button to add organizer in touristic event form
 
 **New features**
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
+
+**Improvments**
+
+- Add popup button to add organizer in touristic event form
+- Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
 
 
 2.102.1 (2024-02-20)
