@@ -10,17 +10,18 @@ Lastly, for a developer instance, please follow :ref:`the dedicated procedure <d
 Requirements
 ------------
 
-A first estimation of minimal required system resources are:
+Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersection)
+which are executed on the database. This is especially true in the setup with a Geotrek Rando v3 portal requesting
+dynamic geometric data through the Geotrek API.
 
-* 2 cores
-* 4 Go RAM
-* 20 Go disk space
-
-For big instances required system resources are:
+In such a configuration the required system resources should be:
 
 * 4 cores
 * 8 Go RAM or more
 * 50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
+
+If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
+database server level.
 
 Software requirements are :
 
