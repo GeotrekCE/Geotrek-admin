@@ -449,7 +449,7 @@ LEAFLET_CONFIG = {
     'TILES': [
         (
             'OpenTopoMap',
-            '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
             {
                 'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
                 'maxNativeZoom': 17,
@@ -458,7 +458,7 @@ LEAFLET_CONFIG = {
         ),
         (
             'OpenStreetMap',
-            '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
                 'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
                 'maxNativeZoom': 19,
