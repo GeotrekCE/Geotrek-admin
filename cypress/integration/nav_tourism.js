@@ -7,12 +7,12 @@ describe('Create tourism event', () => {
       .then((resp) => {
         expect(resp.status).to.eq(200)
       })
+    cy.mockTiles();
   })
 
   beforeEach(() => {
     cy.setCookie('django_language', 'en');
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
-
   });
 
   it('Should dynamically show/hide cancellation reason', () => {
