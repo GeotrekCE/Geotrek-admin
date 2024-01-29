@@ -11,7 +11,7 @@ describe('Nav reports workflow', () => {
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
     cy.setCookie('django_language', 'en');
-    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"})
+    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"}).as("tiles");
   });
 
   it('Handles resolved intervention reports', () => {

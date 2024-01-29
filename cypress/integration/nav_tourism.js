@@ -12,11 +12,13 @@ describe('Create tourism event', () => {
   beforeEach(() => {
     cy.setCookie('django_language', 'en');
     Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
-    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"})
+    cy.mockTiles();
   });
 
-  it('Should dynamicly show/hide cancellation reason', () => {
+  it('Should dynamically show/hide cancellation reason', () => {
     cy.visit('/touristicevent/add/').get("#event").scrollTo('bottom');
+    //
+    cy.wait('@tiles');
     // check initially hidden
     cy.get('#div_id_cancellation_reason').should("not.be.visible");
     // check toggle hide/show
