@@ -32,7 +32,7 @@ Makina Corpus
 * Hugo Hasson
 * Joaquim Nallar
 
-.. image:: http://depot.makina-corpus.org/public/logo.gif
+.. image:: https://makina-corpus.com/profiles/makina/themes/makina_front/img/logo.png
     :target: http://www.makina-corpus.com
 
 Parc national des Ecrins

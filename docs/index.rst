@@ -22,7 +22,7 @@ Welcome to Geotrek's documentation!
     usage/apis.rst
     usage/static-pages.rst
     usage/tutorials.rst
-    faq.rst
+    usage/faq.rst
 
 .. toctree::
     :caption: 🔧 Installation & configuration
@@ -41,7 +41,7 @@ Welcome to Geotrek's documentation!
     :caption: ✨ Contribute
     :maxdepth: 2
 
-    CONTRIBUTING
+    contribute/contributing
     contribute/development
     contribute/translating
     contribute/documentation
@@ -49,14 +49,8 @@ Welcome to Geotrek's documentation!
 
 .. toctree::
     :caption: 📝 Others
-    :maxdepth: 2
+    :maxdepth: 1
 
-    troubleshooting
-    authors
-    changelog
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`search`
+    others/troubleshooting
+    others/authors
+    others/changelog
