@@ -1,8 +1,6 @@
 Welcome to Geotrek's documentation!
 ===================================
 
-.. _contents:
-
 .. toctree::
     :caption: 💡 About
     :maxdepth: 2
