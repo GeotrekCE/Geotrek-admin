@@ -30,23 +30,29 @@ C’est l’**application de référence** des parcs naturels, mais aussi de nom
 Les quatre briques
 ==================
 
-Geotrek dispose de quatre briques à la fois distincts et complémentaires :
+
+La suite logicielle Geotrek dispose de quatre briques à la fois distincts et complémentaires :
 
 * :ref:`Geotrek-admin <qu-est-ce-que-geotrek>`: outil de gestion et de saisie de l’ensemble des informations, intégrant les données des Systèmes d’Informations Touristiques (SIT) et pouvant être connecté à votre SIG ou à des systèmes d’information transport
 * `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando-v3/blob/main/docs/presentation-fr.md>`_ : site web, reprenant les informations saisies dans Geotrek-admin, à destination des internautes grand public
 * `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile#geotrek-mobile>`_ : application mobile fonctionnant sous Android et iOS, reprenant des informations saisies dans Geotrek-admin et optimisées pour l’usage mobile (volume, impact sur la batterie, hors-ligne, géolocalisation…)
 * `Geotrek-rando-widget <https://github.com/GeotrekCE/Geotrek-rando-widget#geotrek-rando-widget>`_ : nouveau composant web permettant de valoriser une offre de contenus touristiques et de randonnées auprès des usagers du territoire, en l'intégrant dans un site internet existant
 
-1.3 Utilisateurs
-=================
+.. note::
+  Cette documentation ne traite que de **Geotrek-Admin**, chaque brique ayant sa propre documentation.
+
+Utilisateurs
+============
 
 L’application Geotrek, **destinée à deux types de public**, est une solution web qui apporte :
 
 * des fonctionnalités de gestion des informations (itinéraires, sites outdoor, points d’intérêts, description, interprétation, médias…) et de gestion des infrastructures (signalétique, aménagements, travaux, réglementation…) pour les utilisateurs gérant un territoire (**Geotrek-admin**) 
 * des fonctionnalités simples et ludiques de recherche et de consultation d’itinéraires pour les internautes et les mobinautes (**Geotrek-rando V3**, **Geotrek-mobile** et **Geotrek-rando-widget**).
 
-1.4 Composants libres
-======================
+Pour retrouver plus d'informations sur la suite applicative Geotrek, rendez-vous sur `geotrek.fr <https://geotrek.fr>`_.
+
+Composants libres
+=================
 
 L’application Geotrek utilise les technologies open source suivantes :
 

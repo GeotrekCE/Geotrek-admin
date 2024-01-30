@@ -100,7 +100,7 @@ Release translations (only for github repository managers)
 ----------------------------------------------------------
 
 Weblate send new translations to `translations` branch in Github, dedicated to translations.
-When new translations chains are validated, manager has to send the manually to Github.
+When new translations chains are validated, manager has to send them manually to Github.
 
 For each release, `translations` branch must be merged into master before building the release.
 
