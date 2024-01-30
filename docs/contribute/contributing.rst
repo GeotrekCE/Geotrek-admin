@@ -109,4 +109,4 @@ On master branch:
 * Run ``dch -v <version>+dev --no-force-save-on-release`` and save
 * Commit with message 'Back to development' and push to ```master``
 
-* When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.circleci/config.yml`` file for details)
+* When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.github/workflows/test.yml`` file for details)
