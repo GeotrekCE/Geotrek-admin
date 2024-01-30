@@ -1,13 +1,13 @@
-=======
-7. APIs
-=======
+====
+APIs
+====
 
 .. contents::
    :local:
    :depth: 2
 
-7.1 API Geotrek
-===============
+API Geotrek
+===========
 
 Geotrek dispose d’une API (Application Programming Interface) qui sert à exposer les données stockées dans une instance de Geotrek-admin, dans le but de pouvoir la faire communiquer avec d'autres outils, systèmes et plateforme et ainsi échanger des données.
 
@@ -24,11 +24,11 @@ C’est le cas des applications de :
 
 Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
 
-7.2 APIs externes
-==================
+APIs externes
+=============
 
-7.2.1 Geotrek et IGNrando'
---------------------------
+Geotrek et IGNrando'
+--------------------
 
 Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' (https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne).
 
@@ -76,13 +76,13 @@ Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirk
 
     Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``
 
-7.2.2 Geotrek et APIDAE
----------------------------
+Geotrek et APIDAE
+-----------------
 
 Il existe plusieurs passerelles entre la plateforme d'informations touristiques APIDAE et Geotrek. 
 
-7.2.2.1 APIDAE vers Geotrek
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+APIDAE vers Geotrek
+~~~~~~~~~~~~~~~~~~~
 
 Actuellement, certains contenus touristiques peuvent être synchronisés automatiquement avec une base APIDAE. Il s'agit des contenus situés dans les catégories suivantes :
 
@@ -93,8 +93,8 @@ Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tour
 
 Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
-7.2.2.2 Geotrek vers APIDAE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Geotrek vers APIDAE
+~~~~~~~~~~~~~~~~~~~
 
 Il existe aussi un lien dans l'autre sens, permettant d'importer automatiquement vers APDIAE les itinéraires existants dans une instance Geotrek.
 

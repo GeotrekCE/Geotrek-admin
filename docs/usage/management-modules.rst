@@ -1,6 +1,6 @@
-=====================
-2. Modules de gestion
-=====================
+==================
+Modules de gestion
+==================
 
 .. contents::
    :local:
@@ -23,8 +23,8 @@ Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche
 
 .. _les-troncons:
 
-2.1 Les tronçons
-================
+Les tronçons
+============
 
 C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre deux intersections. Le mécanisme de segmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
@@ -53,8 +53,8 @@ Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en affi
 
 .. _les-sentiers:
 
-2.2 Les sentiers
-================
+Les sentiers
+============
 
 Il s'agit d'un ensemble linéaire composés d'un ou plusieurs tronçons (entiers ou partiels) grâce à la segmentation dynamique.
 
@@ -66,15 +66,15 @@ A ne pas confondre avec le module Itinéraires qui permet de créer des randonn�
 
 .. _les-statuts:
 
-2.3 Les statuts
-================
+Les statuts
+============
 
 Ils permettent de renseigner des informations sur le linéaire (type physique, statut foncier, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique) sans avoir à le faire tronçon par tronçon grâce à la segmentation dynamique qui permet de localiser le départ et l'arrivée sur un ou plusieurs tronçons.
 
 .. _les-amenagements:
 
-2.4 Les aménagements
-====================
+Les aménagements
+================
 
 Ils permettent d'inventorier les aménagements sur les sentiers (passerelles, mains courantes, cunettes, soutènements, bancs, parkings...) en les localisant, les typant, les décrivant, renseignant leur état et leur année d'implantation.
 
@@ -90,8 +90,8 @@ Pour importer automatiquement des éléments d'aménagements, se référer à la
 
 .. _la-signaletique:
 
-2.5 La signalétique
-===================
+La signalétique
+===============
 
 Centralise les informations sur la signalétique d'accueil, d'information et d'orientation des randonneurs. Permet de localiser, décrire l'implantation, et gérer les fichiers concernant la signalétique (BAT, maquettes, photos, etc.).
 
@@ -103,8 +103,8 @@ Pour importer automatiquement des éléments de signalétiques, se référer à 
 
 .. _les-interventions:
 
-2.6 Les interventions
-=====================
+Les interventions
+=================
 
 Les interventions permettent d'inventorier et suivre les travaux réalisés sur les sentiers. Chaque intervention correspond à une action sur un tronçon, sentier, aménagement ou signalétique.
 
@@ -122,8 +122,8 @@ L'onglet `Avancé` du formulaire permet de renseigner des informations financiè
 
 .. _les-chantiers:
 
-2.7 Les chantiers
-=================
+Les chantiers
+=============
 
 Les chantiers permettent de grouper plusieurs interventions pour en avoir une vision globale et d'y renseigner globalement des informations administratives (contraintes, financeurs, prestataires, cout global, maitrise d'ouvrage...) et éventuellement d'y attacher des documents (cahier des charges, recette, plans...).
 

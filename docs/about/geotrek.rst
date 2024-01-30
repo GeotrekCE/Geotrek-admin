@@ -1,6 +1,6 @@
-===========
-1. Geotrek
-===========
+=======
+Geotrek
+=======
 
 .. contents::
    :local:
@@ -8,8 +8,8 @@
 
 .. _qu-est-ce-que-geotrek:
 
-1.1 Qu'est ce que Geotrek ?
-============================
+Qu'est ce que Geotrek ?
+=======================
 
 Geotrek est un ensemble d'outils web dédiés à la **gestion et la valorisation** des activités de randonnées, de sports de pleine nature et des informations touristiques.
 
@@ -27,8 +27,8 @@ C’est l’**application de référence** des parcs naturels, mais aussi de nom
 * de facilement pouvoir **accéder à d’autres fonctionnalités** quand le besoin s’en fera ressentir : site web, impression de fiches de parcours, gestion de la signalétique, organisation des travaux…
 * d’exporter facilement vos contenus valorisables (itinéraires, POIs, contenus touristiques …) vers d’autres **plateformes touristiques nationales** (IGNrando', Visorando, Outdooractive, Apidae, Cirkwi, etc.)
 
-1.2 Les quatre briques
-======================
+Les quatre briques
+==================
 
 Geotrek dispose de quatre briques à la fois distincts et complémentaires :
 

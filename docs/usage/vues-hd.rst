@@ -1,13 +1,13 @@
-===========
-5. Vues HD
-===========
+========
+Vues HD
+========
 
 .. contents::
    :local:
    :depth: 2
 
-5.1 Représentation verticale : les vues HD
-==========================================
+Représentation verticale : les vues HD
+======================================
 
 Pour aller au-delà de la localisation sur une carte dans la représentation des sites d'activité Outdoor, notamment celles verticales (escalade, via-ferrata, alpinisme...), nous avons la possibilité d'ajouter des photos très haute définition (gigapixel) sur les itinéraires, POI et sites outdoor, et d'annoter celles-ci pour les enrichir.
 
