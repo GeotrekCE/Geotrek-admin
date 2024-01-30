@@ -1,6 +1,6 @@
-==========================
-3. Modules de valorisation
-==========================
+=======================
+Modules de valorisation
+=======================
 
 .. contents::
    :local:
@@ -8,17 +8,17 @@
 
 .. _itineraires:
 
-3.1 Itinéraires
-===============
+Itinéraires
+===========
 
 Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout ou la modification sont fréquents.
 
-3.1.1 Fiche détaillée
----------------------
+Fiche détaillée
+---------------
 
-3.1.1.1 Basique
-~~~~~~~~~~~~~~~
+Basique
+~~~~~~~
 
 **Structure liée** ~ requis
 
@@ -151,8 +151,8 @@ L’ajout ou la modification sont fréquents.
 1. Prendre le sentier à droite direction l'Oussella
 2. Après la marmite de Géant et le pont, continuer à gauche direction l'Oussella.
 
-3.1.1.2 Avancé
-~~~~~~~~~~~~~~
+Avancé
+~~~~~~
 
 **Parking conseillé [fr]**
 
@@ -299,8 +299,8 @@ L’ajout ou la modification sont fréquents.
 - Visibilité : interne
 - Exemple : les Estagnous
 
-3.1.1.3 Accessibilité
-~~~~~~~~~~~~~~~~~~~~~~
+Accessibilité
+~~~~~~~~~~~~~~
 
 **Type d'accessibilité**
 
@@ -372,8 +372,8 @@ L’ajout ou la modification sont fréquents.
 - Exemple : Panneau de signalisation PMR rampe d'accès amovible.
 
 
-3.1.2 Itinérance
-----------------
+Itinérance
+----------
 
 Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : https://www.grand-tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-Ecrins.
 
@@ -383,8 +383,8 @@ Le séjour complet ainsi que chaque étape sont donc chacunes des randonnées co
 
 Si vous ne souhaitez pas que les étapes soient affichées dans la page de Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors de publier l'itinéraire parent, pour que toutes les étapes qui y sont rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando.
 
-3.1.3 Points de référence
---------------------------
+Points de référence
+--------------------
 
 Lorsque l'on localise un itinéraire, il est aussi possible de localiser le parking de la randonnée et de placer des points de référence numérotées sous forme de puces rouges sur la carte.
 
@@ -396,15 +396,15 @@ Pour que des puces numérotées sous forme de pastilles rouges soient affichées
 
 .. image :: /images/user-manual/references-geotrek-admin.jpg
 
-3.1.4 Ordre des catégories
----------------------------
+Ordre des catégories
+---------------------
 
 Dans le portail Geotrek-rando, les différents types de contenus sont éclatés en catégories.
 
 Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques des itinéraires et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis l'Adminsite de Geotrek-admin.
 
-3.1.5 Zone tampon pour contenus à proximité
-----------------------------------------------
+Zone tampon pour contenus à proximité
+----------------------------------------
 
 La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques et services.
 
@@ -412,8 +412,8 @@ Pour modifier la distance de la zone tampon (buffer), se référer à la section
 
 .. _points-d-interets-poi:
 
-3.2 Points d'intérêts (POI)
-===========================
+Points d'intérêts (POI)
+=======================
 
 Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmentation dynamique, en fonction des tronçons communs de l'itinéraire et des POIs.
 
@@ -421,30 +421,30 @@ Pour importer automatiquement des éléments de POIs, se référer à la section
 
 .. _services:
 
-3.3 Services
-============
+Services
+========
 
 .. _contenus-touristiques:
 
-3.4 Contenus touristiques
-=========================
+Contenus touristiques
+=====================
 
 .. _evenements-touristiques:
 
-3.5 Évènements touristiques
-===========================
+Évènements touristiques
+=======================
 
 .. _signalements:
 
-3.6 Signalements
-================
+Signalements
+============
 
 Pour configurer Suricate, se référer à cette section :ref:`Suricate support <suricate-support>`
 
 .. _zones-sensibles:
 
-3.7 Zones sensibles
-===================
+Zones sensibles
+===============
 
 Ce module permet d’inventorier, de localiser des zonages réglementaires (de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope (APPB), sites classés, sites d'intérêt écologique) ou des surfaces liées à la présence d’une ou plusieurs espèces protégées ou patrimoniales.
 
@@ -458,12 +458,12 @@ Pour activer le module Zones sensibles, se référer à cette section :ref:`Sens
 
 .. _pleinenature:
 
-3.8 Activités outdoor
-======================
+Activités outdoor
+==================
 
 
-3.8.1 Sites et parcours
-------------------------
+Sites et parcours
+------------------
 
 Geotrek-admin dédie deux modules aux activités outdoor : les sites et les parcours. Un site correspond à une zone ou à un réseau hydrographique à gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, zone de vol libre…
 
@@ -490,8 +490,8 @@ Les deux modules outdoor permettent de :
 
 Pour activer le module Outdoor, se référer à la section :ref:`Outdoor <outdoor>`
 
-3.8.1.1 Arborescence
-~~~~~~~~~~~~~~~~~~~~~
+Arborescence
+~~~~~~~~~~~~~
 
 Les fiches détail des sites et des parcours présentent les liens entre eux sous forme d'une arborescence. Pour ne pas surcharger,
 tous les éléments ne sont pas repris, mais uniquement :
@@ -502,8 +502,8 @@ tous les éléments ne sont pas repris, mais uniquement :
 
 Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
 
-3.8.2 Nomenclatures
---------------------
+Nomenclatures
+--------------
 
 En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
 
@@ -514,11 +514,11 @@ En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin 
   Par exemple « Site école » pour l'escalade.
 * **Échelle de cotation** : permet de regrouper les cotations faisant partie de la même échelle. Elles sont spécifiques à chaque pratique.
 
-3.8.3 Filières
----------------
+Filières
+---------
 
-3.8.3.1 Escalade
-~~~~~~~~~~~~~~~~~
+Escalade
+~~~~~~~~~
 
 La notion de site est naturelle. Elle peut être définie géographiquement par un polygone.
 Il est possible (mais pas obligatoire) de créer des sous-sites pour représenter des secteurs.
@@ -531,8 +531,8 @@ il est également possible de créer autant de parcours que de longueurs dans la
 Lors de la saisie de la grande voie, il faudra préciser les différentes longueurs dans le champ « Enfants », dans le bon ordre.
 Le nom de chaque longueur pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur 2 », etc.
 
-3.8.3.2 Vol libre
-~~~~~~~~~~~~~~~~~
+Vol libre
+~~~~~~~~~
 
 La zone de vol n'est pas définie géographiquement de manière précise mais fait quand même l'objet d'un site avec un nom
 (ex: « massif de … ») et un polygone approximatif ou bien un point (de préférence celui de départ). Cela n'a pas une importance
@@ -544,8 +544,8 @@ Afin de les identifier, il faut créer les types de site « Aire de décollage �
 Comme le vol est libre, il n'est pas nécessaire de définir des parcours. Cependant, il est possible d'en définir pour donner
 des exemples de trajectoires.
 
-3.8.3.3 Eau vive
-~~~~~~~~~~~~~~~~~
+Eau vive
+~~~~~~~~~
 
 Le site est généralement constitué par une rivière ou une portion de rivière. Il est possible d'y adjoindre des affluents.
 La géométrie du site est donc un linéraire correspondant à un réseau hydrographique.
