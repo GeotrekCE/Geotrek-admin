@@ -12,15 +12,14 @@ Welcome to Geotrek's documentation!
     :maxdepth: 2
 
     usage/overview.rst
+    usage/interfaces.rst
     usage/management-modules.rst
     usage/touristic-modules.rst 
     usage/editing-objects.rst
-    usage/vues-hd.rst
     usage/configuration-ttw.rst
     usage/apis.rst
     usage/static-pages.rst
     usage/tutorials.rst
-    usage/faq.rst
 
 .. toctree::
     :caption: 🔧 Installation & configuration

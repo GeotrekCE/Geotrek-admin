@@ -58,6 +58,8 @@ To import a shapefile containing your paths, use the command ``loadpaths``::
 Import data from touristic data systems (SIT)
 =============================================
 
+.. _configure-apidae-ex-sitra-import:
+
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
 
