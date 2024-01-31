@@ -2,6 +2,10 @@
 Contributing
 ============
 
+.. contents::
+   :local:
+   :depth: 2
+
 Conventions
 -----------
 
@@ -13,7 +17,6 @@ Conventions
 * Open a new Pull Request in "Draft" status until tests passed. Use at least 'bug', 'improvement' or 'feature' label.
 * Commits messages are explicit and mention issue number (``(ref #12)`` or ``(fixes #23)``), they should contains corresponding tag (see below)
 * Features are developed in a branch and merged from Github pull-requests.
-
 
 Definition of done
 ------------------
@@ -96,7 +99,7 @@ Merge     twisted_rightwards_arrows 🔀
 
 
 Release
--------
+--------
 
 On master branch:
 
@@ -110,3 +113,17 @@ On master branch:
 * Commit with message 'Back to development' and push to ```master``
 
 * When creating a new release 'x.y.z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.github/workflows/test.yml`` file for details)
+
+Other ways to contribute
+-------------------------
+
+* Help the users and answers questions on the `mailing-list <https://groups.google.com/g/geotrek-fr>`_ ;
+* `Open a ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ when you encounter a bug ;
+* `Open a ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ when you have a suggestion or feature idea ;
+* Translate the documentation ;
+* Translate the menus, buttons and labels (we use `Weblate <https://weblate.makina-corpus.net>`_) ;
+* Maintain the installation script for different Linux distributions (*requires some basic Linux skills*) ;
+* Fix bugs or improve layout and apparence (*requires Webmaster skills*) ;
+* Fix bugs or improve core modules (*requires python/Django skills*).
+
+Join the `mailing list <https://groups.google.com/forum/#!forum/geotrek-fr>`_! Send an email to ``geotrek-fr+subscribe@googlegroups.com`` and you will receive an invitation automatically.

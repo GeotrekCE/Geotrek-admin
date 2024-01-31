@@ -53,7 +53,7 @@ ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, 
 
 Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
 
-Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'interface d'administration Django (à ne pas modifier) :
+Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'interface de configuration Django (à ne pas modifier) :
 
 .. figure:: ../images/user-manual/cirkwi-tables.png
    :alt: Ensemble des champs paramétrables pour le référentiel CIRKWI
@@ -93,10 +93,12 @@ Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tour
 
 Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
+Pour configurer APIDAE, se référer à cette section :ref:`Configure APIDAE (ex-SITRA) import <configure-apidae-ex-sitra-import>`
+
 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~
 
-Il existe aussi un lien dans l'autre sens, permettant d'importer automatiquement vers APDIAE les itinéraires existants dans une instance Geotrek.
+Il existe aussi un lien dans l'autre sens, permettant d'importer automatiquement vers APIDAE les itinéraires existants dans une instance Geotrek.
 
 L'API permet de connecter une instance Geotrek pour importer des itinéraires vers les objets de type "Équipements" dans APIDAE.
 

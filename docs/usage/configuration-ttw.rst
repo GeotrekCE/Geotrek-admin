@@ -7,33 +7,28 @@ Paramétrage
    :depth: 2
 
 
-Accès interface admin
-=====================
+Accès interface de configuration
+=================================
 
 Menu à droite > admin
 
 .. figure:: ../images/admin/capture-admin.png
-   :alt: Capture lien admin
+   :alt: Lien vers l'interface de configuration Django
    :align: center
 
-   Lien vers l'interface d'administration django
+   Lien vers l'interface de configuration Django
 
 .. _parametrages-des-modules:
 
 Paramétrages des modules
 ========================
 
+Cette section présente quelques exemples de paramétrages des catégories au sein des modules.
+
 Itinéraires
 -----------
 
--  Pratiques
--  Accessibilités
--  Niveaux de difficulté
--  Thèmes
--  Types de services
--  Types de POIs
-
-.. figure:: ../images/admin/django-admin-params-itineraires.png
+.. figure:: ../images/admin/django-admin-params-itineraires-v2.png
    :alt: Ensemble des champs paramétrables du module Itinéraires
    :align: center
 
@@ -42,13 +37,13 @@ Itinéraires
 Exemple : ajouter une pratique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Dans admin, à la ligne “Pratiques” cliquer sur “+ ajouter”
+-  Dans l'interface de configuration Django, à la ligne “Pratiques” cliquer sur “+ ajouter”
 -  Remplir les champs (en gras les champs obligatoires)
 
 .. note::
   La couleur n’est utilisée que pour le mobile actuellement.
 
-.. figure:: ../images/admin/django-admin-ajout-pratique.png
+.. figure:: ../images/admin/django-admin-ajout-pratique-v2.png
    :alt: Ajout d'une nouvelle pratique
    :align: center
 
@@ -62,7 +57,7 @@ Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés s
 - permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
 
 Pour les configurer, vous devez :
-- vous rendre dans l'interface d'administration
+- vous rendre dans l'interface de configuration Django
 - dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ Ajouter`
 
 Via cette interface vous pourrez créer des étiquettes puis, une fois créées, les rattacher à des itinéraires.
@@ -109,37 +104,11 @@ Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :
 
    Rendu des étiquettes dans les filtres de Geotrek-rando
 
-.. _sites-et-parcours-outdoor-1:
-
-Sites et parcours outdoor
--------------------------
-
--  Cotations
--  Filières
--  Pratiques
--  Types de parcours
--  Types de site
--  Échelles de cotation
-
-
-Plongées
---------
-
--  Niveau de difficulté
--  Niveau technique
--  Pratique
-
 
 Tourisme
 --------
 
--  Autres sports : catégorie activités → Types de contenus touristiques
--  Lieux de renseignements
--  Types de lieux de renseignement
--  Types d’événement touristiques
--  Systèmes de réservation
-
-.. figure:: ../images/admin/django-admin-params-tourisme.png
+.. figure:: ../images/admin/django-admin-params-tourisme-v2.png
    :alt: Ensemble des champs paramétrables des modules Contenus et Évènements touristiques
    :align: center
 
@@ -149,7 +118,7 @@ Exemple : catégorie de contenu touristique et ses sous-types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-.. figure:: ../images/admin/django-admin-categorie-contenu-touristique.png
+.. figure:: ../images/admin/django-admin-categorie-contenu-touristique-v2.png
    :alt: Création de catégorie de contenu touristique et ses sous-types
    :align: center
 
@@ -166,22 +135,6 @@ sous-types et leur nom.
 
    Sous-types de la catégorie “Hébergements”
 
-Dans l’édition d’un contenu touristique de catégorie “Hébergement”
-
-.. figure:: ../images/admin/contenu-touristique-categorie-sous-type.png
-   :alt: Ajout d'un type d'usage à la catégorie “Hébergements”
-   :align: center
-
-   Ajout d'un type d'usage à la catégorie “Hébergements”
-
-Zones
------
-
--  Communes
--  Secteurs
--  Zones sensibles et types de zones
-
-
 .. _user-management-section:
 
 Gestion des utilisateurs
@@ -193,7 +146,7 @@ Les utilisateurs appartiennent à des groupes et les permissions peuvent être a
 
 Avec les groupes, vous pouvez créer et configurer un profil utilisateur, chacun possédant des permissions spécifiques.
 
-Toute la configuration des utilisateurs, groupes et permissions est disponible depuis l'interface d'administration Django, si vous n'avez pas activé *Authentification externe* (voir ci-dessous).
+Toute la configuration des utilisateurs, groupes et permissions est disponible depuis l'interface de configuration Django, si vous n'avez pas activé *Authentification externe* (voir ci-dessous).
 
 .. figure:: ../images/admin/django-admin-params-users.png
    :alt: Interface de configuration des utilisateurs/groupes
@@ -225,7 +178,7 @@ Un utilisateur donné peut avoir trois niveaux permissions basiques :
 .. note::
   Il est préférable de désactiver un compte lorsqu’un utilisateur n’intervient plus sur Geotrek, plutôt que de le supprimer. En effet supprimer le compte supprimera également par exemple toutes les entrées dans l’historique de Geotrek associées à ce compte.
 
-- **Équipe** : si la case est cochée l’utilisateur pourra accéder à l’interface d’administration de Geotrek-Admin
+- **Équipe** : si la case est cochée l’utilisateur pourra accéder à l’interface de configuration Django de Geotrek-Admin
 
 - **Super-utilisateur** : permet d’octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
 
@@ -333,7 +286,7 @@ Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geo
 
 Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
 
-Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface d'administration sur la section "Portails cibles".
+Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface de configuration Django sur la section "Portails cibles".
 
 .. figure:: ../images/admin/portals.png
    :alt: Configuration des portails
