@@ -258,7 +258,7 @@ Cette notion de structures permet de segmenter les périmètres d’action des u
 
     - celui-ci est super-utilisateur
 
-    - celui-ci possède la permission « Can by structure », qui permet d’outrepasser la restriction des structures.
+    - celui-ci possède la permission « Can bypass structure », qui permet d’outrepasser la restriction des structures.
 
 Pour définir la structure par défaut, se référer à la section :ref:`Default structure <default-structure>`
 
