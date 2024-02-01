@@ -2595,8 +2595,9 @@ To get your modifications available for Rando application, launch the ``sync_ran
 PDF as booklet
 ~~~~~~~~~~~~~~
 
+::
 
-    USE_BOOKLET_PDF = True
+    USE_BOOKLET_PDF = False
 
 Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
 It is possible to customize the pdf, with trek_public_booklet_pdf.html.
