@@ -26,7 +26,7 @@ Elles sont gérées depuis l'interface de configuration Django de Geotrek-admin 
 Créer une page statique
 ========================
 
-Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
+Depuis l'interface de configuration Django de Geotrek-admin, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
 
 .. image :: /images/user-manual/flatpages-flatpages.png
 

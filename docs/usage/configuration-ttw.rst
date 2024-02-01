@@ -161,12 +161,12 @@ L’application permet d’attribuer des droits à autant de groupes que souhait
 Nous recommandons cependant de privilégier la diffusion la plus large par défaut et de ne restreindre l’application que pour des raisons impératives.
 
 L’application permet de définir des rôles disposant chacun de certains droits.
-- visiteurs anonymes (par exemple : tous les internautes)
-- partenaires, élus
-- agents techniques
-- prestataires externes
-- administrateurs de l’application
-- …
+  - visiteurs anonymes (par exemple : tous les internautes)
+  - partenaires, élus
+  - agents techniques
+  - prestataires externes
+  - administrateurs de l’application
+  - …
 
 À chaque rôle est associé un ensemble de permissions (consulter telle donnée, la modifier…) qui peuvent être attribuées à un document ou à une catégorie.
 Les utilisateurs sont ensuite associés à un ou plusieurs rôles.
