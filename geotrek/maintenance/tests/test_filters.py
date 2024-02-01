@@ -97,6 +97,29 @@ class InterventionZoningFilterTest(TestCase):
         self.assertEqual(len(filter.qs), 0)
 
 
+class InterventionDateFilterTest(TestCase):
+    def test_filter_year_without_end_date(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2021]})
+        self.assertEqual(intervention_filter.qs.count(), 1)
+
+    def test_filter_year_with_range(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30", end_date="2024-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30", end_date="2024-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2022]})
+        self.assertEqual(intervention_filter.qs.count(), 2)
+
+    def test_filter_year_with_end_date(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30", end_date="2023-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30", end_date="2024-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2023, 2024]})
+        self.assertEqual(intervention_filter.qs.count(), 2)
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionFilteringByLandTest(TestCase):
     @classmethod

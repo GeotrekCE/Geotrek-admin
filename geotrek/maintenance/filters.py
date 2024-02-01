@@ -138,8 +138,10 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
 
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
-    begin_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by begin date range')},), label=_('begin date'))
-    end_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by end date range')},), label=_('end date'))
+    begin_date = CustomDateFromToRangeFilter(widget=OneLineRangeWidget(attrs={'type': 'text', 'class': 'minmax-field', 'title': _('Filter by begin date range')},), label=_('begin date'))
+    end_date = CustomDateFromToRangeFilter(widget=OneLineRangeWidget(attrs={'type': 'text', 'class': 'minmax-field', 'title': _('Filter by end date range')},), label=_('end date'))
+    year = MultipleChoiceFilter(choices=lambda: Intervention.objects.year_choices(),
+                                method='filter_year', label=_("Year"))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
     area_type = InterventionIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False,
                                                                  lookup_expr='intersects')
@@ -154,8 +156,14 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
             'status', 'type', 'stake', 'subcontracting', 'project', 'on',
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def filter_year(self, qs, name, values):
+        conditions = Q()
+        for value in values:
+            # Filter only with precise begin year
+            conditions |= Q(begin_date__year=value, end_date__isnull=True)
+            # Filter year between begin and end date
+            conditions |= Q(begin_date__year__lte=value, end_date__year__gte=value)
+        return qs.filter(conditions)
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):
