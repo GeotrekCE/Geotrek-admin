@@ -214,8 +214,3 @@ And give them permissions by schema :
 
 You can also create groups, etc. See PostgreSQL documentation.
 
-
-Advanced Configuration
-----------------------
-
-See :ref:`advanced configuration <advanced-configuration-section>`...
