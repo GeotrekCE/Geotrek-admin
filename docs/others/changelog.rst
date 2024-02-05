@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 
+**Documentation**
+
+- Reorganize major sections in documentation, and add content
+
 
 2.102.1 (2024-02-20)
 --------------------
@@ -32,8 +36,6 @@ CHANGELOG
 **Documentation**
 
 - Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
-- Improve documentation with new sections (about, touristic modules)
-
 
 **New features**
 

@@ -19,7 +19,7 @@ Tous les objets linéaires reposant sur les tronçons récupèrent leurs informa
 Calcul du dénivelé
 ---------------------
 
-Nous calculons le « dénivelé positif cumulé <https://fr.wikipedia.org/wiki/D%C3%A9nivel%C3%A9_positif_cumul%C3%A9>`_.
+Nous calculons le `dénivelé positif cumulé <https://fr.wikipedia.org/wiki/D%C3%A9nivel%C3%A9_positif_cumul%C3%A9>`_.
 
 Nous échantillonnons le DEM tous les 25m par défaut (voir paramètre ``ALTIMETRIC_PROFILE_PRECISION``),
 et nous ajoutons un peu de lissage pour éviter le bruit.

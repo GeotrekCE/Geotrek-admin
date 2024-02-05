@@ -44,16 +44,19 @@ Il est possible d'exclure les POI du flux pour ne diffuser que les randonnées. 
 Il est possible de filtrer les POI du flux par structure. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/pois.xml?structures=2``).
 Vous pouvez filtrer avec plusieurs structures : en séparant les identifiants par des virgules (``http://XXXXX/api/cirkwi/pois.xml?structures=2,5,3``).
 
-Il est également possible de filtrer les randonnées du flux par structure et par portail. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>``.
-ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
-Tout comme les pois Vous pouvez filtrer avec plusieurs structures et portails : en séparant les identifiants par des virgules.
+Il est également possible de filtrer les randonnées du flux par structure et par portail. 
+Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
 
 Il est également possible d'exclure du flux les randonnées provenant de sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour
 ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
 
 Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
 
-Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'interface de configuration Django (à ne pas modifier) :
+Il est également possible d'exclure du flux les randonnées provenant de sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
+
+Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
+
+Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le module de configuration (à ne pas modifier) :
 
 .. figure:: ../images/user-manual/cirkwi-tables.png
    :alt: Ensemble des champs paramétrables pour le référentiel CIRKWI
@@ -61,7 +64,7 @@ Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'inter
 
    Ensemble des champs paramétrables pour le référentiel CIRKWI
 
-Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre interface de configuration Django. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806.
+Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans le module de configuration. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806.
 
 * Pratique >> locomotion/loisirs
 * Accessibilite >> thematiques/tags

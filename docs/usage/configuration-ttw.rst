@@ -13,10 +13,10 @@ Accès interface de configuration
 Menu à droite > admin
 
 .. figure:: ../images/admin/capture-admin.png
-   :alt: Lien vers l'interface de configuration Django
+   :alt: Lien vers le module de configuration
    :align: center
 
-   Lien vers l'interface de configuration Django
+   Lien vers le module de configuration
 
 .. _parametrages-des-modules:
 
@@ -37,7 +37,7 @@ Itinéraires
 Exemple : ajouter une pratique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Dans l'interface de configuration Django, à la ligne “Pratiques” cliquer sur “+ ajouter”
+-  Dans le module de configuration, à la ligne “Pratiques” cliquer sur “+ ajouter”
 -  Remplir les champs (en gras les champs obligatoires)
 
 .. note::
@@ -57,7 +57,7 @@ Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés s
 - permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
 
 Pour les configurer, vous devez :
-- vous rendre dans l'interface de configuration Django
+- vous rendre dans le module de configuration
 - dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ Ajouter`
 
 Via cette interface vous pourrez créer des étiquettes puis, une fois créées, les rattacher à des itinéraires.
@@ -146,7 +146,7 @@ Les utilisateurs appartiennent à des groupes et les permissions peuvent être a
 
 Avec les groupes, vous pouvez créer et configurer un profil utilisateur, chacun possédant des permissions spécifiques.
 
-Toute la configuration des utilisateurs, groupes et permissions est disponible depuis l'interface de configuration Django, si vous n'avez pas activé *Authentification externe* (voir ci-dessous).
+Toute la configuration des utilisateurs, groupes et permissions est disponible depuis le module de configuration, si vous n'avez pas activé *Authentification externe* (voir ci-dessous).
 
 .. figure:: ../images/admin/django-admin-params-users.png
    :alt: Interface de configuration des utilisateurs/groupes
@@ -178,7 +178,7 @@ Un utilisateur donné peut avoir trois niveaux permissions basiques :
 .. note::
   Il est préférable de désactiver un compte lorsqu’un utilisateur n’intervient plus sur Geotrek, plutôt que de le supprimer. En effet supprimer le compte supprimera également par exemple toutes les entrées dans l’historique de Geotrek associées à ce compte.
 
-- **Équipe** : si la case est cochée l’utilisateur pourra accéder à l’interface de configuration Django de Geotrek-Admin
+- **Équipe** : si la case est cochée l’utilisateur pourra accéder au module de configuration de Geotrek-Admin
 
 - **Super-utilisateur** : permet d’octroyer toutes les permissions à un utilisateur sans avoir à les définir explicitement
 
@@ -204,7 +204,7 @@ Chaque type de donnée est au moins associée à ces quatres actions de base (*a
 
 Voici la signification des actions autorisées dans les permissions :
 
-* *view* : voir les données dans l’interface AdminSite de Django (pour ledonnées dans « category », comme les types de POI, ou les niveaux de difficulté)
+* *view* : voir les données dans le module de configuration (pour ledonnées dans « category », comme les types de POI, ou les niveaux de difficulté)
 * *read* : voir les données dans Geotrek-admin (détail et liste)
 * *add* : ajouter une nouvelle donnée (itinéraire, thème…)
 * *change* : modifier une donnée
@@ -286,7 +286,7 @@ Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geo
 
 Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
 
-Pour configurer un ou pluseurs portails, il faut se rendre dans l'interface de configuration Django sur la section "Portails cibles".
+Pour configurer un ou pluseurs portails, il faut se rendre dans le module de configuration sur la section "Portails cibles".
 
 .. figure:: ../images/admin/portals.png
    :alt: Configuration des portails
