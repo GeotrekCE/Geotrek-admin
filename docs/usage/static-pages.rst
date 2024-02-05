@@ -19,14 +19,14 @@ Les pages statiques sont les pages d'information et de contextualisation de votr
 
 Elles permettent de fournir à l'internaute et futur randonneur des informations génériques : présentation de votre structure, votre projet de randonnée, recommandations, informations pratiques, etc.
 
-Elles sont gérées depuis l'interface de configuration Django de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
+Elles sont gérées depuis le module de configuration de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
 
 .. image :: /images/user-manual/flatpages-adminsite.jpg
 
 Créer une page statique
 ========================
 
-Depuis l'interface de configuration Django de Geotrek-admin, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
+Depuis le module de configuration de Geotrek-admin, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
 
 .. image :: /images/user-manual/flatpages-flatpages.png
 

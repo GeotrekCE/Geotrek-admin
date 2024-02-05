@@ -56,7 +56,7 @@ Composants libres
 
 L’application Geotrek utilise les technologies open source suivantes :
 
-* **Python / Django**, l'épine dorsale de l'application qui prend en charge les principales fonctionnalités comme l'interface de configuration, l'exploitation de la base de données, la gestion des utilisateurs et de leurs droits ou l'intégration avec les bibliothèques cartographiques. La richesse de son écosystème permet de concevoir des applications aux possibilités infinies, en favorisant la production d'applications sécurisées, solides (tests automatiques) et robustes (Python).
+* **Python / Django**, l'épine dorsale de l'application qui prend en charge les principales fonctionnalités comme le module de configuration, l'exploitation de la base de données, la gestion des utilisateurs et de leurs droits ou l'intégration avec les bibliothèques cartographiques. La richesse de son écosystème permet de concevoir des applications aux possibilités infinies, en favorisant la production d'applications sécurisées, solides (tests automatiques) et robustes (Python).
 * **PostgreSQL / PostGIS** pour la base de données. La totalité des données de l'application est stockée dans une instance PostgreSQL avec l'extension spatiale PostGIS :
 
   * attributs, comptes utilisateurs…,

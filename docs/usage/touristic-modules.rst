@@ -401,7 +401,7 @@ Ordre des catégories
 
 Dans le portail Geotrek-rando, les différents types de contenus sont éclatés en catégories.
 
-Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques des itinéraires et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis l'interface de configuration Django de Geotrek-admin.
+Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques des itinéraires et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis le module de configuration de Geotrek-admin.
 
 Zone tampon pour contenus à proximité
 ----------------------------------------

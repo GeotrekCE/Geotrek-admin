@@ -1158,7 +1158,7 @@ Use timers to receive alerts for your reports
 
 **To enable the alerts :**
 
-- Go to the Admin Site and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
+- Go to the Configuration module and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
 
 - Select the "Uses timers" checkbox on reports that you wish to receive alerts for (in report update form)
 

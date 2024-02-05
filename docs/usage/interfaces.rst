@@ -79,13 +79,13 @@ Vue édition
 Paramètres de configuration
 ============================
 
-Toutes les listes de choix (thématiques, pratiques, parcours…) sont administrables depuis l'outil d'administration Django, selon les droits dont dispose l’utilisateur connecté.
+Toutes les listes de choix (thématiques, pratiques, parcours…) sont administrables depuis le module de configuration, selon les droits dont dispose l’utilisateur connecté.
 
 .. figure:: ../images/admin/interface-django.png
-   :alt: Interface complète de configuration Django
+   :alt: Interface complète du module de configuration
    :align: center
 
-   Interface complète de configuration Django
+   Interface complète du module de configuration
 
 .. figure:: ../images/user-manual/django-pratique.png
    :alt: Exemple d’édition des pratiques et de leur pictogramme
