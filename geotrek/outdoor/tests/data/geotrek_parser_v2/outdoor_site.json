@@ -536,7 +536,24 @@
                 "en": "Test ambiance en",
                 "fr": "Test ambiance fr"
             },
-            "attachments": [],
+            "attachments": [
+                {
+                    "backend": "",
+                    "type": "image",
+                    "filetype": {
+                        "id": 1,
+                        "structure": null,
+                        "type": "Photographie"
+                    },
+                    "author": "",
+                    "license": null,
+                    "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG.400x0_q85.jpg",
+                    "legend": "Arrien-en-Bethmale, vue du village",
+                    "title": "",
+                    "url": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG",
+                    "uuid": "c648fff1-2416-48fa-a67d-5fbcf466f3a1"
+                }
+            ],
             "cities": [],
             "children": [
                 2,

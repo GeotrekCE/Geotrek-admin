@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.common.models import FileType
+from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.outdoor.models import Practice, Rating, RatingScale, Sector, Site
 from geotrek.outdoor.parsers import GeotrekSiteParser
@@ -114,7 +114,9 @@ class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         # self.assertEqual(site.weblink.count(), 1)
         # self.assertEqual(site.excluded_pois.count(), 1)
         self.assertEqual(site.eid, "57a8fb52-213d-4dce-8224-bc997f892aae")
-        # self.assertEqual(Attachment.objects.filter(object_id=site.pk).count(), 3)
-        # self.assertEqual(Attachment.objects.get(object_id=site.pk, license__isnull=False).license.label, "License")
+        self.assertEqual(Attachment.objects.filter(object_id=site.pk).count(), 1)
+        attachment = Attachment.objects.filter(object_id=site.pk).first()
+        self.assertIsNotNone(attachment.attachment_file.url)
+        self.assertEqual(attachment.legend, 'Arrien-en-Bethmale, vue du village')
         child_site = Site.objects.get(name_fr="Noeud 1", name_en="Node")
         self.assertEqual(child_site.parent, site)

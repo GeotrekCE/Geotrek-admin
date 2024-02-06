@@ -1,5 +1,6 @@
 from django.conf import settings
-from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin, GeotrekParser, GlobalImportError, Parser)
+
+from geotrek.common.parsers import GeotrekParser
 from geotrek.outdoor.models import Practice, Rating, RatingScale, Sector, Site
 
 
