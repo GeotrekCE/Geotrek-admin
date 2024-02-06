@@ -52,20 +52,29 @@ class GeotrekSiteParser(GeotrekParser):
         return None
 
     def init_outdoor_category(self, category, model, join_field=None, extra_fields={}):
+        # Get categories as JSON response
         response = self.request_or_retry(f"{self.url}/api/v2/outdoor_{category}")
         results = response.json().get('results', [])
+
+        # Init mapping variable for this category if it does not exist
         if category not in self.field_options.keys():
             self.field_options[category] = {}
         if "mapping" not in self.field_options[category].keys():
             self.field_options[category]["mapping"] = {}
+
+        # Iter over category JSON results
         for result in results:
+
+            # Extract label in default language from JSON
             label = result["name"]
             if isinstance(label, dict):
                 if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
                     replaced_label = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], f'outdoor_{category}')
             else:
                 if label:
-                   replaced_label = self.replace_mapping(label, f'outdoor_{category}')
+                    replaced_label = self.replace_mapping(label, f'outdoor_{category}')
+
+            # Extract other category attributes in default language from JSON
             fields = {}
             for field in extra_fields:
                 if isinstance(result[field], dict):
@@ -73,13 +82,19 @@ class GeotrekSiteParser(GeotrekParser):
                         fields[field] = result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
                 else:
                     fields[field] = result[field]
+
+            # Extract field that will become a ForeignKey from JSON response, using mapping
             if join_field:
                 mapping_key = self.replace_fields.get(join_field, join_field)
                 mapped_value = self.get_id_from_mapping(self.field_options[mapping_key]["mapping"], result[join_field])
                 if not mapped_value:
-                    continue # Ignore some results if related category was not retrieved
+                    continue  # Ignore some results if related category was not retrieved
                 fields[f"{join_field}_id"] = mapped_value
+
+            # Create or update object given all the fields that we extracted above
             category_obj, _ = model.objects.update_or_create(**{'name': replaced_label}, defaults=fields)
+
+            # Remember this object in mapping for next call
             self.field_options[category]["mapping"][category_obj.pk] = result['id']
 
     def __init__(self, *args, **kwargs):
