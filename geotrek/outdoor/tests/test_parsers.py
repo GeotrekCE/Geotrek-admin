@@ -19,7 +19,7 @@ from geotrek.common.utils import testdata
 from geotrek.common.models import Organism, Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.core.tests.factories import PathFactory
-from geotrek.outdoor.models import Site
+from geotrek.outdoor.models import Practice, Rating, RatingScale, Sector, Site
 from geotrek.outdoor.parsers import GeotrekSiteParser
 from geotrek.trekking.tests.factories import RouteFactory
 from geotrek.trekking.models import POI, POIType, Service, Trek, DifficultyLevel, Route
@@ -29,15 +29,12 @@ from geotrek.trekking.parsers import (
 )
 
 
-
 class TestGeotrekSiteParser(GeotrekSiteParser):
     url = "https://test.fr"
     provider = 'geotrek1'
     field_options = {
         'type': {'create': True, },
-        'ratings': {'create': True, },
         'themes': {'create': True},
-        'practice': {'create': True},
         'geom': {'required': True},
         'labels': {'create': True},
         'source': {'create': True},
@@ -72,7 +69,6 @@ class TestGeotrek2SiteParser(GeotrekSiteParser):
 #         'geom': {'required': True},
 #     }
 
-
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
@@ -85,14 +81,16 @@ class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('outdoor', 'outdoor_practice.json'),
-                                ('outdoor', 'outdoor_rating.json'),
-                                ('outdoor', 'theme.json'),
+        self.mock_json_order = [('outdoor', 'theme.json'),
                                 ('outdoor', 'outdoor_sitetype.json'),
                                 ('outdoor', 'label.json'),
                                 ('outdoor', 'source.json'),
                                 ('outdoor', 'organism.json'),
                                 ('outdoor', 'structure.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
                                 ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_site.json')]
 
@@ -104,6 +102,10 @@ class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
         call_command('import', 'geotrek.outdoor.tests.test_parsers.TestGeotrekSiteParser', verbosity=0)
         self.assertEqual(Site.objects.count(), 6)
+        self.assertEqual(Sector.objects.count(), 2)
+        self.assertEqual(RatingScale.objects.count(), 1)
+        self.assertEqual(Rating.objects.count(), 3)
+        self.assertEqual(Practice.objects.count(), 1)
         site = Site.objects.get(name_fr="Racine", name_en="Root")
         # TODO : all the ones that are commented do not work
         self.assertEqual(site.published, True)
@@ -111,10 +113,15 @@ class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(site.published_en, True)
         self.assertEqual(site.published_it, False)
         self.assertEqual(site.published_es, False)
+        self.assertEqual(str(site.practice.sector), 'Vertical')
         self.assertEqual(str(site.practice), 'Escalade')
         self.assertEqual(str(site.labels.first()), 'Label fr')
-        #self.assertEqual(str(site.ratings.all()), 'Très facile')
-        #self.assertEqual(str(site.practice.sector), 'Vertical')
+        self.assertEqual(site.ratings.count(), 3)
+        self.assertEqual(str(site.ratings.first()), 'Cotation : 3+')
+        self.assertEqual(site.ratings.first().description, 'Une description')
+        self.assertEqual(site.ratings.first().order, 302)
+        self.assertEqual(site.ratings.first().color, '#D9D9D8')
+        self.assertEqual(str(site.ratings.first().scale), 'Cotation (Escalade)')
         self.assertEqual(str(site.type), 'Ecole')
         self.assertAlmostEqual(site.geom[0][0][0][0], 970023.8976707931, places=5)
         self.assertAlmostEqual(site.geom[0][0][0][1], 6308806.903248067, places=5)
@@ -135,14 +142,16 @@ class SiteGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(site.orientation, ['NE', 'S'])
         self.assertEqual(site.ambiance, "Test ambiance fr")
         self.assertEqual(site.ambiance_en, "Test ambiance en")
-        #self.assertEqual(site.parent) # TODO use other to test this
         self.assertEqual(site.wind, ['N', 'E'])
+        self.assertEqual(str(site.structure), 'Test structure')
         # self.assertEqual(site.information_desks.count(), 1)
         # self.assertEqual(site.weblink.count(), 1)
         # self.assertEqual(site.excluded_pois.count(), 1)
         self.assertEqual(site.eid, "57a8fb52-213d-4dce-8224-bc997f892aae")
         # self.assertEqual(Attachment.objects.filter(object_id=site.pk).count(), 3)
         # self.assertEqual(Attachment.objects.get(object_id=site.pk, license__isnull=False).license.label, "License")
+        child_site = Site.objects.get(name_fr="Noeud 1", name_en="Node")
+        self.assertEqual(child_site.parent, site)
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
