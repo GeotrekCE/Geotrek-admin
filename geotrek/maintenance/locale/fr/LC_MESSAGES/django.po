@@ -166,6 +166,9 @@ msgstr "Coût héliportage"
 msgid "Subcontract cost"
 msgstr "Coût sous-traitance"
 
+msgid "Contractors"
+msgstr "Prestataires"
+
 msgid "3D Length"
 msgstr "Longueur 3D"
 
@@ -271,9 +274,6 @@ msgstr "Commentaires"
 msgid "Domain"
 msgstr "Domaine"
 
-msgid "Contractors"
-msgstr "Prestataires"
-
 msgid "Project owner"
 msgstr "Maître d'ouvrage"
 
@@ -285,6 +285,9 @@ msgstr "Financeurs"
 
 msgid "Projects"
 msgstr "Chantiers"
+
+msgid "Intervention contractors"
+msgstr "Prestataires des interventions"
 
 msgid "Period"
 msgstr "Période"

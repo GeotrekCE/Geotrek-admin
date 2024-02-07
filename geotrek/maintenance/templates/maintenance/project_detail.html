@@ -60,6 +60,12 @@
             </td>
         </tr>
         <tr>
+            <th>{{ project|verbose:"intervention_contractors" }}</th>
+            <td>
+                {% valuelist project.intervention_contractors %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "Fundings" %}</th>
             <td>
                 {% for f in project.funding_set.all %}

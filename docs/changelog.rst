@@ -27,6 +27,7 @@ CHANGELOG
 - Add missing translations for fields on ``Courses`` and ``Sites`` in APIv2 (#3569)
 - Allow Apidae Trek parser to handle traces not in utf-8
 - Add workforce cost into intervention model (#3824)
+- Add contractor to intervention model (#3820)
 
 2.101.5 (2024-01-11)
 --------------------

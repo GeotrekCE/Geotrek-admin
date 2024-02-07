@@ -17,7 +17,7 @@ from geotrek.maintenance.tests.factories import (
     FundingFactory, InfrastructureInterventionFactory,
     InfrastructurePointInterventionFactory, InterventionDisorderFactory,
     InterventionFactory, InterventionJobFactory, ManDayFactory, ProjectFactory,
-    SignageInterventionFactory)
+    SignageInterventionFactory, ContractorFactory)
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
@@ -362,3 +362,11 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
         self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
+
+    def test_intervention_contractors(self):
+        project = ProjectFactory.create()
+        contractor1 = ContractorFactory.create(contractor="contractor1")
+        contractor2 = ContractorFactory.create(contractor="contractor2")
+        intervention = InterventionFactory.create(project=project)
+        intervention.contractors.set([contractor1, contractor2])
+        self.assertEqual(project.intervention_contractors, ["contractor1", "contractor2"])

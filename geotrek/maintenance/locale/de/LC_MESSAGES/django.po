@@ -167,6 +167,9 @@ msgstr ""
 msgid "Workforce cost"
 msgstr ""
 
+msgid "Contractors"
+msgstr ""
+
 msgid "3D Length"
 msgstr ""
 
@@ -272,9 +275,6 @@ msgstr ""
 msgid "Domain"
 msgstr ""
 
-msgid "Contractors"
-msgstr ""
-
 msgid "Project owner"
 msgstr ""
 
@@ -285,6 +285,9 @@ msgid "Founders"
 msgstr ""
 
 msgid "Projects"
+msgstr ""
+
+msgid "Intervention contractors"
 msgstr ""
 
 msgid "Period"

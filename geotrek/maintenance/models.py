@@ -23,7 +23,7 @@ from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from mapentity.models import DuplicateMixin
-
+from django.contrib.postgres.aggregates import ArrayAgg
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -51,6 +51,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
     contractor_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Contractor cost"))
     workforce_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Workforce cost"))
+    contractors = models.ManyToManyField('Contractor', related_name="interventions", blank=True,
+                                         verbose_name=_("Contractors"))
 
     # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
@@ -551,8 +553,13 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
         return [str(i) for i in self.interventions.existing()]
 
     @property
-    def contractors_display(self):
-        return [str(c) for c in self.contractors.all()]
+    def intervention_contractors(self):
+        return self.interventions.aggregate(
+            intervention_contractors=ArrayAgg('contractors__contractor', distinct=True))['intervention_contractors']
+
+    @classproperty
+    def intervention_contractors_verbose_name(cls):
+        return _("Intervention contractors")
 
     @property
     def founders_display(self):
