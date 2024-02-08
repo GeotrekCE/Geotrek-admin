@@ -1,36 +1,61 @@
 {
-    "count": 5,
+    "count": 7,
     "next": null,
     "previous": null,
     "results": [
         {
-            "id": 5,
+            "id": 1,
             "accessibility": {
-                "en": "",
-                "fr": ""
+                "en": "Test access en",
+                "fr": "Test access fr"
             },
             "advice": {
-                "en": "",
-                "fr": ""
+                "en": "Test reco en",
+                "fr": "Test reco fr"
             },
-            "attachments": [],
-            "children": [],
-            "children_uuids": [],
+            "attachments": [
+                {
+                    "backend": "",
+                    "type": "image",
+                    "filetype": {
+                        "id": 1,
+                        "structure": null,
+                        "type": "Photographie"
+                    },
+                    "author": "",
+                    "license": null,
+                    "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG.400x0_q85.jpg",
+                    "legend": "Arrien-en-Bethmale, vue du village",
+                    "title": "",
+                    "url": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG",
+                    "uuid": "c648fff1-2416-48fa-a67d-5fbcf466f3a1"
+                }
+            ],
+            "children": [
+                5,
+                6,
+                7
+            ],
+            "children_uuids": [
+                "43ce926d-9236-4a62-ac7f-799d1c024b5a",
+                "eadc73c7-79d9-42bb-b56b-3d5cdd451faf",
+                "d10e70e9-82f9-44c1-8564-eb2692dcd18a"
+            ],
             "cities": [],
             "description": {
-                "en": "",
-                "fr": ""
+                "en": "Test descr en",
+                "fr": "Test descr fr"
             },
             "districts": [],
-            "duration": null,
+            "duration": 100.0,
             "eid": null,
             "equipment": {
-                "en": "",
-                "fr": ""
+                "en": "Test équipement en",
+                "fr": "Test équipement fr"
             },
             "gear": {
-                "en": "",
-                "fr": ""
+                "en": "Test matériel en",
+                "fr": "Test matériel fr"
             },
             "geometry": {
                 "type": "GeometryCollection",
@@ -38,31 +63,25 @@
                     {
                         "type": "Point",
                         "coordinates": [
-                            6.8225098,
-                            44.9492493
+                            6.6888428,
+                            44.1634893
                         ]
                     }
                 ]
             },
-            "height": null,
+            "height": 100,
             "length": 0.0,
             "max_elevation": 0,
             "min_elevation": 0,
             "name": {
-                "en": "Unrelated",
-                "fr": ""
+                "en": "Leaf 1",
+                "fr": "Feuille 1"
             },
-            "parents": [
-                4,
-                1
-            ],
-            "parents_uuids": [
-                "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc",
-                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
-            ],
+            "parents": [],
+            "parents_uuids": [],
             "pdf": {
-                "en": "http://geotrek.local:8000/api/en/courses/5/unrelated.pdf",
-                "fr": "http://geotrek.local:8000/api/fr/courses/5/unrelated.pdf"
+                "en": "http://geotrek.local:8000/api/en/courses/1/feuille-1.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/1/feuille-1.pdf"
             },
             "points_reference": null,
             "published": {
@@ -70,21 +89,23 @@
                 "fr": true
             },
             "provider": "",
-            "ratings": [],
+            "ratings": [
+                35
+            ],
             "ratings_description": {
-                "en": "",
-                "fr": ""
+                "en": "Test descr en",
+                "fr": "Test descr fr"
             },
             "sites": [
-                3
+                5
             ],
             "sites_uuids": [
-                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
             ],
             "structure": 1,
-            "type": null,
-            "url": "http://geotrek.local:8000/api/v2/outdoor_course/5/",
-            "uuid": "43ce926d-9236-4a62-ac7f-799d1c024b5a"
+            "type": 2,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/1/",
+            "uuid": "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
         },
         {
             "id": 4,
@@ -166,87 +187,6 @@
             "type": null,
             "url": "http://geotrek.local:8000/api/v2/outdoor_course/4/",
             "uuid": "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc"
-        },
-        {
-            "id": 1,
-            "accessibility": {
-                "en": "Test access en",
-                "fr": "Test access fr"
-            },
-            "advice": {
-                "en": "Test reco en",
-                "fr": "Test reco fr"
-            },
-            "attachments": [],
-            "children": [
-                5
-            ],
-            "children_uuids": [
-                "43ce926d-9236-4a62-ac7f-799d1c024b5a"
-            ],
-            "cities": [],
-            "description": {
-                "en": "Test descr en",
-                "fr": "Test descr fr"
-            },
-            "districts": [],
-            "duration": 100.0,
-            "eid": null,
-            "equipment": {
-                "en": "Test &eacute;quipement en",
-                "fr": "Test &eacute;quipement fr"
-            },
-            "gear": {
-                "en": "Test mat&eacute;riel en",
-                "fr": "Test mat&eacute;riel fr"
-            },
-            "geometry": {
-                "type": "GeometryCollection",
-                "geometries": [
-                    {
-                        "type": "Point",
-                        "coordinates": [
-                            6.6888428,
-                            44.1634893
-                        ]
-                    }
-                ]
-            },
-            "height": 100,
-            "length": 0.0,
-            "max_elevation": 0,
-            "min_elevation": 0,
-            "name": {
-                "en": "Leaf 1",
-                "fr": "Leaf 1"
-            },
-            "parents": [],
-            "parents_uuids": [],
-            "pdf": {
-                "en": "http://geotrek.local:8000/api/en/courses/1/leaf-1.pdf",
-                "fr": "http://geotrek.local:8000/api/fr/courses/1/leaf-1.pdf"
-            },
-            "points_reference": null,
-            "published": {
-                "en": true,
-                "fr": true
-            },
-            "provider": "",
-            "ratings": [],
-            "ratings_description": {
-                "en": "Test descr en",
-                "fr": "Test descr fr"
-            },
-            "sites": [
-                5
-            ],
-            "sites_uuids": [
-                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
-            ],
-            "structure": 1,
-            "type": 2,
-            "url": "http://geotrek.local:8000/api/v2/outdoor_course/1/",
-            "uuid": "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
         },
         {
             "id": 2,
@@ -401,6 +341,291 @@
             "type": null,
             "url": "http://geotrek.local:8000/api/v2/outdoor_course/3/",
             "uuid": "1d6f5bd3-3559-4484-bd78-f8a091ab81a2"
+        },
+        {
+            "id": 5,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Point",
+                        "coordinates": [
+                            6.8225098,
+                            44.9492493
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": 0.0,
+            "max_elevation": 0,
+            "min_elevation": 0,
+            "name": {
+                "en": "Step 1",
+                "fr": "Step 1"
+            },
+            "parents": [
+                4,
+                1
+            ],
+            "parents_uuids": [
+                "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc",
+                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
+            ],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/5/step-1-fr.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/5/step-1-fr.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                3
+            ],
+            "sites_uuids": [
+                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/5/",
+            "uuid": "43ce926d-9236-4a62-ac7f-799d1c024b5a"
+        },
+        {
+            "id": 6,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.843567,
+                                    43.9671214
+                                ],
+                                [
+                                    6.843567,
+                                    44.0698271
+                                ],
+                                [
+                                    7.1017457,
+                                    44.0698271
+                                ],
+                                [
+                                    7.1017457,
+                                    43.9671214
+                                ],
+                                [
+                                    6.843567,
+                                    43.9671214
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": null,
+            "max_elevation": null,
+            "min_elevation": null,
+            "name": {
+                "en": "Step 2",
+                "fr": "Step 2"
+            },
+            "parents": [
+                1
+            ],
+            "parents_uuids": [
+                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
+            ],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/6/step-2.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/6/step-2.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                3
+            ],
+            "sites_uuids": [
+                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/6/",
+            "uuid": "eadc73c7-79d9-42bb-b56b-3d5cdd451faf"
+        },
+        {
+            "id": 7,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "children": [],
+            "children_uuids": [],
+            "cities": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "duration": null,
+            "eid": null,
+            "equipment": {
+                "en": "",
+                "fr": ""
+            },
+            "gear": {
+                "en": "",
+                "fr": ""
+            },
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.8625641,
+                                    43.9792282
+                                ],
+                                [
+                                    6.8625641,
+                                    44.0621797
+                                ],
+                                [
+                                    6.9394684,
+                                    44.0621797
+                                ],
+                                [
+                                    6.9394684,
+                                    43.9792282
+                                ],
+                                [
+                                    6.8625641,
+                                    43.9792282
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "height": null,
+            "length": null,
+            "max_elevation": null,
+            "min_elevation": null,
+            "name": {
+                "en": "Step 3",
+                "fr": "Step 3"
+            },
+            "parents": [
+                1
+            ],
+            "parents_uuids": [
+                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a"
+            ],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/courses/7/step-3.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/courses/7/step-3.pdf"
+            },
+            "points_reference": null,
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "provider": "",
+            "ratings": [],
+            "ratings_description": {
+                "en": "",
+                "fr": ""
+            },
+            "sites": [
+                5
+            ],
+            "sites_uuids": [
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+            ],
+            "structure": 1,
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_course/7/",
+            "uuid": "d10e70e9-82f9-44c1-8564-eb2692dcd18a"
         }
     ]
 }

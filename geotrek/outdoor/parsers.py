@@ -1,10 +1,84 @@
 from django.conf import settings
 
 from geotrek.common.parsers import GeotrekParser
-from geotrek.outdoor.models import Practice, Rating, RatingScale, Sector, Site
+from geotrek.outdoor.models import Course, CourseType, OrderedCourseChild, Practice, Rating, RatingScale, Sector, Site, SiteType
 
 
-class GeotrekSiteParser(GeotrekParser):
+class GeotrekOutdoorParser(GeotrekParser):
+
+    def init_outdoor_category(self, category, model, join_field=None, extra_fields={}):
+        # Get categories as JSON response
+        response = self.request_or_retry(f"{self.url}/api/v2/{self.init_url_categories[category]}")
+        results = response.json().get('results', [])
+
+        # Init mapping variable for this category if it does not exist
+        if category not in self.field_options.keys():
+            self.field_options[category] = {}
+        if "mapping" not in self.field_options[category].keys():
+            self.field_options[category]["mapping"] = {}
+
+        # Iter over category JSON results
+        for result in results:
+            # Extract label in default language from JSON
+            label = result["name"]
+            if isinstance(label, dict):
+                if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                    replaced_label = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], self.init_url_categories[category])
+            else:
+                replaced_label = self.replace_mapping(label, self.init_url_categories[category])
+
+            # Extract other category attributes in default language from JSON
+            fields = {}
+            for field in extra_fields:
+                if isinstance(result[field], dict):
+                    if result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                        fields[field] = result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                else:
+                    fields[field] = result[field]
+
+            # Extract field that will become a ForeignKey from JSON response, using mapping
+            if join_field:
+                mapped_value = self.get_id_from_mapping(self.field_options[join_field]["mapping"], result[join_field])
+                if not mapped_value:
+                    continue  # Ignore some results if related category was not retrieved
+                fields[f"{join_field}_id"] = mapped_value
+
+            # Create or update object given all the fields that we extracted above
+            category_obj, _ = model.objects.update_or_create(**{'name': replaced_label}, defaults=fields)
+
+            # Remember this object in mapping for next call
+            self.field_options[category]["mapping"][category_obj.pk] = result['id']
+
+    def get_id_from_mapping(self, mapping, value):
+        for dest_id, source_id in mapping.items():
+            if source_id == value:
+                return dest_id
+        return None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.init_outdoor_category('sector', Sector)
+        self.init_outdoor_category('practice', Practice, join_field='sector')
+        self.init_outdoor_category('scale', RatingScale, join_field='practice')
+        self.init_outdoor_category('ratings', Rating, join_field='scale', extra_fields=['description', 'order', 'color'])
+
+    def filter_practice(self, src, val):
+        if val:
+            practice_id = self.get_id_from_mapping(self.field_options["practice"]["mapping"], val)
+            if practice_id:
+                return Practice.objects.get(pk=practice_id)
+        return None
+
+    def filter_ratings(self, src, val):
+        ratings = []
+        for subval in val:
+            rating_id = self.get_id_from_mapping(self.field_options["ratings"]["mapping"], subval)
+            if rating_id:
+                ratings.append(Rating.objects.get(pk=rating_id).pk)
+        return ratings
+
+
+class GeotrekSiteParser(GeotrekOutdoorParser):
     """Geotrek parser for Outoor Site"""
     fill_empty_translated_fields = True
     url = None
@@ -12,11 +86,16 @@ class GeotrekSiteParser(GeotrekParser):
     replace_fields = {
         "eid": "uuid",
         "geom": "geometry",
-        "scale": "ratingscale"
+    }
+    init_url_categories = {
+        "sector": "outdoor_sector",
+        "practice": "outdoor_practice",
+        "scale": "outdoor_ratingscale",
+        "ratings": "outdoor_rating",
+        "type": "outdoor_sitetype",
     }
     url_categories = {
         "themes": "theme",
-        "type": "outdoor_sitetype",
         'labels': 'label',
         'source': 'source',
         'managers': 'organism',
@@ -44,82 +123,19 @@ class GeotrekSiteParser(GeotrekParser):
         'managers': 'organism',
         'structure': 'name',
     }
-    parents = {}
-
-    def get_id_from_mapping(self, mapping, value):
-        for dest_id, source_id in mapping.items():
-            if source_id == value:
-                return dest_id
-        return None
-
-    def init_outdoor_category(self, category, model, join_field=None, extra_fields={}):
-        # Get categories as JSON response
-        response = self.request_or_retry(f"{self.url}/api/v2/outdoor_{category}")
-        results = response.json().get('results', [])
-
-        # Init mapping variable for this category if it does not exist
-        if category not in self.field_options.keys():
-            self.field_options[category] = {}
-        if "mapping" not in self.field_options[category].keys():
-            self.field_options[category]["mapping"] = {}
-
-        # Iter over category JSON results
-        for result in results:
-
-            # Extract label in default language from JSON
-            label = result["name"]
-            if isinstance(label, dict):
-                if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                    replaced_label = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], f'outdoor_{category}')
-            else:
-                if label:
-                    replaced_label = self.replace_mapping(label, f'outdoor_{category}')
-
-            # Extract other category attributes in default language from JSON
-            fields = {}
-            for field in extra_fields:
-                if isinstance(result[field], dict):
-                    if result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                        fields[field] = result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
-                else:
-                    fields[field] = result[field]
-
-            # Extract field that will become a ForeignKey from JSON response, using mapping
-            if join_field:
-                mapping_key = self.replace_fields.get(join_field, join_field)
-                mapped_value = self.get_id_from_mapping(self.field_options[mapping_key]["mapping"], result[join_field])
-                if not mapped_value:
-                    continue  # Ignore some results if related category was not retrieved
-                fields[f"{join_field}_id"] = mapped_value
-
-            # Create or update object given all the fields that we extracted above
-            category_obj, _ = model.objects.update_or_create(**{'name': replaced_label}, defaults=fields)
-
-            # Remember this object in mapping for next call
-            self.field_options[category]["mapping"][category_obj.pk] = result['id']
 
     def __init__(self, *args, **kwargs):
+        self.parents = {}
         super().__init__(*args, **kwargs)
-        self.init_outdoor_category('sector', Sector)
-        self.init_outdoor_category('practice', Practice, join_field='sector')
-        self.init_outdoor_category('ratingscale', RatingScale, join_field='practice')
-        self.init_outdoor_category('rating', Rating, join_field='scale', extra_fields=['description', 'order', 'color'])
+        self.init_outdoor_category('type', SiteType, join_field='practice')
         self.next_url = f"{self.url}/api/v2/outdoor_site"
 
-    def filter_practice(self, src, val):
+    def filter_type(self, src, val):
         if val:
-            practice_id = self.get_id_from_mapping(self.field_options["practice"]["mapping"], val)
-            if practice_id:
-                return Practice.objects.get(pk=practice_id)
+            type_id = self.get_id_from_mapping(self.field_options["type"]["mapping"], val)
+            if type_id:
+                return SiteType.objects.get(pk=type_id)
         return None
-
-    def filter_ratings(self, src, val):
-        ratings = []
-        for subval in val:
-            rating_id = self.get_id_from_mapping(self.field_options["rating"]["mapping"], subval)
-            if rating_id:
-                ratings.append(Rating.objects.get(pk=rating_id).pk)
-        return ratings
 
     def parse_row(self, row):
         super().parse_row(row)
@@ -140,3 +156,98 @@ class GeotrekSiteParser(GeotrekParser):
                 continue
             child_site.parent = parent_site
             child_site.save()
+
+
+class GeotrekCourseParser(GeotrekOutdoorParser):
+    """Geotrek parser for Outoor Course"""
+    fill_empty_translated_fields = True
+    url = None
+    model = Course
+    replace_fields = {
+        "eid": "uuid",
+        "geom": "geometry"
+    }
+    init_url_categories = {
+        "sector": "outdoor_sector",
+        "practice": "outdoor_practice",
+        "scale": "outdoor_ratingscale",
+        "ratings": "outdoor_rating",
+        "type": "outdoor_sitetype",
+    }
+    url_categories = {
+        "themes": "theme",
+        'labels': 'label',
+        'source': 'source',
+        'managers': 'organism',
+        'structure': 'structure',
+    }
+    categories_keys_api_v2 = {
+        "themes": "label",
+        "type": "name",
+        'labels': 'name',
+        'source': 'name',
+        'managers': 'name',
+        'structure': 'name',
+    }
+    natural_keys = {
+        "themes": "label",
+        "type": "name",
+        'labels': 'name',
+        'source': 'name',
+        'managers': 'organism',
+        'structure': 'name',
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.parents_sites = {}
+        self.children_courses = {}
+        super().__init__(*args, **kwargs)
+        self.init_outdoor_category('type', CourseType, join_field='practice')
+        self.next_url = f"{self.url}/api/v2/outdoor_course"
+
+    def filter_type(self, src, val):
+        if val:
+            type_id = self.get_id_from_mapping(self.field_options["type"]["mapping"], val)
+            if type_id:
+                return CourseType.objects.get(pk=type_id)
+        return None
+
+    def parse_row(self, row):
+        super().parse_row(row)
+        self.children_courses[row['uuid']] = row['children_uuids']
+        self.parents_sites[row['uuid']] = row['sites_uuids']
+
+    def end(self):
+        """Add children after all Sites and Courses imported are created in database."""
+        for child, parents in self.parents_sites.items():
+            try:
+                child_course = Course.objects.get(eid=child)
+            except Course.DoesNotExist:
+                self.add_warning(f"Trying to retrieve missing child Course (UUID: {child}) for parent Sites (UUIDs: {parents})")
+                continue
+            parents_ids = []
+            for parent in parents:
+                try:
+                    parent_site = Site.objects.get(eid=parent)
+                except Site.DoesNotExist:
+                    self.add_warning(f"Trying to retrieve missing parent Site (UUID: {parent}) for child Course (UUID: {child})")
+                    continue
+                parents_ids.append(parent_site.pk)
+            child_course.parent_sites.set(parents_ids)
+
+        """Add children after all Courses imported are created in database."""
+        for parent, children in self.children_courses.items():
+            try:
+                parent_course = Course.objects.get(eid=parent)
+            except Course.DoesNotExist:
+                self.add_warning(f"Trying to retrieve missing parent Course (UUID: {child})")
+                continue
+            for i, child in enumerate(children):
+                try:
+                    child_course = Course.objects.get(eid=child)
+                except Course.DoesNotExist:
+                    self.add_warning(f"Trying to retrieve missing children Course (UUID: {child}) for parent Course (UUID: {parent})")
+                    continue
+                OrderedCourseChild.objects.update_or_create(parent=parent_course,
+                                                            child=child_course,
+                                                            defaults={'order': i})

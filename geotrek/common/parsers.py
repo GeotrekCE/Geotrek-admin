@@ -1168,6 +1168,7 @@ class GeotrekAggregatorParser:
         "Signage": ("geotrek.signage.parsers", "GeotrekSignageParser"),
         "Infrastructure": ("geotrek.infrastructure.parsers", "GeotrekInfrastructureParser"),
         "Site": ("geotrek.outdoor.parsers", "GeotrekOutdoorSiteParser"),
+        "Course": ("geotrek.outdoor.parsers", "GeotrekOutdoorCourseParser"),
     }
 
     invalid_model_topology = ['Trek', 'POI', 'Service', 'Signage', 'Infrastructure']
