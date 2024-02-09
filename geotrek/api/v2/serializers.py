@@ -1,6 +1,6 @@
-from bs4 import BeautifulSoup
 import json
 
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import MultiLineString, Point
@@ -13,13 +13,14 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from modeltranslation.utils import build_localized_fieldname
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.v2.functions import Length3D
-from geotrek.api.v2.mixins import PDFSerializerMixin
+from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
@@ -1138,20 +1139,52 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Practice
             fields = ('id', 'name')
 
-    class SiteSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class SiteSerializer(PDFSerializerMixin, DynamicFieldsMixin, PublishedRelatedObjectsSerializerMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        accessibility = serializers.SerializerMethodField()
+        ambiance = serializers.SerializerMethodField()
+        advice = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+        description_teaser = serializers.SerializerMethodField()
+        published = serializers.SerializerMethodField()
+        period = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         attachments = AttachmentSerializer(many=True)
         sector = serializers.SerializerMethodField()
         courses = serializers.SerializerMethodField()
+        courses_uuids = serializers.SerializerMethodField()
         children = serializers.SerializerMethodField()
+        children_uuids = serializers.SerializerMethodField()
         parent = serializers.SerializerMethodField()
+        parent_uuid = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_accessibility(self, obj):
+            return get_translation_or_dict('accessibility', self, obj)
+
+        def get_advice(self, obj):
+            return get_translation_or_dict('advice', self, obj)
+
+        def get_ambiance(self, obj):
+            return get_translation_or_dict('ambiance', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        def get_description_teaser(self, obj):
+            return get_translation_or_dict('description_teaser', self, obj)
+
+        def get_period(self, obj):
+            return get_translation_or_dict('period', self, obj)
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
@@ -1162,45 +1195,26 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         def get_labels(self, obj):
             return [label.pk for label in obj.published_labels]
 
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
+
         def get_courses(self, obj):
-            courses = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            for course in obj.children_courses.all():
-                if language:
-                    if getattr(course, f"published_{language}"):
-                        courses.append(course.pk)
-                else:
-                    if course.published:
-                        courses.append(course.pk)
-            return courses
+            return self.get_values_on_published_related_objects(obj.children_courses.all(), 'pk')
+
+        def get_courses_uuids(self, obj):
+            return self.get_values_on_published_related_objects(obj.children_courses.all(), 'uuid')
 
         def get_parent(self, obj):
-            parent = None
-            request = self.context['request']
-            language = request.GET.get('language')
-            if obj.parent:
-                if language:
-                    if getattr(obj.parent, f"published_{language}"):
-                        parent = obj.parent.pk
-                else:
-                    if obj.parent.published:
-                        parent = obj.parent.pk
-            return parent
+            return self.get_value_on_published_related_object(obj.parent, 'pk')
+
+        def get_parent_uuid(self, obj):
+            return self.get_value_on_published_related_object(obj.parent, 'uuid')
 
         def get_children(self, obj):
-            children = []
-            request = self.context['request']
-            language = request.GET.get('language')
-            if language:
-                for site in obj.get_children():
-                    if getattr(site, f"published_{language}"):
-                        children.append(site.pk)
-            else:
-                for site in obj.get_children():
-                    if site.published:
-                        children.append(site.pk)
-            return children
+            return self.get_values_on_published_related_objects(obj.get_children(), 'pk')
+
+        def get_children_uuids(self, obj):
+            return self.get_values_on_published_related_objects(obj.get_children(), 'uuid')
 
         def get_sector(self, obj):
             if obj.practice and obj.practice.sector:
@@ -1210,28 +1224,44 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'description',
+                'id', 'accessibility', 'advice', 'ambiance', 'attachments', 'cities', 'children', 'children_uuids', 'description',
                 'description_teaser', 'districts', 'eid', 'geometry', 'information_desks', 'labels', 'managers',
-                'name', 'orientation', 'pdf', 'period', 'parent', 'portal', 'practice', 'provider',
-                'ratings', 'sector', 'source', 'structure', 'themes', 'view_points',
-                'type', 'url', 'uuid', 'courses', 'web_links', 'wind',
+                'name', 'orientation', 'pdf', 'period', 'parent', 'parent_uuid', 'portal', 'practice', 'provider',
+                'ratings', 'sector', 'source', 'structure', 'themes', 'view_points', 'published',
+                'type', 'url', 'uuid', 'courses', 'courses_uuids', 'web_links', 'wind',
             )
 
-    class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
+    class CourseSerializer(PDFSerializerMixin, DynamicFieldsMixin, PublishedRelatedObjectsSerializerMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        advice = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:course-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
-        children = serializers.ReadOnlyField(source='children_id')
-        parents = serializers.ReadOnlyField(source='parents_id')
+        children = serializers.SerializerMethodField()
+        parents = serializers.SerializerMethodField()
+        parents_uuids = serializers.SerializerMethodField()
+        published = serializers.SerializerMethodField()
+        children_uuids = serializers.SerializerMethodField()
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         equipment = serializers.SerializerMethodField()
         gear = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         sites = serializers.SerializerMethodField()
+        sites_uuids = serializers.SerializerMethodField()
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
         cities = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_advice(self, obj):
+            return get_translation_or_dict('advice', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)
@@ -1245,25 +1275,50 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         def get_equipment(self, obj):
             return get_translation_or_dict('equipment', self, obj)
 
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
+
         def get_gear(self, obj):
             return get_translation_or_dict('gear', self, obj)
 
         def get_ratings_description(self, obj):
             return get_translation_or_dict('ratings_description', self, obj)
 
-        def get_sites(self, obj):
-            sites = []
+        def get_values_on_published_related_ordered_course(self, ordered_course_queryset, related_course, field):
+            """
+            Retrieve dict of values for `field` on objects from `ordered_course_queryset` only if they are published according to requested language
+            """
             request = self.context['request']
             language = request.GET.get('language')
             if language:
-                for site in obj.parent_sites.all():
-                    if getattr(site, f"published_{language}"):
-                        sites.append(site.pk)
+                published_by_lang = f"{related_course}__{build_localized_fieldname('published', language)}"
+                all_values = ordered_course_queryset.filter(**{published_by_lang: True}).values_list(f"{related_course}__{field}", flat=True)
+                return list(all_values)
             else:
-                for site in obj.parent_sites.all():
-                    if getattr(site, "published"):
-                        sites.append(site.pk)
-            return sites
+                all_values = []
+                for item in ordered_course_queryset:
+                    related_object = getattr(item, related_course)
+                    if getattr(related_object, "any_published"):
+                        all_values.append(getattr(related_object, field))
+            return all_values
+
+        def get_sites(self, obj):
+            return self.get_values_on_published_related_objects(obj.parent_sites.all(), 'pk')
+
+        def get_children(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_children.order_by('order'), 'child', 'pk')
+
+        def get_parents(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_parents.order_by('order'), 'parent', 'pk')
+
+        def get_sites_uuids(self, obj):
+            return self.get_values_on_published_related_objects(obj.parent_sites.all(), 'uuid')
+
+        def get_children_uuids(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_children.order_by('order'), 'child', 'uuid')
+
+        def get_parents_uuids(self, obj):
+            return self.get_values_on_published_related_ordered_course(obj.course_parents.order_by('order'), 'parent', 'uuid')
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
@@ -1274,10 +1329,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Course
             fields = (
-                'id', 'accessibility', 'advice', 'attachments', 'children', 'cities', 'description', 'districts', 'duration', 'eid',
-                'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation',
-                'min_elevation', 'name', 'parents', 'pdf', 'points_reference', 'provider', 'ratings', 'ratings_description',
-                'sites', 'structure', 'type', 'url', 'uuid'
+                'id', 'accessibility', 'advice', 'attachments', 'children', 'children_uuids', 'cities', 'description', 'districts', 'duration', 'eid',
+                'equipment', 'gear', 'geometry', 'height', 'length', 'max_elevation', 'min_elevation', 'name', 'parents',
+                'parents_uuids', 'pdf', 'points_reference', 'published', 'provider', 'ratings', 'ratings_description',
+                'sites', 'sites_uuids', 'structure', 'type', 'url', 'uuid'
             )
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:

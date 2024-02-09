@@ -158,10 +158,10 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website']
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
-    'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'cities', 'courses', 'description', 'description_teaser', 'districts', 'eid',
-    'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent', 'period', 'portal',
-    'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid',
-    'view_points', 'wind', 'web_links'
+    'accessibility', 'advice', 'ambiance', 'attachments', 'children', 'children_uuids', 'cities', 'courses', 'courses_uuids', 'description',
+    'description_teaser', 'districts', 'eid', 'geometry', 'id', 'information_desks', 'labels', 'managers', 'name', 'orientation', 'parent',
+    'parent_uuid', 'period', 'portal', 'practice', 'provider', 'pdf', 'ratings', 'sector', 'source', 'structure', 'themes', 'type', 'url', 'uuid',
+    'view_points', 'published', 'wind', 'web_links'
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'sector', 'pictogram'])
@@ -186,9 +186,9 @@ SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE = sorted([
 
 COURSE_PROPERTIES_JSON_STRUCTURE = sorted([
     'accessibility', 'advice', 'cities', 'description', 'districts', 'eid', 'equipment', 'geometry', 'height', 'id',
-    'length', 'name', 'ratings', 'ratings_description', 'sites', 'structure',
-    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'provider',
-    'pdf', 'points_reference', 'children', 'duration', 'gear', 'uuid'
+    'length', 'name', 'ratings', 'ratings_description', 'sites', 'sites_uuids', 'structure',
+    'type', 'url', 'attachments', 'max_elevation', 'min_elevation', 'parents', 'parents_uuids', 'provider',
+    'pdf', 'points_reference', 'published', 'children', 'children_uuids', 'duration', 'gear', 'uuid'
 ])
 
 COURSETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
@@ -4429,6 +4429,11 @@ class OutdoorSiteHierarchySerializingTestCase(BaseApiTest):
         self.assertIn(self.site_leaf_published.pk, children)
         self.assertIn(self.site_leaf_published_2.pk, children)
         self.assertNotIn(self.site_leaf_unpublished.pk, children)
+        children_uuids = response.json()['children_uuids']
+        self.assertEqual(2, len(children_uuids))
+        self.assertIn(str(self.site_leaf_published.uuid), children_uuids)
+        self.assertIn(str(self.site_leaf_published_2.uuid), children_uuids)
+        self.assertNotIn(str(self.site_leaf_unpublished.uuid), children_uuids)
 
     def test_site_parent_unpublished_serializing(self):
         response = self.get_site_detail(self.site_node_parent_unpublished.pk)
@@ -4448,8 +4453,15 @@ class OutdoorSiteHierarchySerializingTestCase(BaseApiTest):
         self.assertIn(self.site_leaf_published_fr.pk, children)
         self.assertNotIn(self.site_leaf_published_not_fr.pk, children)
         self.assertNotIn(self.site_leaf_unpublished_fr.pk, children)
+        children_uuids = site_published_fr['children_uuids']
+        self.assertEqual(1, len(children_uuids))
+        self.assertIn(str(self.site_leaf_published_fr.uuid), children_uuids)
+        self.assertNotIn(str(self.site_leaf_published_not_fr.uuid), children_uuids)
+        self.assertNotIn(str(self.site_leaf_unpublished_fr.uuid), children_uuids)
         parent = site_published_fr['parent']
+        parent_uuid = site_published_fr['parent_uuid']
         self.assertEqual(parent, self.site_root_fr.pk)
+        self.assertEqual(parent_uuid, str(self.site_root_fr.uuid))
 
 
 class OutdoorFilterByPracticesTestCase(BaseApiTest):
@@ -4509,6 +4521,11 @@ class OutdoorFilterByPortal(BaseApiTest):
         cls.course = outdoor_factory.CourseFactory()
         cls.course.parent_sites.set([cls.site.pk])
         cls.course2 = outdoor_factory.CourseFactory()
+        cls.course3 = outdoor_factory.CourseFactory()
+        cls.course4 = outdoor_factory.CourseFactory()
+        outdoor_models.OrderedCourseChild.objects.create(parent=cls.course, child=cls.course2)
+        outdoor_models.OrderedCourseChild.objects.create(parent=cls.course, child=cls.course4, order=1)
+        outdoor_models.OrderedCourseChild.objects.create(parent=cls.course3, child=cls.course)
         cls.information_desk = tourism_factory.InformationDeskFactory()
         cls.site.information_desks.set([cls.information_desk])
 
@@ -4521,6 +4538,44 @@ class OutdoorFilterByPortal(BaseApiTest):
 
         self.assertIn(self.course.pk, all_ids)
         self.assertNotIn(self.course2.pk, all_ids)
+
+    def test_course_serialized_parent_site_and_related_courses(self):
+        response = self.get_course_detail(self.course.pk)
+        self.assertEqual(response.status_code, 200)
+        parent_sites_pk = response.json()['sites']
+        parent_sites_uuid = response.json()['sites_uuids']
+        parent_courses_uuid = response.json()['parents_uuids']
+        parent_courses_pk = response.json()['parents']
+        children_courses_uuid = response.json()['children_uuids']
+        children_courses_pk = response.json()['children']
+        self.assertEqual(parent_sites_pk, [self.site.pk])
+        self.assertEqual(parent_sites_uuid, [str(self.site.uuid)])
+        self.assertEqual(parent_courses_pk, [self.course3.pk])
+        self.assertEqual(parent_courses_uuid, [str(self.course3.uuid)])
+        self.assertEqual(children_courses_pk, [self.course2.pk, self.course4.pk])
+        self.assertEqual(children_courses_uuid, [str(self.course2.uuid), str(self.course4.uuid)])
+        response = self.get_course_detail(self.course.pk, params={'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+        parent_sites_pk = response.json()['sites']
+        parent_sites_uuid = response.json()['sites_uuids']
+        parent_courses_uuid = response.json()['parents_uuids']
+        parent_courses_pk = response.json()['parents']
+        children_courses_uuid = response.json()['children_uuids']
+        children_courses_pk = response.json()['children']
+        self.assertEqual(parent_sites_pk, [self.site.pk])
+        self.assertEqual(parent_sites_uuid, [str(self.site.uuid)])
+        self.assertEqual(parent_courses_pk, [self.course3.pk])
+        self.assertEqual(parent_courses_uuid, [str(self.course3.uuid)])
+        self.assertEqual(children_courses_pk, [self.course2.pk, self.course4.pk])
+        self.assertEqual(children_courses_uuid, [str(self.course2.uuid), str(self.course4.uuid)])
+
+    def test_site_serialized_children_course(self):
+        response = self.get_site_detail(self.site.pk)
+        self.assertEqual(response.status_code, 200)
+        child_course_pk = response.json()['courses']
+        child_course_uuid = response.json()['courses_uuids']
+        self.assertEqual(child_course_pk, [self.course.pk])
+        self.assertEqual(child_course_uuid, [str(self.course.uuid)])
 
     def test_filter_courses_by_themes(self):
         response = self.get_course_list({'themes': self.theme.pk})

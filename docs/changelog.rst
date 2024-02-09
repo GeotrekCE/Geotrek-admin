@@ -5,20 +5,26 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
-**Improvements**
-
-- Allow Apidae Trek parser to handle traces not in utf-8
-
 **Documentation**
 
 - Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
+
+**New features**
+
+- Add UUIDs of parent and children ``Courses`` and ``Sites`` in APIv2 (#3569)
+
+**Improvements**
+
+- Add missing translations for fields on ``Courses`` and ``Sites`` in APIv2 (#3569)
+- Allow Apidae Trek parser to handle traces not in utf-8
+
 
 2.101.5 (2024-01-11)
 --------------------
 
 **New features**
 
--Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+- Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
 - Generalize``AccessMean`` model and add field ``access`` to ``Intervention`` (#3819)
 
 **Improvements**
