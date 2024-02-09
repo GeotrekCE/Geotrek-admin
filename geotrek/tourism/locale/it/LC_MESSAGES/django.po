@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 11:13+0000\n"
+"POT-Creation-Date: 2024-02-09 13:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -255,6 +255,12 @@ msgstr "touristic-content"
 msgid "Published touristic contents"
 msgstr "Contenuti turistici pubblicati"
 
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
 msgid "Touristic event type"
 msgstr "Tipo di evento turistico"
 
@@ -454,6 +460,3 @@ msgstr "Data"
 
 msgid "Invalid geometry value."
 msgstr "Valore geometrico non valido"
-
-#~ msgid "up to {end}"
-#~ msgstr "fino a {end}"

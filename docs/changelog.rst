@@ -5,6 +5,10 @@ CHANGELOG
 2.101.5+dev (XXXX-XX-XX)
 ------------------------
 
+**Minor changes**
+
+- Update all translation files
+
 **Bug fixes**
 
 - Signage & Blade conditions translations + admin BladeCondition entry (#3847)

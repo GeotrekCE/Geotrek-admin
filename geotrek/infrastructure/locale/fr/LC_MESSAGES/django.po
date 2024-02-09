@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-22 13:07+0000\n"
+"POT-Creation-Date: 2024-02-09 13:56+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -88,9 +88,6 @@ msgstr "Référence, code, ..."
 msgid "Specificites"
 msgstr "Spécificités"
 
-msgid "Condition"
-msgstr "Etat"
-
 msgid "External id"
 msgstr "ID externe"
 
@@ -111,6 +108,9 @@ msgstr "Niveau de dangerosité de l'aménagement pour les usagers"
 
 msgid "Accessibility"
 msgstr "Accessibilité"
+
+msgid "Condition"
+msgstr "État"
 
 msgid "Infrastructures"
 msgstr "Aménagements"

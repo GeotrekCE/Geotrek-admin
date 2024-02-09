@@ -522,10 +522,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         )
         meeting_time = serializers.ReadOnlyField(
             source='start_time',
-            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'start_time'")
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using '%(field)s'") % {"field": "start_time"}
         )
         participant_number = serializers.SerializerMethodField(
-            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'capacity'")
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using '%(field)s'") % {"field": "capacity"}
         )
 
         def get_cancellation_reason(self, obj):
@@ -1473,7 +1473,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
         blades = BladeSerializer(source='blades_set', many=True)
         condition = serializers.SerializerMethodField(
-            help_text=_("This field is deprecated and will be removed in next releases. Please start using 'conditions'")
+            help_text=_("This field is deprecated and will be removed in next releases. Please start using '%(field)s'") % {"field": "conditions"}
         )
 
         def get_condition(self, obj):

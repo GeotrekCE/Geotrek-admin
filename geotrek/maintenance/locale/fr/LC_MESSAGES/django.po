@@ -160,11 +160,8 @@ msgstr "Coût matériel"
 msgid "Heliport cost"
 msgstr "Coût héliportage"
 
-msgid "Contractor cost"
-msgstr "Coût prestataire"
-
-msgid "Workforce cost"
-msgstr "Coût main d'oeuvre"
+msgid "Subcontract cost"
+msgstr "Coût sous-traitance"
 
 msgid "3D Length"
 msgstr "Longueur 3D"

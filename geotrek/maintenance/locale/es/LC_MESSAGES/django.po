@@ -158,10 +158,7 @@ msgstr ""
 msgid "Heliport cost"
 msgstr ""
 
-msgid "Contractor cost"
-msgstr ""
-
-msgid "Workforce cost"
+msgid "Subcontract cost"
 msgstr ""
 
 msgid "3D Length"
