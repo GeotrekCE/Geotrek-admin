@@ -54,3 +54,18 @@ class FlatPageUpdate(FlatPageEditMixin, UpdateView):
 class FlatPageMeta(MetaMixin, DetailView):
     model = flatpages_models.FlatPage
     template_name = 'flatpages/flatpage_meta.html'
+
+
+class MenuItemEditMixin:
+    model = flatpages_models.MenuItem
+    form_class = FlatPageForm
+    success_url = reverse_lazy('admin:flatpages_menu_item_changelist')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class MenuItemCreate(MenuItemEditMixin, CreateView):
+    pass

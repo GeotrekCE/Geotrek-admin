@@ -12,3 +12,13 @@ class FlatPageTO(TranslationOptions):
 
 
 translator.register(flatpages_models.FlatPage, FlatPageTO)
+
+
+class MenuItemTO(TranslationOptions):
+    fields = (
+        'label',
+        'link_url',
+    )
+
+
+translator.register(flatpages_models.MenuItem, MenuItemTO)

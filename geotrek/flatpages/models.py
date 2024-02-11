@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from bs4 import BeautifulSoup
 from extended_choices import Choices
+from treebeard.mp_tree import MP_Node
 
 from mapentity.serializers import plain_text
 from geotrek.common.mixins.models import TimeStampedModelMixin, BasePublishableMixin
@@ -111,3 +112,37 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
     def is_public(self):
         return self.any_published
+
+
+class MenuItem(TimeStampedModelMixin, MP_Node):
+
+    CONTENT_TYPE_CHOICES = (
+        ("Page", "Page"),
+        ("Link", "Link"),
+    )
+
+    label = models.CharField(verbose_name=_('Label'), max_length=50)
+    content_type = models.CharField(max_length=10, null=True, choices=CONTENT_TYPE_CHOICES)
+    link_url = models.URLField(verbose_name=_('Link URL'), blank=True, default='')
+    page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True)
+    target = models.CharField(verbose_name=_('Target'), max_length=12, choices=FLATPAGES_TARGETS,
+                              default=FLATPAGES_TARGETS.ALL)
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='menu_items',
+                                    verbose_name=_("Portal"))
+
+    class Meta:
+        verbose_name = _('Menu item')
+        verbose_name_plural = _('Menu items')
+
+    def __str__(self):
+        return self.label
+
+    def get_add_url(self):
+        return reverse('admin:flatpages_menuitem_add')
+
+    def get_update_url(self):
+        return reverse('admin:flatpages_menuitem_change', args=[self.pk])
+
+    def get_delete_url(self):
+        return reverse('admin:flatpages_menuitem_delete', args=[self.pk])

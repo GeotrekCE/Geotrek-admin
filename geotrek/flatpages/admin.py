@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.conf import settings
 from django.utils.translation import gettext as _
+from treebeard.admin import TreeAdmin
+from treebeard.forms import movenodeform_factory
 
 from geotrek.flatpages import models as flatpages_models
-from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate
+from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate, MenuItemCreate
 
 
 class FlatPagesAdmin(admin.ModelAdmin):
@@ -22,5 +24,16 @@ class FlatPagesAdmin(admin.ModelAdmin):
     portals.short_description = _("Portals")
 
 
+class MenuItemAdmin(TreeAdmin):
+    list_display = ('label', )
+    form = movenodeform_factory(flatpages_models.MenuItem)
+
+    # def add_view(self, request, form_url='', extra_context=None):
+    #     return MenuItemCreate.as_view()(request)
+
+
 if settings.FLATPAGES_ENABLED:
     admin.site.register(flatpages_models.FlatPage, FlatPagesAdmin)
+    admin.site.register(flatpages_models.MenuItem, MenuItemAdmin)
+
+# élément
