@@ -49,7 +49,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     # Costs
     material_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Material cost"))
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
-    subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"))
+    contractor_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Contractor cost"))
+    workforce_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Workforce cost"))
 
     # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
@@ -222,7 +223,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         return self.total_cost_mandays + \
             (self.material_cost or 0) + \
             (self.heliport_cost or 0) + \
-            (self.subcontract_cost or 0)
+            (self.contractor_cost or 0) + \
+            (self.workforce_cost or 0)
 
     @classproperty
     def total_cost_verbose_name(cls):

@@ -101,7 +101,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
-        'material_cost', 'heliport_cost', 'subcontract_cost',
+        'material_cost', 'heliport_cost', 'contractor_cost', 'workforce_cost',
         'total_cost_mandays', 'total_cost',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS

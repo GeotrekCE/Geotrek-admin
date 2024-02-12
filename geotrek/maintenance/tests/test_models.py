@@ -294,10 +294,11 @@ class InterventionTest(TestCase):
         interv = InfrastructureInterventionFactory.create(
             material_cost=1,
             heliport_cost=2,
-            subcontract_cost=4
+            contractor_cost=4,
+            workforce_cost=6
             # implicit 1 manday x 500 €
         )
-        self.assertEqual(interv.total_cost, 507)
+        self.assertEqual(interv.total_cost, 513)
 
     def test_disorders_display(self):
         interv = InterventionFactory.create()

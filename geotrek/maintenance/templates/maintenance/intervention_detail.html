@@ -60,8 +60,12 @@
             <td>{{ intervention.heliport_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
-            <th>{{ intervention|verbose:"subcontract_cost" }}</th>
-            <td>{{ intervention.subcontract_cost|floatformat:2 }} &euro;</td>
+            <th>{{ intervention|verbose:"contractor_cost" }}</th>
+            <td>{{ intervention.contractor_cost|floatformat:2 }} &euro;</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"workforce_cost" }}</th>
+            <td>{{ intervention.workforce_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
             <th>{% trans "Mandays cost" %}</th>
