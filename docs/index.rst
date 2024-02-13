@@ -5,21 +5,21 @@ Welcome to Geotrek's documentation!
     :caption: 💡 About
     :maxdepth: 2
 
-    about/geotrek.rst
+    about/geotrek
 
 .. toctree::
     :caption: 🚀 User manual
     :maxdepth: 2
 
-    usage/overview.rst
-    usage/interfaces.rst
-    usage/management-modules.rst
-    usage/touristic-modules.rst 
-    usage/editing-objects.rst
-    usage/configuration-ttw.rst
-    usage/apis.rst
-    usage/static-pages.rst
-    usage/tutorials.rst
+    usage/overview
+    usage/interfaces
+    usage/management-modules/index
+    usage/promotion-modules/index
+    usage/editing-objects
+    usage/configuration-ttw
+    usage/apis
+    usage/static-pages
+    usage/tutorials
 
 .. toctree::
     :caption: 🔧 Installation & configuration

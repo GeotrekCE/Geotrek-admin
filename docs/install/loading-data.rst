@@ -4,10 +4,6 @@
 Loading data
 ============
 
-.. contents::
-   :local:
-   :depth: 2
-
 Prerequisites for your data
 ---------------------------
 

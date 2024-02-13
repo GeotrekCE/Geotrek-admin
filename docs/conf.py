@@ -1,9 +1,7 @@
-import sphinx_rtd_theme # noqa
 import datetime
 
 extensions = [
     'sphinx.ext.todo',
-    'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -32,12 +30,14 @@ exclude_patterns = ['_build']
 
 pygments_style = 'sphinx'
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 
 html_logo = "_static/logo.svg"
 html_theme_options = {
-    "logo_only": True,
-    'style_external_links': True,
+    "repository_url": "https://github.com/GeotrekCE/Geotrek-admin/",
+    "use_repository_button": True,
+    "use_download_button": True,
+    "show_toc_level": 4
 }
 html_favicon = "_static/favicon.png"
 

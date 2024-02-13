@@ -2,10 +2,6 @@
 Présentation générale
 =====================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Architecture
 ============
 
@@ -20,16 +16,6 @@ L’application est composée :
     * un bouton déconnexion de l’application
 
 * de **paramètres d’administration** (gestion des droits, des listes déroulantes…)
-
-Page d'authentification
-=======================
-
-.. figure:: ../images/user-manual/geotrek-login.png
-   :alt: Accès à Geotrek-admin via un login et un mot de passe
-   :align: center
-
-   Accès à Geotrek-admin via un login et un mot de passe
-
 
 Les modules de Geotrek
 =======================
