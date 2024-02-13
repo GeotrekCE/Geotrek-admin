@@ -4,10 +4,6 @@
 Synchronization
 ===============
 
-.. contents::
-   :local:
-   :depth: 2
-
 Manual synchronization
 ----------------------
 

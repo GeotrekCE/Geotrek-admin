@@ -2,11 +2,6 @@
 Import data
 ===========
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 Import paths
 ============
 

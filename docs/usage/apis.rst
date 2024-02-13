@@ -2,10 +2,6 @@
 APIs
 ====
 
-.. contents::
-   :local:
-   :depth: 2
-
 API Geotrek
 ===========
 

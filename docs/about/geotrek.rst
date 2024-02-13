@@ -2,10 +2,6 @@
 Geotrek
 =======
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _qu-est-ce-que-geotrek:
 
 Qu'est ce que Geotrek ?

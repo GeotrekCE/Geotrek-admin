@@ -2,10 +2,6 @@
 Tutoriels
 ==========
 
-.. contents::
-   :local:
-   :depth: 2
-
 Vidéos
 =======
 

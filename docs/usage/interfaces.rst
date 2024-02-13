@@ -2,10 +2,6 @@
 Interface, navigation et saisie
 =======================================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Navigation et saisie
 ====================
 

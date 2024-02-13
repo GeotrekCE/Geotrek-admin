@@ -2,11 +2,6 @@
 Installation
 ============
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Focal Fossa 20.04 LTS server for production.
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
