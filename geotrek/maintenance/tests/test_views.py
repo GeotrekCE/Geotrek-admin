@@ -46,9 +46,9 @@ class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
-    extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    extra_column_list = ['heliport_cost', 'contractor_cost', 'workforce_cost', 'disorders', 'jobs']
+    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'contractor_cost', 'workforce_cost', 'disorders', 'jobs']
+    expected_column_formatlist_extra = ['id', 'heliport_cost', 'contractor_cost', 'workforce_cost', 'disorders', 'jobs']
     expected_json_geom = {'coordinates': [[3.0, 46.5],
                                           [3.001304, 46.5009004]],
                           'type': 'LineString'}
@@ -80,7 +80,8 @@ class InterventionViewsTest(CommonTest):
             'comments': '',
             'slope': 0,
             'area': 0,
-            'subcontract_cost': 0.0,
+            'contractor_cost': 0.0,
+            'workforce_cost': 0.0,
             'stake': StakeFactory.create().pk,
             'height': 0.0,
             'project': '',
