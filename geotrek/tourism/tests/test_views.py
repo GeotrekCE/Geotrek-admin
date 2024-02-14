@@ -371,7 +371,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
             'id', 'map_image_url', 'meeting_point', 'start_time', 'end_time', 'name',
-            'organizer', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
+            'organizers', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
             'slug', 'source', 'speaker', 'structure', 'target_audience', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
