@@ -2525,7 +2525,7 @@ Treks, touristic contents, touristic events, outdoor sites and courses can be ex
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
 - Touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
-- Touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- Touristic events : ``geotrek/tourism/templates/tourism/touristicevent_public_pdf.html``
 - Outdoor sites : ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``
 - Outdoor courses : ``geotrek/outdoor/templates/outdoor/course_public_pdf.html``
 
