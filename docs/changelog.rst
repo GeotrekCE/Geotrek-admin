@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Signage & Blade conditions translations + admin BladeCondition entry (#3847)
+- Add intervention date filter and add intervention years filter (#3825)
 
 **Documentation**
 

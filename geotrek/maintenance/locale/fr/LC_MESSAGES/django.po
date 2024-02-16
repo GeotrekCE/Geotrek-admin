@@ -74,13 +74,16 @@ msgid "Filter by begin date range"
 msgstr "Filtrer par intervalle de date de début"
 
 msgid "begin date"
-msgstr "date de début"
+msgstr "date début"
 
 msgid "Filter by end date range"
 msgstr "Filtrer par intervalle de date de fin"
 
 msgid "end date"
-msgstr "date de fin"
+msgstr "date fin"
+
+msgid "Year"
+msgstr "Année"
 
 msgid "On"
 msgstr "Sur"

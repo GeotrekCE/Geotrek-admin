@@ -83,6 +83,9 @@ msgstr ""
 msgid "end date"
 msgstr ""
 
+msgid "Year"
+msgstr ""
+
 msgid "On"
 msgstr ""
 
