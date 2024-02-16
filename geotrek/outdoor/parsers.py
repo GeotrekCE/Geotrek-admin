@@ -16,6 +16,8 @@ class GeotrekOutdoorParser(GeotrekParser):
             self.field_options[category] = {}
         if "mapping" not in self.field_options[category].keys():
             self.field_options[category]["mapping"] = {}
+        if self.create_categories:
+            self.field_options[category]["create"] = True
 
         # Iter over category JSON results
         for result in results:
@@ -47,7 +49,17 @@ class GeotrekOutdoorParser(GeotrekParser):
             category_obj, _ = model.objects.update_or_create(**{'name': replaced_label}, defaults=fields)
 
             # Remember this object in mapping for next call
-            self.field_options[category]["mapping"][category_obj.pk] = result['id']
+            self.update_mapping(category, category_obj.pk, result['id'])
+
+    def update_mapping(self, category, key, value):
+        # Ensure an ID only appears once in mapping
+        obsolete_key = None
+        for current_key, current_value in self.field_options[category]["mapping"].items():
+            if current_value == value and current_key != key:
+                obsolete_key = current_key
+        if obsolete_key:
+            self.field_options[category]["mapping"].pop(obsolete_key)
+        self.field_options[category]["mapping"][key] = value
 
     def get_id_from_mapping(self, mapping, value):
         for dest_id, source_id in mapping.items():
@@ -74,7 +86,7 @@ class GeotrekOutdoorParser(GeotrekParser):
         for subval in val:
             rating_id = self.get_id_from_mapping(self.field_options["ratings"]["mapping"], subval)
             if rating_id:
-                ratings.append(Rating.objects.get(pk=rating_id).pk)
+                ratings.append(Rating.objects.get(pk=rating_id))
         return ratings
 
 
@@ -124,10 +136,9 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         'structure': 'name',
     }
 
-    def __init__(self, *args, **kwargs):
+    def start_meta(self):
+        super().start_meta()
         self.parents = {}
-        super().__init__(*args, **kwargs)
-        self.init_outdoor_category('type', SiteType, join_field='practice')
         self.next_url = f"{self.url}/api/v2/outdoor_site"
 
     def filter_type(self, src, val):
@@ -136,6 +147,10 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
             if type_id:
                 return SiteType.objects.get(pk=type_id)
         return None
+
+    def parse(self, filename=None, limit=None):
+        self.init_outdoor_category('type', SiteType, join_field='practice')
+        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)
@@ -172,7 +187,7 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         "practice": "outdoor_practice",
         "scale": "outdoor_ratingscale",
         "ratings": "outdoor_rating",
-        "type": "outdoor_sitetype",
+        "type": "outdoor_coursetype",
     }
     url_categories = {
         "themes": "theme",
@@ -198,11 +213,10 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         'structure': 'name',
     }
 
-    def __init__(self, *args, **kwargs):
+    def start_meta(self):
+        super().start_meta()
         self.parents_sites = {}
         self.children_courses = {}
-        super().__init__(*args, **kwargs)
-        self.init_outdoor_category('type', CourseType, join_field='practice')
         self.next_url = f"{self.url}/api/v2/outdoor_course"
 
     def filter_type(self, src, val):
@@ -211,6 +225,10 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
             if type_id:
                 return CourseType.objects.get(pk=type_id)
         return None
+
+    def parse(self, filename=None, limit=None):
+        self.init_outdoor_category('type', CourseType, join_field='practice')
+        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)

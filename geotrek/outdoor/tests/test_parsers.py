@@ -1,4 +1,6 @@
 
+import os
+from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
@@ -8,31 +10,68 @@ from django.test.utils import override_settings
 
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
-from geotrek.outdoor.models import Course, OrderedCourseChild, Practice, Rating, RatingScale, Sector, Site
-from geotrek.outdoor.parsers import GeotrekCourseParser, GeotrekSiteParser
+from geotrek.outdoor.models import (Course, OrderedCourseChild, Practice,
+                                    Rating, RatingScale, Sector, Site,
+                                    SiteType)
 
 
-class TestGeotrekSiteParser(GeotrekSiteParser):
-    url = "https://test.fr"
-    provider = 'geotrek1'
-    field_options = {
-        'themes': {'create': True},
-        'geom': {'required': True},
-        'labels': {'create': True},
-        'source': {'create': True},
-        'managers': {'create': True},
-        'structure': {'create': True}
-    }
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class MappingOutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
 
-class TestGeotrekCourseParser(GeotrekCourseParser):
-    url = "https://test.fr"
-    provider = 'geotrek2'
-    field_options = {
-        'themes': {'create': True},
-        'geom': {'required': True},
-        'structure': {'create': True}
-    }
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_geotrek_aggregator_parser_mapping(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_sitetype.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
+                                ('outdoor', 'outdoor_site.json'),
+                                ('outdoor', 'outdoor_coursetype.json'),
+                                ('outdoor', 'outdoor_course_ids.json'),
+                                ('outdoor', 'outdoor_course.json')]
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator_mapping.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        self.assertEqual(Site.objects.count(), 6)
+        self.assertEqual(SiteType.objects.count(), 1)
+        self.assertEqual(Course.objects.count(), 7)
+        site = Site.objects.get(name_fr="Racine", name_en="Root")
+        self.assertEqual(str(site.practice.sector), 'Renamed Sector')
+        self.assertEqual(str(site.practice), 'Renamed Practice')
+        self.assertEqual(site.ratings.count(), 1)
+        self.assertEqual(str(site.ratings.first()), 'Renamed Rating Scale : Renamed Rating')
+        self.assertEqual(str(site.ratings.first().scale), 'Renamed Rating Scale (Renamed Practice)')
+        self.assertEqual(str(site.type), 'Renamed Site Type')
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
@@ -56,9 +95,6 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('outdoor', 'outdoor_practice.json'),
                                 ('outdoor', 'outdoor_ratingscale.json'),
                                 ('outdoor', 'outdoor_rating.json'),
-                                ('outdoor', 'outdoor_sitetype.json'),
-                                ('outdoor', 'outdoor_site_ids.json'),
-                                ('outdoor', 'outdoor_site.json'),
                                 ('outdoor', 'theme.json'),
                                 ('outdoor', 'label.json'),
                                 ('outdoor', 'source.json'),
@@ -68,6 +104,9 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('outdoor', 'outdoor_practice.json'),
                                 ('outdoor', 'outdoor_ratingscale.json'),
                                 ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_sitetype.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
+                                ('outdoor', 'outdoor_site.json'),
                                 ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course_ids.json'),
                                 ('outdoor', 'outdoor_course.json')]
@@ -78,7 +117,12 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
 
-        call_command('import', 'geotrek.outdoor.tests.test_parsers.TestGeotrekSiteParser', verbosity=0)
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator_simple.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+
+        # Sites
         self.assertEqual(Site.objects.count(), 6)
         self.assertEqual(Sector.objects.count(), 2)
         self.assertEqual(RatingScale.objects.count(), 1)
@@ -133,7 +177,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         child_site = Site.objects.get(name_fr="Noeud 1", name_en="Node")
         self.assertEqual(child_site.parent, site)
 
-        call_command('import', 'geotrek.outdoor.tests.test_parsers.TestGeotrekCourseParser', verbosity=0)
+        # Courses
         self.assertEqual(Course.objects.count(), 7)
         course = Course.objects.get(name_fr="Feuille 1", name_en="Leaf 1")
         self.assertEqual(str(course.type), 'Type 1')

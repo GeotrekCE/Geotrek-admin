@@ -1,0 +1,44 @@
+{
+    "URL_1": {
+        "url": "url_1",
+        "data_to_import": [
+            "Site",
+            "Course"
+        ],
+        "create": true,
+        "mapping": {
+            "outdoor_sector": {
+                "Renamed Sector": [
+                    "Vertical"
+                ]
+            },
+            "outdoor_practice": {
+                "Renamed Practice": [
+                    "Escalade"
+                ]
+            },
+            "outdoor_ratingscale": {
+                "Renamed Rating Scale": [
+                    "Cotation"
+                ]
+            },
+            "outdoor_rating": {
+                "Renamed Rating": [
+                    "3+",
+                    "4a",
+                    "4c"
+                ]
+            },
+            "outdoor_sitetype": {
+                "Renamed Site Type": [
+                    "Ecole"
+                ]
+            },
+            "outdoor_coursetype": {
+                "Renamed Course Type": [
+                    "Type 1"
+                ]
+            }
+        }
+    }
+}
