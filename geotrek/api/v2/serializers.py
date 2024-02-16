@@ -1399,8 +1399,13 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         class Meta:
             model = flatpages_models.FlatPage
             fields = (
-                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order',
-                'published', 'attachments',
+                'id',
+                'title',
+                'content',
+                'source',
+                'portals',
+                'published',
+                'attachments',
             )
 
         def get_title(self, obj):
@@ -1411,6 +1416,39 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
+
+
+    class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField()
+        link_url = serializers.SerializerMethodField()
+        # children = serializers.SerializerMethodField()
+        published = serializers.SerializerMethodField()
+
+        class Meta:
+            model = flatpages_models.MenuItem
+            fields = (
+                'id',
+                'label',
+                # 'children',
+                'content_type',
+                'link_url',
+                'page',
+                'portals',
+                'published',
+            )
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        def get_link_url(self, obj):
+            return get_translation_or_dict('link_url', self, obj)
+
+        # def get_children(self, obj):
+        #     return [MenuItemSerializer(child).data for child in obj.get_children()]
+
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
+
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 

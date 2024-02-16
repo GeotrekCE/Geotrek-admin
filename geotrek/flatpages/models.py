@@ -23,7 +23,7 @@ FLATPAGES_TARGETS = Choices(
 )
 
 
-class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
+class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     """
     Manage *Geotrek-rando* static pages from Geotrek admin.
 
@@ -31,21 +31,14 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     *Geotrek-rando* folders.
     """
     title = models.CharField(verbose_name=_('Title'), max_length=200)
-    external_url = models.URLField(verbose_name=_('External URL'), blank=True, default='',
-                                   help_text=_('Link to external website instead of HTML content'))
     content = models.TextField(verbose_name=_('Content'), null=True, blank=True,
                                help_text=_('HTML content'))
-    target = models.CharField(verbose_name=_('Target'), max_length=12, choices=FLATPAGES_TARGETS,
-                              default=FLATPAGES_TARGETS.ALL)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='flatpages',
                                     verbose_name=_("Source"))
-    portal = models.ManyToManyField('common.TargetPortal',
+    portals = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='flatpages',
                                     verbose_name=_("Portal"))
-    order = models.IntegerField(default=None, null=True, blank=True,
-                                help_text=_("ID order if blank", ),
-                                verbose_name=_("Order"))
     attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
     @property
@@ -55,7 +48,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     class Meta:
         verbose_name = _('Flat page')
         verbose_name_plural = _('Flat pages')
-        ordering = ['order', 'id']
+        ordering = ['id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
@@ -114,7 +107,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
         return self.any_published
 
 
-class MenuItem(TimeStampedModelMixin, MP_Node):
+class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
     CONTENT_TYPE_CHOICES = (
         ("Page", "Page"),
@@ -127,13 +120,17 @@ class MenuItem(TimeStampedModelMixin, MP_Node):
     page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True)
     target = models.CharField(verbose_name=_('Target'), max_length=12, choices=FLATPAGES_TARGETS,
                               default=FLATPAGES_TARGETS.ALL)
-    portal = models.ManyToManyField('common.TargetPortal',
+    portals = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='menu_items',
                                     verbose_name=_("Portal"))
 
     class Meta:
         verbose_name = _('Menu item')
         verbose_name_plural = _('Menu items')
+
+    @property
+    def slug(self):
+        return slugify(self.label)
 
     def __str__(self):
         return self.label

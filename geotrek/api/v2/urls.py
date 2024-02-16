@@ -73,6 +73,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('outdoor_course', api_views.CourseViewSet, basename='course')
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpage', api_views.FlatPageViewSet, basename='flatpage')
+    router.register('menu_item', api_views.MenuItemViewSet, basename='menu-item')
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     router.register('signage', api_views.SignageViewSet, basename='signage')
     router.register('signage_type', api_views.SignageTypeViewSet, basename='signage-type')
@@ -94,5 +95,7 @@ _urlpatterns += [
     path('sportpractice/<int:pk>/', RedirectView.as_view(pattern_name='apiv2:sportpractice-detail', permanent=True)),
     path('version', api_views.GeotrekVersionAPIView.as_view()),
     path('', include(router.urls)),
+    path('menu_item/tree/', api_views.MenuItemTreeView.as_view(), name='menu-item-tree'),
+    path('flatpage/tree/', api_views.FlatPageTreeView.as_view(), name='flat-page-tree'),
 ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]

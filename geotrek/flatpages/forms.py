@@ -36,10 +36,13 @@ class FlatPageForm(CommonForm):
     class Meta:
         model = FlatPage
         fields = (
-            'title', 'order', 'published', 'source',
-            'portal', 'external_url', 'target',
-            'cover_image', 'cover_image_author',
-            'content'
+            'title',
+            'published',
+            'source',
+            'portals',
+            'cover_image',
+            'cover_image_author',
+            'content',
         )
 
     def clean(self):
