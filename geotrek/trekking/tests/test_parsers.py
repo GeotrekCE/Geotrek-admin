@@ -3,6 +3,7 @@ import json
 import os
 from copy import copy
 from io import StringIO
+from tempfile import TemporaryDirectory
 from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
@@ -1150,11 +1151,16 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 0)
 
 
+@override_settings(TMP_DIR=TemporaryDirectory().name)
 class TestApidaeTrekParserConvertEncodingFiles(TestCase):
     data_dir = "geotrek/trekking/tests/data"
 
+    def setUp(self):
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+
     def test_fix_encoding_to_utf8(self):
-        file_name = f'{self.data_dir}/file_bad_encoding_tmp.kml'
+        file_name = f'{settings.TMP_DIR}/file_bad_encoding_tmp.kml'
         copyfile(f'{self.data_dir}/file_bad_encoding.kml', file_name)
 
         encoding = get_encoding_file(file_name)
@@ -1166,7 +1172,7 @@ class TestApidaeTrekParserConvertEncodingFiles(TestCase):
         self.assertEqual(encoding, "utf-8")
 
     def test_not_fix_encoding_to_utf8(self):
-        file_name = f'{self.data_dir}/file_good_encoding_tmp.kml'
+        file_name = f'{settings.TMP_DIR}/file_good_encoding_tmp.kml'
         copyfile(f'{self.data_dir}/file_good_encoding.kml', file_name)
 
         encoding = get_encoding_file(file_name)
