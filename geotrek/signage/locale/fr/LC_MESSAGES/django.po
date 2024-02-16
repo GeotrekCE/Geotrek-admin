@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-23 14:44+0000\n"
-"PO-Revision-Date: 2015-09-25 17:37+0100\n"
+"POT-Creation-Date: 2024-02-12 14:53+0000\n"
+"PO-Revision-Date: 2024-02-09 17:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 3.0.1\n"
 
 msgid "Signage"
 msgstr "Signalétique"
@@ -35,6 +35,12 @@ msgstr ""
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Filter by one or more structure."
+msgstr "Filtrer par une ou plusieurs structure."
+
+msgid "Filter by one or more manager."
+msgstr "Filtrer par un ou plusieurs gestionnaires."
 
 msgid "Lines"
 msgstr "Lignes"
@@ -59,8 +65,20 @@ msgstr "Type de signalétique"
 msgid "Signage Types"
 msgstr "Types de signalétique"
 
+msgid "Label"
+msgstr ""
+
 msgid "Code"
 msgstr "Code"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Line pictogram"
+msgstr "Pictogramme de ligne"
+
+msgid "Line pictograms"
+msgstr "Pictogrammes de ligne"
 
 msgid "Signage Condition"
 msgstr "État de signalétique"
@@ -79,6 +97,9 @@ msgstr "Type"
 
 msgid "Coordinates"
 msgstr "Coordonnées"
+
+msgid "Condition"
+msgstr "État"
 
 msgid "Signages"
 msgstr "Signalétiques"
@@ -116,9 +137,6 @@ msgstr "Numéro"
 msgid "Color"
 msgstr "Couleur"
 
-msgid "Condition"
-msgstr "Etat"
-
 msgid "Blades"
 msgstr "Lames"
 
@@ -134,8 +152,8 @@ msgstr "Texte"
 msgid "Distance"
 msgstr "Distance"
 
-msgid "Pictogram"
-msgstr "Nom du pictogramme"
+msgid "Pictograms"
+msgstr "Pictogrammes"
 
 msgctxt "duration"
 msgid "Time"
@@ -162,8 +180,17 @@ msgstr "Ajouter une ligne"
 msgid "Remove"
 msgstr "Supprimer"
 
+msgid "No result"
+msgstr "Pas de résultats"
+
+msgid "Choose value(s)"
+msgstr "Choisir une ou des valeur(s)"
+
 msgid "External id"
 msgstr "Identifiant externe"
+
+msgid "Conditions"
+msgstr "États"
 
 msgid "Add a new blade"
 msgstr "Ajouter une lame"
@@ -179,15 +206,3 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
-
-msgid "Filter by one or more manager."
-msgstr "Filtrer par un ou plusieurs gestionnaires"
-
-msgid "Line pictograms"
-msgstr "Pictogrammes des lignes"
-
-msgid "Line pictogram"
-msgstr "Pictogramme des lignes"
-
-msgid "Pictograms"
-msgstr "Pictogrammes"

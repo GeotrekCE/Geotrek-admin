@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-23 10:12+0000\n"
+"POT-Creation-Date: 2024-02-09 15:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -235,18 +235,14 @@ msgstr ""
 msgid "Trek"
 msgstr ""
 
-msgid ""
-"Filter by a trek id. It will show only the sensitive areas intersecting this "
-"trek."
+#, python-format
+msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
 msgid "Types"
 msgstr ""
 
 msgid "Filter by one or more type id, comma-separated."
-msgstr ""
-
-msgid "Filter by a trek id. It will show only the POIs related to this trek."
 msgstr ""
 
 msgid "Sites"
@@ -347,7 +343,7 @@ msgstr ""
 msgid "Filter by one or more Place id, comma-separated."
 msgstr ""
 
-msgid "Filter events on organizers"
+msgid "Filter by one or more organizer, comma-separated."
 msgstr ""
 
 msgid "Filter events on bookable boolean : true/false expected"
@@ -564,12 +560,8 @@ msgstr ""
 msgid "Altimetry data not available"
 msgstr ""
 
+#, python-format
 msgid ""
 "This field is deprecated and will be removed in next releases. Please start "
-"using 'start_time'"
-msgstr ""
-
-msgid ""
-"This field is deprecated and will be removed in next releases. Please start "
-"using 'capacity'"
+"using '%(field)s'"
 msgstr ""

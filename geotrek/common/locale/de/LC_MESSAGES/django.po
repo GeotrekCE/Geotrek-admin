@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-02-12 14:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -132,6 +132,9 @@ msgid ""
 msgstr ""
 
 msgid "Merge"
+msgstr ""
+
+msgid "Action"
 msgstr ""
 
 msgid "Insertion date"
@@ -357,7 +360,10 @@ msgstr ""
 msgid "HD Views"
 msgstr ""
 
-msgid "Add a new HD view"
+msgid "Access mean"
+msgstr ""
+
+msgid "Access means"
 msgstr ""
 
 #, python-brace-format
@@ -464,6 +470,12 @@ msgid ""
 msgstr ""
 
 #, python-brace-format
+msgid ""
+"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj."
+"pk}: "
+msgstr ""
+
+#, python-brace-format
 msgid "Model {model}"
 msgstr ""
 
@@ -539,9 +551,6 @@ msgstr ""
 msgid "Square"
 msgstr ""
 
-msgid "Ellipse"
-msgstr ""
-
 msgid "Circle"
 msgstr ""
 
@@ -575,15 +584,18 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-msgid "Action"
-msgstr ""
-
 msgid "Full history"
 msgstr ""
 
 msgid ""
 "Add very high resolution images that will be automatically tiled and add "
 "annotations on it (points, lines, polygons and text)"
+msgstr ""
+
+msgid "Add a new HD view"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "You are not allowed to see HD views."
