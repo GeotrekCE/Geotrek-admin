@@ -221,3 +221,55 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertTrue(OrderedCourseChild.objects.filter(parent=course, child=child_course_1, order=0).exists())
         self.assertTrue(OrderedCourseChild.objects.filter(parent=course, child=child_course_2, order=1).exists())
         self.assertTrue(OrderedCourseChild.objects.filter(parent=course, child=child_course_3, order=2).exists())
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class OutdoorGeotrekParserWrongChildrenTests(GeotrekParserTestMixin, TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch('requests.get')
+    @mock.patch('requests.head')
+    def test_create_sites_and_courses_with_wrong_children(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_sitetype.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
+                                ('outdoor', 'outdoor_site_wrong_children.json'),
+                                ('outdoor', 'outdoor_coursetype.json'),
+                                ('outdoor', 'outdoor_course_ids.json'),
+                                ('outdoor', 'outdoor_course_wrong_children.json')]
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2', 'config_aggregator_simple.json')
+        call_command('import', 'geotrek.common.parsers.GeotrekAggregatorParser', filename=filename, verbosity=2,
+                     stdout=output)
+        outputs = output.getvalue()
+        self.assertIn("Trying to retrieve missing parent Site (UUID: 5c0d656b-2691-4c45-903c-9ce1050ff9ea) for child Course (UUID: 840f4cf7-dbe0-4aa1-835f-c1219c45dd7a)", outputs)
+        self.assertIn("Trying to retrieve missing parent (UUID: 57a8fb53-214d-4dce-8224-bc997f892aae) for child Site (UUID: 67ca9363-2f5c-4a15-b124-46674a54f08d)", outputs)
+        self.assertIn("Trying to retrieve missing child Course (UUID: 43ce927d-9236-4a62-ac7f-799d1c024b5a) for parent Course (UUID: 0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc)", outputs)

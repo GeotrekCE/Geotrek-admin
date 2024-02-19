@@ -159,15 +159,11 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
     def end(self):
         """Add children after all Sites imported are created in database."""
         for child, parent in self.parents.items():
+            child_site = Site.objects.get(eid=child)
             try:
                 parent_site = Site.objects.get(eid=parent)
             except Site.DoesNotExist:
                 self.add_warning(f"Trying to retrieve missing parent (UUID: {parent}) for child Site (UUID: {child})")
-                continue
-            try:
-                child_site = Site.objects.get(eid=child)
-            except Site.DoesNotExist:
-                self.add_warning(f"Trying to retrieve missing child (UUID: {child}) for parent Site (UUID: {parent})")
                 continue
             child_site.parent = parent_site
             child_site.save()
@@ -238,11 +234,7 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
     def end(self):
         """Add children after all Sites and Courses imported are created in database."""
         for child, parents in self.parents_sites.items():
-            try:
-                child_course = Course.objects.get(eid=child)
-            except Course.DoesNotExist:
-                self.add_warning(f"Trying to retrieve missing child Course (UUID: {child}) for parent Sites (UUIDs: {parents})")
-                continue
+            child_course = Course.objects.get(eid=child)
             parents_ids = []
             for parent in parents:
                 try:
@@ -255,16 +247,12 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
 
         """Add children after all Courses imported are created in database."""
         for parent, children in self.children_courses.items():
-            try:
-                parent_course = Course.objects.get(eid=parent)
-            except Course.DoesNotExist:
-                self.add_warning(f"Trying to retrieve missing parent Course (UUID: {child})")
-                continue
+            parent_course = Course.objects.get(eid=parent)
             for i, child in enumerate(children):
                 try:
                     child_course = Course.objects.get(eid=child)
                 except Course.DoesNotExist:
-                    self.add_warning(f"Trying to retrieve missing children Course (UUID: {child}) for parent Course (UUID: {parent})")
+                    self.add_warning(f"Trying to retrieve missing child Course (UUID: {child}) for parent Course (UUID: {parent})")
                     continue
                 OrderedCourseChild.objects.update_or_create(parent=parent_course,
                                                             child=child_course,

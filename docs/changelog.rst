@@ -58,6 +58,7 @@ CHANGELOG
 **New features**
 
 - Add UUIDs of parent and children ``Courses`` and ``Sites`` in APIv2 (#3569)
+- Add ``GeotrekCourseParser`` and ``GeotrekSiteParser`` in Aggregator to retrieve Outdoor models (refs #3569)
 
 **Improvements**
 

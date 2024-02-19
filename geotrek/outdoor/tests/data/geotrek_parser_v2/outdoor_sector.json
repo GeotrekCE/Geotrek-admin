@@ -5,10 +5,7 @@
     "results": [
         {
             "id": 1,
-            "name": {
-                "en": "White water",
-                "fr": "Eau vive"
-            }
+            "name": "White water"
         },
         {
             "id": 2,
