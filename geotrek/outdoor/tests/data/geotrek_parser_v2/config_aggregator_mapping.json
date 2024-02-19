@@ -14,12 +14,12 @@
             },
             "outdoor_practice": {
                 "Renamed Practice": [
-                    "Escalade"
+                    "Climbing"
                 ]
             },
             "outdoor_ratingscale": {
                 "Renamed Rating Scale": [
-                    "Cotation"
+                    "Class"
                 ]
             },
             "outdoor_rating": {
@@ -31,12 +31,12 @@
             },
             "outdoor_sitetype": {
                 "Renamed Site Type": [
-                    "Ecole"
+                    "School"
                 ]
             },
             "outdoor_coursetype": {
                 "Renamed Course Type": [
-                    "Type 1"
+                    "Type 1 en"
                 ]
             }
         }
