@@ -85,6 +85,7 @@ class InterventionViewsTest(CommonTest):
             'stake': StakeFactory.create().pk,
             'height': 0.0,
             'project': '',
+            'contractors': [],
             'width': 0.0,
             'length': 0.0,
             'status': InterventionStatus.objects.all()[0].pk,
@@ -528,6 +529,7 @@ class ProjectViewsTest(CommonTest):
             'global_cost': '12',
             'comments': '',
             'contractors': ContractorFactory.create().pk,
+            'intervention_contractors': [],
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
 

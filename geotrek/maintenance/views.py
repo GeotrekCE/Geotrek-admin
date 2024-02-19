@@ -98,7 +98,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
     default_extra_columns = [
         'name', 'begin_date', 'end_date', 'type', 'target', 'status', 'stake',
-        'disorders', 'total_manday', 'project', 'subcontracting',
+        'disorders', 'total_manday', 'project', 'contractors', 'subcontracting',
         'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
         'material_cost', 'heliport_cost', 'contractor_cost', 'workforce_cost',
@@ -198,7 +198,7 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-        'interventions', 'interventions_total_cost', 'comments', 'contractors',
+        'interventions', 'interventions_total_cost', 'comments', 'contractors', 'intervention_contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',
