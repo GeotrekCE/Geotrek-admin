@@ -1,8 +1,8 @@
-geotrek-admin (2.101.5+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.102.0) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 11 Jan 2024 15:35:20 +0100
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Mon, 19 Feb 2024 16:54:29 +0100
 
 geotrek-admin (2.101.5) RELEASED; urgency=medium
 
