@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-13 10:26+0000\n"
+"POT-Creation-Date: 2024-02-20 08:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,6 +104,9 @@ msgstr ""
 msgid "Year of activity"
 msgstr ""
 
+msgid "Intervention contractors"
+msgstr ""
+
 msgid "Days"
 msgstr ""
 
@@ -122,19 +125,19 @@ msgstr ""
 msgid "On {}"
 msgstr ""
 
+msgid "Begin date is after end date"
+msgstr ""
+
 msgid "Fundings"
+msgstr ""
+
+msgid "Start year is after end year"
 msgstr ""
 
 msgid "Name"
 msgstr ""
 
 msgid "Brief summary"
-msgstr ""
-
-msgid "Date"
-msgstr ""
-
-msgid "When ?"
 msgstr ""
 
 msgid "Begin date"
@@ -161,7 +164,7 @@ msgstr ""
 msgid "Heliport cost"
 msgstr ""
 
-msgid "Subcontract cost"
+msgid "Contractor cost"
 msgstr ""
 
 msgid "Contractors"
@@ -191,6 +194,9 @@ msgstr ""
 msgid "Remarks and notes"
 msgstr ""
 
+msgid "Access mean"
+msgstr ""
+
 msgid "External id"
 msgstr ""
 
@@ -198,6 +204,9 @@ msgid "Intervention"
 msgstr ""
 
 msgid "Interventions"
+msgstr ""
+
+msgid "Deleted"
 msgstr ""
 
 msgid "Mandays cost"
@@ -282,9 +291,6 @@ msgid "Founders"
 msgstr ""
 
 msgid "Projects"
-msgstr ""
-
-msgid "Intervention contractors"
 msgstr ""
 
 msgid "Period"

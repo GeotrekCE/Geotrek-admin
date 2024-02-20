@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-13 10:26+0000\n"
+"POT-Creation-Date: 2024-02-20 08:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -103,6 +103,9 @@ msgstr ""
 msgid "Year of activity"
 msgstr "Année d'activité"
 
+msgid "Intervention contractors"
+msgstr "Prestataires des interventions"
+
 msgid "Days"
 msgstr "Jours"
 
@@ -127,17 +130,14 @@ msgstr "La date de début est après la date de fin"
 msgid "Fundings"
 msgstr "Financements"
 
+msgid "Start year is after end year"
+msgstr "La date de début est après la date de fin"
+
 msgid "Name"
 msgstr "Nom"
 
 msgid "Brief summary"
 msgstr "Bref résumé"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "When ?"
-msgstr "Quand ?"
 
 msgid "Begin date"
 msgstr "Date de début"
@@ -163,8 +163,8 @@ msgstr "Coût matériel"
 msgid "Heliport cost"
 msgstr "Coût héliportage"
 
-msgid "Subcontract cost"
-msgstr "Coût sous-traitance"
+msgid "Contractor cost"
+msgstr "Coût prestataire"
 
 msgid "Contractors"
 msgstr "Prestataires"
@@ -193,6 +193,9 @@ msgstr "Descriptif"
 msgid "Remarks and notes"
 msgstr "Remarques et notes"
 
+msgid "Access mean"
+msgstr ""
+
 msgid "External id"
 msgstr "ID externe"
 
@@ -201,6 +204,9 @@ msgstr "Intervention"
 
 msgid "Interventions"
 msgstr "Interventions"
+
+msgid "Deleted"
+msgstr ""
 
 msgid "Mandays cost"
 msgstr "Coût jours-hommes"
@@ -285,9 +291,6 @@ msgstr "Financeurs"
 
 msgid "Projects"
 msgstr "Chantiers"
-
-msgid "Intervention contractors"
-msgstr "Prestataires des interventions"
 
 msgid "Period"
 msgstr "Période"

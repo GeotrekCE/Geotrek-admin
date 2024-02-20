@@ -50,7 +50,6 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     material_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Material cost"))
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
     contractor_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Contractor cost"))
-    workforce_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Workforce cost"))
     contractors = models.ManyToManyField('Contractor', related_name="interventions", blank=True,
                                          verbose_name=_("Contractors"))
 
@@ -225,8 +224,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         return self.total_cost_mandays + \
             (self.material_cost or 0) + \
             (self.heliport_cost or 0) + \
-            (self.contractor_cost or 0) + \
-            (self.workforce_cost or 0)
+            (self.contractor_cost or 0)
 
     @classproperty
     def total_cost_verbose_name(cls):

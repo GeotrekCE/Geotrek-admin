@@ -9,7 +9,6 @@ ALTER TABLE maintenance_intervention ALTER COLUMN area SET DEFAULT 0;
 ALTER TABLE maintenance_intervention ALTER COLUMN material_cost SET DEFAULT 0.0;
 ALTER TABLE maintenance_intervention ALTER COLUMN heliport_cost SET DEFAULT 0.0;
 ALTER TABLE maintenance_intervention ALTER COLUMN contractor_cost SET DEFAULT 0.0;
-ALTER TABLE maintenance_intervention ALTER COLUMN workforce_cost SET DEFAULT 0.0;
 -- stake
 -- status
 --type
