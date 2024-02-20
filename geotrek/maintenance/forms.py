@@ -96,7 +96,6 @@ class InterventionForm(CommonForm):
             'material_cost',
             'heliport_cost',
             'contractor_cost',
-            'workforce_cost',
             Fieldset(_("Mandays")),
             css_class="scrollable tab-pane active"
         ),
@@ -106,7 +105,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'begin_date', 'end_date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'contractors', 'access', 'material_cost', 'heliport_cost', 'contractor_cost', 'workforce_cost', 'topology']
+             'height', 'stake', 'project', 'contractors', 'access', 'material_cost', 'heliport_cost', 'contractor_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
         super().__init__(*args, **kwargs)

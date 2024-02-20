@@ -1253,7 +1253,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "heliport_cost",
         "contractor_cost",
-        "workforce_cost",
         "date_update",
         "date_insert",
         "description",
@@ -1730,7 +1729,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "material_cost",
         "heliport_cost",
         "contractor_cost",
-        "workforce_cost",
         "total_cost_mandays",
         "total_cost",
         "cities",
@@ -2169,7 +2167,6 @@ An exhaustive list of form fields hideable in each module.
             "material_cost",
             "heliport_cost",
             "contractor_cost",
-            "workforce_cost",
         ],
     HIDDEN_FORM_FIELDS["project"] = [
             "type",
