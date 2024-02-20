@@ -39,7 +39,7 @@ class GeotrekOutdoorParser(GeotrekParser):
                     fields[field] = result[field]
 
             # Extract field that will become a ForeignKey from JSON response, using mapping
-            if join_field:
+            if join_field and result.get(join_field, False):
                 mapped_value = self.get_id_from_mapping(self.field_options[join_field]["mapping"], result[join_field])
                 if not mapped_value:
                     continue  # Ignore some results if related category was not retrieved
@@ -111,7 +111,6 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         'labels': 'label',
         'source': 'source',
         'managers': 'organism',
-        'structure': 'structure',
     }
     categories_keys_api_v2 = {
         "practice": "name",
@@ -124,7 +123,6 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         'labels': 'name',
         'source': 'name',
         'managers': 'name',
-        'structure': 'name',
     }
     natural_keys = {
         "practice": "name",
@@ -133,7 +131,6 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         'labels': 'name',
         'source': 'name',
         'managers': 'organism',
-        'structure': 'name',
     }
 
     def start_meta(self):
@@ -159,14 +156,15 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
     def end(self):
         """Add children after all Sites imported are created in database."""
         for child, parent in self.parents.items():
-            child_site = Site.objects.get(eid=child)
-            try:
-                parent_site = Site.objects.get(eid=parent)
-            except Site.DoesNotExist:
-                self.add_warning(f"Trying to retrieve missing parent (UUID: {parent}) for child Site (UUID: {child})")
-                continue
-            child_site.parent = parent_site
-            child_site.save()
+            if parent:
+                child_site = Site.objects.get(eid=child)
+                try:
+                    parent_site = Site.objects.get(eid=parent)
+                except Site.DoesNotExist:
+                    self.add_warning(f"Trying to retrieve missing parent (UUID: {parent}) for child Site (UUID: {child})")
+                    continue
+                child_site.parent = parent_site
+                child_site.save()
 
 
 class GeotrekCourseParser(GeotrekOutdoorParser):
@@ -190,7 +188,6 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         'labels': 'label',
         'source': 'source',
         'managers': 'organism',
-        'structure': 'structure',
     }
     categories_keys_api_v2 = {
         "themes": "label",
@@ -198,7 +195,6 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         'labels': 'name',
         'source': 'name',
         'managers': 'name',
-        'structure': 'name',
     }
     natural_keys = {
         "themes": "label",
@@ -206,7 +202,6 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         'labels': 'name',
         'source': 'name',
         'managers': 'organism',
-        'structure': 'name',
     }
 
     def start_meta(self):
