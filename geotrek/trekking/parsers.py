@@ -205,23 +205,27 @@ class GeotrekTrekParser(GeotrekParser):
             for result in results:
                 final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
 
+            uptodate_orders = []
             for key, value in final_children.items():
                 if value:
                     trek_parent_instance = Trek.objects.filter(eid=key)
                     if not trek_parent_instance:
                         self.add_warning(_(f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"))
                         return
-                    order = 0
-                    for child in value:
+                    for order, child in enumerate(value):
                         try:
                             trek_child_instance = Trek.objects.get(eid=child)
                         except Trek.DoesNotExist:
                             self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
                             continue
-                        OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
-                                                                  child=trek_child_instance,
-                                                                  defaults={'order': order})
-                        order += 1
+                        uptodate_order, __ = OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
+                                                                                       child=trek_child_instance,
+                                                                                       defaults={'order': order})
+                        uptodate_orders.append(uptodate_order.pk)
+                        # Delete obsolete entries
+            if self.delete:
+                OrderedTrekChild.objects.exclude(pk__in=uptodate_orders).delete()
+            super().end()
         except Exception as e:
             self.add_warning(_(f"An error occured in children generation : {getattr(e, 'message', repr(e))}"))
 
