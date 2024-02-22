@@ -51,7 +51,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'legend': first_picture.legend,
                 'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
             }]
-        
+
         def get_organizers(self, obj):
             return ", ".join(
                 map(lambda org: org.label, obj.organizers.all())

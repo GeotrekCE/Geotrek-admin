@@ -284,7 +284,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
     ]
     m2m_fields = {
         'themes': 'informationsFeteEtManifestation.themes.*.libelleFr',
-        'organizers': 'informations.structureGestion.nom.libelleFr',
+        'organizers': ('informations.structureGestion.nom.libelleFr',),
     }
     natural_keys = {
         'themes': 'label',
@@ -293,6 +293,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'source': 'name',
         'portal': 'name',
     }
+    # separator = ","
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -351,7 +352,6 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
 
     def filter_email(self, src, val):
         return self._filter_comm(val, 204, multiple=False)
-    
 
     def filter_website(self, src, val):
         return self._filter_comm(val, 205, multiple=False)
@@ -940,16 +940,17 @@ class LEITouristicEventParser(LEIParser):
                     'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
         'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL', 'ADRPREST_EMAIL2'),
         'website': ('ADRPROD_URL', 'ADRPREST_URL'),
-        'organizers': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE'),
         'speaker': ('CIVILITE_RESPONSABLE', 'NOM_RESPONSABLE', 'PRENOM_RESPONSABLE'),
         'type': 'TYPE_NOM',
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
-    m2m_fields = {}
+    m2m_fields = {
+        'organizers': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE')
+    }
     type = None
     natural_keys = {
         'category': 'label',
-        'organizer': 'label',
+        'organizers': 'label',
         'geom': {'required': True},
         'type': 'type',
     }
@@ -959,6 +960,7 @@ class LEITouristicEventParser(LEIParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.field_options['organizers'] = {'create': True}
         if self.type:
             self.constant_fields['type'] = self.type
 
