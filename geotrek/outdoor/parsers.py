@@ -165,6 +165,7 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
                     continue
                 child_site.parent = parent_site
                 child_site.save()
+        super().end()
 
 
 class GeotrekCourseParser(GeotrekOutdoorParser):
@@ -252,3 +253,4 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
                 OrderedCourseChild.objects.update_or_create(parent=parent_course,
                                                             child=child_course,
                                                             defaults={'order': i})
+        super().end()
