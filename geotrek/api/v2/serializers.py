@@ -513,7 +513,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicEventSerializer(TouristicModelSerializer):
         organizers = serializers.SerializerMethodField()
         organizer = serializers.SerializerMethodField()
-        organizers_id = serializers.SerializerMethodField()
+        organizers_id = serializers.PrimaryKeyRelatedField(many=True, source='organizers', read_only=True)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
@@ -556,11 +556,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         # for retrocompatibility of API
         get_organizer = get_organizers
-
-        def get_organizers_id(self, obj):
-            return ", ".join(
-                map(lambda org: org.label, obj.organizers.all())
-            )
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
