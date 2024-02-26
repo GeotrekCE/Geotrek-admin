@@ -23,7 +23,10 @@ Il est également possible de filtrer les randonnées du flux par structure et p
 ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
 Tout comme les pois Vous pouvez filtrer avec plusieurs structures et portails : en séparant les identifiants par des virgules.
 
-Il est possible de filtrer les randonnées par portail et structure en même temps en séparant les 2 filtres par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1``).
+Il est également possible d'exclure du flux les randonnées provenant de sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour
+ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
+
+Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
 
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Adminsite (à ne pas modifier) :
 
