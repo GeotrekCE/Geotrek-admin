@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 13:56+0000\n"
+"POT-Creation-Date: 2024-02-28 15:06+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -344,6 +344,12 @@ msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr ""
 
 msgid "Intervention duration"
+msgstr ""
+
+msgid "Price"
+msgstr ""
+
+msgid "0 mean free"
 msgstr ""
 
 msgid "Select a place in the list or locate the event directly on the map"
