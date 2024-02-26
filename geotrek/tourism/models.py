@@ -458,9 +458,11 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
         validators=[MinValueValidator(0)]
     )
-    price = models.FloatField(
+    price = models.DecimalField(
         null=True,
         blank=True,
+        max_digits=8,
+        decimal_places=2,
         verbose_name=_("Price"),
         help_text=_("0 mean free"),
         validators=[MinValueValidator(0)]
