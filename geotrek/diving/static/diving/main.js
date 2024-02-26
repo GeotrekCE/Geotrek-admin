@@ -2,7 +2,7 @@ $(window).on('entity:map', function (e, data) {
 
     var map = data.map;
 
-    var diveLayer = {url: window.SETTINGS.urls.dive_layer, name: tr('Diving')};
+    var diveLayer = {url: window.SETTINGS.urls["diving_layer"], name: tr('Diving')};
     diveLayer.isActive = false;
 
     var style = L.Util.extend({clickable: false},
@@ -11,7 +11,7 @@ $(window).on('entity:map', function (e, data) {
         modelname: diveLayer.name,
         style: style
     });
-    map.layerscontrol.addOverlay(layer, 'Diving', tr('Diving'));
+    map.layerscontrol.addOverlay(layer,  tr('Diving'), tr('Diving'));
     map.on('layeradd', function(e){
         var options = e.layer.options || {'modelname': 'None'};
 
