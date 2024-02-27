@@ -1219,6 +1219,25 @@ class GeotrekRatingFilter(BaseFilterBackend):
         )
 
 
+class MenuItemFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        portals = request.GET.get('portals')
+        if portals:
+            queryset = queryset.filter(portals__in=portals.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='portals', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separated.'),
+                )
+            ),
+        )
+
+
 class FlatPageFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         targets = request.GET.get('targets')

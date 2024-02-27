@@ -109,17 +109,23 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
 class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
-    CONTENT_TYPE_CHOICES = (
-        ("Page", "Page"),
-        ("Link", "Link"),
+    TARGET_TYPE_CHOICES = (
+        ("Page", "page"),
+        ("Link", "link"),
+    )
+
+    PLATFORM_CHOICES = Choices(
+        ('ALL', 'all', _('All')),
+        ('MOBILE', 'mobile', _('Mobile')),
+        ('WEB', 'web', _('Web')),
     )
 
     label = models.CharField(verbose_name=_('Label'), max_length=50)
-    content_type = models.CharField(max_length=10, null=True, choices=CONTENT_TYPE_CHOICES)
+    target_type = models.CharField(max_length=10, null=True, choices=TARGET_TYPE_CHOICES)
     link_url = models.URLField(verbose_name=_('Link URL'), blank=True, default='')
     page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True)
-    target = models.CharField(verbose_name=_('Target'), max_length=12, choices=FLATPAGES_TARGETS,
-                              default=FLATPAGES_TARGETS.ALL)
+    platform = models.CharField(verbose_name=_('Platform'), max_length=12, choices=PLATFORM_CHOICES,
+                              default=PLATFORM_CHOICES.ALL)
     portals = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='menu_items',
                                     verbose_name=_("Portal"))

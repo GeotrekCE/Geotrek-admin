@@ -1,3 +1,6 @@
+from modeltranslation.utils import build_localized_fieldname
+
+from django.conf import settings
 from django.db.models.query import Prefetch
 
 from geotrek.api.v2 import serializers as api_serializers, \
@@ -34,10 +37,13 @@ class MenuItemTreeView(GenericAPIView):
     """from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest"""
     serializer_class = api_serializers.MenuItemSerializer
     queryset = flatpages_models.MenuItem.objects.filter(depth=1)
-    filter_backends = GeotrekPublishedFilter
+    filter_backends = (
+        GeotrekPublishedFilter,
+        api_filters.MenuItemFilter,
+    )
 
     def get(self, request, *args, **kwargs):
-        root_items = self.queryset.all()
+        root_items = self.filter_queryset(self.get_queryset()).all()
 
         data = []
         for n in root_items:
@@ -45,9 +51,37 @@ class MenuItemTreeView(GenericAPIView):
 
         return Response(data)
 
+    def _check_page_published(self, node):
+        # FIXME: duplicates a lot of GeotrekPublishedFilter.filter_queryset
+        if not node.page:
+            return True
+
+        page = node.page
+
+        language = self.request.GET.get('language', 'all')
+        associated_published_fields = [f.name for f in page._meta.get_fields() if f.name.startswith('published')]
+
+        if len(associated_published_fields) == 1:
+            # the FlatPage model published field is not translated
+            return page.published
+        elif len(associated_published_fields) > 1:
+            # the FlatPage model published field is translated
+            if language == 'all':
+                # no language specified. Include if at least one language published.
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    field_name = build_localized_fieldname('published', lang)
+                    if getattr(page, field_name):
+                        return True
+                return False
+            else:
+                # a language is specified, return the publication status for that language.
+                field_name = build_localized_fieldname('published', language)
+                return getattr(page, field_name)
+
+
     def _recursive_node_to_dict(self, node):
         result = self.get_serializer(instance=node).data
-        children = [self._recursive_node_to_dict(c) for c in node.get_children()]
+        children = [self._recursive_node_to_dict(c) for c in self.filter_queryset(node.get_children()) if self._check_page_published(c)]
         if children:
             result["children"] = children
         return result

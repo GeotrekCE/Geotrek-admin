@@ -1423,18 +1423,19 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         link_url = serializers.SerializerMethodField()
         # children = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
+        page_title = serializers.SerializerMethodField()
 
         class Meta:
             model = flatpages_models.MenuItem
             fields = (
                 'id',
                 'label',
-                # 'children',
-                'content_type',
+                'target_type',
                 'link_url',
                 'page',
                 'portals',
                 'published',
+                'page_title',
             )
 
         def get_label(self, obj):
@@ -1448,6 +1449,11 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
+
+        def get_page_title(self, obj):
+            if not obj.page:
+                return None
+            return get_translation_or_dict('title', self, obj.page)
 
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:

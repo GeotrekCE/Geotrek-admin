@@ -66,7 +66,7 @@ class MenuItemAdmin(TreeAdmin):
     form = adapt_form(movenodeform_factory(flatpages_models.MenuItem))
     # change_form_template = "flatpages/change_form.html"
     list_filter = (
-        ("portal", admin.filters.RelatedOnlyFieldListFilter),
+        ("portals", admin.filters.RelatedOnlyFieldListFilter),
     )
 
     # def add_view(self, request, form_url='', extra_context=None):
