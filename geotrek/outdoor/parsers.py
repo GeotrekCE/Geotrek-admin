@@ -218,6 +218,11 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
                 return CourseType.objects.get(pk=type_id)
         return None
 
+    def filter_points_reference(self, src, val):
+        if val:
+            return str(val)
+        return None
+
     def parse(self, filename=None, limit=None):
         self.init_outdoor_category('type', CourseType, join_field='practice')
         super().parse(filename, limit)

@@ -4,6 +4,7 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
+from django.contrib.gis.geos.collections import MultiPoint
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -210,6 +211,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         parent_site = Site.objects.get(name_fr="Noeud 2 bis")
         self.assertEqual(course.parent_sites.count(), 1)
         self.assertEqual(course.parent_sites.first(), parent_site)
+        self.assertEqual(type(course.points_reference), MultiPoint)
         self.assertEqual(str(course.parent_sites.first().practice), 'Climbing')
         child_course_1 = Course.objects.get(name="Step 1")
         child_course_2 = Course.objects.get(name="Step 2")

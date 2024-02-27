@@ -83,7 +83,23 @@
                 "en": "http://geotrek.local:8000/api/en/courses/1/feuille-1.pdf",
                 "fr": "http://geotrek.local:8000/api/fr/courses/1/feuille-1.pdf"
             },
-            "points_reference": null,
+            "points_reference": {
+                "type": "MultiPoint",
+                "coordinates": [
+                    [
+                        5.953323841094969,
+                        44.49945923930636
+                    ],
+                    [
+                        5.953838825225822,
+                        44.499933687298885
+                    ],
+                    [
+                        5.954546928405755,
+                        44.500438740596934
+                    ]
+                ]
+            },
             "published": {
                 "en": true,
                 "fr": true
