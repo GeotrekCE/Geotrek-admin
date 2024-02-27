@@ -1421,7 +1421,6 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
         link_url = serializers.SerializerMethodField()
-        # children = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
         page_title = serializers.SerializerMethodField()
 
@@ -1443,9 +1442,6 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_link_url(self, obj):
             return get_translation_or_dict('link_url', self, obj)
-
-        # def get_children(self, obj):
-        #     return [MenuItemSerializer(child).data for child in obj.get_children()]
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)

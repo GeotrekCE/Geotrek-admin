@@ -44,11 +44,6 @@ class FlatPagesAdmin(TreeAdmin):
     portals.short_description = _("Portals")
 
 
-def adapt_form(form):
-    print("HELLO!")
-    return form
-
-
 class MyListFilter(admin.filters.SimpleListFilter):
 
     def __init__(self, *args, **kwargs):
@@ -63,18 +58,13 @@ class MyListFilter(admin.filters.SimpleListFilter):
 # class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
 class MenuItemAdmin(TreeAdmin):
     list_display = ('label', )
-    form = adapt_form(movenodeform_factory(flatpages_models.MenuItem))
+    form = movenodeform_factory(flatpages_models.MenuItem)
     # change_form_template = "flatpages/change_form.html"
     list_filter = (
         ("portals", admin.filters.RelatedOnlyFieldListFilter),
     )
 
-    # def add_view(self, request, form_url='', extra_context=None):
-    #     return MenuItemCreate.as_view()(request)
-
 
 if settings.FLATPAGES_ENABLED:
     admin.site.register(flatpages_models.FlatPage, FlatPagesAdmin)
     admin.site.register(flatpages_models.MenuItem, MenuItemAdmin)
-
-# élément
