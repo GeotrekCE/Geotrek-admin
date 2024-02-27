@@ -500,6 +500,8 @@ class TouristicEventOrganizerCreatePopupTest(TestCase):
         url = '/popup/add/organizer/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        response = self.client.post(url, data={"label": "test"})
+        self.assertIn("dismissAddAnotherPopup", response.content.decode())
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
