@@ -1463,6 +1463,24 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             return get_translation_or_dict('title', self, obj.page)
 
 
+    class MenuItemDetailsSerializer(MenuItemSerializer):
+        children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
+
+        class Meta(MenuItemSerializer.Meta):
+            fields = MenuItemSerializer.Meta.fields + (
+                'children',
+                'parent',
+            )
+
+        def get_children(self, obj):
+            return obj.get_children().values_list('id', flat=True).all()
+
+        def get_parent(self, obj):
+            parent = obj.get_parent()
+            return parent.id if parent else None
+
+
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
     class InfrastructureTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

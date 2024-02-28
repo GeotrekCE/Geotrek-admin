@@ -23,7 +23,7 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
 
 
 class MenuItemRetrieveView(RetrieveAPIView):
-    serializer_class = api_serializers.MenuItemSerializer
+    serializer_class = api_serializers.MenuItemDetailsSerializer
     queryset = flatpages_models.MenuItem.objects.all()
 
 
