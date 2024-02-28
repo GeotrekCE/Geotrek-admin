@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='touristiceventorganizer',
             name='label',
-            field=models.CharField(max_length=256, verbose_name='OrganizerLabel'),
+            field=models.CharField(max_length=256, verbose_name='Label'),
         ),
     ]
