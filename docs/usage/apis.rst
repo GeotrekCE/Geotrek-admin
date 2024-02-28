@@ -6,21 +6,18 @@ APIs
    :local:
    :depth: 2
 
+.. image :: /images/user-manual/api-ecosystem.png
+
 API Geotrek
 ===========
 
 Geotrek dispose d’une API (Application Programming Interface) qui sert à exposer les données stockées dans une instance de Geotrek-admin, dans le but de pouvoir la faire communiquer avec d'autres outils, systèmes et plateforme et ainsi échanger des données.
 
-Cette API, désormais dans sa version 2 permet à toute structure tiers de récupérer des données et de les intégrer dans son système ou ses applications.
+Cette API, désormais dans sa version 2 permet à toute structure tierce de récupérer des données et de les intégrer dans son système ou ses applications.
 
-A ce jour de nombreux partenaires des structures utilisatrices de l’application Geotrek ont déjà utilisé cette API pour intégrer les données dans leurs outils.
+À ce jour de nombreux partenaires des structures utilisatrices de l’application Geotrek ont déjà utilisé cette API pour intégrer les données dans leurs outils.
 
-C’est le cas des applications de :
-    • Visorando
-    • Kalkin
-    • Apidae
-    • IGNrando'
-    • Outdooractive
+L'API Geotrek est le point central pour permettre les interconnexions avec divers services. Grâce à cette interface de données, Geotrek s'est positionné comme un point central dans un écosystème de solutions du monde de la gestion et promotion des activités de pleine nature.
 
 Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
 
@@ -30,7 +27,7 @@ APIs externes
 Geotrek et IGNrando'
 --------------------
 
-Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' (https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne).
+Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' (https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne).
 
 Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins 
 

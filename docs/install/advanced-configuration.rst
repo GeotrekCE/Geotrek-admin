@@ -719,6 +719,22 @@ Signage and Blade
   - ``bladenumber`` is the number of the blade
   - ``linenumber`` is the number of the line
 
+.. _trek-poi-intersection:
+
+POI
+~~~~
+
+.. envvar:: TREK_POI_INTERSECTION_MARGIN
+
+    Buffer around treks to intersects POIs (works only without dynamic segmentation)
+
+    Example::
+
+        TREK_POI_INTERSECTION_MARGIN = 500  # meters
+
+    Default::
+
+        500
 
 Diving
 ~~~~~~

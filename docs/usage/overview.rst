@@ -144,4 +144,4 @@ Modules de valorisation
        | rafting, parapente, course d'orientation, voie d'escalade, 
        | parcours d'eau vive…etc.) 
 
-Chaque module est accessible depuis le bandeau vertical.
+Chaque module est accessible depuis le bandeau vertical situé à gauche de l'écran.

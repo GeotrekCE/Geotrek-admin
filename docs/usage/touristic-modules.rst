@@ -386,29 +386,15 @@ Si vous ne souhaitez pas que les étapes soient affichées dans la page de Reche
 Points de référence
 --------------------
 
-Lorsque l'on localise un itinéraire, il est aussi possible de localiser le parking de la randonnée et de placer des points de référence numérotées sous forme de puces rouges sur la carte.
+Lorsqu'on localise un itinéraire, il est aussi possible de localiser le parking de la randonnée et de placer des points de référence numérotés sous forme de puces rouges sur la carte.
 
 Ces derniers servent à y faire référence dans le champs Description de l'itinéraire (Pas à pas) :
 
-.. image :: /images/user-manual/references-geotrek-rando.jpg
+.. image :: /images/user-manual/references-geotrek-rando.png
 
 Pour que des puces numérotées sous forme de pastilles rouges soient affichées dans la description, il suffit de les saisir en tant que Liste numérotées dans le champs Description :
 
-.. image :: /images/user-manual/references-geotrek-admin.jpg
-
-Ordre des catégories
----------------------
-
-Dans le portail Geotrek-rando, les différents types de contenus sont éclatés en catégories.
-
-Pour définir leur ordre d'affichage, il est possible de le définir dans la base de données pour certains contenus (ordre des pratiques des itinéraires et des catégories de contenus touristiques) en renseignant leur champs ``ordre`` depuis le module de configuration de Geotrek-admin.
-
-Zone tampon pour contenus à proximité
-----------------------------------------
-
-La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques et services.
-
-Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Distances <distances>`
+.. image :: /images/user-manual/references-geotrek-admin.png
 
 .. _points-d-interets-poi:
 
@@ -419,6 +405,10 @@ Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmen
 
 Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import POIs <import-pois>`
 
+.. note::
+
+	Lorsque Geotrek est installé en mode "sans segmentation dynamique", les POI sont rattachés aux itinéraires par zone tampon (buffer). Dans ce cas le paramètre pris en compte est le paramètre :ref:`TREK_POI_INTERSECTION_MARGIN <trek-poi-intersection>` qui est paramétrable dans le custom.py.
+
 .. _services:
 
 Services
@@ -428,6 +418,13 @@ Services
 
 Contenus touristiques
 =====================
+
+Zone tampon pour contenus à proximité
+----------------------------------------
+
+La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remonter les informations des contenus/évènements touristiques et services.
+
+Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Distances <distances>`
 
 .. _evenements-touristiques:
 
@@ -461,6 +458,7 @@ Pour activer le module Zones sensibles, se référer à cette section :ref:`Sens
 Activités outdoor
 ==================
 
+Par défaut, ce module est désactivé dans Geotrek. Pour activer le module Outdoor, se référer à cette section :ref:`Outdoor <outdoor>`
 
 Sites et parcours
 ------------------
@@ -498,14 +496,15 @@ tous les éléments ne sont pas repris, mais uniquement :
 
 - le site/parcours courant,
 - le site auquel il appartient (parent), ainsi que le grand-parent, etc. jusqu'à remonter au plus haut niveau,
-- les différents sous-sites et/ou parcours (enfants) le cas échéant.
+- Les sites et parcours "frères", ayant le même site parent.
+- les différents sous-sites et/ou parcours enfants.
 
 Des liens permettent d'ajouter des sites ou parcours en les positionnant directement dans l'arborescence.
 
 Nomenclatures
 --------------
 
-En déroulant le menu en haut à droite de l'écran et en cliquant sur « Admin » il est possible de modifier les nomenclatures.
+Via l'interface de configuration de Geotrek-Admin, il est possible de modifier les nomenclatures.
 
 * **Filières** : elles servent à regrouper les pratiques pour pouvoir filtrer rapidement les sites ou parcours.
   Par exemple la filière « eau vive » peut regrouper « kayak » et « canyoning ».
@@ -554,5 +553,3 @@ Les aires d'embarquement/débarquement sont définies par des sous-sites. Leur g
 ou d'un polygone.
 Les parcours sont automatiquement attachés à une aire d'embarquement et une aire de débarquement qui sont les aires les plus
 proches respectivement du début et de la fin du parcours.
-
-Pour activer le module Outdoor, se référer à cette section :ref:`Outdoor <outdoor>`

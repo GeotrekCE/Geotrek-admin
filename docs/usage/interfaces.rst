@@ -18,9 +18,9 @@ Tous les modules sont construits de la même façon :
 
 * une liste paginée des objets du module
 * la possibilité de filtrer la liste selon des attributs ou de faire une recherche libre
-* la possibilité de filtrer selon l'étendu de la carte
+* la possibilité de filtrer selon l'étendue de la carte
 * la sélection coordonnée (liste → carte, carte → liste)
-* la possibilité d'exporter les résultats en CSV (pour EXCEL ou CALC), en SHAPEFILE (pour QGIS) et en GPX (pour l'importer dans un GPS)
+* la possibilité d'exporter les résultats au format CSV, SHAPEFILE et en GPX
 * une carte dans laquelle il est possible de naviguer (déplacer, zoomer), d'afficher en plein écran, de mesurer une longueur, d'exporter une image de la carte, de réinitialiser l'étendue, de zoomer sur une commune ou un secteur et de superposer des données des autres modules (contours communes / secteurs / physique / foncier / gestionnaires…)
 * l'accès à la vue détail d'un objet au clic sur celui-ci
 
@@ -30,11 +30,14 @@ Tous les modules sont construits de la même façon :
 
    Vue liste avec la carte 
 
+
 .. note::
-	- Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur la carte.
-	- La liste des résultats est filtrée en fonction de l'étendue de la carte affichée.
-	- C'est aussi depuis un module qu'il est possible d'ajouter de nouveaux objets.
-	- Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
+ - Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur la carte.
+ - Il est possible d'ajouter de nouveaux objets depuis chaque module.
+ - Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
+
+.. warning::
+ - La liste des résultats est filtrée en fonction de l'étendue de la carte affichée.
 
 Vue détail
 ----------
@@ -56,9 +59,10 @@ Voici les possibilités de la fiche détail :
    Fiche détail d'un itinéraire
 
 .. note::
-	- Lorsque le statut de publication de l’itinéraire est activé, celui-ci ainsi que tous ses objets associés, sont mis en ligne.
-	- À tout moment et ce sur chaque module, les informations peuvent être soit mises en ligne, soit désactivées, voire supprimées.
-	- Ne sont mises en ligne que les informations choisies et disponibles. Les catégories non encore alimentées ne seront pas visibles pour le grand public.
+ - Lorsque le statut de publication d'un objet est activé, celui-ci ainsi que tous ses attributs associés, sont mis en ligne.
+ - À tout moment et ce sur chaque module, les informations peuvent être soit mises en ligne, soit désactivées, voire supprimées.
+ - Ne sont mises en ligne que les informations choisies et disponibles. Les catégories non encore alimentées ne seront pas visibles pour le grand public. Ainsi si vous créez une nouvelle pratique "Raquettes", celle-ci ne sera pas mise ne ligne tant que vous n'aurez pas publié un premier itinéraire de raquettes.
+
 
 Vue édition
 ------------

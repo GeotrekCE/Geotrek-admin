@@ -30,13 +30,12 @@ C’est l’**application de référence** des parcs naturels, mais aussi de nom
 Les quatre briques
 ==================
 
-
 La suite logicielle Geotrek dispose de quatre briques à la fois distincts et complémentaires :
 
 * :ref:`Geotrek-admin <qu-est-ce-que-geotrek>`: outil de gestion et de saisie de l’ensemble des informations, intégrant les données des Systèmes d’Informations Touristiques (SIT) et pouvant être connecté à votre SIG ou à des systèmes d’information transport
 * `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando-v3/blob/main/docs/presentation-fr.md>`_ : site web, reprenant les informations saisies dans Geotrek-admin, à destination des internautes grand public
 * `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile#geotrek-mobile>`_ : application mobile fonctionnant sous Android et iOS, reprenant des informations saisies dans Geotrek-admin et optimisées pour l’usage mobile (volume, impact sur la batterie, hors-ligne, géolocalisation…)
-* `Geotrek-rando-widget <https://github.com/GeotrekCE/Geotrek-rando-widget#geotrek-rando-widget>`_ : nouveau composant web permettant de valoriser une offre de contenus touristiques et de randonnées auprès des usagers du territoire, en l'intégrant dans un site internet existant
+* `Geotrek-rando-widget <https://geotrek-rando-widget.readthedocs.io/>`_ : nouveau composant web permettant de valoriser une offre de contenus touristiques et de randonnées auprès des usagers du territoire, en l'intégrant dans un site internet existant
 
 .. note::
   Cette documentation ne traite que de **Geotrek-Admin**, chaque brique ayant sa propre documentation.
@@ -51,15 +50,54 @@ L’application Geotrek, **destinée à deux types de public**, est une solution
 
 Pour retrouver plus d'informations sur la suite applicative Geotrek, rendez-vous sur `geotrek.fr <https://geotrek.fr>`_.
 
+A qui appartient Geotrek ?
+==========================
+
+Geotrek est un produit libre et open source avec une importante communauté d'utilisateurs.
+
+Retrouvez toutes les infos sur la genèse du produit, son modèle communautaire ainsi que les principales structures contributrices sur le `site geotrek.fr <https://geotrek.fr/apropos.html>`_.
+
+Comment rejoindre la communauté ?
+==================================
+
+* Rejoignez la `mailing list <https://groups.google.com/forum/#!forum/geotrek-fr>`_! Envoyez un mail à ``geotrek-fr+subscribe@googlegroups.com`` et vous recevrez automatiquement une invitation.
+* `Ouvrir un ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ lorsqu'un bug est détecté
+* `Ouvrir un ticket <https://github.com/GeotrekCE/Geotrek-admin/issues/new>`_ pour proposer une suggestion ou une nouvelle fonctionnalité
+* Rejoindre le `canal de discussion Matrix <https://matrix.to/#/#geotrek:matrix.org>`_ afin d'échanger directement avec des membres de la communauté Geotrek
+
 Composants libres
 =================
 
 L’application Geotrek utilise les technologies open source suivantes :
 
+Geotrek-admin
+-------------
+
 * **Python / Django**, l'épine dorsale de l'application qui prend en charge les principales fonctionnalités comme le module de configuration, l'exploitation de la base de données, la gestion des utilisateurs et de leurs droits ou l'intégration avec les bibliothèques cartographiques. La richesse de son écosystème permet de concevoir des applications aux possibilités infinies, en favorisant la production d'applications sécurisées, solides (tests automatiques) et robustes (Python).
-* **PostgreSQL / PostGIS** pour la base de données. La totalité des données de l'application est stockée dans une instance PostgreSQL avec l'extension spatiale PostGIS :
+* **PostgreSQL / PostGIS** pour la base de données. La totalité des données de l'application est stockée dans une instance PostgreSQL avec l'extension spatiale PostGIS :
 
   * attributs, comptes utilisateurs…,
   * géométries,
   * raster (Modèle Numérique Terrain).
-* **JavaScript / React**, **Next.js**, **Leaflet**, **SVG** et **WebGL** pour l'interaction avec les utilisateurs et la visualisation, **HTML5** pour la structure du site, **CSS3** pour l’apparence.
+
+Geotrek-rando
+-------------
+
+* **Next.js** (*React, Typescript*), 
+* **Leaflet**, utilisé comme librairie cartographique
+
+Geotrek-rando-widget
+---------------------
+
+* **Stencil**, framework permettant de créer des composants web personnalisables et légers.
+* **Leaflet**, utilisé comme librairie cartographique
+
+Geotrek-mobile
+---------------
+
+* **Angular**, framework utilisé pour l'application Geotrek-mobile.
+* **Ionic**, composant UI
+* **Capacitor**, boîte à outils nécessaires à la création d'applications mobiles
+* **MapLibre**, utilisé comme librairie cartographique 
+
+
