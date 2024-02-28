@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 13:56+0000\n"
+"POT-Creation-Date: 2024-02-28 10:45+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -280,6 +280,11 @@ msgstr ""
 msgid "Event places"
 msgstr ""
 
+#, fuzzy
+#| msgid "Organizer"
+msgid "OrganizerLabel"
+msgstr "Organisator"
+
 msgid "Organizer"
 msgstr "Organisator"
 
@@ -458,6 +463,11 @@ msgstr ""
 
 msgid "Date"
 msgstr "Datum"
+
+#, fuzzy
+#| msgid "Organizer"
+msgid "Add Organizer"
+msgstr "Organisator"
 
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"
