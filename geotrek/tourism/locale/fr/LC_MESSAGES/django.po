@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 13:56+0000\n"
+"POT-Creation-Date: 2024-02-28 10:45+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -283,6 +283,11 @@ msgstr "Lieu d'évènement"
 msgid "Event places"
 msgstr "Lieux d'évènements"
 
+#, fuzzy
+#| msgid "Organizer"
+msgid "OrganizerLabel"
+msgstr "Organisateur"
+
 msgid "Organizer"
 msgstr "Organisateur"
 
@@ -463,6 +468,11 @@ msgstr "Total"
 
 msgid "Date"
 msgstr "Date"
+
+#, fuzzy
+#| msgid "Organizer"
+msgid "Add Organizer"
+msgstr "Organisateur"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
