@@ -459,10 +459,8 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
-#, fuzzy
-#| msgid "Organizer"
 msgid "Add Organizer"
-msgstr "Organisator"
+msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"

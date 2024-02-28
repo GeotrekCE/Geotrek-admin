@@ -1,5 +1,4 @@
 
-
 from django.forms.widgets import Select
 from django.test import TestCase
 from django.contrib.auth.models import Permission
