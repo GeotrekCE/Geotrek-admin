@@ -1396,6 +1396,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         published = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
         children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
 
         class Meta:
             model = flatpages_models.FlatPage
@@ -1407,7 +1408,8 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 'portals',
                 'published',
                 'attachments',
-                'children'
+                'children',
+                'parent',
             )
 
         def get_title(self, obj):
@@ -1421,6 +1423,10 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_children(self, obj):
             return obj.get_children().values_list('id', flat=True).all()
+
+        def get_parent(self, obj):
+            parent = obj.get_parent()
+            return parent.id if parent else None
 
 
     class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
