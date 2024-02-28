@@ -491,7 +491,13 @@ class TouristicEventOrganizerCreatePopupTest(TestCase):
     def test_cannot_create_organizer(self):
         url = '/popup/add/organizer/'
         response = self.client.get(url)
+        # with no user logged -> redirect to login page
         self.assertRedirects(response, "/login/?next=/popup/add/organizer/")
+        user = UserFactory()
+        self.client.force_login(user=user)
+        response = self.client.get(url)
+        # with user with no perm -> redirect to login page
+        self.assertEqual(response.status_code, 403)
 
     def test_can_create_organizer(self):
         user = UserFactory()
