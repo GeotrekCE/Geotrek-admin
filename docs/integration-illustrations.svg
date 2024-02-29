@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="import-illustrations.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path3783"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.4) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible;">
+      <path
+         id="path3786"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible;">
+      <path
+         id="path3792"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="EmptyTriangleOutM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleOutM"
+       style="overflow:visible">
+      <path
+         id="path3940"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#FFFFFF;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.4) translate(-4.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lend"
+       style="overflow:visible;">
+      <path
+         id="path3798"
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) rotate(180) translate(1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3786-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-4"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3783-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-9"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3786-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="243.02304"
+     inkscape:cy="841.80906"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1918"
+     inkscape:window-height="1059"
+     inkscape:window-x="0"
+     inkscape:window-y="19"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 39.671512,96.364341 107.71429,65.93361 74.142859,48.790753 109.9079,113.01699"
+       id="path2991"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 169.83972,114.52607 215.554,73.811776"
+       id="path2995"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-mid:none;marker-end:none"
+       d="m 185.73257,46.633207 25.35715,21.964289"
+       id="path2997"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-mid:none;marker-end:none"
+       d="M 235.01829,50.561779 212.87544,70.561776"
+       id="path2999"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="M 267.4061,99.678353 369.49999,114.68361"
+       id="path3001"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 331.28571,51.076468 -8.57143,54.999992"
+       id="path3003"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
+       d="m 27.736195,178.54055 58.57143,12.85714 -60.71429,46.42857"
+       id="path5901"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
+       d="m 133.45049,162.82626 -67.142865,23.57143 -9.28572,-27.14285"
+       id="path5903"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 162.45011,149.72541 62.62946,59.74692 33.1871,1.90301"
+       id="path6095"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 170.88847,173.9997 18.18275,1.51523 26.76905,25.25381 -6.566,38.89087"
+       id="path6097"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:#000000;fill-opacity:0.21960784;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 149.29592,419.90367 -93.944185,-21.2132 -15.152291,39.39595 20.203051,23.23351 86.873125,-8.08122 z"
+       id="path6289"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/polygon-errors.png"
+       inkscape:export-xdpi="300.18008"
+       inkscape:export-ydpi="300.18008" />
+    <path
+       style="fill:#000000;fill-opacity:0.21960784;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 109.89997,371.41635 -54.548235,-23.23351 7.07107,23.23351 0,28.28427 54.548235,21.21321 z"
+       id="path6289-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/polygon-errors.png"
+       inkscape:export-xdpi="300.18008"
+       inkscape:export-ydpi="300.18008" />
+    <path
+       style="fill:#000000;fill-opacity:0.21960784;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 265.62319,406.75065 -36.33485,15.45867 -33.11313,-5.1046 14.64721,38.13326 86.87312,-8.08122 z"
+       id="path6289-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/polygon-errors.png"
+       inkscape:export-xdpi="300.18008"
+       inkscape:export-ydpi="300.18008" />
+    <path
+       style="fill:#000000;fill-opacity:0.21960784;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 260.31989,365.3344 -24.74873,14.14213 -22.72843,-14.14213 -16.66752,51.26524 69.44798,-10.35406 z"
+       id="path6289-5-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/polygon-errors.png"
+       inkscape:export-xdpi="300.18008"
+       inkscape:export-ydpi="300.18008" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 324.04926,218.93939 49.47135,-44.71644 -13.21428,-30 -30.71429,1.78571 -2.47462,31.39883 20.71734,17.53723"
+       id="path2991-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart)"
+       d="m 454.03038,68.187369 12.72189,-9.2704 0.83131,0.80152 -62.17694,45.627051"
+       id="path5901-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="/home/mle/Code/geobi/geobi-ecrins/Geotrek/docs/paths-errors.png"
+       inkscape:export-xdpi="300.0545"
+       inkscape:export-ydpi="300.0545" />
+  </g>
+</svg>
