@@ -1,3 +1,6 @@
+from mapentity.forms import TranslatedModelForm, MapEntityForm
+from treebeard.forms import MoveNodeForm
+
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -10,20 +13,20 @@ from modeltranslation.settings import AVAILABLE_LANGUAGES
 from modeltranslation.utils import build_localized_fieldname
 
 
-class FlatPageForm(CommonForm):
+class FlatPageForm(MoveNodeForm, MapEntityForm):
     content = forms.CharField(widget=forms.Textarea, label=_("Content"))
     cover_image = forms.ImageField(label=_("Cover image"), required=False)
     cover_image_author = forms.CharField(label=_("Cover image author"), max_length=128, required=False)
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs['user']
+        # self.user = kwargs['user']
         super().__init__(*args, **kwargs)
         # Revert widget modifications done by MapentityForm.__init__()
         for fieldname in self.fields.keys():
             if fieldname.startswith('content_'):
                 self.fields[fieldname].widget = forms.Textarea()
-        self.fields['source'].help_text = None
-        self.fields['portal'].help_text = None
+        # self.fields['source'].help_text = None
+        # self.fields['portal'].help_text = None
         if self.instance.pk:
             page = Attachment.objects.filter(
                 content_type=ContentType.objects.get_for_model(FlatPage),

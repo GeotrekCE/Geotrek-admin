@@ -5,6 +5,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from geotrek.flatpages import models as flatpages_models
+from geotrek.flatpages.forms import FlatPageForm
 from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate, MenuItemCreate
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -30,7 +31,7 @@ class FlatPagesAdmin(TreeAdmin):
     list_display = ('title', 'published', 'publication_date', 'portals', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
-    form = movenodeform_factory(flatpages_models.FlatPage)
+    form = movenodeform_factory(flatpages_models.FlatPage, FlatPageForm)
     # form = FlatPagesAdminForm
 
     # def add_view(self, request, form_url='', extra_context=None):
