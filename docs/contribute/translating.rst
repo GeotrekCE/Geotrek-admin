@@ -2,10 +2,6 @@
 Translating
 ============
 
-.. contents::
-   :local:
-   :depth: 2
-
 Geotrek-admin can be translated online on
 `Makina Corpus Weblate instance <https://weblate.makina-corpus.net/projects/geotrek-admin/>`_
 
@@ -100,7 +96,7 @@ Release translations (only for github repository managers)
 ----------------------------------------------------------
 
 Weblate send new translations to `translations` branch in Github, dedicated to translations.
-When new translations chains are validated, manager has to send them manually to Github.
+When new translations chains are validated, manager has to send the manually to Github.
 
 For each release, `translations` branch must be merged into master before building the release.
 

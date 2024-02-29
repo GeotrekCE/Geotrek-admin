@@ -1,28 +1,26 @@
 Welcome to Geotrek's documentation!
 ===================================
 
-.. toctree::
-    :caption: 💡 About
-    :maxdepth: 2
-
-    about/geotrek.rst
+.. _contents:
 
 .. toctree::
-    :caption: 🚀 User manual
+    :caption: User manual
     :maxdepth: 2
 
     usage/overview.rst
-    usage/interfaces.rst
-    usage/management-modules.rst
-    usage/touristic-modules.rst 
+    usage/screencasts.rst
     usage/editing-objects.rst
-    usage/configuration-ttw.rst
-    usage/apis.rst
+    usage/management-modules.rst
+    usage/treks.rst
+    usage/outdoor.rst
     usage/static-pages.rst
-    usage/tutorials.rst
+    usage/configuration-ttw.rst
+    usage/externals-apis.rst
+    usage/qgis.rst
+    faq.rst
 
 .. toctree::
-    :caption: 🔧 Installation & configuration
+    :caption: Installation & configuration
     :maxdepth: 2
 
     install/installation
@@ -33,21 +31,28 @@ Welcome to Geotrek's documentation!
     install/synchronization
     install/import
     install/docker
+    install/sensitivity
 
 .. toctree::
-    :caption: ✨ Contribute
+    :caption: Contribute
     :maxdepth: 2
 
-    contribute/contributing
+    CONTRIBUTING
     contribute/development
     contribute/translating
     contribute/documentation
     contribute/design
 
 .. toctree::
-    :caption: 📝 Others
-    :maxdepth: 1
+    :caption: Others
+    :maxdepth: 2
 
-    others/troubleshooting
-    others/authors
-    others/changelog
+    troubleshooting
+    authors
+    changelog
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`search`

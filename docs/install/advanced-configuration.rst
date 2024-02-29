@@ -4,11 +4,6 @@
 Advanced configuration
 ======================
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 Application settings
 --------------------
 
@@ -19,7 +14,8 @@ In order to check your configuration of spatial extents, a small tool
 is available at http://server/tools/extents/.
 
 .. note ::
-  Administrator privileges are required.
+
+    Administrator privileges are required.
 
 
 Email settings
@@ -41,43 +37,32 @@ be sent to the managers:
 .. code-block :: bash
 
     sudo geotrek sendtestemail --managers
-    
-.. _API:
+
 
 API
 ~~~
 
-.. envvar:: API_IS_PUBLIC
+.. code-block :: python
 
-    Set to ``True`` if you want the API V2 to be available for everyone without authentication. 
+    API_IS_PUBLIC = True
 
-    Example::
-
-        API_IS_PUBLIC = True
-
-    Default::
-
-        False
-
-.. note::
-  - This API provides access to promotion content (Treks, POIs, Touristic Contents ...). 
-  - Set to ``False`` if Geotrek is intended to be used only for managing content and not promoting them.
-  - This setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
+Choose if you want the API V2 to be available for everyone without authentication. This API provides access to promotion content (Treks, POIs, Touristic Contents ...). Set to False if Geotrek is intended to be used only for managing content and not promoting them.
+Note that this setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
 
 
 Swagger API documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: INSTALLED_APPS for API V2
+In order to enable swagger module to auto-document API, in the custom settings file,
+add the following code:
 
-In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
+.. code-block :: python
 
-    Enable API V2 documentation::
-
-        INSTALLED_APPS += ('drf_yasg', )
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
 
 Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-The API swagger documentation is now availaible here : ``<GEOTREK_ADMIN_URL>/api/v2``
+The API swagger documentation is now availaible here : `<GEOTREK_ADMIN_URL>/api/v2`
 
 Share services between several Geotrek instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,20 +136,26 @@ To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custo
 
 Expected columns in table/view are :
 
-* ``username`` : string (*unique*)
-* ``first_name`` : string
-* ``last_name``: string
-* ``password`` : string (simple md5 encoded, or full hashed and salted password)
-* ``email`` : string
-* ``level`` : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
-* ``structure`` : string
-* ``lang`` : string (language code)
+* username : string (*unique*)
+* first_name : string
+* last_name : string
+* password : string (simple md5 encoded, or full hashed and salted password)
+* email : string
+* level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
+* structure : string
+* lang : string (language code)
 
 .. note ::
-  - The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
-  - User management will be disabled from Administration backoffice.
-  - In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings file, and restart instance (see paragraph above).
-  - Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us for more details.
+
+    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
+
+    User management will be disabled from Administration backoffice.
+
+    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
+    file, and restart instance (see paragraph above).
+
+    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
+    for more details.
 
 Custom SQL
 ~~~~~~~~~~
@@ -175,7 +166,6 @@ Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app 
 * ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names
 
-.. _map-settings:
 
 Map settings
 ------------
@@ -183,28 +173,28 @@ Map settings
 Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, you have two basemaps layers in your Geotrek-admin (OSM and OpenTopoMap)
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OpenTopoMap)
 
 You can change or add more basemaps layers like this:
 
-.. envvar:: LEAFLET_CONFIG['TILES'] 
-
-  Specify the tiles URLs this way in your custom Django setting file:
-
-    Syntax::
+.. code-block :: python
 
         LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
-    Basic example::
+Specify the tiles URLs this way in your custom Django setting file:
 
-        LEAFLET_CONFIG['TILES'] = [
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
         ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
         ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
-        ]
+    ]
 
-    Example with IGN and OSM basemaps::
+Example with IGN and OSM basemaps:
 
-        LEAFLET_CONFIG['TILES'] = [
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
         (
             'IGN Plan V2',
             '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
@@ -250,11 +240,15 @@ You can change or add more basemaps layers like this:
                 'maxZoom': 22
             }
         ),
-        ]
+    ]
 
-    You can also configure overlays layers like this::
+To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-web-issus-des-scans-ign.
 
-        LEAFLET_CONFIG['OVERLAYS'] = [
+You can also configure overlays layers like this :
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
         (
             'IGN Cadastre',
             '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
@@ -264,53 +258,47 @@ You can change or add more basemaps layers like this:
                 'maxZoom': 22
             }
         ),
-        ]
+    ]
 
-.. note:: 
-  To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
 
 Map layers zoom
 ~~~~~~~~~~~~~~~
 
-.. envvar:: LEAFLET_CONFIG
+You can define the max_zoom the user can zoom for all tiles.
 
-    You can define the max_zoom the user can zoom for all tiles.
+.. code-block :: python
 
-    Example::
+    LEAFLET_CONFIG['MAX_ZOOM'] = 19
 
-        LEAFLET_CONFIG= 19
-
-
-.. note ::
-  It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
+*It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.*
 
 
 Map layers colors and style
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for layers color and style
+All layers colors can be customized from the settings.
+See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
+layer style.
 
-    All layers colors can be customized from the settings. See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial layer style.
+.. code-block :: python
 
-    Example::
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
-        MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+Or change just one parameter (the opacity for example):
 
-    Example with one parameter::
+.. code-block :: python
 
-        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
-
-.. note ::
-  It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 
-.. envvar:: COLORS_POOL
+Regarding colors that depend from database content, such as land layers
+(physical types, work management...) or restricted areas. We use a specific
+setting that receives a list of colors:
 
-    Regarding colors that depend from database content, such as land layers (physical types, work management...) or restricted areas. We use a specific setting that receives a list of colors:
+.. code-block :: python
 
-    Example::
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
 
-        COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
 
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
@@ -333,7 +321,7 @@ of available styles.
                            'arrowColor': 'black', 'arrowSize': 10},}
     }
 
-Color of the different layers on the map :
+Color of the different layers on the map
 
 .. code-block :: python
 
@@ -350,31 +338,30 @@ Color of the different layers on the map :
 
 Color of the different layers on the top right for landing.
 
-.. note :: 
-  - For land, physical, competence, signagemanagement, workmanagement should have 5 values.
-  - For restricted Area: add as many color as your number of restricted area type
-  - **Restart** the application for changes to take effect.
+    * For land, physical, competence, signagemanagement, workmanagement should have 5 values.
+    * For restricted Area: add as many color as your number of restricted area type
+
+**Restart** the application for changes to take effect.
 
 
 External raster layers
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. tip::
-  It is possible to add overlay tiles layer on maps. For example, it can be useful to:
-    - Get the cadastral parcels on top of satellite images
-    - Home made layers (*with Tilemill or QGisMapserver for example*).
-    - Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths that are marked as invisible in the database!
+It is possible to add overlay tiles layer on maps. For example, it can be useful to:
 
-.. envvar:: LEAFLET_CONFIG['OVERLAYS']
+* Get the cadastral parcels on top of satellite images
+* Home made layers (*with Tilemill or QGisMapserver for example*).
+  Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths
+  that are marked as invisible in the database!
 
-    In ``custom.py``, just add the following lines:
+In ``custom.py``, just add the following lines:
 
-    Example::
+.. code-block :: python
 
-        LEAFLET_CONFIG['OVERLAYS'] = [
-        ('Cadastre', '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; Cadastre - Carte © IGN/Geoportail')
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre', '//wxs.ign.fr/essentiels/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; IGN - GeoPortail')
         ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-        ]
+    ]
 
 
 **Expected properties:**
@@ -392,78 +379,54 @@ For ``GeoJSON`` files, you can provide the following properties :
 Geographical CRUD
 ~~~~~~~~~~~~~~~~~
 
-.. envvar:: PATH_SNAPPING_DISTANCE
+.. code-block :: python
 
-    Minimum distance to merge two paths in unit of SRID
+    PATH_SNAPPING_DISTANCE = 2.0
 
-    Example::
+Minimum distance to merge 2 paths in unit of SRID
 
-        PATH_SNAPPING_DISTANCE = 2.0
+    *Change the distance. Better to keep it like this. Not used when ``TREKKING_TOPOLOGY_ENABLED = True``.*
 
-.. note ::
-  - Change the distance. Better to keep it like this. 
-  - Not used when ``TREKKING_TOPOLOGY_ENABLED = True``
+.. code-block :: python
 
-.. envvar:: SNAP_DISTANCE
+    SNAP_DISTANCE = 30
 
-    Distance of snapping for the cursor in pixels on Leaflet map.
+Distance of snapping for the cursor in pixels on Leaflet map.
 
-    Example::
+.. code-block :: python
 
-        SNAP_DISTANCE = 30
+    PATH_MERGE_SNAPPING_DISTANCE = 2
 
-.. envvar:: PATH_MERGE_SNAPPING_DISTANCE
+Minimum distance to merge 2 paths.
 
-    Minimum distance to merge two paths.
+    *Change the distance. Should be higher or the same as PATH_SNAPPING_DISTANCE*
 
-    Example::
+    *Used when TREKKING_TOPOLOGY_ENABLED = True*
 
-        PATH_MERGE_SNAPPING_DISTANCE = 2
+.. code-block :: python
 
-.. note ::
-  - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
-  - Used when ``TREKKING_TOPOLOGY_ENABLED = True``.
+    TREK_POINTS_OF_REFERENCE_ENABLED = True
 
-.. envvar:: TREK_POINTS_OF_REFERENCE_ENABLED
+Points of reference are enabled on form of treks.
 
-    Points of reference are enabled on form of treks.
+.. code-block :: python
 
-    Example::
+    OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
 
-        TREK_POINTS_OF_REFERENCE_ENABLED = True
+Points of reference are enabled on form of otudoor courses.
 
-    Default::
+.. code-block :: python
 
-        False
+    TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
 
-.. envvar:: OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
+Land objects are added on other objects (path for example) with offset, avoiding overlay.
 
-    Points of reference are enabled on form of otudoor courses.
+    *You should not change it to avoid overlay except if you want to have more overlay.*
+    *You can do for example for :*
 
-    Example::
-
-        OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
-
-    Default::
-    
-        False
-
-.. envvar:: TOPOLOGY_STATIC_OFFSETS
-
-    Land objects are added on other objects (path for example) with offset, avoiding overlay.
-
-    Example::
-
-        TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
-
-    Example with more overlays::
+.. code-block :: python
 
         TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
-
-.. note ::
-  You should not change it to avoid overlay except if you want to have more overlays.
-
-**All settings used to generate altimetric profile :**
 
 .. code-block :: python
 
@@ -480,25 +443,23 @@ Geographical CRUD
     ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
     ALTIMETRIC_AREA_MARGIN = 0.15
 
-.. note::
-  - All these settings can be modified but you need to check the result every time
-  - The only one modified most of the time is ``ALTIMETRIC_PROFILE_COLOR``
+All settings used to generate altimetric profile.
+
+    *All these settings can be modified but you need to check the result every time*
+
+    *The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
 
 
 Disable darker map backgrounds
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for map background
+Since IGN map backgrounds are very dense and colourful, a dark opacity is
+applied. In order to disable, change this MapEntity setting:
 
-    Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
+.. code-block :: python
 
-    Example::
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
-        MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
-
-    Default::
-
-        True
 
 Map screenshots
 ~~~~~~~~~~~~~~~
@@ -511,18 +472,16 @@ Map screenshots
     SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
     SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
-.. envvar:: MAP_CAPTURE_SIZE
+Show objects on maps of PDF
 
-    Show objects on maps of PDF
+.. code-block :: python
 
-    Example::
+    MAP_CAPTURE_SIZE = 800
 
-        MAP_CAPTURE_SIZE = 800
+Size in pixels of the capture.
 
-.. note ::
-  - Size in pixels of the capture.
-  - Be careful with your pdfs.
-  - If you change this value, pdfs will be rendered differently
+    *Be careful with your pdfs.*
+    *If you change this value, pdfs will be rendered differently*
 
 
 Modules and components
@@ -531,7 +490,8 @@ Modules and components
 Enable Apps
 ~~~~~~~~~~~
 
-In order to disable a full set of modules, in the custom settings file, add the following code:
+In order to disable a full set of modules, in the custom settings file,
+add the following code:
 
 .. code-block :: python
 
@@ -541,32 +501,17 @@ In order to disable a full set of modules, in the custom settings file, add the 
     _INSTALLED_APPS.remove('geotrek.maintenance')
     INSTALLED_APPS = _INSTALLED_APPS
 
+In order to remove notion of trails:
 
-.. envvar:: TRAIL_MODEL_ENABLED
+.. code-block :: python
 
-    In order to remove notion of trails.
+    TRAIL_MODEL_ENABLED = False
 
-    Example::
+In order to remove landedge model:
 
-        TRAIL_MODEL_ENABLED = False
+.. code-block :: python
 
-    Default::
-
-        True
-
-
-.. envvar:: LANDEDGE_MODEL_ENABLED
-
-    In order to remove landedge model.
-
-    Example::
-
-        LANDEDGE_MODEL_ENABLED = False
-
-    Default::
-
-        True
-
+    LANDEDGE_MODEL_ENABLED = False
 
 In order to remove zoning combo-boxes on list map:
 
@@ -576,177 +521,126 @@ In order to remove zoning combo-boxes on list map:
     LAND_BBOX_DISTRICTS_ENABLED = False
     LAND_BBOX_AREAS_ENABLED = False
 
+In order to hide TouristicContents and TouristicEvents on menu:
 
-.. envvar:: TOURISM_ENABLED
+.. code-block :: python
 
-    In order to hide TouristicContents and TouristicEvents on menu.
+    TOURISM_ENABLED = False
 
-    Example::
+In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
 
-        TOURISM_ENABLED = False
+.. code-block :: python
 
-    Default::
+    FLATPAGES_ENABLED = False
 
-        True
+In order to hide the accessibility menu for attachments:
 
-.. envvar:: FLATPAGES_ENABLED
+.. code-block :: python
 
-    In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
-
-    Example::
-
-        FLATPAGES_ENABLED = False
-
-    Default::
-
-        True
-
-.. envvar:: ACCESSIBILITY_ATTACHMENTS_ENABLED
-
-    In order to hide the accessibility menu for attachments.
-
-    Example::
-
-        ACCESSIBILITY_ATTACHMENTS_ENABLED = False
-
-    Default::
-
-        True
+   ACCESSIBILITY_ATTACHMENTS_ENABLED = False
 
 .. note ::
-  - By doing so, some software upgrades may not be as smooth as usual.
-  - Never forget to mention this customization if you ask for community support.
+
+    By doing so, some software upgrades may not be as smooth as usual.
+    Never forget to mention this customization if you ask for community support.
 
 
 Paths
 ~~~~~
 
-.. envvar:: ALLOW_PATH_DELETION_TOPOLOGY
+.. code-block :: python
 
-    If ``False``, it forbids to delete a path when at least one topology is linked to this path.
+    ALLOW_PATH_DELETION_TOPOLOGY = True
 
-    Example::
-
-        ALLOW_PATH_DELETION_TOPOLOGY = True
-
-    Default::
-
-        False
+If false, it forbid to delete a path when at least one topology is linked to this path.
 
 
-.. envvar:: ALERT_DRAFT
+.. code-block :: python
 
-    If ``True``, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
+    ALERT_DRAFT = False
 
+If True, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
 
-    Example::
-
-        ALERT_DRAFT = False
-
-    Default::
-
-        True
-
-.. envvar:: ALERT_REVIEW
-
-    If ``True``, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
-    Example::
+.. code-block :: python
 
-        ALERT_REVIEW = False
+    ALERT_REVIEW = False
 
-    Default::
 
-        True
+If True, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
 
-.. note ::
-  Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
 Signage and Blade
 ~~~~~~~~~~~~~~~~~
 
+
 ``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) allow to enable or disable blades and lines submodules.
 
 ``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
 
-.. envvar:: BLADE_CODE_TYPE
+.. code-block :: python
 
-    Type of the blade code (string or integer)
+    BLADE_CODE_TYPE = int
 
+Type of the blade code (str or int)
 
-    Example::
+    *It can be str or int.*
 
-        BLADE_CODE_TYPE = INT
+    *If you have an integer code : int*
 
-.. note ::
-  - It can be string or integer
-  - If you have an integer code : ``int``
-  - If you have an string code : ``str``
+    *If you have an string code : str*
 
-.. envvar:: BLADE_CODE_FORMAT
+.. code-block :: python
 
-    Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
+    BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 
+Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
 
-    Example::
+    *If you want to change : move information under bracket*
 
-        BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+    *You can also remove one element between bracket*
 
-.. note ::
-  - If you want to change : move information under bracket
-  - You can also remove one element between bracket
-  - You can do for exemple : ``"CD99.{signagecode}.{bladenumber}"``
-  - It will display : ``CD99.XIDNZEIU.01 (first blade of XIDNZEIU)``
-  - ``signagecode`` is the code of the signage
-  - ``bladenumber`` is the number of the blade
+    *You can do for exemple :*
+    *"CD99.{signagecode}.{bladenumber}"*
 
-.. envvar:: LINE_CODE_FORMAT
+    *It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*
 
-    Corresponds to the format used in export of lines. Used in csv of signage
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
 
+.. code-block :: python
 
-    Example::
+    LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
-        LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+Correspond to the format used in export of lines. Used in csv of signage.
 
-.. note ::
-  - Similar with above
-  - You can do for example : ``"CD99.{signagecode}-{bladenumber}.{linenumber}"``
-  - It will display : ``CD99.XIDNZEIU-01.02`` (second line of the first blade of XIDNZEIU)
-  - ``signagecode`` is the code of the signage
-  - ``bladenumber`` is the number of the blade
-  - ``linenumber`` is the number of the line
+    *Similar with above*
+    *You can do for example :*
+    *"CD99.{signagecode}-{bladenumber}.{linenumber}"*
 
-.. _trek-poi-intersection:
+    *It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of XIDNZEIU)*
 
-POI
-~~~~
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
+    * *linenumber is the number of the line*
 
-.. envvar:: TREK_POI_INTERSECTION_MARGIN
-
-    Buffer around treks to intersects POIs (works only without dynamic segmentation)
-
-    Example::
-
-        TREK_POI_INTERSECTION_MARGIN = 500  # meters
-
-    Default::
-
-        500
 
 Diving
 ~~~~~~
 
-.. envvar:: INSTALLED_APPS for Diving
+In order to enable diving module, in the custom settings file,
+add the following code:
 
-    In order to enable diving module, in the custom settings file, add the following code:
+.. code-block :: python
 
-    Example::
-
-        INSTALLED_APPS += ('geotrek.diving', )
-
+    # Enable diving module
+    INSTALLED_APPS += ('geotrek.diving', )
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
@@ -773,19 +667,17 @@ You can insert circulation and authorization types with this command :
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
 
-.. _outdoor:
 
 Outdoor
 ~~~~~~~
 
-.. envvar:: INSTALLED_APPS for Outdoor
+In order to enable Outdoor module, in the custom settings file,
+add the following code:
 
-    In order to enable Outdoor module, in the custom settings file, add the following code:
+.. code-block :: python
 
-    Example::
-
-        INSTALLED_APPS += ('geotrek.outdoor', )
-
+    # Enable Outdoor module
+    INSTALLED_APPS += ('geotrek.outdoor', )
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
@@ -797,22 +689,22 @@ You can also insert Outdoor minimal data:
 
 After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
 
-.. note ::
-  - Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
-  - You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
-
-.. _sensitive-areas:
+Note: Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
 Sensitive areas
 ~~~~~~~~~~~~~~~
 
-.. envvar:: INSTALLED_APPS for Sensitive areas
+In order to enable sensitivity module, in the custom settings file,
+add the following code:
 
-    In order to enable sensitivity module, in the custom settings file, add the following code:
+.. code-block :: python
 
-    Example::
+    # Enable sensitivity module
+    INSTALLED_APPS += ('geotrek.sensitivity', )
 
-        INSTALLED_APPS += ('geotrek.sensitivity', )
+See `sensitivity section <./sensitivity.html>`_ for settings and imports.
 
 
 You can insert rules of sensitive area with these commands :
@@ -822,109 +714,6 @@ You can insert rules of sensitive area with these commands :
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
     cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
-Settings
-'''''''''
-
-The following settings are related to sensitive areas:
-
-.. envvar:: SENSITIVITY_DEFAULT_RADIUS
-
-    Default radius of sensitivity bubbles when not specified for species
-
-    Example::
-
-        SENSITIVITY_DEFAULT_RADIUS = 100  # meters
-
-    Default::
-
-        100
-
-
-.. envvar:: SENSITIVE_AREA_INTERSECTION_MARGIN
-
-    Buffer around treks to intersects sensitive areas
-
-    Example::
-
-        SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
-
-    Default::
-
-        500
-
-.. notes
-
-    # Take care if you change this value after adding data. You should update buffered geometry in sql.
-    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
-
-
-Import from https://biodiv-sports.fr
-''''''''''''''''''''''''''''''''''''''
-
-In user interface, in the top-right menu, clic on "Imports" and choose "Biodiv'Sports".
-
-On command line, run
-
-.. code-block :: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
-
-
-Import from shapefile
-'''''''''''''''''''''''
-
-In user interface, in the top-right menu, go to Imports and choose "Shapefile zone sensible espèce"
-or "Shapefile zone sensible réglementaire".
-
-.. note::
-  The file must be a zip containing all the shapefile extensions (.shp, .shx, .prj, .dbf, .cpg)
-
-.. figure:: ../images/advanced-configuration/import_shapefile.png
-   :alt: Import shapefile in user interface
-   :align: center
-
-   Import shapefile in user interface
-
-
-On command line, run:
-
-.. code-block :: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
-
-or:
-
-.. code-block :: bash
-
-    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
-
-Attributes for "zones espèces sensibles" are:
- 
-* ``espece`` : species name. Mandatory. A species with this name must have been previously created.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-
-Attributes for "zones sensibles réglementaires" are:
-
-* ``name``: zone name.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-* ``periode`` : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
-* ``pratiques`` : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
-* ``url`` : card url. Optional.
-
-
-Sync to Geotrek-rando
-'''''''''''''''''''''''
-
-Just run:
-
-.. code-block :: bash
-
-    sudo geotrek sync_rando <parameters>
-    
-If sensitivity module is enabled, sensitive areas will be automatically synchronized.
-
 
 Feedback reports settings
 -------------------------
@@ -932,38 +721,31 @@ Feedback reports settings
 Send acknowledge email
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: SEND_REPORT_ACK
+.. code-block :: python
 
-    If ``False``, no email will be sent to the sender of any feedback on Geotrek-rando website.
+    SEND_REPORT_ACK = True
 
-    Example::
+If false, no email will be sent to the sender of any feedback on Geotrek-rando website
 
-        SEND_REPORT_ACK = True
-
-    Default::
-
-        False
-
-.. _suricate-support:
 
 Suricate support
 ~~~~~~~~~~~~~~~~
 
 Suricate is the French national database gathering such reports. It exposes an API for external software to connect to. For Geotrek to connect to Suricate, you need to request two pairs of API keys allowing access.
 
-Geotrek reports can work together with Suricate API, using one of three modes. Proceed through a mode full configuration before proceeding to the next mode.
+Geotrek reports can work together with Suricate API, using one of 3 modes. Proceed through a mode full configuration before proceeding to the next mode.
 
 **1 - No Suricate (default)**
 
 This mode sends no report data to Suricate.
 
-To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) load lists for categories, activities, statuses and problem magnitude:
+To initialize Report forms (Geotrek-admin, Geotrek-rando-v2, Geotrek-rando-v3) load lists for categories, activities, statuses and problem magnitude:
 
 .. code-block :: python
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
-To make these lists available for your Geotrek-rando-V2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
+To make these lists available for your Geotrek-rando-v2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 
 **2 - Suricate Standard**
@@ -987,12 +769,7 @@ Set your account settings in ``custom.py``:
 
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It is used to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Report mode as well.
 
-.. figure:: ../images/advanced-configuration/suricate.png
-   :alt: Suricate workflow
-   :align: center
-
-   Suricate workflow
-
+.. image :: ../images/advanced-configuration/suricate.png
 
 Suricate Workflow mode defines a strict process, composed of several steps representing the lifecycle of a user report, from creation to closing. A report is always characterized with a status, depicting how far in the process the report is, and displayed using a specific color on the map.
 
@@ -1004,7 +781,7 @@ A report consists of the following information :
     * A category : environment, security, usage conflit, signages
     * A magnitude : usage is possible, difficult, or impossible
     * A practice : trekking, cycling, horse-riding…
-    * Up to three pictures
+    * Up to 3 pictures
 
 **Stakeholders and responsibility**
 
@@ -1127,18 +904,13 @@ To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :r
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
-- Go to the configuration site and :
+- Go to the Admin Site and
+    - if you want to include the moderation steps (`SKIP_MANAGER_MODERATION = False`), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
+    - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
+    - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
+    - make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
-  - if you want to include the moderation steps (``SKIP_MANAGER_MODERATION = False``), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
-  - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
-  - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
-  - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
-
-.. note :: 
-  - Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**.
-  - Reports are only saved when synchronized back from Suricate, when the synchronization command is run. 
-
-Make sure to run these three commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
+Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**. Reports are only saved when synchronized back from Suricate, when the synchronization command is run. Make sure to run these 3 commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
 
 .. code-block :: python
 
@@ -1150,31 +922,24 @@ Make sure to run these three commands daily to maintain synchronization and upda
 Display reports with status defined colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: ENABLE_REPORT_COLORS_PER_STATUS
+.. code-block :: python
 
-    Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
+    ENABLE_REPORT_COLORS_PER_STATUS = True
 
-    Example::
-
-        ENABLE_REPORT_COLORS_PER_STATUS = True
-
-    Default::
-
-        False
+Go to the Admin Site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
 
 Use timers to receive alerts for your reports
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. tip::
-  - It is possible to enable receiving email alerts for reports that have remained in the same status for too long.
-  - For instance, I can create two report statuses "To program" with timer days set to 10 and "Programmed" with timer days set to 0.
-  - If a report has had status "To program" for 10 days, an email alert will be sent. If its status is changed to "Programmed" within these 10 days, this will cancel the alert.
-  - The email alert will be sent to the assigned user for this report, or to managers (setting `MANAGERS`) if there is no assigned user.
+It is possible to enable receiving email alerts for reports that have remained in the same status for too long.
+For instance, I can create two report statuses "To program" with timer days set to 10 and "Programmed" with timer days set to 0.
+If a report has had status "To program" for 10 days, an email alert will be sent. If its status is changed to "Programmed" within these 10 days, this will cancel the alert.
+The email alert will be sent to the assigned user for this report, or to managers (setting `MANAGERS`) if there is no assigned user.
 
-**To enable the alerts :**
+To enable the alerts :
 
-- Go to the Configuration module and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
+- Go to the Admin Site and set "Timer days" to some integer other than 0 in relevant statuses (`/admin/feedback/reportstatus/`)
 
 - Select the "Uses timers" checkbox on reports that you wish to receive alerts for (in report update form)
 
@@ -1211,33 +976,22 @@ Attachments
 View attachments in the browser
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for medias
+Attached files are downloaded by default by browser, with the following line,
+files will be opened in the browser :
 
-    Attached files are downloaded by default by browser, with the following line, files will be opened in the browser :
+.. code-block :: python
 
-    Example::
+    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
-        MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
-
-    Default::
-
-        True
 
 Resizing uploaded pictures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD
+Attached pictures can be resized at upload by enabling ``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD``:
 
-    Attached pictures can be resized at upload by enabling this parameter :
+.. code-block :: python
 
-    Example::
-
-        PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
-
-    Default::
-
-        False
-
+    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
 
 These corresponding height/width parameters can be overriden to select resized image size:
 
@@ -1250,13 +1004,11 @@ These corresponding height/width parameters can be overriden to select resized i
 Prohibit usage of big pictures and small width / height
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PAPERCLIP_MAX_BYTES_SIZE_IMAGE
+If you want to prohibit the usage of heavy pictures:
 
-    If you want to prohibit the usage of heavy pictures:
+.. code-block :: python
 
-    Example::
-
-        PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000 # Bytes
+    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000  # Bytes
 
 If you want to prohibit the usage of small pictures in pixels:
 
@@ -1265,7 +1017,7 @@ If you want to prohibit the usage of small pictures in pixels:
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
 
-These three settings will also not allow downloading images from the parsers.
+These 3 settings will also not allow downloading images from the parsers.
 
 
 Prohibit usage of certain file types
@@ -1302,26 +1054,19 @@ Here is the default value for this setting, which you can extend if needed:
         'odg',
     ]
 
-It will verify that the mimetype of the file matches the extension. 
+It will verify that the mimetype of the file matches the extension. You can add extra allowed mimetypes for a given extension with the following syntax:
 
-.. envvar:: PAPERCLIP_EXTRA_ALLOWED_MIMETYPES
+.. code-block :: python
 
-    You can add extra allowed mimetypes for a given extension with the following syntax:
+    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
 
-    Example::
+You can also entirely deactivate these checks with the following:
 
-        PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+.. code-block :: python
 
-.. envvar:: PAPERCLIP_ALLOWED_EXTENSIONS
+    PAPERCLIP_ALLOWED_EXTENSIONS = None
 
-    You can also entirely deactivate these checks with the following:
-
-    Example::
-
-        PAPERCLIP_ALLOWED_EXTENSIONS = None
-
-.. note :: 
-  These two settings will also not allow downloading images from the parsers.
+These 2 settings will also not allow downloading images from the parsers.
 
 
 Interface
@@ -1343,19 +1088,15 @@ For each module, use the following syntax to configure columns to export as CSV 
 
     COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
 
+
+Please refer to the "settings detail" section for a complete list of modules and available columms.
+
 Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
 
-.. envvar:: ENABLE_JOBS_COSTS_DETAILED_EXPORT
+.. code-block :: python
 
-    Enable a more detailed export
+    ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
 
-    Example::
-
-        ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
-
-    Default::
-
-       False
 
 Custom columns available
 ''''''''''''''''''''''''
@@ -2303,13 +2044,14 @@ A (nearly?) exhaustive list of attributes available for display and export as co
 Configure form fields in creation views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: HIDDEN_FORM_FIELDS
+For each module, use the following syntax to configure fields to hide in the creation form.
 
-    For each module, use the following syntax to configure fields to hide in the creation form.
+.. code-block :: python
 
-    Example::
+    HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
 
-        HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+
+Please refer to the "settings detail" section for a complete list of modules and hideable fields.
 
 
 Hideable form fields
@@ -2615,27 +2357,22 @@ An exhaustive list of form fields hideable in each module.
 Configure form fields required or needed for review or publication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Set ``error_on_publication`` to avoid publication without completeness fields
-and ``error_on_review`` if you want this fields to be required before sending to review.
+Set 'error_on_publication' to avoid publication without completeness fields
+and 'error_on_review' if you want this fields to be required before sending to review.
 
-.. envvar:: COMPLETENESS_LEVEL
+.. code-block :: python
 
-    Configure completeness level
+    COMPLETENESS_LEVEL = 'warning'
 
-    Example::
+For each module, configure fields to be needed or required on review or publication
 
-        COMPLETENESS_LEVEL = 'warning'
+.. code-block :: python
 
-.. envvar:: COMPLETENESS_FIELDS
-
-    For each module, configure fields to be needed or required on review or publication
-
-    Example::
-
-        COMPLETENESS_FIELDS = {
+    COMPLETENESS_FIELDS = {
         'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
         'dive': ['practice', 'difficulty', 'description_teaser'],
-        }
+    }
+
 
 Edition
 -------
@@ -2647,64 +2384,52 @@ Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
 Its configuration can be customized using advanced settings (see above paragraph).
 
-.. envvar:: TINYMCE_DEFAULT_CONFIG
+For example, in order to control which buttons are to be shown, and which tags
+are to be kept when cleaning-up, add this bloc :
 
-    For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
+.. code-block :: python
 
-    Example::
-
-        TINYMCE_DEFAULT_CONFIG = {
+    TINYMCE_DEFAULT_CONFIG = {
         'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
         'valid_elements': "img,p,a,em/i,strong/b",
-        }
+    }
 
-.. note ::
-  - This will apply to all text fields.
-  - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
+This will apply to all text fields.
+
+For more information on configuration entries available, please refer to the
+official documentation of *TinyMCE version 3*.
 
 
 Max characters count
 ~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for characters
+Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters
+for text fields (to be used with django-mapentity >= 8.1).
 
-    Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters for text fields (to be used with django-mapentity >= 8.1).
+.. code-block :: python
 
-    Example::
+    MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
 
-        MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
-
-.. note ::
-  - This will apply to all text fields.
-  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
+This will apply to all text fields.
+See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
 
 
 Copyright on pictures
 ~~~~~~~~~~~~~~~~~~~~~
 
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this:
 
-.. envvar:: THUMBNAIL_COPYRIGHT_FORMAT
+.. code-block :: python
 
-    If you want copyright added to your pictures, change this parameter like so :
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
-    Example::
+You can also add ``{legend}``:
 
-        THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    *"{title}-:-{author}-:-{legend}"*
 
-.. note ::
-  - This will apply to all text fields.
-  - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
+.. code-block :: python
 
-
-You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
-
-.. envvar:: THUMBNAIL_COPYRIGHT_SIZE
-
-    Change the size of thumbnail
-
-    Example::
-
-        THUMBNAIL_COPYRIGHT_SIZE = 15
+    THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
 Facebook configuration
@@ -2717,16 +2442,13 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 
 .. image :: /images/facebookappid.png
 
+In ``custom.py`` set Facebook App ID:
 
-.. envvar:: FACEBOOK_APP_ID
+.. code-block :: python
 
-    In ``custom.py`` set Facebook App ID:
+    FACEBOOK_APP_ID = '<your Facebook AppID>'
 
-    Example::
-
-        FACEBOOK_APP_ID = '<your Facebook AppID>'
-
-**You can also override these settings:**
+you can also override these settings:
 
 .. code-block :: python
 
@@ -2744,14 +2466,15 @@ But you can also override default translation files available in each module
 
 Don't edit these default files, use them to find which words you want to override.
 
-**Create the custom translations destination folder:**
+Create the custom translations destination folder:
 
-- Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
-- You can do one folder and one ``django.po`` file for each language (example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
+Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
+You can do one folder and one ``django.po`` file for each language
+(example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
 
 Override the translations that you want in these files.
 
-**Example of content for the French translation overriding:**
+Example of content for the French translation overriding:
 
 .. code-block :: python
 
@@ -2781,7 +2504,7 @@ Override the translations that you want in these files.
     msgid "District"
     msgstr "Pays"
 
-**Apply changes (French translation in this example):**
+Apply changes (French translation in this example):
 
 .. code-block :: bash
 
@@ -2836,7 +2559,8 @@ The template for a specific portal will use the modification made on the overrid
 ( except if you change specific  block)
 
 .. note ::
-  This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
+
+    This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
 
 **You might need to use your own images in the PDF templates.**
 
@@ -2860,7 +2584,9 @@ Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/
     {% endblock url %}
 
 .. note ::
-  The default template may change in the future versions. You will be in charge of porting the modification to your copy.
+
+    The default template may change in the future versions. You will be
+    in charge of porting the modification to your copy.
 
 Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
 To get your modifications available for Rando application, launch the ``sync_rando`` command.
@@ -2869,21 +2595,11 @@ To get your modifications available for Rando application, launch the ``sync_ran
 PDF as booklet
 ~~~~~~~~~~~~~~
 
-.. envvar:: USE_BOOKLET_PDF
 
-    Use booklet for PDF
+    USE_BOOKLET_PDF = True
 
-    Example::
-
-        USE_BOOKLET_PDF = True
-
-    Default::
-
-        False
-
-.. note:: 
-  - During the synchro, pois details will be removed, and the pages will be merged.
-  - It is possible to customize the pdf, with trek_public_booklet_pdf.html.
+Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
+It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
 Custom font in public document template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2911,13 +2627,12 @@ For more information, check out Ubuntu documentation.
 Custom colors in public document template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for custom colors in PDF
+Trek export geometries are translucid red by default. In order to control the
+apparence of objects in public trek PDF exports, use the following setting:
 
-    Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
+.. code-block :: python
 
-    Example::
-
-        MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
+    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
@@ -2925,16 +2640,12 @@ See *Leaflet* reference documentation for detail about layers apparence.
 Primary color in PDF templates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PRIMARY_COLOR
+You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
+Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
-    You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
+.. code-block :: python
 
-    Example::
-
-        PRIMARY_COLOR = "#7b8c12"
-
-.. note:: 
-  Beware of contrast, white colour is used for text so we advise you to avoid light colour.
+    PRIMARY_COLOR = "#7b8c12"
 
 
 Custom logos
@@ -2952,184 +2663,112 @@ Settings for Geotrek-rando
 
 Synchro Geotrek-rando
 ~~~~~~~~~~~~~~~~~~~~~
-With Geotrek-rando V2, there is a synchronization mechanism to expose Geotrek-admin contents in json files generated automatically. 
 
-.. warning:: 
-  This is no more used in Geotrek-rando V3.
+With Geotrek-rando V2, there is a synchronization mechanism to expose Geotrek-admin contents in json files
+generated automatically. This is no more used in Geotrek-rando V3.
 
+.. code-block :: python
 
-.. envvar:: SYNC_RANDO_ROOT
+    SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 
-    Path on your server where the data for Geotrek-rando website will be generated
+Path on your server where the data for Geotrek-rando website will be generated
 
-    Example::
+    *If you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
 
-        SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
+.. code-block :: python
 
-.. note:: 
-  - If you want to modify it, do not forget to import os at the top of the file.
-  - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
+    SYNC_RANDO_OPTIONS = {}
 
-.. envvar:: SYNC_RANDO_OPTIONS
+Options of the sync_rando command in Geotrek-admin interface.
 
-   Options of the sync_rando command in Geotrek-admin interface. 
-
-    Example::
-
-        SYNC_RANDO_OPTIONS = {}
-
-.. _distances:
 
 Distances
 ~~~~~~~~~
 
-.. envvar:: TOURISM_INTERSECTION_MARGIN
 
-   Distance to which tourist contents, tourist events, treks, pois, services will be displayed
+.. code-block :: python
 
-    Example::
+    TOURISM_INTERSECTION_MARGIN = 500
 
-        TOURISM_INTERSECTION_MARGIN = 500 # meters
+Distance to which tourist contents, tourist events, treks, pois, services will be displayed
 
-    Default::
+    *This distance can be changed by practice for treks in the admin.*
 
-        500
+.. code-block :: python
 
-.. note:: 
-  This distance can be changed by practice for treks in the admin.
+    DIVING_INTERSECTION_MARGIN = 500
 
-.. envvar:: DIVING_INTERSECTION_MARGIN
-
-   Distance to which dives will be displayed.
-
-    Example::
-
-        DIVING_INTERSECTION_MARGIN = 500 # meters
-
-    Default::
-
-        500
+Distance to which dives will be displayed.
 
 
 Limits
 ~~~~~~
 
-.. envvar:: TREK_EXPORT_POI_LIST_LIMIT
+.. code-block :: python
 
-   Limit of the number of POIs on treks pdf.
+    TREK_EXPORT_POI_LIST_LIMIT = 14
 
-    Example::
+Limit of the number of pois on treks pdf.
 
-        TREK_EXPORT_POI_LIST_LIMIT = 14
+    *14 is already a huge amount of POI, but it's possible to add more*
 
-.. note:: 
-  ``14`` is already a huge amount of POI, but it's possible to add more
+.. code-block :: python
 
-.. envvar:: TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT
+    TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
-   Limit of the number of information desks on treks pdf.
+Limit of the number of information desks on treks pdf.
 
-    Example::
+    *You can put -1 if you want all the information desks*
 
-        TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 14
 
-.. note:: 
-  You can put ``-1`` if you want all the information desks
-
-Categories
+Cateogories
 ~~~~~~~~~~~
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_PRACTICE
+.. code-block :: python
 
-   On the Geotrek-rando V2 website, treks practices will be displayed separately
+    SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 
-    Example::
+On the Geotrek-rando v2 website, treks practices will be displayed separately
 
-        SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
+    *Field order for each practices in admin will be take in account*
 
-    Default::
+.. code-block :: python
 
-        True
+    SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 
-.. note:: 
-  Field order for each practices in admin will be taken in account
+On the Geotrek-rando v2 website, accessibilites will be displayed separately
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY
+.. code-block :: python
 
-  On the Geotrek-rando V2 website, accessibilites will be displayed separately
+    SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 
-    Example::
+On the Geotrek-rando v2 website, if a trek has a children it will be displayed separately
 
-        SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+.. code-block :: python
 
-    Default::
+    SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 
-        True
+On the Geotrek-rando v2 website, dives practices will be displayed separately
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_ITINERANCY
+.. code-block :: python
 
-  On the Geotrek-rando V2 website, if a trek has a children it will be displayed separately
+    HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 
-    Example::
+On the Geotrek-rando v2 website, treks near other are hidden
 
-        SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
+.. code-block :: python
 
-    Default::
+    TREK_WITH_POIS_PICTURES = False
 
-        True
+It enables correlated pictures on Gotrek-rando v2 to be displayed in the slideshow
 
-.. envvar:: SPLIT_DIVES_CATEGORIES_BY_PRACTICE
+.. code-block :: python
 
-  On the Geotrek-rando V2 website, dives practices will be displayed separately
+    ONLY_EXTERNAL_PUBLIC_PDF = False
 
-
-    Example::
-
-        SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
-
-    Default::
-
-        False
-
-.. envvar:: HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
-
-  On the Geotrek-rando V2 website, treks near other are hidden
-
-
-    Example::
-
-        HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
-
-    Default::
-
-        True
-
-.. envvar:: TREK_WITH_POIS_PICTURES
-
-  It enables correlated pictures on Geotrek-rando V2 to be displayed in the slideshow
-
-
-    Example::
-
-        TREK_WITH_POIS_PICTURES = False
-
-    Default::
-
-        True
-
-.. envvar:: ONLY_EXTERNAL_PUBLIC_PDF
-
-  On Geotrek-rando V2 website, only PDF imported with filetype "Topoguide"will be used and not autogenerated.
-
-    Example::
-
-        ONLY_EXTERNAL_PUBLIC_PDF = False
-
-    Default::
-
-        True
-
-**Order of all the objects without practices on Geotrek-rando website** :
+On Geotrek-rando v2 website, only PDF imported with filetype "Topoguide"
+will be used and not autogenerated.
 
 .. code-block :: python
 
@@ -3138,116 +2777,103 @@ Categories
     DIVE_CATEGORY_ORDER = 10
     TOURISTIC_EVENT_CATEGORY_ORDER = 99
 
+Order of all the objects without practices on Geotrek-rando website
 
-.. note:: 
-  - All the settings about order are the order inside Geotrek-rando website.
-  - Practices of diving, treks and categories of touristic contents are taken in account
+    *All the settings about order are the order inside Geotrek-rando website.*
+
+    *Practices of diving, treks and categories of touristic contents are taken in account*
 
 
 Settings for Geotrek-mobile
 ---------------------------
 
-.. envvar:: SYNC_MOBILE_ROOT
+.. code-block :: python
 
-  Path on your server where the datas for mobile will be saved.
+    SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
-    Example::
+Path on your server where the datas for mobile will be saved
 
-        SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
+    *If you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
 
-.. note:: 
-  - If you want to modify it, do not forget to import os at the top of the file.
-  - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
+.. code-block :: python
 
-.. envvar:: SYNC_MOBILE_OPTIONS
+    SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
-  Options of the sync_mobile command.
+Options of the sync_mobile command
 
-    Example::
+.. code-block :: python
 
-        SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
+    MOBILE_NUMBER_PICTURES_SYNC = 3
 
-    Default::
+Number max of pictures that will be displayed and synchronized for each object (trek, poi, etc.) in the mobile app.
 
-        True
+.. code-block :: python
 
-.. envvar:: MOBILE_NUMBER_PICTURES_SYNC
+    MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
 
-  Number max of pictures that will be displayed and synchronized for each object (trek, POI, etc.) in the mobile app.
+URL's Tiles used for the mobile.
 
-    Example::
+    *Change for IGN:*
 
-        MOBILE_NUMBER_PICTURES_SYNC = 3
-
-.. envvar:: MOBILE_TILES_URL
-
-  URL's Tiles used for the mobile.
-
-    Example with OpenTopoMap::
+.. code-block :: python
 
         MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
 
-    Example with IGN::
+.. code-block :: python
 
-        MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
-
-.. envvar:: MOBILE_LENGTH_INTERVALS
-
-  Intervals of the mobile for the length filter.
-
-    Example::
-
-        MOBILE_LENGTH_INTERVALS =  [
+    MOBILE_LENGTH_INTERVALS =  [
         {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
         {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
         {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
         {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
-        ]
+    ]
 
-.. note:: 
-  - Interval key is in meters.
-  - You can add new intervals
+Intervals of the mobile for the length filter
 
-.. envvar:: MOBILE_ASCENT_INTERVALS
+    *Interval key is in meters.*
+    *You can add new intervals*
 
-  Intervals of the mobile for the ascent filter.
+.. code-block :: python
 
-    Example::
+    MOBILE_LENGTH_INTERVALS =  [
+        {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+        {"id": 2, "name": "10 - 30 km", "interval": [9999, 29999]},
+        {"id": 3, "name": "30 - 50 km", "interval": [30000, 50000]},
+        {"id": 4, "name": "50 - 80 km", "interval": [50000, 80000]}
+        {"id": 5, "name": "> 80 km", "interval": [80000, 999999]}
+    ]
 
-        MOBILE_ASCENT_INTERVALS = [
+.. code-block :: python
+
+    MOBILE_ASCENT_INTERVALS = [
         {"id": 1, "name": "< 300 m", "interval": [0, 299]},
         {"id": 2, "name": "300 - 600", "interval": [300, 599]},
         {"id": 3, "name": "600 - 1000", "interval": [600, 999]},
         {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
-        ]
+    ]
 
-.. note:: 
-  Do the same as above
+Intervals of the mobile for the ascent filter
 
-.. envvar:: MOBILE_DURATION_INTERVALS
+    *Do the same as above*
 
-  Intervals of the mobile for the duration filter.
+.. code-block :: python
 
-    Example::
-
-        MOBILE_DURATION_INTERVALS = [
+    MOBILE_DURATION_INTERVALS = [
         {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
         {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
         {"id": 3, "name": "2h30 - 5h", "interval": [2.5, 5]},
         {"id": 4, "name": "5h - 9h", "interval": [5, 9]},
         {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
-        ]
+    ]
 
-.. note:: 
-  Check ``MOBILE_LENGTH_INTERVALS`` section to use it, here interval correspond to 1 unit of hour
+Intervals of the mobile for the duration filter
 
-.. envvar:: ENABLED_MOBILE_FILTERS
+    *Check MOBILE_LENGTH_INTERVALS comment to use it, here interval correspond to 1 unit of hour*
 
-  List of all the filters enabled on mobile.
+.. code-block :: python
 
-    Example::
-
-        ENABLED_MOBILE_FILTERS = [
+    ENABLED_MOBILE_FILTERS = [
         'practice',
         'difficulty',
         'durations',
@@ -3258,8 +2884,15 @@ Settings for Geotrek-mobile
         'districts',
         'cities',
         'accessibilities',
-        ]
+    ]
 
-.. note:: 
-  Remove any of the filters if you don't want one of them. It's useless to add other one.
+List of all the filters enabled on mobile.
 
+    *Remove any of the filters if you don't want one of them. It's useless to add other one.*
+
+
+================
+Settings details
+================
+
+Search settings in this page to have information.

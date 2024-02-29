@@ -3,9 +3,6 @@
 ===========
 Development
 ===========
-.. contents::
-   :local:
-   :depth: 2
 
 Quickstart
 ==========
@@ -247,7 +244,7 @@ Then run a synchronization.
 Mapentity development
 =====================
 
-See `Django-Mapentity documentation <https://django-mapentity.readthedocs.io/>`_
+TODO
 
 
 UML diagrams of data model

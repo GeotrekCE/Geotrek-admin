@@ -2,11 +2,6 @@
 Import data
 ===========
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 Import paths
 ============
 
@@ -53,12 +48,9 @@ To import a shapefile containing your paths, use the command ``loadpaths``::
         --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
         --encoding latin9 -i
 
-.. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)
 =============================================
-
-.. _configure-apidae-ex-sitra-import:
 
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
@@ -171,11 +163,14 @@ Sensitive areas import
 
 When sensitive areas module is enabled, Geotrek provides 3 parsers to import data:
 
-* **Import sensitive areas from http://biodiv-sports.fr** (``geotrek.sensitivity.parsers.BiodivParser``). By default this
+* Import sensitive areas from http://biodiv-sports.fr (``geotrek.sensitivity.parsers.BiodivParser``). By default this
   parser imports all sensitive areas in configured spatial extent.
-* **Import species sensitive areas from a zipped shapefile**. 
-  Imported field names are: ``espece`` (required), ``contact`` and ``descriptio``. Species with corresponding names have to be created manually before import.
-* **Import regulatory sensitive areas from a zipped shapefile**. Imported field names are: ``nom`` (required), ``contact``, ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``. Practices with corresponding names have to be created manually before import.
+* Import species sensitive areas from a ziped shapefile. Imported field names are: ``espece`` (required), ``contact``
+  and ``descriptio``.
+  Species with corresponding names have to be created manually before import.
+* Import regulatory sensitive areas from a ziped shapefile. Imported field names are: ``nom`` (required), ``contact``,
+  ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``.
+  Practices with corresponding names have to be created manually before import.
 
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
@@ -379,8 +374,6 @@ To get help about a command:
 ::
 
     sudo geotrek help <subcommand>
-    
-.. _import-dem-altimetry:
 
 
 Import DEM (altimetry)
@@ -414,7 +407,6 @@ Import DEM (altimetry)
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-.. _import-pois:
 
 Import POIs
 -----------
@@ -459,7 +451,7 @@ Import POIs
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-.. _import-infrastructure:
+
 
 Import Infrastructure
 ---------------------
@@ -552,6 +544,7 @@ Load a layer with point geometries and import entities as infrastructures object
 - expected formats for the `point_layer` file are shapefile or geojson (other geodjango supported-formats may work but untested),
 - the command updates existing Infrastructure objects based on the `eid` field (external ID),
 - if the Infrastructure object does not exist (or if `eid` is not specified) it is created.
+
 
 **Usage example**
 
@@ -651,7 +644,7 @@ Import Dive
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-.. _import-signage:
+
 
 Import Signage
 --------------

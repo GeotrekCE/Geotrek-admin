@@ -2,10 +2,6 @@
 Configuration
 =============
 
-.. contents::
-   :local:
-   :depth: 2
-   
 
 Basic configuration update
 --------------------------
@@ -94,7 +90,6 @@ Spatial reference identifier of your database. Default 2154 is RGF93 / Lambert-9
 
 *Choose wisely with epsg.io for example*
 
-.. _default-structure:
 
 Default Structure
 ~~~~~~~~~~~~~~~~~
@@ -214,3 +209,8 @@ And give them permissions by schema :
 
 You can also create groups, etc. See PostgreSQL documentation.
 
+
+Advanced Configuration
+----------------------
+
+See :ref:`advanced configuration <advanced-configuration-section>`...
