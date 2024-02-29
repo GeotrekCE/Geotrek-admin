@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 13:56+0000\n"
+"POT-Creation-Date: 2024-02-28 14:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -457,6 +457,9 @@ msgstr ""
 
 msgid "Date"
 msgstr "Data"
+
+msgid "Add Organizer"
+msgstr ""
 
 msgid "Invalid geometry value."
 msgstr "Valore geometrico non valido"

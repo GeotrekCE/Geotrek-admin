@@ -11,6 +11,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
@@ -396,6 +397,10 @@ class TouristicEventOrganizer(TimeStampedModelMixin):
 
     def __str__(self):
         return self.label
+
+    @classmethod
+    def get_add_url(cls):
+        return reverse('tourism:organizer_add')
 
 
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,

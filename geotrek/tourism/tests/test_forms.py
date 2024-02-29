@@ -1,5 +1,9 @@
 
+from django.forms.widgets import Select
 from django.test import TestCase
+from django.contrib.auth.models import Permission
+
+from mapentity.widgets import SelectMultipleWithPop
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.tourism.forms import TouristicEventForm
@@ -85,3 +89,23 @@ class PathFormTest(TestCase):
         )
         self.assertFalse(form1.is_valid())
         self.assertIn("Start date is after end date", str(form1.errors))
+
+    def test_organizers_widget_select(self):
+        # if user has 'add_touristiceventorganizer' permission the widget must be a SelectMultipleWithPop
+        # otherwith a Select
+        form = TouristicEventForm(
+            user=UserFactory(),
+            data={}
+        )
+        assert type(form.fields['organizer'].widget) is Select
+
+    def test_organizers_widget_select_multiple_with_pop(self):
+        # if user has 'add_touristiceventorganizer' permission the widget must be a SelectMultipleWithPop
+        # otherwith a Select
+        user = UserFactory()
+        user.user_permissions.add(Permission.objects.get(codename='add_touristiceventorganizer'))
+        form = TouristicEventForm(
+            user=user,
+            data={}
+        )
+        assert type(form.fields['organizer'].widget) is SelectMultipleWithPop

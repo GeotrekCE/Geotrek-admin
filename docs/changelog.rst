@@ -4,6 +4,7 @@ CHANGELOG
 
 2.102.1+dev (XXXX-XX-XX)
 ------------------------
+- Add popup button to add organizer in touristic event form
 
 **New features**
 

@@ -7,7 +7,8 @@ from tempfile import mkdtemp
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -484,6 +485,29 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
+
+
+class TouristicEventOrganizerCreatePopupTest(TestCase):
+    def test_cannot_create_organizer(self):
+        url = '/popup/add/organizer/'
+        response = self.client.get(url)
+        # with no user logged -> redirect to login page
+        self.assertRedirects(response, "/login/?next=/popup/add/organizer/")
+        user = UserFactory()
+        self.client.force_login(user=user)
+        response = self.client.get(url)
+        # with user with no perm -> redirect to login page
+        self.assertEqual(response.status_code, 403)
+
+    def test_can_create_organizer(self):
+        user = UserFactory()
+        user.user_permissions.add(Permission.objects.get(codename='add_touristiceventorganizer'))
+        self.client.force_login(user=user)
+        url = '/popup/add/organizer/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url, data={"label": "test"})
+        self.assertIn("dismissAddAnotherPopup", response.content.decode())
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):

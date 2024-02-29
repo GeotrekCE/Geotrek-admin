@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 13:56+0000\n"
+"POT-Creation-Date: 2024-02-28 14:57+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -67,7 +67,7 @@ msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"
 
 msgid "Label"
-msgstr "Étiquette"
+msgstr "Libellé"
 
 msgid "Information desk type"
 msgstr "Type de lieu de renseignement"
@@ -463,6 +463,9 @@ msgstr "Total"
 
 msgid "Date"
 msgstr "Date"
+
+msgid "Add Organizer"
+msgstr "Ajouter un organisateur"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
