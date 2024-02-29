@@ -4,6 +4,10 @@
 Docker
 ======
 
+.. contents::
+   :local:
+   :depth: 2
+
 Docker is an alternative installation method, recommended for experts only.
 It allows to install several instances of Geotrek-admin on the same serveur,
 and to install it on other distributions than Ubuntu Linux 18.04.

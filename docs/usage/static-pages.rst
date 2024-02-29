@@ -2,6 +2,11 @@
 Pages statiques
 ===============
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 .. danger::
     Depuis Geotrek-Rando V3, le composant Bootstrap n'est plus utilisé pour gérer les différentes tailles d'écran. Cela signifie que la mise en page créée dans Geotrek-Admin n'est pas reproduite sur le site public. Cette documentation n'est valable que pour Geotrek-Rando V2 en attendant sa mise à jour expliquant le fonctionnement actuel. Voir le ticket : https://github.com/GeotrekCE/Geotrek-rando-v3/issues/466
 
@@ -14,14 +19,14 @@ Les pages statiques sont les pages d'information et de contextualisation de votr
 
 Elles permettent de fournir à l'internaute et futur randonneur des informations génériques : présentation de votre structure, votre projet de randonnée, recommandations, informations pratiques, etc.
 
-Elles sont gérées depuis l'Adminsite de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
+Elles sont gérées depuis le module de configuration de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
 
 .. image :: /images/user-manual/flatpages-adminsite.jpg
 
 Créer une page statique
-=======================
+========================
 
-Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
+Depuis le module de configuration de Geotrek-admin, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
 
 .. image :: /images/user-manual/flatpages-flatpages.png
 
@@ -92,7 +97,7 @@ Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs à 
 - Tools : Afficher le code source de la page
 
 Astuces
-=======
+========
 
 1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder.
 2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Vous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.

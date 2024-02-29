@@ -2,6 +2,10 @@
 Modules de gestion
 ==================
 
+.. contents::
+   :local:
+   :depth: 2
+
 Geotrek-admin comporte un certain nombre de modules de gestion des sentiers (tronçons, sentiers, statuts, aménagements, signalétique, interventions et chantiers).
 
 Les tronçons sont les éléments de base sur lesquels s'appuient l'ensemble des objets des autres modules, en utilisant la segmentation dynamique (https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique).
@@ -10,16 +14,19 @@ Les modules signalétique et aménagement ont initialement été conçus dans un
 
 Les modules interventions et chantiers ont été conçus de façon à permettre à la fois un inventaire et un suivi des travaux (prévisionnel, administratif et financier).
 
-En termes de structuration, le choix initial a été de concevoir, sur le volet gestion, la gestion des valeurs des listes déroulantes structure par structure pour que chaque structure travaillant sur une même instance Geotrek-admin puisse avoir des typologies différentes (types de signalétique, d’aménagements, d’organismes...). Néanmoins, depuis la version 2.20 de Geotrek-admin (voir le changelog : https://github.com/GeotrekCE/Geotrek-admin/releases/tag/2.20.0), il est possible de partager des typologies entre les différentes structures en ne renseignant pas ce champ.
+Pour les territoires qui le souhaitent, sur le volet gestion, les valeurs des listes déroulantes peuvent être différenciées  par structure, afin que chaque structure travaillant sur une même instance Geotrek-admin puisse avoir des typologies différentes si nécéssaire (types de signalétique, d’aménagements, d’organismes...).
+
+Néanmoins, pour les territoires qui souhaitent mutualiser les mêmes valeurs dans les listes sans avoir à les renseigner pour chaque structure, il est possible de partager des typologies entre les différentes structures en ne renseignant tout simplement pas ce champ.
 Un compte utilisateur appartenant à une structure X n'aura accès qu'aux typologies associées à celle-ci, ainsi qu'aux typologies partagées. De même, ce compte utilisateur ne pourra pas modifier ou supprimer des objets appartenant à une autre structure (c'est-à-dire créés par un compte utilisateur appartenant à une autre structure), sauf à avoir des permissions particulières.
 
 Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche SIG ou un relevé GPX sur la carte lors de la création d'un objet sur la carte pour pouvoir le visualiser et le localiser sur la carte (``Charger un fichier local (GPX, KML, GeoJSON)``).
 
+.. _les-troncons:
+
 Les tronçons
 ============
 
-C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
-
+C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre deux intersections. Le mécanisme de segmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
 Les tronçons peuvent être soit numérisés dans Geotrek-admin, soit importés directement dans l'outil via :
 
@@ -44,6 +51,8 @@ Comme pour tous les modules, il est aussi possible d'attacher des documents à c
 
 Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en afficher l'historique des modifications.
 
+.. _les-sentiers:
+
 Les sentiers
 ============
 
@@ -55,10 +64,14 @@ Ils permettent également de préciser une ou plusieurs certifications ainsi que
 
 A ne pas confondre avec le module Itinéraires qui permet de créer des randonnées publiées sur un portail Geotrek-rando.
 
+.. _les-statuts:
+
 Les statuts
-===========
+============
 
 Ils permettent de renseigner des informations sur le linéaire (type physique, statut foncier, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique) sans avoir à le faire tronçon par tronçon grâce à la segmentation dynamique qui permet de localiser le départ et l'arrivée sur un ou plusieurs tronçons.
+
+.. _les-amenagements:
 
 Les aménagements
 ================
@@ -73,6 +86,10 @@ Comme pour les autres modules, il sont intersectés avec les autres modules pour
 
 Il est aussi possible de les exporter, de leur attacher des fichiers (images, PDF, tableurs, ZIP...) et d'en consulter l'historique des modifications.
 
+Pour importer automatiquement des éléments d'aménagements, se référer à la section :ref:`Import Infrastructure <import-infrastructure>`
+
+.. _la-signaletique:
+
 La signalétique
 ===============
 
@@ -81,6 +98,10 @@ Centralise les informations sur la signalétique d'accueil, d'information et d'o
 Pour une signalétique, il est possible de définir chaque lame et chaque ligne de lame. L'image ci-dessous montre un exemple de correspondance entre une signalétique terrain et sa saisie dans Geotrek.
 
 .. image :: /images/user-manual/signage.png
+
+Pour importer automatiquement des éléments de signalétiques, se référer à la section :ref:`Import Signage <import-signage>`
+
+.. _les-interventions:
 
 Les interventions
 =================
@@ -98,6 +119,8 @@ Chaque intervention correspond à un type. On peut aussi renseigner si celle-ci 
 Plusieurs interventions peuvent être rattachées à un même chantier pour avoir une vision globale de plusieurs interventions correspondant à une opération commune.
 
 L'onglet `Avancé` du formulaire permet de renseigner des informations financières sur chaque intervention (coût direct et indirect lié au nombre de jours/agents dissocié par fonction).
+
+.. _les-chantiers:
 
 Les chantiers
 =============
