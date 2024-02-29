@@ -30,7 +30,7 @@ class FlatPagesAdmin(TreeAdmin):
     list_display = ('title', 'published', 'publication_date', 'portals', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
-    form = movenodeform_factory(flatpages_models.MenuItem)
+    form = movenodeform_factory(flatpages_models.FlatPage)
     # form = FlatPagesAdminForm
 
     # def add_view(self, request, form_url='', extra_context=None):
