@@ -145,8 +145,8 @@ class TouristicEventForm(CommonForm):
         self.fields['start_time'].widget.attrs['placeholder'] = _('HH:MM')
         self.fields['end_time'].widget.attrs['placeholder'] = _('HH:MM')
         if self.user.has_perm("tourism.add_touristiceventorganizer"):
-            self.fields['organizer'].widget = SelectMultipleWithPop(
-                choices=self.fields['organizer'].choices,
+            self.fields['organizers'].widget = SelectMultipleWithPop(
+                choices=self.fields['organizers'].choices,
                 add_url=TouristicEventOrganizer.get_add_url()
             )
         # Since we use chosen() in trek_form.html, we don't need the default help text
