@@ -232,6 +232,14 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
+class TouristicOrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = tourism_models.TouristicEventOrganizer
+        fields = (
+            'id',
+        )
+
+
 class OrganismSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source='organism')
 
@@ -503,13 +511,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return city.code if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
-        organizer = serializers.SlugRelatedField(
-            read_only=True,
-            slug_field='label'
-        )
-        organizer_id = serializers.PrimaryKeyRelatedField(
-            read_only=True
-        )
+        organizers = serializers.SerializerMethodField()
+        organizer = serializers.SerializerMethodField()
+        organizers_id = serializers.PrimaryKeyRelatedField(many=True, source='organizers', read_only=True)
         attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         url = HyperlinkedIdentityField(view_name='apiv2:touristicevent-detail')
         begin_date = serializers.DateField()
@@ -545,6 +549,14 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_end_date(self, obj):
             return obj.end_date or obj.begin_date
 
+        def get_organizers(self, obj):
+            return ", ".join(
+                map(lambda org: org.label, obj.organizers.all())
+            )
+
+        # for retrocompatibility of API
+        get_organizer = get_organizers
+
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
             fields = TimeStampedSerializer.Meta.fields + (
@@ -552,7 +564,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'booking', 'cancellation_reason', 'cancelled', 'capacity', 'cities',
                 'contact', 'description', 'description_teaser', 'districts', 'duration',
                 'email', 'end_date', 'end_time', 'external_id', 'geometry', 'meeting_point',
-                'meeting_time', 'name', 'organizer', 'organizer_id', 'participant_number', 'pdf', 'place',
+                'meeting_time', 'name', 'organizers', 'organizer', 'organizers_id', 'participant_number', 'pdf', 'place',
                 'portal', 'practical_info', 'provider', 'published', 'source', 'speaker',
                 'start_time', 'structure', 'target_audience', 'themes', 'type',
                 'url', 'uuid', 'website'

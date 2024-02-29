@@ -228,7 +228,7 @@ INFRASTRUCTURE_MAINTENANCE_DIFFICULTY_DETAIL_JSON_STRUCTURE = sorted([
 TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted([
     'id', 'accessibility', 'approved', 'attachments', 'begin_date', 'bookable', 'booking', 'cities', 'contact', 'create_datetime',
     'description', 'description_teaser', 'districts', 'duration', 'email', 'end_date', 'external_id', 'geometry',
-    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'organizer_id', 'capacity', 'pdf', 'place', 'portal',
+    'meeting_point', 'start_time', 'meeting_time', 'end_time', 'name', 'organizer', 'organizers', 'organizers_id', 'capacity', 'pdf', 'place', 'portal',
     'practical_info', 'provider', 'published', 'source', 'speaker', 'structure', 'target_audience', 'themes',
     'type', 'update_datetime', 'url', 'uuid', 'website', 'cancelled', 'cancellation_reason', 'participant_number'
 ])
@@ -3241,8 +3241,8 @@ class TouristicEventTestCase(BaseApiTest):
             capacity=12,
             bookable=False,
             place=cls.place,
-            organizer=cls.organizer
         )
+        cls.touristic_event5.organizers.set([cls.organizer])
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=Point(0.77802, 43.047482, srid=4326))
 
     def test_touristic_event_list(self):

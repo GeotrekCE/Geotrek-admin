@@ -63,7 +63,7 @@ msgid "Start date is after end date"
 msgstr ""
 
 msgid "Label"
-msgstr "Label"
+msgstr ""
 
 msgid "Information desk type"
 msgstr ""
@@ -280,7 +280,7 @@ msgid "Event places"
 msgstr ""
 
 msgid "Organizer"
-msgstr "Organizer"
+msgstr ""
 
 msgid "Organizers"
 msgstr ""

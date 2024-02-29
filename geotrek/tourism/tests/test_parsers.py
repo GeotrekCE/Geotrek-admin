@@ -461,12 +461,15 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
-        self.assertEqual(str(event.organizer), 'Toto')
         self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
         self.assertQuerysetEqual(
             event.themes.all(),
             ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
+        )
+        self.assertQuerysetEqual(
+            event.organizers.all(),
+            ['<TouristicEventOrganizer: Toto>']
         )
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
@@ -871,6 +874,10 @@ class LEIParserTest(TranslationResetMixin, TestCase):
         self.assertIn("Description A", event.description)
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().content_object, event)
+        self.assertQuerysetEqual(
+            event.organizers.all(),
+            ['<TouristicEventOrganizer: Resp Event A>']
+        )
 
 
 class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):

@@ -182,6 +182,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
     structure = StructureSerializer()
+    organizers = rest_serializers.SerializerMethodField(source="organizers")
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -192,6 +193,11 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
     category = rest_serializers.SerializerMethodField()
+
+    def get_organizers(self, obj):
+        return ", ".join(
+            map(lambda org: org.label, obj.organizers.all())
+        )
 
     def __init__(self, instance=None, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)
@@ -205,7 +211,7 @@ class TouristicEventAPISerializer(PicturesSerializerMixin, PublishableSerializer
         fields = (
             'id', 'accessibility', 'approved', 'begin_date', 'booking',
             'capacity', 'category', 'contact', 'description', 'description_teaser',
-            'duration', 'email', 'end_date', 'end_time', 'meeting_point', 'organizer',
+            'duration', 'email', 'end_date', 'end_time', 'meeting_point', 'organizers',
             'pois', 'portal', 'practical_info', 'source', 'speaker', 'start_time',
             'structure', 'target_audience', 'themes', 'touristic_contents', 'touristic_events',
             'treks', 'type', 'type1', 'website'
