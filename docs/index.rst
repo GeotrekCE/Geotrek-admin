@@ -50,4 +50,4 @@ Welcome to Geotrek's documentation!
 
     others/troubleshooting
     others/authors
-    others/changelog
+    changelog
