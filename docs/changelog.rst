@@ -14,6 +14,7 @@ CHANGELOG
 
 - Add popup button to add organizer in touristic event form
 - Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
+- Update favicon with current Geotrek logo
 
 **Documentation**
 
