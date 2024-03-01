@@ -15,6 +15,10 @@ CHANGELOG
 - Add popup button to add organizer in touristic event form
 - Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
 
+**Documentation**
+
+- Reorganize major sections in documentation, and add content
+
 
 2.102.1 (2024-02-20)
 --------------------
