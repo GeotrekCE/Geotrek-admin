@@ -1,0 +1,204 @@
+<circuits version="2">
+    <circuit date_creation="1295825772" date_modification="1295828456" id_circuit="10925"
+        id_utilisateur="1">
+        <informations>
+            <information langue="fr">
+                <titre>Le patrimoine de Plancoët</titre>
+                <description>Laissez-vous guider par ce chemin</description>
+                <medias>
+                    <images>
+                        <image nature="13">
+                            <legende>Le patrimoine de Plancoët</legende>
+                            <url>https://example.net/a_picture.jpg</url>
+                            <credit>Manon</credit>
+                        </image>
+                        <image nature="3">
+                            <url>https://example.net/a_picture.jpg</url>
+                        </image>
+                    </images>
+                    <videos>
+                        <video>
+                            <code>
+                                <iframe width='500' height='360'
+                                    src='https://www.youtube.com/embed/bI2z9VGhd0A' />
+                            </code>
+                            <credit>Valentin</credit>
+                        </video>
+                    </videos>
+                    <sons>
+                        <son>
+                            <url>https://www.cirkwi.com/mp3/6302_fr.mp3</url>
+                            <credit>Valentin</credit>
+                        </son>
+                    </sons>
+                </medias>
+                <informations_complementaires>
+                    <information_complementaire>
+                        <titre>Horaires</titre>
+                        <description>Tous les jours sauf le Dimanche</description>
+                    </information_complementaire>
+                </informations_complementaires>
+                <tags_publics>
+                    <tag_public id="31" nom="style_randonnee" />
+                    <tag_public id="36" nom="public_famille" />
+                </tags_publics>
+                <pdfs_perso>
+                    <pdf_perso>https://www.mon-site.com/lien_vers_mon_pdf.pdf</pdf_perso>
+                </pdfs_perso>
+            </information>
+            <information langue="en">
+                <titre>Title en</titre>
+                <description>Description en</description>
+                <medias>
+                    <images>
+                        <image nature="12">
+                            <legende>Le patrimoine de Plancoët</legende>
+                            <url>https://example.net/a_picture.jpg</url>
+                            <credit>Manon</credit>
+                        </image>
+                    </images>
+                </medias>
+            </information>
+        </informations>
+        <sens_circuit id="1" label="aller_simple">
+            <adresse>
+                <num>74</num>
+                <rue>chemin du sars barras</rue>
+                <ville>Plancoët</ville>
+                <cp>22130</cp>
+                <pays code_pays="FR">France</pays>
+                <position>
+                    <lat>48.5223295900644</lat>
+                    <lng>-2.23556272792814</lng>
+                </position>
+            </adresse>
+            <distance>3400</distance>
+            <denivele_positif>354</denivele_positif>
+            <denivele_negatif>-354</denivele_negatif>
+            <tags_prives>
+                <tag_prive id="31" nom="bretagne_randonnee" />
+                <tag_prive id="39" nom="bretagne_tourisme" />
+            </tags_prives>
+            <ddrs>
+                <ddr id_ddr="45" />
+                <ddr id_ddr="53" />
+            </ddrs>
+            <locomotions>
+                <locomotion type="voiture" id_locomotion="2" difficulte="1" duree="45" jours="0" />
+                <locomotion type="vtt" id_locomotion="3" difficulte="3" duree="129" />
+            </locomotions>
+            <fichier_trace
+                url="https://demo-admin.geotrek.fr/static/boucle-du-pic-des-trois-seigneurs.gpx"
+                info_parcours="false" />
+            <infos_parcours>
+                <info_parcours numero="1" date_modification="1365413342" id_info_parcours="357">
+                    <categories>
+                        <categorie nom="Intersection" id_categorie="15" />
+                        <categorie nom="Lieu dangereux" id_categorie="11" />
+                    </categories>
+                    <informations>
+                        <information langue="fr">
+                            <titre>Tour de lancienne église Sainte-Gertrude</titre>
+                            <description>
+                                A Tenneville, ce site reposant vous fera découvrir une église
+                                classée dont il ne reste qu’une partie du bâtiment originel. Nous
+                                vous laissons le plaisir de...\r\nClassé le 1985\r\n
+                            </description>
+                            <medias>
+                                <images>
+                                    <image nature="12">
+                                        <legende>Le patrimoine de Plancoët</legende>
+                                        <url>https://example.net/a_picture.jpg</url>
+                                    </image>
+                                </images>
+                            </medias>
+                        </information>
+                    </informations>
+                    <adresse>
+                        <pays code_pays="BE">Belgique</pays>
+                        <position>
+                            <lat>48.7125946</lat>
+                            <lng>6.1442926</lng>
+                        </position>
+                        <altitude>468.0</altitude>
+                    </adresse>
+                    <dates>
+                        <date recursivite_annuelle="true">
+                            <date_debut>1365123600</date_debut>
+                            <date_fin>1365130800</date_fin>
+                        </date>
+                        <date recursivite_annuelle="false">
+                            <date_debut>1365123601</date_debut>
+                            <date_fin>1365130802</date_fin>
+                        </date>
+                    </dates>
+                </info_parcours>
+            </infos_parcours>
+            <pois>
+                <poi numero="1" date_modification="1365413311" id_poi="35237">
+                    <categories>
+                        <categorie nom="Monuments et Architecture" id_categorie="15" />
+                        <categorie nom="Eglise" id_categorie="11" />
+                    </categories>
+                    <informations>
+                        <information langue="fr">
+                            <titre>Tour de lancienne église Sainte-Gertrude</titre>
+                            <description>
+                                A Tenneville, ce site reposant vous fera découvrir une église
+                                classée dont il ne reste qu’une partie du bâtiment originel. Nous
+                                vous laissons le plaisir de...\r\nClassé le 1985\r\n
+                            </description>
+                            <medias>
+                                <images>
+                                    <image>
+                                        <url>https://example.net/a_picture.jpg</url>
+                                    </image>
+                                </images>
+                            </medias>
+                        </information>
+                    </informations>
+                    <adresse>
+                        <num>1</num>
+                        <rue>route de Bastogne</rue>
+                        <ville>Tenneville</ville>
+                        <cp>6970</cp>
+                        <pays code_pays="BE">Belgique</pays>
+                        <position>
+                            <lat>48.7125946</lat>
+                            <lng>6.1442926</lng>
+                        </position>
+                        <altitude>468.0</altitude>
+                    </adresse>
+                    <dates>
+                        <date recursivite_annuelle="true">
+                            <date_debut>1365123600</date_debut>
+                            <date_fin>1365130800</date_fin>
+                        </date>
+                        <date recursivite_annuelle="false">
+                            <date_debut>1365123601</date_debut>
+                            <date_fin>1365130802</date_fin>
+                        </date>
+                    </dates>
+                    <qrcodelink>
+                        https://ws.cirkwi.com/link/jek3dd35kn
+                    </qrcodelink>
+                    <diffusion cirkwi="1" mobile="1" reseau="1" partage="2" />
+                </poi>
+            </pois>
+            <dates>
+                <date recursivite_annuelle="true">
+                    <date_debut>1365123600</date_debut>
+                    <date_fin>1365130800</date_fin>
+                </date>
+                <date recursivite_annuelle="false">
+                    <date_debut>1365123601</date_debut>
+                    <date_fin>1365130802</date_fin>
+                </date>
+            </dates>
+            <qrcodelink>
+                https://ws.cirkwi.com/link/g54rzr72zve
+            </qrcodelink>
+            <diffusion cirkwi="1" mobile="1" reseau="1" />
+        </sens_circuit>
+    </circuit>
+</circuits>
