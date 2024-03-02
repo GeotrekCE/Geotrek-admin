@@ -27,7 +27,7 @@ class FlatPagesAdminForm(ModelForm):
 
 
 # class FlatPagesAdmin(TabbedTranslationAdmin):
-class FlatPagesAdmin(TreeAdmin, TabbedTranslationAdmin):
+class FlatPagesAdmin(TabbedTranslationAdmin, TreeAdmin):
     list_display = ('title', 'published', 'publication_date', 'portals', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
