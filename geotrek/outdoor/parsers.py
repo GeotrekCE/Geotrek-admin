@@ -165,6 +165,11 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
                     continue
                 child_site.parent = parent_site
                 child_site.save()
+        if self.delete:
+            # Prepare deletion by removing protected links
+            for site in self.model.objects.filter(pk__in=self.to_delete):
+                site.children.set([])
+                site.children_courses.set([])
         super().end()
 
 

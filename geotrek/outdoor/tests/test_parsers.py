@@ -77,6 +77,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
+        Site.objects.create(name="To delete", provider="URL_1", geom='GEOMETRYCOLLECTION(POINT(0 0))')
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -170,6 +171,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(attachment.legend, 'Arrien-en-Bethmale, vue du village')
         child_site = Site.objects.get(name_fr="Noeud 1", name_en="Node")
         self.assertEqual(child_site.parent, site)
+        self.assertEqual(Site.objects.filter(name="To delete").count(), 0)
 
         # Courses
         self.assertEqual(Course.objects.count(), 7)
