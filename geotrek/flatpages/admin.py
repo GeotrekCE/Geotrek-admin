@@ -70,7 +70,10 @@ class MyListFilter(admin.filters.SimpleListFilter):
 
 # class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
 class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin):
-    list_display = ('label', )
+    list_display = (
+        'label',
+        'portal_names_string',
+    )
     form = movenodeform_factory(flatpages_models.MenuItem)
     list_filter = (
         ("portals", admin.filters.RelatedOnlyFieldListFilter),

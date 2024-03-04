@@ -1,6 +1,7 @@
 import mimetypes
 
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib import admin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import slugify
@@ -149,3 +150,7 @@ class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
     def get_delete_url(self):
         return reverse('admin:flatpages_menuitem_delete', args=[self.pk])
+
+    @admin.display(description='Portals')
+    def portal_names_string(self):
+        return ", ".join(p.name for p in self.portals.all())
