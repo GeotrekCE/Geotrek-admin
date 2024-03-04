@@ -74,10 +74,10 @@ class ZoningPropertiesMixinTest(TestCase):
         self.path.save()
 
         self.assertListEqual([d.name for d in self.path.published_districts],
-                             [district.pk, self.district.pk])
+                             [district.name, self.district.name])
         self.assertEqual(len(self.path.districts), 2)
         self.assertListEqual([d.name for d in self.path.published_districts],
-                             [district.pk, self.district.pk])
+                             [district.name, self.district.name])
         self.assertEqual(len(self.path.published_districts), 2)
 
     def test_areas(self):
