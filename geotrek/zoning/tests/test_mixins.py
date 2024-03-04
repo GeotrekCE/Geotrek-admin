@@ -27,65 +27,79 @@ class ZoningPropertiesMixinTest(TestCase):
     def test_cities(self):
         city = CityFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.cities, [repr(self.city), repr(city)])
+        self.assertListEqual([c.name for c in self.path.cities],
+                             [self.city.name, city.name])
         self.assertEqual(len(self.path.cities), 2)
-        self.assertQuerysetEqual(self.path.published_cities, [repr(self.city), repr(city)])
+        self.assertListEqual([c.name for c in self.path.published_cities],
+                             [self.city.name, city.name])
         self.assertEqual(len(self.path.published_cities), 2)
 
-        self.assertQuerysetEqual(self.trek.cities, [repr(self.city), repr(city)])
+        self.assertListEqual([c.name for c in self.trek.cities],
+                             [self.city.name, city.name])
         self.assertEqual(len(self.trek.cities), 2)
-        self.assertQuerysetEqual(self.trek.published_cities, [repr(self.city)],)
+        self.assertListEqual([c.name for c in self.trek.published_cities],
+                             [self.city.name],)
         self.assertEqual(len(self.trek.published_cities), 1)
 
         # Check reverse order
         self.path.reverse()
         self.path.save()
 
-        self.assertQuerysetEqual(self.path.cities, [repr(city), repr(self.city)])
+        self.assertListEqual([c.name for c in self.path.cities],
+                             [city.name, self.city.name])
         self.assertEqual(len(self.path.cities), 2)
-        self.assertQuerysetEqual(self.path.published_cities, [repr(city), repr(self.city)])
+        self.assertListEqual([c.name for c in self.path.published_cities],
+                             [city.name, self.city.name])
         self.assertEqual(len(self.path.published_cities), 2)
 
     def test_districts(self):
         district = DistrictFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.districts, [repr(self.district), repr(district)])
+        self.assertListEqual([d.name for d in self.path.districts],
+                             [self.district.name, district.name])
         self.assertEqual(len(self.path.districts), 2)
-        self.assertQuerysetEqual(self.path.published_districts, [repr(self.district), repr(district)])
+        self.assertListEqual([d.name for d in self.path.published_districts],
+                             [self.district.name, district.name])
         self.assertEqual(len(self.path.published_districts), 2)
 
-        self.assertQuerysetEqual(self.trek.districts, [repr(self.district), repr(district)])
+        self.assertListEqual([d.name for d in self.trek.districts],
+                             [self.district.name, district.name])
         self.assertEqual(len(self.trek.districts), 2)
-        self.assertQuerysetEqual(self.trek.published_districts, [repr(self.district)])
+        self.assertListEqual([d.name for d in self.trek.published_districts],
+                             [self.district.name])
         self.assertEqual(len(self.trek.published_districts), 1)
 
         # Check reverse order
         self.path.reverse()
         self.path.save()
 
-        self.assertQuerysetEqual(self.path.districts, [repr(district), repr(self.district)])
+        self.assertListEqual([d.name for d in self.path.published_districts],
+                             [district.pk, self.district.pk])
         self.assertEqual(len(self.path.districts), 2)
-        self.assertQuerysetEqual(self.path.published_districts, [repr(district), repr(self.district)])
+        self.assertListEqual([d.name for d in self.path.published_districts],
+                             [district.pk, self.district.pk])
         self.assertEqual(len(self.path.published_districts), 2)
 
     def test_areas(self):
         area = RestrictedAreaFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.areas, [repr(self.area), repr(area)])
+        self.assertListEqual([a.pk for a in self.path.areas], [self.area.pk, area.pk])
         self.assertEqual(len(self.path.areas), 2)
-        self.assertQuerysetEqual(self.path.published_areas, [repr(self.area), repr(area)])
+
+        self.assertListEqual([a.pk for a in self.path.published_areas], [self.area.pk, area.pk])
         self.assertEqual(len(self.path.published_areas), 2)
 
-        self.assertQuerysetEqual(self.trek.areas, [repr(self.area), repr(area)])
+        self.assertListEqual([a.pk for a in self.trek.areas], [self.area.pk, area.pk])
         self.assertEqual(len(self.trek.areas), 2)
-        self.assertQuerysetEqual(self.trek.published_areas, [repr(self.area)])
+
+        self.assertListEqual([a.pk for a in self.trek.published_areas], [self.area.pk])
         self.assertEqual(len(self.trek.published_areas), 1)
 
         # Check reverse order
         self.path.reverse()
         self.path.save()
 
-        self.assertQuerysetEqual(self.path.areas, [repr(area), repr(self.area)])
+        self.assertListEqual([a.pk for a in self.path.areas], [area.pk, self.area.pk])
         self.assertEqual(len(self.path.areas), 2)
-        self.assertQuerysetEqual(self.path.published_areas, [repr(area), repr(self.area)])
+        self.assertListEqual([a.pk for a in self.path.published_areas], [area.pk, self.area.pk])
         self.assertEqual(len(self.path.published_areas), 2)

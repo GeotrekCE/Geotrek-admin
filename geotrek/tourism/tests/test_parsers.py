@@ -407,9 +407,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info)
         self.assertTrue(content.published)
         self.assertEqual(content.category, category)
-        self.assertQuerysetEqual(
-            content.type1.all(),
-            ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
+        self.assertListEqual(
+            list(content.type1.all().values_list('label', flat=True)),
+            ['Type A', 'Type B']
         )
         self.assertQuerysetEqual(content.type2.all(), [])
         self.assertEqual(Attachment.objects.count(), 4)
@@ -463,13 +463,13 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertTrue(event.published)
         self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
-        self.assertQuerysetEqual(
-            event.themes.all(),
-            ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
+        self.assertListEqual(
+            list(event.themes.all().values_list('label', flat=True)),
+            ['Cyclisme', 'Sports cyclistes']
         )
-        self.assertQuerysetEqual(
-            event.organizers.all(),
-            ['<TouristicEventOrganizer: Toto>']
+        self.assertListEqual(
+            list(event.organizers.all().values_list('label', flat=True)),
+            ['Toto']
         )
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
@@ -719,16 +719,14 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
-        self.assertQuerysetEqual(event.portal.all(), ['<TargetPortal: Itinérance>'])
+        self.assertListEqual(list(event.portal.all().values_list('name', flat=True)), ['Itinérance'])
         call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28OtherPortal',
                      verbosity=0)
 
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
-        self.assertQuerysetEqual(event.portal.all(),
-                                 ['<TargetPortal: Itinérance>',
-                                  '<TargetPortal: Other_portal>'],
-                                 ordered=False)
+        self.assertListEqual(list(event.portal.all().values_list('name', flat=True)),
+                             ['Itinérance', 'Other_portal'])
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_information_desk_apidae(self, mocked):
@@ -874,9 +872,9 @@ class LEIParserTest(TranslationResetMixin, TestCase):
         self.assertIn("Description A", event.description)
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().content_object, event)
-        self.assertQuerysetEqual(
-            event.organizers.all(),
-            ['<TouristicEventOrganizer: Resp Event A>']
+        self.assertListEqual(
+            list(event.organizers.all().values_list('label', flat=True)),
+            ['Resp Event A']
         )
 
 
