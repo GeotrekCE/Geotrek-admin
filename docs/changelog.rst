@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism : add price to TouristicEvent model - ref #3587
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947) 
 
 **Improvments**
 
