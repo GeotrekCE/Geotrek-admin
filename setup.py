@@ -65,7 +65,7 @@ setup(
         'django-colorfield',
         'Fiona',
         'markdown',
-        "weasyprint==52.5",  # newer version required libpango (not available in bionic)
+        "weasyprint==61.1",  # newer version required libpango (not available in bionic)
         'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
         "django-clearcache",
         "pyopenair",
