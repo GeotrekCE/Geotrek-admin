@@ -1,5 +1,8 @@
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.response import Response
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework import renderers
 
 from django.conf import settings
 from django.db.models.query import Prefetch
@@ -25,6 +28,10 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
 class MenuItemRetrieveView(RetrieveAPIView):
     serializer_class = api_serializers.MenuItemDetailsSerializer
     queryset = flatpages_models.MenuItem.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+        renderers.JSONRenderer, ]
 
 
 class MenuItemTreeView(GenericAPIView):
@@ -35,6 +42,10 @@ class MenuItemTreeView(GenericAPIView):
         GeotrekPublishedFilter,
         api_filters.MenuItemFilter,
     )
+    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+        renderers.JSONRenderer, ]
 
     def get(self, request, *args, **kwargs):
         root_items = self.filter_queryset(self.get_queryset()).all()
@@ -85,12 +96,22 @@ class FlatPageRetrieveView(RetrieveAPIView):
     serializer_class = api_serializers.FlatPageSerializer
     queryset = flatpages_models.FlatPage.objects.all()
 
+    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+        renderers.JSONRenderer, ]
+
 
 class FlatPageTreeView(GenericAPIView):
     # from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest
     serializer_class = api_serializers.FlatPageSerializer
     queryset = flatpages_models.FlatPage.objects.filter(depth=1)
     filter_backends = (GeotrekPublishedFilter, )
+
+    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+        renderers.JSONRenderer, ]
 
     def get(self, request, *args, **kwargs):
         root_items = self.filter_queryset(self.queryset).all()
