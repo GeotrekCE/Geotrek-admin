@@ -130,6 +130,7 @@ class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     portals = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='menu_items',
                                     verbose_name=_("Portal"))
+    open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=False)
 
     class Meta:
         verbose_name = _('Menu item')
