@@ -558,7 +558,7 @@ def log_cascade_deletion_from_timer_status(sender, instance, using, **kwargs):
 
 
 class PendingEmail(models.Model):
-    recipient = models.EmailField(verbose_name=_("Email"), max_length=256, blank=True, null=True)
+    recipient = models.EmailField(verbose_name=_("Recipient"), max_length=256, blank=True, null=True)
     subject = models.CharField(max_length=200, null=False, blank=False)
     message = models.TextField(verbose_name=_("Message"), blank=False, null=False)
     error_message = models.TextField(null=False, blank=False)

@@ -168,7 +168,7 @@ class BladeDelete(MapEntityDelete):
         return super().delete(request, args, kwargs)
 
     def get_success_url(self):
-        return self.signage.get_detail_url()
+        return self.get_object().signage.get_detail_url()
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):

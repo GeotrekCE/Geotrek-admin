@@ -145,7 +145,7 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.name, "Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
-        self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
+        self.assertListEqual(list(trek.themes.all().values_list('pk', flat=True)), [t.pk for t in self.themes])
         self.assertEqual(WKTWriter(precision=4).write(trek.geom), WKT)
 
 
