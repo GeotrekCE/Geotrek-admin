@@ -70,6 +70,7 @@ class InterventionForm(CommonForm):
     end_date = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={"data-date-orientation": "bottom auto"}),
+        label=_("End date")
     )
 
     geomfields = ['topology']
@@ -90,11 +91,12 @@ class InterventionForm(CommonForm):
             'height',
             'stake',
             'project',
+            'contractors',
             'access',
             'description',
             'material_cost',
             'heliport_cost',
-            'subcontract_cost',
+            'contractor_cost',
             Fieldset(_("Mandays")),
             css_class="scrollable tab-pane active"
         ),
@@ -104,7 +106,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'begin_date', 'end_date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'access', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
+             'height', 'stake', 'project', 'contractors', 'access', 'material_cost', 'heliport_cost', 'contractor_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -204,9 +206,7 @@ class ProjectForm(CommonForm):
                     'constraint',
                     'global_cost',
                     'comments',
-
-                    css_class="span6"),
-                Div('project_owner',
+                    'project_owner',
                     'project_manager',
                     'contractors',
                     Fieldset(_("Fundings")),

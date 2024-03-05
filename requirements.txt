@@ -51,6 +51,8 @@ cffi==1.16.0
     #   persistent
     #   pyvips
     #   weasyprint
+chardet==5.2.0
+    # via geotrek (setup.py)
 charset-normalizer==3.2.0
     # via requests
 click==8.1.3
@@ -88,7 +90,7 @@ datetime==5.2
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==3.2.23
+django==3.2.24
     # via
     #   django-appconf
     #   django-appypod
@@ -202,7 +204,7 @@ inflection==0.5.1
     # via drf-yasg
 itypes==1.2.0
     # via coreapi
-jinja2==3.1.2
+jinja2==3.1.3
     # via coreschema
 kombu==5.3.2
     # via celery
@@ -216,7 +218,7 @@ large-image-source-vips==1.17.2
     # via geotrek (setup.py)
 lxml==4.9.3
     # via mapentity
-mapentity==8.6.2
+mapentity==8.7.0
     # via geotrek (setup.py)
 markdown==3.4.4
     # via geotrek (setup.py)
@@ -248,7 +250,7 @@ persistent==5.0
     # via
     #   btrees
     #   zodb
-pillow==10.0.1
+pillow==10.2.0
     # via
     #   cairosvg
     #   django-colorfield

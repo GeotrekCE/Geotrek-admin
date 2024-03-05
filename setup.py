@@ -28,12 +28,11 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='https://makina-corpus.com',
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
-                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
         'Django==3.2.*',
         'mapentity',
+        'chardet',
         'cairosvg',
         'cairocffi',
         'env_file',

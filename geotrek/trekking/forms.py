@@ -205,7 +205,7 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks', 'source', 'portal']:
             self.fields[f].help_text = ''
 
-        if self.instance:
+        if self.instance and self.instance.pk:
             queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
                                                         .order_by('order')
             # init multiple children field with data

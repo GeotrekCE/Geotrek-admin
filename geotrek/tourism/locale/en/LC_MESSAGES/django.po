@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 11:13+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -255,6 +255,12 @@ msgstr ""
 msgid "Published touristic contents"
 msgstr ""
 
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
 msgid "Touristic event type"
 msgstr ""
 
@@ -337,6 +343,12 @@ msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr ""
 
 msgid "Intervention duration"
+msgstr ""
+
+msgid "Price"
+msgstr ""
+
+msgid "0 mean free"
 msgstr ""
 
 msgid "Select a place in the list or locate the event directly on the map"
@@ -446,6 +458,9 @@ msgid "Total"
 msgstr ""
 
 msgid "Date"
+msgstr ""
+
+msgid "Add Organizer"
 msgstr ""
 
 msgid "Invalid geometry value."

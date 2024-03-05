@@ -38,7 +38,7 @@ flake8:
 	$(docker_compose) run --rm web flake8 geotrek
 
 messages:
-	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
 
 ###########################
 #        coverage         #

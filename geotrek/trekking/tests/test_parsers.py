@@ -3,10 +3,12 @@ import json
 import os
 from copy import copy
 from io import StringIO
+from tempfile import TemporaryDirectory
 from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
 from urllib.parse import urlparse
+from shutil import copy as copyfile
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
@@ -16,6 +18,7 @@ from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
 from geotrek.common.utils import testdata
+from geotrek.common.utils.file_infos import get_encoding_file
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.core.tests.factories import PathFactory
@@ -142,7 +145,7 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.name, "Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
-        self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
+        self.assertListEqual(list(trek.themes.all().values_list('pk', flat=True)), [t.pk for t in self.themes])
         self.assertEqual(WKTWriter(precision=4).write(trek.geom), WKT)
 
 
@@ -1146,6 +1149,39 @@ class ApidaeTrekParserTests(TestCase):
         mocked_get.side_effect = self.make_dummy_get('trek_with_not_complete_illustration.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
         self.assertEqual(Attachment.objects.count(), 0)
+
+
+@override_settings(TMP_DIR=TemporaryDirectory().name)
+class TestApidaeTrekParserConvertEncodingFiles(TestCase):
+    data_dir = "geotrek/trekking/tests/data"
+
+    def setUp(self):
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+
+    def test_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_bad_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_bad_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertNotEqual(encoding, "utf-8")
+
+        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
+
+    def test_not_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_good_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_good_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertEqual(encoding, "utf-8")
+
+        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
 
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):

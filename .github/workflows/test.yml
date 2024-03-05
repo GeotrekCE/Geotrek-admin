@@ -144,7 +144,8 @@ jobs:
         ./venv/bin/coverage run ./manage.py test -v 3
         ./venv/bin/coverage xml -o coverage.xml
 
-    - uses: codecov/codecov-action@v3
+    # codecov-action version 3.1.4 is the last version supported by bionic (3.1.5 requires node 20)
+    - uses: codecov/codecov-action@v3.1.4
       with:
         files: ./coverage.xml
         env_vars: OS,ENV

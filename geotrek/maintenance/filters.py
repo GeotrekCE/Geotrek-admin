@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter, MultipleChoiceFilter, DateFromToRangeFilter
+from django_filters import ChoiceFilter, MultipleChoiceFilter, DateFromToRangeFilter, ModelMultipleChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
@@ -15,7 +15,7 @@ from geotrek.zoning.filters import (IntersectionFilterCity, IntersectionFilterDi
                                     ZoningFilterSet)
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 
-from .models import Intervention, Project
+from .models import Intervention, Project, Contractor
 
 
 class BboxInterventionFilterMixin:
@@ -138,8 +138,10 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
 
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
-    begin_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by begin date range')},), label=_('begin date'))
-    end_date = CustomDateFromToRangeFilter(lookup_expr='icontains', widget=OneLineRangeWidget(attrs={'type': 'date', 'class': 'minmax-field', 'title': _('Filter by end date range')},), label=_('end date'))
+    begin_date = CustomDateFromToRangeFilter(widget=OneLineRangeWidget(attrs={'type': 'text', 'class': 'minmax-field', 'title': _('Filter by begin date range')},), label=_('begin date'))
+    end_date = CustomDateFromToRangeFilter(widget=OneLineRangeWidget(attrs={'type': 'text', 'class': 'minmax-field', 'title': _('Filter by end date range')},), label=_('end date'))
+    year = MultipleChoiceFilter(choices=lambda: Intervention.objects.year_choices(),
+                                method='filter_year', label=_("Year"))
     on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
     area_type = InterventionIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False,
                                                                  lookup_expr='intersects')
@@ -151,11 +153,17 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'status', 'type', 'stake', 'subcontracting', 'project', 'on',
+            'status', 'type', 'stake', 'subcontracting', 'project', 'contractors', 'on',
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def filter_year(self, qs, name, values):
+        conditions = Q()
+        for value in values:
+            # Filter only with precise begin year
+            conditions |= Q(begin_date__year=value, end_date__isnull=True)
+            # Filter year between begin and end date
+            conditions |= Q(begin_date__year__lte=value, end_date__year__gte=value)
+        return qs.filter(conditions)
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):
@@ -168,6 +176,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)
     area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), lookup_expr='intersects', required=False)
     area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), lookup_expr='intersects', required=False)
+    contractors = ModelMultipleChoiceFilter(label=_("Intervention contractors"), queryset=Contractor.objects.all(), method='filter_contractors')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
@@ -175,6 +184,13 @@ class ProjectFilterSet(StructureRelatedFilterSet):
             'year', 'type', 'domain', 'contractors', 'project_owner',
             'project_manager', 'founders'
         ]
+
+    def filter_contractors(self, qs, name, values):
+        q = Q()
+        if values:
+            q |= Q(contractors__in=values)
+            q |= Q(interventions__contractors__in=values)
+        return qs.filter(q)
 
     def filter_year(self, qs, name, values):
         q = Q()

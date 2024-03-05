@@ -11,6 +11,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
@@ -397,6 +398,10 @@ class TouristicEventOrganizer(TimeStampedModelMixin):
     def __str__(self):
         return self.label
 
+    @classmethod
+    def get_add_url(cls):
+        return reverse('tourism:organizer_add')
+
 
 class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                      StructureRelated, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
@@ -425,8 +430,9 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    organizer = models.ForeignKey('tourism.TouristicEventOrganizer', verbose_name=_("Organizer"), blank=True, null=True,
-                                  on_delete=models.PROTECT, related_name="touristicevent")
+
+    organizers = models.ManyToManyField('tourism.TouristicEventOrganizer', verbose_name=_("Organizers"), blank=True,
+                                        related_name="touristicevent")
     speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
     type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, on_delete=models.PROTECT)
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
@@ -456,6 +462,15 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
     intervention_duration = models.FloatField(
         verbose_name=_("Intervention duration"), blank=True, null=True,
         help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+        validators=[MinValueValidator(0)]
+    )
+    price = models.DecimalField(
+        null=True,
+        blank=True,
+        max_digits=8,
+        decimal_places=2,
+        verbose_name=_("Price"),
+        help_text=_("0 mean free"),
         validators=[MinValueValidator(0)]
     )
     objects = TouristicEventManager()

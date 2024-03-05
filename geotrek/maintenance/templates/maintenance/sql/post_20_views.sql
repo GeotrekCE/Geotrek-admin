@@ -19,12 +19,13 @@ SELECT a.id,
        i.disorder AS "Disorders",
        a.material_cost AS "Material cost",
        a.heliport_cost AS "Heliport cost",
-       a.subcontract_cost AS "Subcontract cost",
+       a.contractor_cost AS "Contractor cost",
        j.job AS "Job",
        j.cost AS "Mandays",
        j.nb_days AS "Cost",
-       (a.material_cost+a.heliport_cost+a.subcontract_cost)::float AS "Total cost",
+       (a.material_cost+a.heliport_cost+a.contractor_cost)::float AS "Total cost",
        h.name AS "Project",
+       m.contractor AS "Contractors",
        CASE
            WHEN k.app_label = 'core' THEN 'Tronçons'
            WHEN k.app_label = 'infrastructure' THEN 'Aménagements'
@@ -38,24 +39,31 @@ SELECT a.id,
        a.date_update AS "Update date",
        a.geom_3d
 FROM maintenance_intervention a
+LEFT JOIN
+    (SELECT array_to_string(array_agg(a.contractor), ', '::text, '_'::text) contractor,
+            intervention_id
+     FROM maintenance_contractor a
+     JOIN maintenance_intervention_contractors b ON a.id = b.contractor_id
+     JOIN maintenance_intervention c ON b.intervention_id = c.id
+     GROUP BY intervention_id) m ON a.id = m.intervention_id
 LEFT JOIN maintenance_interventiontype b ON a.type_id = b.id
 LEFT JOIN maintenance_interventionstatus c ON a.status_id = c.id
 LEFT JOIN core_stake d ON a.stake_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
 LEFT JOIN maintenance_project h ON a.project_id = h.id
 LEFT JOIN common_accessmean accessmean ON a.access_id = accessmean.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM maintenance_intervention a
-     JOIN zoning_city b ON ST_INTERSECTS (st_pointonsurface(a.geom_3d), b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM maintenance_intervention a
-     JOIN zoning_district b ON ST_INTERSECTS (st_pointonsurface(a.geom_3d), b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom_3d, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom_3d, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (disorder  ORDER BY a.id), ', ', '_') disorder,
             c.id
@@ -99,6 +107,7 @@ SELECT a.id,
        h.organism AS "Project owner",
        j.organism AS "Project manager",
        k.contractor AS "Contractors",
+       l.contractor AS "Intervention contractors",
        i.financement AS "Fundings",
        a.comments AS "Comments",
        a.date_insert AS "Insertion date",
@@ -136,11 +145,19 @@ LEFT JOIN
         SELECT projectsgeoms.project_id, projectsgeoms.projectgeom
         FROM projectsgeoms) l ON a.id = l.project_id
 LEFT JOIN
-    (SELECT a.contractor,
-            b.contractor_id,
+    (SELECT array_to_string(array_agg(a.contractor), ', '::text, '_'::text) contractor,
             project_id
      FROM maintenance_contractor a
      JOIN maintenance_project_contractors b ON a.id = b.contractor_id
-     JOIN maintenance_project c ON b.project_id = c.id) k ON a.id = k.project_id
-WHERE a.deleted IS FALSE 
+     JOIN maintenance_project c ON b.project_id = c.id
+     GROUP BY project_id) k ON a.id = k.project_id
+LEFT JOIN maintenance_intervention m ON  a.id = m.project_id
+LEFT JOIN
+    (SELECT array_to_string(array_agg(a.contractor), ', '::text, '_'::text) contractor,
+            intervention_id
+     FROM maintenance_contractor a
+     JOIN maintenance_intervention_contractors b ON a.id = b.contractor_id
+     JOIN maintenance_intervention c ON b.intervention_id = c.id
+     GROUP BY intervention_id) l ON m.id = l.intervention_id
+WHERE a.deleted IS FALSE
 ;

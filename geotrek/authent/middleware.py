@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils.translation import LANGUAGE_SESSION_KEY
 
 
 class LocaleForcedMiddleware:
@@ -18,7 +17,7 @@ class LocaleForcedMiddleware:
         is_api_call = (user_agent is None or 'geotrek' in user_agent)
         forced_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if is_api_call and forced_language and hasattr(request, 'session'):
-            request.session[LANGUAGE_SESSION_KEY] = forced_language
+            request.session['django_language'] = forced_language
         return self.get_response(request)
 
 

@@ -461,7 +461,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         """
         Custom model validation
         """
-        if self.pk in self.trek_children.values_list('child__id', flat=True):
+        if self.pk and self.pk in self.trek_children.values_list('child__id', flat=True):
             raise ValidationError(_("Cannot use itself as child trek."))
 
     @property

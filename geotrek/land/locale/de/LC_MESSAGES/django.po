@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,9 @@ msgid "Land edge"
 msgstr ""
 
 msgid "Physical edge"
+msgstr ""
+
+msgid "Circulation edge"
 msgstr ""
 
 msgid "Competence edge"
@@ -87,6 +90,21 @@ msgstr ""
 msgid "Signage management edges"
 msgstr ""
 
+msgid "Circulation type"
+msgstr ""
+
+msgid "Circulation types"
+msgstr ""
+
+msgid "Authorization type"
+msgstr ""
+
+msgid "Authorization types"
+msgstr ""
+
+msgid "Circulation edges"
+msgstr ""
+
 msgid "Add a new land edge"
 msgstr ""
 
@@ -100,6 +118,9 @@ msgid "Add a new work management edge"
 msgstr ""
 
 msgid "Add a new signage management edge"
+msgstr ""
+
+msgid "Add a new circulation edge"
 msgstr ""
 
 msgid "Competence"

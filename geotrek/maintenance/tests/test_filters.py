@@ -14,7 +14,7 @@ from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBound
 from geotrek.land import filters  # noqa
 
 from geotrek.maintenance.filters import ProjectFilterSet, InterventionFilterSet
-from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory, ContractorFactory
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
@@ -95,6 +95,102 @@ class InterventionZoningFilterTest(TestCase):
 
         filter = InterventionFilterSet(data={'area_type': [self.area_type_3, ]})
         self.assertEqual(len(filter.qs), 0)
+
+
+class InterventionDateFilterTest(TestCase):
+    def test_filter_year_without_end_date(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2021]})
+        self.assertEqual(intervention_filter.qs.count(), 1)
+
+    def test_filter_year_with_range(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30", end_date="2024-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30", end_date="2024-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2022]})
+        self.assertEqual(intervention_filter.qs.count(), 2)
+
+    def test_filter_year_with_end_date(self):
+        InterventionFactory(name="intervention1", begin_date="2020-07-30", end_date="2023-07-30")
+        InterventionFactory(name="intervention1", begin_date="2021-07-30")
+        InterventionFactory(name="intervention1", begin_date="2022-07-30", end_date="2024-07-30")
+        intervention_filter = InterventionFilterSet({'year': [2023, 2024]})
+        self.assertEqual(intervention_filter.qs.count(), 2)
+
+
+class InterventionContractorsFilterTest(TestCase):
+    def test_filter_without_contractors(self):
+        project = ProjectFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InterventionFactory.create(project=project)
+        else:
+            InterventionFactory.create(project=project, geom='SRID=2154;POINT (700000 6600000)')
+
+        project_filter = ProjectFilterSet({})
+
+        self.assertEqual(project_filter.qs.count(), 1)
+
+    def test_filter_with_project_contractors(self):
+        contractor = ContractorFactory.create()
+        project = ProjectFactory.create()
+        project.contractors.set([contractor])
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InterventionFactory.create(project=project)
+        else:
+            InterventionFactory.create(project=project, geom='SRID=2154;POINT (700000 6600000)')
+
+        project_filter = ProjectFilterSet({'contractors': [contractor]})
+        self.assertEqual(project_filter.qs.count(), 1)
+
+    def test_filter_with_intervention_contractors(self):
+        contractor = ContractorFactory.create()
+        contractor_2 = ContractorFactory.create()
+        project = ProjectFactory.create()
+        project.contractors.set([contractor_2])
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            inter = InterventionFactory.create(project=project)
+        else:
+            inter = InterventionFactory.create(project=project, geom='SRID=2154;POINT (700000 6600000)')
+        inter.contractors.set([contractor])
+
+        project_filter = ProjectFilterSet({'contractors': [contractor]})
+        self.assertEqual(project_filter.qs.count(), 1)
+
+    def test_filter_with_project_and_intervention_contractors(self):
+        contractor = ContractorFactory.create()
+        contractor_2 = ContractorFactory.create()
+        ContractorFactory.create()
+        project = ProjectFactory.create()
+        project.contractors.set([contractor_2])
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            inter = InterventionFactory.create(project=project)
+        else:
+            inter = InterventionFactory.create(project=project, geom='SRID=2154;POINT (700000 6600000)')
+        inter.contractors.set([contractor])
+
+        project_filter = ProjectFilterSet({'contractors': [contractor, contractor_2]})
+        self.assertEqual(project_filter.qs.count(), 1)
+
+    def test_filter_with_project_and_intervention_contractors_not_match(self):
+        contractor = ContractorFactory.create()
+        contractor_2 = ContractorFactory.create()
+        contractor_3 = ContractorFactory.create()
+        project = ProjectFactory.create()
+        project.contractors.set([contractor_2])
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            inter = InterventionFactory.create(project=project)
+        else:
+            inter = InterventionFactory.create(project=project, geom='SRID=2154;POINT (700000 6600000)')
+        inter.contractors.set([contractor])
+
+        project_filter = ProjectFilterSet({'contractors': [contractor_3]})
+        self.assertEqual(project_filter.qs.count(), 0)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

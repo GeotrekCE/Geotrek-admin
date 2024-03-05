@@ -205,7 +205,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('(deprecated) Same as near_trek.')
+                    description=_("(deprecated) replaced by '%(field)s'.") % {"field": "near_trek"}
                 )
             ),
         )
@@ -247,7 +247,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_("(deprecated) Same as near_trek.")
+                    description=_("(deprecated) replaced by '%(field)s'.") % {"field": "near_trek"}
                 )
             ), Field(
                 name='sites', required=False, location='query', schema=coreschema.Integer(
@@ -507,6 +507,7 @@ class TouristicEventFilterSet(filters.FilterSet):
         widget=CSVWidget(),
         queryset=TouristicEventOrganizer.objects.all(),
         help_text=_("Filter by one or more organizer, comma-separated."),
+        field_name="organizers"
     )
 
     help_texts = {

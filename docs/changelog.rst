@@ -2,19 +2,72 @@
 CHANGELOG
 =========
 
-2.101.5+dev (XXXX-XX-XX)
+2.102.1+dev (XXXX-XX-XX)
 ------------------------
+
+**New features**
+
+- Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
+- Tourism : add price to TouristicEvent model - ref #3587
+
+**Improvments**
+
+- Add popup button to add organizer in touristic event form
+- Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
+- Update favicon with current Geotrek logo
+- Add intervention geometries union in projects database view (``v_projects``) (#3892)
+
+**Documentation**
+
+- Reorganize major sections in documentation, and add content
+
+**Minor fixes**
+
+- Add missing translation in intervention form (refs #3825)
+
+
+2.102.1 (2024-02-20)
+--------------------
+
+**Hot fix**
+
+- Remove workforce cost (#3824)
+
+
+2.102.0 (2024-02-19)
+--------------------
+
+**Minor changes**
+
+- Update all translation files
+
+**Bug fixes**
+
+- Signage & Blade conditions translations + admin BladeCondition entry (#3847)
+- Add intervention date filter and add intervention years filter (#3825)
+
+**Documentation**
+
+- Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
+
+**New features**
+
+- Add UUIDs of parent and children ``Courses`` and ``Sites`` in APIv2 (#3569)
 
 **Improvements**
 
-- Add interventions geometries union in projects database view (``v_projects``) (#3892)
+- Add missing translations for fields on ``Courses`` and ``Sites`` in APIv2 (#3569)
+- Allow Apidae Trek parser to handle traces not in utf-8
+- Add workforce cost into intervention model (#3824)
+- Add contractor to intervention model (#3820)
+
 
 2.101.5 (2024-01-11)
 --------------------
 
 **New features**
 
--Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+- Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
 - Generalize``AccessMean`` model and add field ``access`` to ``Intervention`` (#3819)
 
 **Improvements**

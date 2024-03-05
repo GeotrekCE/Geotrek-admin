@@ -47,6 +47,10 @@
             <td>{{ object.duration }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"price" }}</th>
+            <td>{{ object.price }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"meeting_point" }}</th>
             <td>{{ object.meeting_point }}</td>
         </tr>
@@ -79,8 +83,9 @@
             <td>{% if object.website %}<a href="{{ object.website }}" target="_blank">{{ object.website }}</a>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"organizer" }}</th>
-            <td>{% if object.organizer %}{{ object.organizer }}
+            <th>{{ object|verbose:"organizers" }}</th>
+            <td>{% if object.organizers %}
+                    {% valuelist object.organizers.all %}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>

@@ -1,5 +1,8 @@
 Documentation
 =============
+.. contents::
+   :local:
+   :depth: 2
 
 We use sphinx doc and sphinx-rtd-theme. Requirements are included.
 

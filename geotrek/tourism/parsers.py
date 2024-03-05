@@ -246,7 +246,6 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         ),
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
-        'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
@@ -284,15 +283,17 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'illustrations'
     ]
     m2m_fields = {
-        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr'
+        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr',
+        'organizers': ('informations.structureGestion.nom.libelleFr',),
     }
     natural_keys = {
         'themes': 'label',
         'type': 'type',
-        'organizer': 'label',
+        'organizers': 'label',
         'source': 'name',
         'portal': 'name',
     }
+    # separator = ","
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -301,7 +302,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         self.field_options = self.field_options.copy()
         self.field_options['themes'] = {'create': True}
         self.field_options['type'] = {'create': True}
-        self.field_options['organizer'] = {'create': True}
+        self.field_options['organizers'] = {'create': True}
         if self.type is not None:
             self.constant_fields['type'] = self.type
         if self.themes is not None:
@@ -939,16 +940,17 @@ class LEITouristicEventParser(LEIParser):
                     'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
         'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL', 'ADRPREST_EMAIL2'),
         'website': ('ADRPROD_URL', 'ADRPREST_URL'),
-        'organizer': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE'),
         'speaker': ('CIVILITE_RESPONSABLE', 'NOM_RESPONSABLE', 'PRENOM_RESPONSABLE'),
         'type': 'TYPE_NOM',
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
-    m2m_fields = {}
+    m2m_fields = {
+        'organizers': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE')
+    }
     type = None
     natural_keys = {
         'category': 'label',
-        'organizer': 'label',
+        'organizers': 'label',
         'geom': {'required': True},
         'type': 'type',
     }
@@ -958,6 +960,7 @@ class LEITouristicEventParser(LEIParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.field_options['organizers'] = {'create': True}
         if self.type:
             self.constant_fields['type'] = self.type
 
@@ -966,9 +969,9 @@ class LEITouristicEventParser(LEIParser):
             val = val.replace('\n', '<br>')
         return val
 
-    def filter_organizer(self, src, val):
+    def filter_organizers(self, src, val):
         (first, second) = val
-        return self.apply_filter('organizer', src, [first if first else second])
+        return self.apply_filter('organizers', src, [first if first else second])
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val
