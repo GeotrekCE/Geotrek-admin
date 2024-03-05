@@ -15,6 +15,7 @@ CHANGELOG
 - Add popup button to add organizer in touristic event form
 - Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
 - Update favicon with current Geotrek logo
+- Add intervention geometries union in projects database view (``v_projects``) (#3892)
 
 **Documentation**
 
@@ -31,6 +32,7 @@ CHANGELOG
 **Hot fix**
 
 - Remove workforce cost (#3824)
+
 
 2.102.0 (2024-02-19)
 --------------------
@@ -58,6 +60,7 @@ CHANGELOG
 - Allow Apidae Trek parser to handle traces not in utf-8
 - Add workforce cost into intervention model (#3824)
 - Add contractor to intervention model (#3820)
+
 
 2.101.5 (2024-01-11)
 --------------------
