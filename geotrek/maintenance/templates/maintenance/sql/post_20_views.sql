@@ -112,7 +112,7 @@ SELECT a.id,
        a.comments AS "Comments",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       m.projectgeom
+       pg.projectgeom
 FROM maintenance_project a
 LEFT JOIN maintenance_projecttype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
@@ -143,7 +143,7 @@ LEFT JOIN
           FROM maintenance_intervention mi
           GROUP BY mi.project_id)
         SELECT projectsgeoms.project_id, projectsgeoms.projectgeom
-        FROM projectsgeoms) m ON a.id = m.project_id
+        FROM projectsgeoms) pg ON a.id = pg.project_id
 LEFT JOIN
     (SELECT array_to_string(array_agg(a.contractor), ', '::text, '_'::text) contractor,
             project_id
