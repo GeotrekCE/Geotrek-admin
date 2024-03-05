@@ -128,11 +128,11 @@ class FlatPageTest(TestCase):
         _create_flatpage_and_menuitem(published_fr=True)
 
     def get_flatpage_list(self, params=None):
-        return self.client.get(reverse('apimobile:flatpage-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:flatpage-list'), params, headers={"accept-language": 'fr'})
 
     def get_flatpage_detail(self, id_flatpage, params=None):
         return self.client.get(reverse('apimobile:flatpage-detail', args=(id_flatpage,)),
-                               params, HTTP_ACCEPT_LANGUAGE='fr')
+                               params, headers={"accept-language": 'fr'})
 
     def test_flatpage_list(self):
         response = self.get_flatpage_list()

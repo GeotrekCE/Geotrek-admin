@@ -90,7 +90,7 @@ class SensitiveAreaOpenAirViewsTest(TestCase):
     @freeze_time("2020-01-01")
     def test_openair_detail(self):
         url = reverse("sensitivity:sensitivearea_openair_detail", args=("en", self.area4.pk))
-        response = self.client.get(url, HTTP_HOST='testserver')
+        response = self.client.get(url, headers={"host": 'testserver'})
         self.assertEqual(response.status_code, 200)
         today = datetime.datetime.now().strftime('%d/%m/%Y')
         expected_response = b'* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website http://testserver\n'
@@ -118,7 +118,7 @@ class SensitiveAreaOpenAirViewsTest(TestCase):
     @freeze_time("2020-01-01")
     def test_not_an_aerial_sensitiveaera_detail(self):
         url = reverse("sensitivity:sensitivearea_openair_detail", args=("en", self.area1.pk))
-        response = self.client.get(url, HTTP_HOST='testserver')
+        response = self.client.get(url, headers={"host": 'testserver'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'This is not an aerial area')
 
@@ -130,7 +130,7 @@ class SensitiveAreaOpenAirViewsTest(TestCase):
     @freeze_time("2020-01-01")
     def test_openair_list(self):
         url = reverse("sensitivity:sensitivearea_openair_list", args=("en",))
-        response = self.client.get(url, HTTP_HOST='testserver')
+        response = self.client.get(url, headers={"host": 'testserver'})
         self.assertEqual(response.status_code, 200)
         expected_response = '* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) '
         'module from website http://testserver\n'

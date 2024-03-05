@@ -66,7 +66,7 @@ class CourseFormTest(TestCase):
         })
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.course.ratings.all(), [])
+        self.assertQuerySetEqual(self.course.ratings.all(), [])
 
     def test_points_reference(self):
         form = CourseForm(user=self.user, instance=self.course, data={

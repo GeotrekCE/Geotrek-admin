@@ -42,6 +42,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('type', 'structure')
 
 
+@admin.register(InfrastructureCondition, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel)
 class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure__name')
     merge_field = "label"
@@ -76,8 +77,3 @@ class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
         if not request.user.has_perm('authent.can_bypass_structure'):
             return ()
         return ('structure',)
-
-
-admin.site.register(InfrastructureCondition, InfrastructureSimpleFieldAdmin)
-admin.site.register(InfrastructureMaintenanceDifficultyLevel, InfrastructureSimpleFieldAdmin)
-admin.site.register(InfrastructureUsageDifficultyLevel, InfrastructureSimpleFieldAdmin)

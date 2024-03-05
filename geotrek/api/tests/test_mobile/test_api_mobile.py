@@ -120,21 +120,21 @@ class BaseApiTest(TestCase):
         cls.city2 = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)), published=False)
 
     def get_treks_list(self, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-list'), params, headers={"accept-language": lang})
 
     def get_treks_detail(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, headers={"accept-language": lang})
 
     def get_poi_list(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, headers={"accept-language": lang})
 
     def get_touristic_content_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
     def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
 
 class APIAccessTestCase(BaseApiTest):

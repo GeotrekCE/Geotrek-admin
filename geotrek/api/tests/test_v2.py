@@ -5372,14 +5372,14 @@ class GenericCacheTestCase(APITestCase):
         # we used custom header, cache is invalidate and url is now https
         with self.assertNumQueries(2):
             response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
-                                       HTTP_X_FORWARDED_PROTO='https')
+                                       headers={"x-forwarded-proto": 'https'})
         data = response.json()
         self.assertTrue(data['pictogram'].startswith('https://'))
 
         # cache is hit
         with self.assertNumQueries(1):
             response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)),
-                                       HTTP_X_FORWARDED_PROTO='https')
+                                       headers={"x-forwarded-proto": 'https'})
         data = response.json()
         self.assertTrue(data['pictogram'].startswith('https://'))
 

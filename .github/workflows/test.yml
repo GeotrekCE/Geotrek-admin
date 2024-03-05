@@ -54,7 +54,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -219,7 +219,7 @@ jobs:
     needs: [build_docker_image]
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -299,7 +299,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test

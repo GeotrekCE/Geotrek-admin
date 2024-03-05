@@ -17,6 +17,7 @@ attrs==23.1.0
 backports-zoneinfo==0.2.1
     # via
     #   celery
+    #   django
     #   kombu
 beautifulsoup4==4.12.2
     # via mapentity
@@ -93,7 +94,7 @@ datetime==5.2
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==3.2.25
+django==4.2.11
     # via
     #   django-appconf
     #   django-appypod
@@ -296,7 +297,6 @@ python-magic==0.4.27
 pytz==2023.3.post1
     # via
     #   datetime
-    #   django
     #   django-modelcluster
     #   djangorestframework
     #   djangorestframework-datatables
