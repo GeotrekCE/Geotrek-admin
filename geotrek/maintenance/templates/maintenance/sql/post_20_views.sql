@@ -143,7 +143,7 @@ LEFT JOIN
           FROM maintenance_intervention mi
           GROUP BY mi.project_id)
         SELECT projectsgeoms.project_id, projectsgeoms.projectgeom
-        FROM projectsgeoms) l ON a.id = m.project_id
+        FROM projectsgeoms) m ON a.id = m.project_id
 LEFT JOIN
     (SELECT array_to_string(array_agg(a.contractor), ', '::text, '_'::text) contractor,
             project_id
