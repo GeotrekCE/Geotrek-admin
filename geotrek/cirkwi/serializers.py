@@ -3,7 +3,7 @@ import datetime
 from django.contrib.gis.db.models.functions import Transform
 from django.urls import reverse
 from django.utils import translation
-from django.utils.timezone import utc, make_aware
+from django.utils.timezone import make_aware
 from django.utils.translation import get_language
 from django.utils.xmlutils import SimplerXMLGenerator
 
@@ -14,7 +14,7 @@ from geotrek.cirkwi.models import CirkwiTag
 
 
 def timestamp(dt):
-    epoch = make_aware(datetime.datetime(1970, 1, 1), utc)
+    epoch = make_aware(datetime.datetime(1970, 1, 1), datetime.timezone.utc)
     return str(int((dt - epoch).total_seconds()))
 
 

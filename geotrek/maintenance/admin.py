@@ -7,6 +7,7 @@ from geotrek.maintenance.models import (
 )
 
 
+@admin.register(Contractor)
 class ContractorAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('contractor', 'structure')
     search_fields = ('contractor', 'structure')
@@ -14,6 +15,7 @@ class ContractorAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "contractor"
 
 
+@admin.register(InterventionStatus)
 class InterventionStatusAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('status', 'order', 'structure')
     search_fields = ('status', 'order', 'structure')
@@ -21,6 +23,7 @@ class InterventionStatusAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "status"
 
 
+@admin.register(InterventionType)
 class InterventionTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
@@ -28,6 +31,7 @@ class InterventionTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "type"
 
 
+@admin.register(InterventionDisorder)
 class InterventionDisorderAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('disorder', 'structure')
     search_fields = ('disorder', 'structure')
@@ -35,6 +39,7 @@ class InterventionDisorderAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "disorder"
 
 
+@admin.register(InterventionJob)
 class InterventionJobAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('job', 'cost', 'structure', 'active')
     search_fields = ('job', 'structure')
@@ -42,6 +47,7 @@ class InterventionJobAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "job"
 
 
+@admin.register(ProjectType)
 class ProjectTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
@@ -49,17 +55,9 @@ class ProjectTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "type"
 
 
+@admin.register(ProjectDomain)
 class ProjectDomainAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('domain', 'structure')
     search_fields = ('domain', 'structure')
     list_filter = ('structure',)
     merge_field = "domain"
-
-
-admin.site.register(Contractor, ContractorAdmin)
-admin.site.register(InterventionStatus, InterventionStatusAdmin)
-admin.site.register(InterventionType, InterventionTypeAdmin)
-admin.site.register(InterventionDisorder, InterventionDisorderAdmin)
-admin.site.register(InterventionJob, InterventionJobAdmin)
-admin.site.register(ProjectType, ProjectTypeAdmin)
-admin.site.register(ProjectDomain, ProjectDomainAdmin)

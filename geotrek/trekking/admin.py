@@ -136,11 +136,13 @@ class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
     search_fields = ('name', 'description', 'scale__name')
     merge_field = 'name'
 
+    @admin.display(
+        description=_("Color")
+    )
     def color_markup(self, obj):
         if not obj.color:
             return ''
         return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
-    color_markup.short_description = _("Color")
 
 
 class RatingAdminInLine(TranslationTabularInline):
@@ -167,9 +169,11 @@ class ServiceTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     search_fields = ('name',)
     merge_field = 'name'
 
+    @admin.display(
+        description=_("Practices")
+    )
     def practices_display(self, obj):
         return ', '.join([practice.name for practice in obj.practices.all()])
-    practices_display.short_description = _("Practices")
 
 
 # Register previously defined modeladmins

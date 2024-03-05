@@ -7,16 +7,18 @@ from geotrek.common.mixins.actions import MergeActionMixin
 from geotrek.zoning import models as zoning_models
 
 
+@admin.action(
+    description=_("Publish (visible on Geotrek-rando)")
+)
 def publish(modeladmin, request, queryset):
     queryset.update(published=True)
 
 
+@admin.action(
+    description=_("Unpublish (hidden on Geotrek-rando)")
+)
 def unpublish(modeladmin, request, queryset):
     queryset.update(published=False)
-
-
-publish.short_description = _("Publish (visible on Geotrek-rando)")
-unpublish.short_description = _("Unpublish (hidden on Geotrek-rando)")
 
 
 class RestrictedAreaTypeAdmin(MergeActionMixin, admin.ModelAdmin):
