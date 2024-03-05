@@ -9,11 +9,22 @@ from geotrek.flatpages.forms import FlatPageForm
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
+    class FlatPagesAdminBase(TabbedTranslationAdmin, TreeAdmin):
+        pass
+
+    class MenuItemAdminBase(TabbedTranslationAdmin, TreeAdmin):
+        pass
+
 else:
-    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
+    # from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
+    class FlatPagesAdminBase(TreeAdmin):
+        pass
+
+    class MenuItemAdminBase(TreeAdmin):
+        pass
 
 
-class FlatPagesAdmin(TabbedTranslationAdmin, TreeAdmin):
+class FlatPagesAdmin(FlatPagesAdminBase):
     list_display = ('title', 'published', 'publication_date', 'portals', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
@@ -69,7 +80,7 @@ class MyListFilter(admin.filters.SimpleListFilter):
 
 
 # class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
-class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin):
+class MenuItemAdmin(MenuItemAdminBase):
     list_display = (
         'label',
         'portal_names_string',
