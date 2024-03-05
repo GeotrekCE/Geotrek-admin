@@ -20,6 +20,10 @@ CHANGELOG
 
 - Reorganize major sections in documentation, and add content
 
+**Minor fixes**
+
+- Add missing translation in intervention form (refs #3825)
+
 
 2.102.1 (2024-02-20)
 --------------------

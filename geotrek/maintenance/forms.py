@@ -70,6 +70,7 @@ class InterventionForm(CommonForm):
     end_date = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={"data-date-orientation": "bottom auto"}),
+        label=_("End date")
     )
 
     geomfields = ['topology']
