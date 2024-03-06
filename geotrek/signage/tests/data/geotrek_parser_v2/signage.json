@@ -102,7 +102,7 @@
         }
       ],
       "code": "30123/01",
-      "condition": 8,
+      "conditions": [8],
       "description": "des",
       "eid": null,
       "geometry": {
@@ -126,7 +126,7 @@
       "attachments": [],
       "blades": [],
       "code": "",
-      "condition": null,
+      "conditions": [],
       "description": "",
       "eid": null,
       "geometry": {

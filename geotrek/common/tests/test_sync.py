@@ -163,7 +163,7 @@ class SyncRandoFailTest(VarTmpTestCase):
 
     def test_language_not_in_db(self):
         with self.assertRaisesRegex(CommandError,
-                                    r"Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
+                                    r"Language cat doesn't exist. Select in these one : \['en', 'es', 'fr', 'it'\]"):
             management.call_command('sync_rando', os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'), url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 

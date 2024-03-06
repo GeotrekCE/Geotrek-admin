@@ -37,6 +37,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicEventListSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         pictures = rest_serializers.SerializerMethodField()
+        organizers = rest_serializers.SerializerMethodField()
+        organizer = rest_serializers.SerializerMethodField()
 
         def get_pictures(self, obj):
             if not obj.resized_pictures:
@@ -50,6 +52,13 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
             }]
 
+        def get_organizers(self, obj):
+            return ", ".join(
+                map(lambda org: org.label, obj.organizers.all())
+            )
+        # for retrocompatibility of API
+        get_organizer = get_organizers
+
         class Meta:
             model = tourism_models.TouristicEvent
             id_field = 'pk'
@@ -57,7 +66,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = ('id', 'pk', 'name', 'description_teaser', 'description', 'themes', 'pictures',
                       'begin_date', 'end_date', 'duration', 'meeting_point',
                       'start_time', 'contact', 'email', 'website',
-                      'organizer', 'speaker', 'type', 'accessibility',
+                      'organizers', 'organizer', 'speaker', 'type', 'accessibility',
                       'capacity', 'booking', 'target_audience',
                       'practical_info', 'approved', 'geometry')
 

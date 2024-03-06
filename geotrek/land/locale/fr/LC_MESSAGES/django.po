@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,9 @@ msgstr "Type foncier"
 
 msgid "Physical edge"
 msgstr "Type de voie"
+
+msgid "Circulation edge"
+msgstr "Circulation"
 
 msgid "Competence edge"
 msgstr "Compétence sentiers"
@@ -86,6 +89,21 @@ msgstr "Gestionnaires travaux"
 msgid "Signage management edges"
 msgstr "Gestionnaires signalétique"
 
+msgid "Circulation type"
+msgstr "Type de circulation"
+
+msgid "Circulation types"
+msgstr "Types de circulation"
+
+msgid "Authorization type"
+msgstr "Type d'autorisation"
+
+msgid "Authorization types"
+msgstr "Types d'autorisation"
+
+msgid "Circulation edges"
+msgstr "Circulations"
+
 msgid "Add a new land edge"
 msgstr "Ajouter un type foncier"
 
@@ -100,6 +118,9 @@ msgstr "Ajouter un gestionnaire travaux"
 
 msgid "Add a new signage management edge"
 msgstr "Ajouter un gestionnaire signalétique"
+
+msgid "Add a new circulation edge"
+msgstr "Ajouter une nouvelle circulation"
 
 msgid "Competence"
 msgstr "Compétence"

@@ -2,7 +2,254 @@
 CHANGELOG
 =========
 
-2.98.1+dev (XXXX-XX-XX)
+2.102.1+dev (XXXX-XX-XX)
+------------------------
+
+**New features**
+
+- Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
+- Tourism : add price to TouristicEvent model - ref #3587
+
+**Improvments**
+
+- Add popup button to add organizer in touristic event form
+- Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
+- Update favicon with current Geotrek logo
+- Add intervention geometries union in projects database view (``v_projects``) (#3892)
+
+**Documentation**
+
+- Reorganize major sections in documentation, and add content
+
+**Minor fixes**
+
+- Add missing translation in intervention form (refs #3825)
+
+
+2.102.1 (2024-02-20)
+--------------------
+
+**Hot fix**
+
+- Remove workforce cost (#3824)
+
+
+2.102.0 (2024-02-19)
+--------------------
+
+**Minor changes**
+
+- Update all translation files
+
+**Bug fixes**
+
+- Signage & Blade conditions translations + admin BladeCondition entry (#3847)
+- Add intervention date filter and add intervention years filter (#3825)
+
+**Documentation**
+
+- Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
+
+**New features**
+
+- Add UUIDs of parent and children ``Courses`` and ``Sites`` in APIv2 (#3569)
+
+**Improvements**
+
+- Add missing translations for fields on ``Courses`` and ``Sites`` in APIv2 (#3569)
+- Allow Apidae Trek parser to handle traces not in utf-8
+- Add workforce cost into intervention model (#3824)
+- Add contractor to intervention model (#3820)
+
+
+2.101.5 (2024-01-11)
+--------------------
+
+**New features**
+
+- Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+- Generalize``AccessMean`` model and add field ``access`` to ``Intervention`` (#3819)
+
+**Improvements**
+
+- Add rules fixture on sensitive area (#3470)
+- Change condition on signage & blade to select many of them (#3847)
+- Allow to set headers in requests from Parsers (#3861)
+- Sort bladeType alphabetically (#3821)
+- Update ``Intervention`` model to have begin & end date (#3825)
+
+**Documentation**
+
+- Improve documentation for database restore
+- Improve documentation aboute suricate's workflow (#3070)
+- Update layer section for maps since IGN updates
+
+**Maintenance**
+
+- Update ``check_ign_keys`` script to match new IGN urls
+- Update ``base.py`` configuration for layers
+- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
+
+**Bug fixes**
+
+- Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
+- Display only related interventions on project detail map (#3878)
+- Maintenance appears several times on some zoning filters (#3881)
+- Fix sub-language usage (en-US, zh-hant, ...) (#3801)
+
+
+2.101.4     (2023-11-15)
+------------------------
+
+**Bug fixes**
+
+- Fix: filters choices can raise exception in lists and not updated until application restart (#3812)
+- Fix missing geometries for HD `view_points` in APIv2's `/poi/` and `/site/` routes (#3701)
+- Fix cannot click on objects after customizing map styles (#3800)
+- Fix profile elevation PNG generation by using cairosvg instead of convertit (#3833)
+
+**Documentation**
+
+- Improve help and doc for the `loadinfrastructure` command
+
+
+2.101.3     (2023-10-26)
+------------------------
+
+**Bug fixes**
+
+- Fix `sync_rando` admin command failure if Trek has SVG attachment (#3803)
+- Fix provider choices in list filter forms
+
+2.101.2     (2023-10-17)
+------------------------
+
+**Bug fixes**
+
+- Fix Aggregator fails when updating Tour steps order (#3793)
+- Fix services list display error (refs ##3795)
+
+
+2.101.1     (2023-10-06)
+------------------------
+
+**Bug fixes**
+
+- POI cirkwi XML endpoint is fixed (2.101.0 regression) (#3783)
+
+
+2.101.0     (2023-10-05)
+------------------------
+
+**New features**
+
+- Sensitivity: Add ``openair`` export format for aerial sensitive areas (#2372)
+
+**Bug fixes**
+
+- Fix missing update rights for Infrastructure Condition and Infrastructure Type with no structure in Admin Site (#3747)
+- Allow to load a signage with the year set to None, raise error if set to NaN (#3611)
+- Fix filters on Intervention exports (resolve #3749)
+- Fix cities display on string (refs #3585)
+
+**Improvements**
+
+- Add organizer_id on TouristicEvent endpoint (#3587)
+- Sort API V2 by begin date by default on touristic events (#3597)
+
+**Maintenance**
+
+- Upgrade `django-mapentity` to 8.6.1. New authentication system for screamshotter and convertit by token instead of IP detection.
+- Refactor code for accessibility attachments
+
+**Documentation**
+
+- Add new contributors to the authors list in documentation
+- Reorganize settings section (related to PR #3669)
+- Update WYSIWYG link to help user when creating labels
+
+
+2.100.2     (2023-09-12)
+------------------------
+
+**Improvements**
+
+- Remove 'review' field on ServiceType (#1669)
+
+**Documentation**
+
+- Update loading_data section to add information about MNT values that needs to be integer (#1891)
+- Add details and template for the pull requests process
+- Update documentation fr translation files
+- Uniformize documentation section
+- Move user management section to user manual (#3709)
+
+**CI**
+
+- Reorganize generated release notes
+
+**Bug fixes**
+
+- Fix missing geometries for HD `view_points` in APIv2's `/trek/` route (#3701)
+- Increase length size of label on TouristicEventOrganizer model to fix migrations problems (#3719)
+
+
+2.100.1      (2023-09-05)
+-------------------------
+
+**Documentation**
+
+- Replace broken link
+
+**Improvements**
+
+- Add rules data on ``v_sensitivearea`` view  (#3613)
+
+**Clean**
+
+- Remove unused folder 'bulkimport' from project (#3673)
+
+
+2.100.0    (2023-09-05)
+-----------------------
+
+**DO NOT USE**
+
+**Bug fixes**
+
+- Fix: unable to search within a list of services (#3521)
+- Fix: Unpublish trek in all languages when path is deleted (#1321)
+- Fix: duplication on sites now does not duplicate children sites (#3665)
+
+**New features**
+
+- Filter trek and outdoor site labels according to whether they are published or not (#3529)
+- Respond 404 JSON if page not found in API v2
+
+**Improvements**
+
+- Filter by multiple structures on Blades list (#3646)
+- Add a multiselect to filter the Blades by more than one manager
+- Filter by end date by default on touristic events in APIv2 (#3597)
+- Add model LinePictogram for each line (#3327)
+- Create Organizer model for touristic events, configurable in admin site (#3625)
+- Improve CSS of the altitude profile of altimetry (#3657)
+- Remove elliptic annotations from HD Views (they cannot be displayed on Leaflet)
+- Serve GeoJS script locally
+- To delete parent outdoor sites you must first delete their children (#3151)
+
+
+**Documentation**
+
+- Add configuration file for readthedocs
+- Update architecture schema
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
+
+
+2.99.0     (2023-07-18)
 -----------------------
 
 **New features**
@@ -10,18 +257,30 @@ CHANGELOG
 - Add field ``access`` to Signage and Infrastructure models (#3605)
 - Enable filtering lists by objects IDs on APIv2 (#3458)
 - Add information desks link on Treks with AggregatorParsers
+- Add filter by manager to Blades module
+- Add filter "Published" to outdoor course and outdoor site (#2810)
+- Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
+- Make signage blade lines text optional (#3326)
+- Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
 
 **Improvements**
 
 - Published by language depending on each portals and languages.
 - Use default value with parsers when no value is found
+- Improve filter popover (#2968)
+- Add a scroll bar into filter form and module list (#2849)
+- In projects, start year must be before end year (#3567)
+
+**Maintenance**
+
+- Upgrade `django-mapentity`
 
 **Minor changes**
 
 - Use practice color of treks used for mobile in pdfs
 
 
-2.98.1 (2023-05-30)
+2.98.1     (2023-05-30)
 -----------------------
 
 **Bug fixes**
@@ -428,7 +687,7 @@ In preparation for HD Views developments (PR #3298)
 -----------------------
 
 **DO NOT USE IT!**
- 
+
 **Warning**
 
 - Migrations for Touristic Events can fail depending on data for ``participant_number`` - Skip to 2.89.1 instead
@@ -453,7 +712,7 @@ In preparation for HD Views developments (PR #3298)
 
 - Fix TouristicEvent with no end dates are not returned in APIv2 (#3127)
 
-**Minor improvements** 
+**Minor improvements**
 
 - Check ``begin_date`` is before ``end_date`` in TouristicEvent forms (#3237)
 - Set ``begin_date`` not null for TouristicEvents (#3237)

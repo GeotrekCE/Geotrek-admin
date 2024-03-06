@@ -1,16 +1,15 @@
 import argparse
-import logging
 import filecmp
+import logging
 import os
-import stat
-from PIL import Image
 import re
 import shutil
+import stat
 import tempfile
 from time import sleep
 from zipfile import ZipFile
-import cairosvg
 
+import cairosvg
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
@@ -19,19 +18,21 @@ from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation
 from django.utils.translation import gettext as _
-from geotrek.common.models import FileType  # NOQA
+from modeltranslation.utils import build_localized_fieldname
+from PIL import Image
+
+from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
+from geotrek.api.mobile.views.trekking import TrekViewSet
 from geotrek.common import models as common_models
 from geotrek.common.functions import GeometryType
+from geotrek.common.helpers_sync import ZipTilesBuilder
+from geotrek.common.models import FileType  # NOQA
 from geotrek.flatpages.models import FlatPage
 from geotrek.tourism import models as tourism_models
-from geotrek.trekking import models as trekking_models
-from geotrek.api.mobile.views.trekking import TrekViewSet
-from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
-from geotrek.common.helpers_sync import ZipTilesBuilder
-# Register mapentity models
-from geotrek.trekking import urls  # NOQA
 from geotrek.tourism import urls  # NOQA
-
+# Register mapentity models
+from geotrek.trekking import models as trekking_models
+from geotrek.trekking import urls  # NOQA
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +198,7 @@ class Command(BaseCommand):
                 image = Image.open(obj.pictogram.path)
             # Resize
             if size:
-                image = image.resize((size, size), Image.ANTIALIAS)
+                image = image.resize((size, size), Image.Resampling.LANCZOS)
             # Save
             image.save(dst, optimize=True, quality=95)
             if name not in zipfile.namelist():
@@ -237,7 +238,7 @@ class Command(BaseCommand):
 
     def sync_flatpage(self, lang):
         flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
-            **{'published_{lang}'.format(lang=lang): True})
+            **{build_localized_fieldname('published', lang): True})
         if self.portal:
             flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
@@ -249,7 +250,7 @@ class Command(BaseCommand):
     def sync_trekking(self, lang):
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
         treks = trekking_models.Trek.objects.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING").existing().order_by('pk')
-        treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
+        treks = treks.filter(**{build_localized_fieldname('published', lang): True})
 
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
@@ -319,7 +320,7 @@ class Command(BaseCommand):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for lang in self.languages:
-            trek.prepare_elevation_chart(lang, self.referer)
+            trek.prepare_elevation_chart(lang)
             url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
             self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                            url_media, directory=url_trek, zipfile=trekid_zipfile)
@@ -330,7 +331,7 @@ class Command(BaseCommand):
             for desk in child.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
             for lang in self.languages:
-                child.prepare_elevation_chart(lang, self.referer)
+                child.prepare_elevation_chart(lang)
                 url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
                 self.sync_file(child.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                                url_media, directory=url_trek, zipfile=trekid_zipfile)

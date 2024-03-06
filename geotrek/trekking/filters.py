@@ -13,7 +13,7 @@ class TrekFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zon
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Trek.objects.provider_choices()
+        choices=lambda: Trek.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -35,7 +35,7 @@ class POIFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilter
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=POI.objects.provider_choices()
+        choices=lambda: POI.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -50,7 +50,7 @@ class ServiceFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Service.objects.provider_choices()
+        choices=lambda: Service.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

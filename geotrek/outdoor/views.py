@@ -59,11 +59,16 @@ class SiteUpdate(MapEntityUpdate):
 
 
 class SiteDelete(MapEntityDelete):
+    template_name = "outdoor/site_confirm_delete.html"
     model = Site
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    # Add support for browsers which only accept GET and POST for now.
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
 
 class SiteDocumentPublicMixin:

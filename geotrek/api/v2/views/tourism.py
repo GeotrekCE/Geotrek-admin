@@ -95,12 +95,12 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return tourism_models.TouristicEvent.objects.existing()\
             .select_related('type') \
-            .prefetch_related('themes', 'source', 'portal',
+            .prefetch_related('themes', 'source', 'portal', 'organizers',
                               Prefetch('attachments',
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
                               ) \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('name')  # Required for reliable pagination
+            .order_by('begin_date')  # Required for reliable pagination
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -114,3 +114,12 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
         return tourism_models.TouristicEventPlace.objects.prefetch_related('touristicevents').annotate(
             geom_transformed=Transform('geom', settings.API_SRID)
         ).order_by('name')
+
+
+class TouristicEventOrganizerViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.TouristicEventRelatedPortalFilter
+    )
+    serializer_class = api_serializers.TouristicEventOrganizerSerializer
+    queryset = tourism_models.TouristicEventOrganizer.objects.order_by('label')

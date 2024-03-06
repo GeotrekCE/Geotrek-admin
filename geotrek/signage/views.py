@@ -33,14 +33,14 @@ class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['code', 'type', 'condition']
+    default_extra_columns = ['code', 'type', 'conditions']
     searchable_columns = ['id', 'name', 'code']
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'code', 'type', 'condition', 'description',
+        'structure', 'name', 'code', 'type', 'conditions', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
         'printed_elevation', 'sealing', 'access', 'manager', 'uuid',
@@ -95,7 +95,7 @@ class SignageViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type', 'condition')
+            qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type').prefetch_related('conditions')
         return qs
 
 
@@ -168,7 +168,7 @@ class BladeDelete(MapEntityDelete):
         return super().delete(request, args, kwargs)
 
     def get_success_url(self):
-        return self.signage.get_detail_url()
+        return self.get_object().signage.get_detail_url()
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):
@@ -195,8 +195,8 @@ class BladeList(CustomColumnsMixin, MapEntityList):
 class BladeFormatList(MapEntityFormat, BladeList):
     mandatory_columns = ['id']
     default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
-                             'condition', 'coordinates']
-    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
+                             'conditions', 'coordinates']
+    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictograms']
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()
@@ -234,6 +234,8 @@ class BladeViewSet(GeotrekMapentityViewSet):
         qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'number')
+        else:
+            qs = qs.select_related('signage', 'direction', 'type', 'color').prefetch_related('conditions')
         return qs
 
 

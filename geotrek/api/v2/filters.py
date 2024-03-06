@@ -13,9 +13,10 @@ from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
+from modeltranslation.utils import build_localized_fieldname
 
-from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEvent, TouristicEventPlace, \
-    TouristicEventType
+from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
+    TouristicEventPlace, TouristicEventType
 from geotrek.trekking.models import ServiceType, Trek, POI
 from geotrek.zoning.models import City, District
 
@@ -141,13 +142,13 @@ class GeotrekPublishedFilter(BaseFilterBackend):
                 # no language specified. Check for all.
                 q = Q()
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    field_name = 'published_{}'.format(lang)
+                    field_name = build_localized_fieldname('published', lang)
                     if field_name in associated_published_fields:
                         q |= Q(**{field_name: True})
                 qs = qs.filter(q)
             else:
                 # one language is specified
-                field_name = 'published_{}'.format(language)
+                field_name = build_localized_fieldname('published', language)
                 qs = qs.filter(**{field_name: True})
 
         return qs
@@ -204,7 +205,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_('(deprecated) Same as near_trek.')
+                    description=_("(deprecated) replaced by '%(field)s'.") % {"field": "near_trek"}
                 )
             ),
         )
@@ -246,7 +247,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             ), Field(
                 name='trek', required=False, location='query', schema=coreschema.Integer(
                     title=_("Trek"),
-                    description=_("(deprecated) Same as near_trek.")
+                    description=_("(deprecated) replaced by '%(field)s'.") % {"field": "near_trek"}
                 )
             ), Field(
                 name='sites', required=False, location='query', schema=coreschema.Integer(
@@ -502,6 +503,13 @@ class TouristicEventFilterSet(filters.FilterSet):
         queryset=TouristicEventPlace.objects.all(),
         help_text=_("Filter by one or more Place id, comma-separated.")
     )
+    organizer = filters.ModelMultipleChoiceFilter(
+        widget=CSVWidget(),
+        queryset=TouristicEventOrganizer.objects.all(),
+        help_text=_("Filter by one or more organizer, comma-separated."),
+        field_name="organizers"
+    )
+
     help_texts = {
         'bookable': _("Filter events on bookable boolean : true/false expected"),
         'cancelled': _("Filter events on cancelled boolean : true/false expected")
@@ -515,7 +523,7 @@ class TouristicEventFilterSet(filters.FilterSet):
 
     class Meta:
         model = TouristicEvent
-        fields = ['cancelled', 'bookable', 'place']
+        fields = ['cancelled', 'bookable', 'place', 'organizer']
 
 
 class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
@@ -985,12 +993,12 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
             language = request.GET.get('language')
             if language:
                 # one language is specified
-                related_field_name = '{}__published_{}'.format(related_name, language)
+                related_field_name = '{}__{}'.format(related_name, build_localized_fieldname('published', language))
                 q &= Q(**{related_field_name: True})
             else:
                 # no language specified. Check for all.
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    related_field_name = '{}__published_{}'.format(related_name, lang)
+                    related_field_name = '{}__{}'.format(related_name, build_localized_fieldname('published', lang))
                     q |= Q(**{related_field_name: True})
         q &= optional_query
         qs = qs.filter(q)
@@ -1153,6 +1161,7 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
 
 class GeotrekLabelFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        queryset = queryset.filter(published=True)
         filter_label = request.GET.get('only_filters')
         if filter_label:
             try:

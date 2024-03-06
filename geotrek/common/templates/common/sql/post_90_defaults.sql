@@ -77,6 +77,7 @@ ALTER TABLE common_targetportal ALTER COLUMN facebook_image_height SET DEFAULT {
 --------
 -- name
 ALTER TABLE common_label ALTER COLUMN filter SET DEFAULT False;
+ALTER TABLE common_label ALTER COLUMN published SET DEFAULT False;
 ALTER TABLE common_label ALTER COLUMN advice SET DEFAULT '';
 ALTER TABLE common_label ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_label ALTER COLUMN date_update SET DEFAULT now();
@@ -101,3 +102,9 @@ ALTER TABLE common_hdviewpoint ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 ALTER TABLE common_hdviewpoint ALTER COLUMN annotations SET DEFAULT '{}'::jsonb;
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_update SET DEFAULT now();
+
+-- AccessMean
+----------
+-- label
+ALTER TABLE common_accessmean ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE common_accessmean ALTER COLUMN date_update SET DEFAULT now();

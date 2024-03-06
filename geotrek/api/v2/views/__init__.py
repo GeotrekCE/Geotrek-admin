@@ -20,7 +20,8 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SportPracticeViewSet  # noqa
     from .sensitivity import SpeciesViewSet  # noqa
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    from .tourism import TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, InformationDeskTypeViewSet, TouristicContentCategoryViewSet, LabelAccessibilityViewSet, TouristicEventPlaceViewSet  # noqa
+    from .tourism import (TouristicContentViewSet, TouristicEventViewSet, TouristicEventTypeViewSet, InformationDeskViewSet, InformationDeskTypeViewSet,  # noqa
+                         TouristicContentCategoryViewSet, LabelAccessibilityViewSet, TouristicEventPlaceViewSet, TouristicEventOrganizerViewSet)  # noqa
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
@@ -31,7 +32,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     from .infrastructure import InfrastructureTypeViewSet, InfrastructureViewSet, InfrastructureUsageDifficultyLevelViewSet, InfrastructureConditionViewSet, InfrastructureMaintenanceDifficultyLevelViewSet  # noqa
 if 'geotrek.signage' in settings.INSTALLED_APPS:
-    from .signage import SignageViewSet, SignageTypeViewSet, SealingViewSet, ColorViewSet, DirectionViewSet, BladeTypeViewSet  # noqa
+    from .signage import SignageViewSet, SignageTypeViewSet, SignageConditionViewSet, SealingViewSet, ColorViewSet, DirectionViewSet, BladeTypeViewSet  # noqa
 if 'drf_yasg' in settings.INSTALLED_APPS:
     from .swagger import schema_view  # noqa
 

@@ -16,7 +16,7 @@ def clean_participants_number(apps, schema_editor):
             new_info = f"Participants: {participant_number}"
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 cursor.execute(
-                    "UPDATE tourism_touristicevent SET practical_info_{} = practical_info_{} || ' ' || %s WHERE id='{}';".format(lang, lang, id), [new_info]
+                    "UPDATE tourism_touristicevent SET practical_info_{} = practical_info_{} || ' ' || %s WHERE id='{}';".format(lang.replace('-', '_'), lang.replace('-', '_'), id), [new_info]
                 )
     qs.update(
         participant_number=''

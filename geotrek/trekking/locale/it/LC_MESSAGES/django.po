@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-03 14:51+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -446,6 +446,9 @@ msgstr "Tipo di PDI"
 msgid "POI types"
 msgstr "Tipi di PDI"
 
+msgid "Public name (Change carefully)"
+msgstr ""
+
 msgid "Service type"
 msgstr "Tipo di servizio"
 
@@ -456,9 +459,6 @@ msgid "Service"
 msgstr "Servizio"
 
 msgid "Published"
-msgstr ""
-
-msgid "Waiting for publication"
 msgstr ""
 
 msgid "Published Services"
@@ -579,12 +579,6 @@ msgid "Print booklet"
 msgstr "Stampa opuscolo"
 
 msgid "Photos accessibility"
-msgstr ""
-
-msgid "yes"
-msgstr "si"
-
-msgid "no"
 msgstr ""
 
 msgid "Child of:"

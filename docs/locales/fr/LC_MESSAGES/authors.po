@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-12 14:31+0000\n"
+"POT-Creation-Date: 2023-09-08 08:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.12.1\n"
 
 #: ../../authors.rst:3
-msgid "AUTHORS"
+msgid "Authors"
 msgstr ""
 
 #: ../../authors.rst:6
@@ -89,71 +89,134 @@ msgstr ""
 msgid "Emmanuelle Helly"
 msgstr ""
 
-#: ../../authors.rst:29
-msgid "Parc national des Ecrins"
+#: ../../authors.rst:24
+msgid "Célia Prat"
 msgstr ""
 
-#: ../../authors.rst:31
-msgid "Camille Monchicourt"
+#: ../../authors.rst:25
+msgid "Paul Florence"
+msgstr ""
+
+#: ../../authors.rst:26
+msgid "Marine Faucher"
+msgstr ""
+
+#: ../../authors.rst:27
+msgid "Marc-Antoine Dupré"
+msgstr ""
+
+#: ../../authors.rst:28
+msgid "Hugo Hasson"
 msgstr ""
 
 #: ../../authors.rst:34
-msgid "Others"
+msgid "Parc national des Ecrins"
 msgstr ""
 
 #: ../../authors.rst:36
-msgid "Michaël Viadere"
+msgid "Camille Monchicourt"
 msgstr ""
 
 #: ../../authors.rst:37
-msgid "Guillaume Boitel"
+msgid "Théo Lechémia"
 msgstr ""
 
 #: ../../authors.rst:38
-msgid "Jean Lenormand"
+msgid "Élie Bouttier"
 msgstr ""
 
 #: ../../authors.rst:41
-msgid "Credits"
+msgid "Others"
 msgstr ""
 
 #: ../../authors.rst:43
-msgid "*Information desk* by Alex Berkowitz from The Noun Project"
+msgid "Michaël Viadere (OpenIG)"
 msgstr ""
 
 #: ../../authors.rst:44
-msgid "*Calendar* by Laurent Patain from The Noun Project"
+msgid "Guillaume Boitel"
 msgstr ""
 
 #: ../../authors.rst:45
-msgid "*Restaurant* designed by Roberto Pinto from the Noun Project"
+msgid "Jean Lenormand"
 msgstr ""
 
 #: ../../authors.rst:46
-msgid "*Kayak* designed by johanna from the Noun Project"
+msgid "Claude Paroz"
 msgstr ""
 
 #: ../../authors.rst:47
-msgid "*Luggage* designed by Luis Prado from the Noun Project"
+msgid "Amandine Sahl (Parc National des Cévennes)"
 msgstr ""
 
 #: ../../authors.rst:48
-msgid "*Location* designed by Jacob Lowe from the Noun Project"
+msgid "Frédéric Cloitre (LPO AuRA)"
 msgstr ""
 
 #: ../../authors.rst:49
-msgid "*Food* designed by Rémy Médard from the Noun Project"
+msgid "Idrissa Djepa Creutz (OepnIG / Parc National des Cévennes)"
 msgstr ""
 
 #: ../../authors.rst:50
-msgid "*Climbing* designed by Eric Milet from the Noun Project"
+msgid "Yannick LE DUC"
 msgstr ""
 
 #: ../../authors.rst:51
-msgid "*Box Office* designed by Alessio Damiano from the Noun Project"
+msgid "Guillaume Boitel (Parc National de Port Cros)"
 msgstr ""
 
 #: ../../authors.rst:52
+msgid "Pierre Loicq (Parc National de la Vanoise)"
+msgstr ""
+
+#: ../../authors.rst:55
+msgid "Credits"
+msgstr ""
+
+#: ../../authors.rst:57
+msgid "*Information desk* by Alex Berkowitz from The Noun Project"
+msgstr ""
+
+#: ../../authors.rst:58
+msgid "*Calendar* by Laurent Patain from The Noun Project"
+msgstr ""
+
+#: ../../authors.rst:59
+msgid "*Restaurant* designed by Roberto Pinto from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:60
+msgid "*Kayak* designed by johanna from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:61
+msgid "*Luggage* designed by Luis Prado from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:62
+msgid "*Location* designed by Jacob Lowe from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:63
+msgid "*Food* designed by Rémy Médard from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:64
+msgid "*Climbing* designed by Eric Milet from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:65
+msgid "*Box Office* designed by Alessio Damiano from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:66
 msgid "*Steep Descent* designed by Sergey Patutin from the Noun Project"
 msgstr ""
 
+#: ../../authors.rst:67
+msgid "*Landscape* by Adrien Coquet from the Noun Project"
+msgstr ""
+
+#: ../../authors.rst:68
+msgid "*Ski course* by Sahua D from the Noun Project"
+msgstr ""

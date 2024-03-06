@@ -280,6 +280,8 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    published = models.BooleanField(verbose_name=_("Published"), default=False,
+                                    help_text=_("Visible on Geotrek-rando"))
     filter = models.BooleanField(verbose_name=_("Filter"), default=False,
                                  help_text=_("Show this label as a filter in public portal"))
 
@@ -378,3 +380,15 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
 
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
+
+
+class AccessMean(TimeStampedModelMixin):
+    label = models.CharField(max_length=128)
+
+    class Meta:
+        verbose_name = _("Access mean")
+        verbose_name_plural = _("Access means")
+        ordering = ('label',)
+
+    def __str__(self):
+        return self.label

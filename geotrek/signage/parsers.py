@@ -16,16 +16,16 @@ class GeotrekSignageParser(GeotrekParser):
     }
     url_categories = {
         'sealing': 'signage_sealing',
-        'condition': 'infrastructure_condition',
+        'conditions': 'signage_condition',
         'type': 'signage_type',
     }
     categories_keys_api_v2 = {
-        'condition': 'label',
+        'conditions': 'label',
         'sealing': 'label',
         'type': 'label'
     }
     natural_keys = {
-        'condition': 'label',
+        'conditions': 'label',
         'sealing': 'label',
         'type': 'label'
     }

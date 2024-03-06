@@ -12,6 +12,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.signals import log_cascade_deletion
+from modeltranslation.utils import build_localized_fieldname
 from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
@@ -137,6 +138,16 @@ def log_cascade_deletion_from_coursetype_practice(sender, instance, using, **kwa
     log_cascade_deletion(sender, instance, CourseType, 'practice')
 
 
+class ChildSitesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child sites linked to this site")
+
+
+class ChildCoursesExistError(Exception):
+    def __init__(self):
+        super().__init__("There are child courses linked to this site")
+
+
 class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin,
            StructureRelated, AltimetryMixin, TimeStampedModelMixin, MPTTModel, ExcludedPOIsMixin):
     ORIENTATION_CHOICES = (
@@ -239,7 +250,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
             return self.children.filter(published=True)
         q = Q()
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            q |= Q(**{'published_{}'.format(lang): True})
+            q |= Q(**{build_localized_fieldname('published', lang): True})
         return self.children.filter(q)
 
     @property
@@ -307,6 +318,10 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
         return Organism.objects.filter(site__in=sites)  # Sorted and unique
 
     @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def all_pois(self):
         return POI.outdoor_all_pois(self)
 
@@ -329,6 +344,14 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.refresh_from_db()
+
+    def delete(self, *args, **kwargs):
+        if self.children.exists():
+            raise ChildSitesExistError()
+        elif self.children_courses.exists():
+            raise ChildCoursesExistError()
+        else:
+            super().delete(*args, **kwargs)
 
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
@@ -509,7 +532,7 @@ Blade.add_property('courses', lambda self: intersecting(Course, self), _("Course
 Intervention.add_property('courses', lambda self: intersecting(Course, self), _("Courses"))
 
 Course.add_property('sites', Site.outdoor_sites, _("Sites"))
-Course.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Course.add_property('courses', Course.outdoor_courses, _("Courses"))
 Course.add_property('treks', Trek.outdoor_treks, _("Treks"))
 Course.add_property('services', Service.outdoor_services, _("Services"))
 Course.add_property('trails', lambda self: intersecting(Trail, self), _("Trails"))
@@ -519,4 +542,4 @@ Course.add_property('touristic_contents', TouristicContent.outdoor_touristic_con
 Course.add_property('touristic_events', TouristicEvent.outdoor_touristic_events, _("Touristic events"))
 Course.add_property('interventions', lambda self: Course.course_interventions(self), _("Interventions"))
 
-Site.add_property('courses', Course.outdoor_courses, _("Parcours"))
+Site.add_property('courses', Course.outdoor_courses, _("Courses"))

@@ -12,8 +12,8 @@ urlpatterns = []
 
 router = DefaultRouter(trailing_slash=False)
 
-router.register(r'^api/(?P<lang>[a-z]{2})/courses', outdoor_views.CourseAPIViewSet, basename='course')
-router.register(r'^api/(?P<lang>[a-z]{2})/sites', outdoor_views.SiteAPIViewSet, basename='site')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/courses', outdoor_views.CourseAPIViewSet, basename='course')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/sites', outdoor_views.SiteAPIViewSet, basename='site')
 
 
 class SiteEntityOptions(PublishableEntityOptions):

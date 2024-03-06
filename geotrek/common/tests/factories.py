@@ -125,6 +125,7 @@ class LabelFactory(factory.django.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('label.png')
     advice = "Advice label"
     filter = True
+    published = True
 
 
 class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
@@ -191,3 +192,10 @@ class HDViewPointFactory(factory.django.DjangoModelFactory):
             }
         ]
     }
+
+
+class AccessMeanFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AccessMean
+
+    label = factory.Sequence(lambda n: "Acces mean %s" % n)

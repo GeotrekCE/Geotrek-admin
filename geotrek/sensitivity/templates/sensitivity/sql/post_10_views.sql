@@ -61,6 +61,7 @@ SELECT a.id,
                   END
               ) AS "Period",
        c.pratiques_sportives AS "Sport practices",
+       r.rules  AS "Rules",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         b.url_{{ lang }} AS "URL {{ lang }}",
        {% endfor %}
@@ -87,20 +88,29 @@ LEFT JOIN
      JOIN sensitivity_species c ON a.species_id = c.id
      GROUP BY species_id,
               c.name) c ON a.species_id = c.species_id
+LEFT JOIN (
+    SELECT
+        ssr.sensitivearea_id,
+        array_to_string(array_agg(sr.name ORDER BY sr.id), ', '::text, '_'::text) AS rules
+    FROM sensitivity_sensitivearea_rules AS ssr
+    JOIN sensitivity_rule AS sr
+    ON ssr.rule_id = sr.id
+    GROUP BY ssr.sensitivearea_id
+) r ON r.sensitivearea_id = a.id
 LEFT JOIN sensitivity_species h ON a.species_id = h.id
 LEFT JOIN authent_structure d ON a.structure_id = d.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM sensitivity_sensitivearea a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM sensitivity_sensitivearea a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
-WHERE deleted IS FALSE 
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
+WHERE deleted IS FALSE
 ;
 

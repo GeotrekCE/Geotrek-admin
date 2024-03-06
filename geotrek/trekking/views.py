@@ -190,7 +190,7 @@ class TrekDocumentPublicMixin:
         # Prepare altimetric graph
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
-        trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
+        trek.prepare_elevation_chart(language)
         return super().render_to_response(context, **response_kwargs)
 
 
@@ -455,7 +455,7 @@ class ServiceList(CustomColumnsMixin, MapEntityList):
     filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
-    searchable_columns = ['id', 'name']
+    searchable_columns = ['id']
 
 
 class ServiceFormatList(MapEntityFormat, ServiceList):

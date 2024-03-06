@@ -1,0 +1,42 @@
+{% extends "mapentity/mapentity_confirm_delete.html" %}
+{% load static i18n geotrek_tags %}
+
+{% block mainpanel %}
+<div class="div-center">
+    <div class="alert alert-block">
+        {% if object.children.exists or object.children_courses.exists %}
+                <h4 class="alert-heading">Warning!</h4>
+                {% blocktrans %}You can't delete <strong>{{ object }}</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding.{% endblocktrans %}
+
+            {% if object.children.exists %}
+            <div class="panel-heading">{% trans 'Child outdoor sites linked to this site' %} :</div>
+            <ul>
+                {% for child_site in object.children.all %}
+                    <li><a href="{{ child_site.get_absolute_url }}">{{ child_site.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if object.children_courses.exists %}
+            <div class="panel-heading">{% trans 'Child outdoor courses linked to this site' %} :</div>
+            <ul>
+                {% for child_course in object.children_courses.all %}
+                    <li><a href="{{ child_course.get_absolute_url }}">{{ child_course.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% else %}
+            <h4 class="alert-heading">Warning!</h4>
+            {% blocktrans %}Do you really wish to delete <strong>{{ object }}</strong> ?{% endblocktrans %}
+            <div style="margin-bottom: 20px;"></div>
+            <form method="POST" action="{{ object.get_delete_url }}">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-danger" value="{% trans "Yes, delete" %}"></input>
+                <a class="btn btn-outline-secondary" href="{{ object.get_update_url }}">{% trans "No, back to edit view" %}</a>
+            </form>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock mainpanel %}

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -234,9 +234,6 @@ msgstr "Ajouter un nouveau site outdoor"
 msgid "Sites"
 msgstr "Sites"
 
-msgid "Parcours"
-msgstr "Parcours"
-
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -357,11 +354,40 @@ msgstr "Ajouter site enfant"
 msgid "Add a brother site"
 msgstr "Ajouter un site frère"
 
-msgid "Attached files"
+#, python-format
+msgid ""
+"You can't delete <strong>%(object)s</strong> because it has child outdoor "
+"sites associated with it. Modify or delete these child outdoor sites before "
+"proceeding."
 msgstr ""
+"Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites "
+"'outdoor' lui sont associés. Pour pouvoir supprimer un site parent, il faut "
+"au préalable supprimer ses sites 'outdoor' associés."
+
+msgid "Child outdoor sites linked to this site"
+msgstr "Sites outdoor enfants de ce site"
+
+msgid "Child outdoor courses linked to this site"
+msgstr "Courses outdoor enfants de ce site"
+
+#, python-format
+msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+msgstr "Voulez-vous réellement supprimer <strong>%(object)s</strong> ?"
+
+msgid "Yes, delete"
+msgstr "Oui, supprimer"
+
+msgid "No, back to edit view"
+msgstr "Non, retour à l'édition"
+
+msgid "Attached files"
+msgstr "Pièces jointes"
 
 msgid "Parents"
 msgstr "Parents"
+
+msgid "Published"
+msgstr "Publié"
 
 msgid "Advices"
 msgstr "Recommandations"

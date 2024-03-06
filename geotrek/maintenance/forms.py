@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.forms import FloatField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
-
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
@@ -64,8 +63,15 @@ class InterventionForm(CommonForm):
 
     topology = TopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
-    project = forms.ModelChoiceField(required=False, label=_("Project"),
-                                     queryset=Project.objects.existing())
+    project = forms.ModelChoiceField(
+        required=False, label=_("Project"),
+        queryset=Project.objects.existing()
+    )
+    end_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"data-date-orientation": "bottom auto"}),
+        label=_("End date")
+    )
 
     geomfields = ['topology']
     leftpanel_scrollable = False
@@ -74,7 +80,8 @@ class InterventionForm(CommonForm):
         Div(
             'structure',
             'name',
-            'date',
+            'begin_date',
+            'end_date',
             'status',
             'disorders',
             'type',
@@ -84,10 +91,12 @@ class InterventionForm(CommonForm):
             'height',
             'stake',
             'project',
+            'contractors',
+            'access',
             'description',
             'material_cost',
             'heliport_cost',
-            'subcontract_cost',
+            'contractor_cost',
             Fieldset(_("Mandays")),
             css_class="scrollable tab-pane active"
         ),
@@ -96,8 +105,8 @@ class InterventionForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Intervention
         fields = CommonForm.Meta.fields + \
-            ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'topology']
+            ['structure', 'name', 'begin_date', 'end_date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
+             'height', 'stake', 'project', 'contractors', 'access', 'material_cost', 'heliport_cost', 'contractor_cost', 'topology']
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -142,6 +151,18 @@ class InterventionForm(CommonForm):
                         or self.instance.geom.geom_type == 'LineString'))
         self.fields['length'].widget.attrs['readonly'] = editable
 
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
+            if self.instance.pk and self.instance.target and hasattr(self.instance.target, "report_interventions"):
+                self.fields["end_date"].required = True
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+        begin_date = clean_data.get('begin_date')
+        end_date = clean_data.get('end_date')
+        if end_date and begin_date > end_date:
+            self.add_error('end_date', _('Begin date is after end date'))
+        return clean_data
+
     def save(self, *args, **kwargs):
         target = self.instance.target
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED and isinstance(target, Report):
@@ -185,9 +206,7 @@ class ProjectForm(CommonForm):
                     'constraint',
                     'global_cost',
                     'comments',
-
-                    css_class="span6"),
-                Div('project_owner',
+                    'project_owner',
                     'project_manager',
                     'contractors',
                     Fieldset(_("Fundings")),
@@ -207,3 +226,9 @@ class ProjectForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_tag = False
+
+    def clean(self, *args, **kwargs):
+        clean_data = super().clean(*args, **kwargs)
+
+        if clean_data.get("end_year") and clean_data.get("end_year") < clean_data.get("begin_year"):
+            self.add_error('end_year', _('Start year is after end year'))

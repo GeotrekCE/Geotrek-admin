@@ -10,6 +10,8 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.tests.factories import (RecordSourceFactory,
                                             TargetPortalFactory)
 from geotrek.outdoor import views as course_views
+from geotrek.outdoor.models import Site
+from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 from geotrek.trekking.tests.factories import POIFactory
@@ -130,3 +132,83 @@ class CourseCustomViewTests(TestCase):
         self.assertEqual(response.json()[0]['name'], 'course_with_ref_points')
         data = "{'type': 'MultiPoint', 'coordinates': [[12.0, 12.0]]}"
         self.assertEqual(str(response.json()[0]['points_reference']), data)
+
+
+class SiteDeleteTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
+
+    def test_view_delete_site(self):
+        self.site_1 = SiteFactory.create(name="site_1")
+        response = self.client.get(reverse('outdoor:site_delete', args=['%s' % self.site_1.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Do you really wish to delete <strong>%s</strong> ?' % (self.site_1.name))
+
+        self.site_2 = SiteFactory.create(name="site_2")
+        self.site_3 = SiteFactory.create(name="site_3", parent=self.site_2)
+        response = self.client.get(reverse('outdoor:site_delete', args=['%s' % self.site_2.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "You can't delete <strong>%s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding." % (self.site_2.name))
+
+    def test_delete_site(self):
+        site_1 = SiteFactory.create(name="site_1")
+        site_2 = SiteFactory.create(name="site_2")
+        self.assertEqual(Site.objects.count(), 2)
+        response = self.client.post(reverse('outdoor:site_delete', args=['%s' % site_2.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Site.objects.count(), 1)
+        self.assertEqual(Site.objects.filter(pk=site_1.pk).exists(), True)
+
+
+class SiteFilterTest(TestCase):
+    factory = SiteFactory
+    filterset = SiteFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = SiteFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        site1 = SiteFactory.create(provider='my_provider1')
+        site2 = SiteFactory.create(provider='my_provider2')
+
+        filter_set = SiteFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(site1, filter_set.qs)
+        self.assertIn(site2, filter_set.qs)
+
+
+class CourseFilterTest(TestCase):
+    factory = CourseFactory
+    filterset = CourseFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = CourseFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        course1 = CourseFactory.create(provider='my_provider1')
+        course2 = CourseFactory.create(provider='my_provider2')
+
+        filter_set = CourseFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(course1, filter_set.qs)
+        self.assertIn(course2, filter_set.qs)

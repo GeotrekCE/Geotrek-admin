@@ -3,8 +3,10 @@ name: Linting
 on:
   pull_request:
     paths:
-      - 'geotrek/**'
-      - '.github/workflows/lint.yml'
+      - 'geotrek/**'  # if geotrek code change
+      - '.github/workflows/lint.yml'  # if lint workflow change
+      - 'dev-requirements.txt'  # if dev-requirements.txt change
+      - 'setup.cfg'   # if lint tools configuration change
 
 env:
   DEBIAN_FRONTEND: noninteractive
@@ -27,7 +29,7 @@ jobs:
 
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 

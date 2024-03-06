@@ -16,6 +16,7 @@ from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from embed_video.backends import detect_backend, VideoDoesntExistException
@@ -24,6 +25,7 @@ from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
 
 from mapentity.models import MapEntityMixin
+from modeltranslation.utils import build_localized_fieldname
 
 
 class CheckBoxActionMixin:
@@ -153,7 +155,7 @@ class PicturesMixin:
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+            except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
                 logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
             else:
                 resized.append((picture, thdetail))
@@ -287,7 +289,7 @@ class BasePublishableMixin(models.Model):
             return self.published
 
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if getattr(self, 'published_%s' % language[0], False):
+            if getattr(self, build_localized_fieldname('published', language[0]), False):
                 return True
         return False
 
@@ -297,7 +299,7 @@ class BasePublishableMixin(models.Model):
         status = []
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % language[0], None) or False
+                published = getattr(self, build_localized_fieldname('published', language[0]), None) or False
             else:
                 published = self.published
             status.append({
@@ -312,7 +314,7 @@ class BasePublishableMixin(models.Model):
         """ Returns languages in which the object is published. """
         langs = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
-            return [language for language in langs if getattr(self, 'published_%s' % language, None)]
+            return [language for language in langs if getattr(self, build_localized_fieldname('published', language), None)]
         elif self.published:
             return langs
         else:
@@ -445,7 +447,7 @@ def get_uuid_duplication(uid_field):
 class GeotrekMapEntityMixin(MapEntityMixin):
     elements_duplication = {
         "attachments": {"uuid": get_uuid_duplication},
-        "avoid_fields": ["aggregations"],
+        "avoid_fields": ["aggregations", "children"],
         "uuid": get_uuid_duplication,
     }
 

@@ -19,6 +19,7 @@ from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 
 from geotrek.core.models import Path, Trail, PathSource
+from geotrek.core.filters import PathFilterSet, TrailFilterSet
 
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -568,8 +569,7 @@ class PathViewsTest(CommonTest):
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=True)
 
-        # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()['features']), 1)
 
@@ -598,7 +598,7 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=False)
 
         # Cache was updated, the path was not a draft : we get 7 queries
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     def test_path_layer_cache(self):
@@ -611,8 +611,7 @@ class PathViewsTest(CommonTest):
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=True)
 
-        # There are 7 queries to get layer without drafts
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get(obj.get_layer_url())
         self.assertEqual(len(response.json()['features']), 2)
 
@@ -635,13 +634,13 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
 
         # Cache is updated when we add a draft path
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url())
 
         self.modelfactory(draft=False)
 
         # Cache is updated when we add a path
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url())
 
 
@@ -694,7 +693,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.get(reverse('core:path-drf-list', kwargs={'format': 'datatables'}))
 
 
@@ -798,7 +797,7 @@ class TrailViewsTest(CommonTest):
 
     def test_perfs_export_csv(self):
         self.modelfactory.create()
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(11):
             self.client.get(self.model.get_format_list_url() + '?format=csv')
 
 
@@ -873,3 +872,53 @@ class RemovePathKeepTopology(TestCase):
         self.assertEqual(poi.deleted, False)
 
         self.assertAlmostEqual(1.5, poi.offset)
+
+
+class PathFilterTest(CommonTest, AuthentFixturesTest):
+    factory = PathFactory
+    filterset = PathFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = PathFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        path1 = PathFactory.create(provider='my_provider1')
+        path2 = PathFactory.create(provider='my_provider2')
+
+        filter_set = PathFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(path1, filter_set.qs)
+        self.assertIn(path2, filter_set.qs)
+
+
+class TrailFilterTest(CommonTest, AuthentFixturesTest):
+    factory = TrailFactory
+    filterset = TrailFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TrailFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        trail1 = TrailFactory.create(provider='my_provider1')
+        trail2 = TrailFactory.create(provider='my_provider2')
+
+        filter_set = TrailFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(trail1, filter_set.qs)
+        self.assertIn(trail2, filter_set.qs)

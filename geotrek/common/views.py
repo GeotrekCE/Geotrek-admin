@@ -6,6 +6,7 @@ import re
 from datetime import timedelta
 from zipfile import ZipFile, is_zipfile
 
+import logging
 import redis
 from django.apps import apps
 from django.conf import settings
@@ -29,6 +30,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
+from django.views.defaults import page_not_found
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.generic import RedirectView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
@@ -39,6 +41,7 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from mapentity.views import MapEntityList
+from modeltranslation.utils import build_localized_fieldname
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
@@ -70,6 +73,15 @@ from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
                                   discover_available_parsers)
 
+logger = logging.getLogger(__name__)
+
+
+def handler404(request, exception, template_name="404.html"):
+    if "api/v2" in request.get_full_path():
+        logger.warning(f'{request.get_full_path()} has been tried')
+        return JsonResponse({"page": 'does not exist'}, status=404)
+    return page_not_found(request, exception, template_name="404.html")
+
 
 class Meta(MetaMixin, TemplateView):
     template_name = 'common/meta.html'
@@ -84,29 +96,29 @@ class Meta(MetaMixin, TemplateView):
         if portal:
             try:
                 target_portal = TargetPortal.objects.get(name=portal)
-                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
+                context['META_DESCRIPTION'] = getattr(target_portal, build_localized_fieldname('description', lang))
             except TargetPortal.DoesNotExist:
                 pass
 
         if 'geotrek.trekking' in settings.INSTALLED_APPS:
             from geotrek.trekking.models import Trek
             context['treks'] = Trek.objects.existing().order_by('pk').filter(
-                Q(**{'published_{lang}'.format(lang=lang): True})
-                | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                Q(**{build_localized_fieldname('published', lang): True})
+                | Q(**{'trek_parents__parent__{published_lang}'.format(published_lang=build_localized_fieldname('published', lang)): True,
                        'trek_parents__parent__deleted': False})
             )
         if 'geotrek.tourism' in settings.INSTALLED_APPS:
             from geotrek.tourism.models import TouristicContent, TouristicEvent
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
             context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
         if 'geotrek.diving' in settings.INSTALLED_APPS:
             from geotrek.diving.models import Dive
             context['dives'] = Dive.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
+                **{build_localized_fieldname('published', lang): True}
             )
         return context
 

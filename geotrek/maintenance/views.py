@@ -35,7 +35,7 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
+    default_extra_columns = ['begin_date', 'end_date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
     unorderable_columns = ['target']
 
@@ -49,7 +49,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
 
-        queryset = Intervention.objects.existing()
+        queryset = super().get_queryset()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
 
@@ -97,11 +97,11 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return mandatory_columns
 
     default_extra_columns = [
-        'name', 'date', 'type', 'target', 'status', 'stake',
-        'disorders', 'total_manday', 'project', 'subcontracting',
+        'name', 'begin_date', 'end_date', 'type', 'target', 'status', 'stake',
+        'disorders', 'total_manday', 'project', 'contractors', 'subcontracting',
         'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
-        'material_cost', 'heliport_cost', 'subcontract_cost',
+        'material_cost', 'heliport_cost', 'contractor_cost',
         'total_cost_mandays', 'total_cost',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -198,7 +198,7 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-        'interventions', 'interventions_total_cost', 'comments', 'contractors',
+        'interventions', 'interventions_total_cost', 'comments', 'contractors', 'intervention_contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',

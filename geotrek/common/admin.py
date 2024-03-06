@@ -100,7 +100,7 @@ class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 class LabelAdmin(TabbedTranslationAdmin):
-    list_display = ('pictogram_img', 'name', 'filter')
+    list_display = ('pictogram_img', 'name', 'filter', 'published')
     list_display_links = ('name',)
     search_fields = ('name', )
 
@@ -137,6 +137,13 @@ class HDViewPointAdmin(admin.ModelAdmin):
     update_link.short_description = _('Title')
 
 
+class AccessAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('label',)
+    search_fields = ('label',)
+    list_filter = ('label',)
+    merge_field = "label"
+
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
@@ -147,3 +154,4 @@ admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
 admin.site.register(common_models.Label, LabelAdmin)
 admin.site.register(common_models.License, LicenseAdmin)
 admin.site.register(common_models.HDViewPoint, HDViewPointAdmin)
+admin.site.register(common_models.AccessMean, AccessAdmin)

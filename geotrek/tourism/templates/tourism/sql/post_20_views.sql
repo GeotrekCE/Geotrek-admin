@@ -137,18 +137,18 @@ LEFT JOIN
      GROUP BY c.id) p ON a.id = p.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
 LEFT JOIN common_reservationsystem d ON a.reservation_system_id = d.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM tourism_touristiccontent a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM tourism_touristiccontent a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 WHERE deleted IS FALSE 
 ;
 
@@ -196,7 +196,7 @@ SELECT a.id,
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.meeting_point_{{ lang }} AS "Meeting point {{ lang }}",
        {% endfor %}
-       a.organizer AS "Organizer",
+       o.labels AS "Organizers",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.accessibility_{{ lang }} AS "Accessibility {{ lang }}",
        {% endfor %}
@@ -209,6 +209,7 @@ SELECT a.id,
             WHEN a.bookable IS TRUE THEN 'Yes'
         END AS "Bookable {{ lang }}",
        a.cancelled AS "Canceled", 
+       a.price AS "Price",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         cr.label_{{ lang }} AS "Cancellation reason {{ lang }}",
        {% endfor %}
@@ -220,18 +221,18 @@ LEFT JOIN public.tourism_touristiceventtype b ON a.type_id = b.id
 LEFT JOIN public.authent_structure c ON a.structure_id = c.id
 LEFT JOIN public.tourism_cancellationreason cr ON a.cancellation_reason_id = cr.id
 LEFT JOIN public.tourism_touristiceventplace p ON a.place_id = p.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM tourism_touristicevent a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM tourism_touristicevent a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 LEFT JOIN
     (SELECT c.id,
             array_to_string(ARRAY_AGG (a.label ORDER BY a.id), ', ', '_') labels
@@ -239,6 +240,13 @@ LEFT JOIN
      JOIN tourism_touristicevent_themes b ON a.id = b.theme_id
      JOIN tourism_touristicevent c ON b.touristicevent_id = c.id
      GROUP BY c.id) h ON a.id = h.id
+LEFT JOIN
+    (SELECT c.id,
+            array_to_string(ARRAY_AGG (a.label ORDER BY a.id), ', ', '_') labels
+     FROM tourism_touristiceventorganizer a
+     JOIN tourism_touristicevent_organizers b ON a.id = b.touristiceventorganizer_id
+     JOIN tourism_touristicevent c ON b.touristicevent_id = c.id
+     GROUP BY c.id) o ON a.id = o.id
 WHERE deleted IS FALSE 
 ;
 

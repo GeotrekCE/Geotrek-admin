@@ -125,7 +125,7 @@
             <td colspan="3">
             {% if perms.maintenance.add_intervention %}
                 <h3>{% trans "Intervention" %}</h3>
-                    {% with columns="name,status,stake,total_cost,date" %}
+                    {% with columns="name,status,stake,total_cost,begin_date,end_date" %}
                             {% valuetable report.interventions.all columns=columns %}
                     {% endwith %}
                     {% if not suricate_workflow_enabled %}

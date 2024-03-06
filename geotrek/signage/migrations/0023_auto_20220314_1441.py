@@ -8,7 +8,7 @@ def forward(apps, schema_editor):
     with schema_editor.connection.cursor() as cursor:
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             cursor.execute(
-                f"UPDATE signage_signage SET published_{lang} = True WHERE published = True;  "
+                f"UPDATE signage_signage SET published_{lang.replace('-', '_')} = True WHERE published = True;  "
             )
 
 

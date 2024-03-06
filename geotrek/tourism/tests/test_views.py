@@ -7,7 +7,8 @@ from tempfile import mkdtemp
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -30,6 +31,7 @@ from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              TouristicContentType1Factory,
                                              TouristicContentType2Factory,
                                              TouristicEventFactory)
+from geotrek.tourism.filters import TouristicContentFilterSet, TouristicEventFilterSet
 from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.zoning.tests import factories as zoning_factories
@@ -370,7 +372,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'cities', 'contact', 'description', 'description_teaser',
             'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
             'id', 'map_image_url', 'meeting_point', 'start_time', 'end_time', 'name',
-            'organizer', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
+            'organizers', 'capacity', 'pictures', 'pois', 'portal', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
             'slug', 'source', 'speaker', 'structure', 'target_audience', 'themes',
             'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
@@ -485,6 +487,29 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 403)
 
 
+class TouristicEventOrganizerCreatePopupTest(TestCase):
+    def test_cannot_create_organizer(self):
+        url = '/popup/add/organizer/'
+        response = self.client.get(url)
+        # with no user logged -> redirect to login page
+        self.assertRedirects(response, "/login/?next=/popup/add/organizer/")
+        user = UserFactory()
+        self.client.force_login(user=user)
+        response = self.client.get(url)
+        # with user with no perm -> redirect to login page
+        self.assertEqual(response.status_code, 403)
+
+    def test_can_create_organizer(self):
+        user = UserFactory()
+        user.user_permissions.add(Permission.objects.get(codename='add_touristiceventorganizer'))
+        self.client.force_login(user=user)
+        url = '/popup/add/organizer/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url, data={"label": "test"})
+        self.assertIn("dismissAddAnotherPopup", response.content.decode())
+
+
 class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
@@ -566,3 +591,53 @@ class TrekInformationDeskAPITest(TestCase):
         self.assertEqual(result['features'][0]['type'], 'Feature')
         self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
         self.assertEqual(result['features'][0]['properties']['name'], desk.name)
+
+
+class TouristicContentFilterTest(TestCase):
+    factory = TouristicContentFactory
+    filterset = TouristicContentFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TouristicContentFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        touristic_content1 = TouristicContentFactory.create(provider='my_provider1')
+        touristic_content2 = TouristicContentFactory.create(provider='my_provider2')
+
+        filter_set = TouristicContentFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(touristic_content1, filter_set.qs)
+        self.assertIn(touristic_content2, filter_set.qs)
+
+
+class TouristicEventFilterTest(TestCase):
+    factory = TouristicEventFactory
+    filterset = TouristicEventFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TouristicEventFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        touristic_event1 = TouristicEventFactory.create(provider='my_provider1')
+        touristic_event2 = TouristicEventFactory.create(provider='my_provider2')
+
+        filter_set = TouristicEventFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(touristic_event1, filter_set.qs)
+        self.assertIn(touristic_event2, filter_set.qs)

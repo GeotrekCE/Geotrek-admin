@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -67,7 +67,7 @@ msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"
 
 msgid "Label"
-msgstr "Étiquette"
+msgstr "Libellé"
 
 msgid "Information desk type"
 msgstr "Type de lieu de renseignement"
@@ -100,7 +100,7 @@ msgid "Phone"
 msgstr "Téléphone"
 
 msgid "Email"
-msgstr "Email"
+msgstr "Courriel"
 
 msgid "Website"
 msgstr "Site web"
@@ -259,6 +259,12 @@ msgstr "contenu-touristique"
 msgid "Published touristic contents"
 msgstr "Contenus touristiques publiés"
 
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
+
 msgid "Touristic event type"
 msgstr "Type d'évènement touristique"
 
@@ -276,6 +282,12 @@ msgstr "Lieu d'évènement"
 
 msgid "Event places"
 msgstr "Lieux d'évènements"
+
+msgid "Organizer"
+msgstr "Organisateur"
+
+msgid "Organizers"
+msgstr "Organisateurs"
 
 msgid "Begin date"
 msgstr "Date de début"
@@ -303,9 +315,6 @@ msgstr "11:00, 23:30"
 
 msgid "End time"
 msgstr "Heure de fin"
-
-msgid "Organizer"
-msgstr "Organisateur"
 
 msgid "Speaker"
 msgstr "Intervenant"
@@ -339,6 +348,12 @@ msgstr ""
 
 msgid "Intervention duration"
 msgstr "Temps d'intervention"
+
+msgid "Price"
+msgstr ""
+
+msgid "0 mean free"
+msgstr ""
 
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
@@ -454,6 +469,9 @@ msgstr "Total"
 
 msgid "Date"
 msgstr "Date"
+
+msgid "Add Organizer"
+msgstr "Ajouter un organisateur"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

@@ -164,17 +164,19 @@ class CourseForm(CommonForm):
             )
             right_after_type_index = self.fieldslayout[0].fields.index('type') + 1
             self.fieldslayout[0].insert(right_after_type_index, fieldname)
-        if self.instance:
+
+        if self.instance and self.instance.pk:
             queryset_children = OrderedCourseChild.objects.filter(parent__id=self.instance.pk).order_by('order')
             # init multiple children field with data
             self.fields['children_course'].queryset = Course.objects.exclude(pk=self.instance.pk)
             self.fields['children_course'].initial = [c.child.pk for c in self.instance.course_children.all()]
             # init hidden field with children order
-            self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
-        if self.instance.pk:
+            self.fields['hidden_ordered_children'].initial = ",".join(
+                str(x) for x in queryset_children.values_list('child__id', flat=True))
             self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove('pois_excluded')
+
         if not settings.OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
         else:

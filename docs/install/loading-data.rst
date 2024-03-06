@@ -4,6 +4,9 @@
 Loading data
 ============
 
+.. contents::
+   :local:
+   :depth: 2
 
 Prerequisites for your data
 ---------------------------
@@ -63,7 +66,14 @@ And use the Geotrek-admin command to load it into PostGIS :
     This command makes use of *GDAL* and ``raster2pgsql`` internally. It
     therefore supports all GDAL raster input formats. You can list these formats
     with the command ``raster2pgsql -G``.
+
+.. note ::
     
+    The elevation data of DEM must be integer values. If the elevation data are floating
+    numbers, you can convert them in integer values with the Raster calculator processing
+    of `SAGA in QGis <https://docs.qgis.org/3.28/en/docs/user_manual/processing/3rdParty.html#saga>`_
+    (Processing > Toolbox > SAGA > Raster calculus > Raster calculator) with formula parameter set to ``int(a)``.
+
 .. note ::
 
     If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. 

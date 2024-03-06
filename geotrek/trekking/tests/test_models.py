@@ -9,6 +9,7 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
+from geotrek.common.tests.factories import LabelFactory
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
@@ -144,9 +145,8 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='Ca')
         TrekFactory.create(name='A')
         TrekFactory.create(name='B')
-        self.assertQuerysetEqual(Trek.objects.all(),
-                                 ['<Trek: A>', '<Trek: B>', '<Trek: Ca>', '<Trek: Cb>'],
-                                 ordered=False)
+        self.assertListEqual(list(Trek.objects.all().values_list('name', flat=True)),
+                             ['A', 'B', 'Ca', 'Cb'])
 
     def test_trek_itself_as_parent(self):
         """
@@ -414,9 +414,9 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekA, child=trekB, order=1).save()
         OrderedTrekChild(parent=trekA, child=trekC, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertQuerysetEqual(trekA.children, ['<Trek: B>', '<Trek: C>'])
-        self.assertQuerysetEqual(trekB.parents, ['<Trek: A>'])
-        self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['B', 'C'])
+        self.assertListEqual(list(trekB.parents.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
         self.assertEqual(list(trekA.children_id), [trekB.id, trekC.id])
         self.assertEqual(trekB.parents_id, [trekA.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
@@ -426,8 +426,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekC.next_id, {trekA.id: None})
         self.assertEqual(trekC.previous_id, {trekA.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertQuerysetEqual(trekA.children, ['<Trek: C>'])
-        self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['C'])
+        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
         self.assertEqual(list(trekA.children_id), [trekC.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
 
@@ -438,9 +438,9 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertQuerysetEqual(trekA.parents, ['<Trek: B>', '<Trek: C>'], ordered=False)
-        self.assertQuerysetEqual(trekB.children, ['<Trek: A>'])
-        self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['B', 'C'])
+        self.assertListEqual(list(trekB.children.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
         self.assertEqual(trekA.parents_id, [trekB.id, trekC.id])
         self.assertEqual(list(trekB.children_id), [trekA.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
@@ -450,8 +450,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekA.next_id, {trekC.id: None})
         self.assertEqual(trekA.previous_id, {trekC.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertQuerysetEqual(trekA.parents, ['<Trek: C>'])
-        self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['C'])
+        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
         self.assertEqual(trekA.parents_id, [trekC.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
 
@@ -507,3 +507,16 @@ class CascadedDeletionLoggingTest(TestCase):
         self.assertEqual(scale_entry.action_flag, DELETION)
         self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
         self.assertEqual(rating_entry.action_flag, DELETION)
+
+
+class TrekLabelsTestCase(TestCase):
+
+    def setUp(self):
+        self.trek = TrekFactory()
+        self.published_label = LabelFactory(published=True)
+        self.unpublished_label = LabelFactory(published=False)
+
+        self.trek.labels.set([self.published_label, self.unpublished_label])
+
+    def test_published_label_property(self):
+        self.assertEqual(self.trek.published_labels, [self.published_label])

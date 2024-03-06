@@ -24,6 +24,19 @@
     {{ block.super }}
     <script type="text/javascript">
 
+        function updatePictogramSelectorWidth() {
+            var prefix = '{{ line_formset.prefix }}';
+            var totalForms = $('#id_' + prefix + '-TOTAL_FORMS');
+            var formCount = parseInt(totalForms.val());
+
+            for (let i = 0; i < formCount; i++) {
+                const pictograms = document.querySelectorAll("#id_lines_" + i + "_pictograms_chosen");
+                pictograms.forEach(pictogram => {
+                pictogram.setAttribute("style", "width: 100% !important");
+                });
+            }
+        }
+
         $('#id_date').datepicker({
             autoclose: true,
             language: '{{ request.LANGUAGE_CODE }}',
@@ -42,7 +55,36 @@
                 deleteCssClass: 'delete-row',
                 addText: '{% trans "Add a line" %}',
                 deleteText: '{% trans "Remove" %}',
+                added: function (row) {
+                    var prefix = '{{ line_formset.prefix }}';
+                    var totalForms = $('#id_' + prefix + '-TOTAL_FORMS');
+                    var formCount = parseInt(totalForms.val()) - 1 ;
+                    row.find('input,select,textarea,label,div').each(function () {
+                        var idRegex = new RegExp(prefix + '_(\\d+|__prefix__)_'),
+                            replacement = prefix + '-' + formCount + '-';
+                        if ($(this).attr("for")) $(this).attr("for", $(this).attr("for").replace(idRegex, replacement));
+                        if ($(this).attr('id')) $(this).attr('id', $(this).attr('id').replace(idRegex, replacement));
+                        if ($(this).attr('name')) $(this).attr('name', $(this).attr('name').replace(idRegex, replacement));
+                    });
+                    row.find('select.selectmultiple').each(function () {
+                        var select_id = $(this).attr('id');
+                        $('#' + select_id + '_chosen').remove();
+                        var new_select = $(this).clone(false);
+                        $(this).after(new_select);
+                        $(this).remove()
+                        new_select.chosen({
+                         no_results_text: "{% trans "No result" %}",
+                         placeholder_text_multiple: "{% trans "Choose value(s)" %}"
+                    });
+                    })
+                    // Update width of pictogram selector  
+                    updatePictogramSelectorWidth();
+                }
             });
+        });
+
+        $(window).on('entity:view:add entity:view:update', function (e, data) {
+            updatePictogramSelectorWidth();
         });
     </script>
 {% endblock extrabody %}

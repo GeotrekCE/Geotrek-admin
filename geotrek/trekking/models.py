@@ -20,7 +20,8 @@ from mapentity.helpers import clone_attachment
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (GeotrekMapEntityMixin,
+from geotrek.common.mixins.models import (BasePublishableMixin,
+                                          GeotrekMapEntityMixin,
                                           OptionalPictogramMixin,
                                           PictogramMixin, PicturesMixin,
                                           PublishableMixin,
@@ -239,11 +240,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def get_map_image_url(self):
         return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
-    def get_map_image_path(self):
+    def get_map_image_path(self, language=None):
+        lang = language or get_language()
         basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
         if not os.path.exists(basefolder):
             os.makedirs(basefolder)
-        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
+        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, lang))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
         extent = list(super().get_map_image_extent(srid))
@@ -459,7 +461,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         """
         Custom model validation
         """
-        if self.pk in self.trek_children.values_list('child__id', flat=True):
+        if self.pk and self.pk in self.trek_children.values_list('child__id', flat=True):
             raise ValidationError(_("Cannot use itself as child trek."))
 
     @property
@@ -520,6 +522,10 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     @property
     def source_display(self):
         return ','.join([str(source) for source in self.source.all()])
+
+    @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
 
     @property
     def extent(self):
@@ -862,7 +868,9 @@ class POIType(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
+class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128,
+                            help_text=_("Public name (Change carefully)"))
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -904,8 +912,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
                                                              self.name)
         if self.type.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        elif self.type.review:
-            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @classproperty

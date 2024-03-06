@@ -72,6 +72,7 @@ json_test_species = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46.kml",
+            "openair_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46/openair",
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],
@@ -102,6 +103,7 @@ json_test_species_page_2 = {
             "structure": "LPO",
             "species_id": 7,
             "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
+            "openair_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47/openair",
             "geometry": {
                 "type": "MultiPolygon",
                 "coordinates": [[[[3.1, 45], [3.2, 45], [3.2, 46], [3.1, 46], [3.1, 45]],
@@ -134,7 +136,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
     def test_create(self, mocked):
         self.page = 1
 
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 200
 
@@ -176,7 +178,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
     def test_create_with_practice(self, mocked):
         self.page = 1
 
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -194,7 +196,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_status_code_404(self, mocked):
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 404
             response.url = url
@@ -205,7 +207,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_status_code_404_practice(self, mocked):
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             if params and params.get('in_bbox', None):
                 response.status_code = 404
@@ -222,7 +224,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
     def test_create_no_id(self, mocked):
         self.page = 1
 
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -253,7 +255,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
     def test_create_species_url(self, mocked):
         self.page = 1
 
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -276,7 +278,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
     def test_create_species_radius(self, mocked):
         self.page = 1
 
-        def side_effect(url, allow_redirects, params=None):
+        def side_effect(url, allow_redirects, headers, params=None):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:

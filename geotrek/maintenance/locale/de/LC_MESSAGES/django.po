@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-03-04 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,6 +31,14 @@ msgid "descent"
 msgstr ""
 
 msgid "slope"
+msgstr ""
+
+#, python-format
+msgid "min %s"
+msgstr ""
+
+#, python-format
+msgid "max %s"
 msgstr ""
 
 msgid "Infrastructure"
@@ -63,6 +71,18 @@ msgstr ""
 msgid "Outdoor Site"
 msgstr ""
 
+msgid "Filter by begin date range"
+msgstr ""
+
+msgid "begin date"
+msgstr ""
+
+msgid "Filter by end date range"
+msgstr ""
+
+msgid "end date"
+msgstr ""
+
 msgid "Year"
 msgstr ""
 
@@ -84,6 +104,9 @@ msgstr ""
 msgid "Year of activity"
 msgstr ""
 
+msgid "Intervention contractors"
+msgstr ""
+
 msgid "Days"
 msgstr ""
 
@@ -102,7 +125,13 @@ msgstr ""
 msgid "On {}"
 msgstr ""
 
+msgid "Begin date is after end date"
+msgstr ""
+
 msgid "Fundings"
+msgstr ""
+
+msgid "Start year is after end year"
 msgstr ""
 
 msgid "Name"
@@ -111,10 +140,10 @@ msgstr ""
 msgid "Brief summary"
 msgstr ""
 
-msgid "Date"
+msgid "Begin date"
 msgstr ""
 
-msgid "When ?"
+msgid "End date"
 msgstr ""
 
 msgid "Subcontracting"
@@ -135,7 +164,10 @@ msgstr ""
 msgid "Heliport cost"
 msgstr ""
 
-msgid "Subcontract cost"
+msgid "Contractor cost"
+msgstr ""
+
+msgid "Contractors"
 msgstr ""
 
 msgid "3D Length"
@@ -162,6 +194,9 @@ msgstr ""
 msgid "Remarks and notes"
 msgstr ""
 
+msgid "Access mean"
+msgstr ""
+
 msgid "External id"
 msgstr ""
 
@@ -169,6 +204,9 @@ msgid "Intervention"
 msgstr ""
 
 msgid "Interventions"
+msgstr ""
+
+msgid "Deleted"
 msgstr ""
 
 msgid "Mandays cost"
@@ -241,9 +279,6 @@ msgid "Comments"
 msgstr ""
 
 msgid "Domain"
-msgstr ""
-
-msgid "Contractors"
 msgstr ""
 
 msgid "Project owner"

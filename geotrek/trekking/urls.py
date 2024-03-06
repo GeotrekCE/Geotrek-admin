@@ -53,9 +53,9 @@ class ServiceEntityOptions(MapEntityOptions):
 router = DefaultRouter(trailing_slash=False)
 
 
-router.register(r'^api/(?P<lang>[a-z]{2})/treks', TrekAPIViewSet, basename='trek')
-router.register(r'^api/(?P<lang>[a-z]{2})/pois', POIAPIViewSet, basename='poi')
-router.register(r'^api/(?P<lang>[a-z]{2})/services', ServiceAPIViewSet, basename='service')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/treks', TrekAPIViewSet, basename='trek')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/pois', POIAPIViewSet, basename='poi')
+router.register(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/services', ServiceAPIViewSet, basename='service')
 
 urlpatterns += router.urls
 urlpatterns += registry.register(models.Trek, TrekEntityOptions, menu=settings.TREKKING_MODEL_ENABLED)

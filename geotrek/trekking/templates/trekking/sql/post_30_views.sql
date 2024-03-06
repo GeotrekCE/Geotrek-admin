@@ -259,30 +259,18 @@ SELECT a.id,
 FROM v_poi a
 LEFT JOIN trekking_poitype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM
-         (SELECT e.geom,
-                 e.id
-          FROM trekking_poi i,
-               core_topology e
-          WHERE i.topo_object_id = e.id
-              AND e.deleted = FALSE) a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM
-         (SELECT e.geom,
-                 e.id
-          FROM trekking_poi i,
-               core_topology e
-          WHERE i.topo_object_id = e.id
-              AND e.deleted = FALSE) a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id 
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 ;
 
 --Services
@@ -318,28 +306,16 @@ SELECT a.id,
 FROM v_services a
 LEFT JOIN trekking_servicetype b ON a.type_id = b.id
 LEFT JOIN authent_structure c ON a.structure_id = c.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM
-         (SELECT e.geom,
-                 e.id
-          FROM trekking_service i,
-               core_topology e
-          WHERE i.topo_object_id = e.id
-              AND e.deleted = FALSE) a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM
-         (SELECT e.geom,
-                 e.id
-          FROM trekking_service i,
-               core_topology e
-          WHERE i.topo_object_id = e.id
-              AND e.deleted = FALSE) a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id 
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 ;

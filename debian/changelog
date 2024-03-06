@@ -1,8 +1,80 @@
-geotrek-admin (2.98.1+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.102.1+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 30 May 2023 12:23:42 +0200
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Tue, 20 Feb 2024 11:14:51 +0100
+
+geotrek-admin (2.102.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Tue, 20 Feb 2024 10:33:07 +0100
+
+geotrek-admin (2.102.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Mon, 19 Feb 2024 16:54:29 +0100
+
+geotrek-admin (2.101.5) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 11 Jan 2024 15:02:05 +0100
+
+geotrek-admin (2.101.4) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 Nov 2023 14:14:01 +0100
+
+geotrek-admin (2.101.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 26 Oct 2023 10:57:23 +0200
+
+geotrek-admin (2.101.2) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 17 Oct 2023 17:12:13 +0200
+
+geotrek-admin (2.101.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 06 Oct 2023 14:41:57 +0200
+
+geotrek-admin (2.101.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 05 Oct 2023 11:20:46 +0200
+
+geotrek-admin (2.100.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 12 Sep 2023 17:40:13 +0200
+
+geotrek-admin (2.100.1) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Hugo Hasson <hugo.hasson@makina-corpus.com>  Tue, 05 Sep 2023 15:58:07 +0200
+
+geotrek-admin (2.100.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Hugo Hasson <hugo.hasson@makina-corpus.com>  Tue, 05 Sep 2023 11:11:20 +0200
+
+geotrek-admin (2.99.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 18 Jul 2023 16:07:49 +0200
 
 geotrek-admin (2.98.1) RELEASED; urgency=medium
 

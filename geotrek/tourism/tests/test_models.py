@@ -9,7 +9,7 @@ from django.test.utils import override_settings
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType
+from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
@@ -142,6 +142,16 @@ class TourismRelations(TestCase):
     def test_spatial_link_settings_ordering(self):
         self.assertEqual(self.trek.touristic_contents.all()[0], self.content2)
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content)
+
+
+class OrganizerModelTest(TestCase):
+    def test_str(self):
+        organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
+        self.assertEqual('foo bar', str(organizer))
+
+    def test_get_add_url(self):
+        url = TouristicEventOrganizer.get_add_url()
+        self.assertEqual(url, "/popup/add/organizer/")
 
 
 class TouristicEventModelTest(TestCase):
