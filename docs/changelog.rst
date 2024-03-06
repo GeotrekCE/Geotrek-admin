@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism : add price to TouristicEvent model - ref #3587
+- Define trek practice color for sync. mobile and pdfs
 
 **Bug fixes**
 
@@ -243,7 +244,6 @@ CHANGELOG
 - Serve GeoJS script locally
 - To delete parent outdoor sites you must first delete their children (#3151)
 
-
 **Documentation**
 
 - Add configuration file for readthedocs
@@ -267,7 +267,6 @@ CHANGELOG
 - Add a "district" attribute to views containing the "cities" attribute in API V2 (#3632)
 - Make signage blade lines text optional (#3326)
 - Add path information on API V2 about departure, arrival, comfort, source, networks, usages and stake (#3262)
-
 
 **Improvements**
 

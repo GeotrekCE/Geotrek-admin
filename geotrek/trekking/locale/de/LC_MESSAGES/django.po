@@ -107,7 +107,7 @@ msgstr "Ordnung"
 msgid "Alphabetical order if blank"
 msgstr "Alphabetische Reihenfolge, wenn leer"
 
-msgid "Color of the practice, only used in mobile."
+msgid "Color of the practice, only used in mobile and pdfs."
 msgstr ""
 
 msgid "Practice"
