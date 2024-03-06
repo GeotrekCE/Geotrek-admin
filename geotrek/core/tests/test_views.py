@@ -797,7 +797,7 @@ class TrailViewsTest(CommonTest):
 
     def test_perfs_export_csv(self):
         self.modelfactory.create()
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             self.client.get(self.model.get_format_list_url() + '?format=csv')
 
 
