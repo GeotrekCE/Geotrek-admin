@@ -10,6 +10,11 @@ CHANGELOG
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism : add price to TouristicEvent model - ref #3587
 
+**Bug fixes**
+
+- Fix cache key for zoning cities
+
+
 **Improvments**
 
 - Add popup button to add organizer in touristic event form
