@@ -1,9 +1,7 @@
-import sphinx_rtd_theme # noqa
 import datetime
 
 extensions = [
     'sphinx.ext.todo',
-    'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -24,20 +22,22 @@ copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 # built documents.
 #
 # The short X.Y version.
-version = '2.102'
+version = '2.101'
 # The full version, including alpha/beta/rc tags.
-release = '2.102.1+dev'
+release = '2.101.5+dev'
 
 exclude_patterns = ['_build']
 
 pygments_style = 'sphinx'
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_book_theme'
 
 html_logo = "_static/logo.svg"
 html_theme_options = {
-    "logo_only": True,
-    'style_external_links': True,
+    "repository_url": "https://github.com/GeotrekCE/Geotrek-admin/",
+    "use_repository_button": True,
+    "use_download_button": True,
+    "show_toc_level": 4
 }
 html_favicon = "_static/favicon.png"
 
