@@ -67,6 +67,20 @@ class FlatPagesAdmin(FlatPagesAdminBase):
             return [(None, {'fields': self.replace_orig_field(self.get_fields(request, obj))})]
         return None
 
+    def get_form(self, request, *args, **kwargs):
+        # Django's ModelAdmin generates a ModelForm class based on FlatPageForm in the add/edit views. This override
+        # injects the `user` attribute needed by FlatPageForm on the newly created Form class.
+        form_class = super().get_form(request, *args, **kwargs)
+        form_class.user = request.user
+        return form_class
+
+    def save_related(self, request, form, formsets, change):
+        # Django's ModelAdmin first saves the form instance without commit awaiting for formsets' validations. We
+        # perform the cover image save/update/deletion on `save_related` because we need the committed instance
+        # (with an ID).
+        super().save_related(request, form, formsets, change)
+        form.save_cover_image()
+
 
 class MyListFilter(admin.filters.SimpleListFilter):
 

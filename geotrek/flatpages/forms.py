@@ -69,9 +69,9 @@ class FlatPageForm(MoveNodeForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
-        page = super().save(commit=commit)
-        if commit and self.cleaned_data['cover_image']:
+    def save_cover_image(self):
+        page = self.instance
+        if self.cleaned_data['cover_image']:
             Attachment.objects.update_or_create(
                 content_type=ContentType.objects.get_for_model(FlatPage),
                 object_id=page.id,
@@ -83,7 +83,7 @@ class FlatPageForm(MoveNodeForm):
                     'starred': True,
                 }
             )
-        if commit and not self.cleaned_data['cover_image']:
+        if not self.cleaned_data['cover_image']:
             Attachment.objects.filter(
                 content_type=ContentType.objects.get_for_model(FlatPage),
                 object_id=page.id,
