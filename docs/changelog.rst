@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism : add price to TouristicEvent model - ref #3587
+- Define trek practice color for sync. mobile and pdfs
 
 **Improvments**
 
@@ -238,7 +239,6 @@ CHANGELOG
 - Serve GeoJS script locally
 - To delete parent outdoor sites you must first delete their children (#3151)
 
-
 **Documentation**
 
 - Add configuration file for readthedocs
@@ -274,10 +274,6 @@ CHANGELOG
 **Maintenance**
 
 - Upgrade `django-mapentity`
-
-**Minor changes**
-
-- Use practice color of treks used for mobile in pdfs
 
 
 2.98.1     (2023-05-30)
