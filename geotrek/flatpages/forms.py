@@ -17,8 +17,9 @@ class FlatPageForm(MoveNodeForm):
     cover_image = forms.ImageField(label=_("Cover image"), required=False)
     cover_image_author = forms.CharField(label=_("Cover image author"), max_length=128, required=False)
 
+    user = None  # Set by .admin.FlatPagesAdmin
+
     def __init__(self, *args, **kwargs):
-        # self.user = kwargs['user']
         super().__init__(*args, **kwargs)
 
         # Content translation fields' widgets are replaced with the TinyMCE widget, original widget attrs
