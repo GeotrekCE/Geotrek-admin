@@ -1,6 +1,5 @@
 from tinymce.widgets import TinyMCE
 
-from mapentity.forms import TranslatedModelForm, MapEntityForm
 from treebeard.forms import MoveNodeForm
 
 from django import forms
@@ -8,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
-from geotrek.common.forms import CommonForm
 from geotrek.common.models import Attachment, FileType
 from geotrek.flatpages.models import FlatPage
 from modeltranslation.settings import AVAILABLE_LANGUAGES

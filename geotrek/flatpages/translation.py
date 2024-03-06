@@ -22,5 +22,4 @@ class MenuItemTO(TranslationOptions):
     )
 
 
-
 translator.register(flatpages_models.MenuItem, MenuItemTO)

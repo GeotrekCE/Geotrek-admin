@@ -83,7 +83,6 @@ class MenuItemTreeView(GenericAPIView):
                 field_name = build_localized_fieldname('published', language)
                 return getattr(page, field_name)
 
-
     def _recursive_node_to_dict(self, node):
         result = self.get_serializer(instance=node).data
         children = [self._recursive_node_to_dict(c) for c in self.filter_queryset(node.get_children()) if self._check_page_published(c)]

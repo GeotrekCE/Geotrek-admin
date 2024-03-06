@@ -9,6 +9,7 @@ from geotrek.flatpages.forms import FlatPageForm
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
+
     class FlatPagesAdminBase(TabbedTranslationAdmin, TreeAdmin):
         pass
 
@@ -16,7 +17,6 @@ if 'modeltranslation' in settings.INSTALLED_APPS:
         pass
 
 else:
-    # from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
     class FlatPagesAdminBase(TreeAdmin):
         pass
 
@@ -85,7 +85,7 @@ class FlatPagesAdmin(FlatPagesAdminBase):
 class MyListFilter(admin.filters.SimpleListFilter):
 
     def __init__(self, *args, **kwargs):
-       super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def choices(self, changelist):
         for choice in super().choices(changelist):

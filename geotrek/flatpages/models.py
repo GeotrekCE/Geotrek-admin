@@ -38,8 +38,8 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
                                     blank=True, related_name='flatpages',
                                     verbose_name=_("Source"))
     portals = models.ManyToManyField('common.TargetPortal',
-                                    blank=True, related_name='flatpages',
-                                    verbose_name=_("Portal"))
+                                     blank=True, related_name='flatpages',
+                                     verbose_name=_("Portal"))
     attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
     @property
@@ -126,10 +126,10 @@ class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     link_url = models.URLField(verbose_name=_('Link URL'), blank=True, default='')
     page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True)
     platform = models.CharField(verbose_name=_('Platform'), max_length=12, choices=PLATFORM_CHOICES,
-                              default=PLATFORM_CHOICES.ALL)
+                                default=PLATFORM_CHOICES.ALL)
     portals = models.ManyToManyField('common.TargetPortal',
-                                    blank=True, related_name='menu_items',
-                                    verbose_name=_("Portal"))
+                                     blank=True, related_name='menu_items',
+                                     verbose_name=_("Portal"))
     open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=False)
 
     class Meta:
