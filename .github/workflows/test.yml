@@ -260,6 +260,9 @@ jobs:
 
       - name: Prepare nginx
         run: |
+          sudo service apache2 stop
+          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get autoremove
           sudo apt-get install -q -y nginx
           sudo mkdir /var/www/geotrek -p
           ls -als
