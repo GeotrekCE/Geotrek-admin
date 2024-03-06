@@ -217,6 +217,10 @@ jobs:
     name: Tests E2E docker
     runs-on: ubuntu-20.04
     needs: [build_docker_image]
+    env:
+      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
+
     services:
       postgres:
         image: postgis/postgis:12-2.5
