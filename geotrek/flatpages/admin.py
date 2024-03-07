@@ -25,7 +25,7 @@ else:
 
 
 class FlatPagesAdmin(FlatPagesAdminBase):
-    list_display = ('title', 'published', 'publication_date', 'portals', )
+    list_display = ('title', 'published', 'publication_date', 'portal_names_string', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
     form = movenodeform_factory(flatpages_models.FlatPage, form=FlatPageForm)

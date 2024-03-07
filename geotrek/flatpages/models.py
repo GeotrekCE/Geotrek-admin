@@ -107,6 +107,10 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     def is_public(self):
         return self.any_published
 
+    @admin.display(description='Portals')
+    def portal_names_string(self):
+        return ", ".join(p.name for p in self.portals.all())
+
 
 class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
