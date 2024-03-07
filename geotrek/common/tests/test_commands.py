@@ -200,10 +200,10 @@ class CheckVersionsCommandTestCase(TestCase):
         mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['14', '3.0']
         call_command('check_versions', '--full', stdout=self.output)
         expected_result = (
-            f"Geotrek version    : \x1b[32;1m{__version__}\x1b[0m\n"
-            "Python version     : \x1b[32;1m3.9.1\x1b[0m\n"
-            "Django version     : \x1b[32;1m3.2.2\x1b[0m\n"
-            "PostgreSQL version : \x1b[32;1m14\x1b[0m\n"
-            "PostGIS version    : \x1b[32;1m14\x1b[0m"
+            f"Geotrek version    : {__version__}\n"
+            "Python version     : 3.9.1\n"
+            "Django version     : 3.2.2\n"
+            "PostgreSQL version : 14\n"
+            "PostGIS version    : 14"
         )
         self.assertEqual(self.output.getvalue().strip(), expected_result)
