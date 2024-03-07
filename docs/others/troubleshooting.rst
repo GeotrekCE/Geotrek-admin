@@ -155,7 +155,7 @@ To debug or to report a bug, you can check or provide in issue the main versions
     geotrek check_versions
 
 
-From docker :
+From docker:
 
 .. code-block :: bash
 

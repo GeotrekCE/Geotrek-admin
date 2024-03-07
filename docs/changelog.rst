@@ -9,7 +9,7 @@ CHANGELOG
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism : add price to TouristicEvent model - ref #3587
-- Add `check_versions` command to check Python, Django, PostgreSQL and PostGIS versions.
+- Add `check_versions` command to check Geotrek, Python, Django, PostgreSQL and PostGIS versions.
 
 **Bug fixes**
 
