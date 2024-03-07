@@ -9,6 +9,7 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from easy_thumbnails.models import Thumbnail
 
+from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import TargetPortal
 from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
@@ -164,10 +165,9 @@ class CheckVersionsCommandTestCase(TestCase):
     def setUp(self):
         self.output = StringIO()
 
-    @patch('geotrek.common.management.commands.check_versions.Command.get_geotrek_version', return_value='1.0.0')
-    def test_geotrek_version(self, mock_get_version):
+    def test_geotrek_version(self):
         call_command('check_versions', '--geotrek', stdout=self.output)
-        self.assertEqual(self.output.getvalue().strip(), '1.0.0')
+        self.assertEqual(self.output.getvalue().strip(), __version__)
 
     @patch('geotrek.common.management.commands.check_versions.sys')
     def test_python_version(self, mock_sys):
@@ -192,18 +192,18 @@ class CheckVersionsCommandTestCase(TestCase):
         call_command('check_versions', '--postgis', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), '3.1.0')
 
-    @patch('geotrek.__version__', return_value="2.200.0")
-    @patch('sys.version', return_value="3.9.1")
-    @patch('django.get_version', return_value='3.2.7')
+    @patch('geotrek.common.management.commands.check_versions.sys')
+    @patch('django.get_version', return_value='3.2.2')
     @patch('django.db.connection.cursor')
-    def test_full_version(self, mock_cursor, mock_get_version, mock_version_info, mock_geotrek):
-        mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3', '3.1.0']
-        call_command('check_versions', stdout=self.output)
+    def test_full_version(self, mock_cursor, mock_get_version, mock_version_info):
+        type(mock_version_info).version = PropertyMock(return_value="3.9.1")
+        mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['14', '3.0']
+        call_command('check_versions', '--full', stdout=self.output)
         expected_result = (
-            "Geotrek version     : 2.200.0\n"
-            "Python version     : 3.9.1\n"
-            "Django version     : 3.2.7\n"
-            "PostgreSQL version : 13.3\n"
-            "PostGIS version    : 3.1.0"
+            f"Geotrek version    : \x1b[32;1m{__version__}\x1b[0m\n"
+            "Python version     : \x1b[32;1m3.9.1\x1b[0m\n"
+            "Django version     : \x1b[32;1m3.2.2\x1b[0m\n"
+            "PostgreSQL version : \x1b[32;1m14\x1b[0m\n"
+            "PostGIS version    : \x1b[32;1m14\x1b[0m"
         )
         self.assertEqual(self.output.getvalue().strip(), expected_result)
