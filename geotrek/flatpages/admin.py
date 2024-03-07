@@ -95,6 +95,33 @@ class MyListFilter(admin.filters.SimpleListFilter):
 
 # class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
 class MenuItemAdmin(MenuItemAdminBase):
+    fieldsets = [
+        (None, {
+            'fields': [
+                'label',
+                'portals',
+                'platform',
+                'target_type',
+            ],
+        }),
+        ('Page', {
+            'fields': [
+                'page',
+            ],
+        }),
+        ('Link', {
+            'fields': [
+                'link_url',
+                'open_in_new_tab',
+            ],
+        }),
+        (None, {
+            'fields': [
+                '_position',
+                '_ref_node_id',
+            ],
+        }),
+    ]
     list_display = (
         'label',
         'portal_names_string',
