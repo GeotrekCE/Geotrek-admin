@@ -1,5 +1,5 @@
 ===============
-Troubleshouting
+Troubleshooting
 ===============
 
 .. contents::
@@ -143,3 +143,35 @@ You have to update the signature key to get the last update :
 ::
 
    wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
+
+
+Show main packages versions
+---------------------------
+
+To debug or to report a bug, you can check or provide in issue the main versions of Geotrek-admin and its dependencies :
+
+.. code-block :: bash
+
+    geotrek check_versions
+
+
+From docker:
+
+.. code-block :: bash
+
+    docker compose run --rm web ./manage.py check_versions
+
+
+Some examples:
+
+.. code-block :: bash
+
+    geotrek check_versions --full
+    geotrek check_versions --postgis
+
+
+Check command help for more options:
+
+.. code-block :: bash
+
+    geotrek check_versions --help
