@@ -8,7 +8,7 @@ from geotrek import __version__
 
 
 class Command(BaseCommand):
-    help = Check Geotrek-admin, Python, Django, PostgreSQL and PostGIS version used by your system."
+    help = "Check Geotrek-admin, Python, Django, PostgreSQL and PostGIS version used by your system."
 
     def add_arguments(self, parser):
         parser.add_argument('--geotrek', action='store_true', help="Show only Geotrek version.")
