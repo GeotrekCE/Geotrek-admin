@@ -1,25 +1,23 @@
+import os
+from io import StringIO
+from unittest import mock
+from unittest.mock import patch, PropertyMock
+
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
-
 from django.test import TestCase
-from django.conf import settings
-
-from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
-from geotrek.common.models import TargetPortal
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.tests.factories import POIFactory
-from geotrek.infrastructure.tests.factories import InfrastructureFactory, InfrastructureTypeFactory
-from geotrek.infrastructure.models import InfrastructureType, Infrastructure
-from geotrek.core.models import Usage, Path
-from geotrek.core.tests.factories import UsageFactory, PathFactory
-
 from easy_thumbnails.models import Thumbnail
 
-from io import StringIO
-import os
-
-from unittest import mock
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.models import TargetPortal
+from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.core.models import Usage, Path
+from geotrek.core.tests.factories import UsageFactory, PathFactory
+from geotrek.infrastructure.models import InfrastructureType, Infrastructure
+from geotrek.infrastructure.tests.factories import InfrastructureFactory, InfrastructureTypeFactory
+from geotrek.trekking.tests.factories import POIFactory
 
 
 @mock.patch('sys.stdout', new_callable=StringIO)
@@ -160,3 +158,60 @@ class CommandAttachmentsTests(TestCase):
         call_command('clean_attachments', stdout=output, verbosity=2)
         self.assertIn('%s... Thumbnail' % self.content.thumbnail.name, output.getvalue())
         self.assertTrue(os.path.exists(self.content.thumbnail.path))
+
+
+class CheckVersionsCommandTestCase(TestCase):
+    def setUp(self):
+        self.output = StringIO()
+
+    @patch('geotrek.common.management.commands.check_versions.Command.get_geotrek_version', return_value='1.0.0')
+    def test_geotrek_version(self, mock_get_version):
+        call_command('check_versions', '--geotrek', stdout=self.output)
+        self.assertEqual(self.output.getvalue().strip(), '1.0.0')
+
+    @patch('geotrek.common.management.commands.check_versions.sys')
+    def test_python_version(self, mock_sys):
+        type(mock_sys).version_info = PropertyMock(return_value=(3, 9, 1, 'final', 0))
+        call_command('check_versions', '--python', stdout=self.output)
+        self.assertEqual(self.output.getvalue().strip(), '3.9.1')
+
+    @patch('django.get_version', return_value='3.2.7')
+    def test_django_version(self, mock_get_version):
+        call_command('check_versions', '--django', stdout=self.output)
+        self.assertEqual(self.output.getvalue().strip(), '3.2.7')
+
+    @patch('django.db.connection.cursor')
+    def test_postgresql_version(self, mock_cursor):
+        mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3']
+        call_command('check_versions', '--postgresql', stdout=self.output)
+        self.assertEqual(self.output.getvalue().strip(), '13.3')
+
+    @patch('django.db.connection.cursor')
+    def test_postgis_version(self, mock_cursor):
+        mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['3.1.0']
+        call_command('check_versions', '--postgis', stdout=self.output)
+        self.assertEqual(self.output.getvalue().strip(), '3.1.0')
+
+    @patch('geotrek.__version__', return_value="2.200.0")
+    @patch('sys.version', return_value="3.9.1")
+    @patch('django.get_version', return_value='3.2.7')
+    @patch('django.db.connection.cursor')
+    def test_full_version(self, mock_cursor, mock_get_version, mock_version_info, mock_geotrek):
+        mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3', '3.1.0']
+        call_command('check_versions', stdout=self.output)
+
+        @patch('geotrek.__version__', return_value="2.200.0")
+        @patch('sys.version', return_value="3.9.1")
+        @patch('django.get_version', return_value='3.2.7')
+        @patch('django.db.connection.cursor')
+        def test_full_version(self, mock_cursor, mock_get_version, mock_version_info, mock_geotrek):
+            mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3', '3.1.0']
+            call_command('check_versions', stdout=self.output)
+            expected_result = (
+                "Geotrek version     : 2.200.0\n"
+                "Python version     : 3.9.1\n"
+                "Django version     : 3.2.7\n"
+                "PostgreSQL version : 13.3\n"
+                "PostGIS version    : 3.1.0"
+            )
+            self.assertEqual(self.output.getvalue().strip(), expected_result)
