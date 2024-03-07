@@ -199,19 +199,11 @@ class CheckVersionsCommandTestCase(TestCase):
     def test_full_version(self, mock_cursor, mock_get_version, mock_version_info, mock_geotrek):
         mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3', '3.1.0']
         call_command('check_versions', stdout=self.output)
-
-        @patch('geotrek.__version__', return_value="2.200.0")
-        @patch('sys.version', return_value="3.9.1")
-        @patch('django.get_version', return_value='3.2.7')
-        @patch('django.db.connection.cursor')
-        def test_full_version(self, mock_cursor, mock_get_version, mock_version_info, mock_geotrek):
-            mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3', '3.1.0']
-            call_command('check_versions', stdout=self.output)
-            expected_result = (
-                "Geotrek version     : 2.200.0\n"
-                "Python version     : 3.9.1\n"
-                "Django version     : 3.2.7\n"
-                "PostgreSQL version : 13.3\n"
-                "PostGIS version    : 3.1.0"
-            )
-            self.assertEqual(self.output.getvalue().strip(), expected_result)
+        expected_result = (
+            "Geotrek version     : 2.200.0\n"
+            "Python version     : 3.9.1\n"
+            "Django version     : 3.2.7\n"
+            "PostgreSQL version : 13.3\n"
+            "PostGIS version    : 3.1.0"
+        )
+        self.assertEqual(self.output.getvalue().strip(), expected_result)
