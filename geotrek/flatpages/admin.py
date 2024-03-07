@@ -102,6 +102,7 @@ class MenuItemAdmin(MenuItemAdminBase):
                 'pictogram',
                 'portals',
                 'platform',
+                'published',
                 'target_type',
             ],
         }),
