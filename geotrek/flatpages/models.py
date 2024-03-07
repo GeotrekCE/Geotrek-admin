@@ -13,8 +13,7 @@ from extended_choices import Choices
 from treebeard.mp_tree import MP_Node
 
 from mapentity.serializers import plain_text
-from geotrek.common.mixins.models import TimeStampedModelMixin, BasePublishableMixin
-
+from geotrek.common.mixins.models import TimeStampedModelMixin, BasePublishableMixin, PictogramMixin
 
 FLATPAGES_TARGETS = Choices(
     ('ALL', 'all', _('All')),
@@ -112,7 +111,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
         return ", ".join(p.name for p in self.portals.all())
 
 
-class MenuItem(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
+class MenuItem(PictogramMixin, BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
     TARGET_TYPE_CHOICES = (
         ("Page", "page"),

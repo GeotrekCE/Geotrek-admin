@@ -24,6 +24,7 @@ from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSer
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
+from geotrek.common.serializers import PictogramSerializerMixin
 from geotrek.common.utils import simplify_coords
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -1428,7 +1429,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             parent = obj.get_parent()
             return parent.id if parent else None
 
-    class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class MenuItemSerializer(PictogramSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
         link_url = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
@@ -1446,6 +1447,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 'published',
                 'page_title',
                 'open_in_new_tab',
+                'pictogram',
             )
 
         def get_label(self, obj):

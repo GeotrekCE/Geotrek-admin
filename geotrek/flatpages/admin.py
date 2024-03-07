@@ -99,6 +99,7 @@ class MenuItemAdmin(MenuItemAdminBase):
         (None, {
             'fields': [
                 'label',
+                'pictogram',
                 'portals',
                 'platform',
                 'target_type',
