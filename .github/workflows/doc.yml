@@ -26,8 +26,15 @@ jobs:
         LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v3
-      - name: Documentation
+      - uses: ./.github/actions/python-cache-requirements
+        with:
+          requirements: docs/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip3 install -r docs/requirements.txt
+
+      - name: Build doc
         run: |
           cd docs/
-          pip install -r ./requirements.txt -U
           make html SPHINXOPTS="-W"
