@@ -33,6 +33,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libproj-dev \
     unzip \
     less \
+    iproute \
     nano \
     curl \
     software-properties-common \
