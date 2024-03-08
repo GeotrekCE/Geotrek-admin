@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         ('zoning', '0006_clean_spatial_index'),
         ('zoning', '0007_auto_20210126_0956'),
         ('zoning', '0008_auto_20210118_1443'),
-        ('zoning', '0100_initial'),
+        # ('zoning', '0100_initial'),
         ('zoning', '0101_auto_20220913_1542'),
         ('zoning', '0102_auto_20220919_1148'),
         ('zoning', '0103_alter_restrictedarea_area_type')
