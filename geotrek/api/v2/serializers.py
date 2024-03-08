@@ -1434,6 +1434,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
         link_url = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
         page_title = serializers.SerializerMethodField()
+        attachments = AttachmentSerializer(many=True)
 
         class Meta:
             model = flatpages_models.MenuItem
@@ -1448,6 +1449,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 'page_title',
                 'open_in_new_tab',
                 'pictogram',
+                'attachments',
             )
 
         def get_label(self, obj):

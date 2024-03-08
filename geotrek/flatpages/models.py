@@ -136,6 +136,7 @@ class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMix
                                      blank=True, related_name='menu_items',
                                      verbose_name=_("Portal"))
     open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=False)
+    attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
     class Meta:
         verbose_name = _('Menu item')

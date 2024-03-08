@@ -5,7 +5,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from geotrek.flatpages import models as flatpages_models
-from geotrek.flatpages.forms import FlatPageForm
+from geotrek.flatpages.forms import FlatPageForm, MenuItemForm
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
@@ -95,11 +95,15 @@ class MyListFilter(admin.filters.SimpleListFilter):
 
 # class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
 class MenuItemAdmin(MenuItemAdminBase):
+    # FIXME: there is a lot of duplicated code in this class and a need for another baseclass
+    # It will be easier to refactor when the tests are ready.
+
     fieldsets = [
         (None, {
             'fields': [
                 'label',
                 'pictogram',
+                'thumbnail',
                 'portals',
                 'platform',
                 'published',
@@ -128,10 +132,46 @@ class MenuItemAdmin(MenuItemAdminBase):
         'label',
         'portal_names_string',
     )
-    form = movenodeform_factory(flatpages_models.MenuItem)
+    form = movenodeform_factory(flatpages_models.MenuItem, form=MenuItemForm)
     list_filter = (
         ("portals", admin.filters.RelatedOnlyFieldListFilter),
     )
+
+    # Override modeltranslation's TranslationAdmin._get_declared_fieldsets
+    # The original method does not preserve MoveNodeForm's declared FormFields (aka class attributes) when
+    # dynamically creating a Form class for the Admin add and change views.
+    def _get_declared_fieldsets(self, request, obj=None):
+        # Take custom modelform fields option into account
+        # mdu : use self.form.base_fields rather than self.form._meta.fields
+        # The latter does not have the FormFields declared as class attributes, hence breaking MoveNodeForm.
+        if not self.fields and hasattr(self.form, 'base_fields') and self.form.base_fields:
+            self.fields = self.form.base_fields.keys()
+
+        # takes into account non-standard add_fieldsets attribute used by UserAdmin
+        fieldsets = (
+            self.add_fieldsets
+            if getattr(self, 'add_fieldsets', None) and obj is None
+            else self.fieldsets
+        )
+        if fieldsets:
+            return self._patch_fieldsets(fieldsets)
+        elif self.fields:
+            return [(None, {'fields': self.replace_orig_field(self.get_fields(request, obj))})]
+        return None
+
+    def get_form(self, request, *args, **kwargs):
+        # Django's ModelAdmin generates a ModelForm class based on FlatPageForm in the add/edit views. This override
+        # injects the `user` attribute needed by FlatPageForm on the newly created Form class.
+        form_class = super().get_form(request, *args, **kwargs)
+        form_class.user = request.user
+        return form_class
+
+    def save_related(self, request, form, formsets, change):
+        # Django's ModelAdmin first saves the form instance without commit awaiting for formsets' validations. We
+        # perform the cover image save/update/deletion on `save_related` because we need the committed instance
+        # (with an ID).
+        super().save_related(request, form, formsets, change)
+        form.save_thumbnail()
 
 
 if settings.FLATPAGES_ENABLED:

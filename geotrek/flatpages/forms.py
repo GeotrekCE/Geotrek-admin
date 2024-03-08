@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.models import Attachment, FileType
-from geotrek.flatpages.models import FlatPage
+from geotrek.flatpages.models import FlatPage, MenuItem
 from modeltranslation.settings import AVAILABLE_LANGUAGES
 from modeltranslation.utils import build_localized_fieldname
 
@@ -85,6 +85,58 @@ class FlatPageForm(MoveNodeForm):
         if not self.cleaned_data['cover_image']:
             Attachment.objects.filter(
                 content_type=ContentType.objects.get_for_model(FlatPage),
+                object_id=page.id,
+            ).delete()
+        return page
+
+
+class MenuItemForm(MoveNodeForm):
+
+    thumbnail = forms.ImageField(label=_("Thumbnail"), required=False)
+
+    user = None  # Set by .admin.MenuItemAdmin
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance.pk:
+            page = Attachment.objects.filter(
+                content_type=ContentType.objects.get_for_model(MenuItem),
+                object_id=self.instance.pk
+            ).first()
+            if page:
+                self.fields['thumbnail'].initial = page.attachment_file
+
+    class Meta:
+        model = MenuItem
+        fields = (
+            'label',
+            'pictogram',
+            'thumbnail',
+            'published',
+            'portals',
+            'platform',
+            'target_type',
+            'page',
+            'link_url',
+            'open_in_new_tab',
+        )
+
+    def save_thumbnail(self):
+        page = self.instance
+        if self.cleaned_data['thumbnail']:
+            Attachment.objects.update_or_create(
+                content_type=ContentType.objects.get_for_model(MenuItem),
+                object_id=page.id,
+                defaults={
+                    'attachment_file': self.cleaned_data['thumbnail'],
+                    'filetype': FileType.objects.get_or_create(type="Photographie", structure=None)[0],
+                    'creator': self.user,
+                }
+            )
+        if not self.cleaned_data['thumbnail']:
+            Attachment.objects.filter(
+                content_type=ContentType.objects.get_for_model(MenuItem),
                 object_id=page.id,
             ).delete()
         return page
