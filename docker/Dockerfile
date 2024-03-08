@@ -53,7 +53,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-COPY --chown=geotrek:geotrek docker/* /usr/local/bin/
+COPY --chown=geotrek:geotrek docker/scripts/* /usr/local/bin/
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000
 
@@ -66,7 +66,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     python3.8-venv \
     build-essential \
     libpq-dev &&\
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/* \
+    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
 RUN python3.8 -m venv /opt/venv
@@ -78,6 +78,8 @@ FROM build as dev
 
 COPY dev-requirements.txt dev-requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt
+COPY ./docs/requirements.txt doc-requirements.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r doc-requirements.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
@@ -86,7 +88,6 @@ FROM base as prod
 ENV ENV prod
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
-COPY --chown=geotrek:geotrek docker/* /usr/local/bin/
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
 COPY --chown=geotrek:geotrek manage.py manage.py
 COPY --chown=geotrek:geotrek VERSION VERSION
