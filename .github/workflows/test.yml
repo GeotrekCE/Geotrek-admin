@@ -74,11 +74,13 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: |
+          ~/.cache/pip
+          ~/.wheel_dir
           ./venv
 
-        key: pip-${{ matrix.python-version }}
+        key: pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}
+          pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
 
     - name: Prepare test env
       run: |

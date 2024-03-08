@@ -35,9 +35,9 @@ jobs:
             ~/.cache/pip
             ~/.wheel_dir
 
-          key: pip-${{ matrix.python-version }}
+          key: pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
           restore-keys: |
-            pip-${{ matrix.python-version }}
+            pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
 
       - name: Install dependencies
         run: |
