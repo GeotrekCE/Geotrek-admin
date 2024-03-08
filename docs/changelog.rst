@@ -11,10 +11,13 @@ CHANGELOG
 - Tourism : add price to TouristicEvent model - ref #3587
 - Add `check_versions` command to check Geotrek, Python, Django, PostgreSQL and PostGIS versions.
 - Add ``GeotrekCourseParser`` and ``GeotrekSiteParser`` in Aggregator to retrieve Outdoor models (refs #3569)
+- Add trail on leaflet overlay
 
 **Bug fixes**
 
 - Fix cache key for zoning cities
+- Change signage group on leaflet overlay
+- Add some translation on leaflet overlay layer
 
 **Improvements**
 
