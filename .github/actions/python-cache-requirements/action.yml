@@ -13,10 +13,7 @@ runs:
     - uses: actions/setup-python@v4
       with:
         cache: 'pip'
-        cache-dependency-path: |
-          requirements.txt
-          dev-requirements.txt
-          docs/requirements.txt
+        cache-dependency-path: '**/*requirements.txt'
     - run: |
         pip install -r ${{ inputs.requirements }}
       shell: bash
