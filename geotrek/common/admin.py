@@ -63,6 +63,9 @@ class AttachmentAdmin(admin.ModelAdmin):
         """ Do not add from Adminsite. """
         return False
 
+    @admin.display(
+        description=_('Linked content')
+    )
     def content_link(self, obj):
         """Returns content object link"""
         try:
@@ -73,8 +76,6 @@ class AttachmentAdmin(admin.ModelAdmin):
         else:
             return format_html('<a data-pk="{}" href="{}" >{}</a>',
                                obj.object_id, content_url, obj.object_id)
-
-    content_link.short_description = _('Linked content')
 
 
 class ThemeAdmin(MergeActionMixin, TabbedTranslationAdmin):
@@ -118,6 +119,9 @@ class HDViewPointAdmin(admin.ModelAdmin):
         """ Do not add from Adminsite. """
         return False
 
+    @admin.display(
+        description=_('Title')
+    )
     def update_link(self, obj):
         """Returns link to HD View"""
         return format_html(
@@ -125,6 +129,9 @@ class HDViewPointAdmin(admin.ModelAdmin):
             obj.pk, obj.full_url, obj.title
         )
 
+    @admin.display(
+        description=_('Related to')
+    )
     def related_object_link(self, obj):
         """Returns content object link"""
         content_url = obj.content_object.get_detail_url()
@@ -132,9 +139,6 @@ class HDViewPointAdmin(admin.ModelAdmin):
             '<a data-pk="{}" href="{}" >{}</a>',
             obj.object_id, content_url, str(obj.content_object)
         )
-
-    related_object_link.short_description = _('Related to')
-    update_link.short_description = _('Title')
 
 
 class AccessAdmin(MergeActionMixin, admin.ModelAdmin):

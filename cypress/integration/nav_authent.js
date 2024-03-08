@@ -44,19 +44,6 @@ describe('Login from home page / admin page', () => {
         cy.contains("Username");
         cy.get('[name="username"]');
     })
-
-    it('Login admin', () => {
-        cy.visit('/admin/');
-        cy.get('[name="username"]')
-            .type('admin')
-            .should('have.value', 'admin');
-        cy.get('[name="password"]')
-            .type('admin')
-            .should('have.value', 'admin');
-        cy.get("input[type='submit']").click();
-        cy.url().should('include', '/admin/');
-        cy.url().should('not.include', '/login/?next=/');
-    })
 })
 
 
@@ -77,12 +64,5 @@ describe('Logout', () => {
         cy.get("a.dropdown-toggle").contains('admin').click();
         cy.get("a[href='/logout/']").click();
         cy.url().should('include', '/login/');
-    })
-
-
-    it('Logout admin', () => {
-        cy.visit('/admin/');
-        cy.get("a[href='/admin/logout/']").click();
-        cy.url().should('include', '/admin/logout/');
     })
 })

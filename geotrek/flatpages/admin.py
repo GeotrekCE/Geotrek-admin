@@ -17,9 +17,11 @@ class FlatPagesAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, form_url='', extra_context=None):
         return FlatPageUpdate.as_view()(request, pk=object_id)
 
+    @admin.display(
+        description=_("Portals")
+    )
     def portals(self, obj):
         return ', '.join([portal.name for portal in obj.portal.all()])
-    portals.short_description = _("Portals")
 
 
 if settings.FLATPAGES_ENABLED:

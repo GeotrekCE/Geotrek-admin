@@ -13,9 +13,9 @@ class LocaleForcedMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        user_agent = request.META.get('HTTP_USER_AGENT')
+        user_agent = request.headers.get('user-agent')
         is_api_call = (user_agent is None or 'geotrek' in user_agent)
-        forced_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        forced_language = request.headers.get('accept-language')
         if is_api_call and forced_language and hasattr(request, 'session'):
             request.session['django_language'] = forced_language
         return self.get_response(request)
