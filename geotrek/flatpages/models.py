@@ -115,9 +115,9 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
 class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
-    TARGET_TYPE_CHOICES = (
-        ("Page", "page"),
-        ("Link", "link"),
+    TARGET_TYPE_CHOICES = Choices(
+        ("PAGE", "page", _("Page")),
+        ("LINK", "link", _("Link")),
     )
 
     PLATFORM_CHOICES = Choices(

@@ -1,5 +1,6 @@
 import datetime
 import json
+from functools import partial
 from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
@@ -14,6 +15,8 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
+
+from geotrek.flatpages.models import MenuItem
 from mapentity.tests.factories import SuperUserFactory
 from rest_framework.test import APITestCase
 
@@ -2781,48 +2784,136 @@ class FlatPageTestCase(TestCase):
         cls.source = common_factory.RecordSourceFactory()
         cls.portal = common_factory.TargetPortalFactory()
         cls.page1 = flatpages_factory.FlatPageFactory(
-            title='AAA', published=True, order=2, target='web', content='Blah',
+            title='AAA', published=True, content='Blah',
             sources=[cls.source], portals=[cls.portal]
         )
         cls.page2 = flatpages_factory.FlatPageFactory(
-            title='BBB', published=True, order=1, target='mobile', content='Blbh'
+            title='BBB', published=True, content='Blbh'
         )
 
     def tearDown(self):
+        # FIXME: tests do not fail if commented. Necessary?
         clear_internal_user_cache()
         super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/flatpage/')
+
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'count': 2,
-            'next': None,
-            'previous': None,
-            'results': [{
-                'id': self.page2.pk,
-                'title': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
-                'content': {'en': 'Blbh', 'es': None, 'fr': None, 'it': None},
-                'external_url': '',
-                'order': 1,
-                'portal': [],
-                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
-                'source': [],
-                'target': 'mobile',
-                'attachments': [],
-            }, {
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_by_ids = {page["id"]: page for page in resp_data["results"]}
+        self.assertIn(self.page1.id, resp_by_ids.keys())
+        self.assertIn(self.page2.id, resp_by_ids.keys())
+        self.assertEqual(
+            resp_by_ids[self.page1.id],
+            {
                 'id': self.page1.pk,
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
                 'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
-                'external_url': '',
-                'order': 2,
-                'portal': [self.portal.pk],
+                'portals': [self.portal.pk],
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [self.source.pk],
-                'target': 'web',
                 'attachments': [],
-            }]
-        })
+                'parent': None,
+                'children': [],
+            }
+        )
+        self.assertEqual(
+            resp_by_ids[self.page2.id],
+            {
+                'id': self.page2.pk,
+                'title': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'content': {'en': 'Blbh', 'es': None, 'fr': None, 'it': None},
+                'portals': [],
+                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'source': [],
+                'attachments': [],
+                'parent': None,
+                'children': [],
+            }
+        )
+
+    def test_list_returns_published_page_only(self):
+        flatpages_factory.FlatPageFactory(
+            title='Not published page', published=False, content='Not published content'
+        )
+
+        response = self.client.get('/api/v2/flatpage/')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_ids = [page["id"] for page in resp_data["results"]]
+        self.assertIn(self.page1.id, resp_ids)
+        self.assertIn(self.page2.id, resp_ids)
+
+    def test_list_returns_published_in_specified_language_only(self):
+        self.page2.published_fr = True
+        self.page2.save()
+        flatpages_factory.FlatPageFactory(
+            title='Not published page', published=False, content='Not published content'
+        )
+
+        response = self.client.get('/api/v2/flatpage/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], self.page2.id)
+
+    def test_list_returns_pages_associated_to_portals(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+        page1 = published_page_factory(portals=[portal1])
+        page2 = published_page_factory(portals=[portal1, portal2])
+        published_page_factory(portals=None)
+
+        response = self.client.get(f'/api/v2/flatpage/?portals={portal1.id},{portal2.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_ids = [page["id"] for page in resp_data["results"]]
+        self.assertIn(page1.id, resp_ids)
+        self.assertIn(page2.id, resp_ids)
+
+    def test_list_returns_page_checking_both_publication_and_portal(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        page_factory(published_en=True, published_fr=False, portals=[portal2])
+        page_factory(published_fr=True, portals=[portal1])
+        page_factory(published_fr=True, portals=None)
+        visible_page = page_factory(published_fr=True, portals=[portal2])
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal2.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], visible_page.id)
+
+    def test_list_returns_page_targeted_by_visible_menu_item(self):
+        portal = common_factory.TargetPortalFactory()
+        published_page_factory = partial(flatpages_factory.FlatPageFactory, published_fr=True, portals=None)
+        not_visible_page = published_page_factory()
+        visible_page = published_page_factory()
+        menu_factory = partial(flatpages_factory.MenuItemFactory, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        # Those 3 menu items are not visible given the following API query
+        menu_factory(published=False, portals=[portal], page=not_visible_page)
+        menu_factory(published_en=True, published_fr=False, portals=[portal], page=not_visible_page)
+        menu_factory(published_fr=True, portals=None, page=not_visible_page)
+        # Visible menu item
+        menu_factory(published_fr=True, portals=[portal], page=visible_page)
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], visible_page.id)
 
     def test_detail(self):
         response = self.client.get('/api/v2/flatpage/{}/'.format(self.page1.pk))
@@ -2831,12 +2922,9 @@ class FlatPageTestCase(TestCase):
             'id': self.page1.pk,
             'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
             'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
-            'external_url': '',
-            'order': 2,
-            'portal': [self.portal.pk],
+            'portals': [self.portal.pk],
             'published': {'en': True, 'es': False, 'fr': False, 'it': False},
             'source': [self.source.pk],
-            'target': 'web',
             'attachments': [],
         })
 
@@ -2845,12 +2933,6 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'BBB')
-
-    def test_filter_targets(self):
-        response = self.client.get('/api/v2/flatpage/', {'targets': 'web'})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
     def test_filter_sources(self):
         response = self.client.get('/api/v2/flatpage/', {'sources': self.source.pk})

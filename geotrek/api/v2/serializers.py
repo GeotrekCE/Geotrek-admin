@@ -1390,13 +1390,12 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+    class FlatPageRetrieveSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         title = serializers.SerializerMethodField()
         content = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
-        children = serializers.SerializerMethodField()
-        parent = serializers.SerializerMethodField()
 
         class Meta:
             model = flatpages_models.FlatPage
@@ -1408,8 +1407,6 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 'portals',
                 'published',
                 'attachments',
-                'children',
-                'parent',
             )
 
         def get_title(self, obj):
@@ -1420,6 +1417,17 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
+
+    class FlatPageListSerializer(FlatPageRetrieveSerializer):
+
+        children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
+
+        class Meta(FlatPageRetrieveSerializer.Meta):
+            fields = FlatPageRetrieveSerializer.Meta.fields + (
+                'children',
+                'parent',
+            )
 
         def get_children(self, obj):
             return obj.get_children().values_list('id', flat=True).all()

@@ -19,10 +19,16 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
         api_filters.FlatPageFilter,
         api_filters.UpdateOrCreateDateFilter
     )
-    serializer_class = api_serializers.FlatPageSerializer
+    # serializer_class = api_serializers.FlatPageDetailsSerializer
     queryset = flatpages_models.FlatPage.objects.order_by('pk') \
         .prefetch_related(Prefetch('attachments',
                                    queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')))  # Required for reliable pagination
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return api_serializers.FlatPageListSerializer
+        if self.action == 'retrieve':
+            return api_serializers.FlatPageRetrieveSerializer
 
 
 class MenuItemRetrieveView(RetrieveAPIView):
@@ -91,39 +97,39 @@ class MenuItemTreeView(GenericAPIView):
         return result
 
 
-class FlatPageRetrieveView(RetrieveAPIView):
-    serializer_class = api_serializers.FlatPageSerializer
-    queryset = flatpages_models.FlatPage.objects.all()
-
-    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
-        renderers.JSONRenderer, ]
-
-
-class FlatPageTreeView(GenericAPIView):
-    # from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest
-    serializer_class = api_serializers.FlatPageSerializer
-    queryset = flatpages_models.FlatPage.objects.filter(depth=1)
-    filter_backends = (GeotrekPublishedFilter, )
-
-    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
-        renderers.JSONRenderer, ]
-
-    def get(self, request, *args, **kwargs):
-        root_items = self.filter_queryset(self.queryset).all()
-
-        data = []
-        for n in root_items:
-            data.append(self._recursive_node_to_dict(n))
-
-        return Response(data)
-
-    def _recursive_node_to_dict(self, node):
-        result = self.get_serializer(instance=node).data
-        children = [self._recursive_node_to_dict(c) for c in node.get_children()]
-        if children:
-            result["children"] = children
-        return result
+# class FlatPageRetrieveView(RetrieveAPIView):
+#     serializer_class = api_serializers.FlatPageSerializer
+#     queryset = flatpages_models.FlatPage.objects.all()
+#
+#     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+#     authentication_classes = [BasicAuthentication, SessionAuthentication]
+#     renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+#         renderers.JSONRenderer, ]
+#
+#
+# class FlatPageTreeView(GenericAPIView):
+#     # from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest
+#     serializer_class = api_serializers.FlatPageSerializer
+#     queryset = flatpages_models.FlatPage.objects.filter(depth=1)
+#     filter_backends = (GeotrekPublishedFilter, )
+#
+#     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
+#     authentication_classes = [BasicAuthentication, SessionAuthentication]
+#     renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
+#         renderers.JSONRenderer, ]
+#
+#     def get(self, request, *args, **kwargs):
+#         root_items = self.filter_queryset(self.queryset).all()
+#
+#         data = []
+#         for n in root_items:
+#             data.append(self._recursive_node_to_dict(n))
+#
+#         return Response(data)
+#
+#     def _recursive_node_to_dict(self, node):
+#         result = self.get_serializer(instance=node).data
+#         children = [self._recursive_node_to_dict(c) for c in node.get_children()]
+#         if children:
+#             result["children"] = children
+#         return result

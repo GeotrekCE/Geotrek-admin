@@ -1269,7 +1269,7 @@ class FlatPageFilter(BaseFilterBackend):
             queryset = queryset.filter(
                 Q(portals__in=portals.split(','))
                 | Q(menu_items__id__in=published_menu_items)
-            )
+            ).distinct()
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(
