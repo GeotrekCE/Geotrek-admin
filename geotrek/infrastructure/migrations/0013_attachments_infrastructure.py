@@ -21,5 +21,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(attachment_infrastructure),
+        # migrations.RunPython(attachment_infrastructure),
     ]
