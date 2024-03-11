@@ -19,6 +19,7 @@ from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
+from geotrek.api.v2.filters import get_published_filter_expression
 from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSerializerMixin
 from geotrek.api.v2.utils import build_url, get_translation_or_dict
@@ -1430,7 +1431,17 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             )
 
         def get_children(self, obj):
-            return obj.get_children().values_list('id', flat=True).all()
+            children = obj.get_children()
+
+            language = self.context["request"].query_params.get("language")
+            expr = get_published_filter_expression(flatpages_models.FlatPage, language)
+            children = children.filter(expr)
+
+            portals = self.context["request"].query_params.get("portals")
+            if portals:
+                children = children.filter(portals__in=portals.split(","))
+
+            return children.values_list('id', flat=True).all()
 
         def get_parent(self, obj):
             parent = obj.get_parent()

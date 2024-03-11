@@ -2915,6 +2915,27 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(resp_data["count"], 1)
         self.assertEqual(resp_data["results"][0]["id"], visible_page.id)
 
+    def test_list_filters_children_prop(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal1])
+        # Those 3 children pages should not be visible
+        page_factory(published_en=True, published_fr=False, portals=[portal1]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=[portal2]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=None).move(parent_page, pos="last-child")
+        # Visible child page
+        visible_child_page = page_factory(published_en=True, published_fr=True, portals=[portal1])
+        visible_child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent_page.id]
+        self.assertEqual(len(parent_page_repr["children"]), 1)
+        self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
+
     def test_detail(self):
         response = self.client.get('/api/v2/flatpage/{}/'.format(self.page1.pk))
         self.assertEqual(response.status_code, 200)
