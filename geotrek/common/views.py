@@ -32,7 +32,7 @@ from django.utils.translation import gettext as _
 from django.views import static
 from django.views.defaults import page_not_found
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import RedirectView, TemplateView, UpdateView, View
+from django.views.generic import TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from geotrek.common.filters import HDViewPointFilterSet
@@ -58,8 +58,7 @@ from ..altimetry.models import Dem
 from ..core.models import Path
 from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
                     HDViewPointForm, ImportDatasetForm,
-                    ImportDatasetFormWithFile, ImportSuricateForm,
-                    SyncRandoForm)
+                    ImportDatasetFormWithFile, ImportSuricateForm)
 from .mixins.views import (BookletMixin, CompletenessMixin,
                            DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
 from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
@@ -68,7 +67,7 @@ from .serializers import (HDViewPointAPIGeoJSONSerializer,
                           HDViewPointAPISerializer,
                           HDViewPointGeoJSONSerializer, HDViewPointSerializer,
                           ThemeSerializer)
-from .tasks import import_datas, import_datas_from_web, launch_sync_rando
+from .tasks import import_datas, import_datas_from_web
 from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
                                   discover_available_parsers)
@@ -437,78 +436,6 @@ def last_list(request):
         if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
             return redirect(entity.url_list)
     return redirect('trekking:trek_list')
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_view(request):
-    """
-    Custom views to view / track / launch a sync rando
-    """
-
-    return render(request,
-                  'common/sync_rando.html',
-                  {'form': SyncRandoForm(), },
-                  )
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_update_json(request):
-    """
-    get info from sync_rando celery_task
-    """
-    results = []
-    threshold = timezone.now() - timedelta(seconds=60)
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-    i = celery_app.control.inspect(['celery@geotrek'])
-    try:
-        reserved = i.reserved()
-    except redis.exceptions.ConnectionError:
-        reserved = None
-    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
-    for task in tasks:
-        if task['name'].startswith('geotrek.trekking'):
-            results.append(
-                {
-                    'id': task['id'],
-                    'result': {'current': 0, 'total': 0},
-                    'status': 'PENDING',
-                }
-            )
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-
-    return HttpResponse(json.dumps(results),
-                        content_type="application/json")
-
-
-class SyncRandoRedirect(RedirectView):
-    http_method_names = ['post']
-    pattern_name = 'common:sync_randos_view'
-
-    @method_decorator(login_required)
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def post(self, request, *args, **kwargs):
-        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
-                                         host=self.request.get_host())
-        self.job = launch_sync_rando.delay(url=url)
-        return super().post(request, *args, **kwargs)
 
 
 class ServeAttachmentAccessibility(View):

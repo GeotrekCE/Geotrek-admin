@@ -6,7 +6,7 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core.files import File
@@ -15,7 +15,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from geotrek.common.views import HDViewPointAPIViewSet
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
 
 import geotrek.trekking.parsers  # noqa
@@ -23,7 +23,7 @@ from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
-from geotrek.common.tasks import import_datas, launch_sync_rando
+from geotrek.common.tasks import import_datas
 from geotrek.common.tests.factories import (HDViewPointFactory, LicenseFactory,
                                             TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -284,124 +284,6 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response_real.status_code, 200)
         self.assertNotContains(response_real, "Select a valid choice. {real_key} "
                                               "is not one of the available choices.".format(real_key=real_key))
-
-
-class SyncRandoViewTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.super_user = SuperUserFactory.create(username='admin', password='super')
-        cls.simple_user = User.objects.create_user(username='homer', password='doooh')
-
-    def setUp(self):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-
-    def test_get_sync_superuser(self):
-        self.client.login(username='admin', password='super')
-        response = self.client.get(reverse('common:sync_randos_view'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_sync_superuser(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.client.login(username='admin', password='super')
-        response = self.client.post(reverse('common:sync_randos'), data={})
-        self.assertRedirects(response, '/commands/syncview')
-
-    def test_get_sync_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
-        response = self.client.get(reverse('common:sync_randos_view'))
-        self.assertRedirects(response, '/login/?next=/commands/syncview')
-
-    def test_post_sync_simpleuser(self):
-        """
-        test if sync can be launched by simple user post
-        """
-        self.client.login(username='homer', password='doooh')
-        response = self.client.post(reverse('common:sync_randos'), data={})
-        self.assertRedirects(response, '/login/?next=/commands/sync')
-
-    def test_get_sync_states_superuser(self):
-        self.client.login(username='admin', password='super')
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, b'[]')
-
-    def test_get_sync_states_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertRedirects(response, '/login/?next=/commands/statesync/')
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                           'skip_tiles': True, 'skip_pdf': True,
-                                           'skip_dem': True, 'skip_profile_png': True})
-    def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-        self.client.login(username='admin', password='super')
-        launch_sync_rando.apply()
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"infos": "Sync ended"', response.content)
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                           'skip_tiles': True, 'skip_pdf': True,
-                                           'skip_dem': True, 'skip_profile_png': True})
-    def test_get_sync_rando_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
-        self.client.login(username='admin', password='super')
-        launch_sync_rando.apply()
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"exc_message": "This is a test"', response.content)
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
-    @override_settings(SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': False,
-                                           'skip_pdf': False,
-                                           'skip_dem': False, 'skip_profile_png': False})
-    def test_launch_sync_rando(self, mock_tile, mock_map_image, mocked_stdout):
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertIn("Done", log)
-        self.assertEqual(task.status, "SUCCESS")
-
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando_fail(self, mocked_stdout, command):
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertNotIn("Done", log)
-        self.assertNotIn('Sync ended', log)
-        self.assertEqual(task.status, "FAILURE")
-
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @override_settings(SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertNotIn("Done", log)
-        self.assertNotIn('Sync rando ended', log)
-        self.assertEqual(task.status, "FAILURE")
-
-    def tearDown(self):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando'))
 
 
 class HDViewPointViewTest(TestCase):
