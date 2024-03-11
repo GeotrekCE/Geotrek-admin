@@ -1443,9 +1443,49 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
             return children.values_list('id', flat=True).all()
 
+        def _is_published(self, instance, language=None):
+            model = flatpages_models.FlatPage
+            associated_published_fields = [f.name for f in model._meta.get_fields() if f.name.startswith('published')]
+            if len(associated_published_fields) == 1:
+                # The model's published field is not translated
+                return instance.published
+            elif len(associated_published_fields) > 1:
+                # The published field is translated
+                if not language or language == 'all':
+                    # no language specified. Check for all.
+                    for lang in settings.MODELTRANSLATION_LANGUAGES:
+                        field_name = build_localized_fieldname('published', lang)
+                        if getattr(instance, field_name):
+                            break
+                    else:
+                        return False
+                    return True
+                else:
+                    # one language is specified
+                    field_name = build_localized_fieldname('published', language)
+                    return getattr(instance, field_name)
+
         def get_parent(self, obj):
             parent = obj.get_parent()
-            return parent.id if parent else None
+            if not parent:
+                return None
+
+            language = self.context["request"].query_params.get("language")
+            if not self._is_published(parent, language):
+                return None
+
+            portals = self.context["request"].query_params.get("portals")
+            if portals:
+                portals = map(lambda x: int(x), portals.split(","))
+                if parent.portals.all().count() == 0:
+                    return None
+                for portal in parent.portals.all():
+                    if portal.id in portals:
+                        break
+                else:
+                    return None
+
+            return parent.id
 
     class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
