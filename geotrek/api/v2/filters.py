@@ -161,7 +161,9 @@ class GeotrekPublishedFilter(BaseFilterBackend):
         qs = queryset
         language = request.GET.get('language', 'all')
         expr = get_published_filter_expression(qs.model, language)
-        return qs.filter(expr)
+        if expr:
+            qs = qs.filter(expr)
+        return qs
 
 
 class GeotrekSensitiveAreaFilter(BaseFilterBackend):
