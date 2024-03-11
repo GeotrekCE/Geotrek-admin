@@ -50,7 +50,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     class Meta:
         verbose_name = _('Flat page')
         verbose_name_plural = _('Flat pages')
-        ordering = ['id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
