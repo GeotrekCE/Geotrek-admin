@@ -12,41 +12,26 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-  flake8:
-    name: Checking Flake8 rules
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ['ubuntu-20.04']
-        python-version: ['3.8']
-
+  migrations:
+    name: Checking SRID in migrations files
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Not evaluated values in migration files
-        run: |
+      - run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+  flake8:
+    name: Checking Flake8 rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/python-cache-requirements
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.wheel_dir
-
-          key: pip-${{ matrix.python-version }}
-          restore-keys: |
-            pip-${{ matrix.python-version }}
+          requirements: dev-requirements.txt
 
       - name: Install dependencies
         run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir flake8 -c dev-requirements.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade flake8 -c dev-requirements.txt
+          pip3 install -c dev-requirements.txt flake8
 
       - name: Flake8
         run: |

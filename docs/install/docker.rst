@@ -21,12 +21,13 @@ Installation
 2. Download the code from https://github.com/GeotrekCE/Geotrek-admin/releases
    or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/
 3. Unzip the tarball
-4. Copy ``docker-compose-prod.yml`` to ``docker-compose.yml`` and edit to feed your needs if necessary
-5. Copy ``.env-prod.dist`` to ``.env`` and edit to feed your needs if necessary
-6. Create user and database, enable PostGIS extension
-7. Run ``docker-compose run --rm web update.sh``
-8. Run ``docker-compose up``
-9. Install NGINX (or equivalent) and add a configuration file (taking inspiration from ``nginx.conf.in``)
+4. Copy docker/install folder where you want
+5. Edit `docker-compose.yml` to feed your needs if necessary
+6. Copy `.env.dist` to `.env` and edit to feed your needs if necessary
+7. Create user and database, enable PostGIS extension
+8. Run `docker-compose run --rm web update.sh`
+9. Run `docker-compose up`
+10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
 
 Management commands
 -------------------

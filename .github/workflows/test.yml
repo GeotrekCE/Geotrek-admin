@@ -74,11 +74,13 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: |
+          ~/.cache/pip
+          ~/.wheel_dir
           ./venv
 
-        key: pip-${{ matrix.python-version }}
+        key: pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt', 'dev-requirements.txt', 'docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}
+          pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt', 'dev-requirements.txt', 'docs/requirements.txt') }}
 
     - name: Prepare test env
       run: |
@@ -162,7 +164,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Build Docker image
         run: |
-          docker build -t geotrek:latest .
+          docker build -f ./docker/Dockerfile -t geotrek:latest .
       - name: Upload image
         uses: ishworkh/docker-image-artifact-upload@v1
         with:
@@ -237,7 +239,8 @@ jobs:
       - name: Launch service
         run: |
           docker tag geotrek:latest geotrekce/admin:latest
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          cp docker/install/.env.dist .env
+          cp docker/install/docker-compose.yml docker-compose.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/localhost/geotrek.local/' .env

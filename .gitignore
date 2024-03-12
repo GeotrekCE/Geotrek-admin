@@ -43,7 +43,6 @@ docs/_build/
 /env/
 /pyvenv.cfg
 /.env
-/docker-compose.yml
 /build/
 
 /cypress/videos/

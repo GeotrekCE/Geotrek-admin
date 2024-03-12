@@ -32,7 +32,7 @@ serve:
 	$(docker_compose) up
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q && pip-compile -q dev-requirements.in"
+	$(docker_compose) run --rm web bash -c "pip-compile -q && pip-compile -q dev-requirements.in && pip-compile -q docs/requirements.in"
 
 flake8:
 	$(docker_compose) run --rm web flake8 geotrek
