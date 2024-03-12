@@ -207,7 +207,6 @@ class BasicJSONAPITest(TranslationResetMixin):
                     author=self.picture.author,
                     title=self.picture.title,
                     legend=self.picture.legend).encode()).hexdigest())
-        raise Exception(self.result)
         self.assertDictEqual(self.result['pictures'][0],
                              {'url': url,
                               'title': self.picture.title,
