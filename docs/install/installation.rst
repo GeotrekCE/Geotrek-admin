@@ -432,11 +432,6 @@ If it show PostgreSQL 14, you can remove the old PostgreSQL version.
     sudo apt autoremove
 
 
-From Geotrek-admin <= 2.69.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
 Uninstallation
 --------------
 
