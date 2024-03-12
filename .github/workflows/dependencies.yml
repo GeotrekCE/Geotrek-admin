@@ -5,8 +5,8 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - dev-requirements.in
       - dev-requirements.txt
+      - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
 env:
@@ -35,29 +35,32 @@ jobs:
             ~/.cache/pip
             ~/.wheel_dir
 
-          key: pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
+          key: pip-cache-${{ matrix.python-version }}-hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
           restore-keys: |
-            pip-${{ matrix.python-version }}-${{ hashFiles('**/*requirements.txt') }}
+            pip-cache-${{ matrix.python-version }}-hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
 
       - name: Install dependencies
         run: |
           pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c dev-requirements.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir -r dev-requirements.txt
+          pip3 wheel --wheel-dir=~/.wheel_dir -r docs/requirements.txt
           pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
 
       - name: Check dependency graph
         run: |
           pip-compile -q
           pip-compile -q dev-requirements.in
+          pip-compile -q docs/requirements.in
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v17
         id: verify-changed-files
         with:
           files: |
-             requirements.txt
-             dev-requirements.txt
+            requirements.txt
+            dev-requirements.txt
+            docs/requirements.txt
 
       - name: Validating graph
         if: steps.verify-changed-files.outputs.files_changed == 'true'
