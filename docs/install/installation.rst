@@ -286,6 +286,46 @@ If you installed Geotrek-admin on bionic ubuntu with provided install method, yo
 If you use an external database, you should adapt this method along your system
 
 
+PostgreSQL
+----------
+
+Geotrek-admin support PostgreSQL 10+ and PostGIS 2.5+ for now.
+In next release, Django 4.2 will drop PostgreSQL < 12 support.
+We recommend to upgrade to PostgreSQL 16 and PostGIS 3.4.
+
+You can check your PostgreSQL version with the following command:
+
+::
+
+   sudo geotrek check_versions --postgresql
+
+
+If your version if below 12, you should upgrade your PostgreSQL server.
+If you can not upgrade for the moment, check release notes before each Geotrek-admin upgrade to ensure compatibility.
+You will be able to mark hold your geotrek-admin ubuntu package to prevent unwanted upgrade.
+
+::
+
+   sudo apt-mark hold geotrek-admin
+
+
+In case of unwanted upgrade, you will be able te revert your version to last supporting PostgreSQL 10 with, for example:
+
+
+::
+
+   sudo apt-get install geotrek-admin=2.102.1.ubuntu20.04
+
+
+for Ubuntu 20.04, or
+
+::
+
+   sudo apt-get install geotrek-admin=2.102.1.ubuntu18.04
+
+
+for Ubuntu bionic
+
 
 Uninstallation
 --------------
