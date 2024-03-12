@@ -679,9 +679,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "paste_as_text": True
 }
 
-SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
-SYNC_RANDO_OPTIONS = {}
 SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 '''

@@ -103,7 +103,7 @@ class SyncMobileViewTest(TestCase):
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
+    def test_launch_sync_mobile_no_root(self, mocked_stdout, command):
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)
