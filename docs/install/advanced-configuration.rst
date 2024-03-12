@@ -914,18 +914,6 @@ Attributes for "zones sensibles réglementaires" are:
 * ``url`` : card url. Optional.
 
 
-Sync to Geotrek-rando
-'''''''''''''''''''''''
-
-Just run:
-
-.. code-block :: bash
-
-    sudo geotrek sync_rando <parameters>
-    
-If sensitivity module is enabled, sensitive areas will be automatically synchronized.
-
-
 Feedback reports settings
 -------------------------
 
@@ -962,9 +950,6 @@ To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) l
 .. code-block :: python
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
-
-To make these lists available for your Geotrek-rando-V2, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
-
 
 **2 - Suricate Standard**
 
@@ -1117,8 +1102,6 @@ Load alerts from Suricate (located in your bounding box) :
 .. code-block :: python
 
     geotrek sync_suricate -v 2 --no-notification
-
-To make these lists available for your Geotrek-rando, run ``sync_rando`` (see :ref:`synchronization <synchronization-section>`)
 
 - Then load extra required statuses for Reports and Interventions:
 
@@ -2866,7 +2849,6 @@ Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/
   The default template may change in the future versions. You will be in charge of porting the modification to your copy.
 
 Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
-To get your modifications available for Rando application, launch the ``sync_rando`` command.
 
 
 PDF as booklet
@@ -2952,34 +2934,6 @@ You might also need to deploy logo images in the following places :
 
 Settings for Geotrek-rando
 --------------------------
-
-Synchro Geotrek-rando
-~~~~~~~~~~~~~~~~~~~~~
-With Geotrek-rando V2, there is a synchronization mechanism to expose Geotrek-admin contents in json files generated automatically. 
-
-.. warning:: 
-  This is no more used in Geotrek-rando V3.
-
-
-.. envvar:: SYNC_RANDO_ROOT
-
-    Path on your server where the data for Geotrek-rando website will be generated
-
-    Example::
-
-        SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
-
-.. note:: 
-  - If you want to modify it, do not forget to import os at the top of the file.
-  - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
-
-.. envvar:: SYNC_RANDO_OPTIONS
-
-   Options of the sync_rando command in Geotrek-admin interface. 
-
-    Example::
-
-        SYNC_RANDO_OPTIONS = {}
 
 .. _distances:
 
