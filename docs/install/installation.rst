@@ -328,7 +328,7 @@ for Ubuntu bionic
 
 
 Update PostgreSQL / PostGIS on Ubuntu Bionic
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
 
