@@ -300,16 +300,16 @@ You can check your PostgreSQL version with the following command:
    sudo geotrek check_versions --postgresql
 
 
-If your version if below 12, you should upgrade your PostgreSQL server.
+If your PostgreSQL version is below 12, you should upgrade your PostgreSQL server.
 If you can not upgrade for the moment, check release notes before each Geotrek-admin upgrade to ensure compatibility.
-You will be able to mark hold your geotrek-admin ubuntu package to prevent unwanted upgrade.
+You will be able to mark hold your Geotrek-admin Ubuntu package to prevent unwanted upgrade.
 
 ::
 
    sudo apt-mark hold geotrek-admin
 
 
-In case of unwanted upgrade, you will be able te revert your version to last supporting PostgreSQL 10 with, for example:
+In case of unwanted upgrade, you will be able to revert your Geotrek-admin version to last supporting PostgreSQL 10 with, for example:
 
 
 ::
@@ -327,13 +327,13 @@ for Ubuntu 20.04, or
 for Ubuntu bionic
 
 
-Update PostgreSQL / PotGIS on Ubuntu Bionic
+Update PostgreSQL / PostGIS on Ubuntu Bionic
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
 
     Ubuntu Bionic is already deprecated. We recommend you to install PostgreSQL on a dedicated server, with a most recent version of Ubuntu.
-    If possible, on se same host or datacenter than you Geotrek-admin instance.
+    If possible, on the same host or datacenter than your Geotrek-admin instance.
     If you can't, you can follow these instructions to upgrade PostgreSQL and PostGIS on Ubuntu Bionic with official PostgreSQL APT archive repository.
     The ultimate version published for Bionic is PostgreSQL 14, supported until November 12, 2026.
 
@@ -371,7 +371,7 @@ Recreate user and database:
 
 .. note::
 
-    Installing many PostgreSQL versions on same system will use another port than default 5432.
+    Installing many PostgreSQL versions on the same system will use another port than default 5432.
     You can check the newest port with ``pg_lsclusters`` command.
 
 ::
@@ -408,10 +408,10 @@ Now, you can update your Geotrek-admin configuration to use the new PostgreSQL s
     sudo dpkg-reconfigure geotrek-admin
 
 
-And change POSTGRES_PORT to 5433 (or other port found in `pg_lsclusters` command)
+And change ``POSTGRES_PORT`` to 5433 (or other port found in `pg_lsclusters` command)
 
 
-You can now upgrade you Geotrek-admin, and check that the right database is used.
+You can now upgrade your Geotrek-admin, and check that the right database is used.
 
 .. note::
 
@@ -423,7 +423,7 @@ You can now upgrade you Geotrek-admin, and check that the right database is used
         sudo geotrek check_versions --postgresql
 
 
-If it show PostgreSQL 14, you can remove the old PostgreSQL version.
+If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
 
 
 ::
