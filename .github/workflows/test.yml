@@ -76,9 +76,9 @@ jobs:
         path: |
           ./venv
 
-        key: pip-${{ matrix.python-version }}-hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
+        key: pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}-hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
+          pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/dev-requirements.txt') }}
 
     - name: Prepare test env
       run: |
