@@ -6,7 +6,7 @@ from geotrek.outdoor.models import Course, CourseType, OrderedCourseChild, Pract
 
 class GeotrekOutdoorParser(GeotrekParser):
 
-    def init_outdoor_category(self, category, model, join_field=None, extra_fields={}):
+    def init_outdoor_category(self, category, model, join_field=None, extra_fields=None):
         # Get categories as JSON response
         response = self.request_or_retry(f"{self.url}/api/v2/{self.init_url_categories[category]}")
         results = response.json().get('results', [])
@@ -31,12 +31,13 @@ class GeotrekOutdoorParser(GeotrekParser):
 
             # Extract other category attributes in default language from JSON
             fields = {}
-            for field in extra_fields:
-                if isinstance(result[field], dict):
-                    if result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                        fields[field] = result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
-                else:
-                    fields[field] = result[field]
+            if extra_fields is not None:
+                for field in extra_fields:
+                    if isinstance(result[field], dict):
+                        if result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                            fields[field] = result[field][settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+                    else:
+                        fields[field] = result[field]
 
             # Extract field that will become a ForeignKey from JSON response, using mapping
             if join_field and result.get(join_field, False):
