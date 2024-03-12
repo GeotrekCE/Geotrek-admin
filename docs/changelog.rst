@@ -5,6 +5,11 @@ CHANGELOG
 2.102.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Breaking changes**
+
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed.
+
+
 **New features**
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
