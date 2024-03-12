@@ -327,6 +327,116 @@ for Ubuntu 20.04, or
 for Ubuntu bionic
 
 
+Update PostgreSQL / PotGIS on Ubuntu Bionic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning::
+
+    Ubuntu Bionic is already deprecated. We recommend you to install PostgreSQL on a dedicated server, with a most recent version of Ubuntu.
+    If possible, on se same host or datacenter than you Geotrek-admin instance.
+    If you can't, you can follow these instructions to upgrade PostgreSQL and PostGIS on Ubuntu Bionic with official PostgreSQL APT archive repository.
+    The ultimate version published for Bionic is PostgreSQL 14, supported until November 12, 2026.
+
+::
+
+    sudo rm /etc/apt/sources.list.d/pgdg.list
+    sudo apt install curl ca-certificates
+    sudo install -d /usr/share/postgresql-common/pgdg
+    sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt-archive.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    sudo apt update
+
+
+Then, make a database dump.
+
+::
+
+    sudo -u postgres pg_dump -Fc --no-acl --no-owner -U <your geotrek database user> -d <your geotrek database name> > /path/to/your/backup.dump
+
+
+Now, install newest version of PostgreSQL and PostGIS:
+
+::
+
+    sudo apt install postgresql-14-postgis-3
+
+
+Recreate user and database:
+
+
+::
+
+    sudo -u postgres psql -p 5433
+
+
+.. note::
+
+    Installing many PostgreSQL versions on same system will use another port than default 5432.
+    You can check the newest port with ``pg_lsclusters`` command.
+
+::
+
+    CREATE ROLE <your geotrek user> WITH ENCRYPTED PASSWORD '<your geotrek user password>';
+    CREATE DATABASE <your geotrek database> WITH OWNER <your geotrek user>;
+    \c <your geotrek database>
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION postgis_raster;
+    CREATE EXTENSION pgcrypto;
+    \q
+
+::
+
+    sudo -u postgres -p 5433 pg_restore -d <your geotrek database> /path/to/your/backup.dump
+
+
+.. warning::
+
+    If you have configured `pg_hba.conf` or tuning your `postgresql.conf`,
+    you should report configuration from /etc/postgresql/10/{pg_hba.conf | postgresql.conf} to /etc/postgresql/14/{pg_hba.conf | postgresql.conf}.
+    Then restart your postgresql
+
+    ::
+
+        sudo systemctl restart postgresql
+
+
+Now, you can update your Geotrek-admin configuration to use the new PostgreSQL server, by changing its default port to the new one.
+
+
+::
+
+    sudo dpkg-reconfigure geotrek-admin
+
+
+And change POSTGRES_PORT to 5433 (or other port found in `pg_lsclusters` command)
+
+
+You can now upgrade you Geotrek-admin, and check that the right database is used.
+
+.. note::
+
+    If you want to use default 5432 port, you should change it in `postgresql.conf`,
+    restart postgresql service, and change it by reconfiguring Geotrek-admin.
+
+::
+
+        sudo geotrek check_versions --postgresql
+
+
+If it show PostgreSQL 14, you can remove the old PostgreSQL version.
+
+
+::
+
+    sudo apt remove --purge postgresql-10
+    sudo apt autoremove
+
+
+From Geotrek-admin <= 2.69.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 Uninstallation
 --------------
 
