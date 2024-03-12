@@ -25,28 +25,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: ./.github/actions/python-cache-requirements
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.wheel_dir
-
-          key: pip-cache-${{ matrix.python-version }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-          restore-keys: |
-            pip-cache-${{ matrix.python-version }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-            pip-cache-${{ matrix.python-version }}-
+          requirements: dev-requirements.txt
 
       - name: Install dependencies
         run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir -r requirements.txt
-          pip3 wheel --wheel-dir=~/.wheel_dir -r dev-requirements.txt
-          pip3 wheel --wheel-dir=~/.wheel_dir -r docs/requirements.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
+          pip3 install -c dev-requirements.txt pip-tools
 
       - name: Check dependency graph
         run: |
