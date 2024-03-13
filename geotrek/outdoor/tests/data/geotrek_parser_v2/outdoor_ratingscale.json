@@ -1,0 +1,55 @@
+{
+    "count": 6,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": {
+                "en": "Class",
+                "fr": "Classe"
+            },
+            "practice": 2
+        },
+        {
+            "id": 2,
+            "name": {
+                "en": null,
+                "fr": "Caractère vertical"
+            },
+            "practice": 6
+        },
+        {
+            "id": 3,
+            "name": {
+                "en": null,
+                "fr": "Caractère aquatique"
+            },
+            "practice": 6
+        },
+        {
+            "id": 4,
+            "name": {
+                "en": null,
+                "fr": "Engagement / envergure"
+            },
+            "practice": 6
+        },
+        {
+            "id": 5,
+            "name": {
+                "en": null,
+                "fr": "Niveau"
+            },
+            "practice": 4
+        },
+        {
+            "id": 6,
+            "name": {
+                "en": null,
+                "fr": "Cotation"
+            },
+            "practice": 1
+        }
+    ]
+}
