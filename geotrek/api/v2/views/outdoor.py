@@ -75,7 +75,7 @@ class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
 class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
         api_filters.GeotrekRatingFilter,
-        api_filters.SitesAndCourseRelatedPortalFilter,
+        api_filters.SiteRelatedPortalFilter,
     )
     serializer_class = api_serializers.OutdoorRatingSerializer
     queryset = outdoor_models.Rating.objects \
