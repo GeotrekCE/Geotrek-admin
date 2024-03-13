@@ -34,6 +34,9 @@ CHANGELOG
 
 - Add missing translation in intervention form (refs #3825)
 
+**Maintenance**
+
+- Upgrade django-mapentity to 8.7.1
 
 2.102.1 (2024-02-20)
 --------------------
