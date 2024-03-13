@@ -10,7 +10,7 @@ from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, Reservatio
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    from .feedback import (ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet,
+    from .feedback import (ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet,  # noqa
                            ReportProblemMagnitudeViewSet, ReportViewSet)  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from .trekking import (TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet,  # noqa
