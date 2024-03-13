@@ -28,7 +28,7 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
         if self.action == 'list':
             return api_serializers.FlatPageListSerializer
         if self.action == 'retrieve':
-            return api_serializers.FlatPageRetrieveSerializer
+            return api_serializers.FlatPageListSerializer
 
 
 class MenuItemRetrieveView(RetrieveAPIView):

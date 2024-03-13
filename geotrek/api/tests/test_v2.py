@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 
-from geotrek.flatpages.models import MenuItem
+from geotrek.flatpages.models import MenuItem, FlatPage
 from mapentity.tests.factories import SuperUserFactory
 from rest_framework.test import APITestCase
 
@@ -2936,6 +2936,26 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(len(parent_page_repr["children"]), 1)
         self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
 
+    def test_list_includes_children_pages_in_order(self):
+        # Convenient lambda to get nodes from DB after each tree operation,
+        # this is mandatory. See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+        def get(pk):
+            return FlatPage.objects.get(pk=pk)
+
+        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+        parent_id = published_page_factory().id
+        children_ids = [published_page_factory().id for _ in range(3)]
+        get(children_ids[0]).move(get(parent_id), pos="last-child")
+        get(children_ids[1]).move(get(parent_id), pos="first-child")
+        get(children_ids[2]).move(get(children_ids[0]), pos="left")
+
+        response = self.client.get('/api/v2/flatpage/')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent_id]
+        self.assertEqual(parent_page_repr["children"], [children_ids[1], children_ids[2], children_ids[0]])
+
     def test_list_filters_parent_prop_when_parent_has_no_portal(self):
         portal = common_factory.TargetPortalFactory()
         page_factory = flatpages_factory.FlatPageFactory
@@ -2990,7 +3010,50 @@ class FlatPageTestCase(TestCase):
             'published': {'en': True, 'es': False, 'fr': False, 'it': False},
             'source': [self.source.pk],
             'attachments': [],
+            'parent': None,
+            'children': [],
         })
+
+    def test_detail_includes_filtered_children_pages(self):
+        # TODO: use subtest to factorize with the same test on the list endpoint
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal1])
+        # Those 3 children pages should not be visible
+        page_factory(published_en=True, published_fr=False, portals=[portal1]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=[portal2]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=None).move(parent_page, pos="last-child")
+        # Visible child page
+        visible_child_page = page_factory(published_en=True, published_fr=True, portals=[portal1])
+        visible_child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/{parent_page.id}/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        parent_page_repr = response.json()
+        self.assertEqual(len(parent_page_repr["children"]), 1)
+        self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
+
+    def test_detail_includes_children_pages_in_order(self):
+        # TODO: use subtest to factorize with the same test on the list endpoint
+        # Convenient lambda to get nodes from DB after each tree operation,
+        # this is mandatory. See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+        def get(pk):
+            return FlatPage.objects.get(pk=pk)
+
+        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+        parent_id = published_page_factory().id
+        children_ids = [published_page_factory().id for _ in range(3)]
+        get(children_ids[0]).move(get(parent_id), pos="last-child")
+        get(children_ids[1]).move(get(parent_id), pos="first-child")
+        get(children_ids[2]).move(get(children_ids[0]), pos="left")
+
+        response = self.client.get(f'/api/v2/flatpage/{parent_id}/')
+
+        self.assertEqual(response.status_code, 200)
+        parent_page_repr = response.json()
+        self.assertEqual(parent_page_repr["children"], [children_ids[1], children_ids[2], children_ids[0]])
 
     def test_filter_q(self):
         response = self.client.get('/api/v2/flatpage/', {'q': 'BB'})
