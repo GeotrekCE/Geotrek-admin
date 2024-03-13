@@ -3,8 +3,8 @@ import logging
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from geotrek.feedback.helpers import SuricateStandardRequestManager, SuricateGestionRequestManager
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.feedback.helpers import test_suricate_connection
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class Command(BaseCommand):
             report = options["report"]
             no_notification = options["no_notif"]
             if options['test']:
-                test_suricate_connection()
+                self.test_suricate_connection()
             elif report is not None:
                 parser.get_alert(verbosity, report)
             else:
@@ -69,3 +69,9 @@ class Command(BaseCommand):
                     parser.get_alerts(verbosity=verbosity, should_notify=not (no_notification))
         else:
             logger.error("To use this command, please activate setting SURICATE_WORKFLOW_ENABLED.")
+
+    def test_suricate_connection(self):
+        self.stdout.write("API Standard :")
+        SuricateStandardRequestManager().test_suricate_connection()
+        self.stdout.write("API Gestion :")
+        SuricateGestionRequestManager().test_suricate_connection()

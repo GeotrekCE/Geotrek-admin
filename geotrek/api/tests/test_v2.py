@@ -1,6 +1,6 @@
 import datetime
 import json
-from unittest import skipIf
+from unittest import skipIf, mock
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -15,7 +15,8 @@ from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 from mapentity.tests.factories import SuperUserFactory
-from rest_framework.test import APITestCase
+from paperclip.models import random_suffix_regexp
+from rest_framework.test import APITestCase, APIClient
 
 from geotrek import __version__
 from geotrek.api.v2.views.trekking import TrekViewSet
@@ -25,10 +26,11 @@ from geotrek.common import models as common_models
 from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
-                                           get_dummy_uploaded_image)
+                                           get_dummy_uploaded_image, get_dummy_uploaded_image_svg)
 from geotrek.core import models as path_models
 from geotrek.core.tests import factories as core_factory
-from geotrek.feedback.tests import factories as feedback_factory
+from geotrek.feedback import models as feedback_models
+from geotrek.feedback.tests import factories as feedback_factory, factories as feedback_factories
 from geotrek.flatpages.tests import factories as flatpages_factory
 from geotrek.infrastructure import models as infrastructure_models
 from geotrek.infrastructure.tests import factories as infrastructure_factory
@@ -4702,3 +4704,66 @@ class GenericCacheTestCase(APITestCase):
             response = self.client.get(reverse('apiv2:practice-detail', args=(self.practice.pk,)))
         data = response.json()
         self.assertTrue(data['pictogram'].startswith('http://'))
+
+
+class CreateReportsAPITest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.add_url = '/api/en/reports/report'
+        cls.data = {
+            'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
+            'email': 'yeah@you.com',
+            'activity': feedback_factories.ReportActivityFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk
+        }
+
+    def post_report_data(self, data):
+        client = APIClient()
+        response = client.post(self.add_url, data=data,
+                               allow_redirects=False)
+        self.assertEqual(response.status_code, 201, self.add_url)
+        return response
+
+    def test_reports_can_be_created_using_post(self):
+        self.post_report_data(self.data)
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get()
+        self.assertAlmostEqual(report.geom.x, 700000)
+        self.assertAlmostEqual(report.geom.y, 6600000)
+
+    def test_reports_can_be_created_without_geom(self):
+        self.data.pop('geom')
+        self.post_report_data(self.data)
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+
+    def test_reports_with_file(self):
+        self.data['image'] = get_dummy_uploaded_image()
+        self.post_report_data(self.data)
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get()
+        self.assertEqual(report.attachments.count(), 1)
+        regexp = f"dummy_img{random_suffix_regexp()}.jpeg"
+        self.assertRegex(report.attachments.first().attachment_file.name, regexp)
+        self.assertTrue(report.attachments.first().is_image)
+
+    @mock.patch('geotrek.api.v2.views.feedback.logger')
+    def test_reports_with_failed_image(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_image_svg()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>")
+        self.assertEqual(report.attachments.count(), 0)
+
+    @mock.patch('geotrek.api.v2.views.feedback.logger')
+    def test_reports_with_bad_file_format(self, mock_logger):
+        self.data['image'] = get_dummy_uploaded_document()
+        self.data['comment'] = "We have a problem"
+        new_report_id = self.post_report_data(self.data).data.get('id')
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get(pk=new_report_id)
+        self.assertEqual(report.comment, "We have a problem")
+        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id} : {{\'attachment_file\': ['File mime type “text/plain” is not allowed for “odt”.']}}")
+        self.assertEqual(report.attachments.count(), 0)
