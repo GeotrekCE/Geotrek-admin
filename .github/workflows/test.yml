@@ -185,7 +185,7 @@ jobs:
             cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
         - name: Archive package artifact
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: debian-18-04
             path: |
@@ -207,7 +207,7 @@ jobs:
           cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
       - name: Archive package artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: debian-20-04
           path: |
@@ -281,7 +281,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-docker
           path: |
@@ -363,7 +363,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-20.04
           path: |
