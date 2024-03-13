@@ -692,9 +692,6 @@ msgstr ""
 msgid "Add a new service"
 msgstr ""
 
-msgid "Sync"
-msgstr ""
-
 msgid "Add Web link"
 msgstr ""
 
