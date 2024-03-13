@@ -15,7 +15,7 @@ from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.flatpages.models import MenuItem
+from geotrek.flatpages.models import MenuItem, FlatPage
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
@@ -1252,6 +1252,13 @@ class MenuItemFilter(BaseFilterBackend):
 
 class FlatPageFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
+        parent_id = request.GET.get('parent')
+        if parent_id:
+            try:
+                parent_page = FlatPage.objects.get(pk=parent_id)
+            except FlatPage.DoesNotExist:
+                return queryset.none()
+            queryset = parent_page.get_children()
         targets = request.GET.get('targets')
         if targets:
             queryset = queryset.filter(target__in=targets.split(','))
