@@ -209,7 +209,7 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
-        qs = FlatPage.objects.filter(target__in=['mobile', 'all'], published=True).order_by('order')
+        qs = FlatPage.objects.filter(menu_items__platform__in=['mobile', 'all'], published=True)
         if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+            qs = qs.filter(Q(portals__name=self.request.GET['portal']) | Q(portals=None))
         return qs

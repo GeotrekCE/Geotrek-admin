@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.test.testcases import TestCase
 from django.utils import translation
 
-from geotrek.flatpages.tests.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
 from geotrek.flatpages.models import FlatPage
 
 FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -15,7 +15,9 @@ class FlatPageTest(TestCase):
     def setUpTestData(cls):
         translation.activate('fr')
         cls.flatpage = FlatPageFactory.create(published_fr=True)
-        FlatPageFactory.create(published_fr=True)
+        cls.menu_item = MenuItemFactory.create(page=cls.flatpage)
+        flatpage2 = FlatPageFactory.create(published_fr=True)
+        MenuItemFactory.create(page=flatpage2)
 
     def get_flatpage_list(self, params=None):
         return self.client.get(reverse('apimobile:flatpage-list'), params, HTTP_ACCEPT_LANGUAGE='fr')

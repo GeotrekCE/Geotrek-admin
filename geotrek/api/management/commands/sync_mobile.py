@@ -69,11 +69,15 @@ class Command(BaseCommand):
             if hasattr(response, 'render'):
                 response.render()
         except Exception as e:
+            # raise e
             self.successfull = False
             if self.verbosity == 2:
                 self.stdout.write("\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
             return
         if response.status_code != 200:
+            # print(response.status_code)
+            # print(url, params, headers)
+            # print(response.content)
             self.successfull = False
             if self.verbosity == 2:
                 self.stdout.write("\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
@@ -237,10 +241,10 @@ class Command(BaseCommand):
                 self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
-        flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
+        flatpages = FlatPage.objects.order_by('pk').filter(menu_items__platform__in=['mobile', 'all']).filter(
             **{build_localized_fieldname('published', lang): True})
         if self.portal:
-            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            flatpages = flatpages.filter(Q(portals__name__in=self.portal) | Q(portals=None))
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
         for flatpage in flatpages:
