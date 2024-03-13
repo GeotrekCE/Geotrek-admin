@@ -1392,11 +1392,13 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
-    class FlatPageRetrieveSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         title = serializers.SerializerMethodField()
         content = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
+        children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
 
         class Meta:
             model = flatpages_models.FlatPage
@@ -1408,6 +1410,8 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 'portals',
                 'published',
                 'attachments',
+                'children',
+                'parent',
             )
 
         def get_title(self, obj):
@@ -1418,17 +1422,6 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
-
-    class FlatPageListSerializer(FlatPageRetrieveSerializer):
-
-        children = serializers.SerializerMethodField()
-        parent = serializers.SerializerMethodField()
-
-        class Meta(FlatPageRetrieveSerializer.Meta):
-            fields = FlatPageRetrieveSerializer.Meta.fields + (
-                'children',
-                'parent',
-            )
 
         def get_children(self, obj):
             children = obj.get_children()
@@ -1442,28 +1435,6 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 children = children.filter(portals__in=portals.split(","))
 
             return children.values_list('id', flat=True).all()
-
-        def _is_published(self, instance, language=None):
-            model = flatpages_models.FlatPage
-            associated_published_fields = [f.name for f in model._meta.get_fields() if f.name.startswith('published')]
-            if len(associated_published_fields) == 1:
-                # The model's published field is not translated
-                return instance.published
-            elif len(associated_published_fields) > 1:
-                # The published field is translated
-                if not language or language == 'all':
-                    # no language specified. Check for all.
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        field_name = build_localized_fieldname('published', lang)
-                        if getattr(instance, field_name):
-                            break
-                    else:
-                        return False
-                    return True
-                else:
-                    # one language is specified
-                    field_name = build_localized_fieldname('published', language)
-                    return getattr(instance, field_name)
 
         def get_parent(self, obj):
             parent = obj.get_parent()
@@ -1486,6 +1457,28 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                     return None
 
             return parent.id
+
+        def _is_published(self, instance, language=None):
+            model = flatpages_models.FlatPage
+            associated_published_fields = [f.name for f in model._meta.get_fields() if f.name.startswith('published')]
+            if len(associated_published_fields) == 1:
+                # The model's published field is not translated
+                return instance.published
+            elif len(associated_published_fields) > 1:
+                # The published field is translated
+                if not language or language == 'all':
+                    # no language specified. Check for all.
+                    for lang in settings.MODELTRANSLATION_LANGUAGES:
+                        field_name = build_localized_fieldname('published', lang)
+                        if getattr(instance, field_name):
+                            break
+                    else:
+                        return False
+                    return True
+                else:
+                    # one language is specified
+                    field_name = build_localized_fieldname('published', language)
+                    return getattr(instance, field_name)
 
     class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()

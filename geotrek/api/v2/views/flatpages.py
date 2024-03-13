@@ -19,16 +19,10 @@ class FlatPageViewSet(api_viewsets.GeotrekViewSet):
         api_filters.FlatPageFilter,
         api_filters.UpdateOrCreateDateFilter
     )
-    # serializer_class = api_serializers.FlatPageDetailsSerializer
+    serializer_class = api_serializers.FlatPageSerializer
     queryset = flatpages_models.FlatPage.objects.order_by('pk') \
         .prefetch_related(Prefetch('attachments',
                                    queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')))  # Required for reliable pagination
-
-    def get_serializer_class(self):
-        if self.action == 'list':
-            return api_serializers.FlatPageListSerializer
-        if self.action == 'retrieve':
-            return api_serializers.FlatPageListSerializer
 
 
 class MenuItemRetrieveView(RetrieveAPIView):
