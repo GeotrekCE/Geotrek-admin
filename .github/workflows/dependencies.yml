@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up Python
-      - uses: ./.github/actions/python-cache-requirements
+        uses: ./.github/actions/python-cache-requirements
         with:
           requirements: dev-requirements.txt
 
