@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-03-13 14:02+0100\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -731,9 +731,6 @@ msgstr "Ajouter un POI"
 
 msgid "Add a new service"
 msgstr "Ajouter un service"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

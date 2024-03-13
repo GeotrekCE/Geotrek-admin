@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-03-13 14:02+0100\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -690,9 +690,6 @@ msgid "Add a new poi"
 msgstr ""
 
 msgid "Add a new service"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 msgid "Add Web link"

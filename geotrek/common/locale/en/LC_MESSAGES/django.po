@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-03-13 14:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,9 +75,6 @@ msgstr ""
 msgid "Data to import from local file"
 msgstr ""
 
-msgid "Launch Sync"
-msgstr ""
-
 msgid "Overview of the tricky passage"
 msgstr ""
 
@@ -100,21 +97,6 @@ msgid "The uploaded file is not tall enough"
 msgstr ""
 
 msgid "Save changes"
-msgstr ""
-
-msgid "Global tiles syncing ..."
-msgstr ""
-
-msgid "Trek tiles syncing ..."
-msgstr ""
-
-msgid "Tiles synced ..."
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "Sync ended"
 msgstr ""
 
 msgid "Geotrek Rando"
@@ -485,9 +467,6 @@ msgstr ""
 msgid "Import from web."
 msgstr ""
 
-msgid "Init sync ..."
-msgstr ""
-
 msgid "Photos to illustrate information related to the accessibility of treks."
 msgstr ""
 
@@ -663,27 +642,6 @@ msgstr ""
 
 #, python-format
 msgid "%(obj)s has changed state, it needs a review to be published. "
-msgstr ""
-
-msgid "Sync verifications"
-msgstr ""
-
-msgid "Sync in progress"
-msgstr ""
-
-msgid "An error occured"
-msgstr ""
-
-msgid "Public web site sync"
-msgstr ""
-
-msgid "Confirmation"
-msgstr ""
-
-msgid "Are you sure you want to sync ?"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 #, python-format
