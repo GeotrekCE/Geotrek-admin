@@ -218,7 +218,7 @@ large-image-source-vips==1.17.2
     # via geotrek (setup.py)
 lxml==4.9.3
     # via mapentity
-mapentity==8.7.1
+mapentity==8.7.0
     # via geotrek (setup.py)
 markdown==3.4.4
     # via geotrek (setup.py)
