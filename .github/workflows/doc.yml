@@ -44,7 +44,7 @@ jobs:
         id: verify-changed-files
         with:
           files: |
-             docs/*.po
+             **/*.po
 
       - name: Check no translation file has changed
         if: steps.verify-changed-files.outputs.files_changed == 'true'
