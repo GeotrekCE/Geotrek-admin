@@ -251,9 +251,16 @@ class FlatPageTest(TestCase):
 
     def test_flatpage_list_returns_ordered_pages(self):
         FlatPage.objects.update(published_fr=False)
-        page1 = _create_flatpage_and_menuitem(published_fr=True, order=2)
-        page2 = _create_flatpage_and_menuitem(published_fr=True, order=3)
-        page3 = _create_flatpage_and_menuitem(published_fr=True, order=1)
+
+        # I cannot use the _create_flatpage_and_menuitem for this test because it is
+        # the order of creation of MenuItems which defines their position/order,
+        # and I also want to diffentiate the order of MenuItems from the order by FlatPages pk.
+        page1 = FlatPageFactory(published_fr=True)
+        page2 = FlatPageFactory(published_fr=True)
+        page3 = FlatPageFactory(published_fr=True)
+        MenuItemFactory(published_fr=True, page=page3)
+        MenuItemFactory(published_fr=True, page=page1)
+        MenuItemFactory(published_fr=True, page=page2)
 
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
