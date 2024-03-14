@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.102.2+dev (XXXX-XX-XX)
+2.103.0 (2024-03-14)
 ------------------------
 
 **Bug fixes**
@@ -12,6 +12,9 @@ CHANGELOG
 
 2.102.2 (2024-03-13)
 --------------------
+
+**WARNING!**
+Do not use - Causes bug in Geotrek-Rando-v3 exposing Outdoor data
 
 **New features**
 
