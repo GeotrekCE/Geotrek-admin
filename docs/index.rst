@@ -26,13 +26,13 @@ Welcome to Geotrek's documentation!
     :maxdepth: 2
 
     install/installation
+    install/upgrade
     install/loading-data
     install/configuration
     install/advanced-configuration
     install/maintenance
     install/synchronization
     install/import
-    install/docker
 
 .. toctree::
     :caption: ✨ Contribute
