@@ -115,3 +115,6 @@ texinfo_documents = [
      'Makina Corpus', 'Geotrek-admin', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+locale_dirs = ['locale']   # path is example but recommended.
+gettext_compact = False     # optional.

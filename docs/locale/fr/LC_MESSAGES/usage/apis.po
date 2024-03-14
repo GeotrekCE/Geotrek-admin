@@ -1,0 +1,284 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2024, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: ../../usage/apis.rst:3
+msgid "APIs"
+msgstr ""
+
+#: ../../usage/apis.rst:12
+msgid "API Geotrek"
+msgstr ""
+
+#: ../../usage/apis.rst:14
+msgid ""
+"Geotrek dispose d’une API (Application Programming Interface) qui sert à "
+"exposer les données stockées dans une instance de Geotrek-admin, dans le "
+"but de pouvoir la faire communiquer avec d'autres outils, systèmes et "
+"plateforme et ainsi échanger des données."
+msgstr ""
+
+#: ../../usage/apis.rst:16
+msgid ""
+"Cette API, désormais dans sa version 2 permet à toute structure tierce de"
+" récupérer des données et de les intégrer dans son système ou ses "
+"applications."
+msgstr ""
+
+#: ../../usage/apis.rst:18
+msgid ""
+"À ce jour de nombreux partenaires des structures utilisatrices de "
+"l’application Geotrek ont déjà utilisé cette API pour intégrer les "
+"données dans leurs outils."
+msgstr ""
+
+#: ../../usage/apis.rst:20
+msgid ""
+"L'API Geotrek est le point central pour permettre les interconnexions "
+"avec divers services. Grâce à cette interface de données, Geotrek s'est "
+"positionné comme un point central dans un écosystème de solutions du "
+"monde de la gestion et promotion des activités de pleine nature."
+msgstr ""
+
+#: ../../usage/apis.rst:22
+msgid ""
+"Pour changer les paramètres d'accès de l'API, référez vous à cette "
+"section :ref:`API <api>`"
+msgstr ""
+
+#: ../../usage/apis.rst:25
+msgid "APIs externes"
+msgstr ""
+
+#: ../../usage/apis.rst:28
+msgid "Geotrek et IGNrando'"
+msgstr ""
+
+#: ../../usage/apis.rst:30
+msgid ""
+"Geotrek-admin est capable de produire un flux des itinéraires et POIs "
+"présents dans sa BDD au format Cirkwi pour pouvoir les importer "
+"directement dans IGNrando' (https://makina-corpus.com/sig-webmapping"
+"/geotrek-et-lign-ca-fonctionne)."
+msgstr ""
+
+#: ../../usage/apis.rst:32
+msgid ""
+"Exemple des randonnées et POIs du Parc national des Ecrins publiées sur "
+"IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-"
+"national-des-ecrins"
+msgstr ""
+
+#: ../../usage/apis.rst:34
+msgid ""
+"Depuis cette version, 2 flux sont automatiquement générés par Geotrek-"
+"admin au format attendu par l'IGN :"
+msgstr ""
+
+#: ../../usage/apis.rst:36
+msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml"
+msgstr ""
+
+#: ../../usage/apis.rst:37
+msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml"
+msgstr ""
+
+#: ../../usage/apis.rst:39
+msgid ""
+"Il est possible d'exclure les POI du flux pour ne diffuser que les "
+"randonnées. Pour cela, ajouter le paramètre ``?withoutpois=1`` à la fin "
+"de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``)."
+msgstr ""
+
+#: ../../usage/apis.rst:41
+msgid ""
+"Il est possible de filtrer les POI du flux par structure. Pour cela, "
+"ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` à la "
+"fin de l'URL (``http://XXXXX/api/cirkwi/pois.xml?structures=2``). Vous "
+"pouvez filtrer avec plusieurs structures : en séparant les identifiants "
+"par des virgules (``http://XXXXX/api/cirkwi/pois.xml?structures=2,5,3``)."
+msgstr ""
+
+#: ../../usage/apis.rst:44
+msgid ""
+"Il est également possible de filtrer les randonnées du flux par structure"
+" et par portail. Pour cela, ajouter le paramètre "
+"``?structures=<identifiant_de_la_structure>`` ou "
+"``?portals=<identifian_de_la_structure>`` à la fin de l'URL "
+"(``http://XXXXX/api/cirkwi/circuits.xml?portals=3``)."
+msgstr ""
+
+#: ../../usage/apis.rst:47 ../../usage/apis.rst:52
+msgid ""
+"Il est également possible d'exclure du flux les randonnées provenant de "
+"sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour"
+" ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour "
+"cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL"
+" (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``)."
+msgstr ""
+
+#: ../../usage/apis.rst:50 ../../usage/apis.rst:54
+msgid ""
+"Il est possible de cumuler ces différents filtres, en séparant les "
+"valeurs par un ``&`` "
+"(``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``)."
+msgstr ""
+
+#: ../../usage/apis.rst:56
+msgid ""
+"Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le "
+"module de configuration (à ne pas modifier) :"
+msgstr ""
+
+#: ../../usage/apis.rst:62
+msgid "Ensemble des champs paramétrables pour le référentiel CIRKWI"
+msgstr ""
+
+#: ../../usage/apis.rst:64
+msgid ""
+"Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez "
+"vos propres typologies, il faut que vous renseigniez les correspondances "
+"entre les catégories de votre Geotrek et celles du référentiel IGN "
+"(Cirkwi) dans le module de configuration. Comme indiqué ici : "
+"https://github.com/GeotrekCE/Geotrek-admin/issues/806."
+msgstr ""
+
+#: ../../usage/apis.rst:66
+msgid "Pratique >> locomotion/loisirs"
+msgstr ""
+
+#: ../../usage/apis.rst:67
+msgid "Accessibilite >> thematiques/tags"
+msgstr ""
+
+#: ../../usage/apis.rst:68
+msgid "Themes >> thematiques/tags"
+msgstr ""
+
+#: ../../usage/apis.rst:69
+msgid "Types de POI >> Categories POI"
+msgstr ""
+
+#: ../../usage/apis.rst:71
+msgid ""
+"Les correspondances avec les valeurs de ces 3 tables sont donc à "
+"renseigner dans les tables Geotrek des Pratiques, Accessibilités, Thèmes "
+"et Types de POI."
+msgstr ""
+
+#: ../../usage/apis.rst:73
+msgid ""
+"Ce même flux est aussi utilisable pour alimenter directement la "
+"plateforme Cirkwi : https://pro.cirkwi.com/importez-vos-donnees-geotrek-"
+"dans-cirkwi/."
+msgstr ""
+
+#: ../../usage/apis.rst
+msgid "Note"
+msgstr ""
+
+#: ../../usage/apis.rst:77
+msgid ""
+"Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux "
+"contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``"
+msgstr ""
+
+#: ../../usage/apis.rst:80
+msgid "Geotrek et APIDAE"
+msgstr ""
+
+#: ../../usage/apis.rst:82
+msgid ""
+"Il existe plusieurs passerelles entre la plateforme d'informations "
+"touristiques APIDAE et Geotrek."
+msgstr ""
+
+#: ../../usage/apis.rst:85
+msgid "APIDAE vers Geotrek"
+msgstr ""
+
+#: ../../usage/apis.rst:87
+msgid ""
+"Actuellement, certains contenus touristiques peuvent être synchronisés "
+"automatiquement avec une base APIDAE. Il s'agit des contenus situés dans "
+"les catégories suivantes :"
+msgstr ""
+
+#: ../../usage/apis.rst:89
+msgid ""
+"Contenus touristiques (hébergements, restaurants, produits du territoire,"
+" lieux de visites...)"
+msgstr ""
+
+#: ../../usage/apis.rst:90
+msgid "Evénements touristiques (expositions, conférences, sorties...)"
+msgstr ""
+
+#: ../../usage/apis.rst:92
+msgid ""
+"Les contenus touristiques peuvent aussi être synchronisés depuis des flux"
+" Tourinsoft ou Esprit Parc National."
+msgstr ""
+
+#: ../../usage/apis.rst:94
+msgid ""
+"Il est également possible de mettre en place des passerelles pour "
+"importer des POIs, des lieux de renseignement, des aménagements ainsi que"
+" des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir "
+"le lien avec les contenus touristiques pour avoir par exemple d'autres "
+"catégories."
+msgstr ""
+
+#: ../../usage/apis.rst:96
+msgid ""
+"Pour configurer APIDAE, se référer à cette section :ref:`Configure APIDAE"
+" (ex-SITRA) import <configure-apidae-ex-sitra-import>`"
+msgstr ""
+
+#: ../../usage/apis.rst:99
+msgid "Geotrek vers APIDAE"
+msgstr ""
+
+#: ../../usage/apis.rst:101
+msgid ""
+"Il existe aussi un lien dans l'autre sens, permettant d'importer "
+"automatiquement vers APIDAE les itinéraires existants dans une instance "
+"Geotrek."
+msgstr ""
+
+#: ../../usage/apis.rst:103
+msgid ""
+"L'API permet de connecter une instance Geotrek pour importer des "
+"itinéraires vers les objets de type \"Équipements\" dans APIDAE."
+msgstr ""
+
+#: ../../usage/apis.rst:105
+msgid ""
+"Les randonnées VTT, trail, vélo et les tours itinérants sont également "
+"intégrés dans la passerelle."
+msgstr ""
+
+#: ../../usage/apis.rst:107
+msgid ""
+"Pour plus d'information, se référer à la documentation en ligne de "
+"`Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-"
+"api>`_."
+msgstr ""
+
