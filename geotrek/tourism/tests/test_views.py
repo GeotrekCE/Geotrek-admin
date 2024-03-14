@@ -117,8 +117,10 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         self.assertContains(response, 'Tourism')
 
     @override_settings(TOURISM_ENABLED=False)
-    def test_not_shown_in_details_when_disabled(self):
-        url = "/touristiccontent/%s/" % self.content.pk
+    def test_not_tourism_detail_fragment_displayed(self):
+        """Test in other module, if tourism_detail_fragment.html is not displayed."""
+        trek = trekking_factories.TrekFactory.create()
+        url = "/trek/%s/" % trek.pk
         response = self.client.get(url)
         self.assertNotContains(response, 'Tourism')
 
