@@ -6,11 +6,11 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek \n"
+"Project-Id-Version:  Geotrek\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2024-03-14 15:11+0100\n"
+"PO-Revision-Date: 2024-03-14 14:40+0100\n"
+"Last-Translator: Jean-Etienne Castagnede <jecastagnede@vivaldi.net>\n"
 "Language: fr\n"
 "Language-Team: fr <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -21,27 +21,27 @@ msgstr ""
 
 #: ../../install/maintenance.rst:3
 msgid "Maintenance"
-msgstr ""
+msgstr "Maintenance"
 
 #: ../../install/maintenance.rst:10
-msgid "Application backup"
-msgstr ""
+msgid "Backup"
+msgstr "Sauvegarde"
 
 #: ../../install/maintenance.rst:12
 msgid "Database"
-msgstr ""
+msgstr "Base de donnée"
 
 #: ../../install/maintenance.rst:18
 msgid "Media files"
-msgstr ""
+msgstr "Fichiers contribués"
 
 #: ../../install/maintenance.rst:24
 msgid "Configuration"
-msgstr ""
+msgstr "Configuration"
 
 #: ../../install/maintenance.rst:32
-msgid "Application restore"
-msgstr ""
+msgid "Restore"
+msgstr "Restauration"
 
 #: ../../install/maintenance.rst:34
 msgid ""
@@ -51,8 +51,8 @@ msgid ""
 msgstr ""
 
 #: ../../install/maintenance.rst:37
-msgid "Example for Ubuntu 18:"
-msgstr ""
+msgid "Example for Ubuntu:"
+msgstr "Exemple pour Ubuntu :"
 
 #: ../../install/maintenance.rst:45
 msgid "Create an empty database (``geotrekdb`` in this example):"
@@ -60,7 +60,7 @@ msgstr ""
 
 #: ../../install/maintenance.rst:55
 msgid "Restore backup:"
-msgstr ""
+msgstr "Restaurer la sauvegarde :"
 
 #: ../../install/maintenance.rst:61
 msgid ""
@@ -70,7 +70,7 @@ msgstr ""
 
 #: ../../install/maintenance.rst:63
 msgid "Extract media and configuration files:"
-msgstr ""
+msgstr "Extraire les fichiers contribués et la configuration :"
 
 #: ../../install/maintenance.rst:70
 msgid "Follow *Fresh installation* method. Choose to manage database by yourself."
@@ -78,7 +78,7 @@ msgstr ""
 
 #: ../../install/maintenance.rst:74
 msgid "PostgreSQL optimization"
-msgstr ""
+msgstr "Optimisation de PostgreSQL"
 
 #: ../../install/maintenance.rst:76
 msgid "Increase ``shared_buffers`` and ``work_mem`` according to your RAM"
@@ -96,63 +96,69 @@ msgid ""
 "monitoring"
 msgstr ""
 
-#: ../../install/maintenance.rst:84
-msgid "Access your database securely on your local machine (QGIS)"
+#: ../../install/maintenance.rst:82
+msgid ""
+"Use `pgtune <http://pgtune.leopard.in.ua/#/>`_ to optimize your "
+"configuration"
 msgstr ""
 
 #: ../../install/maintenance.rst:86
+msgid "Access your database securely on your local machine (QGIS)"
+msgstr ""
+
+#: ../../install/maintenance.rst:88
 msgid ""
 "Instead of opening your database to the world (by opening the 5432 port "
 "for example), you can use `SSH tunnels "
 "<http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_."
 msgstr ""
 
-#: ../../install/maintenance.rst:91
-msgid "Manage Cache"
-msgstr ""
-
 #: ../../install/maintenance.rst:93
+msgid "Manage Cache"
+msgstr "Gérer le cache"
+
+#: ../../install/maintenance.rst:95
 msgid "You can purge application cache with command or in admin interface"
 msgstr ""
 
-#: ../../install/maintenance.rst:101
-msgid "Major evolutions from version 2.33"
-msgstr ""
-
 #: ../../install/maintenance.rst:103
+msgid "Major evolutions from version 2.33"
+msgstr "Évolutions majeures depuis la 2.33"
+
+#: ../../install/maintenance.rst:105
 msgid ""
 "From version 2.33, Geotrek-admin is packaged in a debian package. This "
 "mean several things :"
 msgstr ""
 
-#: ../../install/maintenance.rst:105
-msgid "a system user ``geotrek`` is created on install ;"
-msgstr ""
-
 #: ../../install/maintenance.rst:107
+msgid "a system user ``geotrek`` is created on install ;"
+msgstr "un utilisateur système ``geotrek`` est créé à l'installation ;"
+
+#: ../../install/maintenance.rst:109
 msgid "base code is located in ``/opt/geotrek-admin`` folder ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:109
+#: ../../install/maintenance.rst:111
 msgid ""
 "``geotrek`` is the new command, replacing ``bin/django``, and must be run"
 " in root (system user ``geotrek`` is used after) ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:111
+#: ../../install/maintenance.rst:113
 msgid ""
 "there is no more ``settings.ini`` but an ``env`` file with environment "
 "variables ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:113
+#: ../../install/maintenance.rst:115
 msgid ""
 "configuration files (custom.py et env), parsers and all customisation "
 "files (templates and translations) are now located in ``/opt/geotrek-"
 "admin/var/conf`` ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:115
+#: ../../install/maintenance.rst:117
 msgid ""
 "we advise you to configure data synchronization in ``/opt/geotrek-"
 "admin/var``"
