@@ -5,6 +5,10 @@ CHANGELOG
 2.103.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Maintenance**
+
+- Bump mapentity from 8.7.0 to 8.7.1
+
 **Hot fix**
 
 - Fix fonts in public PDF (docker image only)
