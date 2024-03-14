@@ -58,7 +58,7 @@ class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
 
 class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
-        api_filters.CourseRelatedPortalFilter,
+        api_filters.CourseRelatedFilter,
     )
     serializer_class = api_serializers.CourseTypeSerializer
     queryset = outdoor_models.CourseType.objects \
@@ -75,7 +75,7 @@ class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
 class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
         api_filters.GeotrekRatingFilter,
-        api_filters.SiteRelatedPortalFilter,
+        api_filters.SitesRelatedPortalAndCourseRelatedFilter
     )
     serializer_class = api_serializers.OutdoorRatingSerializer
     queryset = outdoor_models.Rating.objects \
