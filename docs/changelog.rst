@@ -5,6 +5,11 @@ CHANGELOG
 2.102.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix bug in "portals" filter on outdoor_rating endpoint in API V2 (fix #3997)
+
+
 2.102.2 (2024-03-13)
 --------------------
 
