@@ -64,7 +64,7 @@ Model modification
    docker-compose run --rm web ./manage.py makemigrations <appName>
    docker-compose run --rm web ./manage.py migrate
 
-.. note ::
+.. note::
 
     Add migration file to source control.
 

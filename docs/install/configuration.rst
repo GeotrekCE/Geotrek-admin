@@ -40,7 +40,7 @@ Sometimes you also have to run:
 
     sudo dpkg-reconfigure -u geotrek-admin
 
-.. note ::
+.. note::
 
     Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
 
@@ -174,7 +174,7 @@ Default values::
 In order to check your configuration of spatial extents, a small tool
 is available at ``http://<server_url>/tools/extents/``.
 
-.. note ::
+.. note::
 
     Administrator privileges are required.
 

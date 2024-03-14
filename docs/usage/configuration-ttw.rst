@@ -248,11 +248,11 @@ Les utilisateurs d’une structure ne peuvent travailler que sur les objets dans
 
 Cette notion de structures permet de segmenter les périmètres d’action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin, tout en garantissant une cohérence des données.
 
-.. note ::
+.. note::
 
     Un utilisateur d’une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
 
-.. note ::
+.. note::
 
     Pour qu’un utilisateur puisse modifier les objets d’une autre structure il y a deux possibilités :
 

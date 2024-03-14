@@ -40,7 +40,7 @@ Lorsqu'un POI est créé, il est rattaché à l'itinéraire le plus proche.
 
 Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont associés.
 
-.. note ::
+.. note::
 
     Il n'existe actuellement aucun moyen de contrôler manuellement l'association entre
     randonnées et les POIs.
