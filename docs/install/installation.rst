@@ -31,7 +31,7 @@ In such a configuration the required system resources should be:
 If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
 database server level.
 
-Software requirements are :
+Software requirements are:
 
 * Ubuntu Focal Fossa 20.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
@@ -89,7 +89,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
     The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
-    The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
+    The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.x/site-packages/geotrek`` directory
 
 
 Extra steps
@@ -103,7 +103,7 @@ Here is the installation process for `ClamAV <https://www.clamav.net/>`_ :
 
    apt install clamav
 
-Prepare quarantine folder for suspicious files :
+Prepare quarantine folder for suspicious files:
 
 ::
 
@@ -111,7 +111,7 @@ Prepare quarantine folder for suspicious files :
    chmod 700 /var/lib/clamav/quarantine/
 
 
-Configure ClamAV via cron, to scan the folder once a day, put suspicious files in quarantine, and raise email alerts, by creating file ``/etc/cron.daily/clamscan`` with the following content :
+Configure ClamAV via cron, to scan the folder once a day, put suspicious files in quarantine, and raise email alerts, by creating file ``/etc/cron.daily/clamscan`` with the following content:
 
 ::
 
@@ -126,7 +126,7 @@ Configure ClamAV via cron, to scan the folder once a day, put suspicious files i
    find /var/log/clamav/ -type f -name "scan-report.*" -mtime +365 -delete
 
 
-Make sure to change alert recepient (``admin@example.com`` above) and make this cron file executable :
+Make sure to change alert recepient (``admin@example.com`` above) and make this cron file executable:
 
 ::
 
@@ -169,7 +169,7 @@ Docker
 
 Docker is an alternative installation method, recommended for experts only.
 It allows to install several instances of Geotrek-admin on the same serveur,
-and to install it on other distributions than Ubuntu Linux 18.04.
+and to install it on other distributions than Ubuntu.
 
 
 1. Install Docker and Docker Compose, either from your distribution or from upstream packages

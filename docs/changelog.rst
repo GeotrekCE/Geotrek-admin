@@ -5010,7 +5010,7 @@ In order to enable those features under construction, add ``experimental = True`
 
 :notes:
 
-    After upgrading, mark all POIs as published in the languages of your choice ::
+    After upgrading, mark all POIs as published in the languages of your choice::
 
         UPDATE o_t_poi SET public_fr = TRUE;
         UPDATE o_t_poi SET date_publication = now();
