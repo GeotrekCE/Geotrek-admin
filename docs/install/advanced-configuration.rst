@@ -72,12 +72,15 @@ Swagger API documentation
 
 In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
 
-    Enable API V2 documentation::
+    Enable API V2 documentation:
+
+.. code-block :: python
 
         INSTALLED_APPS += ('drf_yasg', )
 
+
 Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-The API swagger documentation is now availaible here : ``<GEOTREK_ADMIN_URL>/api/v2``
+The API swagger documentation is now available here : ``<GEOTREK_ADMIN_URL>/api/v2``
 
 Share services between several Geotrek instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,8 +131,8 @@ To control those values, edit and fix your ``docker-compose.yml`` file in web an
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 
 
-External authent
-~~~~~~~~~~~~~~~~
+External authentication
+~~~~~~~~~~~~~~~~~~~~~~~
 
 You can authenticate user against a remote database table or view.
 
@@ -438,7 +441,7 @@ Geographical CRUD
 
 .. envvar:: OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
 
-    Points of reference are enabled on form of otudoor courses.
+    Points of reference are enabled on form of outdoor courses.
 
     Example::
 
@@ -902,13 +905,13 @@ Attributes for "zones espèces sensibles" are:
  
 * ``espece`` : species name. Mandatory. A species with this name must have been previously created.
 * ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
+* ``description`` : description (text or HTML format). Optional.
 
 Attributes for "zones sensibles réglementaires" are:
 
 * ``name``: zone name.
 * ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
+* ``description`` : description (text or HTML format). Optional.
 * ``periode`` : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
 * ``pratiques`` : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
 * ``url`` : card url. Optional.
@@ -2773,7 +2776,7 @@ Override the translations that you want in these files.
     "MIME-Version: 1.0\n"
     "Content-Type: text/plain; charset=UTF-8\n"
     "Content-Transfer-Encoding: 8bit\n"
-    "Project-Id-Verésion: PACKAGE VERSION\n"
+    "Project-Id-Version: PACKAGE VERSION\n"
     "Plural-Forms: nplurals=2; plural=(n > 1);\n"
     "Project-Id-Version: \n"
     "X-Generator: Poedit 1.5.4\n"

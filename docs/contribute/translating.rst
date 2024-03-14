@@ -63,7 +63,7 @@ You could also choose language first
 -  Select the project to translate
 
 
-Select a coponent to translate
+Select a component to translate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Select a component (a module or a piece of documentation)
@@ -80,7 +80,7 @@ Translation features
 Weblate shows all translation by language and by module.
 Errors and left to translate can be displayed easily.
 
-Weblate can identify problematic translations as chains between projects, punctuation inconsistancy.
+Weblate can identify problematic translations as chains between projects, punctuation inconsistency.
 
 .. figure:: /images/translating/weblate-check.png
    :alt: image
