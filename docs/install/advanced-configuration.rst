@@ -72,12 +72,15 @@ Swagger API documentation
 
 In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
 
-    Enable API V2 documentation::
+    Enable API V2 documentation:
+
+.. code-block:: python
 
         INSTALLED_APPS += ('drf_yasg', )
 
+
 Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-The API swagger documentation is now availaible here : ``<GEOTREK_ADMIN_URL>/api/v2``
+The API swagger documentation is now available here : ``<GEOTREK_ADMIN_URL>/api/v2``
 
 Share services between several Geotrek instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,8 +131,8 @@ To control those values, edit and fix your ``docker-compose.yml`` file in web an
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 
 
-External authent
-~~~~~~~~~~~~~~~~
+External authentication
+~~~~~~~~~~~~~~~~~~~~~~~
 
 You can authenticate user against a remote database table or view.
 
@@ -350,7 +353,7 @@ Color of the different layers on the map :
 
 Color of the different layers on the top right for landing.
 
-.. note:: 
+.. note::
   - For land, physical, competence, signagemanagement, workmanagement should have 5 values.
   - For restricted Area: add as many color as your number of restricted area type
   - **Restart** the application for changes to take effect.
@@ -438,7 +441,7 @@ Geographical CRUD
 
 .. envvar:: OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
 
-    Points of reference are enabled on form of otudoor courses.
+    Points of reference are enabled on form of outdoor courses.
 
     Example::
 
@@ -807,7 +810,7 @@ Sensitive areas
 ~~~~~~~~~~~~~~~
 
 .. note::
-    The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas. 
+    The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas.
 
     The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
 
@@ -862,6 +865,74 @@ The following settings are related to sensitive areas:
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
 see :ref:`import-sensitive-areas` to import data.
+
+Import from https://biodiv-sports.fr
+''''''''''''''''''''''''''''''''''''''
+
+In user interface, in the top-right menu, clic on "Imports" and choose "Biodiv'Sports".
+
+On command line, run
+
+.. code-block :: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
+
+
+Import from shapefile
+'''''''''''''''''''''''
+
+In user interface, in the top-right menu, go to Imports and choose "Shapefile zone sensible espèce"
+or "Shapefile zone sensible réglementaire".
+
+.. note::
+  The file must be a zip containing all the shapefile extensions (.shp, .shx, .prj, .dbf, .cpg)
+
+.. figure:: ../images/advanced-configuration/import_shapefile.png
+   :alt: Import shapefile in user interface
+   :align: center
+
+   Import shapefile in user interface
+
+
+On command line, run:
+
+.. code-block :: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
+
+or:
+
+.. code-block :: bash
+
+    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
+
+Attributes for "zones espèces sensibles" are:
+
+* ``espece`` : species name. Mandatory. A species with this name must have been previously created.
+* ``contact`` : contact (text or HTML format). Optional.
+* ``description`` : description (text or HTML format). Optional.
+
+Attributes for "zones sensibles réglementaires" are:
+
+* ``name``: zone name.
+* ``contact`` : contact (text or HTML format). Optional.
+* ``description`` : description (text or HTML format). Optional.
+* ``periode`` : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
+* ``pratiques`` : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
+* ``url`` : card url. Optional.
+
+
+Sync to Geotrek-rando
+'''''''''''''''''''''''
+
+Just run:
+
+.. code-block :: bash
+
+    sudo geotrek sync_rando <parameters>
+
+If sensitivity module is enabled, sensitive areas will be automatically synchronized.
+
 
 Feedback reports settings
 -------------------------
@@ -1068,7 +1139,7 @@ Load alerts from Suricate (located in your bounding box) :
   - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
   - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
-.. note:: 
+.. note::
   - Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**.
   - Reports are only saved when synchronized back from Suricate, when the synchronization command is run. 
 
@@ -1254,7 +1325,7 @@ It will verify that the mimetype of the file matches the extension.
 
         PAPERCLIP_ALLOWED_EXTENSIONS = None
 
-.. note:: 
+.. note::
   These two settings will also not allow downloading images from the parsers.
 
 
@@ -2745,7 +2816,7 @@ Max characters count
 
     Example::
 
-        MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = { 
+        MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = {
            "tourism_touristicevent": [{'field': 'description_teaser_fr', 'value': 50}, {'field': 'accessibility_fr', 'value': 25}],
            "trekking_trek": [{'field': 'description_teaser_fr', 'value': 150}],
         }
@@ -2846,7 +2917,7 @@ Override the translations that you want in these files.
     "MIME-Version: 1.0\n"
     "Content-Type: text/plain; charset=UTF-8\n"
     "Content-Transfer-Encoding: 8bit\n"
-    "Project-Id-Verésion: PACKAGE VERSION\n"
+    "Project-Id-Version: PACKAGE VERSION\n"
     "Plural-Forms: nplurals=2; plural=(n > 1);\n"
     "Project-Id-Version: \n"
     "X-Generator: Poedit 1.5.4\n"

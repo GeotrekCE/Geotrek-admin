@@ -18,7 +18,7 @@ Lastly, for a developer instance, please follow :ref:`the dedicated procedure <d
 Requirements
 ------------
 
-Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersection)
+Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersections)
 which are executed on the database. This is especially true in the setup with a Geotrek Rando v3 portal requesting
 dynamic geometric data through the Geotrek API.
 
@@ -150,7 +150,7 @@ Media files will be left in ``/opt/geotrek-admin/var`` directory. To remove them
 
    apt-get purge geotrek-admin
 
-To remove dependencies (convertit, screamshooter…), run:
+To remove dependencies (convertit, screamshoter…), run:
 
 ::
 
