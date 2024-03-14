@@ -9,7 +9,7 @@ from rest_framework import response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
-from geotrek.flatpages.models import FlatPage
+from geotrek.flatpages.models import FlatPage, MenuItem
 from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType, Trek
 from geotrek.tourism.models import (InformationDesk, InformationDeskType, TouristicContentType, TouristicEventType,
                                     TouristicContentCategory)
@@ -209,7 +209,16 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
-        qs = FlatPage.objects.filter(menu_items__platform__in=['mobile', 'all'], published=True)
-        if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(Q(portals__name=self.request.GET['portal']) | Q(portals=None))
-        return qs
+        menu_item_qs = MenuItem.get_tree().filter(
+            depth=1,
+            platform__in=['mobile', 'all'],
+            published=True,
+        )
+
+        portal_name = self.request.GET.get('portal')
+        if portal_name:
+            menu_item_qs = menu_item_qs.filter(Q(portals__name=portal_name) | Q(portals=None))
+
+        menu_item_ids = menu_item_qs.values_list("id", flat=True)
+
+        return FlatPage.objects.filter(menu_items__id__in=menu_item_ids, published=True)
