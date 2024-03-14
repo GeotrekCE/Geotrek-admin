@@ -1,0 +1,275 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2024, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: ../../usage/static-pages.rst:3
+msgid "Pages statiques"
+msgstr ""
+
+#: ../../usage/static-pages.rst:11
+msgid ""
+"Depuis Geotrek-Rando V3, le composant Bootstrap n'est plus utilisé pour "
+"gérer les différentes tailles d'écran. Cela signifie que la mise en page "
+"créée dans Geotrek-Admin n'est pas reproduite sur le site public. Cette "
+"documentation n'est valable que pour Geotrek-Rando V2 en attendant sa "
+"mise à jour expliquant le fonctionnement actuel. Voir le ticket : "
+"https://github.com/GeotrekCE/Geotrek-rando-v3/issues/466"
+msgstr ""
+
+#: ../../usage/static-pages.rst:14
+msgid ""
+"Les pages statiques sont les pages d'information et de contextualisation "
+"de votre portail web Geotrek-rando. Comme pourraient l'être les premières"
+" pages d'un topo-guide papier. Elles peuvent aussi être consultées dans "
+"votre application Geotrek-mobile."
+msgstr ""
+
+#: ../../usage/static-pages.rst:18
+msgid ""
+"Exemple de page statique (http://www.grand-tour-ecrins.fr/informations"
+"/le-grand-tour-des-ecrins/)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:20
+msgid ""
+"Elles permettent de fournir à l'internaute et futur randonneur des "
+"informations génériques : présentation de votre structure, votre projet "
+"de randonnée, recommandations, informations pratiques, etc."
+msgstr ""
+
+#: ../../usage/static-pages.rst:22
+msgid ""
+"Elles sont gérées depuis le module de configuration de Geotrek-admin et "
+"sont ensuite publiées sur Geotrek-rando à chaque synchronisation du "
+"contenu."
+msgstr ""
+
+#: ../../usage/static-pages.rst:27
+msgid "Créer une page statique"
+msgstr ""
+
+#: ../../usage/static-pages.rst:29
+msgid ""
+"Depuis le module de configuration de Geotrek-admin, sélectionnez \"Pages "
+"statiques\" dans la rubrique \"Flatpages\"."
+msgstr ""
+
+#: ../../usage/static-pages.rst:33
+msgid ""
+"Vous accédez alors à la liste des pages statiques. Cliquer sur \"Ajouter "
+"Page statique\" en haut à droite de l'écran pour créer une première page."
+msgstr ""
+
+#: ../../usage/static-pages.rst:37
+msgid "Construire une page statique"
+msgstr ""
+
+#: ../../usage/static-pages.rst:39
+msgid ""
+"Sélectionnez la langue du contenu que vous souhaitez saisir : en / fr / "
+"it..."
+msgstr ""
+
+#: ../../usage/static-pages.rst:41
+msgid "Saisissez :"
+msgstr ""
+
+#: ../../usage/static-pages.rst:43
+msgid "un titre (sans guillemets, parenthèses, etc.)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:44
+msgid ""
+"un ordre optionnel (pour définir l'ordre d'apparition dans le menu de "
+"votre Geotrek-rando)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:45
+msgid "cochez « publié » lorsque vous souhaiterez mettre en ligne votre page"
+msgstr ""
+
+#: ../../usage/static-pages.rst:46
+msgid ""
+"définissez la « source » (comprendre ici la destination d'affichage et "
+"donc votre Geotrek-rando)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:47
+msgid ""
+"sélectionnez une cible (Geotrek-rando et/ou Geotrek-mobile ou cachée pour"
+" créer une page qui ne sera pas listée dans le menu)."
+msgstr ""
+
+#: ../../usage/static-pages.rst:49
+msgid ""
+"Attention, à chaque fois que cela vous est demandé, veillez à "
+"sélectionner la langue de votre contenu."
+msgstr ""
+
+#: ../../usage/static-pages.rst:53
+msgid ""
+"L'interface permet de construire sa page en responsive design, "
+"c'est-à-dire qu'il est possible de disposer les blocs de contenu pour "
+"s'adapter aux différentes tailles d'écrans des utilisateurs."
+msgstr ""
+
+#: ../../usage/static-pages.rst:57
+#, python-format
+msgid ""
+"Choisissez le gabarit sur lequel vous souhaitez construire votre page : "
+"12 / 6-6 / 4-4-4 / etc. Ce sont des formats prédéfinis d'assemblage de "
+"blocs basés sur 12 colonnes qui occupent 100% de la largeur de l'écran "
+"(Bootstrap)."
+msgstr ""
+
+#: ../../usage/static-pages.rst:61
+msgid ""
+"Vous pouvez aussi utiliser ou vous inspirer des 2 gabarits d'exemple "
+"(Gabarit 1 et Gabarit 2)."
+msgstr ""
+
+#: ../../usage/static-pages.rst:65
+msgid ""
+"Vous pouvez ajouter autant de gabarits que vous le souhaitez sur une "
+"seule page."
+msgstr ""
+
+#: ../../usage/static-pages.rst:67
+#, python-format
+msgid ""
+"Une fois que vous avez ajusté vos blocs de contenu pour un affichage sur "
+"ordinateur (Desktop), vous devez basculer sur l'affichage sur mobile "
+"(Phone) pour l'adapter à de plus petits écrans (en cliquant sur les + et "
+"- bleus de chaque bloc). Privilégiez alors des blocs sur une colonne "
+"faisant 100% de large."
+msgstr ""
+
+#: ../../usage/static-pages.rst:72
+msgid "Ajouter du contenu dans un bloc"
+msgstr ""
+
+#: ../../usage/static-pages.rst:74
+msgid ""
+"En cliquant dans la zone de texte, une barre d'édition apparaît. Sur un "
+"format classique comme dans les logiciels de traitement texte, plusieurs "
+"menus et outils sont alors disponibles :"
+msgstr ""
+
+#: ../../usage/static-pages.rst:76
+msgid "File : (fichier)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:77
+msgid "Edit : retour, copier-coller,"
+msgstr ""
+
+#: ../../usage/static-pages.rst:78
+msgid "Insert : Insérer une image, un lien, des caractères spéciaux"
+msgstr ""
+
+#: ../../usage/static-pages.rst:82
+msgid ""
+"Insérer une image : cela ouvre une nouvelle fenêtre avec différents "
+"champs à remplir :"
+msgstr ""
+
+#: ../../usage/static-pages.rst:84
+msgid ""
+"Source : insérer l'URL de l'image (idéalement dans le répertoire "
+"/custom/public/images/ de votre Geotrek-rando)"
+msgstr ""
+
+#: ../../usage/static-pages.rst:85
+msgid "Image description : légender l'image pour optimiser son référencement"
+msgstr ""
+
+#: ../../usage/static-pages.rst:86
+msgid "Dimensions : ajuster le format et cocher « Constrain proportions »"
+msgstr ""
+
+#: ../../usage/static-pages.rst:88
+msgid ""
+"Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs "
+"à remplir :"
+msgstr ""
+
+#: ../../usage/static-pages.rst:90
+msgid "URL : lien de destination"
+msgstr ""
+
+#: ../../usage/static-pages.rst:91
+msgid "Title : texte à afficher pour le lien"
+msgstr ""
+
+#: ../../usage/static-pages.rst:92
+msgid ""
+"Target : « New window » si vous souhaitez que le lien s'ouvre dans un "
+"nouvel onglet"
+msgstr ""
+
+#: ../../usage/static-pages.rst:94
+msgid ""
+"View : « Show blocks » permet de faire apparaître les différents "
+"paragraphes de votre texte. Elles sont utiles à la structure de votre "
+"texte."
+msgstr ""
+
+#: ../../usage/static-pages.rst:95
+msgid ""
+"Format : gras, italique, souligner, etc. Le sous-menu « Formats » permet "
+"de choisir un style prédéfini pour les titres (Heading 1, Heading 2, "
+"etc.). Pour que le style s'applique uniquement au titre et non pas à tout"
+" le texte, faire un retour à la ligne et vérifier sa prise en compte en "
+"activant « Shox blocks »."
+msgstr ""
+
+#: ../../usage/static-pages.rst:96
+msgid "Table : insertion de tableau"
+msgstr ""
+
+#: ../../usage/static-pages.rst:97
+msgid "Tools : Afficher le code source de la page"
+msgstr ""
+
+#: ../../usage/static-pages.rst:100
+msgid "Astuces"
+msgstr ""
+
+#: ../../usage/static-pages.rst:102
+msgid ""
+"Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le "
+"curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la "
+"page précédente et vous perdrez tout votre contenu sans le sauvegarder."
+msgstr ""
+
+#: ../../usage/static-pages.rst:103
+msgid ""
+"Pour reproduire une page dans une langue différente : copier le Code "
+"Source et coller-le Code Source de votre nouvelle langue. Vous n'aurez "
+"plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une "
+"autre langue."
+msgstr ""
+
+#: ../../usage/static-pages.rst:104
+msgid ""
+"Si deux de vos pages ont le même numéro d'ordre d'apparition, une seule "
+"des deux sera affichée sur la plate-forme numérique."
+msgstr ""
+
