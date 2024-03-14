@@ -26,19 +26,20 @@ Paths
 
 If possible:
 
-* Connex graph
+* Clean topologies
 * Name column
 * Data source
 
-Formats: Shapefile or pure SQL dump (CREATE TABLE + INSERT)
+Formats: Geographic file or pure SQL dump (CREATE TABLE + INSERT)
 
 
 Zoning
 ~~~~~~
 
-* Cities polygons (Shapefile or SQL, simple and valid Multi-Polygons)
-* Districts (Shapefile ou SQL, simple and valid Multi-Polygons)
-* Restricted Areas (Shapefile ou SQL, simple and valid Multi-Polygons)
+* Cities: Geographic file or SQL, simple and valid MultiPolygon
+* Districts: Geographic file ou SQL, simple and valid MultiPolygon
+* Restricted Areas: Geographic file ou SQL, simple and valid MultiPolygon
+
 
 Extras
 ~~~~~~
