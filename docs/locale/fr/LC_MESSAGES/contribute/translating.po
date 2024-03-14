@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../contribute/translating.rst:3
 msgid "Translating"
@@ -110,7 +110,7 @@ msgid "Select the project to translate"
 msgstr ""
 
 #: ../../contribute/translating.rst:67
-msgid "Select a coponent to translate"
+msgid "Select a component to translate"
 msgstr ""
 
 #: ../../contribute/translating.rst:69
@@ -145,7 +145,7 @@ msgstr ""
 #: ../../contribute/translating.rst:83
 msgid ""
 "Weblate can identify problematic translations as chains between projects,"
-" punctuation inconsistancy."
+" punctuation inconsistency."
 msgstr ""
 
 #: ../../contribute/translating.rst:88

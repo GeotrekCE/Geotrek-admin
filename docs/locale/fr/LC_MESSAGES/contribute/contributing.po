@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../contribute/contributing.rst:3
 msgid "Contributing"
@@ -113,7 +113,7 @@ msgid "Pull requests"
 msgstr ""
 
 #: ../../contribute/contributing.rst:42
-msgid "Before creating a pull request, ensure you follow thoses rules :"
+msgid "Before creating a pull request, ensure you follow those rules :"
 msgstr ""
 
 #: ../../contribute/contributing.rst:44
@@ -472,8 +472,8 @@ msgstr ""
 
 #: ../../contribute/contributing.rst:106
 msgid ""
-"Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove"
-" ``+dev`` suffix and increment version (please use semver rules)"
+"Update files *VERSION* and *docs/changelog.rst* to remove ``+dev`` suffix"
+" and increment version (please use semver rules)"
 msgstr ""
 
 #: ../../contribute/contributing.rst:107
@@ -495,9 +495,7 @@ msgid "Wait for release to be published through CI"
 msgstr ""
 
 #: ../../contribute/contributing.rst:111
-msgid ""
-"Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to add "
-"``+dev`` suffix"
+msgid "Update files *VERSION* and *docs/changelog.rst* to add ``+dev`` suffix"
 msgstr ""
 
 #: ../../contribute/contributing.rst:112

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../usage/touristic-modules.rst:3
 msgid "Modules de valorisation"
@@ -1211,7 +1211,7 @@ msgstr ""
 msgid ""
 "Le site est généralement constitué par une rivière ou une portion de "
 "rivière. Il est possible d'y adjoindre des affluents. La géométrie du "
-"site est donc un linéraire correspondant à un réseau hydrographique."
+"site est donc un linéaire correspondant à un réseau hydrographique."
 msgstr ""
 
 #: ../../usage/touristic-modules.rst:552

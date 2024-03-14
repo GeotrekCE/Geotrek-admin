@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../usage/editing-objects.rst:3
 msgid "Edition d'un objet"
@@ -202,11 +202,11 @@ msgstr ""
 #: ../../usage/editing-objects.rst:80
 msgid ""
 "Les fonctions d'aimantage ne sont pas disponibles lors de la création "
-"d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer"
-" puis le modifier pour disposer des fonctionnalités d'aimantage, activées"
-" automatiquement lorsque l'on se rapproche d'un objet existant. Par "
-"défaut la distance d'imantage est de 30 pixels mais elle est modifiable "
-"en configuration avancée."
+"d'un nouvel objet (linéaire ou ponctuel). Il faut commencer par le créer "
+"puis le modifier pour disposer des fonctionnalités d'aimantage, activées "
+"automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut"
+" la distance d'aimantage est de 30 pixels mais elle est modifiable en "
+"configuration avancée."
 msgstr ""
 
 #: ../../usage/editing-objects.rst:83
@@ -237,7 +237,7 @@ msgid ""
 msgstr ""
 
 #: ../../usage/editing-objects.rst:98
-msgid "Attributs aditionnels sur les objets"
+msgid "Attributs additionnels sur les objets"
 msgstr ""
 
 #: ../../usage/editing-objects.rst:101 ../../usage/editing-objects.rst:104
