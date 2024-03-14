@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
@@ -19,7 +19,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import Attachment, HDViewPoint, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
@@ -231,11 +231,6 @@ class TrekDelete(MapEntityDelete):
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class TrekMeta(MetaMixin, DetailView):
-    model = Trek
-    template_name = 'trekking/trek_meta.html'
 
 
 class TrekViewSet(GeotrekMapentityViewSet):

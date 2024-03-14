@@ -19,13 +19,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
 from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.db.models.functions import Cast
 from django.http import (Http404, HttpResponse, HttpResponseRedirect,
                          JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone, translation
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
@@ -41,7 +40,6 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from mapentity.views import MapEntityList
-from modeltranslation.utils import build_localized_fieldname
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
@@ -59,9 +57,8 @@ from ..core.models import Path
 from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
                     HDViewPointForm, ImportDatasetForm,
                     ImportDatasetFormWithFile, ImportSuricateForm)
-from .mixins.views import (BookletMixin, CompletenessMixin,
-                           DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
-from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
+from .mixins.views import BookletMixin, CompletenessMixin, DocumentPortalMixin, DocumentPublicMixin
+from .models import AccessibilityAttachment, HDViewPoint, Theme
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
 from .serializers import (HDViewPointAPIGeoJSONSerializer,
                           HDViewPointAPISerializer,
@@ -80,46 +77,6 @@ def handler404(request, exception, template_name="404.html"):
         logger.warning(f'{request.get_full_path()} has been tried')
         return JsonResponse({"page": 'does not exist'}, status=404)
     return page_not_found(request, exception, template_name="404.html")
-
-
-class Meta(MetaMixin, TemplateView):
-    template_name = 'common/meta.html'
-
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET.get('lang')
-        portal = self.request.GET.get('portal')
-        context = super().get_context_data(**kwargs)
-        translation.activate(lang)
-        context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
-        translation.deactivate()
-        if portal:
-            try:
-                target_portal = TargetPortal.objects.get(name=portal)
-                context['META_DESCRIPTION'] = getattr(target_portal, build_localized_fieldname('description', lang))
-            except TargetPortal.DoesNotExist:
-                pass
-
-        if 'geotrek.trekking' in settings.INSTALLED_APPS:
-            from geotrek.trekking.models import Trek
-            context['treks'] = Trek.objects.existing().order_by('pk').filter(
-                Q(**{build_localized_fieldname('published', lang): True})
-                | Q(**{'trek_parents__parent__{published_lang}'.format(published_lang=build_localized_fieldname('published', lang)): True,
-                       'trek_parents__parent__deleted': False})
-            )
-        if 'geotrek.tourism' in settings.INSTALLED_APPS:
-            from geotrek.tourism.models import TouristicContent, TouristicEvent
-            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
-                **{build_localized_fieldname('published', lang): True}
-            )
-            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
-                **{build_localized_fieldname('published', lang): True}
-            )
-        if 'geotrek.diving' in settings.INSTALLED_APPS:
-            from geotrek.diving.models import Dive
-            context['dives'] = Dive.objects.existing().order_by('pk').filter(
-                **{build_localized_fieldname('published', lang): True}
-            )
-        return context
 
 
 class DocumentPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin,

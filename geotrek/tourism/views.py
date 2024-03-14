@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.utils.html import escape
-from django.views.generic import DetailView, CreateView
+from django.views.generic import CreateView
 from django_filters.rest_framework import DjangoFilterBackend
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
@@ -23,7 +23,7 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -150,11 +150,6 @@ class TouristicContentDocumentBookletPublic(TouristicContentDocumentPublicMixin,
 
 class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPublic):
     pass
-
-
-class TouristicContentMeta(MetaMixin, DetailView):
-    model = TouristicContent
-    template_name = 'tourism/touristiccontent_meta.html'
 
 
 class TouristicContentViewSet(GeotrekMapentityViewSet):
@@ -306,11 +301,6 @@ class TouristicEventDocumentBookletPublic(TouristicEventDocumentPublicMixin, Doc
 
 class TouristicEventMarkupPublic(TouristicEventDocumentPublicMixin, MarkupPublic):
     pass
-
-
-class TouristicEventMeta(MetaMixin, DetailView):
-    model = TouristicEvent
-    template_name = 'tourism/touristicevent_meta.html'
 
 
 class TouristicEventViewSet(GeotrekMapentityViewSet):
