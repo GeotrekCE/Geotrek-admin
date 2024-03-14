@@ -1,0 +1,25 @@
+{
+    "count": 6,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "uuid": "e59979d2-8d07-48c8-a958-327d07f9e0d1"
+        },
+        {
+            "uuid": "67ca9363-2f5c-4a15-b124-46674a54f08d"
+        },
+        {
+            "uuid": "d4fd523b-c4e3-43a0-8a23-08005c26f77f"
+        },
+        {
+            "uuid": "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+        },
+        {
+            "uuid": "6825ca31-e6b0-421c-9b08-377c376728e7"
+        },
+        {
+            "uuid": "57a8fb52-213d-4dce-8224-bc997f892aae"
+        }
+    ]
+}

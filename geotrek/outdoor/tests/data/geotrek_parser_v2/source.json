@@ -1,0 +1,13 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Source",
+            "pictogram": "http://geotrek.local:8000/media/upload/vtt_zJeQyWP.svg",
+            "website": null
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": {
+                "en": "Climbing",
+                "fr": "Escalade"
+            },
+            "sector": 2,
+            "pictogram": null
+        }
+    ]
+}

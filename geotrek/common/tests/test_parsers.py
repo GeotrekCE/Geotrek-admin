@@ -748,7 +748,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         self.assertIn('(URL_1) (00%)', stdout_parser)
         self.assertIn('(URL_1) (100%)', stdout_parser)
         # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
-        self.assertEqual(8, mocked_import_module.call_count)
+        self.assertEqual(10, mocked_import_module.call_count)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):

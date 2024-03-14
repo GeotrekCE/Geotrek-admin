@@ -1068,9 +1068,16 @@ class SiteRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
         return self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
 
 
-class CourseRelatedPortalFilter(RelatedObjectsPublishedNotDeletedFilter):
+class CourseRelatedFilter(RelatedObjectsPublishedNotDeletedFilter):
     def filter_queryset(self, request, qs, view):
         return self.filter_queryset_related_objects_published(qs, request, 'courses')
+
+
+class SitesRelatedPortalAndCourseRelatedFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'courses')
+        set_2 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2).distinct()
 
 
 class RelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):

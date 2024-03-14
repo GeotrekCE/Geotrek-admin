@@ -2,18 +2,37 @@
 CHANGELOG
 =========
 
-2.102.1+dev (XXXX-XX-XX)
+2.103.0+dev (XXXX-XX-XX)
 ------------------------
+
+
+2.103.0 (2024-03-14)
+------------------------
+
+**Bug fixes**
+
+- Fix bug in "portals" filter on outdoor_rating endpoint in API V2 (fix #3997)
+
+
+2.102.2 (2024-03-13)
+--------------------
+
+**WARNING!**
+Do not use - Causes bug in Geotrek-Rando-v3 exposing Outdoor data
 
 **New features**
 
 - Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
 - Tourism: add price to TouristicEvent model - ref #3587
 - Add `check_versions` command to check Geotrek, Python, Django, PostgreSQL and PostGIS versions.
+- Add ``GeotrekCourseParser`` and ``GeotrekSiteParser`` in Aggregator to retrieve Outdoor models (refs #3569)
+- Add trail on leaflet overlay
 
 **Bug fixes**
 
 - Fix cache key for zoning cities
+- Change signage group on leaflet overlay
+- Add some translation on leaflet overlay layer
 
 **Improvements**
 
@@ -30,6 +49,9 @@ CHANGELOG
 
 - Add missing translation in intervention form (refs #3825)
 
+**Maintenance**
+
+- Upgrade django-mapentity to 8.7.1
 
 2.102.1 (2024-02-20)
 --------------------

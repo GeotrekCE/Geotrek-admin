@@ -1,0 +1,15 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "label": {
+                "en": "Test thème en",
+                "fr": "Test thème fr"
+            },
+            "pictogram": "http://geotrek.local:8000/media/upload/vtt_QpvFGYG.svg"
+        }
+    ]
+}

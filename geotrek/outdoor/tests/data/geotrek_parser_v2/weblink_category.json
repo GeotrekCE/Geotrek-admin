@@ -1,0 +1,15 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "label": {
+                "en": "Categ lien web",
+                "fr": "Categ lien web fr"
+            },
+            "id": 1,
+            "pictogram": "http://geotrek.local:8000/media/upload/vtt_8uGxKrH.svg"
+        }
+    ]
+}

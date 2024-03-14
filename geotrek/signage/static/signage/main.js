@@ -17,7 +17,7 @@ $(window).on('entity:map', function (e, data) {
 	});
 
     if (data.modelname != modelname){
-	    map.layerscontrol.addOverlay(layer, tr('Signage'), tr('Infrastructure'));
+	    map.layerscontrol.addOverlay(layer, tr('Signages'), tr('Signage'));
     };
 
     map.on('layeradd', function (e) {

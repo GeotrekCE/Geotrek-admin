@@ -1,0 +1,10 @@
+{
+    "URL_1": {
+        "url": "url_1",
+        "data_to_import": [
+            "Site",
+            "Course"
+        ],
+        "create": true
+    }
+}

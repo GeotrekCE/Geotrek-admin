@@ -1,8 +1,12 @@
 {% load static i18n %}
 <script type="text/javascript">
     MapEntity.i18n['Paths'] = "{% trans "Paths" %}";
+    MapEntity.i18n['Trail'] = "{% trans "Trail" %}";
+    MapEntity.i18n['Trails'] = "{% trans "Trails" %}";
 
     window.SETTINGS.urls['path_layer'] = "{% url "core:path-drf-list" format="geojson" %}";
+    window.SETTINGS.urls['trail_layer'] = "{% url "core:trail-drf-list" format="geojson" %}";
     window.SETTINGS.urls['path_graph'] = "{% url "core:path-drf-graph" %}";
 </script>
 <script type="text/javascript" src="{% static "core/main.js" %}"></script>
+<script type="text/javascript" src="{% static "core/trail.js" %}"></script>

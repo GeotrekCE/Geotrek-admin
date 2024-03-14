@@ -1,0 +1,686 @@
+{
+    "count": 6,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 2,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "ambiance": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "cities": [],
+            "children": [
+                4,
+                5
+            ],
+            "children_uuids": [
+                "d4fd523b-c4e3-43a0-8a23-08005c26f77f",
+                "5c0d655b-2691-4c45-903c-9ce1050ff9ea"
+            ],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "description_teaser": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.3793946,
+                                    43.8523552
+                                ],
+                                [
+                                    6.3793946,
+                                    44.2235521
+                                ],
+                                [
+                                    7.0220948,
+                                    44.2235521
+                                ],
+                                [
+                                    7.0220948,
+                                    43.8523552
+                                ],
+                                [
+                                    6.3793946,
+                                    43.8523552
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [],
+            "labels": [],
+            "managers": [],
+            "name": {
+                "en": "Node",
+                "fr": "Noeud 1"
+            },
+            "orientation": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/2/noeud-1.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/2/noeud-1.pdf"
+            },
+            "period": {
+                "en": "",
+                "fr": ""
+            },
+            "parent": 1,
+            "parent_uuid": "57a8fb52-213d-4dce-8224-bc997f892aae",
+            "portal": [],
+            "practice": null,
+            "provider": "",
+            "ratings": [],
+            "sector": null,
+            "source": [],
+            "structure": 1,
+            "themes": [],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/2/",
+            "uuid": "e59979d2-8d07-48c8-a958-327d07f9e0d1",
+            "courses": [],
+            "courses_uuids": [],
+            "web_links": [],
+            "wind": []
+        },
+        {
+            "id": 3,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "ambiance": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "cities": [],
+            "children": [
+                6
+            ],
+            "children_uuids": [
+                "6825ca31-e6b0-421c-9b08-377c376728e7"
+            ],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "description_teaser": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    7.0431519,
+                                    43.8563163
+                                ],
+                                [
+                                    7.0431519,
+                                    44.2156785
+                                ],
+                                [
+                                    7.6638794,
+                                    44.2156785
+                                ],
+                                [
+                                    7.6638794,
+                                    43.8563163
+                                ],
+                                [
+                                    7.0431519,
+                                    43.8563163
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [],
+            "labels": [],
+            "managers": [],
+            "name": {
+                "en": "Node 1 bis",
+                "fr": "Noeud 1 bis"
+            },
+            "orientation": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/3/noeud-1-bis.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/3/noeud-1-bis.pdf"
+            },
+            "period": {
+                "en": "",
+                "fr": ""
+            },
+            "parent": 1,
+            "parent_uuid": "57a8fb52-213d-4dce-8224-bc997f892aae",
+            "portal": [],
+            "practice": null,
+            "provider": "",
+            "ratings": [],
+            "sector": null,
+            "source": [],
+            "structure": 1,
+            "themes": [],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/3/",
+            "uuid": "67ca9363-2f5c-4a15-b124-46674a54f08d",
+            "courses": [
+                5,
+                4
+            ],
+            "courses_uuids": [
+                "43ce926d-9236-4a62-ac7f-799d1c024b5a",
+                "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc"
+            ],
+            "web_links": [],
+            "wind": []
+        },
+        {
+            "id": 4,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "ambiance": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "cities": [],
+            "children": [],
+            "children_uuids": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "description_teaser": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.7506409,
+                                    43.8652279
+                                ],
+                                [
+                                    6.7506409,
+                                    44.2097726
+                                ],
+                                [
+                                    7.0115662,
+                                    44.2097726
+                                ],
+                                [
+                                    7.0115662,
+                                    43.8652279
+                                ],
+                                [
+                                    6.7506409,
+                                    43.8652279
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [],
+            "labels": [],
+            "managers": [],
+            "name": {
+                "en": "Node 2",
+                "fr": "Noeud 2"
+            },
+            "orientation": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/4/noeud-2.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/4/noeud-2.pdf"
+            },
+            "period": {
+                "en": "",
+                "fr": ""
+            },
+            "parent": 2,
+            "parent_uuid": "e59979d2-8d07-48c8-a958-327d07f9e0d1",
+            "portal": [],
+            "practice": null,
+            "provider": "",
+            "ratings": [],
+            "sector": null,
+            "source": [],
+            "structure": 1,
+            "themes": [],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/4/",
+            "uuid": "d4fd523b-c4e3-43a0-8a23-08005c26f77f",
+            "courses": [],
+            "courses_uuids": [],
+            "web_links": [],
+            "wind": []
+        },
+        {
+            "id": 5,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "ambiance": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "cities": [],
+            "children": [],
+            "children_uuids": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "description_teaser": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.4746094,
+                                    43.8672081
+                                ],
+                                [
+                                    6.4746094,
+                                    44.2097726
+                                ],
+                                [
+                                    6.7341614,
+                                    44.2097726
+                                ],
+                                [
+                                    6.7341614,
+                                    43.8672081
+                                ],
+                                [
+                                    6.4746094,
+                                    43.8672081
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [],
+            "labels": [],
+            "managers": [],
+            "name": {
+                "en": "Node 2 bis",
+                "fr": "Noeud 2 bis"
+            },
+            "orientation": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/5/noeud-2-bis.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/5/noeud-2-bis.pdf"
+            },
+            "period": {
+                "en": "",
+                "fr": ""
+            },
+            "parent": 2,
+            "parent_uuid": "e59979d2-8d07-48c8-a958-327d07f9e0d1",
+            "portal": [],
+            "practice": 1,
+            "provider": "",
+            "ratings": [],
+            "sector": 2,
+            "source": [],
+            "structure": 1,
+            "themes": [],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": 1,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/5/",
+            "uuid": "5c0d655b-2691-4c45-903c-9ce1050ff9ea",
+            "courses": [
+                1,
+                2,
+                3
+            ],
+            "courses_uuids": [
+                "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a",
+                "b43a1f53-a810-4703-aad6-3e0327610230",
+                "1d6f5bd3-3559-4484-bd78-f8a091ab81a2"
+            ],
+            "web_links": [],
+            "wind": []
+        },
+        {
+            "id": 6,
+            "accessibility": {
+                "en": "",
+                "fr": ""
+            },
+            "advice": {
+                "en": "",
+                "fr": ""
+            },
+            "ambiance": {
+                "en": "",
+                "fr": ""
+            },
+            "attachments": [],
+            "cities": [],
+            "children": [],
+            "children_uuids": [],
+            "description": {
+                "en": "",
+                "fr": ""
+            },
+            "description_teaser": {
+                "en": "",
+                "fr": ""
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    7.0912171,
+                                    43.950316
+                                ],
+                                [
+                                    7.0912171,
+                                    44.1457542
+                                ],
+                                [
+                                    7.2244263,
+                                    44.1457542
+                                ],
+                                [
+                                    7.2244263,
+                                    43.950316
+                                ],
+                                [
+                                    7.0912171,
+                                    43.950316
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [],
+            "labels": [],
+            "managers": [],
+            "name": {
+                "en": "Node 3",
+                "fr": "Noeud 3"
+            },
+            "orientation": [],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/6/noeud-3.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/6/noeud-3.pdf"
+            },
+            "period": {
+                "en": "",
+                "fr": ""
+            },
+            "parent": 3,
+            "parent_uuid": "67ca9363-2f5c-4a15-b124-46674a54f08d",
+            "portal": [],
+            "practice": null,
+            "provider": "",
+            "ratings": [],
+            "sector": null,
+            "source": [],
+            "structure": 1,
+            "themes": [],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": null,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/6/",
+            "uuid": "6825ca31-e6b0-421c-9b08-377c376728e7",
+            "courses": [],
+            "courses_uuids": [],
+            "web_links": [],
+            "wind": []
+        },
+        {
+            "id": 1,
+            "accessibility": {
+                "en": "Test access en",
+                "fr": "Test access fr"
+            },
+            "advice": {
+                "en": "Test reco en",
+                "fr": "Test reco fr"
+            },
+            "ambiance": {
+                "en": "Test ambiance en",
+                "fr": "Test ambiance fr"
+            },
+            "attachments": [
+                {
+                    "backend": "",
+                    "type": "image",
+                    "filetype": {
+                        "id": 1,
+                        "structure": null,
+                        "type": "Photographie"
+                    },
+                    "author": "",
+                    "license": null,
+                    "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG.400x0_q85.jpg",
+                    "legend": "Arrien-en-Bethmale, vue du village",
+                    "title": "",
+                    "url": "https://foo.fr/media/paperclip/trekking_trek/10443/1083px-arrien-en-bethmale_general_view.JPG",
+                    "uuid": "c648fff1-2416-48fa-a67d-5fbcf466f3a1"
+                }
+            ],
+            "cities": [],
+            "children": [
+                2,
+                3
+            ],
+            "children_uuids": [
+                "e59979d2-8d07-48c8-a958-327d07f9e0d1",
+                "67ca9363-2f5c-4a15-b124-46674a54f08d"
+            ],
+            "description": {
+                "en": "Test descr en",
+                "fr": "Test descr fr"
+            },
+            "description_teaser": {
+                "en": "Test en",
+                "fr": "Test fr"
+            },
+            "districts": [],
+            "eid": null,
+            "geometry": {
+                "type": "GeometryCollection",
+                "geometries": [
+                    {
+                        "type": "Polygon",
+                        "coordinates": [
+                            [
+                                [
+                                    6.3574219,
+                                    43.8266013
+                                ],
+                                [
+                                    6.3574219,
+                                    44.2766713
+                                ],
+                                [
+                                    7.7087403,
+                                    44.2766713
+                                ],
+                                [
+                                    7.7087403,
+                                    43.8266013
+                                ],
+                                [
+                                    6.3574219,
+                                    43.8266013
+                                ]
+                            ]
+                        ]
+                    }
+                ]
+            },
+            "information_desks": [
+                1
+            ],
+            "labels": [
+                4
+            ],
+            "managers": [
+                1
+            ],
+            "name": {
+                "en": "Root",
+                "fr": "Racine"
+            },
+            "orientation": [
+                "NE",
+                "S"
+            ],
+            "pdf": {
+                "en": "http://geotrek.local:8000/api/en/sites/1/racine.pdf",
+                "fr": "http://geotrek.local:8000/api/fr/sites/1/racine.pdf"
+            },
+            "period": {
+                "en": "Test période en",
+                "fr": "Test périod fr"
+            },
+            "parent": null,
+            "parent_uuid": null,
+            "portal": [
+                1
+            ],
+            "practice": 1,
+            "provider": "",
+            "ratings": [
+                35,
+                36,
+                38
+            ],
+            "sector": 2,
+            "source": [
+                1
+            ],
+            "structure": 1,
+            "themes": [
+                1
+            ],
+            "view_points": [],
+            "published": {
+                "en": true,
+                "fr": true
+            },
+            "type": 1,
+            "url": "http://geotrek.local:8000/api/v2/outdoor_site/1/",
+            "uuid": "57a8fb52-213d-4dce-8224-bc997f892aae",
+            "courses": [],
+            "courses_uuids": [],
+            "web_links": [
+                {
+                    "name": {
+                        "en": "Test example en",
+                        "fr": "Test example fr"
+                    },
+                    "url": "https://www.exemple.fr",
+                    "category": {
+                        "label": {
+                            "en": "Categ lien web",
+                            "fr": "Categ lien web fr"
+                        },
+                        "id": 1,
+                        "pictogram": "http://geotrek.local:8000/media/upload/vtt_8uGxKrH.svg"
+                    }
+                }
+            ],
+            "wind": [
+                "N",
+                "E"
+            ]
+        }
+    ]
+}
