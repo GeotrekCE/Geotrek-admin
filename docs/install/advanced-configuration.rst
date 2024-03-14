@@ -19,6 +19,7 @@ In order to check your configuration of spatial extents, a small tool
 is available at http://server/tools/extents/.
 
 .. note::
+
   Administrator privileges are required.
 
 
@@ -164,6 +165,7 @@ Expected columns in table/view are :
 * ``lang`` : string (language code)
 
 .. note::
+
   - The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
   - User management will be disabled from Administration backoffice.
   - In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings file, and restart instance (see paragraph above).
@@ -285,6 +287,7 @@ Map layers zoom
 
 
 .. note::
+
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
 
@@ -304,6 +307,7 @@ Map layers colors and style
         MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 .. note::
+
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
 
@@ -354,6 +358,7 @@ Color of the different layers on the map :
 Color of the different layers on the top right for landing.
 
 .. note::
+
   - For land, physical, competence, signagemanagement, workmanagement should have 5 values.
   - For restricted Area: add as many color as your number of restricted area type
   - **Restart** the application for changes to take effect.
@@ -404,6 +409,7 @@ Geographical CRUD
         PATH_SNAPPING_DISTANCE = 2.0
 
 .. note::
+
   - Change the distance. Better to keep it like this. 
   - Not used when ``TREKKING_TOPOLOGY_ENABLED = True``
 
@@ -424,6 +430,7 @@ Geographical CRUD
         PATH_MERGE_SNAPPING_DISTANCE = 2
 
 .. note::
+
   - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
   - Used when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
@@ -464,6 +471,7 @@ Geographical CRUD
         TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
 
 .. note::
+
   You should not change it to avoid overlay except if you want to have more overlays.
 
 **All settings used to generate altimetric profile :**
@@ -484,6 +492,7 @@ Geographical CRUD
     ALTIMETRIC_AREA_MARGIN = 0.15
 
 .. note::
+
   - All these settings can be modified but you need to check the result every time
   - The only one modified most of the time is ``ALTIMETRIC_PROFILE_COLOR``
 
@@ -523,6 +532,7 @@ Map screenshots
         MAP_CAPTURE_SIZE = 800
 
 .. note::
+
   - Size in pixels of the capture.
   - Be careful with your pdfs.
   - If you change this value, pdfs will be rendered differently
@@ -617,6 +627,7 @@ In order to remove zoning combo-boxes on list map:
         True
 
 .. note::
+
   - By doing so, some software upgrades may not be as smooth as usual.
   - Never forget to mention this customization if you ask for community support.
 
@@ -664,6 +675,7 @@ Paths
         True
 
 .. note::
+
   Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
@@ -684,6 +696,7 @@ Signage and Blade
         BLADE_CODE_TYPE = INT
 
 .. note::
+
   - It can be string or integer
   - If you have an integer code : ``int``
   - If you have an string code : ``str``
@@ -698,6 +711,7 @@ Signage and Blade
         BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 
 .. note::
+
   - If you want to change : move information under bracket
   - You can also remove one element between bracket
   - You can do for exemple : ``"CD99.{signagecode}.{bladenumber}"``
@@ -715,6 +729,7 @@ Signage and Blade
         LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
 .. note::
+
   - Similar with above
   - You can do for example : ``"CD99.{signagecode}-{bladenumber}.{linenumber}"``
   - It will display : ``CD99.XIDNZEIU-01.02`` (second line of the first blade of XIDNZEIU)
@@ -801,6 +816,7 @@ You can also insert Outdoor minimal data:
 After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
 
 .. note::
+
   - Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
   - You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
@@ -810,6 +826,7 @@ Sensitive areas
 ~~~~~~~~~~~~~~~
 
 .. note::
+
     The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas.
 
     The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
@@ -1140,6 +1157,7 @@ Load alerts from Suricate (located in your bounding box) :
   - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
 .. note::
+
   - Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**.
   - Reports are only saved when synchronized back from Suricate, when the synchronization command is run. 
 
@@ -1326,6 +1344,7 @@ It will verify that the mimetype of the file matches the extension.
         PAPERCLIP_ALLOWED_EXTENSIONS = None
 
 .. note::
+
   These two settings will also not allow downloading images from the parsers.
 
 
@@ -2753,6 +2772,7 @@ An exhaustive list of form fields hideable in each module.
         ]
 
 .. note::
+
   ``assigned_user`` is hidden by default in ``HIDDEN_FORM_FIELDS["report"]``, it is possible to force it to appear using ``HIDDEN_FORM_FIELDS["report"] = []``.
 
 
@@ -2803,6 +2823,7 @@ Its configuration can be customized using advanced settings (see above paragraph
         }
 
 .. note::
+
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
 
@@ -2822,8 +2843,9 @@ Max characters count
         }
 
 .. note::
-  - This will apply field by field, language by language.
-  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for details.
+
+  - This will apply to all text fields.
+  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
 
 
 Copyright on pictures
@@ -2839,6 +2861,7 @@ Copyright on pictures
         THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
 .. note::
+
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
 
@@ -2983,6 +3006,7 @@ The template for a specific portal will use the modification made on the overrid
 ( except if you change specific  block)
 
 .. note::
+
   This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
 
 **You might need to use your own images in the PDF templates.**
@@ -3007,6 +3031,7 @@ Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/
     {% endblock url %}
 
 .. note::
+
   The default template may change in the future versions. You will be in charge of porting the modification to your copy.
 
 Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
@@ -3027,7 +3052,8 @@ PDF as booklet
 
         False
 
-.. note:: 
+.. note::
+
   - During the synchro, pois details will be removed, and the pages will be merged.
   - It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
@@ -3079,7 +3105,8 @@ Primary color in PDF templates
 
         PRIMARY_COLOR = "#7b8c12"
 
-.. note:: 
+.. note::
+
   Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
 
@@ -3140,7 +3167,8 @@ Limits
 
         TREK_EXPORT_POI_LIST_LIMIT = 14
 
-.. note:: 
+.. note::
+
   ``14`` is already a huge amount of POI, but it's possible to add more
 
 .. envvar:: TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT
@@ -3151,7 +3179,8 @@ Limits
 
         TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 14
 
-.. note:: 
+.. note::
+
   You can put ``-1`` if you want all the information desks
 
 Categories
@@ -3169,7 +3198,8 @@ Categories
 
         True
 
-.. note:: 
+.. note::
+
   Field order for each practices in admin will be taken in account
 
 .. envvar:: SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY
@@ -3322,7 +3352,8 @@ Settings for Geotrek-mobile
         {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
         ]
 
-.. note:: 
+.. note::
+
   - Interval key is in meters.
   - You can add new intervals
 
@@ -3339,7 +3370,8 @@ Settings for Geotrek-mobile
         {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
         ]
 
-.. note:: 
+.. note::
+
   Do the same as above
 
 .. envvar:: MOBILE_DURATION_INTERVALS
@@ -3356,7 +3388,8 @@ Settings for Geotrek-mobile
         {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
         ]
 
-.. note:: 
+.. note::
+
   Check ``MOBILE_LENGTH_INTERVALS`` section to use it, here interval correspond to 1 unit of hour
 
 .. envvar:: ENABLED_MOBILE_FILTERS

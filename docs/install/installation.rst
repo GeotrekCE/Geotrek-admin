@@ -83,7 +83,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
    If not, you must create database and enable PostGIS extension before.
 5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
 
-.. note ::
+.. note::
 
     Geotrek-admin is automatically installed in ``/opt/geotrek-admin/`` directory.
 
@@ -156,7 +156,7 @@ To remove dependencies (convertit, screamshoter…), run:
 
    apt-get autoremove
 
-.. note::
+.. warning::
 
     PostgreSQL and its database will not be removed by these commands. If need be, remove them manually.
 
