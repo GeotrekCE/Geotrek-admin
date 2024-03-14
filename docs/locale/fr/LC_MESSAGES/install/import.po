@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../install/import.rst:3
 msgid "Import data"
@@ -290,7 +290,7 @@ msgstr ""
 #: ../../install/import.rst:176
 msgid ""
 "**Import species sensitive areas from a zipped shapefile**. Imported "
-"field names are: ``espece`` (required), ``contact`` and ``descriptio``. "
+"field names are: ``espece`` (required), ``contact`` and ``description``. "
 "Species with corresponding names have to be created manually before "
 "import."
 msgstr ""
@@ -360,9 +360,9 @@ msgstr ""
 #: ../../install/import.rst:215
 msgid ""
 "When importing data for the same model using two (or more) different "
-"sources, the ``provider`` field should be used to differenciate between "
+"sources, the ``provider`` field should be used to differentiate between "
 "sources, allowing to enable object deletion with ``delete = True`` "
-"without causing the last parser to delete objects created by preceeding "
+"without causing the last parser to delete objects created by preceding "
 "parsers."
 msgstr ""
 
@@ -386,7 +386,7 @@ msgstr ""
 msgid ""
 "If a parser does not have a ``provider`` value, it will not take "
 "providers into account, meaning that it could delete objects from "
-"preceeding parsers even if these other parsers do have a ``provider`` "
+"preceding parsers even if these other parsers do have a ``provider`` "
 "themselves."
 msgstr ""
 
@@ -401,7 +401,7 @@ msgid "Generic settings for your parser"
 msgstr ""
 
 #: ../../install/import.rst:258
-msgid "This settings may be overriden when you define a new parser:"
+msgid "This settings may be overridden when you define a new parser:"
 msgstr ""
 
 #: ../../install/import.rst:260
@@ -434,7 +434,7 @@ msgstr ""
 
 #: ../../install/import.rst:267
 msgid ""
-"``duplicate_eid_allowed`` if True, allows differents contents with same "
+"``duplicate_eid_allowed`` if True, allows different contents with same "
 "eid (default: ``False``)"
 msgstr ""
 
@@ -532,9 +532,8 @@ msgstr ""
 
 #: ../../install/import.rst:308
 msgid ""
-"Importing from a Geotrek instance works the same way as from SIT. A "
-"usecase for this is to aggregate data from several Geotrek-admin "
-"instance."
+"Importing from a Geotrek instance works the same way as from SIT. A use-"
+"case for this is to aggregate data from several Geotrek-admin instance."
 msgstr ""
 
 #: ../../install/import.rst:312
@@ -783,8 +782,8 @@ msgstr ""
 
 #: ../../install/import.rst:602 ../../install/import.rst:613
 msgid ""
-"optionnally if `--use-structure`: structure <- the structure value "
-"(import field or default)"
+"optionally if `--use-structure`: structure <- the structure value (import"
+" field or default)"
 msgstr ""
 
 #: ../../install/import.rst:604
@@ -931,7 +930,7 @@ msgstr ""
 
 #: ../../install/import.rst:945
 msgid ""
-"Firstly, if a categroy is linked to a structure, it creates the same "
+"Firstly, if a category is linked to a structure, it creates the same "
 "category but with no structure associated. Secondly, every element with "
 "this old category gets assigned to this new category. Finally all old "
 "categories are removed."
@@ -969,7 +968,7 @@ msgstr ""
 #: ../../install/import.rst:968
 msgid ""
 "It can happens that this algorithm can't find any solution and will "
-"genereate a MultiLineString. This will be displayed at the end of the "
+"generate a MultiLineString. This will be displayed at the end of the "
 "reorder"
 msgstr ""
 

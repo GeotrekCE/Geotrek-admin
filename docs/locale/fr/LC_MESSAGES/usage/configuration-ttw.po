@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek 2.102\n"
+"Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 09:43+0100\n"
+"POT-Creation-Date: 2024-03-14 11:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../usage/configuration-ttw.rst:3
 msgid "Paramétrage"
@@ -371,8 +371,9 @@ msgstr ""
 
 #: ../../usage/configuration-ttw.rst:207
 msgid ""
-"*view* : voir les données dans le module de configuration (pour ledonnées"
-" dans « category », comme les types de POI, ou les niveaux de difficulté)"
+"*view* : voir les données dans le module de configuration (pour les "
+"données dans « category », comme les types de POI, ou les niveaux de "
+"difficulté)"
 msgstr ""
 
 #: ../../usage/configuration-ttw.rst:208
@@ -415,8 +416,8 @@ msgstr ""
 #: ../../usage/configuration-ttw.rst:220
 msgid ""
 "Dans la vue de modification d’un utilisateur, il est possible d’associer "
-"un utilisateur à un ou plusieurs groupes pour bénéficier des "
-"permissioncorrespondantes."
+"un utilisateur à un ou plusieurs groupes pour bénéficier des permissions "
+"correspondantes."
 msgstr ""
 
 #: ../../usage/configuration-ttw.rst:222
@@ -483,11 +484,10 @@ msgstr ""
 #: ../../usage/configuration-ttw.rst:243
 msgid ""
 "Chaque utilisateur est obligatoirement rattaché à une structure. Lors de "
-"l’installation, Geotrek crée une structure par défaut à laquellles "
-"premiers utilisateurs seront rattachés.Il est possible d’ajouter de "
-"nouvelles structures, reflétant des partenaires territoriaux, "
-"entreprises, entités qui seront amenés à travailler à vos côtés sur "
-"Geotrek."
+"l’installation, Geotrek crée une structure par défaut à laquelle les "
+"utilisateurs seront rattachés. Il est possible d’ajouter de nouvelles "
+"structures, reflétant des partenaires territoriaux, entreprises, entités "
+"qui seront amenés à travailler à vos côtés sur Geotrek."
 msgstr ""
 
 #: ../../usage/configuration-ttw.rst:245
@@ -595,8 +595,8 @@ msgstr ""
 
 #: ../../usage/configuration-ttw.rst:289
 msgid ""
-"Pour configurer un ou pluseurs portails, il faut se rendre dans le module"
-" de configuration sur la section \"Portails cibles\"."
+"Pour configurer un ou plusieurs portails, il faut se rendre dans le "
+"module de configuration sur la section \"Portails cibles\"."
 msgstr ""
 
 #: ../../usage/configuration-ttw.rst:297
