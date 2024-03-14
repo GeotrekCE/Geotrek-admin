@@ -3,9 +3,8 @@ from rest_framework import viewsets
 
 from django.urls import reverse_lazy
 from django.db.models import Q
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView
 
-from ..common.mixins.views import MetaMixin
 from geotrek.flatpages.serializers import FlatPageSerializer
 from geotrek.flatpages import models as flatpages_models
 
@@ -49,8 +48,3 @@ class FlatPageCreate(FlatPageEditMixin, CreateView):
 
 class FlatPageUpdate(FlatPageEditMixin, UpdateView):
     pass
-
-
-class FlatPageMeta(MetaMixin, DetailView):
-    model = flatpages_models.FlatPage
-    template_name = 'flatpages/flatpage_meta.html'

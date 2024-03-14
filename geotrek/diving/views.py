@@ -4,14 +4,13 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import translation
-from django.views.generic import DetailView
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -133,11 +132,6 @@ class DiveDelete(MapEntityDelete):
     @same_structure_required('diving:dive_detail')
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class DiveMeta(MetaMixin, DetailView):
-    model = Dive
-    template_name = 'diving/dive_meta.html'
 
 
 class DiveViewSet(GeotrekMapentityViewSet):

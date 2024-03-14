@@ -23,7 +23,6 @@ urlpatterns = [
     path('api/<lang:lang>/treks/<int:pk>/services.geojson', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
     path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.gpx', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
     path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.kml', TrekKMLDetail.as_view(), name="trek_kml_detail"),
-    path('api/<lang:lang>/treks/<int:pk>/meta.html', TrekKMLDetail.as_view(), name="trek_meta"),
     path('popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
     path('image/trek-<int:pk>-<lang:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
 ]
