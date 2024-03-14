@@ -351,7 +351,7 @@ Then, make a database dump.
 
 ::
 
-    sudo -u postgres pg_dump -Fc --no-acl --no-owner -U <your geotrek database user> -d <your geotrek database name> > /path/to/your/backup.dump
+    sudo -u postgres pg_dump -Fc --no-acl --no-owner -d <your geotrek database name> > /path/to/your/backup.dump
 
 
 Now, install newest version of PostgreSQL and PostGIS:
@@ -376,7 +376,7 @@ Recreate user and database:
 
 ::
 
-    CREATE ROLE <your geotrek user> WITH ENCRYPTED PASSWORD '<your geotrek user password>';
+    CREATE USER <your geotrek user> WITH ENCRYPTED PASSWORD '<your geotrek user password>';
     CREATE DATABASE <your geotrek database> WITH OWNER <your geotrek user>;
     \c <your geotrek database>
     CREATE EXTENSION postgis;
@@ -386,7 +386,7 @@ Recreate user and database:
 
 ::
 
-    sudo -u postgres -p 5433 pg_restore -d <your geotrek database> /path/to/your/backup.dump
+    pg_restore -p 5433 -U <your geotrek user> -d <your geotrek database> /path/to/your/backup.dump
 
 
 .. warning::
