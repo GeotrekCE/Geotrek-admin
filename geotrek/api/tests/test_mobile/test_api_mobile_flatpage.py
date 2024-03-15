@@ -23,7 +23,7 @@ def _create_flatpage_and_menuitem(**kwargs):
     copied_fields = {
         "title": "label",
         "published": "published",
-        "portals": "portals",
+        # "portals": "portals",
     }
 
     # Same principle: those fields are moved from FlatPage to MenuItem
@@ -56,23 +56,57 @@ def _create_flatpage_and_menuitem(**kwargs):
         return page
 
     menu_kwargs = {}
-    menu_fields = {}
-    menu_fields.update(copied_fields)
-    menu_fields.update(moved_fields)
-    for src, dst in menu_fields.items():
+
+    # Values for moved fields are taken from kwargs
+    for src, dst in moved_fields.items():
         if src in translated_fields:
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 try:
                     menu_kwargs[f"{dst}_{lang}"] = kwargs[f"{src}_{lang}"]
                 except KeyError:
-                    pass
+                    try:
+                        menu_kwargs[f"{dst}_{lang}"] = getattr(page, f"{src}_{lang}")
+                    except AttributeError:
+                        pass
         try:
             menu_kwargs[dst] = kwargs[src]
         except KeyError:
+            try:
+                menu_kwargs[dst] = getattr(page, src)
+            except AttributeError:
+                pass
+
+    # Values for copied fields are taken from `page` instance (to get default values from FlatPage factory)
+    for src, dst in copied_fields.items():
+        if src in translated_fields:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                try:
+                    menu_kwargs[f"{dst}_{lang}"] = getattr(page, f"{src}_{lang}")
+                except AttributeError:
+                    pass
+        try:
+            menu_kwargs[dst] = getattr(page, src)
+        except AttributeError:
             pass
+
+    # `portals` is special regarding the copy, we can't pass the value from the `page` attribute
+    try:
+        menu_kwargs["portals"] = kwargs["portals"]
+    except KeyError:
+        pass
+
     MenuItemFactory.create(page=page, **menu_kwargs)
 
     return page
+
+
+def menu(page):
+    """helper function with short name to adapt all flatpage tests without hurting readability.
+    This is now MenuItem model in place of FlatPage under the hood for all flatpage API mobile endpoints,
+    the change for all tests is to use IDs of MenuItems instead of FlatPages' ones.
+    """
+    menu_id = page.menu_items.first().id
+    return MenuItem.objects.get(pk=menu_id)
 
 
 class FlatPageTest(TestCase):
@@ -97,7 +131,7 @@ class FlatPageTest(TestCase):
         self.assertEqual(json_response[0].get('title'), FlatPage.objects.first().title)
 
     def test_flatpage_detail(self):
-        response = self.get_flatpage_detail(self.flatpage.pk)
+        response = self.get_flatpage_detail(menu(self.flatpage).pk)
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(sorted(json_response.keys()),
