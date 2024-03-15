@@ -143,7 +143,7 @@ class FlatPageTest(TestCase):
         page = _create_flatpage_and_menuitem(published_en=True, published_fr=True, title_fr="Bonjour", title_en="Hello")
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=(page.pk, )),
+            reverse('apimobile:flatpage-detail', args=(menu(page).pk, )),
             HTTP_ACCEPT_LANGUAGE='fr')
 
         self.assertEqual(resp.status_code, 200)
@@ -151,7 +151,7 @@ class FlatPageTest(TestCase):
         self.assertEqual(title, "Bonjour")
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=(page.pk,)),
+            reverse('apimobile:flatpage-detail', args=(menu(page).pk,)),
             HTTP_ACCEPT_LANGUAGE='en')
 
         self.assertEqual(resp.status_code, 200)
@@ -192,8 +192,8 @@ class FlatPageTest(TestCase):
         results = resp.json()
         self.assertEqual(len(results), 2)
         page_ids = [r["id"] for r in results]
-        self.assertIn(page2.id, page_ids)
-        self.assertIn(page3.id, page_ids)
+        self.assertIn(menu(page2).id, page_ids)
+        self.assertIn(menu(page3).id, page_ids)
 
         resp = self.client.get(reverse('apimobile:flatpage-list'), HTTP_ACCEPT_LANGUAGE='en')
 
@@ -201,21 +201,21 @@ class FlatPageTest(TestCase):
         results = resp.json()
         self.assertEqual(len(results), 2)
         page_ids = [r["id"] for r in results]
-        self.assertIn(page1.id, page_ids)
-        self.assertIn(page3.id, page_ids)
+        self.assertIn(menu(page1).id, page_ids)
+        self.assertIn(menu(page3).id, page_ids)
 
     def test_flatpage_detail_published_only_with_lang_param(self):
         page1 = _create_flatpage_and_menuitem(published_en=True, published_fr=False)
         page2 = _create_flatpage_and_menuitem(published_en=False, published_fr=True)
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=(page1.pk, )),
+            reverse('apimobile:flatpage-detail', args=(menu(page1).pk, )),
             HTTP_ACCEPT_LANGUAGE='fr')
 
         self.assertEqual(resp.status_code, 404)
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=(page2.pk,)),
+            reverse('apimobile:flatpage-detail', args=(menu(page2).pk,)),
             HTTP_ACCEPT_LANGUAGE='en')
 
         self.assertEqual(resp.status_code, 404)
@@ -229,35 +229,35 @@ class FlatPageTest(TestCase):
         page4 = _create_flatpage_and_menuitem(published_fr=True, portals=[portal1, portal2])
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=[page1.pk]),
+            reverse('apimobile:flatpage-detail', args=[menu(page1).pk]),
             data={"portal": portal2.name},
             HTTP_ACCEPT_LANGUAGE='fr'
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["id"], page1.id)
+        self.assertEqual(resp.json()["id"], menu(page1).id)
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=[page2.pk]),
+            reverse('apimobile:flatpage-detail', args=[menu(page2).pk]),
             data={"portal": portal2.name},
             HTTP_ACCEPT_LANGUAGE='fr'
         )
         self.assertEqual(resp.status_code, 404)
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=[page3.pk]),
+            reverse('apimobile:flatpage-detail', args=[menu(page3).pk]),
             data={"portal": portal2.name},
             HTTP_ACCEPT_LANGUAGE='fr'
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["id"], page3.id)
+        self.assertEqual(resp.json()["id"], menu(page3).id)
 
         resp = self.client.get(
-            reverse('apimobile:flatpage-detail', args=[page4.pk]),
+            reverse('apimobile:flatpage-detail', args=[menu(page4).pk]),
             data={"portal": portal2.name},
             HTTP_ACCEPT_LANGUAGE='fr'
         )
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json()["id"], page4.id)
+        self.assertEqual(resp.json()["id"], menu(page4).id)
 
     def test_flatpage_list_with_portal_filter(self):
         FlatPage.objects.update(published_fr=False)
@@ -278,9 +278,9 @@ class FlatPageTest(TestCase):
         results = resp.json()
         page_ids = [r["id"] for r in results]
         self.assertEqual(len(page_ids), 3)
-        self.assertIn(page1.id, page_ids)
-        self.assertIn(page2.id, page_ids)
-        self.assertIn(page3.id, page_ids)
+        self.assertIn(menu(page1).id, page_ids)
+        self.assertIn(menu(page2).id, page_ids)
+        self.assertIn(menu(page3).id, page_ids)
 
     def test_flatpage_list_returns_ordered_pages(self):
 
@@ -327,8 +327,8 @@ class FlatPageTest(TestCase):
         results = resp.json()
         page_ids = [r["id"] for r in results]
         self.assertEqual(len(page_ids), 2)
-        self.assertIn(page1.id, page_ids)
-        self.assertIn(page2.id, page_ids)
+        self.assertIn(menu(page1).id, page_ids)
+        self.assertIn(menu(page2).id, page_ids)
 
     def tearDown(self):
         translation.deactivate()
