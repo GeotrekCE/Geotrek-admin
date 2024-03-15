@@ -283,11 +283,6 @@ class FlatPageTest(TestCase):
         self.assertIn(menu(page3).id, page_ids)
 
     def test_flatpage_list_returns_ordered_pages(self):
-
-        def get_menu(page):
-            menu_id = page.menu_items.first().id
-            return MenuItem.objects.get(pk=menu_id)
-
         FlatPage.objects.update(published_fr=False)
         MenuItem.objects.update(published_fr=False)
 
@@ -297,7 +292,7 @@ class FlatPageTest(TestCase):
 
         # old FlatPage's `order` field is not taken into account in the FlatPage + MenuItem factory,
         # the menu3 is moved before menu1 to re-create the page order defined just above.
-        get_menu(page3).move(get_menu(page1), pos="left")
+        menu(page3).move(menu(page1), pos="left")
 
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
@@ -307,7 +302,7 @@ class FlatPageTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
         page_repr_ids = [r["id"] for r in results]
-        self.assertEqual(page_repr_ids, [get_menu(page3).id, get_menu(page1).id, get_menu(page2).id])
+        self.assertEqual(page_repr_ids, [menu(page3).id, menu(page1).id, menu(page2).id])
         titles_in_order = [r["title"] for r in results]
         self.assertEqual(titles_in_order, ["ccc", "aaa", "bbb"])
 
