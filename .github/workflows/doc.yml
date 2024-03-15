@@ -35,6 +35,7 @@ jobs:
         run: |
           cd docs/
           make gettext
+          rm ./_build/locale/changelog.pot
           sphinx-intl update -l fr
           sphinx-intl build
           sphinx-build -b html -D language='fr' -d _build/doctrees . _build/html/fr
