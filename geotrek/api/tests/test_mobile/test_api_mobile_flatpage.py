@@ -5,7 +5,7 @@ from django.utils import translation
 from geotrek.common.tests.factories import TargetPortalFactory
 
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
-from geotrek.flatpages.models import FlatPage, FLATPAGES_TARGETS
+from geotrek.flatpages.models import FlatPage, FLATPAGES_TARGETS, MenuItem
 
 FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE = sorted([
     'id', 'title', 'external_url', 'content'
@@ -66,11 +66,10 @@ def _create_flatpage_and_menuitem(**kwargs):
                     menu_kwargs[f"{dst}_{lang}"] = kwargs[f"{src}_{lang}"]
                 except KeyError:
                     pass
-        else:
-            try:
-                menu_kwargs[dst] = kwargs[src]
-            except KeyError:
-                pass
+        try:
+            menu_kwargs[dst] = kwargs[src]
+        except KeyError:
+            pass
     MenuItemFactory.create(page=page, **menu_kwargs)
 
     return page
@@ -250,17 +249,21 @@ class FlatPageTest(TestCase):
         self.assertIn(page3.id, page_ids)
 
     def test_flatpage_list_returns_ordered_pages(self):
-        FlatPage.objects.update(published_fr=False)
 
-        # I cannot use the _create_flatpage_and_menuitem for this test because it is
-        # the order of creation of MenuItems which defines their position/order,
-        # and I also want to diffentiate the order of MenuItems from the order by FlatPages pk.
-        page1 = FlatPageFactory(published_fr=True)
-        page2 = FlatPageFactory(published_fr=True)
-        page3 = FlatPageFactory(published_fr=True)
-        MenuItemFactory(published_fr=True, page=page3)
-        MenuItemFactory(published_fr=True, page=page1)
-        MenuItemFactory(published_fr=True, page=page2)
+        def get_menu(page):
+            menu_id = page.menu_items.first().id
+            return MenuItem.objects.get(pk=menu_id)
+
+        FlatPage.objects.update(published_fr=False)
+        MenuItem.objects.update(published_fr=False)
+
+        page1 = _create_flatpage_and_menuitem(published_fr=True, title="aaa", order=2)
+        page2 = _create_flatpage_and_menuitem(published_fr=True, title="bbb", order=3)
+        page3 = _create_flatpage_and_menuitem(published_fr=True, title="ccc", order=1)
+
+        # old FlatPage's `order` field is not taken into account in the FlatPage + MenuItem factory,
+        # the menu3 is moved before menu1 to re-create the page order defined just above.
+        get_menu(page3).move(get_menu(page1), pos="left")
 
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
@@ -269,8 +272,10 @@ class FlatPageTest(TestCase):
 
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
-        page_ids = [r["id"] for r in results]
-        self.assertEqual(page_ids, [page3.id, page1.id, page2.id])
+        page_repr_ids = [r["id"] for r in results]
+        self.assertEqual(page_repr_ids, [get_menu(page3).id, get_menu(page1).id, get_menu(page2).id])
+        titles_in_order = [r["title"] for r in results]
+        self.assertEqual(titles_in_order, ["ccc", "aaa", "bbb"])
 
     def test_flatpage_list_filter_by_target(self):
         FlatPage.objects.update(published_fr=False)
