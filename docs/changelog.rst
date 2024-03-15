@@ -5,6 +5,10 @@ CHANGELOG
 2.103.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Hot fix**
+
+- Fix fonts in public PDF (docker image only)
+
 
 2.103.0 (2024-03-14)
 ------------------------
