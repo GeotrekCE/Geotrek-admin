@@ -209,7 +209,7 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
-        menu_item_qs = MenuItem.filter(
+        menu_item_qs = MenuItem.objects.filter(
             depth=1,
             platform__in=['mobile', 'all'],
             published=True,
@@ -219,4 +219,4 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             menu_item_qs = menu_item_qs.filter(Q(portals__name=portal_name) | Q(portals=None))
         menu_item_ids = menu_item_qs.values_list("id", flat=True)
 
-        return FlatPage.objects.filter(menu_items__id__in=menu_item_ids, published=True).order_by("menu_items__position")
+        return FlatPage.objects.filter(menu_items__id__in=menu_item_ids, published=True).order_by("menu_items__path")

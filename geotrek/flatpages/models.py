@@ -136,21 +136,10 @@ class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMix
                                      verbose_name=_("Portal"))
     open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=False)
     attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
-    position = models.IntegerField(null=True)
 
     class Meta:
         verbose_name = _('Menu item')
         verbose_name_plural = _('Menu items')
-
-    def save(self, *args, **kwargs):
-        self.position = self._get_position()
-        super().save(*args, **kwargs)
-
-    def _get_position(self):
-        nodes = self.get_siblings()
-        for i, node in enumerate(nodes):
-            if node == self:
-                return i
 
     @property
     def slug(self):
