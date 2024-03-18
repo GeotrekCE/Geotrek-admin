@@ -9,6 +9,11 @@ CHANGELOG
 
 - Add git to Dockerfile build staging
 
+**Bug fixes**
+
+- Fix bug deleted blades still displayed on detail view of signages (fix #4003)
+
+
 2.103.1 (2024-03-15)
 --------------------
 
