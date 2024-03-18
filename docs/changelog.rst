@@ -5,6 +5,10 @@ CHANGELOG
 2.103.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
 **Bug fixes**
 
 - Fix bug deleted blades still displayed on detail view of signages (fix #4003)
