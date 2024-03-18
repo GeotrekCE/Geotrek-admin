@@ -7,7 +7,7 @@ CHANGELOG
 
 **Hot fix**
 
-- Add git to dockerfile image
+- Add git to Dockerfile build staging
 
 2.103.1 (2024-03-15)
 --------------------
