@@ -90,7 +90,7 @@ datetime==5.2
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==3.2.24
+django==3.2.25
     # via
     #   django-appconf
     #   django-appypod
