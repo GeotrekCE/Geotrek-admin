@@ -470,7 +470,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         max_digits=8,
         decimal_places=2,
         verbose_name=_("Price"),
-        help_text=_("0 mean free"),
+        help_text=_("0 means free"),
         validators=[MinValueValidator(0)]
     )
     objects = TouristicEventManager()
