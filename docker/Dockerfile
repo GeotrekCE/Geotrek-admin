@@ -63,6 +63,7 @@ FROM base as build
 USER root
 
 RUN apt-get update -qq && apt-get install -y -qq  \
+    git \
     python3.8-dev \
     python3.8-venv \
     build-essential \

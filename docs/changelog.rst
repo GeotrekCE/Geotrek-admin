@@ -5,6 +5,10 @@ CHANGELOG
 2.103.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
 2.103.1 (2024-03-15)
 --------------------
 
