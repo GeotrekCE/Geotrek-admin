@@ -1,10 +1,9 @@
 from django.conf import settings
 from django.db import migrations, models
 from django.utils import translation
-from modeltranslation.translator import translator
+from modeltranslation.translator import translator, TranslationOptions
 from modeltranslation.utils import build_localized_fieldname
 
-from geotrek.flatpages.translation import FlatPageTO
 from treebeard.mp_tree import MP_Node
 from treebeard.numconv import NumConv
 
@@ -31,6 +30,11 @@ def get_target_type(page):
 
 
 def create_menu_items_from_flatpages(apps, schema_editor):
+    class FlatPageTO(TranslationOptions):
+        fields = ('title', 'content', 'external_url', ) + (
+            ('published',) if settings.PUBLISHED_BY_LANG else tuple()
+        )
+
     MenuItem = apps.get_model('flatpages', 'MenuItem')
     FlatPage = apps.get_model('flatpages', 'FlatPage')
 
