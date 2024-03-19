@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import migrations, models
 from django.utils import translation
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import translator, TranslationOptions, AlreadyRegistered
 from modeltranslation.utils import build_localized_fieldname
 
 from treebeard.mp_tree import MP_Node
@@ -30,6 +30,15 @@ def get_target_type(page):
 
 
 def create_menu_items_from_flatpages(apps, schema_editor):
+    translated_fields = [
+        "label",
+        "link_url",
+        "published" if settings.PUBLISHED_BY_LANG else tuple(),
+    ]
+
+    class MenuItemTranslationOptions(TranslationOptions):
+        fields = translated_fields
+
     class FlatPageTO(TranslationOptions):
         fields = ('title', 'content', 'external_url', ) + (
             ('published',) if settings.PUBLISHED_BY_LANG else tuple()
@@ -46,7 +55,10 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
 
-    # MenuItem = type(MenuItem)
+    try:
+        translator.register(MenuItem, MenuItemTranslationOptions)
+    except AlreadyRegistered:
+        pass
 
     # Those fields are copied from FlatPage to MenuItem
     # keys are FlatPage's fieldnames, values are MenuItem's
@@ -113,10 +125,13 @@ def create_menu_items_from_flatpages(apps, schema_editor):
         # menu_item = MenuItem.add_root(page=page, **menu_kwargs)
         menu_item = MenuItem.objects.create(page=page, **menu_kwargs)
 
-        menu_item.portals.set(page.portals.all())
+        menu_item.portals.set(page.portal.all())
 
         # FIXME: is save necessary?
         menu_item.save()
+
+    translator.unregister(MenuItem)
+    translator.unregister(FlatPage)
 
 
 def set_treebeard_path_fields(apps, schema_editor):
@@ -170,7 +185,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='flatpage',
             name='path',
-            field=models.CharField(default='', max_length=255, unique=True),
+            field=models.CharField(default='', max_length=255),
             preserve_default=False,
         ),
         migrations.RunPython(set_treebeard_path_fields),

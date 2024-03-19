@@ -1,5 +1,55 @@
-from django.db import migrations, models
+from django.conf import settings
+from django.core.management.color import no_style
+from django.db import migrations, models, connection
 import django.db.models.deletion
+from modeltranslation.translator import TranslationOptions, translator
+from modeltranslation.utils import build_localized_fieldname
+
+
+def get_sync_sql(field_name, missing_langs, model):
+    """
+    Returns SQL needed for sync schema for a new translatable field.
+    From django-modeltranslation: https://github.com/deschler/django-modeltranslation/blob/c34f67491ab59bb6a31eabeb96938c43d2fdd303/modeltranslation/management/commands/sync_translation_fields.py#L137
+    """
+    qn = connection.ops.quote_name
+    style = no_style()
+    sql_output = []
+    db_table = model._meta.db_table
+    for lang in missing_langs:
+        new_field = build_localized_fieldname(field_name, lang)
+        f = model._meta.get_field(new_field)
+        col_type = f.db_type(connection=connection)
+        field_sql = [style.SQL_FIELD(qn(f.column)), style.SQL_COLTYPE(col_type)]
+        # column creation
+        stmt = "ALTER TABLE %s ADD COLUMN %s" % (qn(db_table), ' '.join(field_sql))
+        if not f.null:
+            stmt += " " + 'NOT NULL'
+        sql_output.append(stmt + ";")
+    return sql_output
+
+
+def create_translation_fields(apps, schema_editor):
+    translated_fields = [
+        "label",
+        "link_url",
+        "published" if settings.PUBLISHED_BY_LANG else tuple(),
+    ]
+
+    class MenuItemTranslationOptions(TranslationOptions):
+        fields = translated_fields
+
+    MenuItem = apps.get_model('flatpages', 'MenuItem')
+    translator.register(MenuItem, MenuItemTranslationOptions)
+
+    langs = settings.MODELTRANSLATION_LANGUAGES
+    langs_str = " ,".join(langs)
+
+    for field in translated_fields:
+        print(f"Creating translation fields for {field} for: {langs_str}")
+        sql_statements = get_sync_sql(field, langs, MenuItem)
+        with connection.cursor() as cursor:
+            for sql in sql_statements:
+                cursor.execute(sql)
 
 
 class Migration(migrations.Migration):
@@ -43,4 +93,5 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Menu items',
             },
         ),
+        migrations.RunPython(create_translation_fields),
     ]
