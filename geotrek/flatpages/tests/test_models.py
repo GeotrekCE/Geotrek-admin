@@ -3,6 +3,13 @@ from django.test import TestCase
 from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
+class MduTest(TestCase):
+
+    def test_modeltranslation_descriptor(self):
+        page = FlatPageFactory(title_en="Hello", title_fr="Bonjour")
+        print(page.title)
+
+
 class FlatPageModelTest(TestCase):
     def test_slug_is_taken_from_title(self):
         fp = FlatPageFactory(title="C'est pour toi")
