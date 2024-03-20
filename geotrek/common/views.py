@@ -294,14 +294,6 @@ class ThemeViewSet(viewsets.ModelViewSet):
         return super().get_queryset().order_by('id')
 
 
-class ParametersView(View):
-    def get(request, *args, **kwargs):
-        response = {
-            'geotrek_admin_version': settings.VERSION,
-        }
-        return JsonResponse(response)
-
-
 class HDViewPointList(MapEntityList):
     queryset = HDViewPoint.objects.all()
     filterform = HDViewPointFilterSet
