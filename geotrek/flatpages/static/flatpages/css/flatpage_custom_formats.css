@@ -1,0 +1,51 @@
+h1, h2, h3 {
+    clear: both;
+}
+
+.align-left {
+    float: left;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.align-right {
+    float: right;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.button-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid;
+    text-decoration: none;
+}
+
+.information {
+    clear: both;
+    padding: 1rem;
+    background: lightgray;
+}
+
+.suggestions {
+    clear: both;
+    display: block !important;
+    background: lightgreen;
+    color: green;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    clear: both;
+}
+
+.suggestions::before {
+    content: '' attr(data-type) ' suggestions : ' attr(data-label) '';
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: .3rem;
+}
+
+.suggestions::after {
+    content: 'Identifiants : ' attr(data-ids) '';
+}

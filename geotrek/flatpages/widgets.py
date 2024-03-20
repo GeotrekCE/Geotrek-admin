@@ -1,0 +1,64 @@
+from django.templatetags.static import static
+from tinymce.widgets import TinyMCE
+
+FLATPAGE_TINYMCE_CONFIG = {
+    "height": 500,
+    "plugins": [
+        'autolink lists link image',
+        'media mediaembed',
+        'button-link',
+        'blockquote media table paste imagetools wordcount image_caption suggestions',
+        'visualblocks'
+    ],
+    "menubar": False,
+    'image_title': False,
+    'image_caption': True,
+    'automatic_uploads': False,
+    'convert_urls': False,
+    'file_picker_types': None,
+    'images_upload_url': None,
+    "toolbar": 'undo redo | styleselect | blockquote | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | button-link suggestions | visualblocks',
+    "formats": {
+        "informationFormat": {
+            "block": 'div', "classes": 'information'
+        }
+    },
+    "style_formats": [
+        {"title": 'Headings', "items": [
+            {"title": 'Headings 2', "format": 'h2'},
+            {"title": 'Headings 3', "format": 'h3'},
+            {"title": 'Headings 4', "format": 'h4'},
+            {"title": 'Headings 5', "format": 'h5'},
+            {"title": 'Headings 6', "format": 'h6'}
+        ]},
+        {"title": 'Inline', "items": [
+            {"title": 'Bold', "format": 'bold'},
+            {"title": 'Italic', "format": 'italic'},
+            {"title": 'Underline', "format": 'underline'},
+            {"title": 'Strikethrough', "format": 'strikethrough'},
+        ]},
+        {"title": 'Blocks', "items": [
+            {"title": 'Paragraph', "format": 'p'},
+            {"title": 'Blockquote', "format": 'blockquote'},
+            {"title": 'Information', "format": 'informationFormat'},
+        ]},
+        {"title": 'Alignment', "items": [
+            {"title": 'Left', "format": 'alignleft'},
+            {"title": 'Center', "format": 'aligncenter'},
+            {"title": 'Right', "format": 'alignright'},
+            {"title": 'Justify', "format": 'alignjustify'}
+        ]}
+    ],
+    "newline_behavior": '',
+    "default_font_stack": ['-apple-system', 'Helvetica', 'Arial', 'sans-serif']
+}
+
+
+class FlatPageTinyMCE(TinyMCE):
+
+    def __init__(self, *args, **kwargs):
+        mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()
+        mce_attrs.update(kwargs.get("mce_attrs", {}))
+        mce_attrs["content_css"] = static("flatpages/css/flatpage_custom_formats.css")
+        kwargs["mce_attrs"] = mce_attrs
+        super().__init__(*args, **kwargs)
