@@ -142,7 +142,7 @@ class ViewsTest(TestCase):
 class ViewsImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create(username='homer', password='dooh')
+        cls.user = UserFactory.create()
 
     def setUp(self):
         self.client.force_login(user=self.user)

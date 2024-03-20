@@ -43,7 +43,6 @@ from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
-from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
 from geotrek import __version__
@@ -58,12 +57,11 @@ from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
                     HDViewPointForm, ImportDatasetForm,
                     ImportDatasetFormWithFile, ImportSuricateForm)
 from .mixins.views import BookletMixin, CompletenessMixin, DocumentPortalMixin, DocumentPublicMixin
-from .models import AccessibilityAttachment, HDViewPoint, Theme
+from .models import AccessibilityAttachment, HDViewPoint
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
 from .serializers import (HDViewPointAPIGeoJSONSerializer,
                           HDViewPointAPISerializer,
-                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
-                          ThemeSerializer)
+                          HDViewPointGeoJSONSerializer, HDViewPointSerializer)
 from .tasks import import_datas, import_datas_from_web
 from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
@@ -282,16 +280,6 @@ def import_update_json(request):
             )
 
     return HttpResponse(json.dumps(results), content_type="application/json")
-
-
-class ThemeViewSet(viewsets.ModelViewSet):
-    model = Theme
-    queryset = Theme.objects.all()
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-    serializer_class = ThemeSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().order_by('id')
 
 
 class HDViewPointList(MapEntityList):
