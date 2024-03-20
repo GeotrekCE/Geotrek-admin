@@ -16,15 +16,13 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import GeometryType, Buffer, Area
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
-from .mixins import SensitiveAreaQueryset
 from .models import SensitiveArea, Species, SportPractice
-from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, SensitiveAreaAPISerializer, \
+from .serializers import SensitiveAreaSerializer, SensitiveAreaAPIGeojsonSerializer, \
     SensitiveAreaGeojsonSerializer
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -112,13 +110,6 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'species')
         return qs
-
-
-class SensitiveAreaAPIViewSet(SensitiveAreaQueryset, APIViewSet):
-    model = SensitiveArea
-    serializer_class = SensitiveAreaAPISerializer
-    geojson_serializer_class = SensitiveAreaAPIGeojsonSerializer
-    queryset = SensitiveArea.objects.existing()
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
