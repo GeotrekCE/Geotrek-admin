@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-03-18 10:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,6 +115,9 @@ msgstr "Longueur"
 msgid "Project"
 msgstr "Chantier"
 
+msgid "End date"
+msgstr "Date de fin"
+
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
@@ -141,9 +144,6 @@ msgstr "Bref résumé"
 
 msgid "Begin date"
 msgstr "Date de début"
-
-msgid "End date"
-msgstr "Date de fin"
 
 msgid "Subcontracting"
 msgstr "Sous-traitance"
