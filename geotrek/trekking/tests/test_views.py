@@ -11,7 +11,6 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core import mail
 from django.core.management import call_command
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory, TestCase
@@ -771,7 +770,11 @@ class TrekGPXTest(TrekkingManagerTest):
         cls.trek.description_it = 'Bonnito iti'
         cls.trek.description_fr = 'Jolie rando'
         cls.trek.save()
-        cls.trek.pois.update(description_it=F('description'), published_it=True)
+
+        for poi in cls.trek.pois.all():
+            poi.description_it = poi.description
+            poi.published_it = True
+            poi.save()
 
     def setUp(self):
         self.login()
