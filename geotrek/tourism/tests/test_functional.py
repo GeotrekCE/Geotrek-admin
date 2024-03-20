@@ -1,32 +1,33 @@
-from django.contrib.gis.geos import Polygon, MultiPolygon
-from django.conf import settings
-from django.test.utils import override_settings
-from django.utils.translation import gettext_lazy as _
-from django.utils.module_loading import import_string
-
-import filecmp
-from geotrek.authent.tests.factories import StructureFactory
-from geotrek.authent.tests.factories import TrekkingManagerFactory
-from geotrek.common.tests.factories import AttachmentFactory
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.tourism.models import (TouristicContent,
-                                    TouristicEvent)
-from geotrek.tourism.tests.factories import (TouristicContentFactory,
-                                             TouristicContentCategoryFactory,
-                                             TouristicEventFactory,
-                                             TouristicEventParticipantCountFactory,
-                                             TouristicEventParticipantCategoryFactory)
-from geotrek.zoning.tests.factories import CityFactory
-
-from unittest.mock import patch
-import os
 import csv
+import filecmp
+import os
 from io import StringIO
 from operator import attrgetter
+from unittest.mock import patch
+
+from django.conf import settings
+from django.contrib.gis.geos import MultiPolygon, Polygon
+from django.test.utils import override_settings
+from django.utils.module_loading import import_string
+from django.utils.translation import gettext_lazy as _
+
+from geotrek.authent.tests.factories import StructureFactory, TrekkingManagerFactory
+from geotrek.common.tests import CommonTest
+from geotrek.common.tests.factories import AttachmentFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.tourism.models import TouristicContent, TouristicEvent
+from geotrek.zoning.tests.factories import CityFactory
+
+from .factories import (
+    TouristicContentCategoryFactory,
+    TouristicContentFactory,
+    TouristicEventFactory,
+    TouristicEventParticipantCategoryFactory,
+    TouristicEventParticipantCountFactory,
+)
 
 
-class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
+class TouristicContentViewsTests(CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
@@ -172,7 +173,7 @@ class TouristicContentViewsTests(GeotrekAPITestCase, CommonTest):
                              ['id', 'type1', 'type2', 'eid'])
 
 
-class TouristicEventViewsTests(GeotrekAPITestCase, CommonTest):
+class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory
