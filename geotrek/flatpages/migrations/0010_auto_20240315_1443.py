@@ -8,7 +8,7 @@ from modeltranslation.utils import build_localized_fieldname
 
 def get_sync_sql(field_name, missing_langs, model):
     """
-    Returns SQL needed for sync schema for a new translatable field.
+    Returns SQL (as a list of statements) needed to update schema for new translatable fields.
     From django-modeltranslation: https://github.com/deschler/django-modeltranslation/blob/c34f67491ab59bb6a31eabeb96938c43d2fdd303/modeltranslation/management/commands/sync_translation_fields.py#L137
     """
     qn = connection.ops.quote_name
@@ -32,14 +32,15 @@ def create_translation_fields(apps, schema_editor):
     translated_fields = [
         "label",
         "link_url",
-        "published" if settings.PUBLISHED_BY_LANG else tuple(),
     ]
+    if settings.PUBLISHED_BY_LANG:
+        translated_fields.append("published")
 
-    class MenuItemTranslationOptions(TranslationOptions):
+    class MenuItemTO(TranslationOptions):
         fields = translated_fields
 
     MenuItem = apps.get_model('flatpages', 'MenuItem')
-    translator.register(MenuItem, MenuItemTranslationOptions)
+    translator.register(MenuItem, MenuItemTO)
 
     langs = settings.MODELTRANSLATION_LANGUAGES
     langs_str = " ,".join(langs)
@@ -50,6 +51,10 @@ def create_translation_fields(apps, schema_editor):
         with connection.cursor() as cursor:
             for sql in sql_statements:
                 cursor.execute(sql)
+
+    # The `translator` singleton is global for all migrations. So historical models have to be
+    # unregistered to avoid potential name conflicts with other migrations.
+    translator.unregister(MenuItem)
 
 
 class Migration(migrations.Migration):

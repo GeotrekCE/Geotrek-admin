@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import migrations
 from django.utils import translation
-from modeltranslation.translator import translator, TranslationOptions, AlreadyRegistered
+from modeltranslation.translator import translator, TranslationOptions
 from modeltranslation.utils import build_localized_fieldname
 
 from treebeard.mp_tree import MP_Node
@@ -82,12 +82,8 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # modeltranslation registration is not run on historical models available during migrations.
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
-    # FIXME: should not be necessary if I unregister the model in the previous migration
     # And the same for MenuItem because we'll need destination DB fields for those values.
-    try:
-        translator.register(MenuItem, MenuItemTO)
-    except AlreadyRegistered:
-        pass
+    translator.register(MenuItem, MenuItemTO)
 
     # Those fields are copied from FlatPage to MenuItem.
     # Dict keys are FlatPage's fieldnames, dict values are MenuItem's fieldnames.
