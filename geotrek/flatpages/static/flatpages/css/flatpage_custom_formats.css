@@ -1,0 +1,3 @@
+.quote::before {
+    content: '"'
+}

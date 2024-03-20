@@ -1,4 +1,4 @@
-from tinymce.widgets import TinyMCE
+from geotrek.flatpages.widgets import FlatPageTinyMCE
 
 from treebeard.forms import MoveNodeForm
 
@@ -26,7 +26,7 @@ class FlatPageForm(MoveNodeForm):
         # are passed along as they contain modeltranslation CSS classes.
         for fieldname, formfield in self.fields.items():
             if fieldname.startswith('content_'):
-                self.fields[fieldname].widget = TinyMCE(attrs=self.fields[fieldname].widget.attrs)
+                self.fields[fieldname].widget = FlatPageTinyMCE(attrs=self.fields[fieldname].widget.attrs)
 
         # self.fields['source'].help_text = None
         # self.fields['portal'].help_text = None

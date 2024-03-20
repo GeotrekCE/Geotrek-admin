@@ -680,6 +680,12 @@ TINYMCE_DEFAULT_CONFIG = {
     "paste_as_text": True
 }
 
+TINYMCE_EXTRA_MEDIA = {
+    "css": {
+        "all": ("flatpages/css/flatpage_custom_formats.css", ),
+    },
+}
+
 SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 SYNC_RANDO_OPTIONS = {}
