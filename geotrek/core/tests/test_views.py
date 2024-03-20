@@ -660,7 +660,7 @@ class PathKmlGPXTest(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
         self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
-        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, features='xml')
 
         self.kml_response = self.client.get(reverse('core:path_kml_detail', args=('en', self.path.pk, 'slug')))
 
@@ -783,7 +783,7 @@ class TrailViewsTest(CommonTest):
 
         trail = TrailFactory(offset=3.14)
         response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
-        soup = bs4.BeautifulSoup(response.content, 'lxml')
+        soup = bs4.BeautifulSoup(response.content, features='html.parser')
         textarea_field = soup.find(id="id_topology")
         self.assertIn('"kind": "TMP"', textarea_field.text)
         self.assertIn('"offset": 3.14', textarea_field.text)
@@ -818,7 +818,7 @@ class TrailKmlGPXTest(TestCase):
         self.client.force_login(self.user)
 
         self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
-        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, features='xml')
 
         self.kml_response = self.client.get(reverse('core:trail_kml_detail', args=('en', self.trail.pk, 'slug')))
 

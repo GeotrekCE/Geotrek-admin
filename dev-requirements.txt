@@ -37,6 +37,10 @@ importlib-metadata==6.8.0
     # via
     #   -c requirements.txt
     #   build
+lxml==4.9.3
+    # via
+    #   -c requirements.txt
+    #   -r dev-requirements.in
 mccabe==0.7.0
     # via flake8
 packaging==21.3
