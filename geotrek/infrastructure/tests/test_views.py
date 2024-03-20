@@ -1,16 +1,18 @@
 from django.conf import settings
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.factories import PathManagerFactory
-from geotrek.infrastructure.models import (Infrastructure, INFRASTRUCTURE_TYPES)
-from geotrek.infrastructure.filters import InfrastructureFilterSet
+from geotrek.common.tests import CommonTest
 from geotrek.core.tests.factories import PathFactory
-from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                                    InfrastructureTypeFactory, InfrastructureConditionFactory,
-                                                    PointInfrastructureFactory)
+from geotrek.infrastructure.models import INFRASTRUCTURE_TYPES, Infrastructure
+from geotrek.infrastructure.tests.factories import (
+    InfrastructureConditionFactory,
+    InfrastructureFactory,
+    InfrastructureTypeFactory,
+    PointInfrastructureFactory,
+)
 
 
-class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
+class InfrastructureViewsTest(CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
@@ -25,7 +27,8 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
+            'name': self.obj.name,
+            'published': self.obj.published,
         }
 
     def get_expected_json_attrs(self):
@@ -90,10 +93,6 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
         type = form.fields['type']
         self.assertTrue((infratype.pk, str(infratype)) in type.choices)
 
-    def test_no_pictogram(self):
-        self.modelfactory = InfrastructureNoPictogramFactory
-        super().test_api_detail_for_model()
-
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     modelfactory = PointInfrastructureFactory
@@ -117,28 +116,3 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
         else:
             good_data['geom'] = 'POINT(0.42 0.666)'
         return good_data
-
-
-class InfrastructureFilterTest(CommonTest):
-    factory = InfrastructureFactory
-    filterset = InfrastructureFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = InfrastructureFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        infrastructure1 = InfrastructureFactory.create(provider='my_provider1')
-        infrastructure2 = InfrastructureFactory.create(provider='my_provider2')
-
-        filter_set = InfrastructureFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(infrastructure1, filter_set.qs)
-        self.assertIn(infrastructure2, filter_set.qs)
