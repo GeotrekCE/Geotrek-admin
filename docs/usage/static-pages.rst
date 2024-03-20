@@ -74,18 +74,52 @@ Les champs Titre, Publiée et Contenu peuvent recevoir une valeur différente po
 
     Ces champs sont une alternative au glisser-déposer sur la liste des Pages Statiques et permettent de déplacer les pages dans l'arborescence (voir `Arborescence des pages statiques`_).
 
-**Mise en forme et médias**
+Mise en forme et médias
+-----------------------
 
 Le champ contenu expose un éditeur de texte riche (TinyMCE) permettant d'ajouter de la mise en forme et des médias dans le contenu de la page.
 
 - mise en forme du texte : titres, styles du texte, couleur du texte
 - insertion de listes
+- encart "Information"
+- lien sous forme de bouton
+- citation
 
 Médias :
 
 - insérer une image
 - insérer une vidéo YouTube
 - insérer un lien vers une autre page
+- encart de suggestion de contenu Geotrek
+
+Insérer une image
+-----------------
+
+L'outil *Insérer/modifier* une image permet d'insérer une image dans le contenu. Les champs suivants sont à renseigner :
+
+- Source
+- Description alternative : non-affichée, pour l'accessibilité et les formes de consultation alternatives du contenu
+- Largeur et Hauteur de présentation de l'image en pixels
+- checkbox Afficher le sous-titrage insère une zone de texte collée à l'image pour présenter un titre (le titre est à saisir dans le contenu une fois le formulaire validé)
+
+Insérer des suggestions de contenu Geotrek
+------------------------------------------
+
+Avec l'outil *Suggestions*, les champs suivants sont à renseigner :
+
+- le type de contenu (itinéraires, contenu touristique, événements ou site d'activités de plein nature)
+- les identifiants des contenus (séparés par des virgules. Par exemple : 12,8,73)
+- un titre pour l'encart de suggestions
+
+Après la validation du formulaire une zone récapitulant les informations saisies sous forme textuelle est placée dans le contenu de la page. Le site portail enrichira la présentation des suggestions avec les titres des contenus suggérés à la place des identifiants et les images associées.
+
+Vérifier la mise en page du contenu
+-----------------------------------
+
+Les outils suivants sont disponibles :
+
+- *Afficher les blocs* : permet de contrôler finement la séparation du contenu en blocs (pratique pour les paragraphes de texte)
+- *Code source* : affiche et permet de modifier directement le contenu au format HTML (pour les utilisateurs avertis)
 
 Publier une page
 ================
