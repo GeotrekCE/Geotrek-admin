@@ -31,8 +31,6 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.models import Signage
-from geotrek.signage.tests.factories import SignageFactory
 from geotrek.tourism.tests import factories as tourism_factories
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
@@ -648,24 +646,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         infrafeature = infraslayer['features'][0]
         self.assertEqual(len(infraslayer['features']), 1)
         self.assertEqual(infrafeature['properties']['name'], infra.name)
-
-    def test_signages_geojson(self):
-        signa = SignageFactory.create()
-        signa2 = SignageFactory.create()
-        self.assertEqual(Signage.objects.count(), 2)
-        signa.published = True
-        signa2.published = False
-        signa.save()
-        signa2.save()
-
-        self.assertEqual(Signage.objects.filter(published=True).count(), 1)
-
-        response = self.client.get('/api/en/signages.geojson')
-        self.assertEqual(response.status_code, 200)
-        poislayer = response.json()
-        poifeature = poislayer['features'][0]
-        self.assertEqual(len(poislayer['features']), 1)
-        self.assertEqual(poifeature['properties']['name'], signa.name)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)

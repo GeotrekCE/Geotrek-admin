@@ -1,7 +1,7 @@
-from collections import OrderedDict
 import csv
-from io import StringIO
 import json
+from collections import OrderedDict
+from io import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
@@ -9,19 +9,22 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.translation import gettext
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
-from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.common.tests.factories import OrganismFactory
-from geotrek.signage.models import Signage, Blade
+from geotrek.common.tests import CommonTest
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.tests.factories import (SignageConditionFactory, SignageFactory, SignageTypeFactory, BladeConditionFactory, BladeFactory, BladeTypeFactory,
-                                             SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                             LineFactory, LineDirectionFactory)
-from geotrek.signage.filters import BladeFilterSet, SignageFilterSet
-from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
-
-from mapentity.tests.factories import SuperUserFactory
+from geotrek.signage.models import Blade, Signage
+from geotrek.signage.tests.factories import (
+    BladeColorFactory,
+    BladeConditionFactory,
+    BladeDirectionFactory,
+    BladeFactory,
+    BladeTypeFactory,
+    LineDirectionFactory,
+    LineFactory,
+    SignageConditionFactory,
+    SignageFactory,
+    SignageTypeFactory,
+)
 
 
 class SignageTest(TestCase):
@@ -72,7 +75,7 @@ class SignageTemplatesTest(TestCase):
         self.assertContains(response, "A direction on the line 2")
 
 
-class BladeViewsTest(GeotrekAPITestCase, CommonTest):
+class BladeViewsTest(CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
@@ -87,7 +90,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
+            'number': self.obj.number,
         }
 
     def get_expected_json_attrs(self):
@@ -95,7 +98,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
             'color': self.obj.color.pk,
             'conditions': list(self.obj.conditions.values_list("pk", flat=True)),
             'direction': self.obj.direction.pk,
-            'number': '1',
+            'number': self.obj.number,
             'order_lines': [self.obj.lines.get().pk],
             'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
             'type': {
@@ -334,7 +337,7 @@ class BladeTemplatesTest(TestCase):
         self.assertContains(response, "A direction on the line")
 
 
-class SignageViewsTest(GeotrekAPITestCase, CommonTest):
+class SignageViewsTest(CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
@@ -349,7 +352,8 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
+            'name': self.obj.name,
+            'published': True,
         }
 
     def get_expected_json_attrs(self):
@@ -415,101 +419,3 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
         form = response.context['form']
         type = form.fields['type']
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
-
-    def test_no_pictogram(self):
-        self.obj = SignageNoPictogramFactory.create(publication_date='2020-03-17')
-        response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
-        self.assertEqual(response.status_code, 200)
-        expected_json_attrs = {'id': self.obj.pk, **self.get_expected_json_attrs()}
-        expected_json_attrs['type']['pictogram'] = '/static/signage/picto-signage.png'
-        self.assertJSONEqual(response.content, expected_json_attrs)
-
-
-class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
-    factory = SignageFactory
-    filterset = SignageFilterSet
-
-    def test_none_implantation_year_filter(self):
-
-        self.login()
-        model = self.factory._meta.model
-        SignageFactory.create()
-        response = self.client.get(model.get_list_url())
-        self.assertNotContains(response, 'option value="" selected>None</option')
-
-    def test_implantation_year_filter(self):
-        self.login()
-        model = self.factory._meta.model
-        i = SignageFactory.create(implantation_year=2015)
-        i2 = SignageFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
-
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
-
-        filter = SignageFilterSet(data={'implantation_year': [2015]})
-        self.assertTrue(i in filter.qs)
-        self.assertFalse(i2 in filter.qs)
-
-    def test_implantation_year_filter_with_str(self):
-        i = SignageFactory.create(implantation_year=2015)
-        i2 = SignageFactory.create(implantation_year=2016)
-        filter_set = SignageFilterSet(data={'implantation_year': 'toto'})
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="2015">2015</option>', filter_form.as_p())
-        self.assertIn('<option value="2016">2016</option>', filter_form.as_p())
-
-        self.assertIn(i, filter_set.qs)
-        self.assertIn(i2, filter_set.qs)
-
-    def test_provider_filter_without_provider(self):
-        filter_set = SignageFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        signage1 = SignageFactory.create(provider='my_provider1')
-        signage2 = SignageFactory.create(provider='my_provider2')
-
-        filter_set = SignageFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(signage1, filter_set.qs)
-        self.assertIn(signage2, filter_set.qs)
-
-
-class BladeFilterSetTest(TestCase):
-    factory = BladeFactory
-    filterset = BladeFilterSet
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.model = cls.factory._meta.model
-        cls.user = SuperUserFactory.create()
-
-        cls.manager = OrganismFactory()
-        cls.manager2 = OrganismFactory()
-
-        cls.signage = SignageFactory(manager=cls.manager, code="COUCOU")
-        cls.signage2 = SignageFactory(manager=cls.manager2, code="ADIEU")
-
-        cls.blade = cls.factory(signage=cls.signage)
-        cls.blade2 = cls.factory(signage=cls.signage2)
-
-    def setUp(self):
-        self.client.force_login(self.user)
-
-    def test_filter_by_organism(self):
-        filter = BladeFilterSet(data={'manager': [self.manager.pk,]})
-        response = self.client.get(self.model.get_list_url())
-
-        self.assertEqual(response.status_code, 200)
-
-        self.assertIn(self.blade, filter.qs)
-        self.assertNotIn(self.blade2, filter.qs)

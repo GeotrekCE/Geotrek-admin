@@ -89,30 +89,6 @@ class BladeGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ('id', 'number')
 
 
-class BladeAPISerializer(serializers.ModelSerializer):
-    type = BladeTypeSerializer()
-    structure = StructureSerializer()
-    order_lines = serializers.SerializerMethodField()
-
-    def get_order_lines(self, obj):
-        return obj.order_lines.values_list('pk', flat=True)
-
-    class Meta:
-        model = signage_models.Blade
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'conditions', 'direction')
-        # TODO: Do a lineserializer for order_lines
-
-
-class BladeAPIGeojsonSerializer(GeoFeatureModelSerializer, BladeAPISerializer):
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
-
-    class Meta(BladeAPISerializer.Meta):
-        geo_field = 'api_geom'
-        fields = BladeAPISerializer.Meta.fields + ('api_geom', )
-
-
 class CSVBladeSerializer(CSVSerializer):
     def serialize(self, queryset, **options):
         """
