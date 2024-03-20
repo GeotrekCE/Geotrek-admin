@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import migrations, models
+from django.db import migrations
 from django.utils import translation
 from modeltranslation.translator import translator, TranslationOptions, AlreadyRegistered
 from modeltranslation.utils import build_localized_fieldname
@@ -8,7 +8,22 @@ from treebeard.mp_tree import MP_Node
 from treebeard.numconv import NumConv
 
 
-def get_target_type(page):
+def get_treenode_kwargs(position):
+    """Support function to initialize DB fields from django-treebeard package's model MP_Node"""
+    numconv = NumConv(len(MP_Node.alphabet), MP_Node.alphabet)
+    key = numconv.int2str(position)
+    path = '{0}{1}'.format(
+        MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
+        key
+    )
+    return {
+        "depth": 1,
+        "path": path,
+    }
+
+
+def get_page_type(page):
+    """Support function to know what kind of data is on a FlatPage"""
     has_content = False
     for lang in settings.MODELTRANSLATION_LANGUAGES:
         content_fieldname = build_localized_fieldname("content", lang)
@@ -22,30 +37,43 @@ def get_target_type(page):
             has_link = True
             break
     if has_content and has_link:
-        return "both"
+        return "both_content_and_link"
     elif has_link:
-        return "link"
+        return "link_only"
     else:
-        return "content"
+        return "content_only"
 
 
 def create_menu_items_from_flatpages(apps, schema_editor):
-    translated_fields = [
-        "label",
-        "link_url",
-        "published" if settings.PUBLISHED_BY_LANG else tuple(),
-    ]
+    """The data migration from FlatPages to new MenuItems,
 
-    class MenuItemTranslationOptions(TranslationOptions):
-        fields = translated_fields
-
-    class FlatPageTO(TranslationOptions):
-        fields = ('title', 'content', 'external_url', ) + (
-            ('published',) if settings.PUBLISHED_BY_LANG else tuple()
-        )
+    With a lot of comments in the code.
+    """
 
     MenuItem = apps.get_model('flatpages', 'MenuItem')
     FlatPage = apps.get_model('flatpages', 'FlatPage')
+
+    # Historical models available during migrations do not have custom attributs/methods. Hence they do
+    # not expose the translation fields created by the django-modeltranslation package. We have
+    # to manually define and register translation fields.
+    menu_item_translated_fields = [
+        "label",
+        "link_url",
+    ]
+    flatpage_translated_fields = [
+        "title",
+        "content",
+        "external_url",
+    ]
+    if settings.PUBLISHED_BY_LANG:
+        menu_item_translated_fields.append("published")
+        flatpage_translated_fields.append("published")
+
+    class MenuItemTO(TranslationOptions):
+        fields = menu_item_translated_fields
+
+    class FlatPageTO(TranslationOptions):
+        fields = flatpage_translated_fields
 
     # This is to avoid fallback on another lang when a translation fields (i.e. `title_en`)
     # has an empty string value. In such a case we want to copy the '' value from `flat_page.title_en` as is.
@@ -54,14 +82,15 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # modeltranslation registration is not run on historical models available during migrations.
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
-
+    # FIXME: should not be necessary if I unregister the model in the previous migration
+    # And the same for MenuItem because we'll need destination DB fields for those values.
     try:
-        translator.register(MenuItem, MenuItemTranslationOptions)
+        translator.register(MenuItem, MenuItemTO)
     except AlreadyRegistered:
         pass
 
-    # Those fields are copied from FlatPage to MenuItem
-    # keys are FlatPage's fieldnames, values are MenuItem's
+    # Those fields are copied from FlatPage to MenuItem.
+    # Dict keys are FlatPage's fieldnames, dict values are MenuItem's fieldnames.
     copied_fields = {
         "title": "label",
         "published": "published",
@@ -75,18 +104,20 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     }
 
     # Those fields are translated so we copy/move all translation values
-    translated_fields = [
-        "title",
-        "published",
-        "external_url",
-    ]
+    # translated_fields = [
+    #     "title",
+    #     "published",
+    #     "external_url",
+    # ]
 
-    # The order by is important as it is the order of creation for MenuItems during this migration
-    # which defines their position.
+    # The order-by clause is important as it is the MenuItems' order of creation during this migration
+    # which defines their position as tree nodes.
     pages = FlatPage.objects.order_by("order")
-    for i, page in enumerate(pages):
-
-        if page.target == "hidden" and get_target_type(page) == "content":
+    pages_to_delete = []
+    for position, page in enumerate(pages):
+        page_type = get_page_type(page)
+        if page.target == "hidden" and page_type == "content_only":
+            # The page is hidden and has no external_url value -> we do not create a MenuItem for it
             continue
 
         # copy fields (including translation fields)
@@ -95,9 +126,8 @@ def create_menu_items_from_flatpages(apps, schema_editor):
         menu_fields = {}
         menu_fields.update(copied_fields)
         menu_fields.update(moved_fields)
-
         for src, dst in menu_fields.items():
-            if src in translated_fields:
+            if src in flatpage_translated_fields:
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
                     translation.activate(lang)
                     loc_dst = build_localized_fieldname(dst, lang)
@@ -105,41 +135,32 @@ def create_menu_items_from_flatpages(apps, schema_editor):
             else:
                 menu_kwargs[dst] = getattr(page, src)
 
-        numconv = NumConv(len(MP_Node.alphabet), MP_Node.alphabet)
+        menu_kwargs.update(get_treenode_kwargs(position))
 
-        def get_treenode_kwargs(i):
+        # Several cases handled here:
+        if page_type == "link_only":
+            # FlatPage with only an external_url and no content are "turned into" a MenuItem
+            pages_to_delete.append(page)
+            menu_kwargs["target_type"] = "link"
+        else:
+            # Otherwise the new MenuItem targets the FlatPage
+            menu_kwargs["page"] = page
+            menu_kwargs["target_type"] = "page"
 
-            key = numconv.int2str(i)
-            path = '{0}{1}'.format(
-                MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
-                key
-            )
-
-            return {
-                "depth": 1,
-                "path": path,
-            }
-
-        menu_kwargs.update(get_treenode_kwargs(i))
-
-        # menu_item = MenuItem.add_root(page=page, **menu_kwargs)
-        menu_item = MenuItem.objects.create(page=page, **menu_kwargs)
+        menu_item = MenuItem.objects.create(**menu_kwargs)
 
         menu_item.portals.set(page.portal.all())
 
         # FIXME: is save necessary?
         menu_item.save()
 
+    for page in pages_to_delete:
+        page.delete()
+
+    # The `translator` singleton is global for all migrations. So historical models have to be
+    # unregistered to avoid potential name conflicts with other migrations.
     translator.unregister(MenuItem)
     translator.unregister(FlatPage)
-
-
-def set_treebeard_path_fields(apps, schema_editor):
-    FlatPage = apps.get_model('flatpages', 'FlatPage')
-    pages = FlatPage.objects.all()
-    for page in pages:
-        page.path = str(page.pk)
-        page.save()
 
 
 class Migration(migrations.Migration):
@@ -150,48 +171,4 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(create_menu_items_from_flatpages),
-        migrations.AlterModelOptions(
-            name='flatpage',
-            options={'permissions': (('read_flatpage', 'Can read FlatPage'),), 'verbose_name': 'Flat page', 'verbose_name_plural': 'Flat pages'},
-        ),
-        migrations.RenameField(
-            model_name='flatpage',
-            old_name='portal',
-            new_name='portals',
-        ),
-        migrations.RemoveField(
-            model_name='flatpage',
-            name='external_url',
-        ),
-        migrations.RemoveField(
-            model_name='flatpage',
-            name='order',
-        ),
-        migrations.RemoveField(
-            model_name='flatpage',
-            name='target',
-        ),
-        migrations.AddField(
-            model_name='flatpage',
-            name='depth',
-            field=models.PositiveIntegerField(default=1),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='flatpage',
-            name='numchild',
-            field=models.PositiveIntegerField(default=0),
-        ),
-        migrations.AddField(
-            model_name='flatpage',
-            name='path',
-            field=models.CharField(default='', max_length=255),
-            preserve_default=False,
-        ),
-        migrations.RunPython(set_treebeard_path_fields),
-        migrations.AlterField(
-            model_name='flatpage',
-            name='path',
-            field=models.CharField(max_length=255, unique=True),
-        ),
     ]
