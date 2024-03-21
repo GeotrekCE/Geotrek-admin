@@ -244,7 +244,7 @@ You can now restore your database dump.
 
     Note you should use -h 127.0.0.1 because to keep imported elements owning, you should use geotrek user which is not allowed to connect with default unix socket.
     Some errors can occurs, around extensions creation or spatial_ref_sys table content.
-    This is normal. We already create this extensions on previous steps
+    This is normal. We already create these extensions on previous steps.
 
 
 .. warning::
