@@ -13,8 +13,6 @@ register_converter(LangConverter, 'lang')
 app_name = 'tourism'
 urlpatterns = [
     re_path(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
-    re_path(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/treks/(?P<pk>\d+)/touristicevents\.geojson$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
-    re_path(r'^api/(?P<lang>[a-z]{2}(-[a-z]{2,4})?)/treks/(?P<pk>\d+)/touristiccontents\.geojson$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
     path('popup/add/organizer/', tourism_views.TouristicEventOrganizerCreatePopup.as_view(), name='organizer_add'),
 ]
 

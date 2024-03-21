@@ -3,40 +3,7 @@ from mapentity.serializers import MapentityGeojsonModelSerializer
 
 from rest_framework import serializers as rest_serializers
 
-from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
 from geotrek.diving import models as diving_models
-
-
-class DifficultySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
-
-    class Meta:
-        model = diving_models.Difficulty
-        fields = ('id', 'pictogram', 'label')
-
-
-class LevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
-
-    class Meta:
-        model = diving_models.Level
-        fields = ('id', 'pictogram', 'label', 'description')
-
-
-class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.ReadOnlyField(source='name')
-
-    class Meta:
-        model = diving_models.Practice
-        fields = ('id', 'pictogram', 'label')
-
-
-class CloseDiveSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
-
-    class Meta:
-        model = diving_models.Dive
-        fields = ('id', 'category_id')
 
 
 class DiveSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):

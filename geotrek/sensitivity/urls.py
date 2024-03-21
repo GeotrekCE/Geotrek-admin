@@ -4,9 +4,10 @@ from django.urls import path, register_converter
 from mapentity.registry import registry
 
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
-from . import models
-from . import serializers
-from . import views
+from . import models, serializers, views
+
+
+app_name = 'sensitivity'
 
 
 class SensitiveAreaEntityOptions(PublishableEntityOptions):
@@ -19,7 +20,7 @@ class SensitiveAreaEntityOptions(PublishableEntityOptions):
 
 register_converter(LangConverter, 'lang')
 
-app_name = 'sensitivity'
+
 urlpatterns = [
     path('api/<lang:lang>/sensitiveareas/<int:pk>.kml',
          views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
@@ -29,9 +30,4 @@ urlpatterns = [
          views.SensitiveAreaOpenAirList.as_view(), name="sensitivearea_openair_list"),
 ]
 
-
-if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('api/<lang:lang>/treks/<int:pk>/sensitiveareas.geojson',
-                            views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
-                            name="trek_sensitivearea_geojson"))
 urlpatterns += registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)

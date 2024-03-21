@@ -33,8 +33,8 @@ from geotrek.zoning.models import District, City, RestrictedArea
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .models import Trek, POI, WebLink, Service
-from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, POIAPIGeojsonSerializer,
-                          ServiceAPIGeojsonSerializer,
+from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, TrekPOIAPIGeojsonSerializer,
+                          TrekServiceAPIGeojsonSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 
 
@@ -368,7 +368,7 @@ class POIViewSet(GeotrekMapentityViewSet):
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
-    serializer_class = POIAPIGeojsonSerializer
+    serializer_class = TrekPOIAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -468,7 +468,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
     model = Service
-    serializer_class = ServiceAPIGeojsonSerializer
+    serializer_class = TrekServiceAPIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

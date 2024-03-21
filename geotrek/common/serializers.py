@@ -5,12 +5,10 @@ from django.urls import reverse
 from django.utils.translation import get_language
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
-from rest_framework_gis.fields import (GeometryField,
-                                       GeometrySerializerMethodField)
+from rest_framework_gis.fields import GeometryField, GeometrySerializerMethodField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from .models import (Attachment, FileType, HDViewPoint, Label, RecordSource,
-                     TargetPortal, Theme)
+from .models import Attachment, FileType, HDViewPoint
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -69,32 +67,6 @@ class PublishableSerializerMixin(BasePublishableSerializerMixin):
     class Meta:
         fields = ('name', 'slug', 'map_image_url', 'filelist_url', 'printable') + \
             BasePublishableSerializerMixin.Meta.fields
-
-
-class ThemeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    class Meta:
-        model = Theme
-        fields = ('id', 'pictogram', 'label')
-
-
-class RecordSourceSerializer(PictogramSerializerMixin, rest_serializers.ModelSerializer):
-    class Meta:
-        model = RecordSource
-        fields = ('name', 'website', 'pictogram')
-
-
-class TargetPortalSerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = TargetPortal
-        fields = ('name', 'website')
-
-
-class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    filter_rando = rest_serializers.ReadOnlyField(source='filter')
-
-    class Meta:
-        model = Label
-        fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
 
 
 class HDViewPointSerializer(TranslatedModelSerializer):
