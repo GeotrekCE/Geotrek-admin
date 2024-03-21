@@ -284,10 +284,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return TrekRelationship.objects.filter(trek_a=self)
 
     @property
-    def published_relationships(self):
-        return self.relationships.filter(trek_b__published=True)
-
-    @property
     def poi_types(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Can't use values_list and must add 'ordering' because of bug:
@@ -397,11 +393,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def tourism_treks(cls, tourism_object, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
-    # Rando v1 compat
-    @property
-    def usages(self):
-        return [self.practice] if self.practice else []
-
     @classmethod
     def get_create_label(cls):
         return _("Add a new trek")
@@ -464,15 +455,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         if self.pk and self.pk in self.trek_children.values_list('child__id', flat=True):
             raise ValidationError(_("Cannot use itself as child trek."))
 
-    @property
-    def prefixed_category_id(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
-            return 'I'
-        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            return self.practice.prefixed_id
-        else:
-            return Practice.id_prefix
-
     def distance(self, to_cls):
         if self.practice and self.practice.distance is not None:
             return self.practice.distance
@@ -530,18 +512,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
-
-    @property
-    def rando_url(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            category_slug = self.practice.slug
-        else:
-            category_slug = _('trek')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
         maplayers = [

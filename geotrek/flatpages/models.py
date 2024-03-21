@@ -10,7 +10,6 @@ from django.urls import reverse
 from bs4 import BeautifulSoup
 from extended_choices import Choices
 
-from mapentity.serializers import plain_text
 from geotrek.common.mixins.models import TimeStampedModelMixin, BasePublishableMixin
 
 
@@ -100,14 +99,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
     def get_delete_url(self):
         return reverse('admin:flatpages_flatpage_delete', args=[self.pk])
-
-    @property
-    def rando_url(self):
-        return 'informations/{}/'.format(self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.content)[:500]
 
     def is_public(self):
         return self.any_published

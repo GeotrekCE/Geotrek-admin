@@ -30,8 +30,6 @@ from geotrek.tourism.managers import TouristicContentTypeFilteringManager, Touri
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
-from mapentity.serializers import plain_text
-
 if 'modeltranslation' in settings.INSTALLED_APPS:
     pass
 else:
@@ -305,10 +303,6 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     def type2_label(self):
         return self.category.type2_label
 
-    @property
-    def prefixed_category_id(self):
-        return self.category.prefixed_id
-
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
@@ -320,15 +314,6 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     @property
     def extent(self):
         return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
-
-    @property
-    def rando_url(self):
-        category_slug = _('touristic-content')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.description_teaser or self.description)[:500]
 
     @classmethod
     def topology_touristic_contents(cls, topology, queryset=None):
@@ -521,21 +506,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'),
                 end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
 
-    @property
-    def prefixed_category_id(self):
-        return self.id_prefix
-
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
-
-    @property
-    def rando_url(self):
-        category_slug = _('touristic-event')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.description_teaser or self.description)[:500]
 
     @classmethod
     def topology_touristic_events(cls, topology, queryset=None):
