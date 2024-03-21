@@ -93,19 +93,6 @@ class BladeViewsTest(CommonTest):
             'number': self.obj.number,
         }
 
-    def get_expected_json_attrs(self):
-        return {
-            'color': self.obj.color.pk,
-            'conditions': list(self.obj.conditions.values_list("pk", flat=True)),
-            'direction': self.obj.direction.pk,
-            'number': self.obj.number,
-            'order_lines': [self.obj.lines.get().pk],
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'type': {
-                'label': 'Blade type'
-            }
-        }
-
     def get_expected_datatables_attrs(self):
         return {
             'color': self.obj.color.label,
@@ -354,30 +341,6 @@ class SignageViewsTest(CommonTest):
             'id': self.obj.pk,
             'name': self.obj.name,
             'published': True,
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'code': '',
-            'conditions': list(self.obj.conditions.values_list("pk", flat=True)),
-            'manager': self.obj.manager.pk,
-            'name': 'Signage',
-            'printed_elevation': 4807,
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'sealing': self.obj.sealing.pk,
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'type': {
-                'id': self.obj.type.pk,
-                'label': 'Signage type',
-                'pictogram': '/media/upload/signage_type.png',
-            },
         }
 
     def get_expected_datatables_attrs(self):

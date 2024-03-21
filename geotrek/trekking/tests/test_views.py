@@ -59,39 +59,6 @@ class POIViewsTest(CommonTest):
             'published': self.obj.published
         }
 
-    def get_expected_json_attrs(self):
-        return {
-            'areas': [],
-            'cities': [],
-            'description': '<p>Description</p>',
-            'districts': [],
-            'filelist_url': '/paperclip/get/trekking/poi/{}/'.format(self.obj.pk),
-            'files': [],
-            'map_image_url': '/image/poi-{}.png'.format(self.obj.pk),
-            'max_elevation': 0,
-            'min_elevation': 0,
-            'name': 'POI',
-            'pictures': [],
-            'printable': '/api/en/pois/{}/poi.pdf'.format(self.obj.pk),
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False},
-            ],
-            'slug': 'poi',
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'thumbnail': None,
-            'type': {
-                'id': self.obj.type.pk,
-                'label': 'POI type',
-                'pictogram': '/media/upload/poi-type.png',
-            },
-            'videos': [],
-        }
-
     def get_expected_datatables_attrs(self):
         return {
             'id': self.obj.pk,
@@ -236,116 +203,6 @@ class TrekViewsTest(CommonTest):
             'id': self.obj.pk,
             'name': self.obj.name,
             'published': self.obj.published
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'access': '<p>Access</p>',
-            'accessibilities': [],
-            'accessibility_advice': '<p>Accessibility advice</p>',
-            'accessibility_covering': '<p>Accessibility covering</p>',
-            'accessibility_exposure': '<p>Accessibility exposure</p>',
-            'accessibility_level': {'id': self.obj.accessibility_level.pk, 'label': 'Easy'},
-            'accessibility_signage': '<p>Accessibility signage</p>',
-            'accessibility_slope': '<p>Accessibility slope</p>',
-            'accessibility_width': '<p>Accessibility width</p>',
-            'advice': '<p>Advice</p>',
-            'advised_parking': '<p>Advised parking</p>',
-            'altimetric_profile': '/api/en/treks/{}/profile.json'.format(self.obj.pk),
-            'ambiance': '<p>Ambiance</p>',
-            'areas': [],
-            'arrival': 'Arrival',
-            'ascent': 0,
-            'category': {
-                'id': 'T',
-                'label': 'Hike',
-                'order': 1,
-                'pictogram': '/static/trekking/trek.svg',
-                'slug': 'trek',
-                'type2_label': 'Accessibility type',
-            },
-            'children': [],
-            'cities': [],
-            'departure': 'Departure',
-            'descent': 0,
-            'description': '<p>Description</p>',
-            'description_teaser': '<p>Description teaser</p>',
-            'difficulty': {
-                'id': self.obj.difficulty.pk,
-                'label': 'Difficulty',
-                'pictogram': '/media/upload/difficulty.png',
-            },
-            'accessibility_infrastructure': '<p>Accessibility infrastructure</p>',
-            'districts': [],
-            'dives': [],
-            'duration': 1.5,
-            'duration_pretty': '1 h 30',
-            'elevation_area_url': '/api/en/treks/{}/dem.json'.format(self.obj.pk),
-            'elevation_svg_url': '/api/en/treks/{}/profile.svg'.format(self.obj.pk),
-            'gear': '<p>Gear</p>',
-            'filelist_url': '/paperclip/get/trekking/trek/{}/'.format(self.obj.pk),
-            'files': [],
-            'gpx': '/api/en/treks/{}/trek.gpx'.format(self.obj.pk),
-            'information_desks': [],
-            'labels': [],
-            'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
-            'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
-            'max_elevation': 0,
-            'min_elevation': 0,
-            'name': 'Trek',
-            'networks': [],
-            'next': {},
-            'parents': [],
-            'parking_location': [-1.3630753, -5.9838497],
-            'pictures': [],
-            'points_reference': None,
-            'portal': [],
-            'practice': {
-                'id': self.obj.practice.pk,
-                'label': 'Usage',
-                'pictogram': '/media/upload/practice.png',
-            },
-            'previous': {},
-            'printable': '/api/en/treks/{}/trek.pdf'.format(self.obj.pk),
-            'public_transport': '<p>Public transport</p>',
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'relationships': [],
-            'route': {
-                'id': self.obj.route.pk,
-                'label': 'Route',
-                'pictogram': '/media/upload/routes.png',
-            },
-            'slope': 0.0,
-            'slug': 'trek',
-            'source': [],
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': 'My structure',
-            },
-            'themes': [],
-            'thumbnail': None,
-            'touristic_contents': [],
-            'touristic_events': [],
-            'treks': [],
-            'type2': [],
-            'usages': [{
-                'id': self.obj.practice.pk,
-                'label': 'Usage',
-                'pictogram': '/media/upload/practice.png'
-            }],
-            'videos': [],
-            'web_links': [],
-            'reservation_id': 'XXXXXXXXX',
-            'reservation_system': self.obj.reservation_system.name,
-            'ratings': [],
-            'ratings_description': '',
         }
 
     def get_expected_datatables_attrs(self):
@@ -1035,19 +892,6 @@ class ServiceViewsTest(CommonTest):
     extra_column_list = ['type', 'eid']
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
-
-    def get_expected_json_attrs(self):
-        return {
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': 'My structure'
-            },
-            'type': {
-                'id': self.obj.type.pk,
-                'name': 'Service type',
-                'pictogram': '/media/upload/service-type.png'
-            }
-        }
 
     def get_expected_geojson_geom(self):
         return self.expected_json_geom

@@ -4,7 +4,7 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.tests import CommonLiveTest, CommonTest
 
-from ..models import Dive, Level
+from ..models import Dive
 from .factories import (
     DiveFactory,
     DiveWithLevelsFactory,
@@ -33,63 +33,6 @@ class DiveViewsTests(CommonTest):
             'id': self.obj.pk,
             'name': self.obj.name,
             'published': True,
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'advice': '',
-            'category': {
-                'id': 'D{}'.format(self.obj.practice.id),
-                'label': 'Practice',
-                'order': None,
-                'pictogram': '/media/upload/dummy_img.png',
-                'slug': self.obj.practice.slug,
-            },
-            'departure': '',
-            'depth': None,
-            'description': '',
-            'description_teaser': '',
-            'difficulty': None,
-            'disabled_sport': '',
-            'dives': [],
-            'eid': None,
-            'facilities': '',
-            'filelist_url': '/paperclip/get/diving/dive/{}/'.format(self.obj.pk),
-            'files': [],
-            'levels': [
-                {'description': '<p>Description</p>',
-                 'id': Level.objects.first().pk,
-                 'label': 'Level',
-                 'pictogram': '/media/upload/level.png'}
-            ],
-            'map_image_url': '/image/dive-{}-en.png'.format(self.obj.pk),
-            'name': 'Dive',
-            'owner': '',
-            'pictures': [],
-            'pois': [],
-            'portal': [],
-            'practice': {
-                'id': self.obj.practice.pk,
-                'label': 'Practice',
-                'pictogram': '/media/upload/dummy_img.png'
-            },
-            'printable': '/api/en/dives/{}/dive.pdf'.format(self.obj.pk),
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'slug': self.obj.slug,
-            'source': [],
-            'themes': [],
-            'thumbnail': None,
-            'touristic_contents': [],
-            'touristic_events': [],
-            'treks': [],
-            'videos': [],
         }
 
     def get_expected_datatables_attrs(self):

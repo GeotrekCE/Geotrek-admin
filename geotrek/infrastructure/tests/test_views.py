@@ -31,29 +31,6 @@ class InfrastructureViewsTest(CommonTest):
             'published': self.obj.published,
         }
 
-    def get_expected_json_attrs(self):
-        return {
-            'accessibility': '',
-            'name': self.obj.name,
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': self.obj.structure.name,
-            },
-            'type': {
-                'id': self.obj.type.pk,
-                'label': self.obj.type.label,
-                'pictogram': self.obj.type.pictogram.url if self.obj.type.pictogram else '/static/infrastructure/picto-infrastructure.png',
-            },
-        }
-
     def get_expected_datatables_attrs(self):
         return {
             'cities': '',
