@@ -211,7 +211,7 @@ Update PostgreSQL / PostGIS on Ubuntu Bionic
 
 ::
 
-    sudo rm /etc/apt/sources.list.d/pgdg.list
+    sudo rm -f /etc/apt/sources.list.d/pgdg.list
     sudo apt install curl ca-certificates
     sudo install -d /usr/share/postgresql-common/pgdg
     sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -219,11 +219,11 @@ Update PostgreSQL / PostGIS on Ubuntu Bionic
     sudo apt update
 
 
-Then, make a database dump.
+Then, make a database dump. You can see user / database / password in /opt/geotrek-admin/conf/env file.
 
 ::
 
-    sudo -u postgres pg_dump -Fc --no-acl --no-owner -d <your geotrek database name> > /path/to/your/backup.dump
+    sudo -u postgres pg_dump -Fc --no-acl --no-owner -d <your geotrek database name> > ./backup.dump
 
 
 Now, install newest version of PostgreSQL and PostGIS:
@@ -260,12 +260,12 @@ Recreate user and database:
 
 .. warning::
 
-    You should report configuration from /etc/postgresql/10/pg_hba.conf to /etc/postgresql/14/pg_hba.conf.
+    You should report configuration from /etc/postgresql/10/main/pg_hba.conf to /etc/postgresql/14/main/pg_hba.conf.
     Then restart your postgresql
 
     ::
 
-        sudo cp /etc/postgresql/10/pg_hba.conf /etc/postgresql/14/pg_hba.conf
+        sudo cp /etc/postgresql/10/main/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
         sudo systemctl restart postgresql
 
 
@@ -274,7 +274,13 @@ You can now restore your database dump.
 
 ::
 
-    pg_restore -p 5433 -U <your geotrek user> -d <your geotrek database> /path/to/your/backup.dump
+    pg_restore -h 127.0.0.1 -p 5433 -U <your geotrek user> -d <your geotrek database> ./backup.dump
+
+.. note::
+
+    Note you should use -h 127.0.0.1 because to keep imported elements owning, you should use geotrek user which is not allowed to connect with default unix socket.
+    Some errors can occurs, around extensions creation or spatial_ref_sys table content.
+    This is normal. We already create this extensions on previous steps
 
 
 .. warning::
