@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
-from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Cast
 from django.http import (Http404, HttpResponse, HttpResponseRedirect,
@@ -47,7 +46,6 @@ from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.parsers import SuricateParser
 
@@ -59,9 +57,7 @@ from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
 from .mixins.views import BookletMixin, CompletenessMixin, DocumentPortalMixin, DocumentPublicMixin
 from .models import AccessibilityAttachment, HDViewPoint
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
-from .serializers import (HDViewPointAPIGeoJSONSerializer,
-                          HDViewPointAPISerializer,
-                          HDViewPointGeoJSONSerializer, HDViewPointSerializer)
+from .serializers import HDViewPointGeoJSONSerializer, HDViewPointSerializer, HDViewPointAPISerializer
 from .tasks import import_datas, import_datas_from_web
 from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
@@ -299,15 +295,6 @@ class HDViewPointViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'title')
         return qs
-
-
-class HDViewPointAPIViewSet(APIViewSet):
-    model = HDViewPoint
-    serializer_class = HDViewPointAPISerializer
-    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
-
-    def get_queryset(self):
-        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):
