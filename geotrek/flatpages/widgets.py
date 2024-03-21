@@ -3,14 +3,21 @@ from tinymce.widgets import TinyMCE
 
 FLATPAGE_TINYMCE_CONFIG = {
     "menubar": True,
-    "content_style": '.left { text-align: left; }',
+    'image_title': False,
+    'image_caption': True,
+    'automatic_uploads': False,
+    'convert_urls': False,
+    'file_picker_types': None,
+    'images_upload_url': None,
+    "content_style": ".left { text-align: left; } "
+                     + ".bold { font-weight: bold; }",
     "formats": {
         "alignleft": {
             "selector": 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
             "classes": 'left'
         },
         "quote": {
-            "inline": "span",
+            "block": "blockquote",
             "classes": "quote"
         },
         "bold": {
@@ -38,7 +45,7 @@ FLATPAGE_TINYMCE_CONFIG = {
          "styles": {"display": 'inline-block', "border": '1px solid #2276d2', 'border-radius': '5px',
                     "padding": '2px 5px', "margin": '0 2px', "color": '#2276d2'}},
 
-        {"title": "quote", "inline": "span", "classes": "quote"},
+        {"title": "Citation", "format": "quote"},
         {"title": 'Image formats'},
         {"title": 'Image Left', "selector": 'img', "styles": {'float': 'left', 'margin': '0 10px 0 10px'}},
         {"title": 'Image Right', "selector": 'img', "styles": {'float': 'right', 'margin': '0 0 10px 10px'}},
