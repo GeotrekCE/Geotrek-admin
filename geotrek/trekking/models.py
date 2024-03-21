@@ -85,10 +85,6 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     def slug(self):
         return slugify(self.name) or str(self.pk)
 
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
 
 class RatingScale(RatingScaleMixin):
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
@@ -614,10 +610,6 @@ class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
     @property
     def slug(self):

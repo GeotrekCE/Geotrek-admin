@@ -27,6 +27,12 @@ from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
 class TrekTest(TranslationResetMixin, TestCase):
+    def test_is_public_if_parent_published(self):
+        t = TrekFactory.create(published=False)
+        parent = TrekFactory.create(published=True)
+        OrderedTrekChild.objects.create(parent=parent, child=t)
+        self.assertTrue(t.is_public())
+
     def test_is_publishable(self):
         t = TrekFactory.create()
         t.geom = LineString((0, 0), (1, 1))

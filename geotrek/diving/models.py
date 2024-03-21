@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 
@@ -34,14 +33,6 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
-    @property
-    def slug(self):
-        return slugify(self.name) or str(self.pk)
 
 
 class Difficulty(OptionalPictogramMixin):

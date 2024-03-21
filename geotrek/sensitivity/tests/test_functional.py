@@ -4,7 +4,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 
 from geotrek.common.tests import CommonTest
-from ..models import SensitiveArea
+from ..forms import RegulatorySensitiveAreaForm
+from ..models import SensitiveArea, Species
 from .factories import SensitiveAreaFactory, SpeciesFactory, BiodivManagerFactory
 
 
@@ -104,3 +105,8 @@ class SensitiveAreaViewsTests(CommonTest):
         with override_settings(COLUMNS_LISTS={'sensitivity_export': self.extra_column_list}):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'description', 'contact'])
+
+    def test_regulatory_form(self):
+        """Test if RegulatorySensitiveAreaForm is used with ?category query parameter"""
+        response = self.client.get(self._get_add_url(), {'category': Species.REGULATORY})
+        self.assertTrue(isinstance(response.context['form'], RegulatorySensitiveAreaForm))

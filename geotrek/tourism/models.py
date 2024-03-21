@@ -30,10 +30,6 @@ from geotrek.tourism.managers import TouristicContentTypeFilteringManager, Touri
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
-if 'modeltranslation' in settings.INSTALLED_APPS:
-    pass
-else:
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -177,10 +173,6 @@ class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return self.label
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class TouristicContentType(OptionalPictogramMixin):
@@ -485,10 +477,6 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
 
     def __str__(self):
         return self.name
-
-    @property
-    def type1(self):
-        return [self.type] if self.type else []
 
     @property
     def districts_display(self):
