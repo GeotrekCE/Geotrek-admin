@@ -1,19 +1,25 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
-                             MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from mapentity.views import (
+    MapEntityCreate,
+    MapEntityDelete,
+    MapEntityDetail,
+    MapEntityDocument,
+    MapEntityFormat,
+    MapEntityList,
+    MapEntityUpdate,
+)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
+
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure
-from .serializers import InfrastructureSerializer, InfrastructureAPIGeojsonSerializer, InfrastructureAPISerializer, \
-    InfrastructureGeojsonSerializer
+from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializer
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
@@ -84,12 +90,3 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.select_related('type', 'condition', 'maintenance_difficulty', 'access', 'usage_difficulty')
         return qs
-
-
-class InfrastructureAPIViewSet(APIViewSet):
-    model = Infrastructure
-    serializer_class = InfrastructureAPISerializer
-    geojson_serializer_class = InfrastructureAPIGeojsonSerializer
-
-    def get_queryset(self):
-        return Infrastructure.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))

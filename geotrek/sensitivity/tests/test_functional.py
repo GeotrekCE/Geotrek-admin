@@ -3,19 +3,20 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
-from geotrek.sensitivity.models import SensitiveArea
-from geotrek.sensitivity.tests.factories import (SensitiveAreaFactory, SpeciesFactory, SportPracticeFactory,
-                                                 RegulatorySensitiveAreaFactory, BiodivManagerFactory)
+from geotrek.common.tests import CommonTest
+from ..forms import RegulatorySensitiveAreaForm
+from ..models import SensitiveArea, Species
+from .factories import SensitiveAreaFactory, SpeciesFactory, BiodivManagerFactory, RegulatorySensitiveAreaFactory
 
 
-class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
+class SensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
     modelfactory = SensitiveAreaFactory
     userfactory = BiodivManagerFactory
     expected_json_geom = {
         'type': 'Polygon',
-        'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
+        'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027],
+                         [3.0000391, 46.5], [3.0, 46.5]]],
     }
     extra_column_list = ['description', 'contact']
 
@@ -25,43 +26,9 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-
-        return {
-            'attachments': [],
-            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            'description': 'Blabla',
-            'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
-            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
-            'publication_date': '2020-03-17',
-            'published': True,
-            'rules': [
-                {'code': 'R1',
-                 'description': '',
-                 'id': self.obj.rules.all()[0].pk,
-                 'name': 'Rule1',
-                 'pictogram': '/media/picto_rule1.png',
-                 'url': 'http://url.com'},
-                {'code': 'R2',
-                 'description': 'abcdefgh',
-                 'id': self.obj.rules.all()[1].pk,
-                 'name': 'Rule2',
-                 'pictogram': '/media/picto_rule2.png',
-                 'url': 'http://url.com'}],
-            'species': {
-                'id': self.obj.species.pk,
-                'name': "Species",
-                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
-                'pictogram': "/media/upload/dummy_img.png",
-                'practices': [
-                    {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},
-                    {'id': self.obj.species.practices.all()[1].pk, 'name': "Practice2"},
-                ],
-                'url': self.obj.species.url,
-            },
+            'published': self.obj.published,
+            'radius': self.obj.radius,
+            'species': self.obj.species_id,
         }
 
     def get_expected_datatables_attrs(self):
@@ -103,140 +70,13 @@ class SensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
             self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
                              ['id', 'description', 'contact'])
 
+    def test_regulatory_form_creation(self):
+        """Test if RegulatorySensitiveAreaForm is used with ?category query parameter"""
+        response = self.client.get(self._get_add_url(), {'category': Species.REGULATORY})
+        self.assertTrue(isinstance(response.context['form'], RegulatorySensitiveAreaForm))
 
-class RegulatorySensitiveAreaViewsTests(GeotrekAPITestCase, CommonTest):
-    model = SensitiveArea
-    modelfactory = RegulatorySensitiveAreaFactory
-    userfactory = BiodivManagerFactory
-    expected_json_geom = {
-        'type': 'Polygon',
-        'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
-    }
-    extra_column_list = ['description', 'contact']
-
-    def get_expected_geojson_geom(self):
-        return self.expected_json_geom
-
-    def get_expected_geojson_attrs(self):
-        return {
-            'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'attachments': [],
-            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            'description': 'Blabla',
-            'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
-            'openair_url': '/api/en/sensitiveareas/{}/openair'.format(self.obj.pk),
-            'publication_date': '2020-03-17',
-            'published': True,
-            'rules': [
-                {'code': 'R1',
-                 'description': '',
-                 'id': self.obj.rules.all()[0].pk,
-                 'name': 'Rule1',
-                 'pictogram': '/media/picto_rule1.png',
-                 'url': 'http://url.com'},
-                {'code': 'R2',
-                 'description': 'abcdefgh',
-                 'id': self.obj.rules.all()[1].pk,
-                 'name': 'Rule2',
-                 'pictogram': '/media/picto_rule2.png',
-                 'url': 'http://url.com'}],
-            'species': {
-                'id': self.obj.species.pk,
-                'name': "Species",
-                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
-                'pictogram': "/media/upload/dummy_img.png",
-                'practices': [
-                    {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},
-                    {'id': self.obj.species.practices.all()[1].pk, 'name': "Practice2"},
-                ],
-                'url': self.obj.species.url,
-            },
-        }
-
-    def get_expected_datatables_attrs(self):
-        return {
-            'category': self.obj.category_display,
-            'id': self.obj.pk,
-            'species': self.obj.species_display,
-        }
-
-    def setUp(self):
-        translation.deactivate()
-        super().setUp()
-
-    def get_bad_data(self):
-        return {
-            'geom': 'doh!'
-        }, _('Invalid geometry value.')
-
-    def get_good_data(self):
-        return {
-            'name': 'Test',
-            'practices': [SportPracticeFactory.create().pk],
-            'geom': '{"type": "Polygon", "coordinates":[[[0, 0], [0, 1], [1, 0], [0, 0]]]}',
-            'structure': str(self.user.profile.structure.pk),
-        }
-
-    def _get_add_url(self):
-        return self.model.get_add_url() + '?category=2'
-
-    def test_crud_status(self):
-        if self.model is None:
-            return  # Abstract test should not run
-
-        obj = self.modelfactory()
-
-        response = self.client.get(obj.get_list_url())
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.get(obj.get_detail_url())
-        self.assertEqual(response.status_code, 200)
-
+    def test_regulatory_form_update(self):
+        """Test if RegulatorySensitiveAreaForm is used with regulatory specie in update view"""
+        obj = RegulatorySensitiveAreaFactory()
         response = self.client.get(obj.get_update_url())
-        self.assertEqual(response.status_code, 200)
-
-        self._post_update_form(obj)
-
-        response = self.client.get(obj.get_delete_url())
-        self.assertEqual(response.status_code, 200)
-
-        url = obj.get_detail_url()
-        obj.delete()
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
-
-        self._post_add_form()
-
-        # Test to update without login
-        self.logout()
-
-        obj = self.modelfactory()
-
-        response = self.client.get(self.model.get_add_url() + '?category=2')
-        self.assertEqual(response.status_code, 302)
-        response = self.client.get(obj.get_update_url())
-        self.assertEqual(response.status_code, 302)
-
-    def test_custom_columns_mixin_on_list(self):
-        # Assert columns equal mandatory columns plus custom extra columns
-        if self.model is None:
-            return
-        with override_settings(COLUMNS_LISTS={'sensitivity_view': self.extra_column_list}):
-            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             ['id', 'species', 'description', 'contact'])
-
-    def test_custom_columns_mixin_on_export(self):
-        # Assert columns equal mandatory columns plus custom extra columns
-        if self.model is None:
-            return
-        with override_settings(COLUMNS_LISTS={'sensitivity_export': self.extra_column_list}):
-            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
-                             ['id', 'description', 'contact'])
+        self.assertTrue(isinstance(response.context['form'], RegulatorySensitiveAreaForm))

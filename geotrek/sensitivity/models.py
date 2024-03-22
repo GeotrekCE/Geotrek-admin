@@ -1,7 +1,3 @@
-"""
-   Sensitivity models
-"""
-
 import datetime
 import simplekml
 import logging

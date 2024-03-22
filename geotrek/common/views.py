@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import (login_required,
                                             user_passes_test)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
-from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Cast
 from django.http import (Http404, HttpResponse, HttpResponseRedirect,
@@ -43,12 +42,10 @@ from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins
-from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
 from geotrek import __version__
 from geotrek.celery import app as celery_app
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.parsers import SuricateParser
 
@@ -58,12 +55,9 @@ from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
                     HDViewPointForm, ImportDatasetForm,
                     ImportDatasetFormWithFile, ImportSuricateForm)
 from .mixins.views import BookletMixin, CompletenessMixin, DocumentPortalMixin, DocumentPublicMixin
-from .models import AccessibilityAttachment, HDViewPoint, Theme
+from .models import AccessibilityAttachment, HDViewPoint
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
-from .serializers import (HDViewPointAPIGeoJSONSerializer,
-                          HDViewPointAPISerializer,
-                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
-                          ThemeSerializer)
+from .serializers import HDViewPointGeoJSONSerializer, HDViewPointSerializer, HDViewPointAPISerializer
 from .tasks import import_datas, import_datas_from_web
 from .utils import leaflet_bounds
 from .utils.import_celery import (create_tmp_destination,
@@ -284,24 +278,6 @@ def import_update_json(request):
     return HttpResponse(json.dumps(results), content_type="application/json")
 
 
-class ThemeViewSet(viewsets.ModelViewSet):
-    model = Theme
-    queryset = Theme.objects.all()
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-    serializer_class = ThemeSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().order_by('id')
-
-
-class ParametersView(View):
-    def get(request, *args, **kwargs):
-        response = {
-            'geotrek_admin_version': settings.VERSION,
-        }
-        return JsonResponse(response)
-
-
 class HDViewPointList(MapEntityList):
     queryset = HDViewPoint.objects.all()
     filterform = HDViewPointFilterSet
@@ -319,15 +295,6 @@ class HDViewPointViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'title')
         return qs
-
-
-class HDViewPointAPIViewSet(APIViewSet):
-    model = HDViewPoint
-    serializer_class = HDViewPointAPISerializer
-    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
-
-    def get_queryset(self):
-        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):

@@ -27,11 +27,6 @@ urlpatterns = [
     ),
     path("commands/import", views.import_view, name="import_dataset"),
     path(
-        "api/<lang:lang>/themes.json",
-        views.ThemeViewSet.as_view({"get": "list"}),
-        name="themes_json",
-    ),
-    path(
         "hdviewpoint/annotate/<int:pk>",
         views.HDViewPointAnnotate.as_view(),
         name="hdviewpoint_annotate",
