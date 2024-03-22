@@ -68,8 +68,8 @@ class GeotrekOutdoorParser(GeotrekParser):
                 return dest_id
         return None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def start(self):
+        super().start()
         self.init_outdoor_category('sector', Sector)
         self.init_outdoor_category('practice', Practice, join_field='sector')
         self.init_outdoor_category('scale', RatingScale, join_field='practice')
@@ -146,9 +146,9 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
                 return SiteType.objects.get(pk=type_id)
         return None
 
-    def parse(self, filename=None, limit=None):
+    def start(self):
+        super().start()
         self.init_outdoor_category('type', SiteType, join_field='practice')
-        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)
@@ -229,9 +229,9 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
             return str(val)
         return None
 
-    def parse(self, filename=None, limit=None):
+    def start(self):
+        super().start()
         self.init_outdoor_category('type', CourseType, join_field='practice')
-        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)

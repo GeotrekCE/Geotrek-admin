@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix bug deleted blades still displayed on detail view of signages (fix #4003)
+- Fix interferences on `practice` mapping in Aggregator by changing calls order in GeotrekOutdoorParser (refs #3569)
 
 
 2.103.1 (2024-03-15)
