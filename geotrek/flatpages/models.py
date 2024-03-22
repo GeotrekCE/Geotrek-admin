@@ -134,7 +134,7 @@ class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMix
     portals = models.ManyToManyField('common.TargetPortal',
                                      blank=True, related_name='menu_items',
                                      verbose_name=_("Portal"))
-    open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=False)
+    open_in_new_tab = models.BooleanField(verbose_name=_('Open the link in a new tab'), default=True)
     attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
     class Meta:

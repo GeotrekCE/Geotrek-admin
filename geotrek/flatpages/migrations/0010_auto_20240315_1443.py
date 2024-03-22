@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
                 ('platform',
                  models.CharField(choices=[('all', 'All'), ('mobile', 'Mobile'), ('web', 'Web')], default='all',
                                   max_length=12, verbose_name='Platform')),
-                ('open_in_new_tab', models.BooleanField(default=False, verbose_name='Open the link in a new tab')),
+                ('open_in_new_tab', models.BooleanField(default=True, verbose_name='Open the link in a new tab')),
                 ('page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
                                            related_name='menu_items', to='flatpages.flatpage')),
                 ('portals', models.ManyToManyField(blank=True, related_name='menu_items', to='common.TargetPortal',
