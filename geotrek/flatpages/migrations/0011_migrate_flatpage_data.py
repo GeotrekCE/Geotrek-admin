@@ -155,7 +155,7 @@ def create_menu_items_from_flatpages(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('flatpages', '0010_auto_20240315_1443'),
+        ('flatpages', '0010_create_model_MenuItem'),
     ]
 
     operations = [

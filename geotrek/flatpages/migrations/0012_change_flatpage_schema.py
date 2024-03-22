@@ -12,7 +12,7 @@ def set_treebeard_path_fields(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('flatpages', '0011_auto_20240319_1116'),
+        ('flatpages', '0011_migrate_flatpage_data'),
     ]
 
     operations = [
