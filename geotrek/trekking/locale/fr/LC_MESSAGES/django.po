@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:49+0000\n"
+"POT-Creation-Date: 2024-03-22 14:32+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -351,10 +351,6 @@ msgstr "Ajouter un itinéraire"
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itineraire"
-
 msgid "Sensitive area"
 msgstr "Zone de sensibilité"
 
@@ -542,16 +538,6 @@ msgstr ""
 "La géométrie ne peut pas être convertie en une unique feature continue de "
 "type LineString"
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itinerance"
-
-msgid "Itinerancy"
-msgstr "Itinérance"
-
-msgid "Hike"
-msgstr "Randonnée"
-
 msgid "Attached files"
 msgstr ""
 
@@ -600,6 +586,9 @@ msgstr "Impr. livret"
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
+
+msgid "Itinerancy"
+msgstr "Itinérance"
 
 msgid "Child of:"
 msgstr "Enfant de:"
@@ -731,9 +720,6 @@ msgstr "Ajouter un POI"
 
 msgid "Add a new service"
 msgstr "Ajouter un service"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

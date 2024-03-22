@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:49+0000\n"
+"POT-Creation-Date: 2024-03-22 14:32+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -334,10 +334,6 @@ msgstr "Aggiungere un itinerario"
 msgid "Cannot use itself as child trek."
 msgstr "Impossibile utilizzare un percorso come bambinio proprio."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itinerario"
-
 msgid "Sensitive area"
 msgstr "Area di sensibilità"
 
@@ -522,16 +518,6 @@ msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itineranza"
-
-msgid "Itinerancy"
-msgstr "itinerari a tappe"
-
-msgid "Hike"
-msgstr "Escursione"
-
 msgid "Attached files"
 msgstr ""
 
@@ -580,6 +566,9 @@ msgstr "Stampa opuscolo"
 
 msgid "Photos accessibility"
 msgstr ""
+
+msgid "Itinerancy"
+msgstr "itinerari a tappe"
 
 msgid "Child of:"
 msgstr "Bambino di:"
@@ -710,9 +699,6 @@ msgstr "Aggiungere un nuovo pdi"
 
 msgid "Add a new service"
 msgstr "Aggiungere un nuovo servizio"
-
-msgid "Sync"
-msgstr "Sincro"
 
 msgid "Add Web link"
 msgstr "Aggiungi link Web"

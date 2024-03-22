@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:49+0000\n"
+"POT-Creation-Date: 2024-03-22 14:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -249,9 +249,6 @@ msgstr "Contenuto turistico"
 msgid "Touristic contents"
 msgstr "Contenuti turistici"
 
-msgid "touristic-content"
-msgstr "touristic-content"
-
 msgid "Published touristic contents"
 msgstr "Contenuti turistici pubblicati"
 
@@ -370,9 +367,6 @@ msgstr "a partire da {begin}"
 #, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "da {begin} a {end}"
-
-msgid "touristic-event"
-msgstr "touristic-event"
 
 msgid "Display order"
 msgstr ""
