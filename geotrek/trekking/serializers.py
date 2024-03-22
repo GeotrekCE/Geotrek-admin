@@ -6,12 +6,8 @@ from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
-from geotrek.common.serializers import (
-    PictogramSerializerMixin,
-    TranslatedModelSerializer, PicturesSerializerMixin,
-    PublishableSerializerMixin,
-)
-from geotrek.zoning.serializers import ZoningAPISerializerMixin
+from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
+
 from . import models as trekking_models
 
 
@@ -75,21 +71,17 @@ class POIGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ('id', 'name', 'published')
 
 
-class TrekPOIAPIGeojsonSerializer(DynamicFieldsMixin, GeoFeatureModelSerializer, PublishableSerializerMixin,
-                                  PicturesSerializerMixin, ZoningAPISerializerMixin, TranslatedModelSerializer):
-    # Annotated geom field with API_SRID
+class TrekPOIAPIGeojsonSerializer(GeoFeatureModelSerializer):
     type = POITypeSerializer()
-    structure = StructureSerializer()
     api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
 
     class Meta:
         model = trekking_models.POI
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        id_field = 'id'
         geo_field = 'api_geom'
         fields = (
-            'id', 'description', 'type', 'min_elevation', 'max_elevation', 'structure', 'api_geom'
-        ) + ZoningAPISerializerMixin.Meta.fields + PublishableSerializerMixin.Meta.fields + \
-            PicturesSerializerMixin.Meta.fields
+            'id', 'name', 'type',
+        )
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):

@@ -457,7 +457,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         poislayer = response.json()
         poifeature = poislayer['features'][0]
-        self.assertTrue('thumbnail' in poifeature['properties'])
         self.assertEqual(len(poislayer['features']), 1)
         self.assertEqual(poifeature['properties']['name'], poi.name)
 
