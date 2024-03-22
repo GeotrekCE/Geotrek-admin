@@ -195,6 +195,8 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek = TrekFactory()
         AttachmentImageFactory(content_object=trek)
         self.assertTrue(isinstance(trek.thumbnail, ThumbnailFile))
+        self.assertIsNotNone(trek.thumbnail)
+        self.assertIn(trek.thumbnail.name, trek.thumbnail_display)
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):

@@ -200,10 +200,6 @@ class PicturesMixin:
         return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
 
     @property
-    def thumbnail_csv_display(self):
-        return '' if self.thumbnail is None else os.path.join(settings.MEDIA_URL, self.thumbnail.name)
-
-    @property
     def serializable_thumbnail(self):
         th = self.thumbnail
         if not th:
