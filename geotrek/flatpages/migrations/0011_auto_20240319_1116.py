@@ -82,8 +82,7 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # modeltranslation registration is not run on historical models available during migrations.
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
-    # And the same for MenuItem because we'll need destination DB fields for those values.
-    translator.register(MenuItem, MenuItemTO)
+    # MenuItem is already translation-registered from the previous migration (needed to copy values in translation fields)
 
     # Those fields are copied from FlatPage to MenuItem.
     # Dict keys are FlatPage's fieldnames, dict values are MenuItem's fieldnames.
@@ -98,13 +97,6 @@ def create_menu_items_from_flatpages(apps, schema_editor):
         "external_url": "link_url",
         "target": "platform",
     }
-
-    # Those fields are translated so we copy/move all translation values
-    # translated_fields = [
-    #     "title",
-    #     "published",
-    #     "external_url",
-    # ]
 
     # The order-by clause is important as it is the MenuItems' order of creation during this migration
     # which defines their position as tree nodes.
@@ -147,14 +139,11 @@ def create_menu_items_from_flatpages(apps, schema_editor):
 
         menu_item.portals.set(page.portal.all())
 
-        # FIXME: is save necessary?
-        menu_item.save()
-
     for page in pages_to_delete:
         page.delete()
 
-    # The `translator` singleton is global for all migrations. So historical models have to be
-    # unregistered to avoid potential name conflicts with other migrations.
+    # Historical models have to be unregistered not to conflict with modeltranslation's sync and update commands which
+    # are executed after migrations.
     translator.unregister(MenuItem)
     translator.unregister(FlatPage)
 

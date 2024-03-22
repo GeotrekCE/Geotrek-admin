@@ -52,10 +52,6 @@ def create_translation_fields(apps, schema_editor):
             for sql in sql_statements:
                 cursor.execute(sql)
 
-    # The `translator` singleton is global for all migrations. So historical models have to be
-    # unregistered to avoid potential name conflicts with other migrations.
-    translator.unregister(MenuItem)
-
 
 class Migration(migrations.Migration):
 
