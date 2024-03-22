@@ -3,7 +3,7 @@ from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
 from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
                                            get_dummy_uploaded_image,
-                                           get_dummy_uploaded_file)
+                                           get_dummy_uploaded_file, get_dummy_uploaded_image_svg)
 
 from .. import models
 
@@ -50,6 +50,13 @@ class AttachmentFactory(factory.django.DjangoModelFactory):
 class AttachmentImageFactory(AttachmentFactory):
     attachment_file = factory.django.ImageField()
     is_image = True
+
+    class Meta:
+        model = Attachment
+
+
+class AttachmentPictoSVGFactory(AttachmentFactory):
+    attachment_file = get_dummy_uploaded_image_svg()
 
     class Meta:
         model = Attachment

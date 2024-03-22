@@ -161,12 +161,11 @@ class PicturesMixin:
                 resized.append((picture, thdetail))
         return resized
 
-    @property
-    def picture_print(self):
+    def get_thumbnail(self, alias):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
                 logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
                 continue
@@ -176,18 +175,12 @@ class PicturesMixin:
         return None
 
     @property
+    def picture_print(self):
+        return self.get_thumbnail('print')
+
+    @property
     def thumbnail(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
-                continue
-            thumbnail.author = picture.author
-            thumbnail.legend = picture.legend
-            return thumbnail
-        return None
+        return self.get_thumbnail('small-square')
 
     def resized_picture_mobile(self, root_pk):
         pictures = self.serializable_pictures_mobile(root_pk)

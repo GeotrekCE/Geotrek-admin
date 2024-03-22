@@ -1,3 +1,4 @@
+import datetime
 import os
 from tempfile import TemporaryDirectory
 from unittest import skipIf
@@ -13,7 +14,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from easy_thumbnails.files import ThumbnailFile
 
-from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory
+from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
@@ -179,7 +180,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_wrong_picture(self):
         trek = TrekFactory()
-        error_image_attachment = AttachmentImageFactory(content_object=trek)
+        error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
         os.unlink(error_image_attachment.attachment_file.path)
         self.assertIsNone(trek.picture_print)
 
@@ -188,6 +189,12 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek = TrekFactory()
         self.assertEqual(trek.pictures.count(), 0)
         self.assertIsNone(trek.picture_print, ThumbnailFile)
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_thumbnail(self):
+        trek = TrekFactory()
+        AttachmentImageFactory(content_object=trek)
+        self.assertTrue(isinstance(trek.thumbnail, ThumbnailFile))
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):
@@ -209,7 +216,6 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertIsNone(self.trek.publication_date)
 
     def test_date_is_not_updated_when_saved_again(self):
-        import datetime
         self.test_takes_current_date_when_published_becomes_true()
         old_date = datetime.date(2003, 8, 6)
         self.trek.publication_date = old_date
@@ -541,7 +547,6 @@ class CascadedDeletionLoggingTest(TestCase):
 
 
 class TrekLabelsTestCase(TestCase):
-
     def setUp(self):
         self.trek = TrekFactory()
         self.published_label = LabelFactory(published=True)
