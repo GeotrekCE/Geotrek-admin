@@ -1,7 +1,8 @@
 from django.test import TestCase
 
-from geotrek.infrastructure.filters import InfrastructureFilterSet
+from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory
 
+from ..filters import InfrastructureFilterSet
 from .factories import (
     InfrastructureFactory,
     InfrastructureMaintenanceDifficultyLevelFactory,
@@ -63,26 +64,26 @@ class InfrastructureFilterTest(TestCase):
     filterset = InfrastructureFilterSet
 
     def test_none_implantation_year_filter(self):
-        self.factory.create()
+        self.factory()
         form = self.filterset().form
         self.assertNotIn('option value="" selected>None</option', form.as_p())
 
     def test_implantation_year_filter(self):
-        i = InfrastructureFactory.create(implantation_year=2015)
-        i2 = InfrastructureFactory.create(implantation_year=2016)
+        i = self.factory(implantation_year=2015)
+        i2 = self.factory(implantation_year=2016)
         form = self.filterset().form
 
         self.assertIn('<option value="2015">2015</option>', form.as_p())
         self.assertIn('<option value="2016">2016</option>', form.as_p())
 
-        filter = InfrastructureFilterSet(data={'implantation_year': [2015]})
-        self.assertTrue(i in filter.qs)
-        self.assertFalse(i2 in filter.qs)
+        filterset = self.filterset(data={'implantation_year': [2015]})
+        self.assertTrue(i in filterset.qs)
+        self.assertFalse(i2 in filterset.qs)
 
     def test_implantation_year_filter_with_str(self):
-        i = InfrastructureFactory.create(implantation_year=2015)
-        i2 = InfrastructureFactory.create(implantation_year=2016)
-        filter_set = InfrastructureFilterSet(data={'implantation_year': 'toto'})
+        i = self.factory(implantation_year=2015)
+        i2 = self.factory(implantation_year=2016)
+        filter_set = self.filterset(data={'implantation_year': 'toto'})
         filter_form = filter_set.form.as_p()
         self.assertIn('<option value="2015">2015</option>', filter_form)
         self.assertIn('<option value="2016">2016</option>', filter_form)
@@ -90,18 +91,37 @@ class InfrastructureFilterTest(TestCase):
         self.assertIn(i, filter_set.qs)
         self.assertIn(i2, filter_set.qs)
 
+    def test_form_should_have_signage_intervention_year_choices(self):
+        InfrastructureInterventionFactory(begin_date='2015-01-01')
+        InfrastructureInterventionFactory(begin_date='2020-01-01')
+        filter_set = self.filterset()
+        choice_values = [choice[0] for choice in filter_set.form.fields['intervention_year'].choices]
+        self.assertIn(2015, choice_values)
+        self.assertIn(2020, choice_values)
+        self.assertNotIn(2022, choice_values)
+
+    def test_filter_by_intervention_year(self):
+        filtered_infra_intervention = InfrastructureInterventionFactory(begin_date='2015-01-01')
+        non_filtered_infra_intervention = InfrastructureInterventionFactory(begin_date='2020-01-01')
+        filter_set = self.filterset(data={'intervention_year': [2015]})
+        qs = filter_set.qs
+
+        self.assertEqual(1, len(qs))
+        self.assertIn(filtered_infra_intervention.target, qs)
+        self.assertNotIn(non_filtered_infra_intervention.target, qs)
+
     def test_provider_filter_without_provider(self):
-        filter_set = InfrastructureFilterSet(data={})
+        filter_set = self.filterset(data={})
         filter_form = filter_set.form
 
         self.assertTrue(filter_form.is_valid())
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        infrastructure1 = InfrastructureFactory.create(provider='my_provider1')
-        infrastructure2 = InfrastructureFactory.create(provider='my_provider2')
+        infrastructure1 = self.factory(provider='my_provider1')
+        infrastructure2 = self.factory(provider='my_provider2')
 
-        filter_set = InfrastructureFilterSet()
+        filter_set = self.filterset()
         filter_form = filter_set.form
 
         self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
