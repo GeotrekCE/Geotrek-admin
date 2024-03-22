@@ -126,7 +126,7 @@ class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMix
     )
 
     label = models.CharField(verbose_name=_('Label'), max_length=50)
-    target_type = models.CharField(max_length=10, null=True, choices=TARGET_TYPE_CHOICES)
+    target_type = models.CharField(max_length=10, null=True, blank=True, choices=TARGET_TYPE_CHOICES)
     link_url = models.URLField(verbose_name=_('Link URL'), blank=True, default='')
     page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True, related_name="menu_items")
     platform = models.CharField(verbose_name=_('Platform'), max_length=12, choices=PLATFORM_CHOICES,
