@@ -53,6 +53,10 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     MenuItem = apps.get_model('flatpages', 'MenuItem')
     FlatPage = apps.get_model('flatpages', 'FlatPage')
 
+    if FlatPage.objects.count() == 0:
+        # Not needed when there is no flatpage (running tests, fresh install, ...)
+        return
+
     # Historical models available during migrations do not have custom attributs/methods. Hence they do
     # not expose the translation fields created by the django-modeltranslation package. We have
     # to manually define and register translation fields.
