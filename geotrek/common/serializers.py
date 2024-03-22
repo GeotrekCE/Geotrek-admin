@@ -1,13 +1,9 @@
-from django.conf import settings
 from django.db import models as django_db_models
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.utils.translation import get_language
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometrySerializerMethodField
 
-from .models import Attachment, FileType, HDViewPoint
+from .models import HDViewPoint
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -40,32 +36,6 @@ class PicturesSerializerMixin(rest_serializers.ModelSerializer):
 class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
     class Meta:
         fields = ('published', 'published_status', 'publication_date')
-
-
-class PublishableSerializerMixin(BasePublishableSerializerMixin):
-    printable = rest_serializers.SerializerMethodField('get_printable_url')
-    filelist_url = rest_serializers.SerializerMethodField()
-
-    def get_printable_url(self, obj):
-        if settings.ONLY_EXTERNAL_PUBLIC_PDF:
-            file_type = get_object_or_404(FileType, type="Topoguide")
-            if not Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
-                return None
-        appname = obj._meta.app_label
-        modelname = obj._meta.model_name
-        return reverse('%s:%s_printable' % (appname, modelname),
-                       kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
-
-    def get_filelist_url(self, obj):
-        appname = obj._meta.app_label
-        modelname = obj._meta.model_name
-        return reverse('get_attachments', kwargs={'app_label': appname,
-                                                  'model_name': modelname,
-                                                  'pk': obj.pk})
-
-    class Meta:
-        fields = ('name', 'slug', 'map_image_url', 'filelist_url', 'printable') + \
-            BasePublishableSerializerMixin.Meta.fields
 
 
 class HDViewPointSerializer(TranslatedModelSerializer):
