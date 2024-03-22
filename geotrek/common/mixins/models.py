@@ -19,6 +19,7 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
@@ -215,6 +216,30 @@ class PicturesMixin:
         if not th:
             return None
         return os.path.join(settings.MEDIA_URL, th.name)
+
+    @property
+    def videos(self):
+        all_attachments = self.attachments.all().order_by('-starred')
+        return all_attachments.exclude(attachment_video='')
+
+    @property
+    def serializable_videos(self):
+        serialized = []
+        for att in self.videos:
+            video = detect_backend(att.attachment_video)
+            video.is_secure = True
+            try:
+                serialized.append({
+                    'author': att.author,
+                    'title': att.title,
+                    'legend': att.legend,
+                    'backend': type(video).__name__.replace('Backend', ''),
+                    'url': video.get_url(),
+                    'code': video.code,
+                })
+            except VideoDoesntExistException:
+                pass
+        return serialized
 
     @property
     def files(self):
