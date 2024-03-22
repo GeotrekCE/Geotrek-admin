@@ -1,3 +1,5 @@
+import os
+from tempfile import TemporaryDirectory
 from unittest import skipIf
 
 from bs4 import BeautifulSoup
@@ -9,7 +11,9 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
-from geotrek.common.tests.factories import LabelFactory
+from easy_thumbnails.files import ThumbnailFile
+
+from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
@@ -163,6 +167,27 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertRaisesMessage(ValidationError,
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_correct_picture(self):
+        trek = TrekFactory()
+        AttachmentImageFactory.create_batch(5, content_object=trek)
+        self.assertEqual(trek.pictures.count(), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
+        self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_wrong_picture(self):
+        trek = TrekFactory()
+        error_image_attachment = AttachmentImageFactory(content_object=trek)
+        os.unlink(error_image_attachment.attachment_file.path)
+        self.assertIsNone(trek.picture_print)
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_no_picture(self):
+        trek = TrekFactory()
+        self.assertEqual(trek.pictures.count(), 0)
+        self.assertIsNone(trek.picture_print, ThumbnailFile)
 
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):

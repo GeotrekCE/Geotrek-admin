@@ -47,6 +47,14 @@ class AttachmentFactory(factory.django.DjangoModelFactory):
     legend = factory.Sequence("Legend {0}".format)
 
 
+class AttachmentImageFactory(AttachmentFactory):
+    attachment_file = factory.django.ImageField()
+    is_image = True
+
+    class Meta:
+        model = Attachment
+
+
 class ThemeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Theme
