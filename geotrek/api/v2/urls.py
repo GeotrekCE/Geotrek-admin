@@ -97,7 +97,7 @@ _urlpatterns += [
 ]
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     _urlpatterns += [
-        path('menu_item/<int:pk>/', api_views.MenuItemRetrieveView.as_view(), name='apiv2:menu-item-detail'),
-        path('menu_item/', api_views.MenuItemTreeView.as_view(), name='apiv2:menu-item-tree'),
+        path('menu_item/<int:pk>/', api_views.MenuItemRetrieveView.as_view(), name='menu-item-detail'),
+        path('menu_item/', api_views.MenuItemTreeView.as_view(), name='menu-item-tree'),
     ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]
