@@ -3164,7 +3164,7 @@ class MenuItemTestCase(TestCase):
 
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
-        menu_item = published_menu_item_factory(label="Hello!")
+        menu_item = published_menu_item_factory(label_en="Hello!", label_fr="Bonjour !")
 
         response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
 
@@ -3176,7 +3176,7 @@ class MenuItemTestCase(TestCase):
                 "id": menu_item.pk,
                 "label": {
                     "en": "Hello!",
-                    "fr": None,
+                    "fr": "Bonjour !",
                     "es": None,
                     "it": None,
                 },
