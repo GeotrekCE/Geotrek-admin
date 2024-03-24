@@ -3134,22 +3134,34 @@ class FlatPageTestCase(TestCase):
 
 class MenuItemTestCase(TestCase):
     # TODO:
-    # test_detail
-    # test portal & language filters on both endpoints
+    # [ok] test_detail
+    # [ok] test list with portal
+    # test list with language
+    # test detail with portal
+    # test list with language
     # test menu item not visible if targeted page not published
+    # test_detail_with_portals_filter parent filtered
+    # test_detail_with_portals_filter children filtered
+    # test_detail_check_parent_published
+    # test_detail_check_children_published
+
+    published_menu_item_factory = partial(MenuItemFactory, published=True)
 
     @staticmethod
-    def _get_menu_item(pk):
-        return MenuItem.objects.get(pk=pk)
+    def add_child(parent, child):
+
+        def get(pk):
+            return MenuItem.objects.get(pk=pk)
+
+        get(child.pk).move(get(parent.pk), pos="last-child")
 
     def test_tree(self):
-        get = self._get_menu_item
         published_menu_item_factory = partial(MenuItemFactory, published=True)
         parent = published_menu_item_factory(label="parent")
         child1 = published_menu_item_factory(label="child1")
-        get(child1.pk).move(get(parent.pk), pos="last-child")
+        self.add_child(parent, child1)
         child2 = published_menu_item_factory(label="child2")
-        get(child2.pk).move(get(parent.pk), pos="last-child")
+        self.add_child(parent, child2)
 
         response = self.client.get('/api/v2/menu_item/')
 
@@ -3163,6 +3175,55 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(child1_repr["label"]["en"], "child1")
         child2_repr = parent_repr["children"][1]
         self.assertEqual(child2_repr["label"]["en"], "child2")
+
+    def test_tree_with_portals_filter_on_root_menu_items(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        portal3 = common_factory.TargetPortalFactory()
+        published_menu_item_factory = partial(MenuItemFactory, published=True)
+        published_menu_item_factory(portals=[portal1])
+        menu1 = published_menu_item_factory(portals=[portal1, portal2])
+        menu2 = published_menu_item_factory(portals=[portal2])
+        published_menu_item_factory(portals=None)
+        menu3 = published_menu_item_factory(portals=[portal3])
+
+        response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+        self.assertIn(menu3.pk, menu_item_ids)
+
+    def test_tree_with_portals_filter_on_children(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        portal3 = common_factory.TargetPortalFactory()
+        published_menu_item_factory = partial(MenuItemFactory, published=True)
+        parent = published_menu_item_factory(portals=[portal2])
+        menu1 = published_menu_item_factory(portals=[portal1])
+        self.add_child(parent, menu1)
+        menu2 = published_menu_item_factory(portals=[portal1, portal2])
+        self.add_child(parent, menu2)
+        menu3 = published_menu_item_factory(portals=[portal2])
+        self.add_child(parent, menu3)
+        menu4 = published_menu_item_factory(portals=None)
+        self.add_child(parent, menu4)
+        menu5 = published_menu_item_factory(portals=[portal3])
+        self.add_child(parent, menu5)
+
+        response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        children_ids = [item["id"] for item in parent_repr["children"]]
+        self.assertIn(menu2.pk, children_ids)
+        self.assertIn(menu3.pk, children_ids)
+        self.assertIn(menu5.pk, children_ids)
 
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
