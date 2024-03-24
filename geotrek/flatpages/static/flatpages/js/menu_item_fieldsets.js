@@ -1,7 +1,8 @@
 /*
-* This script handles two effects on fieldsets related to the type of target on the Menu Item change form:
+* This script handles *sugar* effects on fieldsets related to the type of target on the Menu Item change form:
 * - `page` and `link_url` (for the default language) are displayed as required,
-* - the `page` and `link` fieldsets visibility depends on the value of the field `target_type`.
+* - the `page` and `link` fieldsets visibility depends on the value of the field `target_type`,
+* - on form submit erase not needed values regarding the type of target (for instance link URLs erased if target is a page).
 *
 * Note that `page` and `link_url` are not required regarding the <input> elements, the validation takes place on the
 * server side.
@@ -40,9 +41,40 @@ function updateFieldsetsVisibility() {
     }
 }
 
+function cleanSubmission() {
+
+    let eraseLinkUrlFields = function() {
+        let inputs = document.querySelectorAll("input");
+        inputs.forEach((elmt) => {
+            if (elmt.name.startsWith("link_url")) {
+                elmt.value = "";
+            }
+        });
+    };
+
+    let erasePageField = function() {
+        let page_select = document.querySelector("select[name=\"page\"]");
+        page_select.value = undefined;
+    };
+
+    let targetType = document.getElementById("id_target_type").value;
+    if (targetType === "page") {
+        eraseLinkUrlFields();
+    } else if (targetType === "link") {
+        erasePageField();
+    } else {
+        eraseLinkUrlFields();
+        erasePageField();
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
     addRequiredStyle();
     updateFieldsetsVisibility();
+
     let targetTypeSelector = document.getElementById("id_target_type");
     targetTypeSelector.addEventListener("change", updateFieldsetsVisibility);
+
+    let form = document.getElementById("menuitem_form");
+    jQuery(form).submit(cleanSubmission);
 });

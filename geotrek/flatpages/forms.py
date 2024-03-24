@@ -159,9 +159,6 @@ class MenuItemForm(MoveNodeForm):
         if target_type == "page":
             if self.cleaned_data["page"] is None:
                 raise ValidationError({"page": "This field is required."})
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                loc_fieldname = build_localized_fieldname("link_url", lang)
-                self.cleaned_data[loc_fieldname] = ""
 
         if target_type == "link":
             link_url_loc_fieldname = build_localized_fieldname("link_url", settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
@@ -169,4 +166,3 @@ class MenuItemForm(MoveNodeForm):
                     link_url_loc_fieldname in self.cleaned_data
                     and self.cleaned_data[link_url_loc_fieldname] in validators.EMPTY_VALUES):
                 raise ValidationError({link_url_loc_fieldname: "This field is required."})
-            self.cleaned_data["page"] = None
