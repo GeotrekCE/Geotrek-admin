@@ -3296,6 +3296,17 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["children"][0], child1.id)
         self.assertEqual(menu_item_repr["children"][1], child2.id)
 
+    def test_detail_checks_parent_is_published(self):
+        parent = MenuItemFactory(published=False)
+        menu_item = self.published_menu_item_factory()
+        self.add_child(parent, menu_item)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], None)
+
     def test_detail_checks_children_are_published(self):
         menu_item = self.published_menu_item_factory()
         child1 = self.published_menu_item_factory()
