@@ -1,4 +1,3 @@
-from django.conf import settings
 from tinymce.widgets import TinyMCE
 
 from treebeard.forms import MoveNodeForm
@@ -108,15 +107,6 @@ class MenuItemForm(MoveNodeForm):
             if page:
                 self.fields['thumbnail'].initial = page.attachment_file
 
-        print("required init")
-
-        # TODO: page should be required too
-        self.fields["page"].required = True
-
-        link_url_loc_fieldname = build_localized_fieldname("link_url", settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-        print(link_url_loc_fieldname)
-        self.fields[link_url_loc_fieldname].required = True
-
     class Meta:
         model = MenuItem
         fields = (
@@ -135,16 +125,6 @@ class MenuItemForm(MoveNodeForm):
     class Media:
 
         js = ('flatpages/js/menu_item_fieldsets.js',)
-
-    def full_clean(self, *args, **kwargs):
-        print("required pre-full_clean")
-
-        # TODO: same for page
-        self.fields["page"].required = False
-        # TODO: detect default_language
-        link_url_loc_fieldname = build_localized_fieldname("link_url", settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-        self.fields[link_url_loc_fieldname].required = False
-        super().full_clean(*args, **kwargs)
 
     def save_thumbnail(self):
         page = self.instance
