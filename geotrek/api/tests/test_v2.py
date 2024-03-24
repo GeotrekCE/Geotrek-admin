@@ -1,3 +1,5 @@
+import re
+
 import datetime
 import json
 from functools import partial
@@ -3203,6 +3205,17 @@ class MenuItemTestCase(TestCase):
                 "portals": [],
             }
         )
+
+    def test_detail_pictogram_is_absolute_URL(self):
+        published_menu_item_factory = partial(MenuItemFactory, published=True)
+        menu_item = published_menu_item_factory(label="Test picto", pictogram=get_dummy_uploaded_image("menu_picto.png"))
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        picto_url = data["pictogram"]
+        self.assertTrue(re.match("^(http://|https://)", picto_url) is not None)
 
 
 class ReportStatusTestCase(TestCase):
