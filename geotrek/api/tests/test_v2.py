@@ -3131,6 +3131,10 @@ class FlatPageTestCase(TestCase):
 
 
 class MenuItemTestCase(TestCase):
+    # TODO:
+    # test_detail
+    # test portal & language filters on both endpoints
+    # test menu item not visible if targeted page not published
 
     @staticmethod
     def _get_menu_item(pk):
@@ -3157,6 +3161,48 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(child1_repr["label"]["en"], "child1")
         child2_repr = parent_repr["children"][1]
         self.assertEqual(child2_repr["label"]["en"], "child2")
+
+    def test_detail(self):
+        published_menu_item_factory = partial(MenuItemFactory, published=True)
+        menu_item = published_menu_item_factory(label="Hello!")
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(
+            menu_item_repr,
+            {
+                "id": menu_item.pk,
+                "label": {
+                    "en": "Hello!",
+                    "fr": None,
+                    "es": None,
+                    "it": None,
+                },
+                "target_type": None,
+                "published": {
+                    "en": True,
+                    "fr": False,
+                    "es": False,
+                    "it": False,
+                },
+                "page": None,
+                "page_title": None,
+                "link_url": {
+                    "en": "",
+                    "fr": "",
+                    "es": "",
+                    "it": "",
+                },
+                "open_in_new_tab": True,
+                "children": [],
+                "parent": None,
+                "attachments": [],
+                "pictogram": None,
+                "portals": [],
+            }
+        )
 
 
 class ReportStatusTestCase(TestCase):
