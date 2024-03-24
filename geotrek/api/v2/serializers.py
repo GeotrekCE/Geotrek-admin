@@ -1539,7 +1539,21 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_parent(self, obj):
             parent = obj.get_parent()
-            return parent.id if parent else None
+
+            if not parent:
+                return None
+
+            language = self._context["request"].GET.get('language', 'all')
+            try:
+                published_parent = (
+                    MenuItem.objects
+                    .filter(get_published_filter_expression(MenuItem, language))
+                    .get(pk=parent.id)
+                )
+            except MenuItem.DoesNotExist:
+                return None
+
+            return published_parent
 
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
