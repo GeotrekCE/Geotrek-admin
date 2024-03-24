@@ -13,6 +13,8 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+
+from geotrek.flatpages.models import MenuItem
 from modeltranslation.utils import build_localized_fieldname
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
@@ -1528,7 +1530,12 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             )
 
         def get_children(self, obj):
-            return obj.get_children().values_list('id', flat=True).all()
+            language = self._context["request"].GET.get('language', 'all')
+            return (
+                obj.get_children()
+                .filter(get_published_filter_expression(MenuItem, language))
+                .values_list('id', flat=True).all()
+            )
 
         def get_parent(self, obj):
             parent = obj.get_parent()
