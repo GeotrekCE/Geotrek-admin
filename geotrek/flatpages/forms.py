@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core import validators
 from tinymce.widgets import TinyMCE
 
 from treebeard.forms import MoveNodeForm
@@ -144,3 +146,25 @@ class MenuItemForm(MoveNodeForm):
                 object_id=page.id,
             ).delete()
         return page
+
+    def clean(self):
+        """Ensures that:
+          - field `page` has a value if target_type is "page" and
+          - field `link_url` (for the default language only) has a value if target_type is "link".
+
+        It also erases values for fields not relevant to the target_type, for instance if target_type is "page"
+        all `link_url` values are erased.
+         """
+        target_type = self.cleaned_data["target_type"]
+        if target_type == "page":
+            if self.cleaned_data["page"] is None:
+                raise ValidationError({"page": "This field is required."})
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                loc_fieldname = build_localized_fieldname("link_url", lang)
+                self.cleaned_data[loc_fieldname] = ""
+
+        if target_type == "link":
+            link_url_loc_fieldname = build_localized_fieldname("link_url", settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
+            if self.cleaned_data[link_url_loc_fieldname] in validators.EMPTY_VALUES:
+                raise ValidationError({link_url_loc_fieldname: "This field is required."})
+            self.cleaned_data["page"] = None
