@@ -165,6 +165,8 @@ class MenuItemForm(MoveNodeForm):
 
         if target_type == "link":
             link_url_loc_fieldname = build_localized_fieldname("link_url", settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-            if self.cleaned_data[link_url_loc_fieldname] in validators.EMPTY_VALUES:
+            if (
+                    link_url_loc_fieldname in self.cleaned_data
+                    and self.cleaned_data[link_url_loc_fieldname] in validators.EMPTY_VALUES):
                 raise ValidationError({link_url_loc_fieldname: "This field is required."})
             self.cleaned_data["page"] = None
