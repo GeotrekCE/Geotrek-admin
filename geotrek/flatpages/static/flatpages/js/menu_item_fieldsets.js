@@ -17,18 +17,23 @@ function hide(element) {
     element.classList.add("hidden");
 }
 
+function getFirstElementByClassName(className) {
+    let elements = document.getElementsByClassName(className);
+    return elements[0]
+}
+
 function addRequiredStyle() {
-    let pageFieldset = document.getElementsByClassName("page_fieldset")[0];
+    let pageFieldset = getFirstElementByClassName("page_fieldset");
     pageFieldset.querySelector("label").classList.add("required");
-    let linkFieldset = document.getElementsByClassName("link_fieldset")[0];
+    let linkFieldset = getFirstElementByClassName("link_fieldset");
     // `querySelector` returns the first matching element which is the label for the default translation language
     linkFieldset.querySelector("label").classList.add("required");
 }
 
 function updateFieldsetsVisibility() {
     let targetType = document.getElementById("id_target_type").value;
-    let pageFieldset = document.getElementsByClassName("page_fieldset")[0];
-    let linkFieldset = document.getElementsByClassName("link_fieldset")[0];
+    let pageFieldset = getFirstElementByClassName("page_fieldset");
+    let linkFieldset = getFirstElementByClassName("link_fieldset");
     if (targetType === "page") {
         show(pageFieldset);
         hide(linkFieldset);
