@@ -3278,6 +3278,24 @@ class MenuItemTestCase(TestCase):
         picto_url = data["pictogram"]
         self.assertTrue(re.match("^(http://|https://)", picto_url) is not None)
 
+    def test_detail_includes_parent_and_children(self):
+        parent = self.published_menu_item_factory()
+        menu_item = self.published_menu_item_factory()
+        child1 = self.published_menu_item_factory()
+        child2 = self.published_menu_item_factory()
+        self.add_child(parent, menu_item)
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], parent.id)
+        self.assertEqual(len(menu_item_repr["children"]), 2)
+        self.assertEqual(menu_item_repr["children"][0], child1.id)
+        self.assertEqual(menu_item_repr["children"][1], child2.id)
+
     def test_detail_checks_children_are_published(self):
         menu_item = self.published_menu_item_factory()
         child1 = self.published_menu_item_factory()
