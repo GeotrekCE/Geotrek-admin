@@ -3137,13 +3137,15 @@ class MenuItemTestCase(TestCase):
     # [ok] test_detail
     # [ok] test list with portal
     # test list with language
-    # test detail with portal
-    # test list with language
+    # [ko] test detail with portal
+    # test detail with language
     # test menu item not visible if targeted page not published
-    # test_detail_with_portals_filter parent filtered
-    # test_detail_with_portals_filter children filtered
-    # test_detail_check_parent_published
-    # test_detail_check_children_published
+    # [ko] test_detail_with_portals_filter parent filtered
+    # [ko] test_detail_with_portals_filter children filtered
+    # [ok] test_detail_check_parent_published
+    # test_detail_check_parent_published with lang
+    # [ok] test_detail_check_children_published
+    # test_detail_check_children_published with lang
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
@@ -3296,7 +3298,7 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["children"][0], child1.id)
         self.assertEqual(menu_item_repr["children"][1], child2.id)
 
-    def test_detail_checks_parent_is_published(self):
+    def test_detail_does_not_show_not_published_parent(self):
         parent = MenuItemFactory(published=False)
         menu_item = self.published_menu_item_factory()
         self.add_child(parent, menu_item)
@@ -3307,7 +3309,7 @@ class MenuItemTestCase(TestCase):
         menu_item_repr = response.json()
         self.assertEqual(menu_item_repr["parent"], None)
 
-    def test_detail_checks_children_are_published(self):
+    def test_detail_does_not_show_not_published_child(self):
         menu_item = self.published_menu_item_factory()
         child1 = self.published_menu_item_factory()
         self.add_child(menu_item, child1)
