@@ -107,6 +107,8 @@ class MenuItemForm(MoveNodeForm):
             if page:
                 self.fields['thumbnail'].initial = page.attachment_file
 
+        self.fields["link_url_fr"].required = True
+
     class Meta:
         model = MenuItem
         fields = (
@@ -121,6 +123,10 @@ class MenuItemForm(MoveNodeForm):
             'link_url',
             'open_in_new_tab',
         )
+
+    def full_clean(self, *args, **kwargs):
+        self.fields["link_url_fr"].required = False
+        super().full_clean(*args, **kwargs)
 
     def save_thumbnail(self):
         page = self.instance

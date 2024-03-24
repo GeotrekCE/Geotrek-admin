@@ -114,12 +114,14 @@ class MenuItemAdmin(MenuItemAdminBase):
             'fields': [
                 'page',
             ],
+            'classes': ('hidden', 'page_fieldset', )
         }),
         ('Link', {
             'fields': [
                 'link_url',
                 'open_in_new_tab',
             ],
+            'classes': ('hidden', 'link_fieldset', )
         }),
         (None, {
             'fields': [
