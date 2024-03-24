@@ -17,6 +17,7 @@ from django.utils import timezone
 from freezegun.api import freeze_time
 
 from geotrek.flatpages.models import MenuItem, FlatPage
+from geotrek.flatpages.tests.factories import MenuItemFactory
 from mapentity.tests.factories import SuperUserFactory
 from rest_framework.test import APITestCase
 
@@ -2779,6 +2780,7 @@ class OutdoorRatingTestCase(TestCase):
 
 # Convenient lambda to get nodes from DB after each tree operation,
 # this is mandatory. See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+# TODO: move this into the FlatPageTestCase class
 def _get(pk):
     return FlatPage.objects.get(pk=pk)
 
@@ -3126,6 +3128,35 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+
+class MenuItemTestCase(TestCase):
+
+    @staticmethod
+    def _get_menu_item(pk):
+        return MenuItem.objects.get(pk=pk)
+
+    def test_tree(self):
+        get = self._get_menu_item
+        published_menu_item_factory = partial(MenuItemFactory, published=True)
+        parent = published_menu_item_factory(label="parent")
+        child1 = published_menu_item_factory(label="child1")
+        get(child1.pk).move(get(parent.pk), pos="last-child")
+        child2 = published_menu_item_factory(label="child2")
+        get(child2.pk).move(get(parent.pk), pos="last-child")
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        self.assertEqual(parent_repr["label"]["en"], "parent")
+        self.assertEqual(len(parent_repr["children"]), 2)
+        child1_repr = parent_repr["children"][0]
+        self.assertEqual(child1_repr["label"]["en"], "child1")
+        child2_repr = parent_repr["children"][1]
+        self.assertEqual(child2_repr["label"]["en"], "child2")
 
 
 class ReportStatusTestCase(TestCase):
