@@ -3431,6 +3431,17 @@ class MenuItemTestCase(TestCase):
         self.assertIn(child3.id, children_ids)
         self.assertIn(child4.id, children_ids)
 
+    def test_detail_with_language_filter_on_parent(self):
+        parent = MenuItemFactory(published_en=True, published_fr=False)
+        menu_item = MenuItemFactory(published_en=True, published_fr=True)
+        self.add_child(parent, menu_item)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], None)
+
 
 class ReportStatusTestCase(TestCase):
     @classmethod
