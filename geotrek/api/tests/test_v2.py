@@ -3150,7 +3150,7 @@ class MenuItemTestCase(TestCase):
     # [ok] test with full data with no target: attachments (vignette), pictogram
     # [ok] test with specific data with target page
     # [ok] test with specific data with target link
-    # test target_type value is lower case for children
+    # [ok] test target_type value is lower case for children
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
@@ -3281,6 +3281,18 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["link_url"]["en"], menu_item.link_url_en)
         self.assertEqual(menu_item_repr["link_url"]["fr"], menu_item.link_url_fr)
         self.assertEqual(menu_item_repr["open_in_new_tab"], False)
+
+    def test_tree_target_type_is_lowercase_for_child(self):
+        parent = self.published_menu_item_factory()
+        child = self.published_menu_item_factory(target_type=MenuItem.TARGET_TYPE_CHOICES.LINK)
+        self.add_child(parent, child)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        parent_repr = response.json()[0]
+        child_repr = parent_repr["children"][0]
+        self.assertEqual(child_repr["target_type"], "link")
 
     def test_tree_with_portals_filter_on_root_menu_items(self):
         portal1 = common_factory.TargetPortalFactory()
