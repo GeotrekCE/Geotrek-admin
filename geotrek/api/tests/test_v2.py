@@ -3142,7 +3142,7 @@ class MenuItemTestCase(TestCase):
     # [ko] test_detail_with_portals_filter children filtered
     # [ok] test_detail_check_parent_published
     # [ok] test_detail_check_children_published
-    # test menu item not visible if targeted page not published
+    # [ok] test menu item not visible if targeted page not published
     # test detail with language
     # test_detail_check_parent_published with lang
     # test_detail_check_children_published with lang
@@ -3401,6 +3401,26 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(len(menu_item_repr["children"]), 1)
         child_id = menu_item_repr["children"][0]
         self.assertEqual(child_id, child1.id)
+
+    def test_detail_with_language_filter_on_children(self):
+        menu_item = MenuItemFactory(published_en=True, published_fr=True)
+        child1 = MenuItemFactory(published_en=False, published_fr=False)
+        child2 = MenuItemFactory(published_en=True, published_fr=False)
+        child3 = MenuItemFactory(published_en=False, published_fr=True)
+        child4 = MenuItemFactory(published_en=True, published_fr=True)
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+        self.add_child(menu_item, child3)
+        self.add_child(menu_item, child4)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        children_ids = menu_item_repr["children"]
+        self.assertEqual(len(children_ids), 2)
+        self.assertIn(child3.id, children_ids)
+        self.assertIn(child4.id, children_ids)
 
 
 class ReportStatusTestCase(TestCase):
