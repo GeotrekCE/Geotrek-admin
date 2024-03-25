@@ -3148,8 +3148,9 @@ class MenuItemTestCase(TestCase):
     # [ok] test_detail_check_parent_published with lang
     # [ok] test_detail_check_children_published with lang
     # [ok] test with full data with no target: attachments (vignette), pictogram
-    # test with specific data with target page
-    # test with specific data with target link
+    # [ok] test with specific data with target page
+    # [ok] test with specific data with target link
+    # test target_type value is lower case for children
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
@@ -3182,7 +3183,7 @@ class MenuItemTestCase(TestCase):
         child2_repr = parent_repr["children"][1]
         self.assertEqual(child2_repr["label"]["en"], "child2")
 
-    def test_tree_full_data(self):
+    def test_tree_full_data_with_no_target(self):
         portal1 = common_factory.TargetPortalFactory()
         portal2 = common_factory.TargetPortalFactory()
         menu_item = MenuItem.add_root(
@@ -3262,6 +3263,24 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["page"], page.id)
         self.assertEqual(menu_item_repr["page_title"]["en"], page.title_en)
         self.assertEqual(menu_item_repr["page_title"]["fr"], page.title_fr)
+
+    def test_tree_with_link_target(self):
+        menu_item = MenuItem.add_root(
+            published=True,
+            target_type=MenuItem.TARGET_TYPE_CHOICES.LINK,
+            link_url_en="https://en.example.com/",
+            link_url_fr="https://fr.example.com/",
+            open_in_new_tab=False,
+        )
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()[0]
+        self.assertEqual(menu_item_repr["target_type"], "link")
+        self.assertEqual(menu_item_repr["link_url"]["en"], menu_item.link_url_en)
+        self.assertEqual(menu_item_repr["link_url"]["fr"], menu_item.link_url_fr)
+        self.assertEqual(menu_item_repr["open_in_new_tab"], False)
 
     def test_tree_with_portals_filter_on_root_menu_items(self):
         portal1 = common_factory.TargetPortalFactory()
