@@ -137,3 +137,34 @@ class MenuItemAdminChangeFormView(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(b"menu_item_thumbnail" in response.content)
+
+    def test_menu_item_admin_form_change_thumbnail(self):
+        menu_item = MenuItem.add_root(
+            label_en="I have a thumbnail",
+        )
+        file_type = FileType.objects.create(type="Photographie")
+        menu_item_content_type = ContentType.objects.get_for_model(MenuItem)
+        Attachment.objects.create(
+            content_type=menu_item_content_type,
+            object_id=menu_item.id,
+            attachment_file=get_dummy_uploaded_image("menu_item_thumbnail.png"),
+            filetype=file_type,
+            creator=self.user,
+        )
+
+        img = get_dummy_uploaded_image("new_thumbnail.png")
+        change_data = {
+            "label_en": "I have a new thumbnail",
+            "platform": "all",
+            "_position": "first-child",
+            "thumbnail": img,
+        }
+
+        response = self.client.post(f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data)
+
+        self.assertEqual(response.status_code, 302)
+
+        qs = Attachment.objects.filter(object_id=menu_item.id, content_type=menu_item_content_type).all()
+        self.assertEqual(len(qs), 1)
+        thumbnail = qs.first()
+        self.assertIn("new_thumbnail", thumbnail.filename)
