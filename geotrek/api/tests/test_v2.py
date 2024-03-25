@@ -3242,6 +3242,27 @@ class MenuItemTestCase(TestCase):
         self.assertTrue(attachment_repr["url"].find("menu_item_thumbnail") != -1)
         self.assertTrue(attachment_repr["thumbnail"].find("menu_item_thumbnail") != -1)
 
+    def test_tree_with_page_target(self):
+        page = flatpages_factory.FlatPageFactory(
+            published=True,
+            title_en="Targeted page",
+            title_fr="Page ciblée",
+        )
+        MenuItem.add_root(
+            published=True,
+            target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE,
+            page=page,
+        )
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()[0]
+        self.assertEqual(menu_item_repr["target_type"], "page")
+        self.assertEqual(menu_item_repr["page"], page.id)
+        self.assertEqual(menu_item_repr["page_title"]["en"], page.title_en)
+        self.assertEqual(menu_item_repr["page_title"]["fr"], page.title_fr)
+
     def test_tree_with_portals_filter_on_root_menu_items(self):
         portal1 = common_factory.TargetPortalFactory()
         portal2 = common_factory.TargetPortalFactory()
