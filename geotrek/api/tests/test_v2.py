@@ -3227,6 +3227,21 @@ class MenuItemTestCase(TestCase):
         self.assertIn(menu3.pk, children_ids)
         self.assertIn(menu5.pk, children_ids)
 
+    def test_tree_with_language_filter_on_root_items(self):
+        MenuItemFactory(published_fr=False, published_en=False)
+        menu1 = MenuItemFactory(published_fr=True, published_en=False)
+        MenuItemFactory(published_fr=False, published_en=True)
+        menu2 = MenuItemFactory(published_fr=True, published_en=True)
+
+        response = self.client.get('/api/v2/menu_item/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 2)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
         menu_item = published_menu_item_factory(label_en="Hello!", label_fr="Bonjour !")
