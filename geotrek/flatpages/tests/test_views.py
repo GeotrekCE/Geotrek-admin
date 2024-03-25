@@ -38,15 +38,6 @@ from geotrek.flatpages.models import MenuItem
 
 class MenuItemAdminChangeFormView(TestCase):
 
-    # TODO:
-    # - [ok] test post Menu Item form works for addition
-    # - [ok] test post Menu Item form works for change
-    # - [ok] test post error if target_type = "page" and field "page" empty
-    # - [ok] test post error if target_type = "link" and field "link_url" empty (for default language)
-    # - test get form with thumbnail
-    # - test post form with change of thumbnail
-    # - test post form with deletion of thumbnail
-
     def setUp(self) -> None:
         self.user = User.objects.create(username="test_user", is_staff=True)
         add_perm = Permission.objects.get(codename="add_menuitem")
