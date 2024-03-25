@@ -1553,7 +1553,7 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             except MenuItem.DoesNotExist:
                 return None
 
-            return published_parent
+            return published_parent.id
 
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
