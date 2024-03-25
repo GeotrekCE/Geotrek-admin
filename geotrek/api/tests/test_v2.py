@@ -3136,7 +3136,7 @@ class MenuItemTestCase(TestCase):
     # TODO:
     # [ok] test_detail
     # [ok] test list with portal
-    # test list with language
+    # [ok] test list with language
     # [ko] test detail with portal
     # test detail with language
     # test menu item not visible if targeted page not published
@@ -3263,6 +3263,22 @@ class MenuItemTestCase(TestCase):
         children_ids = [item["id"] for item in parent_repr["children"]]
         self.assertIn(child2.pk, children_ids)
         self.assertIn(child4.pk, children_ids)
+
+    def test_tree_with_language_filter_all_value(self):
+        MenuItemFactory(published_fr=False, published_en=False)
+        menu1 = MenuItemFactory(published_fr=True, published_en=False)
+        menu2 = MenuItemFactory(published_fr=False, published_en=True)
+        menu3 = MenuItemFactory(published_fr=True, published_en=True)
+
+        response = self.client.get('/api/v2/menu_item/?language=all')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+        self.assertIn(menu3.pk, menu_item_ids)
 
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
