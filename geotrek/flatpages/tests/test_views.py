@@ -37,7 +37,7 @@ class MenuItemAdminChangeFormView(TestCase):
     # TODO:
     # - [ok] test post Menu Item form works for addition
     # - [ok] test post Menu Item form works for change
-    # - test post error if target_type = "page" and field "page" empty
+    # - [ok] test post error if target_type = "page" and field "page" empty
     # - test post error if target_type = "link" and field "link_url" empty (for default language)
     # - test get form with thumbnail
     # - test post form with change of thumbnail
@@ -82,3 +82,19 @@ class MenuItemAdminChangeFormView(TestCase):
         changed_menu_item = MenuItem.objects.get(pk=menu_item.id)
         self.assertEqual(changed_menu_item.label_en, change_data["label_en"])
         self.assertEqual(changed_menu_item.platform, change_data["platform"])
+
+    def test_menu_item_admin_form_page_required_error(self):
+        add_data = {
+            "label_en": "Hello World!",
+            "platform": "all",
+            "_position": "first-child",
+            "target_type": "page",
+            "page": "",
+        }
+
+        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+
+        self.assertEqual(response.status_code, 200)
+        adminform_errors = response.context["adminform"].errors
+        self.assertTrue("page" in adminform_errors)
+        self.assertTrue("required" in adminform_errors["page"][0])
