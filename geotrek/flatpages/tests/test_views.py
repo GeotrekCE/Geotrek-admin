@@ -1,5 +1,9 @@
-# from django.test import TestCase
-#
+from django.contrib.auth.models import Permission
+from django.test import TestCase
+from geotrek.authent.models import User
+from geotrek.flatpages.models import MenuItem
+
+
 # from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
@@ -26,3 +30,36 @@
 #                     'media', 'portal', 'publication_date', 'published',
 #                     'published_status', 'slug', 'source', 'target',
 #                     'title']))
+
+
+class MenuItemAdminChangeFormView(TestCase):
+
+    # TODO:
+    # - [ok] test post Menu Item form works for addition
+    # - test post Menu Item form works for change
+    # - test post error if target_type = "page" and field "page" empty
+    # - test post error if target_type = "link" and field "link_url" empty (for default language)
+    # - test get form with thumbnail
+    # - test post form with change of thumbnail
+    # - test post form with deletion of thumbnail
+
+    def setUp(self) -> None:
+        self.user = User.objects.create(username="test_user", is_staff=True)
+        add_perm = Permission.objects.get(codename="add_menuitem")
+        view_perm = Permission.objects.get(codename="view_menuitem")
+        update_perm = Permission.objects.get(codename="change_menuitem")
+        delete_perm = Permission.objects.get(codename="delete_menuitem")
+        self.user.user_permissions.add(add_perm, view_perm, update_perm, delete_perm)
+        self.client.force_login(self.user)
+
+    def test_menu_item_admin_form_add(self):
+        add_data = {
+            "label_en": "Hello World!",
+            "platform": "all",
+            "_position": "first-child",
+        }
+
+        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(MenuItem.objects.filter(label_en="Hello World!").count(), 1)
