@@ -3138,14 +3138,15 @@ class MenuItemTestCase(TestCase):
     # [ok] test list with portal
     # [ok] test list with language
     # [ko] test detail with portal
-    # test detail with language
-    # test menu item not visible if targeted page not published
     # [ko] test_detail_with_portals_filter parent filtered
     # [ko] test_detail_with_portals_filter children filtered
     # [ok] test_detail_check_parent_published
-    # test_detail_check_parent_published with lang
     # [ok] test_detail_check_children_published
+    # test menu item not visible if targeted page not published
+    # test detail with language
+    # test_detail_check_parent_published with lang
     # test_detail_check_children_published with lang
+    # test with full data: attachments (vignette), pictogram
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
@@ -3279,6 +3280,16 @@ class MenuItemTestCase(TestCase):
         self.assertIn(menu1.pk, menu_item_ids)
         self.assertIn(menu2.pk, menu_item_ids)
         self.assertIn(menu3.pk, menu_item_ids)
+
+    def test_tree_menu_item_not_exposed_if_target_page_not_published(self):
+        page = flatpages_factory.FlatPageFactory(published=False)
+        MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 0)
 
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
