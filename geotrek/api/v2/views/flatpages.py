@@ -32,6 +32,9 @@ class MenuItemRetrieveView(RetrieveAPIView):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer, ] if settings.DEBUG else [
         renderers.JSONRenderer, ]
+    filter_backends = (
+        GeotrekPublishedFilter,
+    )
 
 
 class MenuItemTreeView(GenericAPIView):
