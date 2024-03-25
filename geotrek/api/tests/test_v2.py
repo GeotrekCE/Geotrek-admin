@@ -3402,6 +3402,15 @@ class MenuItemTestCase(TestCase):
         child_id = menu_item_repr["children"][0]
         self.assertEqual(child_id, child1.id)
 
+    def test_detail_with_language_not_found_error(self):
+        menu_item = MenuItemFactory(published_en=True, published_fr=False)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        from pprint import pprint
+        pprint(response.json())
+        self.assertEqual(response.status_code, 404)
+
     def test_detail_with_language_filter_on_children(self):
         menu_item = MenuItemFactory(published_en=True, published_fr=True)
         child1 = MenuItemFactory(published_en=False, published_fr=False)
