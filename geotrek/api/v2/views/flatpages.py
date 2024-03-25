@@ -52,6 +52,8 @@ class MenuItemTreeView(GenericAPIView):
 
         data = []
         for n in root_items:
+            if not self._check_page_published(n):
+                continue
             data.append(self._recursive_node_to_dict(n))
 
         return Response(data)
