@@ -2781,14 +2781,19 @@ class OutdoorRatingTestCase(TestCase):
             self.assertEqual(rating['scale'], self.scale2.pk)
 
 
-# Convenient lambda to get nodes from DB after each tree operation,
-# this is mandatory. See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
-# TODO: move this into the FlatPageTestCase class
-def _get(pk):
-    return FlatPage.objects.get(pk=pk)
-
-
 class FlatPageTestCase(TestCase):
+
+    published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+
+    @staticmethod
+    def add_child(parent, child, pos="last-child"):
+        # treebeard doc advises to get fresh object from the DB for tree operations.
+        # See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+
+        def get(pk):
+            return FlatPage.objects.get(pk=pk)
+
+        get(child.pk).move(get(parent.pk), pos=pos)
 
     @classmethod
     def setUpTestData(cls):
@@ -2908,9 +2913,9 @@ class FlatPageTestCase(TestCase):
 
     def test_list_returns_page_targeted_by_visible_menu_item(self):
         portal = common_factory.TargetPortalFactory()
-        published_page_factory = partial(flatpages_factory.FlatPageFactory, published_fr=True, portals=None)
-        not_visible_page = published_page_factory()
-        visible_page = published_page_factory()
+        page_factory = partial(flatpages_factory.FlatPageFactory, published_fr=True, portals=None)
+        not_visible_page = page_factory()
+        visible_page = page_factory()
         menu_factory = partial(flatpages_factory.MenuItemFactory, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
         # Those 3 menu items are not visible given the following API query
         menu_factory(published=False, portals=[portal], page=not_visible_page)
@@ -2948,18 +2953,18 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
 
     def test_list_includes_children_pages_in_order(self):
-        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
-        parent_id = published_page_factory().id
-        children_ids = [published_page_factory().id for _ in range(3)]
-        _get(children_ids[0]).move(_get(parent_id), pos="last-child")
-        _get(children_ids[1]).move(_get(parent_id), pos="first-child")
-        _get(children_ids[2]).move(_get(children_ids[0]), pos="left")
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
 
         response = self.client.get('/api/v2/flatpage/')
 
         self.assertEqual(response.status_code, 200)
         resp_data = response.json()
-        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent_id]
+        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent.id]
         self.assertEqual(parent_page_repr["children"], [children_ids[1], children_ids[2], children_ids[0]])
 
     def test_list_returns_null_parent_prop_when_parent_has_no_portal(self):
@@ -3006,28 +3011,28 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(child_page_repr["parent"], None)
 
     def test_list_filter_by_parent(self):
-        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
-        parent_id = published_page_factory().id
-        children_ids = [published_page_factory().id for _ in range(3)]
-        _get(children_ids[0]).move(_get(parent_id), pos="last-child")
-        _get(children_ids[1]).move(_get(parent_id), pos="last-child")
-        _get(children_ids[2]).move(_get(parent_id), pos="last-child")
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent, children[0])
+        self.add_child(parent, children[1])
+        self.add_child(parent, children[2])
 
-        response = self.client.get(f'/api/v2/flatpage/?parent={parent_id}')
+        response = self.client.get(f'/api/v2/flatpage/?parent={parent.id}')
 
         self.assertEqual(response.status_code, 200)
         child_pages_ids = [p["id"] for p in response.json()["results"]]
         self.assertEqual(child_pages_ids, [children_ids[0], children_ids[1], children_ids[2]])
 
     def test_list_filter_by_parent_child_pages_are_ordered(self):
-        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
-        parent_id = published_page_factory().id
-        children_ids = [published_page_factory().id for _ in range(3)]
-        _get(children_ids[0]).move(_get(parent_id), pos="last-child")
-        _get(children_ids[1]).move(_get(parent_id), pos="first-child")
-        _get(children_ids[2]).move(_get(children_ids[0]), pos="left")
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
 
-        response = self.client.get(f'/api/v2/flatpage/?parent={parent_id}')
+        response = self.client.get(f'/api/v2/flatpage/?parent={parent.id}')
 
         self.assertEqual(response.status_code, 200)
         child_pages_ids = [p["id"] for p in response.json()["results"]]
@@ -3099,16 +3104,14 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
 
     def test_detail_includes_children_pages_in_order(self):
-        # TODO: use subtest to factorize with the same test on the list endpoint
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
 
-        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
-        parent_id = published_page_factory().id
-        children_ids = [published_page_factory().id for _ in range(3)]
-        _get(children_ids[0]).move(_get(parent_id), pos="last-child")
-        _get(children_ids[1]).move(_get(parent_id), pos="first-child")
-        _get(children_ids[2]).move(_get(children_ids[0]), pos="left")
-
-        response = self.client.get(f'/api/v2/flatpage/{parent_id}/')
+        response = self.client.get(f'/api/v2/flatpage/{parent.id}/')
 
         self.assertEqual(response.status_code, 200)
         parent_page_repr = response.json()
@@ -3134,28 +3137,13 @@ class FlatPageTestCase(TestCase):
 
 
 class MenuItemTestCase(TestCase):
-    # TODO:
-    # [ok] test_detail
-    # [ok] test list with portal
-    # [ok] test list with language
-    # [ko] test detail with portal
-    # [ko] test_detail_with_portals_filter parent filtered
-    # [ko] test_detail_with_portals_filter children filtered
-    # [ok] test_detail_check_parent_published
-    # [ok] test_detail_check_children_published
-    # [ok] test menu item not visible if targeted page not published
-    # [ok] test detail with language
-    # [ok] test_detail_check_parent_published with lang
-    # [ok] test_detail_check_children_published with lang
-    # [ok] test with full data with no target: attachments (vignette), pictogram
-    # [ok] test with specific data with target page
-    # [ok] test with specific data with target link
-    # [ok] test target_type value is lower case for children
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
     @staticmethod
     def add_child(parent, child):
+        # treebeard doc advises to get fresh object from the DB for tree operations.
+        # See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
 
         def get(pk):
             return MenuItem.objects.get(pk=pk)
@@ -3163,11 +3151,10 @@ class MenuItemTestCase(TestCase):
         get(child.pk).move(get(parent.pk), pos="last-child")
 
     def test_tree(self):
-        published_menu_item_factory = partial(MenuItemFactory, published=True)
-        parent = published_menu_item_factory(label="parent")
-        child1 = published_menu_item_factory(label="child1")
+        parent = self.published_menu_item_factory(label="parent")
+        child1 = self.published_menu_item_factory(label="child1")
         self.add_child(parent, child1)
-        child2 = published_menu_item_factory(label="child2")
+        child2 = self.published_menu_item_factory(label="child2")
         self.add_child(parent, child2)
 
         response = self.client.get('/api/v2/menu_item/')
@@ -3298,12 +3285,11 @@ class MenuItemTestCase(TestCase):
         portal1 = common_factory.TargetPortalFactory()
         portal2 = common_factory.TargetPortalFactory()
         portal3 = common_factory.TargetPortalFactory()
-        published_menu_item_factory = partial(MenuItemFactory, published=True)
-        published_menu_item_factory(portals=[portal1])
-        menu1 = published_menu_item_factory(portals=[portal1, portal2])
-        menu2 = published_menu_item_factory(portals=[portal2])
-        published_menu_item_factory(portals=None)
-        menu3 = published_menu_item_factory(portals=[portal3])
+        self.published_menu_item_factory(portals=[portal1])
+        menu1 = self.published_menu_item_factory(portals=[portal1, portal2])
+        menu2 = self.published_menu_item_factory(portals=[portal2])
+        self.published_menu_item_factory(portals=None)
+        menu3 = self.published_menu_item_factory(portals=[portal3])
 
         response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
 
@@ -3319,17 +3305,16 @@ class MenuItemTestCase(TestCase):
         portal1 = common_factory.TargetPortalFactory()
         portal2 = common_factory.TargetPortalFactory()
         portal3 = common_factory.TargetPortalFactory()
-        published_menu_item_factory = partial(MenuItemFactory, published=True)
-        parent = published_menu_item_factory(portals=[portal2])
-        menu1 = published_menu_item_factory(portals=[portal1])
+        parent = self.published_menu_item_factory(portals=[portal2])
+        menu1 = self.published_menu_item_factory(portals=[portal1])
         self.add_child(parent, menu1)
-        menu2 = published_menu_item_factory(portals=[portal1, portal2])
+        menu2 = self.published_menu_item_factory(portals=[portal1, portal2])
         self.add_child(parent, menu2)
-        menu3 = published_menu_item_factory(portals=[portal2])
+        menu3 = self.published_menu_item_factory(portals=[portal2])
         self.add_child(parent, menu3)
-        menu4 = published_menu_item_factory(portals=None)
+        menu4 = self.published_menu_item_factory(portals=None)
         self.add_child(parent, menu4)
-        menu5 = published_menu_item_factory(portals=[portal3])
+        menu5 = self.published_menu_item_factory(portals=[portal3])
         self.add_child(parent, menu5)
 
         response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
@@ -3421,8 +3406,7 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(len(parent_repr["children"]), 0)
 
     def test_detail(self):
-        published_menu_item_factory = partial(MenuItemFactory, published=True)
-        menu_item = published_menu_item_factory(label_en="Hello!", label_fr="Bonjour !")
+        menu_item = self.published_menu_item_factory(label_en="Hello!", label_fr="Bonjour !")
 
         response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
 
@@ -3463,8 +3447,7 @@ class MenuItemTestCase(TestCase):
         )
 
     def test_detail_pictogram_is_absolute_URL(self):
-        published_menu_item_factory = partial(MenuItemFactory, published=True)
-        menu_item = published_menu_item_factory(label="Test picto", pictogram=get_dummy_uploaded_image("menu_picto.png"))
+        menu_item = self.published_menu_item_factory(label="Test picto", pictogram=get_dummy_uploaded_image("menu_picto.png"))
 
         response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
 
