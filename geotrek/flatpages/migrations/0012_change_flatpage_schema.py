@@ -1,11 +1,24 @@
 from django.db import migrations, models
+from treebeard.mp_tree import MP_Node
+from treebeard.numconv import NumConv
+
+
+def get_treenode_path(position):
+    """Support function to initialize DB field `path` from django-treebeard package's model MP_Node"""
+    numconv = NumConv(len(MP_Node.alphabet), MP_Node.alphabet)
+    key = numconv.int2str(position)
+    path = '{0}{1}'.format(
+        MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
+        key
+    )
+    return path
 
 
 def set_treebeard_path_fields(apps, schema_editor):
     FlatPage = apps.get_model('flatpages', 'FlatPage')
     pages = FlatPage.objects.all()
-    for page in pages:
-        page.path = str(page.pk)
+    for position, page in enumerate(pages):
+        page.path = get_treenode_path(position)
         page.save()
 
 

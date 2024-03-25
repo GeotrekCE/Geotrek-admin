@@ -86,7 +86,8 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # modeltranslation registration is not run on historical models available during migrations.
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
-    # MenuItem is already translation-registered from the previous migration (needed to copy values in translation fields)
+    # MenuItem is already translation-registered from the previous migration
+    # (it will be needed to copy values in translation fields)
 
     # Those fields are copied from FlatPage to MenuItem.
     # Dict keys are FlatPage's fieldnames, dict values are MenuItem's fieldnames.
