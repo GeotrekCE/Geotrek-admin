@@ -1,8 +1,8 @@
 from django.urls import path, register_converter
 
-from mapentity.registry import registry
+from mapentity.registry import registry, MapEntityOptions
 
-from geotrek.common.urls import PublishableEntityOptions, LangConverter
+from geotrek.common.urls import LangConverter
 from . import models, views
 
 
@@ -21,4 +21,4 @@ urlpatterns = [
          views.SensitiveAreaOpenAirList.as_view(), name="sensitivearea_openair_list"),
 ]
 
-urlpatterns += registry.register(models.SensitiveArea, PublishableEntityOptions)
+urlpatterns += registry.register(models.SensitiveArea, MapEntityOptions)
