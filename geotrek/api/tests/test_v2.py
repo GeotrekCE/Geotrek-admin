@@ -3291,6 +3291,20 @@ class MenuItemTestCase(TestCase):
         data = response.json()
         self.assertEqual(len(data), 0)
 
+    def test_tree_child_menu_item_not_exposed_if_target_page_not_published(self):
+        page = flatpages_factory.FlatPageFactory(published=False)
+        parent = MenuItemFactory(published=True)
+        child = MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        self.add_child(parent, child)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        self.assertEqual(len(parent_repr["children"]), 0)
+
     def test_detail(self):
         published_menu_item_factory = partial(MenuItemFactory, published=True)
         menu_item = published_menu_item_factory(label_en="Hello!", label_fr="Bonjour !")
