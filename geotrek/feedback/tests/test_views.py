@@ -10,6 +10,8 @@ from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
+from django.utils.module_loading import import_string
+from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from rest_framework.reverse import reverse
 
@@ -27,6 +29,7 @@ from .test_suricate_sync import (
     test_for_report_and_basic_modes,
     test_for_workflow_mode,
 )
+from ...common.tests import CommonTest
 
 
 class ReportViewsetMailSend(TestCase):
@@ -105,6 +108,143 @@ class ReportSerializationOptimizeTests(TestCase):
                                     format="geojson"))
 
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
+
+
+class ReportViewsTest(CommonTest):
+    model = feedback_models.Report
+    modelfactory = feedback_factories.ReportFactory
+    userfactory = SuperUserFactory
+    expected_json_geom = {
+        'type': 'Point',
+        'coordinates': [3.0, 46.5],
+    }
+    extra_column_list = ['comment', 'advice']
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        feedback_factories.WorkflowManagerFactory(user=UserFactory())
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {
+            'id': self.obj.pk,
+            'color': self.obj.status.color,
+            'name': str(self.obj),
+        }
+
+    def get_expected_datatables_attrs(self):
+        return {
+            'activity': self.obj.activity.label,
+            'category': self.obj.category.label,
+            'date_update': '17/03/2020 00:00:00',
+            'id': self.obj.pk,
+            'status': str(self.obj.status),
+            'eid': f'<a data-pk="{self.obj.pk}" href="/report/{self.obj.pk}/" title="Report {self.obj.pk}">Report {self.obj.pk}</a>'
+        }
+
+    def get_bad_data(self):
+        return {'geom': 'FOO'}, 'Invalid geometry value.'
+
+    def get_good_data(self):
+        return {
+            'geom': '{"type": "Point", "coordinates": [0, 0]}',
+            'email': 'yeah@you.com',
+            'activity': feedback_factories.ReportActivityFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
+        }
+
+    def test_good_data_with_name(self):
+        """Test report created if `name` in data"""
+        data = self.get_good_data()
+        data['name'] = 'Anonymous'
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.email, data['email'])
+        self.logout()
+
+    def test_crud_status(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        obj = self.modelfactory()
+
+        response = self.client.get(obj.get_list_url())
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(obj.get_detail_url().replace(str(obj.pk), '1234567890'))
+        self.assertEqual(response.status_code, 404)
+
+        response = self.client.get(obj.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(obj.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self._post_update_form(obj)
+        self._check_update_geom_permission(response)
+
+        response = self.client.get(obj.get_delete_url())
+        self.assertEqual(response.status_code, 200)
+
+        url = obj.get_detail_url()
+        obj.delete()
+        response = self.client.get(url)
+        # No delete mixin
+        self.assertEqual(response.status_code, 200)
+
+        self._post_add_form()
+
+        # Test to update without login
+        self.logout()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(obj.get_update_url())
+        self.assertEqual(response.status_code, 302)
+
+    @test_for_all_suricate_modes
+    def test_custom_columns_mixin_on_list(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'feedback_view': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
+                             ['id', 'eid', 'activity', 'comment', 'advice'])
+
+    @test_for_all_suricate_modes
+    def test_custom_columns_mixin_on_export(self):
+        # Assert columns equal mandatory columns plus custom extra columns
+        if self.model is None:
+            return
+        with override_settings(COLUMNS_LISTS={'feedback_export': self.extra_column_list}):
+            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
+                             ['id', 'email', 'comment', 'advice'])
+
+    @freeze_time("2020-03-17")
+    def test_api_datatables_list_for_model_in_suricate_mode(self):
+        self.report = feedback_factories.ReportFactory()
+        with override_settings(SURICATE_WORKFLOW_ENABLED=True):
+            list_url = '/api/{modelname}/drf/{modelname}s.datatables'.format(modelname=self.model._meta.model_name)
+            response = self.client.get(list_url)
+            self.assertEqual(response.status_code, 200, f"{list_url} not found")
+            content_json = response.json()
+            datatable_attrs = {
+                'activity': self.report.activity.label,
+                'category': self.report.category.label,
+                'date_update': '17/03/2020 00:00:00',
+                'id': self.report.pk,
+                'status': str(self.report.status),
+                'eid': f'<a data-pk="{self.report.pk}" href="/report/{self.report.pk}/" title="Report {self.report.eid}">Report {self.report.eid}</a>'
+            }
+            self.assertEqual(content_json, {'data': [datatable_attrs],
+                                            'draw': 1,
+                                            'recordsFiltered': 1,
+                                            'recordsTotal': 1})
 
 
 class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
