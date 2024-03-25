@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 from freezegun.api import freeze_time
 
+from geotrek.common.models import Attachment, FileType
 from geotrek.flatpages.models import MenuItem, FlatPage
 from geotrek.flatpages.tests.factories import MenuItemFactory
 from mapentity.tests.factories import SuperUserFactory
@@ -3143,10 +3144,12 @@ class MenuItemTestCase(TestCase):
     # [ok] test_detail_check_parent_published
     # [ok] test_detail_check_children_published
     # [ok] test menu item not visible if targeted page not published
-    # test detail with language
-    # test_detail_check_parent_published with lang
-    # test_detail_check_children_published with lang
-    # test with full data: attachments (vignette), pictogram
+    # [ok] test detail with language
+    # [ok] test_detail_check_parent_published with lang
+    # [ok] test_detail_check_children_published with lang
+    # [ok] test with full data with no target: attachments (vignette), pictogram
+    # test with specific data with target page
+    # test with specific data with target link
 
     published_menu_item_factory = partial(MenuItemFactory, published=True)
 
@@ -3178,6 +3181,66 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(child1_repr["label"]["en"], "child1")
         child2_repr = parent_repr["children"][1]
         self.assertEqual(child2_repr["label"]["en"], "child2")
+
+    def test_tree_full_data(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        menu_item = MenuItem.add_root(
+            label_en="Hello World!",
+            label_fr="Bonjour le monde !",
+            published_en=True,
+            published_fr=True,
+            pictogram=get_dummy_uploaded_image("menu_item_picto.png"),
+            target_type=None,
+        )
+        menu_item.portals.add(portal1, portal2)
+        user = authent_models.User.objects.create(username="test_user")
+        file_type = FileType.objects.create(type="Photographie")
+        Attachment.objects.create(
+            content_type=ContentType.objects.get_for_model(MenuItem),
+            object_id=menu_item.id,
+            attachment_file=get_dummy_uploaded_image("menu_item_thumbnail.png"),
+            filetype=file_type,
+            creator=user,
+        )
+        child1 = self.published_menu_item_factory()
+        child2 = self.published_menu_item_factory()
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        menu_item_repr = data[0]
+        expected_menu_item_repr = {
+            "id": menu_item.id,
+            "label": {
+                "en": "Hello World!",
+                "fr": "Bonjour le monde !",
+                "es": None,
+                "it": None,
+            },
+            "published": {
+                "en": True,
+                "fr": True,
+                "es": False,
+                "it": False,
+            },
+        }
+        for key, value in expected_menu_item_repr.items():
+            self.assertEqual(menu_item_repr[key], value)
+
+        self.assertIn(portal1.id, menu_item_repr["portals"])
+        self.assertIn(portal2.id, menu_item_repr["portals"])
+
+        self.assertTrue(menu_item_repr["pictogram"].find("menu_item_picto") != -1)
+
+        self.assertEqual(len(menu_item_repr["attachments"]), 1)
+        attachment_repr = menu_item_repr["attachments"][0]
+        self.assertTrue(attachment_repr["url"].find("menu_item_thumbnail") != -1)
+        self.assertTrue(attachment_repr["thumbnail"].find("menu_item_thumbnail") != -1)
 
     def test_tree_with_portals_filter_on_root_menu_items(self):
         portal1 = common_factory.TargetPortalFactory()
