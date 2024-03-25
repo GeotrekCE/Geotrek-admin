@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from geotrek.authent.models import User
+from geotrek.common.models import FileType, Attachment
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.flatpages.models import MenuItem
 
 
@@ -116,3 +119,21 @@ class MenuItemAdminChangeFormView(TestCase):
         adminform_errors = response.context["adminform"].errors
         self.assertTrue(link_url_loc_fieldname in adminform_errors)
         self.assertTrue("required" in adminform_errors[link_url_loc_fieldname][0])
+
+    def test_menu_item_admin_form_retrieve_with_thumbnail(self):
+        menu_item = MenuItem.add_root(
+            label_en="I have a thumbnail",
+        )
+        file_type = FileType.objects.create(type="Photographie")
+        Attachment.objects.create(
+            content_type=ContentType.objects.get_for_model(MenuItem),
+            object_id=menu_item.id,
+            attachment_file=get_dummy_uploaded_image("menu_item_thumbnail.png"),
+            filetype=file_type,
+            creator=self.user,
+        )
+
+        response = self.client.get(f"/admin/flatpages/menuitem/{menu_item.id}/change/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b"menu_item_thumbnail" in response.content)
