@@ -6,7 +6,6 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, Ma
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
-from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.views import FlattenPicturesMixin
@@ -74,22 +73,8 @@ class DiveDocumentPublicMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dive = self.get_object()
-
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['dive']
-
         context['object'] = context['dive'] = dive
-        source = self.request.GET.get('source')
-        if source:
-            try:
-                context['source'] = RecordSource.objects.get(name=source)
-            except RecordSource.DoesNotExist:
-                pass
-        portal = self.request.GET.get('portal')
-        if portal:
-            try:
-                context['portal'] = TargetPortal.objects.get(name=portal)
-            except TargetPortal.DoesNotExist:
-                pass
         return context
 
 

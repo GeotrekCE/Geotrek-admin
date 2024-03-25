@@ -2,6 +2,7 @@ from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
+from rest_framework.reverse import reverse
 
 from geotrek.common.tests import CommonTest
 from ..forms import RegulatorySensitiveAreaForm
@@ -80,3 +81,10 @@ class SensitiveAreaViewsTests(CommonTest):
         obj = RegulatorySensitiveAreaFactory()
         response = self.client.get(obj.get_update_url())
         self.assertTrue(isinstance(response.context['form'], RegulatorySensitiveAreaForm))
+
+    def test_kml_detail_view(self):
+        sa = SensitiveAreaFactory()
+        response = self.client.get(reverse('sensitivity:sensitivearea_kml_detail',
+                                           kwargs={'lang': 'en', 'pk': sa.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/vnd.google-earth.kml+xml')

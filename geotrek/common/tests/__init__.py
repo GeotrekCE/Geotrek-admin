@@ -43,7 +43,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable')
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
@@ -126,7 +127,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable')
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
