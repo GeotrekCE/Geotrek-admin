@@ -36,7 +36,7 @@ class MenuItemAdminChangeFormView(TestCase):
 
     # TODO:
     # - [ok] test post Menu Item form works for addition
-    # - test post Menu Item form works for change
+    # - [ok] test post Menu Item form works for change
     # - test post error if target_type = "page" and field "page" empty
     # - test post error if target_type = "link" and field "link_url" empty (for default language)
     # - test get form with thumbnail
@@ -63,3 +63,22 @@ class MenuItemAdminChangeFormView(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(MenuItem.objects.filter(label_en="Hello World!").count(), 1)
+
+    def test_menu_item_admin_form_change(self):
+        menu_item = MenuItem.add_root(
+            label_en="Already exists",
+            platform="web",
+        )
+
+        change_data = {
+            "label_en": "Already exists and changed",
+            "platform": "mobile",
+            "_position": "first-child",
+        }
+
+        response = self.client.post(f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data, follow=False)
+
+        self.assertEqual(response.status_code, 302)
+        changed_menu_item = MenuItem.objects.get(pk=menu_item.id)
+        self.assertEqual(changed_menu_item.label_en, change_data["label_en"])
+        self.assertEqual(changed_menu_item.platform, change_data["platform"])
