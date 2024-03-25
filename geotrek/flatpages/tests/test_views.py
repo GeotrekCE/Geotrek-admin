@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from geotrek.authent.models import User
@@ -38,7 +39,7 @@ class MenuItemAdminChangeFormView(TestCase):
     # - [ok] test post Menu Item form works for addition
     # - [ok] test post Menu Item form works for change
     # - [ok] test post error if target_type = "page" and field "page" empty
-    # - test post error if target_type = "link" and field "link_url" empty (for default language)
+    # - [ok] test post error if target_type = "link" and field "link_url" empty (for default language)
     # - test get form with thumbnail
     # - test post form with change of thumbnail
     # - test post form with deletion of thumbnail
@@ -98,3 +99,20 @@ class MenuItemAdminChangeFormView(TestCase):
         adminform_errors = response.context["adminform"].errors
         self.assertTrue("page" in adminform_errors)
         self.assertTrue("required" in adminform_errors["page"][0])
+
+    def test_menu_item_admin_form_link_url_required_error(self):
+        link_url_loc_fieldname = "link_url_" + settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        add_data = {
+            "label_en": "Hello World!",
+            "platform": "all",
+            "_position": "first-child",
+            "target_type": "link",
+            link_url_loc_fieldname: "",
+        }
+
+        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+
+        self.assertEqual(response.status_code, 200)
+        adminform_errors = response.context["adminform"].errors
+        self.assertTrue(link_url_loc_fieldname in adminform_errors)
+        self.assertTrue("required" in adminform_errors[link_url_loc_fieldname][0])
