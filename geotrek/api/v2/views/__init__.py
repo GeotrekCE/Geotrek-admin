@@ -29,7 +29,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from .outdoor import (SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet,  # noqa
                           OutdoorRatingScaleViewSet, OutdoorRatingViewSet, CourseViewSet, SectorViewSet)  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    from .flatpages import FlatPageViewSet  # noqa
+    from .flatpages import MenuItemTreeView, FlatPageViewSet, MenuItemRetrieveView  # noqa
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     from .infrastructure import InfrastructureTypeViewSet, InfrastructureViewSet, InfrastructureUsageDifficultyLevelViewSet, InfrastructureConditionViewSet, InfrastructureMaintenanceDifficultyLevelViewSet  # noqa
 if 'geotrek.signage' in settings.INSTALLED_APPS:

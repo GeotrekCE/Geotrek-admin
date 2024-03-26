@@ -4,6 +4,7 @@ from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.flatpages.forms import FlatPageForm
 
 
+# FIXME: to remove (tests for the old FlatPage model and form)
 class FlatPageFormTest(TestCase):
     def login(self):
         profile = UserProfileFactory(

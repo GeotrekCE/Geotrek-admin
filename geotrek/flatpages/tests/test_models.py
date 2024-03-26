@@ -1,7 +1,7 @@
 from django.test import TestCase
+from geotrek.flatpages.models import FlatPage
 
 from geotrek.flatpages.tests.factories import FlatPageFactory
-from geotrek.flatpages.models import FlatPage
 
 
 class FlatPageModelTest(TestCase):
@@ -13,6 +13,7 @@ class FlatPageModelTest(TestCase):
         fp = FlatPageFactory()
         self.assertEqual(fp.target, 'all')
 
+    # FIXME: to remove? Should be tested in the mixin
     def test_publication_date_is_filled_if_published(self):
         fp = FlatPageFactory()
         fp.save()
@@ -53,6 +54,7 @@ class FlatPageModelTest(TestCase):
             for f in fp:
                 f.clean()
 
+    # FIXME: to remove?
     def test_is_public(self):
         fp = FlatPageFactory(title="Blabla", published_fr=True)
         self.assertTrue(fp.is_public())

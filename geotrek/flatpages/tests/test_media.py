@@ -3,6 +3,7 @@ from django.test import TestCase
 from geotrek.flatpages.tests.factories import FlatPageFactory
 
 
+# FIXME: to remove? used for randov2 synchronization which is deprecated.
 class FlatPageMediaTest(TestCase):
     def test_media_is_empty_if_content_is_none(self):
         page = FlatPageFactory()
