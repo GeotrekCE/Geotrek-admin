@@ -35,6 +35,14 @@ from geotrek.flatpages.models import MenuItem, FlatPage
 #                     'title']))
 
 
+def _flatten(fieldsets):
+    fields = []
+    for fieldset in fieldsets:
+        for field in fieldset[1]["fields"]:
+            fields.append(field)
+    return fields
+
+
 class MenuItemAdminChangeFormView(TestCase):
 
     def setUp(self) -> None:
@@ -45,6 +53,38 @@ class MenuItemAdminChangeFormView(TestCase):
         delete_perm = Permission.objects.get(codename="delete_menuitem")
         self.user.user_permissions.add(add_perm, view_perm, update_perm, delete_perm)
         self.client.force_login(self.user)
+
+    def test_menu_item_retrieve_expected_form_fields(self):
+        url = reverse('admin:flatpages_menuitem_add')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        expected_fields = [
+            "label_en",
+            "label_fr",
+            "label_es",
+            "label_it",
+            "published_en",
+            "published_fr",
+            "published_es",
+            "published_it",
+            "portals",
+            "platform",
+            "thumbnail",
+            "pictogram",
+            "target_type",
+            "page",
+            "link_url_en",
+            "link_url_fr",
+            "link_url_es",
+            "link_url_it",
+            "open_in_new_tab",
+            "_position",
+            "_ref_node_id",
+        ]
+        fields = _flatten(response.context["adminform"].fieldsets)
+        self.assertEqual(len(fields), len(expected_fields))
+        self.assertEqual(set(fields), set(expected_fields))
 
     def test_menu_item_admin_form_add(self):
         add_data = {
@@ -208,6 +248,37 @@ class FlatPageAdminChangeFormView(TestCase):
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
         return user
+
+    def test_retrieve_expected_form_fields(self):
+        self.login()
+
+        url = reverse('admin:flatpages_flatpage_add')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        expected_fields = [
+            "title_en",
+            "title_fr",
+            "title_es",
+            "title_it",
+            "published_en",
+            "published_fr",
+            "published_es",
+            "published_it",
+            "source",
+            "portals",
+            "cover_image",
+            "cover_image_author",
+            "content_en",
+            "content_fr",
+            "content_es",
+            "content_it",
+            "_position",
+            "_ref_node_id",
+        ]
+        fields = _flatten(response.context["adminform"].fieldsets)
+        self.assertEqual(len(fields), len(expected_fields))
+        self.assertEqual(set(fields), set(expected_fields))
 
     def test_save_without_cover_image(self):
         self.login()
