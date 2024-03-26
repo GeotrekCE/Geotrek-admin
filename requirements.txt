@@ -146,7 +146,7 @@ django-mptt==0.14.0
     # via geotrek (setup.py)
 django-tinymce==3.5.0
     # via mapentity
-django-weasyprint==1.1.0.post2
+django-weasyprint==2.3.0
     # via
     #   geotrek (setup.py)
     #   mapentity
