@@ -7,24 +7,14 @@ from treebeard.forms import movenodeform_factory
 from geotrek.flatpages import models as flatpages_models
 from geotrek.flatpages.forms import FlatPageForm, MenuItemForm
 
+
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
-
-    class FlatPagesAdminBase(TabbedTranslationAdmin, TreeAdmin):
-        pass
-
-    class MenuItemAdminBase(TabbedTranslationAdmin, TreeAdmin):
-        pass
-
 else:
-    class FlatPagesAdminBase(TreeAdmin):
-        pass
-
-    class MenuItemAdminBase(TreeAdmin):
-        pass
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
-class FlatPagesAdmin(FlatPagesAdminBase):
+class FlatPagesAdmin(TabbedTranslationAdmin, TreeAdmin):
     list_display = ('title', 'published', 'publication_date', 'portal_names_string', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
@@ -93,8 +83,7 @@ class MyListFilter(admin.filters.SimpleListFilter):
                 yield choice
 
 
-# class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin): # diamond inheritance problem
-class MenuItemAdmin(MenuItemAdminBase):
+class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin):
     # FIXME: there is a lot of duplicated code in this class and a need for another baseclass
     # It will be easier to refactor when the tests are ready.
 
