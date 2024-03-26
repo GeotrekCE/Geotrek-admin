@@ -15,7 +15,7 @@ else:
 
 
 class FlatPagesAdmin(TabbedTranslationAdmin, TreeAdmin):
-    list_display = ('title', 'published', 'publication_date', 'portal_names_string', )
+    list_display = ('title', 'published', 'publication_date', 'portals_for_display', )
     list_filter = ('published', )
     search_fields = ('title', 'content')
     form = movenodeform_factory(flatpages_models.FlatPage, form=FlatPageForm)
@@ -35,9 +35,9 @@ class FlatPagesAdmin(TabbedTranslationAdmin, TreeAdmin):
         '_ref_node_id',
     )
 
-    def portals(self, obj):
-        return ', '.join([portal.name for portal in obj.portal.all()])
-    portals.short_description = _("Portals")
+    @admin.display(description='Portals')
+    def portals_for_display(self, obj):
+        return ', '.join([portal.name for portal in obj.portals.all()])
 
     def get_form(self, request, *args, **kwargs):
         # Django's ModelAdmin generates a ModelForm class based on FlatPageForm in the add/edit views. This override
@@ -103,12 +103,16 @@ class MenuItemAdmin(TabbedTranslationAdmin, TreeAdmin):
     ]
     list_display = (
         'label',
-        'portal_names_string',
+        'portals_for_display',
     )
     form = movenodeform_factory(flatpages_models.MenuItem, form=MenuItemForm)
     list_filter = (
         ("portals", admin.filters.RelatedOnlyFieldListFilter),
     )
+
+    @admin.display(description='Portals')
+    def portals_for_display(self, obj):
+        return ", ".join(p.name for p in obj.portals.all())
 
     def get_form(self, request, *args, **kwargs):
         # Django's ModelAdmin generates a ModelForm class based on FlatPageForm in the add/edit views. This override

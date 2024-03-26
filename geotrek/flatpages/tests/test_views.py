@@ -5,8 +5,10 @@ from django.test import TestCase
 from django.urls import reverse
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import FileType, Attachment
+from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.flatpages.models import MenuItem, FlatPage
+from geotrek.flatpages.tests.factories import MenuItemFactory, FlatPageFactory
 
 
 # TODO: to be removed, used for randov2 synchronization which is deprecated.
@@ -42,7 +44,7 @@ def _flatten(fieldsets):
     return fields
 
 
-class MenuItemAdminChangeFormView(TestCase):
+class MenuItemAdminFormViewsTestCase(TestCase):
 
     def setUp(self) -> None:
         profile = UserProfileFactory(
@@ -63,6 +65,17 @@ class MenuItemAdminChangeFormView(TestCase):
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
         self.user = user
+
+    def test_retrieve_list_with_portals_displayed(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        MenuItemFactory(label="A menu item with portals", portals=[portal1, portal2])
+
+        url = reverse('admin:flatpages_menuitem_changelist')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Portal1, Portal2", response.content)
 
     def test_retrieve_expected_form_fields(self):
         url = reverse('admin:flatpages_menuitem_add')
@@ -238,7 +251,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertEqual(len(qs), 0)
 
 
-class FlatPageAdminChangeFormView(TestCase):
+class FlatPageAdminFormViewsTestCase(TestCase):
 
     def setUp(self) -> None:
         profile = UserProfileFactory(
@@ -259,6 +272,17 @@ class FlatPageAdminChangeFormView(TestCase):
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
         self.user = user
+
+    def test_retrieve_list_with_portals_displayed(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        FlatPageFactory(title="A flat page with portals", portals=[portal1, portal2])
+
+        url = reverse('admin:flatpages_flatpage_changelist')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Portal1, Portal2", response.content)
 
     def test_retrieve_expected_form_fields(self):
         url = reverse('admin:flatpages_flatpage_add')
