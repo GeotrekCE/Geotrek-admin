@@ -1,6 +1,7 @@
 -c requirements.txt
 
 pip-tools
+lxml
 flake8
 freezegun
 coverage

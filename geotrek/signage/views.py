@@ -8,7 +8,6 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -16,10 +15,8 @@ from geotrek.core.models import AltimetryMixin
 from .filters import SignageFilterSet, BladeFilterSet
 from .forms import SignageForm, BladeForm, LineFormset
 from .models import Signage, Blade
-from .serializers import (SignageSerializer, BladeSerializer,
-                          SignageAPIGeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
-                          SignageAPISerializer, BladeAPISerializer, BladeAPIGeojsonSerializer, SignageGeojsonSerializer,
-                          BladeGeojsonSerializer)
+from .serializers import (SignageSerializer, BladeSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
+                          SignageGeojsonSerializer, BladeGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -97,15 +94,6 @@ class SignageViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type').prefetch_related('conditions')
         return qs
-
-
-class SignageAPIViewSet(APIViewSet):
-    model = Signage
-    serializer_class = SignageAPISerializer
-    geojson_serializer_class = SignageAPIGeojsonSerializer
-
-    def get_queryset(self):
-        return Signage.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class BladeDetail(MapEntityDetail):
@@ -237,12 +225,3 @@ class BladeViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.select_related('signage', 'direction', 'type', 'color').prefetch_related('conditions')
         return qs
-
-
-class BladeAPIViewSet(APIViewSet):
-    model = Blade
-    serializer_class = BladeAPISerializer
-    geojson_serializer_class = BladeAPIGeojsonSerializer
-
-    def get_queryset(self):
-        return Blade.objects.existing().annotate(api_geom=Transform("signage__geom", settings.API_SRID))

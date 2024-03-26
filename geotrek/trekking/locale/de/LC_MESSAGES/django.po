@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:49+0000\n"
+"POT-Creation-Date: 2024-03-22 14:32+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -336,10 +336,6 @@ msgstr "Eine Route hinzufügen"
 msgid "Cannot use itself as child trek."
 msgstr "Es ist nicht möglich, eine Route als eigenes Kind zu benutzen."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "route"
-
 msgid "Sensitive area"
 msgstr "Empfindlicher Bereich"
 
@@ -525,16 +521,6 @@ msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "Roaming"
-
-msgid "Itinerancy"
-msgstr "Roaming"
-
-msgid "Hike"
-msgstr "Wander"
-
 msgid "Attached files"
 msgstr ""
 
@@ -583,6 +569,9 @@ msgstr ""
 
 msgid "Photos accessibility"
 msgstr ""
+
+msgid "Itinerancy"
+msgstr "Roaming"
 
 msgid "Child of:"
 msgstr "Kind von:"
@@ -714,9 +703,6 @@ msgstr "Hinzufügen eine POI"
 
 msgid "Add a new service"
 msgstr "Einen Dienst hinzufügen"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Weblink hinzufügen"

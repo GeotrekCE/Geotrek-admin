@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-18 10:49+0000\n"
+"POT-Creation-Date: 2024-03-22 14:32+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -329,10 +329,6 @@ msgstr ""
 msgid "Cannot use itself as child trek."
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr ""
-
 msgid "Sensitive area"
 msgstr ""
 
@@ -510,16 +506,6 @@ msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr ""
-
-msgid "Itinerancy"
-msgstr ""
-
-msgid "Hike"
-msgstr "Caminata"
-
 msgid "Attached files"
 msgstr ""
 
@@ -565,6 +551,9 @@ msgid "Print booklet"
 msgstr ""
 
 msgid "Photos accessibility"
+msgstr ""
+
+msgid "Itinerancy"
 msgstr ""
 
 msgid "Child of:"
@@ -690,9 +679,6 @@ msgid "Add a new poi"
 msgstr ""
 
 msgid "Add a new service"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 msgid "Add Web link"

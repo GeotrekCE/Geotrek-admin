@@ -5,6 +5,15 @@ CHANGELOG
 2.103.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Breaking changes**
+
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed.
+
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
+
 2.103.2 (2024-03-22)
 --------------------
 
@@ -20,6 +29,7 @@ CHANGELOG
 **Development**
 
 - Add git to Dockerfile build staging
+
 
 2.103.1 (2024-03-15)
 --------------------

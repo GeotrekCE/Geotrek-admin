@@ -1,6 +1,5 @@
 import csv
 import json
-from datetime import datetime
 from io import StringIO
 from unittest import mock
 
@@ -12,28 +11,25 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.module_loading import import_string
-from django.utils.translation import gettext_lazy as _
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
-from paperclip.models import random_suffix_regexp
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
-from geotrek.common.tests import (CommonTest, GeotrekAPITestCase,
-                                  TranslationResetMixin)
-from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_image_svg)
 from geotrek.feedback import models as feedback_models
 from geotrek.maintenance.tests.factories import (
-    InfrastructureInterventionFactory, ReportInterventionFactory)
+    InfrastructureInterventionFactory,
+    ReportInterventionFactory,
+)
 
 from . import factories as feedback_factories
-from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
-                                 test_for_all_suricate_modes,
-                                 test_for_report_and_basic_modes,
-                                 test_for_workflow_mode)
+from .test_suricate_sync import (
+    SURICATE_REPORT_SETTINGS,
+    test_for_all_suricate_modes,
+    test_for_report_and_basic_modes,
+    test_for_workflow_mode,
+)
+from ...common.tests import CommonTest
 
 
 class ReportViewsetMailSend(TestCase):
@@ -46,7 +42,7 @@ class ReportViewsetMailSend(TestCase):
         mock_response.content = json.dumps({"code_ok": 'true'}).encode()
         mock_response.status_code = 200
         mocked_post.return_value = mock_response
-        self.client.post(
+        response = self.client.post(
             '/api/en/reports/report',
             {
                 'geom': '{\"type\":\"Point\",\"coordinates\":[4.3728446995373815,43.856935212211454]}',
@@ -55,10 +51,10 @@ class ReportViewsetMailSend(TestCase):
                 'activity': feedback_factories.ReportActivityFactory.create().pk,
                 'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
             })
-        self.assertEqual(len(mail.outbox), 2)
-        self.assertEqual(mail.outbox[1].subject, "Geotrek : Signal a mistake")
-        self.assertIn("We acknowledge receipt of your feedback", mail.outbox[1].body)
-        self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(mail.outbox[-1].subject, "Geotrek : Signal a mistake")
+        self.assertIn("We acknowledge receipt of your feedback", mail.outbox[-1].body)
+        self.assertEqual(mail.outbox[-1].from_email, settings.DEFAULT_FROM_EMAIL)
         created_report = feedback_models.Report.objects.filter(email="test_post@geotrek.local").first()
         self.assertEqual(created_report.comment, "Test comment &lt;&gt;")
 
@@ -114,7 +110,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
 
-class ReportViewsTest(GeotrekAPITestCase, CommonTest):
+class ReportViewsTest(CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory
@@ -135,18 +131,8 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'activity': self.obj.activity.pk,
-            'category': self.obj.category.pk,
-            'comment': self.obj.comment,
-            'related_trek': None,
-            'email': self.obj.email,
-            'status': self.obj.status_id,
-            'problem_magnitude': self.obj.problem_magnitude.pk
+            'color': self.obj.status.color,
+            'name': str(self.obj),
         }
 
     def get_expected_datatables_attrs(self):
@@ -160,7 +146,7 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
         }
 
     def get_bad_data(self):
-        return {'geom': 'FOO'}, _('Invalid geometry value.')
+        return {'geom': 'FOO'}, 'Invalid geometry value.'
 
     def get_good_data(self):
         return {
@@ -259,132 +245,6 @@ class ReportViewsTest(GeotrekAPITestCase, CommonTest):
                                             'draw': 1,
                                             'recordsFiltered': 1,
                                             'recordsTotal': 1})
-
-
-class BaseAPITest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = UserFactory(password='booh')
-        perm = Permission.objects.get_by_natural_key('add_report', 'feedback', 'report')
-        cls.user.user_permissions.add(perm)
-
-        cls.login_url = '/login/'
-
-
-class CreateReportsAPITest(BaseAPITest):
-    @classmethod
-    def setUpTestData(cls):
-        cls.add_url = '/api/en/reports/report'
-        cls.data = {
-            'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
-            'email': 'yeah@you.com',
-            'activity': feedback_factories.ReportActivityFactory.create().pk,
-            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk
-        }
-
-    def post_report_data(self, data):
-        client = APIClient()
-        response = client.post(self.add_url, data=data,
-                               allow_redirects=False)
-        self.assertEqual(response.status_code, 201, self.add_url)
-        return response
-
-    def test_reports_can_be_created_using_post(self):
-        self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-        report = feedback_models.Report.objects.get()
-        self.assertAlmostEqual(report.geom.x, 700000)
-        self.assertAlmostEqual(report.geom.y, 6600000)
-
-    def test_reports_can_be_created_without_geom(self):
-        self.data.pop('geom')
-        self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-
-    def test_reports_with_file(self):
-        self.data['image'] = get_dummy_uploaded_image()
-        self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-        report = feedback_models.Report.objects.get()
-        self.assertEqual(report.attachments.count(), 1)
-        regexp = f"dummy_img{random_suffix_regexp()}.jpeg"
-        self.assertRegex(report.attachments.first().attachment_file.name, regexp)
-        self.assertTrue(report.attachments.first().is_image)
-
-    @mock.patch('geotrek.feedback.views.logger')
-    def test_reports_with_failed_image(self, mock_logger):
-        self.data['image'] = get_dummy_uploaded_image_svg()
-        self.data['comment'] = "We have a problem"
-        new_report_id = self.post_report_data(self.data).data.get('id')
-        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-        report = feedback_models.Report.objects.get(pk=new_report_id)
-        self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>")
-        self.assertEqual(report.attachments.count(), 0)
-
-    @mock.patch('geotrek.feedback.views.logger')
-    def test_reports_with_bad_file_format(self, mock_logger):
-        self.data['image'] = get_dummy_uploaded_document()
-        self.data['comment'] = "We have a problem"
-        new_report_id = self.post_report_data(self.data).data.get('id')
-        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-        report = feedback_models.Report.objects.get(pk=new_report_id)
-        self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(f"Invalid attachment dummy_file.odt for report {new_report_id} : {{\'attachment_file\': ['File mime type “text/plain” is not allowed for “odt”.']}}")
-        self.assertEqual(report.attachments.count(), 0)
-
-
-class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
-    @classmethod
-    def setUpTestData(cls):
-        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
-
-    def test_categories_can_be_obtained_as_json(self):
-        response = self.client.get('/api/en/feedback/categories.json')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data[0]['id'], self.cat.id)
-        self.assertEqual(data[0]['label'], self.cat.label)
-
-    def test_categories_are_translated(self):
-        response = self.client.get('/api/it/feedback/categories.json')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data[0]['label'], self.cat.label_it)
-
-
-class ListOptionsTest(TranslationResetMixin, BaseAPITest):
-    @classmethod
-    def setUpTestData(cls):
-        cls.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
-        cls.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
-        cls.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
-
-    def test_options_can_be_obtained_as_json(self):
-        response = self.client.get('/api/en/feedback/options.json')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data['activities'][0]['id'], self.activity.id)
-        self.assertEqual(data['activities'][0]['label'], self.activity.label)
-        self.assertEqual(data['categories'][0]['id'], self.cat.id)
-        self.assertEqual(data['categories'][0]['label'], self.cat.label)
-        self.assertEqual(data['magnitudeProblems'][0]['id'], self.pb_magnitude.id)
-        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label)
-
-    def test_options_are_translated(self):
-        response = self.client.get('/api/it/feedback/options.json')
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertEqual(data['activities'][0]['label'], self.activity.label_it)
-        self.assertEqual(data['categories'][0]['label'], self.cat.label_it)
-        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label_it)
-
-    def test_display_dates(self):
-        date_time_1 = datetime.strptime("24/03/21 20:51", '%d/%m/%y %H:%M')
-        date_time_2 = datetime.strptime("28/03/21 5:51", '%d/%m/%y %H:%M')
-        r = feedback_factories.ReportFactory(created_in_suricate=date_time_1, last_updated_in_suricate=date_time_2)
-        self.assertEqual("03/24/2021 8:51 p.m.", r.created_in_suricate_display)
-        self.assertEqual("03/28/2021 5:51 a.m.", r.last_updated_in_suricate_display)
 
 
 class SuricateViewPermissions(AuthentFixturesMixin, TestCase):

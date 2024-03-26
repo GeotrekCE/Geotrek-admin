@@ -3,9 +3,10 @@ import json
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.contrib.gis.geos import MultiLineString, Point
+from django.contrib.gis.geos import MultiLineString, Point, GEOSGeometry
 from django.db.models import F
 from django.urls import reverse
+from django.utils.html import escape
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
@@ -15,9 +16,11 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from modeltranslation.utils import build_localized_fieldname
 from PIL.Image import DecompressionBombError
-from rest_framework import serializers
+from rest_framework import serializers, serializers as rest_serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
+from rest_framework_gis.fields import GeometryField
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSerializerMixin
@@ -1522,3 +1525,30 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
         class Meta:
             model = signage_models.BladeType
             fields = ('id', 'label', 'structure')
+
+
+class ReportAPISerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = feedback_models.Report
+        id_field = 'id'
+        fields = ('id', 'email', 'activity', 'comment', 'category',
+                  'status', 'problem_magnitude', 'related_trek',
+                  'geom')
+        extra_kwargs = {
+            'geom': {'write_only': True},
+        }
+
+    def validate_geom(self, value):
+        return GEOSGeometry(value, srid=4326)
+
+    def validate_comment(self, value):
+        return escape(value)
+
+
+class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(ReportAPISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = ReportAPISerializer.Meta.fields + ('api_geom', )
