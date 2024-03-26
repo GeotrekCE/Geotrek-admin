@@ -28,9 +28,6 @@ class FlatPageForm(MoveNodeForm):
             if fieldname.startswith('content_'):
                 self.fields[fieldname].widget = TinyMCE(attrs=self.fields[fieldname].widget.attrs)
 
-        # self.fields['source'].help_text = None
-        # self.fields['portal'].help_text = None
-
         if self.instance.pk:
             page = Attachment.objects.filter(
                 content_type=ContentType.objects.get_for_model(FlatPage),
