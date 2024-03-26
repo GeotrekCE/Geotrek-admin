@@ -10,7 +10,7 @@ Upgrade
 From Geotrek-admin >= 2.33
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Beforehand you shoud update your system's catalog:
+Beforehand you should update your system's catalog:
 
 ::
 
@@ -77,7 +77,7 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 
 Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
 
-.. note ::
+.. note::
 
     Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory
     and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``

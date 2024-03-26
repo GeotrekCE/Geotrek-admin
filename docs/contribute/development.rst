@@ -42,7 +42,7 @@ Adding or upgrade dependencies
 
 Consider using pip-tools to manage dependencies.
 
-* add your dependency in setup.py for general dependency, dev-requirements.in for dev dependency, then run :
+* add your dependency in setup.py for general dependency, dev-requirements.in for dev dependency, then run:
 
 ::
 
@@ -64,7 +64,7 @@ Model modification
    docker-compose run --rm web ./manage.py makemigrations <appName>
    docker-compose run --rm web ./manage.py migrate
 
-.. note ::
+.. note::
 
     Add migration file to source control.
 

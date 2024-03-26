@@ -1,5 +1,8 @@
 import sphinx_rtd_theme # noqa
 import datetime
+import os
+
+root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 extensions = [
     'sphinx.ext.todo',
@@ -23,10 +26,7 @@ copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-# The short X.Y version.
-version = '2.103'
-# The full version, including alpha/beta/rc tags.
-release = '2.103.2+dev'
+release = open(os.path.join(root, "VERSION")).read()
 
 exclude_patterns = ['_build']
 
@@ -61,3 +61,6 @@ texinfo_documents = [
      'Makina Corpus', 'Geotrek', 'One line description of project.',
      'Miscellaneous'),
 ]
+
+locale_dirs = ['locale']   # path is example but recommended.
+gettext_compact = False     # optional.

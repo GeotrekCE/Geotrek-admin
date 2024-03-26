@@ -9,7 +9,7 @@ We use sphinx doc and sphinx-rtd-theme. Requirements are included.
 A container based on sphinx image is created using docker-compose-dev.yml,
 documentation is built in watch mode thanks to sphinx-autobuild.
 
-To compile and test documentation on local environment, run :
+To compile and test documentation on local environment, run:
 
 .. code-block :: bash
 

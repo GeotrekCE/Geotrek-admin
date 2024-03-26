@@ -1,5 +1,5 @@
-Welcome to Geotrek's documentation!
-===================================
+Welcome to Geotrek-admin documentation!
+=======================================
 
 .. toctree::
     :caption: 💡 About
