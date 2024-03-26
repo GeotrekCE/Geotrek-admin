@@ -1,3 +1,6 @@
+import datetime
+import os
+from tempfile import TemporaryDirectory
 from unittest import skipIf
 
 from bs4 import BeautifulSoup
@@ -9,7 +12,9 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
-from geotrek.common.tests.factories import LabelFactory
+from easy_thumbnails.files import ThumbnailFile
+
+from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
 from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
@@ -27,6 +32,12 @@ from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
 class TrekTest(TranslationResetMixin, TestCase):
+    def test_is_public_if_parent_published(self):
+        t = TrekFactory.create(published=False)
+        parent = TrekFactory.create(published=True)
+        OrderedTrekChild.objects.create(parent=parent, child=t)
+        self.assertTrue(t.is_public())
+
     def test_is_publishable(self):
         t = TrekFactory.create()
         t.geom = LineString((0, 0), (1, 1))
@@ -97,7 +108,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml, 'lxml')
+        parsed = BeautifulSoup(kml, features='xml')
         for placemark in parsed.findAll('placemark'):
             coordinates = placemark.find('coordinates')
             tuples = [s.split(',') for s in coordinates.string.split(' ')]
@@ -158,6 +169,35 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_correct_picture(self):
+        trek = TrekFactory()
+        AttachmentImageFactory.create_batch(5, content_object=trek)
+        self.assertEqual(trek.pictures.count(), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
+        self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_wrong_picture(self):
+        trek = TrekFactory()
+        error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
+        os.unlink(error_image_attachment.attachment_file.path)
+        self.assertIsNone(trek.picture_print)
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_pictures_print_thumbnail_no_picture(self):
+        trek = TrekFactory()
+        self.assertEqual(trek.pictures.count(), 0)
+        self.assertIsNone(trek.picture_print, ThumbnailFile)
+
+    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
+    def test_thumbnail(self):
+        trek = TrekFactory()
+        AttachmentImageFactory(content_object=trek)
+        self.assertTrue(isinstance(trek.thumbnail, ThumbnailFile))
+        self.assertIsNotNone(trek.thumbnail)
+        self.assertIn(trek.thumbnail.name, trek.thumbnail_display)
+
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):
     def setUp(self):
@@ -178,7 +218,6 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertIsNone(self.trek.publication_date)
 
     def test_date_is_not_updated_when_saved_again(self):
-        import datetime
         self.test_takes_current_date_when_published_becomes_true()
         old_date = datetime.date(2003, 8, 6)
         self.trek.publication_date = old_date
@@ -510,7 +549,6 @@ class CascadedDeletionLoggingTest(TestCase):
 
 
 class TrekLabelsTestCase(TestCase):
-
     def setUp(self):
         self.trek = TrekFactory()
         self.published_label = LabelFactory(published=True)

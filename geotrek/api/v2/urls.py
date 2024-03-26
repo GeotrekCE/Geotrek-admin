@@ -24,6 +24,7 @@ if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     router.register('infrastructure_usage_difficulty_level', api_views.InfrastructureUsageDifficultyLevelViewSet, basename='infrastructure-usage-difficulty')
     router.register('infrastructure_maintenance_difficulty_level', api_views.InfrastructureMaintenanceDifficultyLevelViewSet, basename='infrastructure-maintenance-difficulty')
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    router.register('feedback_report', api_views.ReportViewSet, basename='feedback-report')
     router.register('feedback_status', api_views.ReportStatusViewSet, basename='feedback-status')
     router.register('feedback_category', api_views.ReportCategoryViewSet, basename='feedback-category')
     router.register('feedback_activity', api_views.ReportActivityViewSet, basename='feedback-activity')

@@ -2,8 +2,10 @@ from django.http import QueryDict
 from django.test import TestCase
 
 from geotrek.common.tests.factories import OrganismFactory
-from geotrek.outdoor.tests.factories import SiteFactory, PracticeFactory, CourseFactory
-from geotrek.outdoor.filters import SiteFilterSet, CourseFilterSet
+
+from ..filters import CourseFilterSet, SiteFilterSet
+from ..models import Course, Site
+from .factories import CourseFactory, PracticeFactory, SiteFactory
 
 
 class SiteFilterSetTest(TestCase):
@@ -58,6 +60,26 @@ class SiteFilterSetTest(TestCase):
         self.assertEqual(len(filterset.qs), 2)
         self.assertListEqual(list(filterset.qs.values_list('pk', flat=True)), [self.parent.pk, self.child.pk])
 
+    def test_provider_filter_without_provider(self):
+        filter_set = SiteFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(Site.objects.filter(provider="").count(), filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        site1 = SiteFactory.create(provider='my_provider1')
+        site2 = SiteFactory.create(provider='my_provider2')
+
+        filter_set = SiteFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(site1, filter_set.qs)
+        self.assertIn(site2, filter_set.qs)
+
 
 class CourseFilterSetTest(TestCase):
     @classmethod
@@ -82,3 +104,23 @@ class CourseFilterSetTest(TestCase):
         queryset = filterset.qs
         self.assertEqual(len(queryset), 2)
         self.assertListEqual(list(queryset), [self.course1, self.course2])
+
+    def test_provider_filter_without_provider(self):
+        filter_set = CourseFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(Course.objects.filter(provider="").count(), filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        course1 = CourseFactory.create(provider='my_provider1')
+        course2 = CourseFactory.create(provider='my_provider2')
+
+        filter_set = CourseFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(course1, filter_set.qs)
+        self.assertIn(course2, filter_set.qs)

@@ -1,25 +1,17 @@
 from freezegun import freeze_time
-from difflib import SequenceMatcher
 
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 
-from geotrek.sensitivity.tests.factories import SensitiveAreaFactory, SpeciesFactory
 from geotrek.trekking.tests.factories import TrekFactory
+from .factories import SensitiveAreaFactory, SpeciesFactory, RuleFactory
 
 
-def similar_string(a: str, b: str) -> float:
-    """compare two strings and return similarity ratio
-
-    Args:
-        a (str): first value
-        b (str): second_value
-
-    Returns:
-        float: Similarity ration
-    """
-    return SequenceMatcher(None, a, b).ratio()
+class RuleTesCase(TestCase):
+    def test_str(self):
+        rule = RuleFactory()
+        self.assertEqual(str(rule), rule.name)
 
 
 class SensitiveAreaModelTest(TestCase):

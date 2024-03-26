@@ -1,11 +1,9 @@
 import importlib
 
-import os
 from os.path import join
 import sys
 from celery import Task, shared_task, current_task
 from django.contrib.auth.models import User
-from django.core.management import call_command
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
@@ -124,54 +122,4 @@ def import_datas_from_web(**kwargs):
         'parser': class_name,
         'report': parser.report(output_format='html').replace('$celery_id', current_task.request.id),
         'name': current_task.name
-    }
-
-
-@shared_task(base=GeotrekImportTask, name='geotrek.trekking.sync-rando')
-def launch_sync_rando(*args, **kwargs):
-    """
-    celery shared task - sync rando command
-    """
-
-    if not os.path.exists(settings.TMP_DIR):
-        os.mkdir(settings.TMP_DIR)
-    sync_rando_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_rando')
-    if not os.path.exists(sync_rando_tmp_dir):
-        os.mkdir(sync_rando_tmp_dir)
-    if not os.path.exists(settings.SYNC_RANDO_ROOT):
-        os.mkdir(settings.SYNC_RANDO_ROOT)
-
-    print('Sync rando started')
-
-    try:
-        current_task.update_state(
-            state='PROGRESS',
-            meta={
-                'name': current_task.name,
-                'current': 5,
-                'total': 100,
-                'infos': "{}".format(_("Init sync ..."))
-            }
-        )
-
-        sync_rando_options = {
-            'url': kwargs.get('url'),
-        }
-        sync_rando_options.update(settings.SYNC_RANDO_OPTIONS)
-
-        call_command(
-            'sync_rando',
-            settings.SYNC_RANDO_ROOT,
-            verbosity=2,
-            task=current_task,
-            **sync_rando_options
-        )
-
-    except Exception:
-        raise
-
-    print('Sync rando ended')
-
-    return {
-        'name': current_task.name,
     }

@@ -48,12 +48,3 @@ class RestrictedAreaAPISerializer(serializers.ModelSerializer):
     class Meta:
         model = zoning_models.RestrictedArea
         fields = ('id', 'name', 'type')
-
-
-class ZoningAPISerializerMixin(serializers.ModelSerializer):
-    cities = CityAPISerializer(many=True, source='published_cities')
-    districts = DistrictAPISerializer(many=True, source='published_districts')
-    areas = RestrictedAreaAPISerializer(many=True, source='published_areas')
-
-    class Meta:
-        fields = ('cities', 'districts', 'areas')

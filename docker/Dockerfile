@@ -48,6 +48,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
     libffi-dev \
+    fonts-dejavu-core \
     libvips && \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
@@ -62,6 +63,7 @@ FROM base as build
 USER root
 
 RUN apt-get update -qq && apt-get install -y -qq  \
+    git \
     python3.8-dev \
     python3.8-venv \
     build-essential \

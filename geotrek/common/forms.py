@@ -365,27 +365,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         )
 
 
-class SyncRandoForm(forms.Form):
-    """
-    Sync Rando View Form
-    """
-
-    @property
-    def helper(self):
-        helper = FormHelper()
-        helper.form_id = 'form-sync'
-        helper.form_action = reverse('common:sync_randos')
-        helper.form_class = 'search'
-        # submit button with boostrap attributes, disabled by default
-        helper.add_input(Button('sync-web', _("Launch Sync"),
-                                css_class="btn-primary",
-                                **{'data-toggle': "modal",
-                                   'data-target': "#confirm-submit",
-                                   'disabled': 'disabled'}))
-
-        return helper
-
-
 class AttachmentAccessibilityForm(forms.ModelForm):
     next = forms.CharField(widget=forms.HiddenInput())
 

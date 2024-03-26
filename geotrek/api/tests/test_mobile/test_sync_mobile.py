@@ -173,7 +173,7 @@ class SyncMobileFailTest(VarTmpTestCase):
     def test_attachments_missing_from_disk(self, mocke):
         mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
+        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image(), is_image=True)
         os.remove(attachment.attachment_file.path)
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())

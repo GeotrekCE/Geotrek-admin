@@ -8,7 +8,7 @@ from PIL.Image import DecompressionBombError
 from django.conf import settings
 from django.core.mail import mail_managers
 from django.db import models
-from django.db.models import Q, Max, Count
+from django.db.models import Max, Count
 
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -19,7 +19,6 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
@@ -161,12 +160,11 @@ class PicturesMixin:
                 resized.append((picture, thdetail))
         return resized
 
-    @property
-    def picture_print(self):
+    def get_thumbnail(self, alias):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
                 logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
                 continue
@@ -176,18 +174,12 @@ class PicturesMixin:
         return None
 
     @property
+    def picture_print(self):
+        return self.get_thumbnail('print')
+
+    @property
     def thumbnail(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
-                continue
-            thumbnail.author = picture.author
-            thumbnail.legend = picture.legend
-            return thumbnail
-        return None
+        return self.get_thumbnail('small-square')
 
     def resized_picture_mobile(self, root_pk):
         pictures = self.serializable_pictures_mobile(root_pk)
@@ -205,57 +197,6 @@ class PicturesMixin:
         if thumbnail is None:
             return _("None")
         return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
-
-    @property
-    def thumbnail_csv_display(self):
-        return '' if self.thumbnail is None else os.path.join(settings.MEDIA_URL, self.thumbnail.name)
-
-    @property
-    def serializable_thumbnail(self):
-        th = self.thumbnail
-        if not th:
-            return None
-        return os.path.join(settings.MEDIA_URL, th.name)
-
-    @property
-    def videos(self):
-        all_attachments = self.attachments.all().order_by('-starred')
-        return all_attachments.exclude(attachment_video='')
-
-    @property
-    def serializable_videos(self):
-        serialized = []
-        for att in self.videos:
-            video = detect_backend(att.attachment_video)
-            video.is_secure = True
-            try:
-                serialized.append({
-                    'author': att.author,
-                    'title': att.title,
-                    'legend': att.legend,
-                    'backend': type(video).__name__.replace('Backend', ''),
-                    'url': video.get_url(),
-                    'code': video.code,
-                })
-            except VideoDoesntExistException:
-                pass
-        return serialized
-
-    @property
-    def files(self):
-        return self.attachments.exclude(Q(is_image=True) | Q(attachment_file='')).order_by('-starred')
-
-    @property
-    def serializable_files(self):
-        serialized = []
-        for att in self.files:
-            serialized.append({
-                'author': att.author,
-                'title': att.title,
-                'legend': att.legend,
-                'url': att.attachment_file.url,
-            })
-        return serialized
 
     @property
     def sorted_attachments(self):

@@ -185,13 +185,6 @@ class SuricateGestionRequestManager(SuricateRequestManager):
         self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
-def test_suricate_connection():
-    print("API Standard :")
-    SuricateStandardRequestManager().test_suricate_connection()
-    print("API Gestion :")
-    SuricateGestionRequestManager().test_suricate_connection()
-
-
 class SuricateMessenger:
 
     def __init__(self, pending_requests_model=None):

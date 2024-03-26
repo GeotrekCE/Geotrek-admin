@@ -1,7 +1,7 @@
 import factory
 
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
+from geotrek.core.tests.factories import PointTopologyFactory, TopologyFactory
 
 from .. import models
 

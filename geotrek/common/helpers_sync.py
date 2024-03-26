@@ -5,8 +5,6 @@ from django.conf import settings
 from landez import TilesManager
 from landez.sources import DownloadError
 
-from geotrek.common import models
-from geotrek.common import views
 
 logger = logging.getLogger(__name__)
 
@@ -54,13 +52,3 @@ class ZipTilesBuilder:
                 logger.warning("Failed to download tile %s" % name)
             else:
                 self.zipfile.writestr(name, data)
-
-
-class SyncRando:
-    def __init__(self, sync):
-        self.global_sync = sync
-
-    def sync(self, lang):
-        models_picto = [models.Theme, models.RecordSource, models.Label]
-        self.global_sync.sync_pictograms(lang, models_picto, zipfile=self.global_sync.zipfile)
-        self.global_sync.sync_metas(lang, views.Meta)

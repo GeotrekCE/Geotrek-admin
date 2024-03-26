@@ -1,10 +1,6 @@
-from django.contrib.gis.geos import GEOSGeometry
-from django.utils.html import escape
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
-from rest_framework_gis.fields import GeometryField
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.feedback import models as feedback_models
 
@@ -30,33 +26,6 @@ class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = feedback_models.Report
         fields = ["id", "name", "color"]
-
-
-class ReportAPISerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = feedback_models.Report
-        id_field = 'id'
-        fields = ('id', 'email', 'activity', 'comment', 'category',
-                  'status', 'problem_magnitude', 'related_trek',
-                  'geom')
-        extra_kwargs = {
-            'geom': {'write_only': True},
-        }
-
-    def validate_geom(self, value):
-        return GEOSGeometry(value, srid=4326)
-
-    def validate_comment(self, value):
-        return escape(value)
-
-
-class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer):
-    # Annotated geom field with API_SRID
-    api_geom = GeometryField(read_only=True, precision=7)
-
-    class Meta(ReportAPISerializer.Meta):
-        geo_field = 'api_geom'
-        fields = ReportAPISerializer.Meta.fields + ('api_geom', )
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):

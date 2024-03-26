@@ -11,11 +11,14 @@ from mapentity.tests.factories import UserFactory
 
 
 class RuleFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: 'Rule %s' % n)
+    code = factory.Sequence(lambda n: 'CODE%s' % n)
+    url = factory.faker.Faker('url')
+    pictogram = factory.django.ImageField()
+
     class Meta:
         model = models.Rule
         django_get_or_create = ('code', 'name', 'url', 'pictogram')
-
-    name = "Rule"
 
 
 class SportPracticeFactory(factory.django.DjangoModelFactory):

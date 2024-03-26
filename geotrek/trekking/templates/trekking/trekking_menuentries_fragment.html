@@ -1,5 +1,0 @@
-{% load i18n %}
-
-{% if user.is_superuser %}
-    <li class="dropdown-item"><a href="{% url 'common:sync_randos_view' %}">{% trans "Sync" %}</a></li>
-{% endif %}

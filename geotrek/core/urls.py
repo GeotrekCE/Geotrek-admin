@@ -4,7 +4,6 @@ from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import LangConverter
-from geotrek.common.views import ParametersView
 from .models import Path, Trail
 from .views import (
     PathGPXDetail, PathKMLDetail, TrailGPXDetail, TrailKMLDetail,
@@ -16,7 +15,6 @@ register_converter(LangConverter, 'lang')
 app_name = 'core'
 
 urlpatterns = [
-    path('api/<lang:lang>/parameters.json', ParametersView.as_view(), name='parameters_json'),
     re_path(r'^path/delete/(?P<pk>\d+(,\d+)+)/', MultiplePathDelete.as_view(), name="multiple_path_delete"),
     path('api/<lang:lang>/paths/<int:pk>/path_<slug:slug>.gpx', PathGPXDetail.as_view(),
          name="path_gpx_detail"),

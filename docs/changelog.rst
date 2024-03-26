@@ -2,8 +2,45 @@
 CHANGELOG
 =========
 
-2.103.0+dev (XXXX-XX-XX)
+2.103.2+dev (XXXX-XX-XX)
 ------------------------
+
+**Breaking changes**
+
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed.
+
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
+
+2.103.2 (2024-03-22)
+--------------------
+
+**Bug fixes**
+
+- Fix bug deleted blades still displayed on detail view of signages (fix #4003)
+- Fix interferences on `practice` mapping in Aggregator by changing calls order in GeotrekOutdoorParser (refs #3569)
+
+**Maintenance**
+
+- Bump mapentity from 8.7.1 to 8.7.2
+
+**Development**
+
+- Add git to Dockerfile build staging
+
+
+2.103.1 (2024-03-15)
+--------------------
+
+**Maintenance**
+
+- Bump mapentity from 8.7.0 to 8.7.1
+
+**Hot fix**
+
+- Fix fonts in public PDF (docker image only)
 
 
 2.103.0 (2024-03-14)

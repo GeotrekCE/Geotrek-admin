@@ -1,3 +1,0 @@
-"""
-    Generic views for authentication
-"""

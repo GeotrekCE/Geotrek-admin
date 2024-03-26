@@ -3,18 +3,16 @@ import re
 
 
 class DailymotionBackend(VideoBackend):
-    """
-    Backend for Dailymotion URLs.
-    """
+    """ Backend for Dailymotion URLs. """
     re_detect = re.compile(
-        r'^(http(s)?://)?(www\.)?dailymotion.com/.*', re.I
+        r'^(http(s)?://)?((www\.)?dailymotion.com/.*|dai\.ly/\w+)', re.I
     )
 
     re_code = re.compile(
-        r'''dailymotion.com/  # match youtube's domains
+        r'''(dailymotion.com/|dai\.ly/)  # match dailymotion's domains
             (embed/)?
-            video/  # match the embed url syntax
-            (?P<code>\w{7})  # match and extract
+            (video/)?  # match the embed url syntax
+            (?P<code>\w+)  # match and extract
         ''',
         re.I | re.X
     )

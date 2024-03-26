@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 
@@ -34,14 +33,6 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
-    @property
-    def slug(self):
-        return slugify(self.name) or str(self.pk)
 
 
 class Difficulty(OptionalPictogramMixin):
@@ -136,26 +127,11 @@ class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMi
         return self.name
 
     @property
-    def rando_url(self):
-        if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
-            category_slug = self.practice.slug
-        else:
-            category_slug = _('dive')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
     def display_geom(self):
         return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     def distance(self, to_cls):
         return settings.DIVING_INTERSECTION_MARGIN
-
-    @property
-    def prefixed_category_id(self):
-        if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
-            return self.practice.prefixed_id
-        else:
-            return Practice.id_prefix
 
     def get_map_image_url(self):
         return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])
