@@ -3,7 +3,6 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
-from geotrek.authent.models import User
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import FileType, Attachment
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -46,15 +45,26 @@ def _flatten(fieldsets):
 class MenuItemAdminChangeFormView(TestCase):
 
     def setUp(self) -> None:
-        self.user = User.objects.create(username="test_user", is_staff=True)
+        profile = UserProfileFactory(
+            user__username='spammer',
+            user__password='pipo'
+        )
+        user = profile.user
+
+        # Gives permissions to access AdminSite and to CRUD MenuItems
+        user.is_staff = True
+        user.save()
         add_perm = Permission.objects.get(codename="add_menuitem")
         view_perm = Permission.objects.get(codename="view_menuitem")
         update_perm = Permission.objects.get(codename="change_menuitem")
         delete_perm = Permission.objects.get(codename="delete_menuitem")
-        self.user.user_permissions.add(add_perm, view_perm, update_perm, delete_perm)
-        self.client.force_login(self.user)
+        user.user_permissions.add(add_perm, view_perm, update_perm, delete_perm)
 
-    def test_menu_item_retrieve_expected_form_fields(self):
+        success = self.client.login(username=user.username, password='pipo')
+        self.assertTrue(success)
+        self.user = user
+
+    def test_retrieve_expected_form_fields(self):
         url = reverse('admin:flatpages_menuitem_add')
         response = self.client.get(url)
 
@@ -86,7 +96,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertEqual(len(fields), len(expected_fields))
         self.assertEqual(set(fields), set(expected_fields))
 
-    def test_menu_item_admin_form_add(self):
+    def test_add(self):
         add_data = {
             "label_en": "Hello World!",
             "platform": "all",
@@ -98,7 +108,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(MenuItem.objects.filter(label_en="Hello World!").count(), 1)
 
-    def test_menu_item_admin_form_change(self):
+    def test_udpate(self):
         menu_item = MenuItem.add_root(
             label_en="Already exists",
             platform="web",
@@ -117,7 +127,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertEqual(changed_menu_item.label_en, change_data["label_en"])
         self.assertEqual(changed_menu_item.platform, change_data["platform"])
 
-    def test_menu_item_admin_form_page_required_error(self):
+    def test_save_with_page_is_required_error(self):
         add_data = {
             "label_en": "Hello World!",
             "platform": "all",
@@ -133,7 +143,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertTrue("page" in adminform_errors)
         self.assertTrue("required" in adminform_errors["page"][0])
 
-    def test_menu_item_admin_form_link_url_required_error(self):
+    def test_save_with_link_url_is_required_error(self):
         link_url_loc_fieldname = "link_url_" + settings.MODELTRANSLATION_DEFAULT_LANGUAGE
         add_data = {
             "label_en": "Hello World!",
@@ -150,7 +160,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertTrue(link_url_loc_fieldname in adminform_errors)
         self.assertTrue("required" in adminform_errors[link_url_loc_fieldname][0])
 
-    def test_menu_item_admin_form_retrieve_with_thumbnail(self):
+    def test_retrieve_with_thumbnail(self):
         menu_item = MenuItem.add_root(
             label_en="I have a thumbnail",
         )
@@ -168,7 +178,7 @@ class MenuItemAdminChangeFormView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(b"menu_item_thumbnail" in response.content)
 
-    def test_menu_item_admin_form_change_thumbnail(self):
+    def test_save_with_thumbnail(self):
         menu_item = MenuItem.add_root(
             label_en="I have a thumbnail",
         )
@@ -199,7 +209,7 @@ class MenuItemAdminChangeFormView(TestCase):
         thumbnail = qs.first()
         self.assertIn("new_thumbnail", thumbnail.filename)
 
-    def test_menu_item_admin_form_delete_thumbnail(self):
+    def test_save_delete_thumbnail(self):
         menu_item = MenuItem.add_root(
             label_en="I have a thumbnail",
         )
@@ -229,7 +239,8 @@ class MenuItemAdminChangeFormView(TestCase):
 
 
 class FlatPageAdminChangeFormView(TestCase):
-    def login(self):
+
+    def setUp(self) -> None:
         profile = UserProfileFactory(
             user__username='spammer',
             user__password='pipo'
@@ -247,11 +258,9 @@ class FlatPageAdminChangeFormView(TestCase):
 
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
-        return user
+        self.user = user
 
     def test_retrieve_expected_form_fields(self):
-        self.login()
-
         url = reverse('admin:flatpages_flatpage_add')
         response = self.client.get(url)
 
@@ -281,7 +290,6 @@ class FlatPageAdminChangeFormView(TestCase):
         self.assertEqual(set(fields), set(expected_fields))
 
     def test_save_without_cover_image(self):
-        self.login()
         data = {
             "title_en": "Hello English World!",
             "_position": "first-child",
@@ -295,17 +303,14 @@ class FlatPageAdminChangeFormView(TestCase):
         self.assertEqual(page.title, 'Hello English World!')
 
     def test_save_with_cover_image(self):
-        self.login()
-
-        with get_dummy_uploaded_image().open() as image_file:
-            data = {
-                "title_en": "Hello World!",
-                "_position": "first-child",
-                "cover_image": image_file,
-                'cover_image_author': 'Someone',
-            }
-            url = reverse('admin:flatpages_flatpage_add')
-            response = self.client.post(url, data=data)
+        data = {
+            "title_en": "Hello World!",
+            "_position": "first-child",
+            "cover_image": get_dummy_uploaded_image("flatpage_cover.png"),
+            'cover_image_author': 'Someone',
+        }
+        url = reverse('admin:flatpages_flatpage_add')
+        response = self.client.post(url, data=data)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(FlatPage.objects.count(), 1)
@@ -316,19 +321,14 @@ class FlatPageAdminChangeFormView(TestCase):
         self.assertEqual(attachment.author, 'Someone')
 
     def test_save_delete_cover_image(self):
-        user = self.login()
-        page = FlatPage(
-            title='Title',
-        )
-        FlatPage.add_root(instance=page)
-        page.save()
+        page = FlatPage.add_root(title="Title")
         filetype = FileType.objects.create(type="Photographie")
         Attachment.objects.create(
             content_object=page,
             attachment_file=get_dummy_uploaded_image(),
             author='Someone',
             filetype=filetype,
-            creator=user
+            creator=self.user
         )
 
         url = reverse('admin:flatpages_flatpage_change', args=[page.pk])
