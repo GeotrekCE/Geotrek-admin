@@ -1,7 +1,6 @@
-from typing import Optional
-
 from datetime import date, datetime
 from distutils.util import strtobool
+from typing import Optional, Type
 
 import coreschema
 from coreapi.document import Field
@@ -15,6 +14,8 @@ from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
+
+from geotrek.flatpages.models import MenuItem, FlatPage
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
@@ -26,7 +27,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
 
 
-def get_published_filter_expression(model: Model, language: Optional[str] = None):
+def get_published_filter_expression(model: Type[Model], language: Optional[str] = None):
     """Given a model with a `published` field and a language string
     this function returns a query expression to filter on.
 
@@ -1230,17 +1231,51 @@ class GeotrekRatingFilter(BaseFilterBackend):
         )
 
 
+class MenuItemFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        portals = request.GET.get('portals')
+        if portals:
+            queryset = queryset.filter(portals__in=portals.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='portals', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separated.'),
+                )
+            ),
+        )
+
+
 class FlatPageFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        targets = request.GET.get('targets')
-        if targets:
-            queryset = queryset.filter(target__in=targets.split(','))
+        parent_id = request.GET.get('parent')
+        if parent_id:
+            try:
+                parent_page = FlatPage.objects.get(pk=parent_id)
+            except FlatPage.DoesNotExist:
+                return queryset.none()
+            queryset = parent_page.get_children()
         sources = request.GET.get('sources')
         if sources:
             queryset = queryset.filter(source__in=sources.split(','))
         portals = request.GET.get('portals')
         if portals:
-            queryset = queryset.filter(portal__in=portals.split(','))
+            language = request.GET.get('language', 'all')
+            published_menu_items = (
+                MenuItem.objects
+                .filter(get_published_filter_expression(MenuItem, language))
+                .filter(portals__in=portals.split(','))
+                .values_list("id", flat=True))
+            # Filter on Flat Pages associated to one of the portals
+            # OR targeted by a published Menu Item associated to one of the portals.
+            queryset = queryset.filter(
+                Q(portals__in=portals.split(','))
+                | Q(menu_items__id__in=published_menu_items)
+            ).distinct()
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(
@@ -1251,9 +1286,9 @@ class FlatPageFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
-                name='targets', required=False, location='query', schema=coreschema.String(
-                    title=_("Targets"),
-                    description=_('Filter by one or more target (all, mobile, hidden or web), comma-separated.')
+                name='parent', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Parent"),
+                    description=_('Filter by the parent page ID')
                 )
             ), Field(
                 name='sources', required=False, location='query', schema=coreschema.Integer(

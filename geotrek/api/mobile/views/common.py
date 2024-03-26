@@ -9,7 +9,7 @@ from rest_framework import response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
-from geotrek.flatpages.models import FlatPage
+from geotrek.flatpages.models import MenuItem
 from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType, Trek
 from geotrek.tourism.models import (InformationDesk, InformationDeskType, TouristicContentType, TouristicEventType,
                                     TouristicContentCategory)
@@ -204,12 +204,22 @@ class SettingsView(APIView):
 
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+    """Exposes the original FlatPages format for mobile, under the hood MenuItems are queried and converted."""
+
     permission_classes = [AllowAny, ]
-    serializer_class = api_serializers.FlatPageListSerializer
-    serializer_detail_class = api_serializers.FlatPageDetailSerializer
+    serializer_class = api_serializers.MobileMenuItemListSerializer
+    serializer_detail_class = api_serializers.MobileMenuItemDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
-        qs = FlatPage.objects.filter(target__in=['mobile', 'all'], published=True).order_by('order')
-        if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-        return qs
+        menu_item_qs = MenuItem.objects.filter(
+            depth=1,
+            platform__in=['mobile', 'all'],
+            published=True,
+        ).order_by("path")
+        portal_name = self.request.GET.get('portal')
+        if portal_name:
+            menu_item_qs = menu_item_qs.filter(Q(portals__name=portal_name) | Q(portals=None))
+
+        menu_item_qs = menu_item_qs.filter(Q(page__published=True) | Q(page=None))
+
+        return menu_item_qs

@@ -295,6 +295,7 @@ PROJECT_APPS += (
     'django_large_image',
     'colorfield',
     'mptt',
+    'treebeard',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (

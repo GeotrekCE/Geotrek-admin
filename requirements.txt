@@ -106,6 +106,7 @@ django==3.2.25
     #   django-leaflet
     #   django-modelcluster
     #   django-modeltranslation
+    #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
     #   drf-yasg
@@ -149,6 +150,8 @@ django-mptt==0.14.0
     # via geotrek (setup.py)
 django-tinymce==3.5.0
     # via mapentity
+django-treebeard==4.7.1
+    # via geotrek (setup.py)
 django-weasyprint==1.1.0.post2
     # via
     #   geotrek (setup.py)

@@ -1,5 +1,7 @@
 import datetime
+from functools import partial
 import json
+import re
 from unittest import skipIf, mock
 
 from dateutil.relativedelta import relativedelta
@@ -23,6 +25,7 @@ from geotrek.authent import models as authent_models
 from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common import models as common_models
+from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import factories as common_factory, TranslationResetMixin
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
@@ -31,7 +34,9 @@ from geotrek.core import models as path_models
 from geotrek.core.tests import factories as core_factory
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback.tests import factories as feedback_factory, factories as feedback_factories
+from geotrek.flatpages.models import MenuItem, FlatPage
 from geotrek.flatpages.tests import factories as flatpages_factory
+from geotrek.flatpages.tests.factories import MenuItemFactory
 from geotrek.infrastructure import models as infrastructure_models
 from geotrek.infrastructure.tests import factories as infrastructure_factory
 from geotrek.outdoor import models as outdoor_models
@@ -2802,16 +2807,28 @@ class OutdoorRatingTestCase(TestCase):
 
 class FlatPageTestCase(TestCase):
 
+    published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+
+    @staticmethod
+    def add_child(parent, child, pos="last-child"):
+        # treebeard doc advises to get fresh object from the DB for tree operations.
+        # See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+
+        def get(pk):
+            return FlatPage.objects.get(pk=pk)
+
+        get(child.pk).move(get(parent.pk), pos=pos)
+
     @classmethod
     def setUpTestData(cls):
         cls.source = common_factory.RecordSourceFactory()
         cls.portal = common_factory.TargetPortalFactory()
         cls.page1 = flatpages_factory.FlatPageFactory(
-            title='AAA', published=True, order=2, target='web', content='Blah',
+            title='AAA', published=True, content='Blah',
             sources=[cls.source], portals=[cls.portal]
         )
         cls.page2 = flatpages_factory.FlatPageFactory(
-            title='BBB', published=True, order=1, target='mobile', content='Blbh'
+            title='BBB', published=True, content='Blbh'
         )
 
     def tearDown(self):
@@ -2820,35 +2837,272 @@ class FlatPageTestCase(TestCase):
 
     def test_list(self):
         response = self.client.get('/api/v2/flatpage/')
+
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
-            'count': 2,
-            'next': None,
-            'previous': None,
-            'results': [{
-                'id': self.page2.pk,
-                'title': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
-                'content': {'en': 'Blbh', 'es': None, 'fr': None, 'it': None},
-                'external_url': '',
-                'order': 1,
-                'portal': [],
-                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
-                'source': [],
-                'target': 'mobile',
-                'attachments': [],
-            }, {
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_by_ids = {page["id"]: page for page in resp_data["results"]}
+        self.assertIn(self.page1.id, resp_by_ids.keys())
+        self.assertIn(self.page2.id, resp_by_ids.keys())
+        self.assertEqual(
+            resp_by_ids[self.page1.id],
+            {
                 'id': self.page1.pk,
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
                 'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
-                'external_url': '',
-                'order': 2,
-                'portal': [self.portal.pk],
+                'portals': [self.portal.pk],
                 'published': {'en': True, 'es': False, 'fr': False, 'it': False},
                 'source': [self.source.pk],
-                'target': 'web',
                 'attachments': [],
-            }]
-        })
+                'parent': None,
+                'children': [],
+            }
+        )
+        self.assertEqual(
+            resp_by_ids[self.page2.id],
+            {
+                'id': self.page2.pk,
+                'title': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'content': {'en': 'Blbh', 'es': None, 'fr': None, 'it': None},
+                'portals': [],
+                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'source': [],
+                'attachments': [],
+                'parent': None,
+                'children': [],
+            }
+        )
+
+    def test_list_returns_published_page_only(self):
+        flatpages_factory.FlatPageFactory(
+            title='Not published page', published=False, content='Not published content'
+        )
+
+        response = self.client.get('/api/v2/flatpage/')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_ids = [page["id"] for page in resp_data["results"]]
+        self.assertIn(self.page1.id, resp_ids)
+        self.assertIn(self.page2.id, resp_ids)
+
+    def test_list_returns_published_in_specified_language_only(self):
+        self.page2.published_fr = True
+        self.page2.save()
+        flatpages_factory.FlatPageFactory(
+            title='Not published page', published=False, content='Not published content'
+        )
+
+        response = self.client.get('/api/v2/flatpage/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], self.page2.id)
+
+    def test_list_returns_pages_associated_to_portals(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+        page1 = published_page_factory(portals=[portal1])
+        page2 = published_page_factory(portals=[portal1, portal2])
+        published_page_factory(portals=None)
+
+        response = self.client.get(f'/api/v2/flatpage/?portals={portal1.id},{portal2.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 2)
+        resp_ids = [page["id"] for page in resp_data["results"]]
+        self.assertIn(page1.id, resp_ids)
+        self.assertIn(page2.id, resp_ids)
+
+    def test_list_returns_page_checking_both_publication_and_portal(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        page_factory(published_en=True, published_fr=False, portals=[portal2])
+        page_factory(published_fr=True, portals=[portal1])
+        page_factory(published_fr=True, portals=None)
+        visible_page = page_factory(published_fr=True, portals=[portal2])
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal2.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], visible_page.id)
+
+    def test_list_returns_page_targeted_by_visible_menu_item(self):
+        portal = common_factory.TargetPortalFactory()
+        page_factory = partial(flatpages_factory.FlatPageFactory, published_fr=True, portals=None)
+        not_visible_page = page_factory()
+        visible_page = page_factory()
+        menu_factory = partial(flatpages_factory.MenuItemFactory, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        # Those 3 menu items are not visible given the following API query
+        menu_factory(published=False, portals=[portal], page=not_visible_page)
+        menu_factory(published_en=True, published_fr=False, portals=[portal], page=not_visible_page)
+        menu_factory(published_fr=True, portals=None, page=not_visible_page)
+        # Visible menu item
+        menu_factory(published_fr=True, portals=[portal], page=visible_page)
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 1)
+        self.assertEqual(resp_data["results"][0]["id"], visible_page.id)
+
+    def test_list_filters_children_prop(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal1])
+        # Those 3 children pages should not be visible
+        page_factory(published_en=True, published_fr=False, portals=[portal1]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=[portal2]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=None).move(parent_page, pos="last-child")
+        # Visible child page
+        visible_child_page = page_factory(published_en=True, published_fr=True, portals=[portal1])
+        visible_child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent_page.id]
+        self.assertEqual(len(parent_page_repr["children"]), 1)
+        self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
+
+    def test_list_includes_children_pages_in_order(self):
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
+
+        response = self.client.get('/api/v2/flatpage/')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        parent_page_repr = {p["id"]: p for p in resp_data["results"]}[parent.id]
+        self.assertEqual(parent_page_repr["children"], [children_ids[1], children_ids[2], children_ids[0]])
+
+    def test_list_returns_null_parent_prop_when_parent_has_no_portal(self):
+        portal = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=None)
+        child_page = page_factory(published_en=True, published_fr=True, portals=[portal])
+        child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        child_page_repr = {p["id"]: p for p in resp_data["results"]}[child_page.id]
+        self.assertEqual(child_page_repr["parent"], None)
+
+    def test_list_returns_null_parent_prop_when_parent_has_another_portal(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal2])
+        child_page = page_factory(published_fr=True, portals=[portal1])
+        child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        child_page_repr = {p["id"]: p for p in resp_data["results"]}[child_page.id]
+        self.assertEqual(child_page_repr["parent"], None)
+
+    def test_list_returns_null_parent_prop_when_parent_is_not_lang_published(self):
+        portal = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=False, portals=[portal])
+        child_page = page_factory(published_fr=True, portals=[portal])
+        child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?language=fr&portals={portal.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        child_page_repr = {p["id"]: p for p in resp_data["results"]}[child_page.id]
+        self.assertEqual(child_page_repr["parent"], None)
+
+    def test_list_returns_null_parent_prop_when_parent_is_not_published(self):
+        portal = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published=False, portals=[portal])
+        child_page = page_factory(published=True, portals=[portal])
+        child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/?portals={portal.id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        child_page_repr = {p["id"]: p for p in resp_data["results"]}[child_page.id]
+        self.assertEqual(child_page_repr["parent"], None)
+
+    def test_list_filter_by_parent(self):
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent, children[0])
+        self.add_child(parent, children[1])
+        self.add_child(parent, children[2])
+
+        response = self.client.get(f'/api/v2/flatpage/?parent={parent.id}')
+
+        self.assertEqual(response.status_code, 200)
+        child_pages_ids = [p["id"] for p in response.json()["results"]]
+        self.assertEqual(child_pages_ids, [children_ids[0], children_ids[1], children_ids[2]])
+
+    def test_list_filter_by_parent_child_pages_are_ordered(self):
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
+
+        response = self.client.get(f'/api/v2/flatpage/?parent={parent.id}')
+
+        self.assertEqual(response.status_code, 200)
+        child_pages_ids = [p["id"] for p in response.json()["results"]]
+        self.assertEqual(child_pages_ids, [children_ids[1], children_ids[2], children_ids[0]])
+
+    def test_list_filter_by_parent_not_exists(self):
+        not_exists_parent_id = 123
+
+        response = self.client.get(f'/api/v2/flatpage/?parent={not_exists_parent_id}')
+
+        self.assertEqual(response.status_code, 200)
+        resp_data = response.json()
+        self.assertEqual(resp_data["count"], 0)
+        self.assertEqual(resp_data["results"], [])
+
+    def test_list_filter_by_parent_child_pages_visibility(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal1])
+        # Those 3 children pages should not be visible
+        page_factory(published_en=True, published_fr=False, portals=[portal1]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=[portal2]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=None).move(parent_page, pos="last-child")
+        # Visible child page
+        visible_child_page = page_factory(published_en=True, published_fr=True, portals=[portal1])
+        visible_child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/{parent_page.id}/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        parent_page_repr = response.json()
+        self.assertEqual(parent_page_repr["children"], [visible_child_page.id])
 
     def test_detail(self):
         response = self.client.get('/api/v2/flatpage/{}/'.format(self.page1.pk))
@@ -2857,26 +3111,53 @@ class FlatPageTestCase(TestCase):
             'id': self.page1.pk,
             'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
             'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
-            'external_url': '',
-            'order': 2,
-            'portal': [self.portal.pk],
+            'portals': [self.portal.pk],
             'published': {'en': True, 'es': False, 'fr': False, 'it': False},
             'source': [self.source.pk],
-            'target': 'web',
             'attachments': [],
+            'parent': None,
+            'children': [],
         })
+
+    def test_detail_includes_filtered_children_pages(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        page_factory = flatpages_factory.FlatPageFactory
+        parent_page = page_factory(published_fr=True, portals=[portal1])
+        # Those 3 children pages should not be visible
+        page_factory(published_en=True, published_fr=False, portals=[portal1]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=[portal2]).move(parent_page, pos="last-child")
+        page_factory(published_en=True, published_fr=True, portals=None).move(parent_page, pos="last-child")
+        # Visible child page
+        visible_child_page = page_factory(published_en=True, published_fr=True, portals=[portal1])
+        visible_child_page.move(parent_page, pos="last-child")
+
+        response = self.client.get(f'/api/v2/flatpage/{parent_page.id}/?language=fr&portals={portal1.id}')
+
+        self.assertEqual(response.status_code, 200)
+        parent_page_repr = response.json()
+        self.assertEqual(len(parent_page_repr["children"]), 1)
+        self.assertEqual(parent_page_repr["children"][0], visible_child_page.id)
+
+    def test_detail_includes_children_pages_in_order(self):
+        parent = self.published_page_factory()
+        children = [self.published_page_factory() for _ in range(3)]
+        children_ids = [c.id for c in children]
+        self.add_child(parent=parent, child=children[0], pos="last-child")
+        self.add_child(parent=parent, child=children[1], pos="first-child")
+        self.add_child(parent=children[0], child=children[2], pos="left")
+
+        response = self.client.get(f'/api/v2/flatpage/{parent.id}/')
+
+        self.assertEqual(response.status_code, 200)
+        parent_page_repr = response.json()
+        self.assertEqual(parent_page_repr["children"], [children_ids[1], children_ids[2], children_ids[0]])
 
     def test_filter_q(self):
         response = self.client.get('/api/v2/flatpage/', {'q': 'BB'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'BBB')
-
-    def test_filter_targets(self):
-        response = self.client.get('/api/v2/flatpage/', {'targets': 'web'})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
     def test_filter_sources(self):
         response = self.client.get('/api/v2/flatpage/', {'sources': self.source.pk})
@@ -2889,6 +3170,411 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
+
+
+class MenuItemTestCase(TestCase):
+
+    published_menu_item_factory = partial(MenuItemFactory, published=True)
+
+    @staticmethod
+    def add_child(parent, child):
+        # treebeard doc advises to get fresh object from the DB for tree operations.
+        # See "Note" at https://django-treebeard.readthedocs.io/en/latest/tutorial.html
+
+        def get(pk):
+            return MenuItem.objects.get(pk=pk)
+
+        get(child.pk).move(get(parent.pk), pos="last-child")
+
+    def test_tree(self):
+        parent = self.published_menu_item_factory(title="parent")
+        child1 = self.published_menu_item_factory(title="child1")
+        self.add_child(parent, child1)
+        child2 = self.published_menu_item_factory(title="child2")
+        self.add_child(parent, child2)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        self.assertEqual(parent_repr["title"]["en"], "parent")
+        self.assertEqual(len(parent_repr["children"]), 2)
+        child1_repr = parent_repr["children"][0]
+        self.assertEqual(child1_repr["title"]["en"], "child1")
+        child2_repr = parent_repr["children"][1]
+        self.assertEqual(child2_repr["title"]["en"], "child2")
+
+    def test_tree_full_data_with_no_target(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        menu_item = MenuItem.add_root(
+            title_en="Hello World!",
+            title_fr="Bonjour le monde !",
+            published_en=True,
+            published_fr=True,
+            pictogram=get_dummy_uploaded_image("menu_item_picto.png"),
+            target_type=None,
+        )
+        menu_item.portals.add(portal1, portal2)
+        user = authent_models.User.objects.create(username="test_user")
+        file_type = FileType.objects.create(type="Photographie")
+        Attachment.objects.create(
+            content_type=ContentType.objects.get_for_model(MenuItem),
+            object_id=menu_item.id,
+            attachment_file=get_dummy_uploaded_image("menu_item_thumbnail.png"),
+            filetype=file_type,
+            creator=user,
+        )
+        child1 = self.published_menu_item_factory()
+        child2 = self.published_menu_item_factory()
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        menu_item_repr = data[0]
+        expected_menu_item_repr = {
+            "id": menu_item.id,
+            "title": {
+                "en": "Hello World!",
+                "fr": "Bonjour le monde !",
+                "es": None,
+                "it": None,
+            },
+            "published": {
+                "en": True,
+                "fr": True,
+                "es": False,
+                "it": False,
+            },
+        }
+        for key, value in expected_menu_item_repr.items():
+            self.assertEqual(menu_item_repr[key], value)
+
+        self.assertIn(portal1.id, menu_item_repr["portals"])
+        self.assertIn(portal2.id, menu_item_repr["portals"])
+
+        self.assertTrue(menu_item_repr["pictogram"].find("menu_item_picto") != -1)
+
+        self.assertEqual(len(menu_item_repr["attachments"]), 1)
+        attachment_repr = menu_item_repr["attachments"][0]
+        self.assertTrue(attachment_repr["url"].find("menu_item_thumbnail") != -1)
+        self.assertTrue(attachment_repr["thumbnail"].find("menu_item_thumbnail") != -1)
+
+    def test_tree_with_page_target(self):
+        page = flatpages_factory.FlatPageFactory(
+            published=True,
+            title_en="Targeted page",
+            title_fr="Page ciblée",
+        )
+        MenuItem.add_root(
+            published=True,
+            target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE,
+            page=page,
+        )
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()[0]
+        self.assertEqual(menu_item_repr["target_type"], "page")
+        self.assertEqual(menu_item_repr["page"], page.id)
+        self.assertEqual(menu_item_repr["page_title"]["en"], page.title_en)
+        self.assertEqual(menu_item_repr["page_title"]["fr"], page.title_fr)
+
+    def test_tree_with_link_target(self):
+        menu_item = MenuItem.add_root(
+            published=True,
+            target_type=MenuItem.TARGET_TYPE_CHOICES.LINK,
+            link_url_en="https://en.example.com/",
+            link_url_fr="https://fr.example.com/",
+            open_in_new_tab=False,
+        )
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()[0]
+        self.assertEqual(menu_item_repr["target_type"], "link")
+        self.assertEqual(menu_item_repr["link_url"]["en"], menu_item.link_url_en)
+        self.assertEqual(menu_item_repr["link_url"]["fr"], menu_item.link_url_fr)
+        self.assertEqual(menu_item_repr["open_in_new_tab"], False)
+
+    def test_tree_target_type_is_lowercase_for_child(self):
+        parent = self.published_menu_item_factory()
+        child = self.published_menu_item_factory(target_type=MenuItem.TARGET_TYPE_CHOICES.LINK)
+        self.add_child(parent, child)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        parent_repr = response.json()[0]
+        child_repr = parent_repr["children"][0]
+        self.assertEqual(child_repr["target_type"], "link")
+
+    def test_tree_with_portals_filter_on_root_menu_items(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        portal3 = common_factory.TargetPortalFactory()
+        self.published_menu_item_factory(portals=[portal1])
+        menu1 = self.published_menu_item_factory(portals=[portal1, portal2])
+        menu2 = self.published_menu_item_factory(portals=[portal2])
+        self.published_menu_item_factory(portals=None)
+        menu3 = self.published_menu_item_factory(portals=[portal3])
+
+        response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+        self.assertIn(menu3.pk, menu_item_ids)
+
+    def test_tree_with_portals_filter_on_children(self):
+        portal1 = common_factory.TargetPortalFactory()
+        portal2 = common_factory.TargetPortalFactory()
+        portal3 = common_factory.TargetPortalFactory()
+        parent = self.published_menu_item_factory(portals=[portal2])
+        menu1 = self.published_menu_item_factory(portals=[portal1])
+        self.add_child(parent, menu1)
+        menu2 = self.published_menu_item_factory(portals=[portal1, portal2])
+        self.add_child(parent, menu2)
+        menu3 = self.published_menu_item_factory(portals=[portal2])
+        self.add_child(parent, menu3)
+        menu4 = self.published_menu_item_factory(portals=None)
+        self.add_child(parent, menu4)
+        menu5 = self.published_menu_item_factory(portals=[portal3])
+        self.add_child(parent, menu5)
+
+        response = self.client.get(f'/api/v2/menu_item/?portals={portal2.pk},{portal3.pk}')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        children_ids = [item["id"] for item in parent_repr["children"]]
+        self.assertIn(menu2.pk, children_ids)
+        self.assertIn(menu3.pk, children_ids)
+        self.assertIn(menu5.pk, children_ids)
+
+    def test_tree_with_language_filter_on_root_items(self):
+        MenuItemFactory(published_fr=False, published_en=False)
+        menu1 = MenuItemFactory(published_fr=True, published_en=False)
+        MenuItemFactory(published_fr=False, published_en=True)
+        menu2 = MenuItemFactory(published_fr=True, published_en=True)
+
+        response = self.client.get('/api/v2/menu_item/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 2)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+
+    def test_tree_with_language_filter_on_children(self):
+        parent = MenuItemFactory(published_fr=True, published_en=True)
+        child1 = MenuItemFactory(published_fr=False, published_en=False)
+        child2 = MenuItemFactory(published_fr=True, published_en=False)
+        child3 = MenuItemFactory(published_fr=False, published_en=True)
+        child4 = MenuItemFactory(published_fr=True, published_en=True)
+        self.add_child(parent, child1)
+        self.add_child(parent, child2)
+        self.add_child(parent, child3)
+        self.add_child(parent, child4)
+
+        response = self.client.get('/api/v2/menu_item/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        self.assertEqual(len(parent_repr["children"]), 2)
+        children_ids = [item["id"] for item in parent_repr["children"]]
+        self.assertIn(child2.pk, children_ids)
+        self.assertIn(child4.pk, children_ids)
+
+    def test_tree_with_language_filter_all_value(self):
+        MenuItemFactory(published_fr=False, published_en=False)
+        menu1 = MenuItemFactory(published_fr=True, published_en=False)
+        menu2 = MenuItemFactory(published_fr=False, published_en=True)
+        menu3 = MenuItemFactory(published_fr=True, published_en=True)
+
+        response = self.client.get('/api/v2/menu_item/?language=all')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 3)
+        menu_item_ids = [item["id"] for item in data]
+        self.assertIn(menu1.pk, menu_item_ids)
+        self.assertIn(menu2.pk, menu_item_ids)
+        self.assertIn(menu3.pk, menu_item_ids)
+
+    def test_tree_menu_item_not_exposed_if_target_page_not_published(self):
+        page = flatpages_factory.FlatPageFactory(published=False)
+        MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 0)
+
+    def test_tree_child_menu_item_not_exposed_if_target_page_not_published(self):
+        page = flatpages_factory.FlatPageFactory(published=False)
+        parent = MenuItemFactory(published=True)
+        child = MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        self.add_child(parent, child)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        parent_repr = data[0]
+        self.assertEqual(len(parent_repr["children"]), 0)
+
+    def test_detail(self):
+        menu_item = self.published_menu_item_factory(title_en="Hello!", title_fr="Bonjour !")
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(
+            menu_item_repr,
+            {
+                "id": menu_item.pk,
+                "title": {
+                    "en": "Hello!",
+                    "fr": "Bonjour !",
+                    "es": None,
+                    "it": None,
+                },
+                "target_type": None,
+                "published": {
+                    "en": True,
+                    "fr": False,
+                    "es": False,
+                    "it": False,
+                },
+                "page": None,
+                "page_title": None,
+                "link_url": {
+                    "en": "",
+                    "fr": "",
+                    "es": "",
+                    "it": "",
+                },
+                "open_in_new_tab": True,
+                "children": [],
+                "parent": None,
+                "attachments": [],
+                "pictogram": None,
+                "portals": [],
+            }
+        )
+
+    def test_detail_pictogram_is_absolute_URL(self):
+        menu_item = self.published_menu_item_factory(title="Test picto", pictogram=get_dummy_uploaded_image("menu_picto.png"))
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        picto_url = data["pictogram"]
+        self.assertTrue(re.match("^(http://|https://)", picto_url) is not None)
+
+    def test_detail_includes_parent_and_children(self):
+        parent = self.published_menu_item_factory()
+        menu_item = self.published_menu_item_factory()
+        child1 = self.published_menu_item_factory()
+        child2 = self.published_menu_item_factory()
+        self.add_child(parent, menu_item)
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], parent.id)
+        self.assertEqual(len(menu_item_repr["children"]), 2)
+        self.assertEqual(menu_item_repr["children"][0], child1.id)
+        self.assertEqual(menu_item_repr["children"][1], child2.id)
+
+    def test_detail_does_not_show_not_published_parent(self):
+        parent = MenuItemFactory(published=False)
+        menu_item = self.published_menu_item_factory()
+        self.add_child(parent, menu_item)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], None)
+
+    def test_detail_does_not_show_not_published_child(self):
+        menu_item = self.published_menu_item_factory()
+        child1 = self.published_menu_item_factory()
+        self.add_child(menu_item, child1)
+        child2 = MenuItemFactory(published=False)
+        self.add_child(menu_item, child2)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(len(menu_item_repr["children"]), 1)
+        child_id = menu_item_repr["children"][0]
+        self.assertEqual(child_id, child1.id)
+
+    def test_detail_with_language_not_found_error(self):
+        menu_item = MenuItemFactory(published_en=True, published_fr=False)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        from pprint import pprint
+        pprint(response.json())
+        self.assertEqual(response.status_code, 404)
+
+    def test_detail_with_language_filter_on_children(self):
+        menu_item = MenuItemFactory(published_en=True, published_fr=True)
+        child1 = MenuItemFactory(published_en=False, published_fr=False)
+        child2 = MenuItemFactory(published_en=True, published_fr=False)
+        child3 = MenuItemFactory(published_en=False, published_fr=True)
+        child4 = MenuItemFactory(published_en=True, published_fr=True)
+        self.add_child(menu_item, child1)
+        self.add_child(menu_item, child2)
+        self.add_child(menu_item, child3)
+        self.add_child(menu_item, child4)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        children_ids = menu_item_repr["children"]
+        self.assertEqual(len(children_ids), 2)
+        self.assertIn(child3.id, children_ids)
+        self.assertIn(child4.id, children_ids)
+
+    def test_detail_with_language_filter_on_parent(self):
+        parent = MenuItemFactory(published_en=True, published_fr=False)
+        menu_item = MenuItemFactory(published_en=True, published_fr=True)
+        self.add_child(parent, menu_item)
+
+        response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
+
+        self.assertEqual(response.status_code, 200)
+        menu_item_repr = response.json()
+        self.assertEqual(menu_item_repr["parent"], None)
 
 
 class ReportStatusTestCase(TestCase):

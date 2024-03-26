@@ -5,7 +5,6 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 
 from geotrek.common import models as common_models
-from geotrek.flatpages import models as flatpage_models
 from geotrek.trekking import models as trekking_models
 
 
@@ -177,13 +176,19 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'label', 'pictogram')
 
 
-class FlatPageListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = flatpage_models.FlatPage
-        fields = ('id', 'title')
+class MobileMenuItemListSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    title = serializers.CharField()
 
 
-class FlatPageDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = flatpage_models.FlatPage
-        fields = ('id', 'title', 'content', 'external_url')
+class MobileMenuItemDetailSerializer(MobileMenuItemListSerializer):
+
+    external_url = serializers.CharField(source="link_url")
+    content = serializers.SerializerMethodField()
+
+    def get_content(self, obj):
+        if obj.page:
+            return obj.page.content
+        else:
+            return ""
