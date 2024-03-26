@@ -1,3 +1,5 @@
+from typing import Optional
+
 from datetime import date, datetime
 from distutils.util import strtobool
 
@@ -5,7 +7,7 @@ import coreschema
 from coreapi.document import Field
 from django.conf import settings
 from django.contrib.gis.db.models import Collect
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Model
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
@@ -22,6 +24,32 @@ from geotrek.zoning.models import City, District
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
+
+
+def get_published_filter_expression(model: Model, language: Optional[str] = None):
+    """Given a model with a `published` field and a language string
+    this function returns a query expression to filter on.
+
+    `language` parameter is expected to be one of the modeltranslation's defined language or "all".
+    """
+    associated_published_fields = [f.name for f in model._meta.get_fields() if f.name.startswith('published')]
+    if len(associated_published_fields) == 1:
+        # The model's published field is not translated
+        return Q(published=True)
+    elif len(associated_published_fields) > 1:
+        # The published field is translated
+        if not language or language == 'all':
+            # no language specified. Check for all.
+            q = Q()
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field_name = build_localized_fieldname('published', lang)
+                if field_name in associated_published_fields:
+                    q |= Q(**{field_name: True})
+            return q
+        else:
+            # one language is specified
+            field_name = build_localized_fieldname('published', language)
+            return Q(**{field_name: True})
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -131,26 +159,9 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         language = request.GET.get('language', 'all')
-        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
-
-        # if the model of the queryset published field is not translated
-        if len(associated_published_fields) == 1:
-            qs = qs.filter(published=True)
-        elif len(associated_published_fields) > 1:
-            # the published field of the queryset model is translated
-            if language == 'all':
-                # no language specified. Check for all.
-                q = Q()
-                for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    field_name = build_localized_fieldname('published', lang)
-                    if field_name in associated_published_fields:
-                        q |= Q(**{field_name: True})
-                qs = qs.filter(q)
-            else:
-                # one language is specified
-                field_name = build_localized_fieldname('published', language)
-                qs = qs.filter(**{field_name: True})
-
+        expr = get_published_filter_expression(qs.model, language)
+        if expr:
+            qs = qs.filter(expr)
         return qs
 
 
