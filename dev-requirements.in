@@ -3,6 +3,7 @@
 pip-tools
 lxml
 flake8
+flake8-pyproject
 freezegun
 coverage
 factory_boy
