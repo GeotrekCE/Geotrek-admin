@@ -35,7 +35,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
             ("read_flatpage", "Can read FlatPage"),
         )
 
-
     # FIXME: to remove? (sync randov2 related?)
     @property
     def slug(self):
