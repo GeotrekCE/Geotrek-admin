@@ -1,0 +1,120 @@
+[project]
+version = "2.103.2+dev"
+name = "Geotrek-admin"
+description = "Geotrek is a web application which allows you to create, modify and publish a hiking trail network."
+requires-python = ">= 3.8"
+authors = [
+    {name = "Makina Corpus", email = 'geobi@makina-corpus.com'},
+]
+dependencies = [
+    'Django==3.2.*',
+    'mapentity',
+    'chardet',
+    'cairosvg',
+    'cairocffi',
+    'env_file',
+    'pymemcache',
+    'coreschema',
+    'coreapi',
+    'psycopg2',
+    'pdfimpose',
+    'docutils',
+    'toml',
+    'Pillow',
+    'simplekml',
+    'pygal',
+    'paperclip',
+    'django-extended-choices',
+    'django-modelcluster',
+    'django-mptt',
+    'geojson',
+    'tif2geojson',
+    'drf-dynamic-fields',
+    'drf-yasg',
+    'xlrd',
+    'landez',
+    'large-image-source-vips',
+    'django-large-image',
+    'celery',
+    'redis',
+    'django-celery-results',
+    'drf-extensions',
+    'django-colorfield',
+    'Fiona',
+    'markdown',
+    "weasyprint==52.5",
+    'django-weasyprint<2.0.0',
+    "django-clearcache",
+    "pyopenair",
+    'gunicorn',
+    'sentry-sdk',
+]
+classifiers = [
+    'Natural Language :: English',
+    'Environment :: Web Environment',
+    'Framework :: Django',
+    'Development Status :: 5 - Production/Stable',
+    'Programming Language :: Python :: 3'
+]
+readme = "README.rst"
+license = {file = "LICENSE"}
+keywords = ["Python", "Django", "GIS", "Tourism", "Trekking"]
+
+[project.urls]
+Homepage = "https://geotrek.fr"
+Documentation = "https://geotrek.readthedocs.org"
+Repository = "https://github.com/GeotrekCE/Geotrek-admin.git"
+Issues = "https://github.com/GeotrekCE/Geotrek-admin/issues"
+Changelog = "https://github.com/GeotrekCE/Geotrek-admin/docs/changelog.rst"
+
+[project.scripts]
+geotrek = "geotrek:cmd"
+
+[tool.sphinx-pyproject]
+github_repository = "https://github.com/GeotrekCE/Geotrek-admin.git"
+author = "Makina Corpus"
+project = "Geotrek-admin"
+extensions = [
+    'sphinx.ext.todo',
+    'sphinx_rtd_theme'
+]
+templates_path = [ "_templates",]
+html_static_path = [ "_static",]
+html_favicon = "_static/favicon.png"
+source_suffix = ".rst"
+master_doc = "index"
+exclude_patterns = ['_build']
+suppress_warnings = [ "image.nonlocal_uri",]
+pygments_style = "sphinx"
+html_theme = 'sphinx_rtd_theme'
+html_logo = "_static/logo.svg"
+
+[tool.coverage.run]
+source = [
+  'geotrek'
+]
+
+omit = [
+    '*/tests/*',
+    '*/migrations/*',
+    '*/settings/*',
+    '*/test_runner.py',
+    '*/test_global.py',
+    'wsgi.py'
+]
+data_file = "var/.coverage"
+
+[tool.coverage.report]
+ignore_errors = true
+exclude_lines = [
+    'if settings.DEBUG or settings.TEST:',
+    'from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline',
+    'from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin'
+]
+
+[tool.flake8]
+ignore = "E501,W503"
+exclude = "geotrek/settings,conf"
+
+[tool.setuptools]
+py-modules = ['geotrek']

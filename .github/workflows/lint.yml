@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install -c dev-requirements.txt flake8
+          pip3 install -c dev-requirements.txt flake8 flake8-pyproject
 
       - name: Flake8
         run: |

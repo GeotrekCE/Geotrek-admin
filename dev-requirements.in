@@ -4,6 +4,7 @@ pip-tools
 lxml
 tblib
 flake8
+flake8-pyproject
 freezegun
 coverage
 factory_boy
