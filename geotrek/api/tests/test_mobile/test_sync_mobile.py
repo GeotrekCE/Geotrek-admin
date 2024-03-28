@@ -28,7 +28,7 @@ from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image_svg)
 from geotrek.core.tests.factories import PathFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.flatpages.tests.factories import FlatPageFactory
+from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
 from geotrek.tourism.models import TouristicEventType
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
@@ -37,6 +37,16 @@ from geotrek.tourism.tests.factories import (InformationDeskFactory,
 from geotrek.trekking.models import OrderedTrekChild, Trek
 from geotrek.trekking.tests.factories import (PracticeFactory, TrekFactory,
                                               TrekWithPublishedPOIsFactory)
+
+
+def _create_flatpage_and_menuitem(*args, **kwargs):
+    """Support function to convert all FlatPages created for the tests into the creation of
+    a couple FlatPage+MenuItem. The mobile API stays the same (only a FlatPage type is exposed) but
+    there are now 2 models under the hood.
+    """
+    page = FlatPageFactory.create(*args, **kwargs)
+    MenuItemFactory.create(page=page, *args, **kwargs)
+    return page
 
 
 class VarTmpTestCase(TestCase):
@@ -205,8 +215,8 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        FlatPageFactory.create(published_fr=True)
-        FlatPageFactory.create(published_en=True)
+        _create_flatpage_and_menuitem(published_fr=True)
+        _create_flatpage_and_menuitem(published_en=True)
 
     def test_lang(self):
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
@@ -239,12 +249,12 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
         cls.source_a = RecordSourceFactory()
         cls.source_b = RecordSourceFactory()
 
-        FlatPageFactory.create(published=True)
-        FlatPageFactory.create(portals=(cls.portal_a, cls.portal_b),
-                               published=True)
-        FlatPageFactory.create(published=True)
-        FlatPageFactory.create(portals=(cls.portal_a,),
-                               published=True)
+        _create_flatpage_and_menuitem(published=True)
+        _create_flatpage_and_menuitem(portals=(cls.portal_a, cls.portal_b),
+                                      published=True)
+        _create_flatpage_and_menuitem(published=True)
+        _create_flatpage_and_menuitem(portals=(cls.portal_a,),
+                                      published=True)
 
     def test_sync_flatpage(self):
         '''
@@ -277,9 +287,9 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
 
     def test_sync_flatpage_lang(self):
         output = StringIO()
-        FlatPageFactory.create(published_fr=True)
-        FlatPageFactory.create(published_en=True)
-        FlatPageFactory.create(published_es=True)
+        _create_flatpage_and_menuitem(published_fr=True)
+        _create_flatpage_and_menuitem(published_en=True)
+        _create_flatpage_and_menuitem(published_es=True)
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:

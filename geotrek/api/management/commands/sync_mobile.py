@@ -27,7 +27,7 @@ from geotrek.common import models as common_models
 from geotrek.common.functions import GeometryType
 from geotrek.common.helpers_sync import ZipTilesBuilder
 from geotrek.common.models import FileType  # NOQA
-from geotrek.flatpages.models import FlatPage
+from geotrek.flatpages.models import MenuItem
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import urls  # NOQA
 # Register mapentity models
@@ -237,14 +237,43 @@ class Command(BaseCommand):
                 self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
-        flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
-            **{build_localized_fieldname('published', lang): True})
+        """Save FlatPages data for the mobile app as JSON. The original FlatPages format is saved but under the hood
+        MenuItems are queried and converted.
+
+        - call list view of FlatPageViewSet and save results to JSON,
+        - prepare a queryset of MenuItems with relevant mobile-data filtering,
+        - optionally filter by portal,
+        - foreach MenuItem call retrieve view of FlatPageViewSet and save results to JSON.
+
+        Note: the migration to MenuItem is invisible but the IDs change. For instance there is no guaranty that
+        a call to `GET /api/mobile/flatpages/123/` will return the same FlatPage data after the migration. This should
+        not be an issue because mobile apps do not keep a cache or an history based on FlatPage IDs.
+        """
+
+        # FIXME: duplicates filter logic from the FlatPageViewSet
+        # MenuItems are filtered twice, here and in FlatPageViewSet. It would be nice to reuse the IDs from the list
+        # computed in the first `sync_json` for the `sync_json` calls on FlatPage details (so we can remove the need
+        # for the `menu_item_qs` queryset).
+        menu_item_qs = (
+            MenuItem.objects
+            .filter(
+                depth=1,
+                platform__in=['mobile', 'all'],
+            )
+            .filter(
+                **{build_localized_fieldname('published', lang): True},
+            )
+            .filter(
+                Q(page__published=True) | Q(page=None)
+            )
+            .order_by("path")
+        )
         if self.portal:
-            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            menu_item_qs = menu_item_qs.filter(Q(portals__name__in=self.portal) | Q(portals=None))
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
-        for flatpage in flatpages:
-            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}'.format(pk=flatpage.pk), pk=flatpage.pk,
+        for menu_item in menu_item_qs:
+            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}'.format(pk=menu_item.pk), pk=menu_item.pk,
                            as_view_args=[{'get': 'retrieve'}])
 
     def sync_trekking(self, lang):

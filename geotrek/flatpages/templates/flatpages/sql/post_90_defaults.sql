@@ -1,9 +1,9 @@
 -- FlatPage
 -----------
 -- title
-ALTER TABLE flatpages_flatpage ALTER COLUMN external_url SET DEFAULT '';
+-- external_url
 -- content
-ALTER TABLE flatpages_flatpage ALTER COLUMN target SET DEFAULT 'all';
+-- target
 -- source
 -- portal
 -- order
