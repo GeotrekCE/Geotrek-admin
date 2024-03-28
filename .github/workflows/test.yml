@@ -178,7 +178,7 @@ jobs:
         - name: Compile translations
           run: |
             pip3 install django -c requirements.txt
-            apt-get -qqy install gettext
+            sudo apt-get -qqy install gettext
             django-admin compilemessages
 
         - name: Prepare debian 18.04 versioning
@@ -210,7 +210,7 @@ jobs:
       - name: Compile translations
         run: |
           pip3 install django -c requirements.txt
-          apt-get -qqy install gettext
+          sudo apt-get -qqy install gettext
           django-admin compilemessages
 
       - name: Prepare debian 20.04 versioning
