@@ -171,10 +171,23 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
+        - uses: actions/cache@v3
+          with:
+            path: |
+              ./venv
+            key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+            restore-keys: |
+              pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+              pip-${{ matrix.python-version }}-${{ matrix.os }}
+
         - name: Prepare debian 18.04 versioning
           run: |
             grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
             sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+
+        - name: Compile translations
+          run: |
+            ./venv/bin/django-admin compilemessages
 
         - name: Building package debian 18.04
           run: |
@@ -193,10 +206,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ./venv
+          key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          restore-keys: |
+            pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+            pip-${{ matrix.python-version }}-${{ matrix.os }}
       - name: Prepare debian 20.04 versioning
         run: |
           sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog
           sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu20.04\2) focal;/' debian/changelog
+
+      - name: Compile translations
+        run: |
+          ./venv/bin/django-admin compilemessages
 
       - name: Building package debian 18.04
         run: |
