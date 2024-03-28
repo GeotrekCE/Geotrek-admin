@@ -204,6 +204,8 @@ class SettingsView(APIView):
 
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+    """Exposes the original FlatPages format for mobile, under the hood MenuItems are queried and converted."""
+
     permission_classes = [AllowAny, ]
     serializer_class = api_serializers.MobileMenuItemListSerializer
     serializer_detail_class = api_serializers.MobileMenuItemDetailSerializer

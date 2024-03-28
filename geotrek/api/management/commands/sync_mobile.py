@@ -237,9 +237,23 @@ class Command(BaseCommand):
                 self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
-        # FIXME: duplicates filter logic from the FlatPageViewSet. The sync_mobile command would need
-        # to be refactored so the list of IDs from the first `sync_json` could be used for subsequent
-        # syncings in addition of being file-saved.
+        """Save FlatPages data for the mobile app as JSON. The original FlatPages format is saved but under the hood
+        MenuItems are queried and converted.
+
+        - call list view of FlatPageViewSet and save results to JSON,
+        - prepare a queryset of MenuItems with relevant mobile-data filtering,
+        - optionally filter by portal,
+        - foreach MenuItem call retrieve view of FlatPageViewSet and save results to JSON.
+
+        Note: the migration to MenuItem is invisible but the IDs change. For instance there is no guaranty that
+        a call to `GET /api/mobile/flatpages/123/` will return the same FlatPage data after the migration. This should
+        not be an issue because mobile apps do not keep a cache or an history based on FlatPage IDs.
+        """
+
+        # FIXME: duplicates filter logic from the FlatPageViewSet
+        # MenuItems are filtered twice, here and in FlatPageViewSet. It would be nice to reuse the IDs from the list
+        # computed in the first `sync_json` for the `sync_json` calls on FlatPage details (so we can remove the need
+        # for the `menu_item_qs` queryset).
         menu_item_qs = (
             MenuItem.objects
             .filter(
