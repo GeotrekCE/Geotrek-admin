@@ -3,11 +3,16 @@ import datetime
 from sphinx_pyproject import SphinxConfig
 
 
+with open("../geotrek/VERSION") as f:
+    version = f.read().strip()
+
 config = SphinxConfig(
     "../pyproject.toml",
     globalns=globals(),
     config_overrides={
+        "version": version,
         "copyright": f"2013-{datetime.date.today().year}, Makina Corpus",
+
         "html_theme_options": {
             "logo_only": True,
             "style_external_links": True,

@@ -126,6 +126,10 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	chown --recursive geotrek:geotrek /opt/geotrek-admin/var/media/upload/*
 fi
 
+# Compile translations
+echo "Compile translations" >&2
+geotrek compilemessages -v0 || true
+
 echo "Reload" >&2
 # Reload nginx
 if [ -f /etc/init.d/nginx ] ; then

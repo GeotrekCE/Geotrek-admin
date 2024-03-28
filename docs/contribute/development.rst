@@ -43,18 +43,11 @@ Adding or upgrade dependencies
 
 Consider using pip-tools to manage dependencies.
 
-* add your dependencies in ``setup.py`` for general dependencies, ``dev-requirements.in`` for dev dependencies, then run:
+* add your dependency in `[project] dependencies` section of `pyproject.toml` file for general dependency, and in `[project.optional-dependencies] dev` for dev dependency, then run :
 
 ::
 
    make deps
-
-or
-
-::
-
-    docker compose run --rm web pip-compile
-    docker compose run --rm web pip-compile dev-requirements.in
 
 
 Model modification
@@ -138,14 +131,14 @@ run:
 
 ::
 
-   make flake8
+   docker-compose run --rm web flake8 geotrek
 
 
 or
 
 ::
 
-   docker compose run --rm web flake8 geotrek
+   make flake8
 
 
 Run tests

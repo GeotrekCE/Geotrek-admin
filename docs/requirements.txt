@@ -112,9 +112,7 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 toml==0.10.2
-    # via
-    #   -c docs/../requirements.txt
-    #   dom-toml
+    # via dom-toml
 tornado==6.4
     # via livereload
 typing-extensions==4.8.0
