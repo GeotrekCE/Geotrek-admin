@@ -54,7 +54,7 @@ FLATPAGE_TINYMCE_CONFIG = {
     "theme": "silver",
     'paste_auto_cleanup_on_paste': True,
     'paste_as_text': True,
-    "forced_root_block": False,
+    "forced_root_block": "p",
     "width": "95%",
     "resize": "both",
     "browser_spellcheck": True,
