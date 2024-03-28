@@ -63,7 +63,8 @@ FLATPAGE_TINYMCE_CONFIG = {
                        'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],'
                        'img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align],'
                        'p,em/i,strong/b,div[align],br,ul,li,ol,span[style],'
-                       'iframe[src|frameborder=0|alt|title|width|height|align|name]'),
+                       'iframe[src|frameborder=0|alt|title|width|height|align|name],'
+                       'h2,h3,h4,h5,h6,figure,figurecaption'),
     "setup": "tinyMceInit",
 }
 
