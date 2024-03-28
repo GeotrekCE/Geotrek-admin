@@ -20,6 +20,8 @@ FLATPAGE_TINYMCE_CONFIG = {
         'image_caption',
         'suggestions',
         'visualblocks',
+        'code',
+        'help',
     ],
     "menubar": False,
     'image_title': False,
@@ -28,7 +30,9 @@ FLATPAGE_TINYMCE_CONFIG = {
     'convert_urls': False,
     'file_picker_types': None,
     'images_upload_url': None,
-    "toolbar": 'undo redo | styleselect | blockquote | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | button-link suggestions | visualblocks',
+    "toolbar": 'undo redo | styleselect | blockquote | bold italic forecolor |'
+               'alignleft aligncenter alignright alignjustify | bullist numlist | link image media |'
+               'button-link suggestions | visualblocks code | wordcount | help',
     "formats": {
         "informationFormat": {
             "block": 'div', "classes": 'information'
