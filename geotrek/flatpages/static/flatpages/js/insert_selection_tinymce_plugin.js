@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         primary: true
                     }
                 ],
+                initialData: {
+                    label: tinymce.activeEditor.selection.getContent(),
+                },
                 onSubmit: function (api) {
                     var data = api.getData();
                     if (!data.link || !data.label) {
@@ -92,6 +95,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         primary: true
                     }
                 ],
+                initialData: {
+                    label: tinymce.activeEditor.selection.getContent(),
+                },
                 onSubmit: function (api) {
                     var data = api.getData();
                     if (!data.type || !data.ids) {
