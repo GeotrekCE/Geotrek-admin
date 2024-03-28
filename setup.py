@@ -72,6 +72,7 @@ setup(
         # prod,
         'gunicorn',
         'sentry-sdk',
+        'easy-thumbnails[svg]',
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,
