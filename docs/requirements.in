@@ -1,4 +1,4 @@
--c ../dev-requirements.in
+-c ../dev-requirements.txt
 
 sphinx-rtd-theme>=1.0.0
 sphinx>=4.0.0
