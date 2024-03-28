@@ -50,7 +50,21 @@ FLATPAGE_TINYMCE_CONFIG = {
         ]}
     ],
     "newline_behavior": '',
-    "default_font_stack": ['-apple-system', 'Helvetica', 'Arial', 'sans-serif']
+    "default_font_stack": ['-apple-system', 'Helvetica', 'Arial', 'sans-serif'],
+    "theme": "silver",
+    'paste_auto_cleanup_on_paste': True,
+    'paste_as_text': True,
+    "forced_root_block": False,
+    "width": "95%",
+    "resize": "both",
+    "browser_spellcheck": True,
+    "contextmenu": False,
+    'valid_elements': ('@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
+                       'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],'
+                       'img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align],'
+                       'p,em/i,strong/b,div[align],br,ul,li,ol,span[style],'
+                       'iframe[src|frameborder=0|alt|title|width|height|align|name]'),
+    "setup": "tinyMceInit",
 }
 
 
@@ -58,7 +72,6 @@ class FlatPageTinyMCE(TinyMCE):
 
     def __init__(self, *args, **kwargs):
         mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()
-        mce_attrs.update(kwargs.get("mce_attrs", {}))
         mce_attrs["content_css"] = static("flatpages/css/flatpage_custom_formats.css")
         kwargs["mce_attrs"] = mce_attrs
         super().__init__(*args, **kwargs)
