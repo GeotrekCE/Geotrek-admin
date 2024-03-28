@@ -128,7 +128,7 @@ fi
 
 # Compile translations
 echo "Compile translations" >&2
-geotrek compilemessages -v0 || true
+sudo geotrek compilemessages -v0 || true
 
 echo "Reload" >&2
 # Reload nginx
