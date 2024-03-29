@@ -124,7 +124,7 @@ data_file = "var/.coverage"
 [tool.coverage.report]
 ignore_errors = true
 exclude_lines = [
-    'def django_manage():',
+    'pragma: no cover',
     'if settings.DEBUG or settings.TEST:',
     'from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin, TabularInline as TranslationTabularInline',
     'from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin'

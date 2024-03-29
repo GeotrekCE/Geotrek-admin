@@ -10,7 +10,7 @@ with open(os.path.join(here, "VERSION")) as file_version:
 __version__ = VERSION
 
 
-def django_manage():
+def django_manage():  # pragma: no cover
     """Use by geotrek command in debian based installations"""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "geotrek.settings")
 
