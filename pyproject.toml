@@ -49,6 +49,7 @@ dependencies = [
     "weasyprint==52.5",
     'django-weasyprint<2.0.0',
     "django-clearcache",
+    "easy-thumbnails[svg]",
     "pyopenair",
     'gunicorn',
     'sentry-sdk',
