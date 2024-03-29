@@ -143,8 +143,9 @@ include = [
     "geotrek",
 ]
 exclude = [
-    "*.py[cod]",
-    "__pycache__",
+    "*.pyc",
+    "test*.py",
+    "**/__pycache__/*",
     "*.so",
     "**/tests/*"
 ]
