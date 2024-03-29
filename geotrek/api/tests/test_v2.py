@@ -2156,9 +2156,29 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             tourism_models.InformationDesk
         )
 
+    def test_informationdesk_list_with_svg(self):
+        info_desk = tourism_factory.InformationDeskFactory(
+            photo=get_dummy_uploaded_image_svg(), name='test!')
+        info_desk.save()
+        self.treks[0].information_desks.add(info_desk)
+        self.check_number_elems_response(
+            self.get_informationdesk_list(),
+            tourism_models.InformationDesk
+        )
+
     def test_informationdesk_detail(self):
         self.check_structure_response(
             self.get_informationdesk_detail(self.info_desk.pk),
+            INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_informationdesk_detail_with_svg(self):
+        info_desk = tourism_factory.InformationDeskFactory(
+            photo=get_dummy_uploaded_image_svg())
+        info_desk.save()
+        self.treks[0].information_desks.add(info_desk)
+        self.check_structure_response(
+            self.get_informationdesk_detail(info_desk.pk),
             INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
         )
 

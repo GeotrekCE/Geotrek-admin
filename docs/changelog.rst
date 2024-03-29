@@ -5,6 +5,10 @@ CHANGELOG
 2.103.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix api crash when using an svg file for information desks (fixes #3860)
+
 **Breaking changes**
 
 - Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed.
