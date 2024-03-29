@@ -138,13 +138,16 @@ exclude = "geotrek/settings,conf"
 path = "geotrek/VERSION"
 pattern = "(?P<version>.*)"
 
-[tool.hatch.build.targets.sdist]
+[tool.hatch.build]
 include = [
-    "/geotrek",
+    "geotrek",
 ]
 exclude = [
     "*.py[cod]",
     "__pycache__",
     "*.so",
     "**/tests/*"
+]
+artifacts = [
+  "*.mo",
 ]
