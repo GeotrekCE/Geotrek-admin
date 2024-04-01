@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add new menu headers and flat pages with tree hierarchies
 - Add styling and embedding tools for FlatPages content (refs #3921, #3922, #4019)
+- Add local image upload into content of flat pages (ref #3552)
 
 **Bug fixes**
 

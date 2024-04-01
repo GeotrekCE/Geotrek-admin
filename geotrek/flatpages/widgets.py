@@ -21,10 +21,10 @@ FLATPAGE_TINYMCE_CONFIG = {
     "menubar": False,
     'image_title': False,
     'image_caption': True,
-    'automatic_uploads': False,
+    'automatic_uploads': True,
     'convert_urls': False,
-    'file_picker_types': None,
-    'images_upload_url': None,
+    'file_picker_types': "image media",
+    'images_upload_url': "/flatpages/tinymce/upload/",
     "toolbar": 'undo redo | styleselect | blockquote | bold italic forecolor |'
                'alignleft aligncenter alignright alignjustify | bullist numlist | link image media |'
                'button-link suggestions | removeformat visualblocks code | wordcount | help',
