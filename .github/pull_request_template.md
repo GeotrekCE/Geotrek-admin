@@ -12,7 +12,7 @@
 
 ## Checklist
 
-- [ ] I have followed the guidelines in our [Contributing document](https://geotrek.readthedocs.io/en/latest/CONTRIBUTING.html)
+- [ ] I have followed the guidelines in our [Contributing document](https://geotrek.readthedocs.io/en/latest/contribute/contributing.html)
 - [ ] My code respects the Definition of done available in the [Development section of the documentation](https://geotrek.readthedocs.io/en/latest/contribute/development.html#definition-of-done-for-new-model-fields)
 - [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
