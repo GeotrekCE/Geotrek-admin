@@ -1,6 +1,7 @@
 #
 #  Django Tests
 # ..........................
+from tempfile import TemporaryDirectory
 
 TEST = True
 
@@ -51,6 +52,7 @@ class DisableMigrations():
     def __getitem__(self, item):
         return None
 
+
 MIGRATION_MODULES = DisableMigrations()
 
 ADMINS = (
@@ -59,6 +61,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-MEDIA_ROOT = os.path.join(TMP_DIR, 'tests', 'media')
+MEDIA_ROOT = TemporaryDirectory(prefix=os.path.join(TMP_DIR, 'tests')).name
 REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"
 # TEST_RUNNER = 'geotrek.test_runner.TestRunner'
