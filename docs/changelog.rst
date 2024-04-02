@@ -17,6 +17,10 @@ CHANGELOG
 
 - Add git to Dockerfile build staging
 
+**Documentation**
+
+- Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing ``MAX_CHARACTERS`` (deprecated)
+
 
 2.103.2 (2024-03-22)
 --------------------
