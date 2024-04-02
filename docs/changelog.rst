@@ -7,11 +7,11 @@ CHANGELOG
 
 **Bug fixes**
 
-- Fix api crash when using an svg file for information desks (fixes #3860)
+- Fix API crash when using an SVG file for information desks (fixes #3860)
 
 **Breaking changes**
 
-- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed.
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed (#3752)
 
 **Hot fix**
 
@@ -19,7 +19,7 @@ CHANGELOG
 
 **Documentation**
 
-- Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing ``MAX_CHARACTERS`` (deprecated)
+- Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing deprecated ``MAX_CHARACTERS`` (#3844)
 
 
 2.103.2 (2024-03-22)
