@@ -5,6 +5,10 @@ CHANGELOG
 2.103.2+dev (XXXX-XX-XX)
 ------------------------
 
+**WARNING!**
+
+This version breaks the flat pages API. Upgrade first to Geotrek-rando 3.19.0 (simultaneously released on April 2024) for a smooth transition.
+
 **Features**
 
 - Add new menu headers and flat pages with tree hierarchies
