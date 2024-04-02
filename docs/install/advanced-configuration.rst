@@ -2654,15 +2654,18 @@ Max characters count
 
 .. envvar:: MAPENTITY_CONFIG for characters
 
-    Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of characters for text fields (to be used with django-mapentity >= 8.1).
+    Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
 
     Example::
 
-        MAPENTITY_CONFIG['MAX_CHARACTERS'] = 1500
+        MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = { 
+           "tourism_touristicevent": [{'field': 'description_teaser_fr', 'value': 50}, {'field': 'accessibility_fr', 'value': 25}],
+           "trekking_trek": [{'field': 'description_teaser_fr', 'value': 150}],
+        }
 
 .. note ::
-  - This will apply to all text fields.
-  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details.
+  - This will apply field by field, language by language.
+  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for details.
 
 
 Copyright on pictures
