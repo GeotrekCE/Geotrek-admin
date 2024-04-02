@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix api crash when using an svg file for information desks (fixes #3860)
+- Fix mobile sync crash when a theme has no pictogram (fixes #3814)
 
 **Breaking changes**
 
