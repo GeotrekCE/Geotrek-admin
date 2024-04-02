@@ -8,6 +8,7 @@ CHANGELOG
 **Features**
 
 - Add new menu headers and flat pages with tree hierarchies
+- Add styling and embedding tools for FlatPages content (refs #3921, #3922, #4019)
 
 **Bug fixes**
 
@@ -15,7 +16,7 @@ CHANGELOG
 
 **Breaking changes**
 
-- This version brings a lot of changes to flat pages and the corresponding API endpoints. In order not to break your Geotrek-rando website it is mandatory to update first Geotrek-rando to XXX before upgrading your Geotrek-admin to this version. Note that Geotrek-rando handles the upgrade smoothly and can handle both old and new flat pages.
+- This version brings a lot of changes to flat pages and the corresponding API endpoints. In order not to break your Geotrek-rando website it is mandatory to update first Geotrek-rando to 3.19.0 before upgrading your Geotrek-admin to this version. Note that Geotrek-rando handles the upgrade smoothly and can handle both old and new flat pages.
 - Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed (#3752)
 
 **Hot fix**
