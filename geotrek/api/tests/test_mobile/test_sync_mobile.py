@@ -587,3 +587,11 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
+
+    def test_sync_treks_practice_no_picto(self):
+        practice_no_picto = PracticeFactory.create(pictogram=None)
+        TrekWithPublishedPOIsFactory.create(practice=practice_no_picto)
+        output = StringIO()
+        management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
