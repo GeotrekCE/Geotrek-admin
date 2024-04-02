@@ -17,6 +17,10 @@ CHANGELOG
 
 - Add git to Dockerfile build staging
 
+**Maintenance**
+
+- Bump mapentity from 8.7.2 to 8.7.3
+
 **Documentation**
 
 - Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing deprecated ``MAX_CHARACTERS`` (#3844)
