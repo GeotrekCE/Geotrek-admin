@@ -108,7 +108,7 @@ Do not use - Causes bug in Geotrek-Rando-v3 exposing Outdoor data
 
 
 2.102.0 (2024-02-19)
---------------------This branch is out-of-date with the base branch
+--------------------
 
 **Minor changes**
 
