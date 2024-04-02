@@ -103,6 +103,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         pictogram = serializers.SerializerMethodField()
 
         def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
