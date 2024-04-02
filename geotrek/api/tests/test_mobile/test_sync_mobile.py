@@ -22,7 +22,8 @@ from PIL import Image
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.tests.factories import (AttachmentFactory,
                                             RecordSourceFactory,
-                                            TargetPortalFactory)
+                                            TargetPortalFactory,
+                                            ThemeFactory)
 from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
                                            get_dummy_uploaded_image,
                                            get_dummy_uploaded_image_svg)
@@ -573,6 +574,15 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
 
     def test_sync_treks_informationdesk_photo_missing(self):
         os.remove(self.info_desk.photo.path)
+        output = StringIO()
+        management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
+
+    def test_sync_treks_theme_no_picto(self):
+        theme_no_picto = ThemeFactory.create(pictogram=None)
+        trek = TrekWithPublishedPOIsFactory.create()
+        trek.themes.add(theme_no_picto)
         output = StringIO()
         management.call_command('sync_mobile', os.path.join(settings.TMP_DIR, 'sync_mobile', 'tmp_sync'), url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
