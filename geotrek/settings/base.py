@@ -884,6 +884,9 @@ PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
 }
 PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
 
+REDIS_URL = os.getenv('REDIS_URL',
+                      f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/{os.getenv('REDIS_DB', '0')}")
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
