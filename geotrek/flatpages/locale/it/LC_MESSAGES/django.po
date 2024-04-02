@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:32+0000\n"
+"POT-Creation-Date: 2024-04-01 22:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,10 +21,13 @@ msgstr ""
 msgid "Portals"
 msgstr ""
 
-msgid "Flatpages"
+msgid "Page"
 msgstr ""
 
-msgid "Content"
+msgid "Link"
+msgstr ""
+
+msgid "Flatpages"
 msgstr ""
 
 msgid "Cover image"
@@ -33,46 +36,19 @@ msgstr ""
 msgid "Cover image author"
 msgstr ""
 
-msgid "Choose between external URL and HTML content"
-msgstr ""
-
-msgid "All"
-msgstr ""
-
-msgid "Mobile"
-msgstr ""
-
-msgid "Hidden"
-msgstr ""
-
-msgid "Web"
+msgid "Thumbnail"
 msgstr ""
 
 msgid "Title"
 msgstr ""
 
-msgid "External URL"
-msgstr ""
-
-msgid "Link to external website instead of HTML content"
+msgid "Content"
 msgstr ""
 
 msgid "HTML content"
 msgstr ""
 
-msgid "Target"
-msgstr ""
-
 msgid "Source"
-msgstr ""
-
-msgid "Portal"
-msgstr ""
-
-msgid "ID order if blank"
-msgstr ""
-
-msgid "Order"
 msgstr ""
 
 msgid "Flat page"
@@ -81,17 +57,29 @@ msgstr ""
 msgid "Flat pages"
 msgstr ""
 
-msgid "creation"
+msgid "All"
 msgstr ""
 
-msgid "Template 1"
+msgid "Mobile"
 msgstr ""
 
-msgid "Template 2"
+msgid "Web"
 msgstr ""
 
-msgid "Insert Text Here."
+msgid "Target type"
 msgstr ""
 
-msgid "Legend, ©, firstname and author name."
+msgid "Link URL"
+msgstr ""
+
+msgid "Platform"
+msgstr ""
+
+msgid "Open the link in a new tab"
+msgstr ""
+
+msgid "Menu item"
+msgstr ""
+
+msgid "Menu items"
 msgstr ""

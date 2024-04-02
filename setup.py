@@ -69,6 +69,7 @@ setup(
         'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
         "django-clearcache",
         "pyopenair",
+        "django-treebeard",
         # prod,
         'gunicorn',
         'sentry-sdk',

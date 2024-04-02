@@ -14,6 +14,8 @@ from easy_thumbnails.alias import aliases
 from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+
+from geotrek.flatpages.models import MenuItem
 from modeltranslation.utils import build_localized_fieldname
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers, serializers as rest_serializers
@@ -22,9 +24,10 @@ from rest_framework_gis import serializers as geo_serializers
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
+from geotrek.api.v2.filters import get_published_filter_expression
 from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.mixins import PDFSerializerMixin, PublishedRelatedObjectsSerializerMixin
-from geotrek.api.v2.utils import build_url, get_translation_or_dict
+from geotrek.api.v2.utils import build_url, get_translation_or_dict, is_published
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
@@ -1393,17 +1396,27 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+
     class FlatPageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         title = serializers.SerializerMethodField()
         content = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
+        children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
 
         class Meta:
             model = flatpages_models.FlatPage
             fields = (
-                'id', 'title', 'external_url', 'content', 'target', 'source', 'portal', 'order',
-                'published', 'attachments',
+                'id',
+                'title',
+                'content',
+                'source',
+                'portals',
+                'published',
+                'attachments',
+                'children',
+                'parent',
             )
 
         def get_title(self, obj):
@@ -1414,6 +1427,115 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
+
+        def get_children(self, obj):
+            """Returns the filtered (published, portals) list of children page IDs"""
+            children = obj.get_children()
+
+            language = self.context["request"].query_params.get("language")
+            expr = get_published_filter_expression(flatpages_models.FlatPage, language)
+            children = children.filter(expr)
+
+            portals = self.context["request"].query_params.get("portals")
+            if portals:
+                children = children.filter(portals__in=portals.split(","))
+
+            return children.values_list('id', flat=True).all()
+
+        def get_parent(self, obj):
+            """Returns the parent page ID if it exists and is visible (published, portals)"""
+            parent = obj.get_parent()
+            if not parent:
+                return None
+
+            language = self.context["request"].query_params.get("language")
+            if not is_published(parent, language):
+                return None
+
+            portals = self.context["request"].query_params.get("portals")
+            if portals:
+                portals = map(lambda x: int(x), portals.split(","))
+                for portal in parent.portals.all():
+                    if portal.id in portals:
+                        break
+                else:
+                    return None
+
+            return parent.id
+
+    class MenuItemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        title = serializers.SerializerMethodField()
+        link_url = serializers.SerializerMethodField()
+        published = serializers.SerializerMethodField()
+        page_title = serializers.SerializerMethodField()
+        attachments = AttachmentSerializer(many=True)
+
+        class Meta:
+            model = flatpages_models.MenuItem
+            fields = (
+                'id',
+                'title',
+                'target_type',
+                'link_url',
+                'page',
+                'portals',
+                'published',
+                'page_title',
+                'open_in_new_tab',
+                'pictogram',
+                'attachments',
+            )
+
+        def get_title(self, obj):
+            return get_translation_or_dict('title', self, obj)
+
+        def get_link_url(self, obj):
+            return get_translation_or_dict('link_url', self, obj)
+
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
+
+        def get_page_title(self, obj):
+            if not obj.page:
+                return None
+            return get_translation_or_dict('title', self, obj.page)
+
+    class MenuItemDetailsSerializer(MenuItemSerializer):
+        children = serializers.SerializerMethodField()
+        parent = serializers.SerializerMethodField()
+
+        class Meta(MenuItemSerializer.Meta):
+            fields = MenuItemSerializer.Meta.fields + (
+                'children',
+                'parent',
+            )
+
+        def get_children(self, obj):
+            language = self._context["request"].GET.get('language', 'all')
+            return (
+                obj.get_children()
+                .filter(get_published_filter_expression(MenuItem, language))
+                .values_list('id', flat=True).all()
+            )
+
+        def get_parent(self, obj):
+            parent = obj.get_parent()
+
+            if not parent:
+                return None
+
+            language = self._context["request"].GET.get('language', 'all')
+            try:
+                published_parent = (
+                    MenuItem.objects
+                    .filter(get_published_filter_expression(MenuItem, language))
+                    .get(pk=parent.id)
+                )
+            except MenuItem.DoesNotExist:
+                return None
+
+            return published_parent.id
+
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
