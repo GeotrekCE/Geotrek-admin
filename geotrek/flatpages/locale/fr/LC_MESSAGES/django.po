@@ -30,10 +30,10 @@ msgid "Flatpages"
 msgstr "Pages statiques"
 
 msgid "Cover image"
-msgstr ""
+msgstr "Image de couverture"
 
 msgid "Cover image author"
-msgstr ""
+msgstr "Auteur image couverture"
 
 msgid "Thumbnail"
 msgstr "Vignette"

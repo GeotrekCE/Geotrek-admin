@@ -8,7 +8,7 @@ Pages statiques & menus
 
 Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
 
-.. figure :: /images/user-manual/flatpages-gtecrins.jpg
+.. figure:: ../images/user-manual/flatpages-gtecrins.jpg
 
     Exemple de page statique (http://www.grand-tour-ecrins.fr/informations/le-grand-tour-des-ecrins/)
 
@@ -18,17 +18,22 @@ Elles sont gérées depuis le site d'administration de Geotrek-admin et sont ens
 
 Du point de vue d'un portail de valorisation comme Geotrek-rando on parle des pages statiques par opposition aux pages « dynamiques » qui correspondent à la page de recherche avec ses filtres et la carte, ainsi qu'aux pages de détails des résultats. Ces pages ne sont pas conçues manuellement mais sont un assemblage de multiples sources de données effectué par le logiciel Geotrek.
 
-
 Pour rendre les pages statiques accessibles aux visiteurs Geotrek-admin permet de gérer les menus déroulants dans l'en-tête du portail. Les éléments du premier niveau sont toujours apparents (s'il y a assez d'espace d'affichage, ou dans un menu « Burger » sinon). Et il est possible de définir des éléments de menu dans un 2ème niveau, accessibles en déroulant les menus.
+
+.. figure:: ../images/user-manual/flatpages_header_menus_example.png
+
+    Exemple de menus déroulants définis dans Geotrek-admin
 
 La section correspondante et le type d'entités s'appelle Élément Menu, dans cette documentation on pourra parler de menu pour signifier les éléments de menu si ça ne porte pas à confusion.
 
 Les exemples de présentation visuelle des menus et des pages statiques décrivent la manière dont Geotrek-rando peut exploiter ces données et paramètrages. La présentation pourrait être différente si le portail n'est pas propulsé par Geotrek-rando.
 
-.. image :: /images/user-manual/flatpages-adminsite.jpg
+.. image:: ../images/user-manual/flatpages-adminsite.jpg
 
 Créer une page statique
 ========================
+
+.. image:: ../images/user-manual/flatpages_admin_section_pages_statiques.png
 
 Le formulaire de création/modification d'une page statique contient les champs suivants :
 
@@ -36,8 +41,8 @@ Le formulaire de création/modification d'une page statique contient les champs 
 - Publiée
 - Portails
 - Sources
-- Cover image
-- Cover image author
+- Image de couverture
+- Auteur image couverture
 - Contenu
 - Position
 - Relative à
@@ -77,6 +82,8 @@ Les champs Titre, Publiée et Contenu peuvent recevoir une valeur différente po
 Mise en forme et médias
 -----------------------
 
+.. image:: ../images/user-manual/flatpages_tinymce_tools.png
+
 Le champ contenu expose un éditeur de texte riche (TinyMCE) permettant d'ajouter de la mise en forme et des médias dans le contenu de la page.
 
 - mise en forme du texte : titres, styles du texte, couleur du texte
@@ -95,6 +102,8 @@ Médias :
 Insérer une image
 -----------------
 
+.. image:: ../images/user-manual/flatpages_tinymce_tools_insert.png
+
 L'outil *Insérer/modifier* une image permet d'insérer une image dans le contenu. Les champs suivants sont à renseigner :
 
 - Source
@@ -104,6 +113,8 @@ L'outil *Insérer/modifier* une image permet d'insérer une image dans le conten
 
 Insérer des suggestions de contenu Geotrek
 ------------------------------------------
+
+.. image:: ../images/user-manual/flatpages_tinymce_tools_geotrek.png
 
 Avec l'outil *Suggestions*, les champs suivants sont à renseigner :
 
@@ -115,6 +126,8 @@ Après la validation du formulaire une zone récapitulant les informations saisi
 
 Vérifier la mise en page du contenu
 -----------------------------------
+
+.. image:: ../images/user-manual/flatpages_tinymce_tools_code.png
 
 Les outils suivants sont disponibles :
 
@@ -132,6 +145,8 @@ Une page créée n'est pas immédiatement visible sur un portail. Il faut d'abor
 
 Arborescence de menus
 =====================
+
+.. image:: ../images/user-manual/flatpages_admin_with_menuitems.png
 
 La page liste des Éléments Menus indique la structure arborescente qui sous-tend les menus déroulants tels qu'ils apparaîtront sur le portail.
 
@@ -160,6 +175,8 @@ Le champ *Plateforme* permet de différencier des menus destinés uniquement à 
 
 Arborescence des pages statiques
 ================================
+
+.. image:: ../images/user-manual/flatpages_admin_with_flatpages.png
 
 Les pages statiques sont organisées dans une structure arborescente, une page statique peut avoir des pages enfants et une unique page parente. L'arborescence des pages statiques permet d'organiser le contenu statique d'un portail d'une manière intelligible pour les visiteurs du site.
 
