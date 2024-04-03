@@ -9,6 +9,7 @@ CHANGELOG
 
 - Set MenuItem `open_in_new_tab` to False during migration when the target is a flat page
 - Fix OptionalRangeFilter labels translation (fixes #3852)
+- Fix CustomDateFromToRangeFilter labels translation
 
 
 2.104.0 (2024-04-03)
