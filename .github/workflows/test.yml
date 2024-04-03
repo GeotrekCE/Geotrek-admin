@@ -131,8 +131,7 @@ jobs:
 
     - name: Prepare environment
       run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
         ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
         ./venv/bin/python3 ./manage.py compilemessages
 
