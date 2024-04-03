@@ -18,6 +18,7 @@ This version breaks the flat pages API. Upgrade first to Geotrek-rando 3.19.0 (s
 **Bug fixes**
 
 - Fix API crash when using an SVG file for information desks (fixes #3860)
+- Fix mobile sync crash when a theme has no pictogram (fixes #3814)
 
 **Breaking changes**
 
