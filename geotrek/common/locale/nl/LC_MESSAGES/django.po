@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:32+0000\n"
+"POT-Creation-Date: 2024-04-03 14:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,14 +31,6 @@ msgid "Title"
 msgstr ""
 
 msgid "Common"
-msgstr ""
-
-#, python-format
-msgid "min %s"
-msgstr ""
-
-#, python-format
-msgid "max %s"
 msgstr ""
 
 msgid "This field is required to publish object."

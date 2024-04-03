@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:32+0000\n"
+"POT-Creation-Date: 2024-04-03 14:11+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -33,14 +33,6 @@ msgstr "Titre"
 
 msgid "Common"
 msgstr "Commun"
-
-#, python-format
-msgid "min %s"
-msgstr "min %s"
-
-#, python-format
-msgid "max %s"
-msgstr "max %s"
 
 msgid "This field is required to publish object."
 msgstr "Ce champs est obligatoire pour publier l'objet."
