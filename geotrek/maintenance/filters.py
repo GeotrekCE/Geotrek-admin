@@ -126,8 +126,8 @@ class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
 class CustomDateFromToRangeFilter(DateFromToRangeFilter):
     def __init__(self, *args, **kwargs):
         super(DateFromToRangeFilter, self).__init__(*args, **kwargs)
-        self.field.fields[0].label = format_lazy('min {label}', label=self.field.label)
-        self.field.fields[1].label = format_lazy('max {label}', label=self.field.label)
+        self.field.fields[0].label = format_lazy('{min} {label}', min=_('min'), label=self.field.label)
+        self.field.fields[1].label = format_lazy('{max} {label}', max=_('max'), label=self.field.label)
 
 
 class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):

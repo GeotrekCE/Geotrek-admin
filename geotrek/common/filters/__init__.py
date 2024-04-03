@@ -1,4 +1,5 @@
 from django.utils.text import format_lazy
+from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter, RangeFilter
 from mapentity.filters import MapEntityFilterSet
 
@@ -15,8 +16,8 @@ class OptionalRangeFilter(RangeFilter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.field.fields[0].label = format_lazy('min {label}', label=self.field.label)
-        self.field.fields[1].label = format_lazy('max {label}', label=self.field.label)
+        self.field.fields[0].label = format_lazy('{min} {label}', min=_('min'), label=self.field.label)
+        self.field.fields[1].label = format_lazy('{max} {label}', max=_('max'), label=self.field.label)
 
 
 class RightFilter(ModelMultipleChoiceFilter):
