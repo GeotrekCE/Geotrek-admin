@@ -90,6 +90,7 @@ class PublishableEntityOptions(MapEntityOptions):
                     name=self.modelname
                 ),
                 self.markup_public_view.as_view(model=self.model),
+                name="%s_markup_html" % self.modelname,
             ),
         ]
         return publishable_views + mapentity_views

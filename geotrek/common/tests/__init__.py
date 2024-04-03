@@ -57,6 +57,25 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('mapentity.helpers.requests')
+    def test_document_markup(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
+        except NoReverseMatch:
+            return  # No document markup
+
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f"{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html",
+                    kwargs={'pk': obj.pk, 'slug': obj.slug, 'lang': 'en'}))
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('mapentity.helpers.requests')
     def test_duplicate_object_without_structure(self, mock_requests):
         if self.model is None or not getattr(self.model, 'can_duplicate') or hasattr(self.model, 'structure'):
             return
