@@ -31,6 +31,7 @@ Makina Corpus
 * Marc-Antoine Dupré
 * Hugo Hasson
 * Joaquim Nallar
+* Justine Fricou
 
 .. image:: https://makina-corpus.com/profiles/makina/themes/makina_front/img/logo.png
     :target: http://www.makina-corpus.com
