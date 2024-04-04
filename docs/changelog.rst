@@ -9,6 +9,7 @@ CHANGELOG
 
 - New menu items targeting static page now open it in the same tab
 - Ensure migration steps for menu items can be run separately
+- Blockquote style in flat page content is now persistent on saving
 
 
 2.104.1 (2024-04-03)
