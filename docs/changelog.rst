@@ -2,10 +2,10 @@
 CHANGELOG
 =========
 
-2.104.1+dev (XXXX-XX-XX)
-------------------------
+2.104.2 (2024-04-04)
+--------------------
 
-**Bug fix**
+**Bug fixes**
 
 - New menu items targeting static page now open it in the same tab
 - Ensure migration steps for menu items can be run separately
