@@ -31,9 +31,7 @@ C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéai
 Les tronçons peuvent être soit numérisés dans Geotrek-admin, soit importés directement dans l'outil via :
 
 - la commande décrite `ici <https://geotrek.readthedocs.io/en/latest/install/import.html#import-paths>`_, après avoir préalablement nettoyé la géométrie des lignes à l'aide du plugin GRASS dans QGIS. Cette procédure est à privilégier car elle a l'avantage de faire des vérifications topologiques sur les données.
-
-- l'outil Qgis en suivant ce `tutoriel <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_ pour charger des tronçons dans la base de données PostGIS Geotrek à partir d'un réseau de sentiers. Il faut s'assurer en amont que les lignes à insérer sont topologiquement propres. 
-
+- l'outil QGIS en suivant ce `tutoriel <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_ pour charger des tronçons dans la base de données PostGIS Geotrek à partir d'un réseau de sentiers. Il faut s'assurer en amont que les lignes à insérer sont topologiquement propres. 
 
 Si ils sont numérisés directement dans Geotrek-admin, il est possible d'afficher sur la carte un fichier GPX ou GeoJSON pour faciliter leur localisation.
 
@@ -97,7 +95,7 @@ Centralise les informations sur la signalétique d'accueil, d'information et d'o
 
 Pour une signalétique, il est possible de définir chaque lame et chaque ligne de lame. L'image ci-dessous montre un exemple de correspondance entre une signalétique terrain et sa saisie dans Geotrek.
 
-.. image :: /images/user-manual/signage.png
+.. image:: ../images/user-manual/signage.png
 
 Pour importer automatiquement des éléments de signalétiques, se référer à la section :ref:`Import Signage <import-signage>`
 
