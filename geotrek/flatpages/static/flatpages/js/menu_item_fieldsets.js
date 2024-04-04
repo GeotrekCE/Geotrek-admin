@@ -59,6 +59,11 @@ function cleanSubmission() {
         });
     };
 
+    let uncheckOpenInNewTab = function() {
+        let checkbox = document.querySelector("input[name=open_in_new_tab]");
+        checkbox.checked = false;
+    }
+
     let erasePageField = function() {
         let page_select = document.querySelector("select[name=\"page\"]");
         page_select.value = undefined;
@@ -67,6 +72,7 @@ function cleanSubmission() {
     let targetType = document.getElementById("id_target_type").value;
     if (targetType === "page") {
         eraseLinkUrlFields();
+        uncheckOpenInNewTab();
     } else if (targetType === "link") {
         erasePageField();
     } else {
