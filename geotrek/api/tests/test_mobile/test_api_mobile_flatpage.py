@@ -49,7 +49,6 @@ def _create_flatpage_and_menuitem(**kwargs):
         if field in translated_fields:
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 try:
-                    print("remove", f"{field}_{lang}")
                     del page_kwargs[f"{field}_{lang}"]
                 except KeyError:
                     pass

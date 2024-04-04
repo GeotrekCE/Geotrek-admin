@@ -51,11 +51,10 @@ def _create_flatpage_and_menuitem(*args, **kwargs):
 
 
 class VarTmpTestCase(TestCase):
-    sync_path = os.path.join(settings.TMP_DIR, 'tmp_sync')
     sync_directory = None
 
     def setUp(self):
-        self.sync_directory = TemporaryDirectory(dir=self.sync_path).name
+        self.sync_directory = TemporaryDirectory(dir=settings.TMP_DIR).name
         os.mkdir(self.sync_directory)
 
 
