@@ -156,7 +156,7 @@ To remove dependencies (convertit, screamshooter…), run:
 
    apt-get autoremove
 
-.. note ::
+.. note::
 
     PostgreSQL and its database will not be removed by these commands. If need be, remove them manually.
 
@@ -178,11 +178,11 @@ and to install it on other distributions than Ubuntu Linux 18.04.
    or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/
 3. Unzip the tarball
 4. Copy docker/install folder where you want
-5. Edit `docker-compose.yml` to feed your needs if necessary
-6. Copy `.env.dist` to `.env` and edit to feed your needs if necessary
+5. Edit ``docker-compose.yml`` to feed your needs if necessary
+6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary
 7. Create user and database, enable PostGIS extension
-8. Run `docker-compose run --rm web update.sh`
-9. Run `docker-compose up`
+8. Run ``docker-compose run --rm web update.sh``
+9. Run ``docker-compose up``
 10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
 
 Management commands
@@ -190,7 +190,7 @@ Management commands
 
 Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker-compose run --rm web ./manage.py …``
 
-To load minimal data and create an application superuser, run :
+To load minimal data and create an application superuser, run:
 
 ::
 
