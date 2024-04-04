@@ -2,6 +2,7 @@
 
 pip-tools
 lxml
+tblib
 flake8
 freezegun
 coverage

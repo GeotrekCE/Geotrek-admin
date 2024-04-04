@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
+from django.core.files.storage import default_storage
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -771,10 +772,10 @@ class TrailViewsTest(CommonTest):
         trail = TrailFactory(date_update="2000-01-01")
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
-        with open(trail.get_map_image_path(), 'wb') as f:
+        with open(default_storage.path(trail.get_map_image_path()), 'wb') as f:
             f.write(b'***' * 1000)
 
-        self.assertEqual(os.path.getsize(trail.get_map_image_path()), 3000)
+        self.assertEqual(default_storage.size(trail.get_map_image_path()), 3000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 

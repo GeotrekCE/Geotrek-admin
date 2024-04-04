@@ -206,20 +206,20 @@ class SuricateAPITests(SuricateTests):
         r.comment = ""
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.comment, "")
+        self.assertEqual(r.comment, "")
         call_command("sync_suricate", report=r.pk, verbosity=2)
         r.refresh_from_db()
-        self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
+        self.assertEqual(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
         # Test sync last report overwrites local info
         r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.comment, "Lames cassées")
         r.comment = ""
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.comment, "")
+        self.assertEqual(r.comment, "")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS_NO_MODERATION)
@@ -249,12 +249,12 @@ class SuricateAPITests(SuricateTests):
         r.comment = "I was changed"
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.status.identifier, "programmed")
+        self.assertEqual(r.status.identifier, "programmed")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
         # Comment change was overriden, status change was not
-        self.assertEquals(r.status.identifier, "programmed")
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.status.identifier, "programmed")
+        self.assertEqual(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
@@ -405,7 +405,7 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mock_get)
         call_command("sync_suricate", test=True)
         # Assert outputs OK
-        self.assertEquals(mocked_stdout.getvalue(), 'API Standard :\nOK\nAPI Gestion :\nOK\n')
+        self.assertEqual(mocked_stdout.getvalue(), 'API Standard :\nOK\nAPI Gestion :\nOK\n')
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -417,7 +417,7 @@ class SuricateAPITests(SuricateTests):
         self.build_failed_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
-        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 400\nAPI Gestion :\nKO - Status code: 400\n")
+        self.assertEqual(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 400\nAPI Gestion :\nKO - Status code: 400\n")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -429,7 +429,7 @@ class SuricateAPITests(SuricateTests):
         self.build_timeout_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
-        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
+        self.assertEqual(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")

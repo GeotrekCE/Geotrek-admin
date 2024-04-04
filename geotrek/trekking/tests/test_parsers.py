@@ -1151,7 +1151,6 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 0)
 
 
-@override_settings(TMP_DIR=TemporaryDirectory().name)
 class TestApidaeTrekParserConvertEncodingFiles(TestCase):
     data_dir = "geotrek/trekking/tests/data"
 

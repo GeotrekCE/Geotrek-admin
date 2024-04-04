@@ -238,10 +238,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
 
     def get_map_image_path(self, language=None):
         lang = language or get_language()
-        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
-        if not os.path.exists(basefolder):
-            os.makedirs(basefolder)
-        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, lang))
+        return os.path.join('maps', '%s-%s-%s.png' % (self._meta.model_name, self.pk, lang))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
         extent = list(super().get_map_image_extent(srid))

@@ -1,5 +1,4 @@
 import csv
-import filecmp
 import os
 from io import StringIO
 from operator import attrgetter
@@ -7,6 +6,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.gis.geos import MultiPolygon, Polygon
+from django.core.files.storage import default_storage
 from django.test.utils import override_settings
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
@@ -148,10 +148,7 @@ class TouristicEventViewsTests(CommonTest):
         mock_requests.get.return_value.content = '<p id="properties">Mock</p>'
         response = self.client.get(obj.get_document_url())
         self.assertEqual(response.status_code, 200)
-        element_in_dir = os.listdir(os.path.join(settings.MEDIA_ROOT, 'maps'))
-        first_path = os.path.join(settings.MEDIA_ROOT, 'maps', element_in_dir[0])
-        second_path = os.path.join(settings.MEDIA_ROOT, attachment.attachment_file.name)
-        self.assertTrue(filecmp.cmp(first_path, second_path))
+        self.assertEqual(default_storage.size(obj.get_map_image_path()), attachment.attachment_file.size)
 
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns

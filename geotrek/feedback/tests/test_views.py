@@ -316,7 +316,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     def test_cannot_delete_report_intervention(self):
         self.client.force_login(user=self.admin)
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("disabled delete", response.content.decode("utf-8"))
 
     @test_for_workflow_mode
@@ -326,7 +326,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         report.status = feedback_factories.ReportStatusFactory(identifier='solved')
         report.save()
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("delete", response.content.decode("utf-8"))
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
 

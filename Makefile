@@ -40,6 +40,9 @@ flake8:
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
 
+compilemessages:
+	$(docker_compose) run --rm web ./manage.py compilemessages
+
 ###########################
 #        coverage         #
 ###########################
@@ -52,10 +55,10 @@ coverage:
 	$(docker_compose) run -e ENV=tests web coverage lcov
 
 test:
-	$(docker_compose) run -e ENV=tests --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
 
 test_nds:
-	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --noinput --parallel
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js

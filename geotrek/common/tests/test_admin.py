@@ -16,7 +16,6 @@ from geotrek.trekking.tests.factories import (DifficultyLevelFactory,
                                               POIFactory, TrekFactory)
 
 
-@override_settings(MEDIA_ROOT=TemporaryDirectory().name)
 class AttachmentAdminTest(TestCase):
     @classmethod
     def setUpTestData(cls):

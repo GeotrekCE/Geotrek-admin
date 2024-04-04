@@ -158,7 +158,7 @@ class InfrastructureUsageDifficultyAdminTest(TestCase):
 
     def test_infrastructure_usage_difficulty_level_display_string(self):
         """ Test string formatting for usage difficulty levels """
-        self.assertEquals(str(self.level), "Medium (Ecorp)")
+        self.assertEqual(str(self.level), "Medium (Ecorp)")
 
     def test_infrastructure_usage_difficulty_can_be_changed(self):
         """ Test admin update view for usage difficulty levels """
@@ -187,7 +187,7 @@ class InfrastructureMaintenanceDifficultyAdminTest(TestCase):
 
     def test_infrastructure_maintenance_difficulty_level_display_string(self):
         """ Test string formatting for maintenance difficulty levels """
-        self.assertEquals(str(self.level), "Medium (Ecorp)")
+        self.assertEqual(str(self.level), "Medium (Ecorp)")
 
     def test_infrastructure_maintenance_difficulty_can_be_changed(self):
         """ Test admin update view for maintenance difficulty levels """

@@ -642,6 +642,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MOBILE_TILES_URL = [
     'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 ]
+MOBILE_TILES_PATH = os.path.join(VAR_DIR, 'tiles')
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
@@ -887,6 +888,14 @@ PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
 REDIS_URL = os.getenv('REDIS_URL',
                       f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/{os.getenv('REDIS_DB', '0')}")
 
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'api_v2',
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
@@ -911,10 +920,3 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
-REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'api_v2',
-    'DEFAULT_CACHE_ERRORS': False
-}
-
-SESSION_ENGINE = "django.contrib.sessions.backends.file"
-SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")

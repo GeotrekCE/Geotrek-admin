@@ -169,7 +169,6 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_correct_picture(self):
         trek = TrekFactory()
         AttachmentImageFactory.create_batch(5, content_object=trek)
@@ -177,20 +176,17 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
         self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_wrong_picture(self):
         trek = TrekFactory()
         error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
         os.unlink(error_image_attachment.attachment_file.path)
         self.assertIsNone(trek.picture_print)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_no_picture(self):
         trek = TrekFactory()
         self.assertEqual(trek.pictures.count(), 0)
         self.assertIsNone(trek.picture_print, ThumbnailFile)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_thumbnail(self):
         trek = TrekFactory()
         AttachmentImageFactory(content_object=trek)

@@ -534,7 +534,7 @@ class Command(BaseCommand):
             'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
+            'tiles_dir': settings.MOBILE_TILES_PATH,
         }
         sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
         if options['empty_tmp_folder']:

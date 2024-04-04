@@ -147,7 +147,7 @@ msgstr "{obj} a été mis en brouillon"
 
 msgid "You can't delete this path, some topologies are linked with this path"
 msgstr ""
-"Vous ne pouvez pas supprimer ce tronçon, des topologies sont liés à ce "
+"Vous ne pouvez pas supprimer ce tronçon, des topologies sont liées à ce "
 "tronçon"
 
 msgid "Trails"

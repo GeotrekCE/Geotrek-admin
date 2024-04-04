@@ -1,7 +1,9 @@
 #
 #  Django Tests
 # ..........................
+import shutil
 from tempfile import TemporaryDirectory
+import os
 
 TEST = True
 
@@ -61,6 +63,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+TMP_DIR = os.path.join(TMP_DIR, 'tests')
+if os.path.exists(TMP_DIR):
+    shutil.rmtree(TMP_DIR)
+os.makedirs(TMP_DIR)
+
 MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name
+SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name
+MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name
 REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"
-# TEST_RUNNER = 'geotrek.test_runner.TestRunner'
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name
