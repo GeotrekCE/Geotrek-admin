@@ -259,7 +259,7 @@ persistent==5.0
     # via
     #   btrees
     #   zodb
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   cairosvg
     #   django-colorfield
