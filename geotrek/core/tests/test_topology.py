@@ -35,11 +35,10 @@ class TopologyTest(TestCase):
         self.assertTrue(t2 < e.date_update < t3)
 
     def test_latestupdate_delete(self):
-        for i in range(10):
-            TopologyFactory.create()
+        TopologyFactory.create_batch(10)
         t1 = dbnow()
         self.assertTrue(t1 > Topology.objects.latest("date_update").date_update)
-        (Topology.objects.all()[0]).delete(force=True)
+        Topology.objects.first().delete(force=True)
         self.assertFalse(t1 > Topology.objects.latest("date_update").date_update)
 
     def test_length(self):

@@ -17,6 +17,7 @@ from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils import dbnow
 from geotrek.core.models import (CertificationTrail, Path, PathAggregation,
                                  Trail)
@@ -47,7 +48,7 @@ class StakeTest(TestCase):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class PathTest(TestCase):
+class PathTest(TranslationResetMixin, TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
         p1 = PathFactory()
