@@ -47,12 +47,15 @@ compilemessages:
 #        coverage         #
 ###########################
 verbose_level ?= 1
+report ?= report -m
 .PHONY: coverage
 coverage:
+	rm ./var/.coverage* || true
 	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
-	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --parallel -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing -a ./manage.py test $(test_name) --parallel -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests web coverage lcov
+	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level) || true
+	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level) || true
+	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
+	rm ./var/.coverage*
 
 test:
 	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
