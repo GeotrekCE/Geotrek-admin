@@ -9,6 +9,9 @@ CHANGELOG
 
 - New menu items targeting static page now open it in the same tab
 
+**Documentation**
+
+- Fix RST syntax (#4047)
 
 2.104.1 (2024-04-03)
 --------------------
