@@ -5,6 +5,9 @@ CHANGELOG
 2.104.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fix**
+
+- New menu items targeting static page now open it in the same tab
 
 
 2.104.1 (2024-04-03)
