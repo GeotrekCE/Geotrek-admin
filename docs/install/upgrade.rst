@@ -77,7 +77,7 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 
 Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
 
-.. note ::
+.. note::
 
     Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory
     and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``
@@ -116,6 +116,7 @@ Backup settings, media files and database on the old server:
     tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
 
 Restore files on the new server:
+
 ::
 
     scp old_server_ip:path/to/data.tgz .
@@ -224,13 +225,13 @@ Recreate user and database:
 
 .. warning::
 
-    You should report configuration from /etc/postgresql/10/main/pg_hba.conf to /etc/postgresql/14/main/pg_hba.conf.
-    Then restart your postgresql
+    You should report configuration from ``/etc/postgresql/10/main/pg_hba.conf`` to ``/etc/postgresql/14/main/pg_hba.conf``.
+    Then restart your PostgreSQL
 
     ::
 
         sudo cp /etc/postgresql/10/main/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
-        sudo systemctl restart postgresql
+        sudo systemctl restart PostgreSQL
 
 
 You can now restore your database dump.
@@ -242,16 +243,16 @@ You can now restore your database dump.
 
 .. note::
 
-    Note you have to use `-h 127.0.0.1` to connect with the `geotrek` user (this user cannot connect with the default unix socket). Connecting with `geotrek` is important for restored entities to have the right owner.
+    Note you have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
     Some errors can occurs, around extensions creation or spatial_ref_sys table content.
     This is normal. We already create these extensions on previous steps.
 
 
 .. warning::
 
-    Any special configuration or tune setting in your `postgresql.conf` will not be reported,
-    you should report configuration yourself in /etc/postgresql/14/postgresql.conf.
-    Then restart your postgresql
+    Any special configuration or tune setting in your ``postgresql.conf`` will not be reported,
+    you should report configuration yourself in ``/etc/postgresql/14/postgresql.conf``.
+    Then restart your PostgreSQL
 
     ::
 
@@ -274,8 +275,8 @@ You can now upgrade your Geotrek-admin, and check that the right database is use
 
 .. note::
 
-    If you want to use default 5432 port, you should change it in `postgresql.conf`,
-    restart postgresql service, and change it by reconfiguring Geotrek-admin.
+    If you want to use default 5432 port, you should change it in ``postgresql.conf``,
+    restart PostgreSQL service, and change it by reconfiguring Geotrek-admin.
 
 ::
 
