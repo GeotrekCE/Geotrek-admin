@@ -3,7 +3,6 @@ import json
 import os
 from copy import copy
 from io import StringIO
-from tempfile import TemporaryDirectory
 from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock

@@ -2,8 +2,6 @@ import json
 import os
 import urllib
 from io import StringIO
-from shutil import rmtree
-from tempfile import mkdtemp
 from unittest import mock, skipIf
 
 import requests

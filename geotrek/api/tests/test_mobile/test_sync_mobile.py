@@ -1,7 +1,6 @@
 import errno
 import json
 import os
-import shutil
 import zipfile
 from io import StringIO
 from tempfile import TemporaryDirectory

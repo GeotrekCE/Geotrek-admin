@@ -1,4 +1,3 @@
-import os
 from io import StringIO
 from tempfile import TemporaryDirectory
 from unittest.mock import patch

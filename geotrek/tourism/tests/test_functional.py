@@ -1,5 +1,4 @@
 import csv
-import os
 from io import StringIO
 from operator import attrgetter
 from unittest.mock import patch

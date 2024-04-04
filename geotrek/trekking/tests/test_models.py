@@ -1,6 +1,5 @@
 import datetime
 import os
-from tempfile import TemporaryDirectory
 from unittest import skipIf
 
 from bs4 import BeautifulSoup

@@ -1,8 +1,5 @@
-from shutil import rmtree
-from tempfile import mkdtemp
 from unittest import mock
 
-from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 
 from django.core.files.uploadedfile import SimpleUploadedFile

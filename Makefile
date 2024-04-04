@@ -50,8 +50,8 @@ verbose_level ?= 1
 .PHONY: coverage
 coverage:
 	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
-	$(docker_compose) run -e ENV=tests web coverage run ./manage.py test $(test_name) -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests_nds web coverage run -a ./manage.py test $(test_name) -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --parallel -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing -a ./manage.py test $(test_name) --parallel -v $(verbose_level)
 	$(docker_compose) run -e ENV=tests web coverage lcov
 
 test:

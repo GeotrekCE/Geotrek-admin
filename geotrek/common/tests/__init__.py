@@ -1,5 +1,4 @@
 import os
-import shutil
 
 from unittest import mock
 
@@ -21,9 +20,8 @@ from mapentity.tests import MapEntityTest, MapEntityLiveTest
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
-from .factories import AttachmentFactory, AttachmentAccessibilityFactory, AttachmentImageFactory
+from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 
 class TranslationResetMixin:

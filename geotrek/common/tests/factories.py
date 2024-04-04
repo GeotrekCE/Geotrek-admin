@@ -1,9 +1,7 @@
 import factory
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
-from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_file, get_dummy_uploaded_image_svg)
+from geotrek.common.utils.testdata import get_dummy_uploaded_file, get_dummy_uploaded_image_svg
 
 from .. import models
 

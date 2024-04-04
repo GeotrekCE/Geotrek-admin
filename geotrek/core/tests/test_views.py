@@ -1,4 +1,3 @@
-import os
 import re
 from unittest import mock, skipIf
 
