@@ -57,10 +57,10 @@ coverage:
 	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
 	rm ./var/.coverage*
 
-test:
+tests:
 	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
 
-test_nds:
+tests_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --noinput --parallel
 
 test_nav:
