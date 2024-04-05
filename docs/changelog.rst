@@ -5,6 +5,9 @@ CHANGELOG
 2.104.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Documentation**
+
+- Improve static pages documentation (#4050)
 
 
 2.104.2 (2024-04-04)
