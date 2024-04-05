@@ -113,7 +113,7 @@ jobs:
     - name: Install python dependencies
       run: |
         python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt
+        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
 
