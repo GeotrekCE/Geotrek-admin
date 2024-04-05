@@ -12,16 +12,15 @@ Quickstart
 
 ::
 
-    cp .env-dev.dist .env
+    cp .env.dist .env
     # Edit .env if need be
-    cp docker-compose-dev.yml docker-compose.yml
-    docker-compose build
-    docker-compose run --rm web update.sh
-    docker-compose run --rm web load_data.sh
-    docker-compose run --rm web ./manage.py createsuperuser
-    docker-compose up -d
+    docker compose build
+    docker compose run --rm web update.sh
+    docker compose run --rm web load_data.sh
+    docker compose run --rm web ./manage.py createsuperuser
+    docker compose up
 
-Edit `/etc/hosts` file to add geotrek.local alias to 127.0.0.1
+Edit `/etc/hosts` file to add `geotrek.local` alias to `127.0.0.1`
 
 Go to ``http://geotrek.local:8000`` in your browser
 
@@ -48,8 +47,8 @@ Consider using pip-tools to manage dependencies.
 
 ::
 
-   docker-compose run --rm web pip-compile
-   docker-compose run --rm web pip-compile dev-requirements.in
+   docker compose run --rm web pip-compile
+   docker compose run --rm web pip-compile dev-requirements.in
 
 or
 
@@ -63,8 +62,8 @@ Model modification
 
 ::
 
-   docker-compose run --rm web ./manage.py makemigrations <appName>
-   docker-compose run --rm web ./manage.py migrate
+   docker compose run --rm web ./manage.py makemigrations <appName>
+   docker compose run --rm web ./manage.py migrate
 
 .. note::
 
@@ -139,7 +138,7 @@ run:
 
 ::
 
-   docker-compose run --rm web flake8 geotrek
+   docker compose run --rm web flake8 geotrek
 
 
 or
@@ -158,13 +157,13 @@ Run tests
 
 ::
 
-   docker-compose run --rm -e ENV=tests web ./manage.py test
+   docker compose run --rm -e ENV=tests web ./manage.py test
 
 Test without dynamic segmentation:
 
 ::
 
-   docker-compose run --rm -e ENV=tests_nds web ./manage.py test
+   docker compose run --rm -e ENV=tests_nds web ./manage.py test
 
 
 **Cypress tests :**
@@ -173,8 +172,8 @@ Create an empty project with Docker :
 
 ::
 
-    docker-compose down
-    docker-compose up -d
+    docker compose down
+    docker compose up -d
 
 
 Install elements for the cypress tests
@@ -217,7 +216,7 @@ Data only:
 
 ::
 
-   docker-compose run --rm web ./manage.py flush
+   docker compose run --rm web ./manage.py flush
 
 Restore existing Database
 =========================
@@ -226,7 +225,7 @@ Assuming a dump of your database is located in your project directory:
 
 ::
 
-   docker-compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
+   docker compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
 
 Restore your ``./var/conf/`` project files, and data files into ``./var/media``.
 
