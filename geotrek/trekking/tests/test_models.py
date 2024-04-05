@@ -14,7 +14,6 @@ from django.test.utils import override_settings
 from easy_thumbnails.files import ThumbnailFile
 
 from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
@@ -522,7 +521,6 @@ class RatingTest(TestCase):
 class CascadedDeletionLoggingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        clear_internal_user_cache()
         cls.practice = PracticeFactory(name="Pratice A")
         cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
         cls.rating = RatingFactory(scale=cls.scale)
@@ -530,7 +528,6 @@ class CascadedDeletionLoggingTest(TestCase):
         cls.weblink = WebLinkFactory(category=cls.categ)
 
     def test_cascading_from_practice(self):
-        clear_internal_user_cache()
         practice_pk = self.practice.pk
         self.practice.delete()
         rating_model_num = ContentType.objects.get_for_model(Rating).pk

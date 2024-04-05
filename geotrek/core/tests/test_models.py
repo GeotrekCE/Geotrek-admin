@@ -13,7 +13,6 @@ from django.db.models import ProtectedError
 from django.template.loader import get_template
 from django.test import TestCase
 from django.test.utils import override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
@@ -251,7 +250,6 @@ class TrailTestDisplay(TestCase):
         t1 = TrailFactory.create()
         certif = CertificationTrailFactory.create(trail=t1)
         self.assertEqual(t1.certifications_display, f'{certif}')
-        clear_internal_user_cache()
         certif_pk = certif.pk
         trail_pk = t1.pk
         obj_repr = str(t1)

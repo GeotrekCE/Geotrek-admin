@@ -14,7 +14,6 @@ from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
-from mapentity.middleware import clear_internal_user_cache
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek import __version__
@@ -89,7 +88,6 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.assertEqual(event.deadline, event.date_event + timedelta(days=7))
         obj_repr = str(self.programmed_report)
         report_pk = self.programmed_report.pk
-        clear_internal_user_cache()
         self.programmed_report.delete(force=True)
         model_num = ContentType.objects.get_for_model(TimerEvent).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=event.pk)
@@ -113,7 +111,6 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.assertEqual(self.waiting_report.status, self.late_intervention_status)
 
     def test_cascading_deletion(self):
-        clear_internal_user_cache()
         ContentType.objects.clear_cache()
         status = ReportStatusFactory(timer_days=3)
         report = ReportFactory(uses_timers=True)

@@ -6,7 +6,6 @@ from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.geos.point import GEOSGeometry, Point
 from django.test import TestCase, override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.outdoor.models import (ChildCoursesExistError, ChildSitesExistError, CourseType, Rating, RatingScale, Site,
@@ -179,7 +178,6 @@ class SectorTest(TestCase):
         rating = RatingFactory(scale=rating_scale)
         site_type = SiteTypeFactory(practice=practice)
         course_type = CourseTypeFactory(practice=practice)
-        clear_internal_user_cache()
         practice_pk = practice.pk
         practice_repr = str(practice)
         rating_scale_pk = rating_scale.pk

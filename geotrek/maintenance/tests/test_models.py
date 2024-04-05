@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.utils import translation
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests.factories import (PathFactory, StakeFactory,
                                           TopologyFactory, TrailFactory)
@@ -61,7 +60,6 @@ class InterventionTest(TestCase):
         md = ManDayFactory.create(intervention=i, nb_days=5)
         ManDayFactory.create(intervention=i, nb_days=8)
         self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
-        clear_internal_user_cache()
         manday_pk = md.pk
         interv_pk = i.pk
         obj_repr = str(i)
@@ -159,7 +157,6 @@ class InterventionTest(TestCase):
         self.assertTrue(interv.in_project)
         interv.save()
         funding = FundingFactory(project=proj, amount=6)
-        clear_internal_user_cache()
         project_pk = proj.pk
         funding_pk = funding.pk
         obj_repr = str(proj)

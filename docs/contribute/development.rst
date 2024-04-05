@@ -21,7 +21,9 @@ Quickstart
     docker-compose run --rm web ./manage.py createsuperuser
     docker-compose up -d
 
-Go to ``http://geotrek.localhost:8000``.
+Edit `/etc/hosts` file to add geotrek.local alias to 127.0.0.1
+
+Go to ``http://geotrek.local:8000`` in your browser
 
 PDF generation might not work unless you use this domain and is correctly set to SERVER_NAME variable in your .env file.
 
@@ -205,7 +207,7 @@ Pictures of the problem and videos are generated in ``cypress/videos`` and ``cyp
 Setup to use screamshotter-related features locally
 ===================================================
 
-Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local Geotrek-admin web instance. By default the address is ``http://geotrek.localhost:8000``.
+Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local Geotrek-admin web instance. By default the address is ``http://geotrek.local:8000``.
 
 
 Database reset

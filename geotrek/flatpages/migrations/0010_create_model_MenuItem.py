@@ -63,7 +63,7 @@ def create_translation_fields(apps, schema_editor):
     langs_str = " ,".join(langs)
 
     for field in translated_fields:
-        print(f"Creating translation fields for {field} for: {langs_str}")
+        print(f"\n   Creating translation fields for {field} for: {langs_str}")
         sql_statements = get_sync_sql(field, langs, MenuItem)
         with connection.cursor() as cursor:
             for sql in sql_statements:

@@ -1026,8 +1026,9 @@ class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
-        self.client.get(
-            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        response = self.client.get(reverse('trekking:trek_printable',
+                                           kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertEqual(response.status_code, 200)
         # Assert second access to PDF will not trigger screenshot
         self.trek.refresh_from_db()
         self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))

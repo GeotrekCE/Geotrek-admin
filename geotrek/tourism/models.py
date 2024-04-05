@@ -277,7 +277,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     class Meta:
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
-        # ordering = ('-pk',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
