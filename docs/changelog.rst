@@ -2,8 +2,23 @@
 CHANGELOG
 =========
 
-2.104.0+dev (XXXX-XX-XX)
+2.104.2+dev (XXXX-XX-XX)
 ------------------------
+
+
+
+2.104.2 (2024-04-04)
+--------------------
+
+**Bug fixes**
+
+- New menu items targeting static page now open it in the same tab
+- Ensure migration steps for menu items can be run separately
+- Blockquote style in flat page content is now persistent on saving
+
+
+2.104.1 (2024-04-03)
+--------------------
 
 **Bug fixes**
 

@@ -9,7 +9,7 @@ otherwise translation fields (from the Python objects side) would be missing.
 from django.conf import settings
 from django.db import migrations
 from django.utils import translation
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import translator, TranslationOptions, AlreadyRegistered
 from modeltranslation.utils import build_localized_fieldname
 
 from treebeard.mp_tree import MP_Node
@@ -94,8 +94,12 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     # modeltranslation registration is not run on historical models available during migrations.
     # We register FlatPage for translations now so `title_fr`, `title_es`, etc are defined.
     translator.register(FlatPage, FlatPageTO)
-    # MenuItem is already translation-registered from the previous migration
+    # MenuItem is already translation-registered from the previous migration so we cautiously try
     # (it will be needed to copy values in translation fields)
+    try:
+        translator.register(MenuItem, MenuItemTO)
+    except AlreadyRegistered:
+        pass
 
     # Those fields are copied from FlatPage to MenuItem.
     # Dict keys are FlatPage's fieldnames, dict values are MenuItem's fieldnames.
