@@ -626,20 +626,16 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
         qs = queryset
         updated_before = request.GET.get('updated_before')
         if updated_before:
-            updated_before = datetime.strptime(updated_before, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_update__lte=updated_before))
+            qs = qs.filter(date_update__lte=updated_before)
         updated_after = request.GET.get('updated_after')
         if updated_after:
-            updated_after = datetime.strptime(updated_after, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_update__gte=updated_after))
+            qs = qs.filter(date_update__gte=updated_after)
         created_before = request.GET.get('created_before')
         if created_before:
-            created_before = datetime.strptime(created_before, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_insert__lte=created_before))
+            qs = qs.filter(date_insert__lte=created_before)
         created_after = request.GET.get('created_after')
         if created_after:
-            created_after = datetime.strptime(created_after, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_insert__gte=created_after))
+            qs = qs.filter(date_insert__gte=created_after)
         return qs
 
     def get_schema_fields(self, view):
