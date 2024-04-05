@@ -872,7 +872,7 @@ class RemovePathKeepTopology(TestCase):
         poi.reload()
         e1.reload()
 
-        self.assertEqual(len(Path.objects.all()), 1)
+        self.assertEqual(Path.objects.all().count(), 1)
 
         self.assertEqual(e1.deleted, True)
         self.assertEqual(poi.deleted, False)

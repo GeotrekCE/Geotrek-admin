@@ -9,7 +9,6 @@ from django.core import mail
 from django.forms.widgets import CheckboxInput, EmailInput, HiddenInput, Select
 from django.test import override_settings
 from django.urls.base import reverse
-from django.utils import translation
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.widgets import MapWidget
 from tinymce.widgets import TinyMCE
@@ -149,7 +148,6 @@ class TestSuricateForms(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_assign_step(self, mocked_post, mocked_get):
-        translation.activate('fr')
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
         mails_before = len(mail.outbox)
@@ -197,7 +195,6 @@ class TestSuricateForms(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_self_assign_step(self, mocked_post, mocked_get):
-        translation.activate('fr')
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
         mails_before = len(mail.outbox)
@@ -273,7 +270,6 @@ class TestSuricateForms(SuricateWorkflowTests):
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_solving_report_intervention(self, mocked_post):
-        translation.activate('fr')
         mails_before = len(mail.outbox)
         self.build_post_request_patch(mocked_post)
         # Report has a linked intervention

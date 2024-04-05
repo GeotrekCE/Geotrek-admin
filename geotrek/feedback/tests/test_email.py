@@ -78,7 +78,6 @@ class EmailSendingTest(SuricateTests):
 
     @override_settings(LANGUAGE_CODE='fr')
     def test_email_format_and_content_fr(self):
-        translation.activate('fr')
         ReportFactory.create(email='jacques.dupont@nulpart.com',
                              comment="Ceci est un commentaire")
         sent_mail = mail.outbox[0]

@@ -11,8 +11,6 @@ ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
 
-# TEST_EXCLUDE = ('django',)
-
 ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS += (
@@ -63,14 +61,16 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# recreate TMP_DIR for tests, and it as base dir forl all files
 TMP_DIR = os.path.join(TMP_DIR, 'tests')
 if os.path.exists(TMP_DIR):
     shutil.rmtree(TMP_DIR)
-os.makedirs(TMP_DIR)
+SESSIONS_DIR = os.path.join(TMP_DIR, 'sessions')
+os.makedirs(SESSIONS_DIR)
 
-MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name
-SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name
-MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name
-REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name
+SESSION_FILE_PATH = SESSIONS_DIR  # sessions files
+MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
+SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
+MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
+DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image
+REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"  # celery broker url

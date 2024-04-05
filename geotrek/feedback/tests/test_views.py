@@ -9,7 +9,6 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils import translation
 from django.utils.module_loading import import_string
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
@@ -349,7 +348,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     @test_for_workflow_mode
     def test_csv_superuser_sees_emails(self):
         '''Test CSV job costs export does contain emails for superuser'''
-        translation.activate('fr')
         self.client.force_login(user=self.super_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -362,7 +360,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     @test_for_workflow_mode
     def test_csv_hidden_emails(self):
         '''Test CSV job costs export do not contain emails for supervisor'''
-        translation.activate('fr')
         self.client.force_login(user=self.normal_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -375,7 +372,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     @test_for_workflow_mode
     def test_csv_manager_sees_emails(self):
         '''Test CSV job costs export does contain emails for manager'''
-        translation.activate('fr')
         self.client.force_login(user=self.workflow_manager_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -388,7 +384,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     @test_for_report_and_basic_modes
     def test_normal_csv_emails(self):
         '''Test CSV job costs export do not contain emails for supervisor'''
-        translation.activate('fr')
         self.client.force_login(user=self.normal_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
