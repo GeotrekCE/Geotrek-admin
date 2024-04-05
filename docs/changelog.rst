@@ -5,6 +5,9 @@ CHANGELOG
 2.104.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 
 
 2.104.2 (2024-04-04)
