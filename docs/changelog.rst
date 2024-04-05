@@ -16,6 +16,9 @@ CHANGELOG
 - Ensure migration steps for menu items can be run separately
 - Blockquote style in flat page content is now persistent on saving
 
+**Documentation**
+
+- Fix RST syntax (#4047)
 
 2.104.1 (2024-04-03)
 --------------------

@@ -390,11 +390,11 @@ Lorsqu'on localise un itinéraire, il est aussi possible de localiser le parking
 
 Ces derniers servent à y faire référence dans le champs Description de l'itinéraire (Pas à pas) :
 
-.. image :: /images/user-manual/references-geotrek-rando.png
+.. image:: ../images/user-manual/references-geotrek-rando.png
 
 Pour que des puces numérotées sous forme de pastilles rouges soient affichées dans la description, il suffit de les saisir en tant que Liste numérotées dans le champs Description :
 
-.. image :: /images/user-manual/references-geotrek-admin.png
+.. image:: ../images/user-manual/references-geotrek-admin.png
 
 .. _points-d-interets-poi:
 

@@ -965,7 +965,7 @@ only one Linestring from start to end. It stays as close as possible to the corr
 when the order is not well managed during topologies' display.
 
 .. danger::
-    It can happens that this algorithm can't find any solution and will genereate a MultiLineString.
+    It can happen that this algorithm can't find any solution and will genereate a MultiLineString.
     This will be displayed at the end of the reorder
 
 

@@ -84,6 +84,7 @@ Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cli
    Ajout d'une étiquette à un itinéraire
 
 .. tip::
+
     * L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
     * Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
     * Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
@@ -173,7 +174,7 @@ Les utilisateurs sont ensuite associés à un ou plusieurs rôles.
 
 Un utilisateur donné peut avoir trois niveaux permissions basiques :
 
-- **Actif** : si cette case est coché, l’utilisateur peut se connecter à Geotrek-admin
+- **Actif** : si cette case est cochée, l’utilisateur peut se connecter à Geotrek-admin
 
 .. note::
   Il est préférable de désactiver un compte lorsqu’un utilisateur n’intervient plus sur Geotrek, plutôt que de le supprimer. En effet supprimer le compte supprimera également par exemple toutes les entrées dans l’historique de Geotrek associées à ce compte.
@@ -248,11 +249,11 @@ Les utilisateurs d’une structure ne peuvent travailler que sur les objets dans
 
 Cette notion de structures permet de segmenter les périmètres d’action des utilisateurs et de permettre à différentes entités de travailler sur un même Geotrek-Admin, tout en garantissant une cohérence des données.
 
-.. note ::
+.. note::
 
     Un utilisateur d’une structure pourra tout de même tracer des itinéraires sur des tronçons tracés par une autre structure
 
-.. note ::
+.. note::
 
     Pour qu’un utilisateur puisse modifier les objets d’une autre structure il y a deux possibilités :
 
