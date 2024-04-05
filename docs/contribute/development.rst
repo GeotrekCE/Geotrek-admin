@@ -47,14 +47,14 @@ Consider using pip-tools to manage dependencies.
 
 ::
 
-   docker compose run --rm web pip-compile
-   docker compose run --rm web pip-compile dev-requirements.in
+   make deps
 
 or
 
 ::
 
-   make deps
+    docker compose run --rm web pip-compile
+    docker compose run --rm web pip-compile dev-requirements.in
 
 
 Model modification
@@ -138,14 +138,14 @@ run:
 
 ::
 
-   docker compose run --rm web flake8 geotrek
+   make flake8
 
 
 or
 
 ::
 
-   make flake8
+   docker compose run --rm web flake8 geotrek
 
 
 Run tests
@@ -153,17 +153,42 @@ Run tests
 
 **Django tests :**
 
-``ENV`` variable must be set to run tests:
+run:
+
+::
+
+   make coverage
+
+
+To run all test suites and report global coverage
+
+
+To run a specific test suite, run:
+
+::
+
+    make tests
+
+or
 
 ::
 
    docker compose run --rm -e ENV=tests web ./manage.py test
 
-Test without dynamic segmentation:
+
+And
+
+
+::
+
+    make tests_nds
+
+or
 
 ::
 
    docker compose run --rm -e ENV=tests_nds web ./manage.py test
+
 
 
 **Cypress tests :**
