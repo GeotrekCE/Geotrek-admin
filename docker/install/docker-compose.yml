@@ -53,5 +53,4 @@ services:
       - redis
 
 volumes:
-  postgres:
   redis:

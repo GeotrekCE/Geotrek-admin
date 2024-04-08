@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
+- Remove unused `postgres` volume in docker compose file for production
 
 **Documentation**
 
