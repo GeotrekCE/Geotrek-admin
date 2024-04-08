@@ -141,6 +141,8 @@ jobs:
 
     - name: Unit test
       run: |
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage run ./manage.py test -v 3
         ./venv/bin/coverage xml -o coverage.xml
 
