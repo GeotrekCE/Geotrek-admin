@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
+- Fix crash on migrate when db username or dbname contains dash
 
 **Documentation**
 

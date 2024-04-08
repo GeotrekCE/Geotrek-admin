@@ -124,5 +124,5 @@ def move_models_to_schemas(app):
         dbname = settings.DATABASES['default']['NAME']
         dbuser = settings.DATABASES['default']['USER']
         search_path = ', '.join(('public', ) + tuple(set(settings.DATABASE_SCHEMAS.values())))
-        sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
+        sql = "ALTER ROLE \"%s\" IN DATABASE \"%s\" SET search_path=%s;" % (dbuser, dbname, search_path)
         cursor.execute(sql)
