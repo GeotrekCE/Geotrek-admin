@@ -9,6 +9,10 @@ CHANGELOG
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 
+**Documentation**
+
+- Improve static pages documentation (#4050
+
 
 2.104.2 (2024-04-04)
 --------------------
