@@ -46,8 +46,7 @@ Vidéos
 Visualiser les données dans QGIS
 =================================
 
-
-.. image :: ../images/qgis/Qgis_projet.png
+.. image:: ../images/qgis/Qgis_projet.png
 
 Création de vues SQL pour afficher des couches dans QGIS
 ---------------------------------------------------------
@@ -78,7 +77,7 @@ Créer une connexion à la base de données PostgreSQL du projet
 * Cliquer sur « Tester la connexion »
 * Si la connexion est réussi, cliquer sur OK pour enregistrer la connexion
 
-.. image :: ../images/qgis/Connexion_bdd.png
+.. image:: ../images/qgis/Connexion_bdd.png
 
 Créer un projet QGIS à partir des vues SQL
 ------------------------------------------
@@ -118,7 +117,7 @@ Créer des groupes de couches
 
 Il peut être utile de créer des groupes de couches dans le cas où certaines couches sont disponibles dans plusieurs types géométriques : exemple pour la couche Sentiers qui peut contenir des lignes et des points
 
-.. image :: ../images/qgis/groupe_couches.png
+.. image:: ../images/qgis/groupe_couches.png
 
 Changer le style d'une couche
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,6 +134,7 @@ Le fait de dimensionner la taille des colonnes dans la table attributaire permet
 * Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur une colonne > Taille autom pour toutes les colonnes
 
 Certains champs texte peuvent être très larges (exemple _Description_ dans la couche **Zones sensibles**). Dans ce cas il est possible d'adapter manuellement la taille de la colonne :
+
 * Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur la colonne > Largeur > Entrer une largeur de colonne (exemple : 200)
 
 Afficher le décompte des entités d'une couche

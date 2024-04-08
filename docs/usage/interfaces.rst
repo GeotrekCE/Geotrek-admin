@@ -32,12 +32,14 @@ Tous les modules sont construits de la même façon :
 
 
 .. note::
- - Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur la carte.
- - Il est possible d'ajouter de nouveaux objets depuis chaque module.
- - Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
+
+   - Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur la carte.
+   - Il est possible d'ajouter de nouveaux objets depuis chaque module.
+   - Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche détaillée de celui-ci.
 
 .. warning::
- - La liste des résultats est filtrée en fonction de l'étendue de la carte affichée.
+
+   - La liste des résultats est filtrée en fonction de l'étendue de la carte affichée.
 
 Vue détail
 ----------
@@ -59,6 +61,7 @@ Voici les possibilités de la fiche détail :
    Fiche détail d'un itinéraire
 
 .. note::
+
  - Lorsque le statut de publication d'un objet est activé, celui-ci ainsi que tous ses attributs associés, sont mis en ligne.
  - À tout moment et ce sur chaque module, les informations peuvent être soit mises en ligne, soit désactivées, voire supprimées.
  - Ne sont mises en ligne que les informations choisies et disponibles. Les catégories non encore alimentées ne seront pas visibles pour le grand public. Ainsi si vous créez une nouvelle pratique "Raquettes", celle-ci ne sera pas mise ne ligne tant que vous n'aurez pas publié un premier itinéraire de raquettes.

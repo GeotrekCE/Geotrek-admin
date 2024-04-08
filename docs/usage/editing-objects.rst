@@ -40,7 +40,7 @@ Lorsqu'un POI est créé, il est rattaché à l'itinéraire le plus proche.
 
 Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont associés.
 
-.. note ::
+.. note::
 
     Il n'existe actuellement aucun moyen de contrôler manuellement l'association entre
     randonnées et les POIs.
@@ -68,7 +68,7 @@ Les objets ponctuels ne sont associés qu'à un seul tronçon, sauf dans le cas 
 
 Chaque évènement dispose néanmoins d'une géométrie calculée à partir de leur segmentation dynamique pour faciliter leur affichage dans Geotrek ou dans QGIS (voir la section :ref:`Visualiser les données dans Qgis <visualiser-les-donnees-dans-qgis>`). Il ne faut néanmoins pas modifier directement ces géométries, elles sont calculées automatiquement quand on modifie l'évènement d'un objet.
 
-.. notes
+.. note::
 
     Des vues SQL sont disponibles pour accéder aux objets de manière plus lisible et simplifiée (``v_interventions`` par exemple).
 
@@ -125,19 +125,19 @@ Pour aller au-delà de la localisation sur une carte dans la représentation des
 
 Le bloc "Vues HD" dans l'onglet "Fichier liés" permet d'associer une photo très haute définition (de plusieurs dizaines ou centaines de Mo) aux itinéraires, POI et sites Outdoor. Ces images sont tuilées automatiquement pour disposer de fichiers plus légers à charger dans un navigateur (en fonctionnant comme les fonds de carte tuilés). 
 
-.. image :: /images/user-manual/hd_view_trek.png
+.. image:: ../images/user-manual/hd_view_trek.png
 
 Une fois l'image ajoutée, un formulaire d'annotation permet d'ajouter des objets (points, lignes, polygones, cercles...) et des textes pour enrichir les photos. 
 
-.. image :: /images/user-manual/hd_view_annotations.png
+.. image:: ../images/user-manual/hd_view_annotations.png
 
 Les annotations sont stockées en GeoJSON et peuvent donc être affichées par dessus la photo tuilée dans une librairie javascript de cartographie (comme Leaflet ou GeoJS) au niveau de Geotrek-rando-v3 ou autre. Pour cela, l'APIv2 expose pour chaque Vue HD l'adresse de récupération des tuiles ainsi que les annotations GeoJSON.
 
 La vue HD est également associée à une localisation correspondant à l'emplacement de ce que l'on voit sur l'image. 
 
-.. image :: /images/user-manual/hd_view_detail.png
+.. image:: ../images/user-manual/hd_view_detail.png
 
-.. notes
+.. note::
 
     Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
 

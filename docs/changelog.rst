@@ -5,9 +5,13 @@ CHANGELOG
 2.104.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Bug fixes**
+
+- Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
+
 **Documentation**
 
-- Improve static pages documentation (#4050)
+- Improve static pages documentation (#4050
 
 
 2.104.2 (2024-04-04)
@@ -19,6 +23,9 @@ CHANGELOG
 - Ensure migration steps for menu items can be run separately
 - Blockquote style in flat page content is now persistent on saving
 
+**Documentation**
+
+- Fix RST syntax (#4047)
 
 2.104.1 (2024-04-03)
 --------------------

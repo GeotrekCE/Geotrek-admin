@@ -6,7 +6,7 @@ APIs
    :local:
    :depth: 2
 
-.. image :: /images/user-manual/api-ecosystem.png
+.. image:: ../images/user-manual/api-ecosystem.png
 
 API Geotrek
 ===========
@@ -72,7 +72,7 @@ Les correspondances avec les valeurs de ces 3 tables sont donc à renseigner dan
 
 Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirkwi : https://pro.cirkwi.com/importez-vos-donnees-geotrek-dans-cirkwi/.
 
-:Note:
+.. note::
 
     Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``
 

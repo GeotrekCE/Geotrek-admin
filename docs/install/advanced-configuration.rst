@@ -18,7 +18,7 @@ Spatial extents
 In order to check your configuration of spatial extents, a small tool
 is available at http://server/tools/extents/.
 
-.. note ::
+.. note::
   Administrator privileges are required.
 
 
@@ -38,7 +38,7 @@ Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 You can test your configuration with the following command. A fake email will
 be sent to the managers:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek sendtestemail --managers
     
@@ -95,7 +95,7 @@ Capture and conversion
 
 If you want to use external services, in ``.env``, add following variables:
 
-.. code-block :: python
+.. code-block:: python
 
     CAPTURE_HOST=x.x.x.x
     CAPTURE_PORT=XX
@@ -113,7 +113,7 @@ services on each instance.
 
 Start by stopping everything:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo systemctl stop geotrek
 
@@ -135,7 +135,7 @@ You can authenticate user against a remote database table or view.
 
 To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
 
-.. code-block :: python
+.. code-block:: python
 
     AUTHENT_DATABASE = 'authent'
     DATABASES['authent'] = {
@@ -160,7 +160,7 @@ Expected columns in table/view are :
 * ``structure`` : string
 * ``lang`` : string (language code)
 
-.. note ::
+.. note::
   - The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
   - User management will be disabled from Administration backoffice.
   - In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings file, and restart instance (see paragraph above).
@@ -281,7 +281,7 @@ Map layers zoom
         LEAFLET_CONFIG= 19
 
 
-.. note ::
+.. note::
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
 
@@ -300,7 +300,7 @@ Map layers colors and style
 
         MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
-.. note ::
+.. note::
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
 
@@ -315,7 +315,7 @@ Map layers colors and style
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
 
-.. code-block :: python
+.. code-block:: python
 
     MAPENTITY_CONFIG['MAP_STYLES'] = {
         'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
@@ -335,7 +335,7 @@ of available styles.
 
 Color of the different layers on the map :
 
-.. code-block :: python
+.. code-block:: python
 
     COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                    'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
@@ -350,7 +350,7 @@ Color of the different layers on the map :
 
 Color of the different layers on the top right for landing.
 
-.. note :: 
+.. note:: 
   - For land, physical, competence, signagemanagement, workmanagement should have 5 values.
   - For restricted Area: add as many color as your number of restricted area type
   - **Restart** the application for changes to take effect.
@@ -400,7 +400,7 @@ Geographical CRUD
 
         PATH_SNAPPING_DISTANCE = 2.0
 
-.. note ::
+.. note::
   - Change the distance. Better to keep it like this. 
   - Not used when ``TREKKING_TOPOLOGY_ENABLED = True``
 
@@ -420,7 +420,7 @@ Geographical CRUD
 
         PATH_MERGE_SNAPPING_DISTANCE = 2
 
-.. note ::
+.. note::
   - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
   - Used when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
@@ -460,12 +460,12 @@ Geographical CRUD
 
         TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
 
-.. note ::
+.. note::
   You should not change it to avoid overlay except if you want to have more overlays.
 
 **All settings used to generate altimetric profile :**
 
-.. code-block :: python
+.. code-block:: python
 
     ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
     ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
@@ -503,7 +503,7 @@ Disable darker map backgrounds
 Map screenshots
 ~~~~~~~~~~~~~~~
 
-.. code-block :: python
+.. code-block:: python
 
     SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
     SHOW_POIS_ON_MAP_SCREENSHOT = True
@@ -519,7 +519,7 @@ Map screenshots
 
         MAP_CAPTURE_SIZE = 800
 
-.. note ::
+.. note::
   - Size in pixels of the capture.
   - Be careful with your pdfs.
   - If you change this value, pdfs will be rendered differently
@@ -533,7 +533,7 @@ Enable Apps
 
 In order to disable a full set of modules, in the custom settings file, add the following code:
 
-.. code-block :: python
+.. code-block:: python
 
     # Disable infrastructure and maintenance
     _INSTALLED_APPS = list(INSTALLED_APPS)
@@ -570,7 +570,7 @@ In order to disable a full set of modules, in the custom settings file, add the 
 
 In order to remove zoning combo-boxes on list map:
 
-.. code-block :: python
+.. code-block:: python
 
     LAND_BBOX_CITIES_ENABLED = False
     LAND_BBOX_DISTRICTS_ENABLED = False
@@ -613,7 +613,7 @@ In order to remove zoning combo-boxes on list map:
 
         True
 
-.. note ::
+.. note::
   - By doing so, some software upgrades may not be as smooth as usual.
   - Never forget to mention this customization if you ask for community support.
 
@@ -660,7 +660,7 @@ Paths
 
         True
 
-.. note ::
+.. note::
   Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 
@@ -680,7 +680,7 @@ Signage and Blade
 
         BLADE_CODE_TYPE = INT
 
-.. note ::
+.. note::
   - It can be string or integer
   - If you have an integer code : ``int``
   - If you have an string code : ``str``
@@ -694,7 +694,7 @@ Signage and Blade
 
         BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 
-.. note ::
+.. note::
   - If you want to change : move information under bracket
   - You can also remove one element between bracket
   - You can do for exemple : ``"CD99.{signagecode}.{bladenumber}"``
@@ -711,7 +711,7 @@ Signage and Blade
 
         LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
-.. note ::
+.. note::
   - Similar with above
   - You can do for example : ``"CD99.{signagecode}-{bladenumber}.{linenumber}"``
   - It will display : ``CD99.XIDNZEIU-01.02`` (second line of the first blade of XIDNZEIU)
@@ -752,14 +752,14 @@ Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 You can insert licenses of attachments with this command :
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
@@ -791,13 +791,13 @@ Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert Outdoor minimal data:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
 After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
 
-.. note ::
+.. note::
   - Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
   - You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
@@ -865,7 +865,7 @@ In user interface, in the top-right menu, clic on "Imports" and choose "Biodiv'S
 
 On command line, run
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
 
@@ -888,13 +888,13 @@ or "Shapefile zone sensible réglementaire".
 
 On command line, run:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
 
 or:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
 
@@ -947,7 +947,7 @@ This mode sends no report data to Suricate.
 
 To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) load lists for categories, activities, statuses and problem magnitude:
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
@@ -957,7 +957,7 @@ This mode simply forwards all reports to Suricate, using the Standard API to pos
 
 Set your account settings in ``custom.py``:
 
-.. code-block :: python
+.. code-block:: python
 
     SURICATE_REPORT_ENABLED = True
 
@@ -1069,7 +1069,7 @@ You can find the same detailled explanation on the workflow in this article in f
 
 - Set your settings in ``custom.py`` :
 
-.. code-block :: python
+.. code-block:: python
 
     SURICATE_WORKFLOW_ENABLED = True
 
@@ -1087,25 +1087,25 @@ You can find the same detailled explanation on the workflow in this article in f
 
 You can use the following command to test your connection settings:
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek sync_suricate -v 2 --connection-test
 
 Load lists for activities and/or report statuses from Suricate:
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek sync_suricate --activities --statuses -v 2
 
 Load alerts from Suricate (located in your bounding box) :
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek sync_suricate -v 2 --no-notification
 
 - Then load extra required statuses for Reports and Interventions:
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
     geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
@@ -1117,13 +1117,13 @@ Load alerts from Suricate (located in your bounding box) :
   - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
   - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
-.. note :: 
+.. note:: 
   - Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**.
   - Reports are only saved when synchronized back from Suricate, when the synchronization command is run. 
 
 Make sure to run these three commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek retry_failed_requests_and_mails
     geotrek check_timers
@@ -1163,7 +1163,7 @@ Use timers to receive alerts for your reports
 
 - Make sure to run this commands daily to send email alerts and clear obsolete timers (thanks to `cron` for instance) :
 
-.. code-block :: python
+.. code-block:: python
 
     geotrek check_timers
 
@@ -1177,13 +1177,13 @@ and should notice your users on how many time you keep their email.
 A Django command is available to anonymize reports, by default older
 than 365 days.
 
-.. code-block :: bash
+.. code-block:: bash
 
     geotrek erase_emails
 
 Or if you want to erase emails for reports older than 90 days
 
-.. code-block :: bash
+.. code-block:: bash
 
     geotrek erase_emails --days 90
 
@@ -1224,7 +1224,7 @@ Resizing uploaded pictures
 
 These corresponding height/width parameters can be overriden to select resized image size:
 
-.. code-block :: python
+.. code-block:: python
 
     PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
     PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
@@ -1243,7 +1243,7 @@ Prohibit usage of big pictures and small width / height
 
 If you want to prohibit the usage of small pictures in pixels:
 
-.. code-block :: python
+.. code-block:: python
 
     PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
     PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
@@ -1257,7 +1257,7 @@ Prohibit usage of certain file types
 Paperclip will only accept attachment files matching a list of allowed extensions.
 Here is the default value for this setting, which you can extend if needed:
 
-.. code-block :: python
+.. code-block:: python
 
     PAPERCLIP_ALLOWED_EXTENSIONS = [
         'jpeg',
@@ -1303,7 +1303,7 @@ It will verify that the mimetype of the file matches the extension.
 
         PAPERCLIP_ALLOWED_EXTENSIONS = None
 
-.. note :: 
+.. note:: 
   These two settings will also not allow downloading images from the parsers.
 
 
@@ -1315,14 +1315,14 @@ Configure columns displayed in lists views and exports
 
 For each module, use the following syntax to configure columns to display in the main table.
 
-.. code-block :: python
+.. code-block:: python
 
     COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
 
 
 For each module, use the following syntax to configure columns to export as CSV or SHP.
 
-.. code-block :: python
+.. code-block:: python
 
     COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
 
@@ -1345,7 +1345,7 @@ Custom columns available
 
 A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
 
-.. code-block :: python
+.. code-block:: python
 
     COLUMNS_LISTS["path_view"] = [
         "length_2d",
@@ -2302,7 +2302,7 @@ Hideable form fields
 
 An exhaustive list of form fields hideable in each module.
 
-.. code-block :: python
+.. code-block:: python
 
     HIDDEN_FORM_FIELDS["path"] = [
             "departure",
@@ -2644,7 +2644,7 @@ Its configuration can be customized using advanced settings (see above paragraph
         'valid_elements': "img,p,a,em/i,strong/b",
         }
 
-.. note ::
+.. note::
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
 
@@ -2663,7 +2663,7 @@ Max characters count
            "trekking_trek": [{'field': 'description_teaser_fr', 'value': 150}],
         }
 
-.. note ::
+.. note::
   - This will apply field by field, language by language.
   - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for details.
 
@@ -2680,7 +2680,7 @@ Copyright on pictures
 
         THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
-.. note ::
+.. note::
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
 
@@ -2704,7 +2704,7 @@ it needs static html files built by synchronization (thanks to option ``--rando-
 
 In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
 
-.. image :: /images/facebookappid.png
+.. image:: /images/facebookappid.png
 
 
 .. envvar:: FACEBOOK_APP_ID
@@ -2717,7 +2717,7 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 
 **You can also override these settings:**
 
-.. code-block :: python
+.. code-block:: python
 
     FACEBOOK_IMAGE = '/images/logo-geotrek.png'
     FACEBOOK_IMAGE_WIDTH = 200
@@ -2742,7 +2742,7 @@ Override the translations that you want in these files.
 
 **Example of content for the French translation overriding:**
 
-.. code-block :: python
+.. code-block:: python
 
     # MY FRENCH CUSTOM TRANSLATION
     # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -2772,7 +2772,7 @@ Override the translations that you want in these files.
 
 **Apply changes (French translation in this example):**
 
-.. code-block :: bash
+.. code-block:: bash
 
     cd /opt/geotrek-admin/var/conf/extra_locale
     sudo chown geotrek. fr/LC_MESSAGES/
@@ -2824,7 +2824,7 @@ Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url pa
 The template for a specific portal will use the modification made on the overriden template in  ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
 ( except if you change specific  block)
 
-.. note ::
+.. note::
   This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
 
 **You might need to use your own images in the PDF templates.**
@@ -2848,7 +2848,7 @@ Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/
        <div class="geo"><a href="https://www.grand-tour-ecrins.fr">grand-tour-ecrins.fr</a></div>
     {% endblock url %}
 
-.. note ::
+.. note::
   The default template may change in the future versions. You will be in charge of porting the modification to your copy.
 
 Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
@@ -2889,7 +2889,7 @@ manager:
 For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
 ``/usr/local/share/fonts/custom/`` as root, and run the following command:
 
-.. code-block :: bash
+.. code-block:: bash
 
     fc-cache
 
@@ -3091,7 +3091,7 @@ Categories
 
 **Order of all the objects without practices on Geotrek-rando website** :
 
-.. code-block :: python
+.. code-block:: python
 
     TREK_CATEGORY_ORDER = 1
     ITINERANCY_CATEGORY_ORDER = 2
