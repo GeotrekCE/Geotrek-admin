@@ -4,6 +4,7 @@
 import shutil
 from tempfile import TemporaryDirectory
 import os
+from .base import *  # noqa
 
 TEST = True
 
