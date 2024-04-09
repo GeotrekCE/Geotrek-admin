@@ -279,6 +279,19 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Trigger resolving intervention
         user = SuperUserFactory(username="admin", password="dadadad")
+
+        # Test form will not validate without intervention end date
+        data = {
+            'name': interv.name,
+            'begin_date': interv.begin_date,
+            'status': 3,    # pk for "Terminée" from fixtures
+            'structure': user.profile.structure.pk
+        }
+        form = InterventionForm(user=user, instance=interv, data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("La date de fin est obligatoire.", str(form.errors))
+
+        interv.refresh_from_db()
         end_date = interv.begin_date
         data = {
             'name': interv.name,

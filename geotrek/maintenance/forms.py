@@ -12,7 +12,7 @@ from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
-from .models import Intervention, InterventionJob, ManDay, Project
+from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     from geotrek.feedback.models import Report, ReportStatus, TimerEvent
@@ -151,16 +151,20 @@ class InterventionForm(CommonForm):
                         or self.instance.geom.geom_type == 'LineString'))
         self.fields['length'].widget.attrs['readonly'] = editable
 
-        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.instance.pk and self.instance.target and hasattr(self.instance.target, "report_interventions"):
-                self.fields["end_date"].required = True
-
     def clean(self, *args, **kwargs):
         clean_data = super().clean(*args, **kwargs)
         begin_date = clean_data.get('begin_date')
         end_date = clean_data.get('end_date')
+        status = clean_data.get('status')
         if end_date and begin_date > end_date:
             self.add_error('end_date', _('Begin date is after end date'))
+
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
+            target = self.instance.target
+            if self.instance.pk and target and isinstance(target, Report) and target.status and \
+               target.status.identifier in ["programmed", "late_resolution"] and \
+               status == InterventionStatus.objects.get(order=30) and end_date is None:
+                self.add_error('end_date', _('End date is required.'))
         return clean_data
 
     def save(self, *args, **kwargs):
