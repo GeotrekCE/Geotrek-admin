@@ -182,7 +182,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)
     area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), lookup_expr='intersects', required=False)
     area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), lookup_expr='intersects', required=False)
-    contractors = ModelMultipleChoiceFilter(label=_("Intervention contractors"), queryset=Contractor.objects.all(), method='filter_contractors')
+    contractors = ModelMultipleChoiceFilter(label=_("Contractors"), queryset=Contractor.objects.all(), method='filter_contractors')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
