@@ -9,6 +9,10 @@ CHANGELOG
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 
+**Features**
+
+- Add 'feedback' on filter modules list (#3972)
+
 **Documentation**
 
 - Improve static pages documentation (#4050
