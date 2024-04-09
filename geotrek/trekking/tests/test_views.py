@@ -638,9 +638,6 @@ class TrekGPXTest(TrekkingManagerTest):
         self.response = self.client.get(url)
         self.parsed = BeautifulSoup(self.response.content, features='xml')
 
-    def tearDown(self):
-        translation.deactivate()
-
     def test_gpx_is_served_with_content_type(self):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
@@ -686,7 +683,6 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         cls.trek.save()
 
     def tearDown(self):
-        translation.deactivate()
         self.client.logout()
 
     def test_geojson_translation(self):

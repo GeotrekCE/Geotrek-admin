@@ -5,7 +5,6 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
-from django.utils import translation
 
 from geotrek.core.tests.factories import (PathFactory, StakeFactory,
                                           TopologyFactory, TrailFactory)
@@ -247,7 +246,6 @@ class InterventionTest(TestCase):
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):
-        translation.activate('en')
         on_path = InterventionFactory.create()
         self.assertIn('Path', on_path.target_display)
         self.assertIn('path-16.png', on_path.target_display)

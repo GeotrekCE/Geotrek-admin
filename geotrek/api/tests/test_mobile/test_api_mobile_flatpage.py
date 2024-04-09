@@ -124,7 +124,6 @@ def menu(page):
 class FlatPageTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        translation.activate('fr')
         cls.flatpage = _create_flatpage_and_menuitem(published_fr=True)
         _create_flatpage_and_menuitem(published_fr=True)
 

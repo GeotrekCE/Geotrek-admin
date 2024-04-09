@@ -1,5 +1,4 @@
 from django.test.utils import override_settings
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 from rest_framework.reverse import reverse
@@ -38,10 +37,6 @@ class SensitiveAreaViewsTests(CommonTest):
             'id': self.obj.pk,
             'species': self.obj.species_display,
         }
-
-    def setUp(self):
-        translation.deactivate()
-        super().setUp()
 
     def get_bad_data(self):
         return {

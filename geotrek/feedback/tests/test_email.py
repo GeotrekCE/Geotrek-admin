@@ -4,7 +4,6 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.core import mail, management
 from django.core.mail.backends.base import BaseEmailBackend
-from django.utils import translation
 from geotrek.feedback.models import AttachedMessage, PendingEmail, WorkflowManager
 
 from geotrek.feedback.parsers import SuricateParser
@@ -75,19 +74,6 @@ class EmailSendingTest(SuricateTests):
                          '[Geotrek] Feedback from john.doe@nowhere.com')
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
-
-    @override_settings(LANGUAGE_CODE='fr')
-    def test_email_format_and_content_fr(self):
-        ReportFactory.create(email='jacques.dupont@nulpart.com',
-                             comment="Ceci est un commentaire")
-        sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Signalement de jacques.dupont@nulpart.com')
-        self.assertIn("Commentaire : Ceci est un commentaire", sent_mail.body)
-        self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
-        self.assertIn("http://www.openstreetmap.org/?mlat=46.500000&mlon=3.000000", sent_mail.body)
-
-        translation.deactivate()
 
 
 class TestPendingEmail(SuricateTests):

@@ -87,7 +87,7 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # We check the content was created and cached
         last_update_status = feedback_models.Report.latest_updated()
-        geojson_lookup = f"fr_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
+        geojson_lookup = f"en_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
         cache_content = cache.get(geojson_lookup)
 
         self.assertEqual(response.content, cache_content.content)
@@ -355,7 +355,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)
 
     @test_for_workflow_mode
     def test_csv_hidden_emails(self):
@@ -367,7 +367,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertNotIn("Courriel", column_names)
+        self.assertNotIn("Email", column_names)
 
     @test_for_workflow_mode
     def test_csv_manager_sees_emails(self):
@@ -379,7 +379,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)
 
     @test_for_report_and_basic_modes
     def test_normal_csv_emails(self):
@@ -391,4 +391,4 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)

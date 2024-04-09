@@ -14,7 +14,6 @@ from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils import translation
 from landez.sources import DownloadError
 from modeltranslation.utils import build_localized_fieldname
 from PIL import Image
@@ -63,7 +62,6 @@ class SyncMobileTilesTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        translation.deactivate()
 
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tiles, mock_tileslist):
@@ -147,11 +145,6 @@ class SyncMobileTilesTest(VarTmpTestCase):
 
 
 class SyncMobileFailTest(VarTmpTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        translation.deactivate()
-
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join(self.sync_directory, 'other'))
         with self.assertRaisesRegex(CommandError, "Destination directory contains extra data"):
@@ -236,7 +229,6 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        translation.deactivate()
 
         cls.portals = []
 
@@ -312,7 +304,6 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        translation.deactivate()
 
     def test_sync_settings(self):
         output = StringIO()
@@ -403,7 +394,6 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                                             attachment_file=get_dummy_uploaded_image())
         cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
                                                           attachment_file=get_dummy_uploaded_image())
-        translation.deactivate()
 
     def test_sync_treks(self):
         output = StringIO()

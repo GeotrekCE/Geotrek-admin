@@ -187,7 +187,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Nouveau Signalement à traiter")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] New report to process")
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
@@ -294,20 +294,20 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(self.interv_report.assigned_user, WorkflowManager.objects.first().user)
         self.assertEqual(len(mail.outbox), mails_before + 1)
-        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] Un Signalement est à clôturer")
+        self.assertEqual(mail.outbox[-1].subject, "[Geotrek] A report must be solved")
         self.assertEqual(mail.outbox[-1].to, [self.workflow_manager.user.email])
 
     @test_for_report_and_basic_modes
     def test_can_create_intervention(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
+        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
 
     @test_for_workflow_mode
     def test_can_only_create_intervention_once_1(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.filed_report.pk}), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("Ajouter une intervention", response.content.decode("utf-8"))
+        self.assertNotIn("Add a new intervention", response.content.decode("utf-8"))
 
     @test_for_workflow_mode
     def test_predefined_emails_serialized(self):
@@ -330,7 +330,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     def test_can_only_create_intervention_once_2(self):
         response = self.client.get(reverse('feedback:report_detail', kwargs={'pk': self.waiting_report.pk}), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Ajouter une intervention", response.content.decode("utf-8"))
+        self.assertIn("Add a new intervention", response.content.decode("utf-8"))
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")

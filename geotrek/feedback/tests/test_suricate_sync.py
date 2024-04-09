@@ -537,19 +537,19 @@ def test_for_all_suricate_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)
@@ -562,13 +562,13 @@ def test_for_report_and_basic_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
@@ -580,7 +580,7 @@ def test_for_report_and_basic_modes(test_func):
 def test_for_workflow_mode(test_func):
     def inner(self, *args, **kwargs):
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)
