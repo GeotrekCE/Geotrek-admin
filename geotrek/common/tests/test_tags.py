@@ -1,9 +1,10 @@
 from django.test import TestCase
 
 from geotrek.common.templatetags.geotrek_tags import duration
+from geotrek.common.tests import TranslationResetMixin
 
 
-class DurationTagTestCase(TestCase):
+class DurationTagTestCase(TranslationResetMixin, TestCase):
     def test_duration_lt_1h(self):
         self.assertEqual("15 min", duration(0.25))
         self.assertEqual("30 min", duration(0.5))
