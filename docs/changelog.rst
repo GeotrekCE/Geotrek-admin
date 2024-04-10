@@ -9,7 +9,7 @@ CHANGELOG
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 
-**Features**
+**Improvements**
 
 - Add 'feedback' on filter modules list (#3972)
 
