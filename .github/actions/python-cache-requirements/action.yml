@@ -18,7 +18,6 @@ runs:
           requirements.txt
           dev-requirements.txt
           docs/requirements.txt
-    - uses: yezz123/setup-uv@v4
     - run: |
-        uv pip install -r ${{ inputs.requirements }}
+        pip install -r ${{ inputs.requirements }}
       shell: bash
