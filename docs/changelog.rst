@@ -14,6 +14,10 @@ CHANGELOG
 
 - Improve static pages documentation (#4050
 
+**Improvements**
+
+- Remove unused `postgres` volume in docker compose file for production
+
 
 2.104.2 (2024-04-04)
 --------------------
