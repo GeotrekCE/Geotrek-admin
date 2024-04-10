@@ -107,10 +107,9 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - uses: yezz123/setup-uv@v4
-
     - name: Install python dependencies
       run: |
+        pip install uv
         uv venv ./venv
         uv pip install -r dev-requirements.txt -U
 
