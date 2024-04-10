@@ -8,11 +8,15 @@ CHANGELOG
 **Bug fixes**
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
-- Remove unused `postgres` volume in docker compose file for production
+- Fix crash on migrate when db username or dbname contains dash
 
 **Documentation**
 
 - Improve static pages documentation (#4050
+
+**Improvements**
+
+- Remove unused `postgres` volume in docker compose file for production
 
 
 2.104.2 (2024-04-04)
