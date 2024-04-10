@@ -141,7 +141,8 @@ jobs:
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run ./manage.py test -v 3
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
     # codecov-action version 3.1.4 is the last version supported by bionic (3.1.5 requires node 20)
