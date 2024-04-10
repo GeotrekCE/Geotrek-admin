@@ -3,7 +3,7 @@ name: Check deps
 on:
   pull_request:
     paths:
-      - setup.py
+      - pyproject.toml.py
       - requirements.txt
       - dev-requirements.txt
       - docs/requirements.txt
@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install -c dev-requirements.txt pip-tools
+          pip install uv
 
       - name: Check dependency graph
         run: |
