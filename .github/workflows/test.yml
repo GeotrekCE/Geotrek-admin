@@ -72,11 +72,12 @@ jobs:
       with:
         path: |
           ./venv
+          ~/.cache/uv
 
-        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+        key: uv-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-          pip-${{ matrix.python-version }}-${{ matrix.os }}
+          uv-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          uv-${{ matrix.python-version }}-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -109,7 +110,6 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        rm -rf ./venv
         pip install uv
         uv venv -p /usr/bin/python${{ matrix.python-version }} venv
         . venv/bin/activate
