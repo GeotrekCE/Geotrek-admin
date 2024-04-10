@@ -110,7 +110,8 @@ jobs:
     - name: Install python dependencies
       run: |
         pip install uv
-        uv venv -p /usr/bin/python${{ matrix.python-version }} ./venv
+        uv venv -p /usr/bin/python${{ matrix.python-version }} venv
+        source ./venv/bin/activate
         uv pip install -r dev-requirements.txt -U
 
     - name: Create test required directories
