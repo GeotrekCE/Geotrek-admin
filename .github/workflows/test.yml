@@ -121,6 +121,12 @@ jobs:
       run: |
         mkdir -p ./var/log ./var/cache/sessions
 
+    - name: Prepare environment
+      run: |
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
+        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python3 ./manage.py compilemessages
+
     - name: Check missing migrations
       run: |
         ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
@@ -128,12 +134,6 @@ jobs:
     - name: Check running migrations
       run: |
         ENV=dev ./venv/bin/python3 ./manage.py migrate
-
-    - name: Prepare environment
-      run: |
-        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
 
     - name: Launch Celery
       run: |
