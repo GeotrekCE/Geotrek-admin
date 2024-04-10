@@ -3,7 +3,7 @@ name: Check deps
 on:
   pull_request:
     paths:
-      - setup.py
+      - pyproject.toml.py
       - requirements.txt
       - dev-requirements.txt
       - docs/requirements.txt
@@ -31,13 +31,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install -c dev-requirements.txt pip-tools
+          pip install uv
 
       - name: Check dependency graph
         run: |
-          pip-compile -q --strip-extras
-          pip-compile -q --strip-extras dev-requirements.in
-          pip-compile -q --strip-extras docs/requirements.in
+          make ci_check_deps
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v17

@@ -4,6 +4,8 @@ else
   docker_compose=docker-compose
 endif
 
+dep_update = uv pip compile -q --strip-extras pyproject.toml --output-file requirements.txt && uv pip compile pyproject.toml -c requirements.txt -q --strip-extras --extra dev --output-file dev-requirements.txt && uv pip compile --strip-extras -q docs/requirements.in --output-file docs/requirements.txt
+
 -include Makefile.perso.mk
 
 ###########################
@@ -32,7 +34,10 @@ serve:
 	$(docker_compose) up
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
+	$(docker_compose) run --rm web bash -c "$(dep_update)"
+
+ci_check_deps:
+	$(dep_update)
 
 flake8:
 	$(docker_compose) run --rm web flake8 geotrek

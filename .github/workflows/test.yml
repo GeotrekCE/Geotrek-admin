@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Test CI
 
 on:
@@ -75,11 +72,12 @@ jobs:
       with:
         path: |
           ./venv
+          ~/.cache/uv
 
-        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+        key: uv-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-          pip-${{ matrix.python-version }}-${{ matrix.os }}
+          uv-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          uv-${{ matrix.python-version }}-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -112,10 +110,10 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
-        ./venv/bin/pip3 install -r requirements.txt -U
-        ./venv/bin/pip3 install -r dev-requirements.txt -U
+        pip install uv
+        uv venv -p /usr/bin/python${{ matrix.python-version }} venv
+        . venv/bin/activate
+        uv pip install -r dev-requirements.txt -U
 
     - name: Create test required directories
       run: |
@@ -174,6 +172,16 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
+        - uses: ./.github/actions/python-cache-requirements
+          with:
+            requirements: requirements.txt
+
+        - name: Compile translations
+          run: |
+            pip3 install django -c requirements.txt
+            sudo apt-get -qqy install gettext
+            django-admin compilemessages
+
         - name: Prepare debian 18.04 versioning
           run: |
             grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -196,6 +204,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/python-cache-requirements
+        with:
+          requirements: requirements.txt
+
+      - name: Compile translations
+        run: |
+          pip3 install django -c requirements.txt
+          sudo apt-get -qqy install gettext
+          django-admin compilemessages
+
       - name: Prepare debian 20.04 versioning
         run: |
           sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog

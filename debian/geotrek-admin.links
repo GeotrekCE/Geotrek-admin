@@ -1,1 +1,1 @@
-opt/geotrek-admin/bin/manage.py usr/sbin/geotrek
+/opt/geotrek-admin/bin/manage.py /usr/sbin/geotrek
