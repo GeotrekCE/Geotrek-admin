@@ -57,10 +57,10 @@ coverage:
 	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
 	rm ./var/.coverage*
 
-tests:
+test:
 	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
 
-tests_nds:
+test_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --noinput --parallel
 
 test_nav:
@@ -75,7 +75,7 @@ node_modules:
 test_js: node_modules
 	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
-tests: test test_js test_nav
+tests: test test_nds test_js test_nav
 
 update:
 	$(docker_compose) run web update.sh
