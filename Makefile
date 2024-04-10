@@ -4,7 +4,7 @@ else
   docker_compose=docker-compose
 endif
 
-dep_update = pip-compile -q --strip-extras && pip-compile -c requirements.txt -q --strip-extras --extra dev --output-file dev-requirements.txt && pip-compile --strip-extras -q docs/requirements.in
+dep_update = uv pip compile -q --strip-extras pyproject.toml --output-file requirements.txt && uv pip compile pyproject.toml -c requirements.txt -q --strip-extras --extra dev --output-file dev-requirements.txt && uv pip compile --strip-extras -q docs/requirements.in --output-file docs/requirements.txt
 
 -include Makefile.perso.mk
 

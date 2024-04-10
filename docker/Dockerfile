@@ -65,23 +65,24 @@ USER root
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
     python3.8-dev \
-    python3.8-venv \
+    python3-pip \
     build-essential \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
+RUN pip install --no-cache-dir uv
+
 USER geotrek
-RUN python3.8 -m venv /opt/venv
-RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
+
+RUN uv venv /opt/venv
 COPY requirements.txt requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
+RUN . /opt/venv/bin/activate && uv pip install -r requirements.txt
 
 FROM build as dev
 
 COPY dev-requirements.txt dev-requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt
 COPY ./docs/requirements.txt doc-requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r doc-requirements.txt
+RUN . /opt/venv/bin/activate && uv pip sync dev-requirements.txt && uv pip install -r doc-requirements.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
@@ -92,7 +93,8 @@ ENV ENV prod
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
 COPY --chown=geotrek:geotrek manage.py manage.py
-COPY --chown=geotrek:geotrek pyproject.toml pyproject.toml
+COPY --chown=geotrek:geotrek VERSION VERSION
+COPY --chown=geotrek:geotrek setup.cfg setup.cfg
 
 RUN CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
