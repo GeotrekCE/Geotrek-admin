@@ -6,6 +6,7 @@ import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Max, Count
@@ -339,9 +340,9 @@ class PublishableMixin(BasePublishableMixin):
         picture = self.attachments.filter(is_image=True, title='mapimage').first()
         if picture:
             attached = picture.attachment_file
-            src = os.path.join(settings.MEDIA_ROOT, attached.name)
+            src = attached.path
             dst = self.get_map_image_path()
-            shutil.copyfile(src, dst)
+            shutil.copyfile(src, default_storage.path(dst))
         else:
             super().prepare_map_image(rooturl)
 

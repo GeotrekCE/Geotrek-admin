@@ -14,6 +14,7 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
@@ -59,7 +60,7 @@ def mocked_image(file_name):
 
 @override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
-class SuricateTests(TestCase):
+class SuricateTests(TranslationResetMixin, TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False):
@@ -206,20 +207,20 @@ class SuricateAPITests(SuricateTests):
         r.comment = ""
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.comment, "")
+        self.assertEqual(r.comment, "")
         call_command("sync_suricate", report=r.pk, verbosity=2)
         r.refresh_from_db()
-        self.assertEquals(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
+        self.assertEqual(r.comment, "Ne pas prendre la route Départementale 155 en direction de Malons")
         # Test sync last report overwrites local info
         r = Report.objects.get(external_uuid="7EE5DF25-5056-AA2B-DDBEEFA5768CD53E")
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.comment, "Lames cassées")
         r.comment = ""
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.comment, "")
+        self.assertEqual(r.comment, "")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS_NO_MODERATION)
@@ -249,12 +250,12 @@ class SuricateAPITests(SuricateTests):
         r.comment = "I was changed"
         r.save()
         r.refresh_from_db()
-        self.assertEquals(r.status.identifier, "programmed")
+        self.assertEqual(r.status.identifier, "programmed")
         call_command("sync_suricate", report=0, verbosity=2)
         r.refresh_from_db()
         # Comment change was overriden, status change was not
-        self.assertEquals(r.status.identifier, "programmed")
-        self.assertEquals(r.comment, "Lames cassées")
+        self.assertEqual(r.status.identifier, "programmed")
+        self.assertEqual(r.comment, "Lames cassées")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")
@@ -405,7 +406,7 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mock_get)
         call_command("sync_suricate", test=True)
         # Assert outputs OK
-        self.assertEquals(mocked_stdout.getvalue(), 'API Standard :\nOK\nAPI Gestion :\nOK\n')
+        self.assertEqual(mocked_stdout.getvalue(), 'API Standard :\nOK\nAPI Gestion :\nOK\n')
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -417,7 +418,7 @@ class SuricateAPITests(SuricateTests):
         self.build_failed_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
-        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 400\nAPI Gestion :\nKO - Status code: 400\n")
+        self.assertEqual(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 400\nAPI Gestion :\nKO - Status code: 400\n")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("sys.stdout", new_callable=io.StringIO)
@@ -429,7 +430,7 @@ class SuricateAPITests(SuricateTests):
         self.build_timeout_request_patch(mock_get)
         # Assert outputs KO
         call_command("sync_suricate", test=True)
-        self.assertEquals(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
+        self.assertEqual(mocked_stdout.getvalue(), "API Standard :\nKO - Status code: 408\nAPI Gestion :\nKO - Status code: 408\n")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
@@ -536,19 +537,19 @@ def test_for_all_suricate_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)
@@ -561,13 +562,13 @@ def test_for_report_and_basic_modes(test_func):
     def inner(self, *args, **kwargs):
         exceptions = []
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'No Suricate' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=False):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Report' mode",)
@@ -579,7 +580,7 @@ def test_for_report_and_basic_modes(test_func):
 def test_for_workflow_mode(test_func):
     def inner(self, *args, **kwargs):
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True, LANGUAGE_CODE='fr'):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)

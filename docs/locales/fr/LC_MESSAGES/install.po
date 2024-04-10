@@ -2002,11 +2002,11 @@ msgid "Create user and database, enable PostGIS extension"
 msgstr ""
 
 #: ../../install/docker.rst:23
-msgid "Run ``docker-compose run --rm web update.sh``"
+msgid "Run ``docker compose run --rm web update.sh``"
 msgstr ""
 
 #: ../../install/docker.rst:24
-msgid "Run ``docker-compose up``"
+msgid "Run ``docker compose up``"
 msgstr ""
 
 #: ../../install/docker.rst:25

@@ -32,7 +32,7 @@ serve:
 	$(docker_compose) up
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q && pip-compile -q dev-requirements.in && pip-compile -q docs/requirements.in"
+	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
 
 flake8:
 	$(docker_compose) run --rm web flake8 geotrek
@@ -40,22 +40,28 @@ flake8:
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
 
+compilemessages:
+	$(docker_compose) run --rm web ./manage.py compilemessages
+
 ###########################
 #        coverage         #
 ###########################
 verbose_level ?= 1
+report ?= report -m
 .PHONY: coverage
 coverage:
+	rm ./var/.coverage* || true
 	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
-	$(docker_compose) run -e ENV=tests web coverage run ./manage.py test $(test_name) -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests_nds web coverage run -a ./manage.py test $(test_name) -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests web coverage lcov
+	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
+	rm ./var/.coverage*
 
 test:
-	$(docker_compose) run -e ENV=tests --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
 
 test_nds:
-	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --noinput --parallel
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
@@ -69,7 +75,7 @@ node_modules:
 test_js: node_modules
 	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
-tests: test test_js test_nav
+tests: test test_nds test_js test_nav
 
 update:
 	$(docker_compose) run web update.sh

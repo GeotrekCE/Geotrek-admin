@@ -166,30 +166,30 @@ class CheckVersionsCommandTestCase(TestCase):
         self.output = StringIO()
 
     def test_geotrek_version(self):
-        call_command('check_versions', '--geotrek', stdout=self.output)
+        call_command('check_versions', '--geotrek', '--no-color', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), __version__)
 
     @patch('geotrek.common.management.commands.check_versions.sys')
     def test_python_version(self, mock_sys):
         type(mock_sys).version_info = PropertyMock(return_value=(3, 9, 1, 'final', 0))
-        call_command('check_versions', '--python', stdout=self.output)
+        call_command('check_versions', '--python', '--no-color', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), '3.9.1')
 
     @patch('django.get_version', return_value='3.2.7')
     def test_django_version(self, mock_get_version):
-        call_command('check_versions', '--django', stdout=self.output)
+        call_command('check_versions', '--django', '--no-color', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), '3.2.7')
 
     @patch('django.db.connection.cursor')
     def test_postgresql_version(self, mock_cursor):
         mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['13.3']
-        call_command('check_versions', '--postgresql', stdout=self.output)
+        call_command('check_versions', '--postgresql', '--no-color', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), '13.3')
 
     @patch('django.db.connection.cursor')
     def test_postgis_version(self, mock_cursor):
         mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['3.1.0']
-        call_command('check_versions', '--postgis', stdout=self.output)
+        call_command('check_versions', '--postgis', '--no-color', stdout=self.output)
         self.assertEqual(self.output.getvalue().strip(), '3.1.0')
 
     @patch('geotrek.common.management.commands.check_versions.sys')
@@ -198,7 +198,7 @@ class CheckVersionsCommandTestCase(TestCase):
     def test_full_version(self, mock_cursor, mock_get_version, mock_version_info):
         type(mock_version_info).version = PropertyMock(return_value="3.9.1")
         mock_cursor.return_value.__enter__.return_value.fetchone.return_value = ['14', '3.0']
-        call_command('check_versions', '--full', stdout=self.output)
+        call_command('check_versions', '--full', '--no-color', stdout=self.output)
         expected_result = (
             f"Geotrek version    : {__version__}\n"
             "Python version     : 3.9.1\n"

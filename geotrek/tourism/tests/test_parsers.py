@@ -628,7 +628,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 2)
-        content = TouristicContent.objects.first()
+        content = TouristicContent.objects.last()
         self.assertEqual(content.eid, "HOTCEN0280010001")
         self.assertEqual(content.name, "Hôtel du Perche")
         self.assertEqual(content.description[:27], "")

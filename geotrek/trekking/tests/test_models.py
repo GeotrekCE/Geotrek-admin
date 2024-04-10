@@ -1,6 +1,5 @@
 import datetime
 import os
-from tempfile import TemporaryDirectory
 from unittest import skipIf
 
 from bs4 import BeautifulSoup
@@ -15,7 +14,6 @@ from django.test.utils import override_settings
 from easy_thumbnails.files import ThumbnailFile
 
 from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
@@ -169,7 +167,6 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_correct_picture(self):
         trek = TrekFactory()
         AttachmentImageFactory.create_batch(5, content_object=trek)
@@ -177,20 +174,17 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
         self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_wrong_picture(self):
         trek = TrekFactory()
         error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
         os.unlink(error_image_attachment.attachment_file.path)
         self.assertIsNone(trek.picture_print)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_pictures_print_thumbnail_no_picture(self):
         trek = TrekFactory()
         self.assertEqual(trek.pictures.count(), 0)
         self.assertIsNone(trek.picture_print, ThumbnailFile)
 
-    @override_settings(MEDIA_ROOT=TemporaryDirectory().name)
     def test_thumbnail(self):
         trek = TrekFactory()
         AttachmentImageFactory(content_object=trek)
@@ -527,7 +521,6 @@ class RatingTest(TestCase):
 class CascadedDeletionLoggingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        clear_internal_user_cache()
         cls.practice = PracticeFactory(name="Pratice A")
         cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
         cls.rating = RatingFactory(scale=cls.scale)
@@ -535,7 +528,6 @@ class CascadedDeletionLoggingTest(TestCase):
         cls.weblink = WebLinkFactory(category=cls.categ)
 
     def test_cascading_from_practice(self):
-        clear_internal_user_cache()
         practice_pk = self.practice.pk
         self.practice.delete()
         rating_model_num = ContentType.objects.get_for_model(Rating).pk

@@ -3,7 +3,6 @@ import json
 import os
 from copy import copy
 from io import StringIO
-from tempfile import TemporaryDirectory
 from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
@@ -1151,7 +1150,6 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 0)
 
 
-@override_settings(TMP_DIR=TemporaryDirectory().name)
 class TestApidaeTrekParserConvertEncodingFiles(TestCase):
     data_dir = "geotrek/trekking/tests/data"
 

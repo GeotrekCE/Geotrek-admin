@@ -60,3 +60,5 @@ docs/_build/
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
 /dpkg/
+/coverage.lcov
+/htmlcov/

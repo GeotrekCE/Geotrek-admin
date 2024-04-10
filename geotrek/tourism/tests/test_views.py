@@ -1,8 +1,5 @@
-from shutil import rmtree
-from tempfile import mkdtemp
 from unittest import mock
 
-from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -191,7 +188,6 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
     def test_external_public_document_pdf(self):
         content = TouristicContentFactory.create(published=True)
         Attachment.objects.create(
@@ -200,7 +196,6 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
             creator=UserFactory.create(),
             attachment_file=SimpleUploadedFile('external.pdf', b'External PDF')
         )
-        rmtree(settings.MEDIA_ROOT)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

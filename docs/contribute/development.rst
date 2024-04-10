@@ -12,16 +12,17 @@ Quickstart
 
 ::
 
-    cp .env-dev.dist .env
+    cp .env.dist .env
     # Edit .env if need be
-    cp docker-compose-dev.yml docker-compose.yml
-    docker-compose build
-    docker-compose run --rm web update.sh
-    docker-compose run --rm web load_data.sh
-    docker-compose run --rm web ./manage.py createsuperuser
-    docker-compose up -d
+    docker compose build
+    docker compose run --rm web update.sh
+    docker compose run --rm web load_data.sh
+    docker compose run --rm web ./manage.py createsuperuser
+    docker compose up
 
-Go to ``http://geotrek.localhost:8000``.
+Edit `/etc/hosts` file to add `geotrek.local` alias to `127.0.0.1`
+
+Go to ``http://geotrek.local:8000`` in your browser
 
 PDF generation might not work unless you use this domain and is correctly set to SERVER_NAME variable in your .env file.
 
@@ -46,14 +47,14 @@ Consider using pip-tools to manage dependencies.
 
 ::
 
-   docker-compose run --rm web pip-compile
-   docker-compose run --rm web pip-compile dev-requirements.in
+   make deps
 
 or
 
 ::
 
-   make deps
+    docker compose run --rm web pip-compile
+    docker compose run --rm web pip-compile dev-requirements.in
 
 
 Model modification
@@ -61,8 +62,8 @@ Model modification
 
 ::
 
-   docker-compose run --rm web ./manage.py makemigrations <appName>
-   docker-compose run --rm web ./manage.py migrate
+   docker compose run --rm web ./manage.py makemigrations <appName>
+   docker compose run --rm web ./manage.py migrate
 
 .. note::
 
@@ -137,14 +138,14 @@ run:
 
 ::
 
-   docker-compose run --rm web flake8 geotrek
+   make flake8
 
 
 or
 
 ::
 
-   make flake8
+   docker compose run --rm web flake8 geotrek
 
 
 Run tests
@@ -152,17 +153,42 @@ Run tests
 
 **Django tests :**
 
-``ENV`` variable must be set to run tests:
+run:
 
 ::
 
-   docker-compose run --rm -e ENV=tests web ./manage.py test
+   make coverage
 
-Test without dynamic segmentation:
+
+To run all test suites and report global coverage
+
+
+To run a specific test suite, run:
 
 ::
 
-   docker-compose run --rm -e ENV=tests_nds web ./manage.py test
+    make tests
+
+or
+
+::
+
+   docker compose run --rm -e ENV=tests web ./manage.py test
+
+
+And
+
+
+::
+
+    make tests_nds
+
+or
+
+::
+
+   docker compose run --rm -e ENV=tests_nds web ./manage.py test
+
 
 
 **Cypress tests :**
@@ -171,8 +197,8 @@ Create an empty project with Docker :
 
 ::
 
-    docker-compose down
-    docker-compose up -d
+    docker compose down
+    docker compose up -d
 
 
 Install elements for the cypress tests
@@ -205,7 +231,7 @@ Pictures of the problem and videos are generated in ``cypress/videos`` and ``cyp
 Setup to use screamshotter-related features locally
 ===================================================
 
-Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local Geotrek-admin web instance. By default the address is ``http://geotrek.localhost:8000``.
+Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local Geotrek-admin web instance. By default the address is ``http://geotrek.local:8000``.
 
 
 Database reset
@@ -215,7 +241,7 @@ Data only:
 
 ::
 
-   docker-compose run --rm web ./manage.py flush
+   docker compose run --rm web ./manage.py flush
 
 Restore existing Database
 =========================
@@ -224,7 +250,7 @@ Assuming a dump of your database is located in your project directory:
 
 ::
 
-   docker-compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
+   docker compose run --rm web pg_restore --clean --no-owner --no-acl -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /opt/geotrek-admin/<path_to_backup>.dump
 
 Restore your ``./var/conf/`` project files, and data files into ``./var/media``.
 

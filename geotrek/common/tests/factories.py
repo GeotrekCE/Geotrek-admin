@@ -1,9 +1,7 @@
 import factory
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
-from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_file, get_dummy_uploaded_image_svg)
+from geotrek.common.utils.testdata import get_dummy_uploaded_file, get_dummy_uploaded_image_svg
 
 from .. import models
 
@@ -67,7 +65,7 @@ class ThemeFactory(factory.django.DjangoModelFactory):
         model = models.Theme
 
     label = factory.Sequence(lambda n: "Theme %s" % n)
-    pictogram = dummy_filefield_as_sequence('theme-%s.png')
+    pictogram = factory.django.ImageField()
 
 
 class RecordSourceFactory(factory.django.DjangoModelFactory):
@@ -76,7 +74,7 @@ class RecordSourceFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "Record source %s" % n)
     website = 'http://geotrek.fr'
-    pictogram = dummy_filefield_as_sequence('recordsource-%s.png')
+    pictogram = factory.django.ImageField()
 
 
 class TargetPortalFactory(factory.django.DjangoModelFactory):
@@ -99,7 +97,7 @@ class LabelFactory(factory.django.DjangoModelFactory):
         model = models.Label
 
     name = "Label"
-    pictogram = get_dummy_uploaded_image('label.png')
+    pictogram = factory.django.ImageField()
     advice = "Advice label"
     filter = True
     published = True
@@ -114,7 +112,7 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.AccessibilityAttachment
 
-    attachment_accessibility_file = get_dummy_uploaded_image()
+    attachment_accessibility_file = factory.django.ImageField()
 
     creator = factory.SubFactory(UserFactory)
     title = factory.Sequence("Title {0}".format)
@@ -124,7 +122,7 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
 class HDViewPointFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HDViewPoint
-    picture = get_dummy_uploaded_image()
+    picture = factory.django.ImageField()
     title = "A title"
     author = "An author"
     legend = "Something"

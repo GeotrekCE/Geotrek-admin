@@ -2,8 +2,6 @@ import json
 import os
 import urllib
 from io import StringIO
-from shutil import rmtree
-from tempfile import mkdtemp
 from unittest import mock, skipIf
 
 import requests
@@ -256,14 +254,9 @@ class MultilangParserTests(TestCase):
         self.assertEqual(theme_imported.label_fr, 'filtered Paysages')
 
 
-@override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
 class AttachmentParserTests(TestCase):
     def setUp(self):
         self.filetype = FileType.objects.create(type="Photographie")
-
-    def tearDown(self):
-        if os.path.exists(settings.MEDIA_ROOT):
-            rmtree(settings.MEDIA_ROOT)
 
     @mock.patch('requests.get')
     def test_attachment(self, mocked):

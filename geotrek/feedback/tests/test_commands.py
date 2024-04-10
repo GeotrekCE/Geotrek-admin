@@ -41,8 +41,8 @@ class TestFlushPendingRequests(TestCase):
     def test_flush_all(self):
         PendingSuricateAPIRequest.objects.create(params="{}")
         PendingEmail.objects.create()
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
-        self.assertEquals(PendingEmail.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingEmail.objects.count(), 1)
         call_command('retry_failed_requests_and_mails', flush=True)
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
-        self.assertEquals(PendingEmail.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingEmail.objects.count(), 0)

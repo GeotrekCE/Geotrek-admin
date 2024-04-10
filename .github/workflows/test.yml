@@ -113,13 +113,19 @@ jobs:
     - name: Install python dependencies
       run: |
         python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools
+        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
 
     - name: Create test required directories
       run: |
         mkdir -p ./var/log ./var/cache/sessions
+
+    - name: Prepare environment
+      run: |
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
+        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python3 ./manage.py compilemessages
 
     - name: Check missing migrations
       run: |
@@ -129,20 +135,14 @@ jobs:
       run: |
         ENV=dev ./venv/bin/python3 ./manage.py migrate
 
-    - name: Prepare environment
-      run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
-
     - name: Launch Celery
       run: |
         ./venv/bin/celery -A geotrek worker -c 1 &
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run ./manage.py test -v 3
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
     # codecov-action version 3.1.4 is the last version supported by bionic (3.1.5 requires node 20)

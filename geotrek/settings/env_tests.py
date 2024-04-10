@@ -1,14 +1,16 @@
 #
 #  Django Tests
 # ..........................
+from .base import *  # noqa
+import shutil
+from tempfile import TemporaryDirectory
+import os
 
 TEST = True
 
 ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
-
-# TEST_EXCLUDE = ('django',)
 
 ALLOWED_HOSTS = ['localhost']
 
@@ -18,9 +20,6 @@ INSTALLED_APPS += (
     'geotrek.outdoor',
     'drf_yasg',
 )
-
-LOGGING['loggers']['']['handlers'] = ('log_file', )
-LOGGING['handlers']['log_file']['level'] = 'INFO'
 
 LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
@@ -51,6 +50,7 @@ class DisableMigrations():
     def __getitem__(self, item):
         return None
 
+
 MIGRATION_MODULES = DisableMigrations()
 
 ADMINS = (
@@ -59,4 +59,19 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# TEST_RUNNER = 'geotrek.test_runner.TestRunner'
+# recreate TMP_DIR for tests, and it as base dir forl all files
+TMP_DIR = os.path.join(TMP_DIR, 'tests')
+if os.path.exists(TMP_DIR):
+    shutil.rmtree(TMP_DIR)
+SESSIONS_DIR = os.path.join(TMP_DIR, 'sessions')
+os.makedirs(SESSIONS_DIR)
+
+SESSION_FILE_PATH = SESSIONS_DIR  # sessions files
+LOGGING['loggers']['']['handlers'] = ('log_file', )
+LOGGING['handlers']['log_file']['level'] = 'INFO'
+LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
+MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
+SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
+MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
+DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image
+REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"  # celery broker url

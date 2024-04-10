@@ -9,7 +9,6 @@ from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils import translation
 from django.utils.module_loading import import_string
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory, UserFactory
@@ -88,7 +87,7 @@ class ReportSerializationOptimizeTests(TestCase):
 
         # We check the content was created and cached
         last_update_status = feedback_models.Report.latest_updated()
-        geojson_lookup = f"fr_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
+        geojson_lookup = f"en_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
         cache_content = cache.get(geojson_lookup)
 
         self.assertEqual(response.content, cache_content.content)
@@ -316,7 +315,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     def test_cannot_delete_report_intervention(self):
         self.client.force_login(user=self.admin)
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("disabled delete", response.content.decode("utf-8"))
 
     @test_for_workflow_mode
@@ -326,7 +325,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         report.status = feedback_factories.ReportStatusFactory(identifier='solved')
         report.save()
         response = self.client.get(f"/intervention/edit/{self.intervention.pk}/", follow=True)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn("delete", response.content.decode("utf-8"))
         self.assertNotIn("disabled delete", response.content.decode("utf-8"))
 
@@ -349,7 +348,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     @test_for_workflow_mode
     def test_csv_superuser_sees_emails(self):
         '''Test CSV job costs export does contain emails for superuser'''
-        translation.activate('fr')
         self.client.force_login(user=self.super_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -357,12 +355,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)
 
     @test_for_workflow_mode
     def test_csv_hidden_emails(self):
         '''Test CSV job costs export do not contain emails for supervisor'''
-        translation.activate('fr')
         self.client.force_login(user=self.normal_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -370,12 +367,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertNotIn("Courriel", column_names)
+        self.assertNotIn("Email", column_names)
 
     @test_for_workflow_mode
     def test_csv_manager_sees_emails(self):
         '''Test CSV job costs export does contain emails for manager'''
-        translation.activate('fr')
         self.client.force_login(user=self.workflow_manager_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -383,12 +379,11 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)
 
     @test_for_report_and_basic_modes
     def test_normal_csv_emails(self):
         '''Test CSV job costs export do not contain emails for supervisor'''
-        translation.activate('fr')
         self.client.force_login(user=self.normal_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)
@@ -396,4 +391,4 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
         dict_from_csv = dict(list(reader)[0])
         column_names = list(dict_from_csv.keys())
-        self.assertIn("Courriel", column_names)
+        self.assertIn("Email", column_names)

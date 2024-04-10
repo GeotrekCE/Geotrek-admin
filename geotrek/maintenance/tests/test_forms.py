@@ -1,10 +1,11 @@
 from django.test import TestCase
 from geotrek.authent.tests.factories import UserFactory
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory
 from geotrek.maintenance.forms import InterventionForm, ManDayForm, ProjectForm
 
 
-class ManDayFormTest(TestCase):
+class ManDayFormTest(TranslationResetMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -60,7 +61,7 @@ class InterventionFormTest(TestCase):
         self.assertIn("Begin date is after end date", str(form.errors))
 
 
-class ProjectDateFormTest(TestCase):
+class ProjectDateFormTest(TranslationResetMixin, TestCase):
 
     def test_begin_end_date(self):
         user = UserFactory()

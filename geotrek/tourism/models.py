@@ -152,7 +152,6 @@ GEOMETRY_TYPES = Choices(
 
 
 class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
-
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
     type1_label = models.CharField(verbose_name=_("First list label"), max_length=128,
@@ -226,8 +225,7 @@ class TouristicContentType2(TouristicContentType):
 
 class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                        StructureRelated, TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
-    """ A generic touristic content (accomodation, museum, etc.) in the park
-    """
+    """ A generic touristic content (accommodation, museum, etc.) in the park """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -279,6 +277,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     class Meta:
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name

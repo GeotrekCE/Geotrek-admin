@@ -5,7 +5,6 @@ set -e
 mkdir -p /opt/geotrek-admin/var/static \
          /opt/geotrek-admin/var/conf/extra_static \
          /opt/geotrek-admin/var/media/upload \
-         /opt/geotrek-admin/var/data \
          /opt/geotrek-admin/var/cache/sessions \
          /opt/geotrek-admin/var/cache/api_v2 \
          /opt/geotrek-admin/var/cache/fat \

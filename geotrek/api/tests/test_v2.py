@@ -57,7 +57,6 @@ from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
-from mapentity.middleware import clear_internal_user_cache
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -291,10 +290,6 @@ HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted([
 class BaseApiTest(TestCase):
     """ Base TestCase for all API profiles """
 
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
-
     @classmethod
     def setUpTestData(cls):
         # This prevents the test APIAccessAnonymousTestCase.test_hdviewpoint_detail_content_poi not passing on some environments.
@@ -497,12 +492,12 @@ class BaseApiTest(TestCase):
     def check_number_elems_response(self, response, model):
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), model.objects.count())
+        self.assertEqual(len(json_response['results']), model.objects.count())
 
     def check_structure_response(self, response, structure):
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), structure)
+        self.assertEqual(sorted(json_response.keys()), structure)
 
     def get_trek_list(self, params=None):
         return self.client.get(reverse('apiv2:trek-list'), params)
@@ -1546,7 +1541,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_structure_filter_list(self):
         response = self.get_structure_list({'portals': self.portal.pk, 'language': 'en'})
-        self.assertEquals(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 1)
 
     def test_structure_detail(self):
         self.check_structure_response(
@@ -1559,7 +1554,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
         services = trek_models.Service.objects.all()
-        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(type__published=True).count())
+        self.assertEqual(len(json_response['results']), services.count() - 1, services.filter(type__published=True).count())
 
     def test_service_detail(self):
         self.check_structure_response(
@@ -1632,7 +1627,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
         services = trek_models.ServiceType.objects.all()
-        self.assertEquals(len(json_response['results']), services.count() - 1, services.filter(published=True).count())
+        self.assertEqual(len(json_response['results']), services.count() - 1, services.filter(published=True).count())
 
     def test_servicetype_detail(self):
         self.check_structure_response(
@@ -1924,11 +1919,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_touristiccontentcategory_list(self):
         json_response = self.get_touristiccontentcategory_list().json()
         # Get two objects for the two published touristic contents
-        self.assertEquals(len(json_response['results']), 2)
+        self.assertEqual(len(json_response['results']), 2)
 
     def test_touristiccontentcategory_list_filter(self):
         response = self.get_touristiccontentcategory_list({'portals': self.portal.pk})
-        self.assertEquals(len(response.json()['results']), 1)
+        self.assertEqual(len(response.json()['results']), 1)
 
     def test_touristiccontent_detail(self):
         self.check_structure_response(
@@ -2237,7 +2232,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_reservationsystem_list_filter(self):
         response = self.get_reservationsystem_list({'portals': self.portal.pk})
         # Two results : one reservationsystem associated with content2 and the other with trek[0]
-        self.assertEquals(len(response.json()['results']), 2)
+        self.assertEqual(len(response.json()['results']), 2)
 
     def test_reservationsystem_detail(self):
         self.check_structure_response(
@@ -2299,7 +2294,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_outdoorpractice_list()
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(
+        self.assertEqual(
             len(json_response['results']),
             outdoor_models.Practice.objects.filter(sites__published=True).distinct().count()
         )
@@ -2457,8 +2452,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json.dumps(json_response.get('annotations'))
         self.assertIsNone(json_response.get('site'))
         self.assertIsNone(json_response.get('poi'))
-        self.assertEquals(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))
-        self.assertEquals(json_response.get('trek').get('id'), self.treks[0].id)
+        self.assertEqual(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))
+        self.assertEqual(json_response.get('trek').get('id'), self.treks[0].id)
 
     def test_hdviewpoint_detail_content_poi(self):
         response = self.get_hdviewpoint_detail(self.hdviewpoint_poi.pk)
@@ -2467,8 +2462,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json.dumps(json_response.get('annotations'))
         self.assertIsNone(json_response.get('site'))
         self.assertIsNone(json_response.get('trek'))
-        self.assertEquals(json_response.get('poi').get('uuid'), str(self.poi.uuid))
-        self.assertEquals(json_response.get('poi').get('id'), self.poi.id)
+        self.assertEqual(json_response.get('poi').get('uuid'), str(self.poi.uuid))
+        self.assertEqual(json_response.get('poi').get('id'), self.poi.id)
 
     def test_hdviewpoint_detail_content_site(self):
         response = self.get_hdviewpoint_detail(self.hdviewpoint_site.pk)
@@ -2477,8 +2472,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json.dumps(json_response.get('annotations'))
         self.assertIsNone(json_response.get('poi'))
         self.assertIsNone(json_response.get('trek'))
-        self.assertEquals(json_response.get('site').get('uuid'), str(self.site.uuid))
-        self.assertEquals(json_response.get('site').get('id'), self.site.id)
+        self.assertEqual(json_response.get('site').get('uuid'), str(self.site.uuid))
+        self.assertEqual(json_response.get('site').get('id'), self.site.id)
 
     def test_hdviewpoint_geom_on_related_lists(self):
         response = self.get_poi_detail(self.poi.pk)
@@ -2607,10 +2602,6 @@ class OutdoorRatingScaleTestCase(TestCase):
         cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
         cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
 
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
-
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_ratingscale/')
         self.assertEqual(response.status_code, 200)
@@ -2668,10 +2659,6 @@ class TrekRatingTestCase(TestCase):
         cls.rating1.treks.set([trek_factory.TrekFactory()])
         cls.rating2.treks.set([trek_factory.TrekFactory()])
         cls.rating3.treks.set([trek_factory.TrekFactory()])
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/trek_rating/')
@@ -2742,10 +2729,6 @@ class OutdoorRatingTestCase(TestCase):
         cls.rating1.sites.set([outdoor_factory.SiteFactory()])
         cls.rating2.sites.set([outdoor_factory.SiteFactory()])
         cls.rating3.sites.set([outdoor_factory.SiteFactory()])
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/outdoor_rating/')
@@ -2830,10 +2813,6 @@ class FlatPageTestCase(TestCase):
         cls.page2 = flatpages_factory.FlatPageFactory(
             title='BBB', published=True, content='Blbh'
         )
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def test_list(self):
         response = self.client.get('/api/v2/flatpage/')
@@ -3538,11 +3517,7 @@ class MenuItemTestCase(TestCase):
 
     def test_detail_with_language_not_found_error(self):
         menu_item = MenuItemFactory(published_en=True, published_fr=False)
-
         response = self.client.get(f'/api/v2/menu_item/{menu_item.pk}/?language=fr')
-
-        from pprint import pprint
-        pprint(response.json())
         self.assertEqual(response.status_code, 404)
 
     def test_detail_with_language_filter_on_children(self):
@@ -3588,10 +3563,6 @@ class ReportStatusTestCase(TestCase):
         cls.magnitude2 = feedback_factory.ReportProblemMagnitudeFactory(label="Hardcore")
         cls.category1 = feedback_factory.ReportCategoryFactory(label="Conflict")
         cls.category2 = feedback_factory.ReportCategoryFactory(label="Literring")
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def test_status_list(self):
         response = self.client.get('/api/v2/feedback_status/')
@@ -3690,10 +3661,6 @@ class LanguageOrderingTestCase(TestCase):
         cls.tc3 = tourism_factory.TouristicContentFactory(name_fr="BAA", name_en="AAA", published_fr=True, published_en=True)
         cls.tc4 = tourism_factory.TouristicContentFactory(name_fr="CCC", name_en="CCC", published_fr=True, published_en=True)
 
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
-
     def assert_ordered_by_language(self, endpoint, ordered_ids, language):
         # GET request on list with language param
         response = self.client.get(reverse(endpoint), {'language': language})
@@ -3733,10 +3700,6 @@ class WebLinksCategoryTestCase(TestCase):
         cls.web_link_cat1 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto1.png', label="To do")
         cls.web_link_cat2 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto2.png', label="To see")
         cls.web_link_cat3 = trek_factory.WebLinkCategoryFactory(pictogram='dummy_picto3.png', label="To eat")
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def test_web_links_category_list(self):
         response = self.client.get(reverse('apiv2:weblink-category-list'))
@@ -3781,10 +3744,6 @@ class TrekWebLinksTestCase(TestCase):
         cls.web_link2 = trek_factory.WebLinkFactory(category=cls.web_link_cat, name="Web link", name_en="Web link", url="http://dummy.url")
         cls.trek1 = trek_factory.TrekFactory(web_links=[cls.web_link1, cls.web_link2])
 
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
-
     def test_web_links_in_trek_list(self):
         response = self.client.get(reverse('apiv2:trek-list'))
         self.assertEqual(response.status_code, 200)
@@ -3826,10 +3785,6 @@ class TrekDifficultyFilterCase(TestCase):
         cls.trek_medium = trek_factory.TrekFactory(difficulty=cls.medium)
         cls.trek_hard = trek_factory.TrekFactory(difficulty=cls.hard)
         cls.trek_v_hard = trek_factory.TrekFactory(difficulty=cls.v_hard)
-
-    def tearDown(self):
-        clear_internal_user_cache()
-        super().tearDown()
 
     def assert_trek_is_in_reponse(self, response, expected_trek):
         found = list(filter(lambda trek: trek['id'] == expected_trek.pk, response.json()['results']))

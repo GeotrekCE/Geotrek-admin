@@ -4,6 +4,7 @@ from unittest import mock
 
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
 from django.utils import translation
@@ -19,9 +20,8 @@ from mapentity.tests import MapEntityTest, MapEntityLiveTest
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
-from .factories import AttachmentFactory, AttachmentAccessibilityFactory
+from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 
 class TranslationResetMixin:
@@ -31,7 +31,6 @@ class TranslationResetMixin:
 
 
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
-
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             return {'topology': 'doh!'}, _('Topology is not valid.')
@@ -108,14 +107,12 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj_1 = self.modelfactory.create(structure=structure)
         obj_1.refresh_from_db()
 
-        AttachmentFactory.create(content_object=obj_1,
-                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentImageFactory.create(content_object=obj_1)
 
         attachments_accessibility = 'attachments_accessibility' in fields_name
 
         if attachments_accessibility:
-            AttachmentAccessibilityFactory.create(content_object=obj_1,
-                                                  attachment_accessibility_file=get_dummy_uploaded_image())
+            AttachmentAccessibilityFactory.create(content_object=obj_1)
         response = self.client.post(
             reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
                     kwargs={"pk": obj_1.pk})
@@ -314,9 +311,9 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -324,7 +321,7 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
         mapimage_url = '%s%s?context&lang=fr' % (self.live_server_url, obj.get_detail_url())
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
@@ -343,9 +340,9 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -353,7 +350,7 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
         mapimage_url = '%s%s?context' % (self.live_server_url, obj.get_detail_url())
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
@@ -414,9 +411,9 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -424,4 +421,4 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))

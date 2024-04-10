@@ -638,9 +638,6 @@ class TrekGPXTest(TrekkingManagerTest):
         self.response = self.client.get(url)
         self.parsed = BeautifulSoup(self.response.content, features='xml')
 
-    def tearDown(self):
-        translation.deactivate()
-
     def test_gpx_is_served_with_content_type(self):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
@@ -686,7 +683,6 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         cls.trek.save()
 
     def tearDown(self):
-        translation.deactivate()
         self.client.logout()
 
     def test_geojson_translation(self):
@@ -1026,8 +1022,9 @@ class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
-        self.client.get(
-            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        response = self.client.get(reverse('trekking:trek_printable',
+                                           kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertEqual(response.status_code, 200)
         # Assert second access to PDF will not trigger screenshot
         self.trek.refresh_from_db()
         self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
