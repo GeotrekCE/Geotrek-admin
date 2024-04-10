@@ -94,7 +94,7 @@ COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
 COPY --chown=geotrek:geotrek manage.py manage.py
 COPY --chown=geotrek:geotrek VERSION VERSION
-COPY --chown=geotrek:geotrek setup.cfg setup.cfg
+COPY --chown=geotrek:geotrek pyproject.toml pyproject.toml
 
 RUN CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
