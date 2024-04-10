@@ -11,7 +11,7 @@ CHANGELOG
 
 **Improvements**
 
-- Add 'feedback' on filter modules list (#3972)
+- Add `report` model on Intervention filters in module list (#3972)
 
 **Documentation**
 
