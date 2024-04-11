@@ -34,25 +34,12 @@ To upgrade only geotrek-admin and its dependencies, run:
 
    sudo apt-get install geotrek-admin
 
-To upgrade geotrek-admin to a **specific version**, run:
+.. note::
 
-::
+    - It is only possible to install the latest version of geotrek-admin via this command line
 
-   sudo apt-get install geotrek-admin=<version>
+    - Even when not listed with ``apt list``, all package versions remain available in the `Assets of release notes <https://github.com/GeotrekCE/Geotrek-admin/releases/>`_. 
 
-For instance:
-
-::
-
-   sudo apt-get install geotrek-admin=2.97.4.ubuntu18.04
-
-or
-
-::
-
-   sudo apt-get install geotrek-admin=2.98.0.ubuntu20.04
-
-**Note:** all package versions remain available. Even when not listed with ``apt list``.
 
 Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
 
