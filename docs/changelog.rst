@@ -12,7 +12,8 @@ CHANGELOG
 
 **Documentation**
 
-- Improve static pages documentation (#4050
+- Improve static pages documentation (#4050)
+- Update informations about upgrading (#4064)
 
 **Improvements**
 
