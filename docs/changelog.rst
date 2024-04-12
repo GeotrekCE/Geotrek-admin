@@ -10,6 +10,10 @@ CHANGELOG
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 - Fix crash on migrate when db username or dbname contains dash
 
+**Improvements**
+
+- Add `report` model on Intervention filters in module list (#3972)
+
 **Documentation**
 
 - Improve static pages documentation (#4050

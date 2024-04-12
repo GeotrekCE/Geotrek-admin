@@ -133,7 +133,7 @@ class CustomDateFromToRangeFilter(DateFromToRangeFilter):
 class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
-                  ('trail', _("Trail")))
+                  ('trail', _("Trail")), ('report', _("Report")))
 
     if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
@@ -156,6 +156,11 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
         fields = StructureRelatedFilterSet.Meta.fields + [
             'status', 'type', 'stake', 'subcontracting', 'project', 'contractors', 'on',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Sorted 'ON_CHOICES' here to sort with user language.
+        self.form.fields["on"].choices = sorted(self.ON_CHOICES, key=lambda modelname: modelname[1])
 
     def filter_year(self, qs, name, values):
         conditions = Q()
