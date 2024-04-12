@@ -10,10 +10,8 @@ CHANGELOG
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 - Fix crash on migrate when db username or dbname contains dash
 - Fix Intervention end date should only be mandatory in last step of Suricate Workflow (refs #3825)"
+- Change label filter intervention contractors and filter null value on project contractors detail view (#3820)
 
-**Improvements**
-
-- Add `report` model on Intervention filters in module list (#3972)
 
 **Documentation**
 
@@ -22,6 +20,7 @@ CHANGELOG
 **Improvements**
 
 - Remove unused `postgres` volume in docker compose file for production
+- Add `report` model on Intervention filters in module list (#3972)
 
 
 2.104.2 (2024-04-04)
