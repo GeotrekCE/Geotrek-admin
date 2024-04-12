@@ -289,7 +289,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         }
         form = InterventionForm(user=user, instance=interv, data=data)
         self.assertFalse(form.is_valid())
-        self.assertIn("La date de fin est obligatoire.", str(form.errors))
+        self.assertIn("End date is required.", str(form.errors))
 
         interv.refresh_from_db()
         end_date = interv.begin_date
