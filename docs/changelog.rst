@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
 - Fix crash on migrate when db username or dbname contains dash
+- Fix Intervention end date should only be mandatory in last step of Suricate Workflow (refs #3825)"
 
 **Improvements**
 

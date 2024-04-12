@@ -13,6 +13,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.feedback.models import Report
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
@@ -152,12 +153,14 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
         if kwargs['can_delete']:
             intervention = self.get_object()
             # Disallow deletion if this intervention is part of Suricate Workflow at the moment
-            not_workflow = not settings.SURICATE_WORKFLOW_ENABLED
-            is_report = intervention.target and intervention.target.__class__.__name__ == "Report"
-            report_is_closed = False
-            if is_report:
-                report_is_closed = (intervention.target.status.identifier == 'solved')
-            kwargs["can_delete"] = not_workflow or (not is_report) or report_is_closed
+            if not settings.SURICATE_WORKFLOW_ENABLED:
+                kwargs["can_delete"] = True
+            else:
+                is_report = intervention.target and isinstance(intervention.target, Report)
+                report_is_closed = False
+                if is_report:
+                    report_is_closed = (intervention.target.status.identifier == 'solved')
+                kwargs["can_delete"] = (not is_report) or report_is_closed
         return kwargs
 
 

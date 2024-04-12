@@ -12,7 +12,7 @@ from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
-from .models import Intervention, InterventionJob, ManDay, Project
+from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     from geotrek.feedback.models import Report, ReportStatus, TimerEvent
@@ -151,16 +151,28 @@ class InterventionForm(CommonForm):
                         or self.instance.geom.geom_type == 'LineString'))
         self.fields['length'].widget.attrs['readonly'] = editable
 
-        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
-            if self.instance.pk and self.instance.target and hasattr(self.instance.target, "report_interventions"):
-                self.fields["end_date"].required = True
-
     def clean(self, *args, **kwargs):
         clean_data = super().clean(*args, **kwargs)
         begin_date = clean_data.get('begin_date')
         end_date = clean_data.get('end_date')
+        status = clean_data.get('status')
         if end_date and begin_date > end_date:
             self.add_error('end_date', _('Begin date is after end date'))
+
+        # Special case in which the intervention's end date needs to me mandatory,
+        # in Suricate Workflow mode, when supervisor is closing an intervention.
+        # This ensures that we can access the end date in a Predefined Email.
+        # See "3 - Resolution", "4 - Closing", and "7 - Predefined messages" in the doc :
+        # https://geotrek.readthedocs.io/en/2.104.2/install/advanced-configuration.html#suricate-support
+        if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
+            target = self.instance.target
+            intervention_is_updated = self.instance.pk
+            target_is_a_report = target and isinstance(target, Report)
+            report_is_programmed_or_late = target.status and target.status.identifier in ["programmed", "late_resolution"]
+            intervention_is_being_resolved_without_end_date = status == InterventionStatus.objects.get(order=30) and end_date is None
+            if intervention_is_updated and target_is_a_report and report_is_programmed_or_late and \
+               intervention_is_being_resolved_without_end_date:
+                self.add_error('end_date', _('End date is required.'))
         return clean_data
 
     def save(self, *args, **kwargs):
