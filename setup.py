@@ -71,6 +71,7 @@ setup(
         "django-clearcache",
         "pyopenair",
         "django-treebeard",
+        "scipy",
         # prod,
         'gunicorn',
         'sentry-sdk',
