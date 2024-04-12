@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Sum, Prefetch
 from django.http import HttpResponseRedirect
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -20,6 +20,11 @@ from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, 
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+
+
+import numpy as np
+from scipy.sparse.csgraph import dijkstra
+from scipy.sparse import csr_matrix
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
