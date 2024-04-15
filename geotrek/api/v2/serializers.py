@@ -488,7 +488,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             return get_translation_or_dict('description_teaser', self, obj)
 
     class TouristicContentSerializer(TouristicModelSerializer):
-        attachments = AttachmentSerializer(many=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         departure_city = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
@@ -1168,7 +1168,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         period = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
-        attachments = AttachmentSerializer(many=True)
+        attachments = AttachmentSerializer(many=True, source='sorted_attachments')
         sector = serializers.SerializerMethodField()
         courses = serializers.SerializerMethodField()
         courses_uuids = serializers.SerializerMethodField()
