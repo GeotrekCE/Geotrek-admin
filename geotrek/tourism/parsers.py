@@ -1015,18 +1015,21 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     url_categories = {
+        "structure": "structure",
         "category": "touristiccontent_category",
         "themes": "theme",
         "source": "source"
     }
 
     categories_keys_api_v2 = {
+        "structure": "name",
         'category': 'label',
         'themes': 'label',
         'source': 'name'
     }
 
     natural_keys = {
+        "structure": "name",
         'category': 'label',
         'themes': 'label',
         'type1': 'label',
@@ -1094,14 +1097,17 @@ class GeotrekTouristicEventParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         "type": "touristicevent_type",
         "source": "source"
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         'type': 'type',
         'source': 'name'
     }
     natural_keys = {
+        "structure": "name",
         'type': 'type',
         'source': 'name'
     }

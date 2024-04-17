@@ -117,7 +117,7 @@
       "name": "test gard",
       "printed_elevation": null,
       "sealing": 1,
-      "structure": "DEMO",
+      "structure": 1,
       "type": 4,
       "uuid": "6de1205c-8066-4e8b-8f84-f8736db61e95"
     },
@@ -141,7 +141,7 @@
       "name": "Test picto defaut",
       "printed_elevation": null,
       "sealing": null,
-      "structure": "MC",
+      "structure": 3,
       "type": 3,
       "uuid": "133e9666-5bb5-4690-8034-6171bf4af115"
     }
