@@ -197,7 +197,7 @@ geojson==2.5.0
     #   tif2geojson
 gpxpy==1.5.0
     # via mapentity
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via geotrek (setup.py)
 html5lib==1.1
     # via weasyprint
