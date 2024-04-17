@@ -60,9 +60,6 @@ msgstr "Avancé"
 msgid "Accessibility"
 msgstr "Accessibilité"
 
-msgid "Related treks"
-msgstr "Itinéraires liés"
-
 msgid "Insert service:"
 msgstr "Insérer un service :"
 
@@ -303,9 +300,6 @@ msgstr "Liens web"
 msgid "External resources"
 msgstr "Ressources externes"
 
-msgid "Connections between treks"
-msgstr "Liens entre les itinéraires"
-
 msgid "Information desks"
 msgstr "Lieux de renseignement"
 
@@ -368,21 +362,6 @@ msgstr "Aménagements"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
-
-msgid "Common departure"
-msgstr "Départ en commun"
-
-msgid "Common edge"
-msgstr "Tronçon commun"
-
-msgid "Circuit step"
-msgstr "Étape de circuit"
-
-msgid "Trek relationship"
-msgstr "Réseaux randonnée"
-
-msgid "Trek relationships"
-msgstr "Liens entre itinéraires"
 
 msgid "Path"
 msgstr "Tronçons"

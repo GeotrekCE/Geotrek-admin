@@ -59,9 +59,6 @@ msgstr ""
 msgid "Accessibility"
 msgstr ""
 
-msgid "Related treks"
-msgstr ""
-
 msgid "Insert service:"
 msgstr ""
 
@@ -281,9 +278,6 @@ msgstr ""
 msgid "External resources"
 msgstr ""
 
-msgid "Connections between treks"
-msgstr ""
-
 msgid "Information desks"
 msgstr ""
 
@@ -345,21 +339,6 @@ msgid "Infrastructures"
 msgstr ""
 
 msgid "Published treks"
-msgstr ""
-
-msgid "Common departure"
-msgstr ""
-
-msgid "Common edge"
-msgstr ""
-
-msgid "Circuit step"
-msgstr ""
-
-msgid "Trek relationship"
-msgstr ""
-
-msgid "Trek relationships"
 msgstr ""
 
 msgid "Path"

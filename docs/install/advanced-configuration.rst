@@ -2043,7 +2043,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "accessibility_infrastructure",
         "parking_location",
         "points_reference",
-        "related",
         "children",
         "parents",
         "pois",

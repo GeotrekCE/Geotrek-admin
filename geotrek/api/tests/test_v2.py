@@ -323,7 +323,6 @@ class BaseApiTest(TestCase):
         cls.treks[0].labels.add(cls.label)
         cls.treks[0].ratings.add(cls.rating)
         cls.treks[1].ratings.add(cls.rating2)
-        trek_models.TrekRelationship(trek_a=cls.treks[0], trek_b=cls.treks[1]).save()
         cls.information_desk_type = tourism_factory.InformationDeskTypeFactory()
         cls.info_desk = tourism_factory.InformationDeskFactory(type=cls.information_desk_type)
         cls.treks[0].information_desks.add(cls.info_desk)
@@ -407,7 +406,6 @@ class BaseApiTest(TestCase):
         cls.child3 = trek_factory.TrekFactory.create(published=False, name='Child 3',
                                                      reservation_system=cls.reservation_system, route=cls.route,
                                                      accessibility_level=None)
-        trek_models.TrekRelationship(trek_a=cls.parent, trek_b=cls.treks[0]).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.parent2, child=cls.child3, order=1).save()

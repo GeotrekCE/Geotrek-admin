@@ -67,7 +67,6 @@ ALTER TABLE trekking_trek ALTER COLUMN provider SET DEFAULT '';
 -- route
 -- difficulty
 -- web_links
--- related_treks
 -- information_desks
 -- points_reference
 -- source
@@ -84,14 +83,6 @@ ALTER TABLE trekking_trek ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_trek ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 
-
--- TrekRelationship
--------------------
-ALTER TABLE trekking_trekrelationship ALTER COLUMN has_common_departure SET DEFAULT FALSE;
-ALTER TABLE trekking_trekrelationship ALTER COLUMN has_common_edge SET DEFAULT FALSE;
-ALTER TABLE trekking_trekrelationship ALTER COLUMN is_circuit_step SET DEFAULT FALSE;
--- trek_a
--- trek_b
 
 -- TrekNetwork
 --------------

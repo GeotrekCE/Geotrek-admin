@@ -5,6 +5,10 @@ CHANGELOG
 2.104.2+dev (XXXX-XX-XX)
 ------------------------
 
+**Breaking changes**
+
+- This version removes the concept of "Related treks". If you have any information left in your database associated with this concept it'll be deleted (refs #3750 and #550)
+
 **Bug fixes**
 
 - Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
