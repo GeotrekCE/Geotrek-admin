@@ -100,7 +100,7 @@ TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + [
 
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
-    'name', 'attachments', 'published', 'provider', 'type', 'type_label', 'type_pictogram',
+    'name', 'attachments', 'published', 'provider', 'structure', 'type', 'type_label', 'type_pictogram',
     'update_datetime', 'url', 'uuid', 'view_points'
 ])
 
@@ -5438,6 +5438,7 @@ class CreateReportsAPITest(TestCase):
 class SensitivityAPIv2Test(TranslationResetMixin, TrekkingManagerTest):
     def setUp(self):
         super().setUp()
+        self.structure = authent_models.default_structure()
         self.sensitivearea = SensitiveAreaFactory.create()
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk
@@ -5469,7 +5470,7 @@ class SensitivityAPIv2Test(TranslationResetMixin, TrekkingManagerTest):
                  'pictogram': 'http://testserver/media/picto_rule2.png',
                  'url': 'http://url.com'}],
             'provider': '',
-            'structure': 'My structure',
+            'structure': self.structure.pk,
             'published': True,
         }
         self.expected_geom = {

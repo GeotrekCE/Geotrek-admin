@@ -21,6 +21,7 @@ CHANGELOG
 
 - Remove unused `postgres` volume in docker compose file for production
 - Add `report` model on Intervention filters in module list (#3972)
+- Homogenize `structure` field in APIv2 to always return ids instead of names (#3007)
 
 
 2.104.2 (2024-04-04)
