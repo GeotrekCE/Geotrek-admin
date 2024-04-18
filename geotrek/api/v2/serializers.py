@@ -194,7 +194,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        structure = serializers.CharField(source='structure.name')
 
         class Meta:
             model = trekking_models.Service
@@ -910,8 +909,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             fields = (
                 'id', 'description', 'external_id',
-                'geometry', 'name', 'attachments', 'provider', 'published', 'type',
-                'type_label', 'type_pictogram', 'url', 'uuid',
+                'geometry', 'name', 'attachments', 'provider', 'published', 'structure',
+                'type', 'type_label', 'type_pictogram', 'url', 'uuid',
                 'create_datetime', 'update_datetime', 'view_points'
             )
 
@@ -969,7 +968,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         period = serializers.SerializerMethodField()
         practices = serializers.PrimaryKeyRelatedField(many=True, source='species.practices', read_only=True)
         info_url = serializers.URLField(source='species.url')
-        structure = serializers.CharField(source='structure.name')
         published = serializers.BooleanField()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField()
@@ -1552,7 +1550,6 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
     class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        structure = serializers.CharField(source='structure.name')
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
 
@@ -1606,7 +1603,6 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
     class SignageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        structure = serializers.CharField(source='structure.name')
         attachments = AttachmentSerializer(many=True)
         blades = BladeSerializer(source='blades_set', many=True)
         condition = serializers.SerializerMethodField(
