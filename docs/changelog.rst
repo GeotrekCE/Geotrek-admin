@@ -12,6 +12,7 @@ CHANGELOG
 - Fix Intervention end date should only be mandatory in last step of Suricate Workflow (refs #3825)"
 - Change label filter intervention contractors and filter null value on project contractors detail view (#3820)
 - Sort attachements in API V2 for OutdoorSites and TouristicContent objects (fixes #4071)
+- Expose missing Sources in APIv2 (fixes #4079)
 
 **Documentation**
 
