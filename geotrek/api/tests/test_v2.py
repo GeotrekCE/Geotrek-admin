@@ -3150,6 +3150,12 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.json()['count'], 1)
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
+    def test_filter_sources_by_portal(self):
+        response = self.client.get('/api/v2/source/', {'portals': self.portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['name'], self.source.name)
+
 
 class MenuItemTestCase(TestCase):
 

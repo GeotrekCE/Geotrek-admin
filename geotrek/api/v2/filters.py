@@ -1139,6 +1139,23 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNot
         return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
+class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        portals = request.GET.get('portals')
+        portals_query = Q()
+        if portals:
+            related_portal_in = '{}__portals__in'.format('flatpages')
+            portals_query = Q(**{related_portal_in: portals.split(',')})
+        set_1 = self.filter_queryset_related_objects_published(qs, request, 'flatpages', portals_query)
+        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
+        set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontents')
+        set_4 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevents')
+        set_5 = qs.none()
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            set_5 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
+        return (set_1 | set_2 | set_3 | set_4 | set_5).distinct()
+
+
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
