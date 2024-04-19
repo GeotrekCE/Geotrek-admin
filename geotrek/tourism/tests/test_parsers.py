@@ -883,6 +883,7 @@ class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
 
     field_options = {
         "category": {'create': True},
+        "structure": {'create': True},
         'themes': {'create': True},
         'source': {'create': True},
         'type1': {'create': True, 'fk': 'category'},
@@ -903,6 +904,7 @@ class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
         'source': {'create': True},
         'type': {'create': True, },
         'geom': {'required': True},
+        'structure': {'create': True},
     }
 
 
@@ -927,7 +929,8 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
@@ -946,6 +949,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(touristic_content.category), 'Sorties')
         self.assertEqual(str(touristic_content.type1.first()), 'Ane')
         self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertEqual(str(touristic_content.structure), "Struct1")
         self.assertEqual(str(touristic_content.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
         self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
@@ -956,7 +960,8 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create_create_categories(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
@@ -991,7 +996,8 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristicevent_type.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristicevent_type.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristicevent_ids.json'),
                                 ('tourism', 'touristicevent.json')]
@@ -1006,6 +1012,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 2)
         touristic_event = TouristicEvent.objects.all().first()
         self.assertEqual(str(touristic_event.type), 'Spectacle')
+        self.assertEqual(str(touristic_event.structure), 'Struct1')
         self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
         self.assertEqual(str(touristic_event.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_event.geom.x, 548907.5259389633, places=5)

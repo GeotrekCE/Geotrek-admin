@@ -644,12 +644,14 @@ class GeotrekTrekTestProviderParser(GeotrekTrekParser):
     default_language = "fr"
     delete = True
     url_categories = {}
+    constant_fields = {'structure': settings.DEFAULT_STRUCTURE_NAME}
 
 
 class GeotrekTrekTestNoProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
     delete = True
     url_categories = {}
+    constant_fields = {'structure': settings.DEFAULT_STRUCTURE_NAME}
 
 
 class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
@@ -811,6 +813,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         # end_meta()
         self.mock_json_order = [
             # First time
+            ('trekking', 'structure.json'),
             ('trekking', 'trek_difficulty.json'),
             ('trekking', 'trek_route.json'),
             ('trekking', 'trek_theme.json'),
@@ -819,6 +822,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ('trekking', 'trek_network.json'),
             ('trekking', 'trek_label.json'),
             ('trekking', 'sources.json'),
+            ('trekking', 'structure.json'),
             ('trekking', 'poi_type.json'),
             ('trekking', 'trek_ids.json'),
             ('trekking', 'trek.json'),
@@ -833,6 +837,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ('trekking', 'trek_informationdesk.json'),
 
             # Second time
+            ('trekking', 'structure.json'),
             ('trekking', 'trek_difficulty.json'),
             ('trekking', 'trek_route.json'),
             ('trekking', 'trek_theme.json'),
@@ -841,6 +846,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ('trekking', 'trek_network.json'),
             ('trekking', 'trek_label.json'),
             ('trekking', 'sources.json'),
+            ('trekking', 'structure.json'),
             ('trekking', 'poi_type.json'),
             ('trekking', 'trek_ids.json'),
             ('trekking', 'trek.json'),

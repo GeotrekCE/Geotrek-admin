@@ -15,14 +15,17 @@ class GeotrekInfrastructureParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         'condition': 'infrastructure_condition',
         'type': 'infrastructure_type',
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         'condition': 'label',
         'type': 'label'
     }
     natural_keys = {
+        "structure": "name",
         'condition': 'label',
         'type': 'label'
     }
