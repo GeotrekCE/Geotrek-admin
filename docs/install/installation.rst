@@ -190,6 +190,8 @@ Management commands
 
 Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker compose run --rm web ./manage.py …``
 
+Replace ``sudo dpkg-reconfigure geotrek-admin`` by ``cd <install directory>; docker compose run --rm web update.sh``
+
 To load minimal data and create an application superuser, run:
 
 ::

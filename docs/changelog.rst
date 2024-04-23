@@ -16,7 +16,8 @@ CHANGELOG
 
 **Documentation**
 
-- Improve static pages documentation (#4050
+- Improve static pages documentation (#4050)
+- Add usage of update script to docker documentation
 
 **Improvements**
 
