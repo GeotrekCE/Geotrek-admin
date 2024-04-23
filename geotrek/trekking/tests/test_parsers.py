@@ -260,6 +260,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
                                 ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json')]
@@ -289,6 +290,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.source.first().name, "Une source numero 2")
+        self.assertEqual(trek.source.first().website, "https://www.ecrins-parcnational.fr")
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
         self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
@@ -305,6 +307,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                ('trekking', 'trek_accessibility.json'),
                                ('trekking', 'trek_network.json'),
                                ('trekking', 'trek_label.json'),
+                               ('trekking', 'sources.json'),
                                ('trekking', 'sources.json'),
                                ('trekking', 'trek_ids.json'),
                                ('trekking', 'trek.json'),
@@ -366,6 +369,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
                                 ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json')]
@@ -393,6 +397,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                ('trekking', 'trek_accessibility.json'),
                                ('trekking', 'trek_network.json'),
                                ('trekking', 'trek_label.json'),
+                               ('trekking', 'sources.json'),
                                ('trekking', 'sources.json'),
                                ('trekking', 'trek_ids.json'),
                                ('trekking', 'trek.json'),
@@ -428,12 +433,12 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
-        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'11')
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'15')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 5)
         trek.refresh_from_db()
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
-        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'13')
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'25')
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -448,6 +453,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_accessibility.json'),
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
@@ -537,6 +543,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
                                 ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json'),
@@ -625,6 +632,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
                                 ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children_do_not_exist.json')]
@@ -652,6 +660,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_accessibility.json'),
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
@@ -682,6 +691,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
                                 ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids.json'),
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json'),
@@ -693,6 +703,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_accessibility.json'),
                                 ('trekking', 'trek_network.json'),
                                 ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
                                 ('trekking', 'sources.json'),
                                 ('trekking', 'trek_ids_2.json'),
                                 ('trekking', 'trek_2.json'),
