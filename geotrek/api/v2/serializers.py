@@ -1558,7 +1558,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
         class Meta:
             model = infrastructure_models.Infrastructure
-            fields = ('id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name',
+            fields = ('id', 'accessibility', 'attachments', 'conditions', 'description', 'eid', 'geometry', 'name',
                       'implantation_year', 'maintenance_difficulty', 'provider', 'structure', 'type', 'usage_difficulty', 'uuid')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

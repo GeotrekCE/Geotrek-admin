@@ -214,7 +214,7 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry',
+    'id', 'accessibility', 'attachments', 'conditions', 'description', 'eid', 'geometry',
     'implantation_year', 'maintenance_difficulty', 'name', 'provider', 'structure',
     'type', 'usage_difficulty', 'uuid'
 ])
@@ -453,9 +453,9 @@ class BaseApiTest(TestCase):
             type=cls.infrastructure_type,
             usage_difficulty=cls.infrastructure_usagedifficulty,
             maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
-            condition=cls.infrastructure_condition,
             published=True
         )
+        cls.infrastructure.conditions.add(cls.infrastructure_condition)
         cls.bladetype = signage_factory.BladeTypeFactory(
         )
         cls.color = signage_factory.BladeColorFactory()

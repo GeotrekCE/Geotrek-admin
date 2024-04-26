@@ -34,7 +34,7 @@ class InfrastructureViewsTest(CommonTest):
     def get_expected_datatables_attrs(self):
         return {
             'cities': '',
-            'condition': self.obj.condition.label,
+            'conditions': self.obj.conditions_display,
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'type': self.obj.type.label,
@@ -46,7 +46,7 @@ class InfrastructureViewsTest(CommonTest):
             'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': [InfrastructureConditionFactory.create().pk],
             'accessibility': 'description accessibility'
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -85,7 +85,7 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             'name_en': 'test_en',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': [InfrastructureConditionFactory.create().pk],
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
