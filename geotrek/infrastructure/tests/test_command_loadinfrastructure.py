@@ -25,7 +25,7 @@ class InfrastructureCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
-                     condition_default='condition', structure_default='structure',
+                     condition_default='conditions', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
@@ -42,7 +42,7 @@ class InfrastructureCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure_good_multipoint.geojson')
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
-                     condition_default='condition', structure_default='structure',
+                     condition_default='conditions', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
@@ -57,7 +57,7 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure_bad_multipoint.geojson')
         with self.assertRaisesRegex(CommandError, 'One of your geometry is a MultiPoint object with multiple points'):
             call_command('loadinfrastructure', filename, type_default='label', name_default='name',
-                         condition_default='condition', structure_default='structure',
+                         condition_default='conditions', structure_default='structure',
                          description_default='description', year_default=2010, verbosity=2, stdout=output)
 
     def test_load_infrastructure_with_fields_use_structure(self):
@@ -65,7 +65,7 @@ class InfrastructureCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_field='label', name_field='name',
-                     condition_field='condition', structure_default='structure', use_structure=True,
+                     condition_field='conditions', structure_default='structure', use_structure=True,
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn("InfrastructureType 'type (%s)' created" % structure, output.getvalue())
@@ -83,7 +83,7 @@ class InfrastructureCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_field='label', name_field='name',
-                     condition_field='condition', structure_default='structure',
+                     condition_field='conditions', structure_default='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn("InfrastructureType 'type' created", output.getvalue())
@@ -158,7 +158,7 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         InfrastructureFactory(name="name", eid="eid_2")
         call_command('loadinfrastructure', filename, eid_field='eid', type_default='label',
-                     name_default='name', verbosity=2, stdout=output)
+                     condition_field='conditions', name_default='name', verbosity=2, stdout=output)
         self.assertIn("Update : name with eid eid1", output.getvalue())
         self.assertEqual(Infrastructure.objects.count(), 2)
 
@@ -166,7 +166,7 @@ class InfrastructureCommandTest(TestCase):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
-                     condition_default='condition', structure_default='wrong_structure_default',
+                     condition_default='conditions', structure_default='wrong_structure_default',
                      description_default='description', year_default=2010, category_default='E', verbosity=0,
                      stdout=output)
         self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
