@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add sources websites and pictograms to Aggregator (#3569)
 
+**Bug fixes**
+
+- Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
+
 
 2.105.1 (2024-05-07)
 --------------------
