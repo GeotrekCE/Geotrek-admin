@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ('path', models.CharField(max_length=255, unique=True)),
                 ('depth', models.PositiveIntegerField()),
                 ('numchild', models.PositiveIntegerField(default=0)),
-                ('title', models.CharField(max_length=50, verbose_name='Title')),
+                ('title', models.CharField(max_length=200, verbose_name='Title')),
                 ('target_type',
                  models.CharField(
                      blank=True, choices=[('page', 'Page'), ('link', 'Link')], max_length=10,
