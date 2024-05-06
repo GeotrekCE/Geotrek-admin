@@ -13,6 +13,7 @@ CHANGELOG
 - Change label filter intervention contractors and filter null value on project contractors detail view (#3820)
 - Sort attachements in API V2 for OutdoorSites and TouristicContent objects (fixes #4071)
 - Expose missing Sources in APIv2 (fixes #4079)
+- MenuItem `open_in_new_tab` is now set to False when no target (#4093)
 
 **Documentation**
 
