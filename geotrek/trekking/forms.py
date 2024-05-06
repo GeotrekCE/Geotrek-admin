@@ -3,13 +3,12 @@ from copy import deepcopy
 from django.utils.translation import gettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.forms.models import inlineformset_factory
 
 from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
+from crispy_forms.layout import Layout, Submit, HTML, Div
 from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop, MapWidget
 from modeltranslation.utils import build_localized_fieldname
@@ -20,35 +19,6 @@ from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, RatingScale
 from django.db import transaction
 
-
-class TrekRelationshipForm(forms.ModelForm):
-    trek_b = forms.ModelChoiceField(queryset=Trek.objects.existing(), required=True,
-                                    label=_("Trek"))
-
-    class Meta:
-        fields = ('id',
-                  'trek_a',
-                  'trek_b',
-                  'has_common_departure',
-                  'has_common_edge',
-                  'is_circuit_step')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout('id',
-                                    'trek_a',
-                                    'trek_b',
-                                    'has_common_departure',
-                                    'has_common_edge',
-                                    'is_circuit_step',
-                                    'DELETE')
-
-
-TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through,
-                                                form=TrekRelationshipForm, fk_name='trek_a',
-                                                extra=1)
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -152,7 +122,6 @@ class TrekForm(BaseTrekForm):
                     'reservation_id',
                     'pois_excluded',
                     'hidden_ordered_children',
-                    Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),

@@ -37,8 +37,7 @@ from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking.managers import (POIManager, ServiceManager, TrekManager,
-                                       TrekOrderedChildManager,
-                                       TrekRelationshipManager, WebLinkManager)
+                                       TrekOrderedChildManager, WebLinkManager)
 
 logger = logging.getLogger(__name__)
 
@@ -190,10 +189,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                    blank=True, null=True, verbose_name=_("Difficulty"))
     web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
-    related_treks = models.ManyToManyField('self', through='TrekRelationship',
-                                           verbose_name=_("Related treks"), symmetrical=False,
-                                           help_text=_("Connections between treks"),
-                                           related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                blank=True, verbose_name=_("Information desks"),
                                                help_text=_("Where to obtain information"))
@@ -262,19 +257,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
             extent[2] = max(extent[2], poi.geom.x)
             extent[3] = max(extent[3], poi.geom.y)
         return extent
-
-    @property
-    def related(self):
-        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
-
-    @classproperty
-    def related_verbose_name(cls):
-        return _("Related treks")
-
-    @property
-    def relationships(self):
-        # Does not matter if a or b
-        return TrekRelationship.objects.filter(trek_a=self)
 
     @property
     def poi_types(self):
@@ -544,42 +526,6 @@ tourism_models.TouristicEvent.add_property('published_treks', lambda self: inter
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('treks', lambda self: self.signage.treks, _("Treks"))
     Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
-
-
-class TrekRelationship(models.Model):
-    """
-    Relationships between treks : symmetrical aspect is managed by a trigger that
-    duplicates all couples (trek_a, trek_b)
-    """
-    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), default=False)
-    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), default=False)
-    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), default=False)
-
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", on_delete=models.CASCADE)
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"), on_delete=models.CASCADE)
-
-    objects = TrekRelationshipManager()
-
-    class Meta:
-        verbose_name = _("Trek relationship")
-        verbose_name_plural = _("Trek relationships")
-        unique_together = ('trek_a', 'trek_b')
-
-    def __str__(self):
-        return "%s <--> %s" % (self.trek_a, self.trek_b)
-
-    @property
-    def relation(self):
-        return "%s %s%s%s" % (
-            self.trek_b.name_display,
-            _("Departure") if self.has_common_departure else '',
-            _("Path") if self.has_common_edge else '',
-            _("Circuit") if self.is_circuit_step else ''
-        )
-
-    @property
-    def relation_display(self):
-        return self.relation
 
 
 class TrekNetwork(TimeStampedModelMixin, PictogramMixin):

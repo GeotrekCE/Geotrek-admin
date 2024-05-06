@@ -16,7 +16,6 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import Attachment, HDViewPoint, RecordSource, TargetPortal, Label
 from geotrek.common.permissions import PublicOrReadPermMixin
@@ -31,7 +30,7 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import District, City, RestrictedArea
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
-from .forms import TrekForm, TrekRelationshipFormSet, POIForm, WebLinkCreateFormPopup, ServiceForm
+from .forms import TrekForm, POIForm, WebLinkCreateFormPopup, ServiceForm
 from .models import Trek, POI, WebLink, Service
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer, ServiceSerializer, TrekPOIAPIGeojsonSerializer,
                           TrekServiceAPIGeojsonSerializer,
@@ -70,9 +69,8 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'accessibility_covering', 'accessibility_exposure', 'accessibility_level', 'accessibility_signage',
         'accessibility_slope', 'accessibility_width', 'accessibility_infrastructure', 'access', 'route',
         'public_transport', 'advised_parking', 'web_links', 'labels', 'parking_location', 'points_reference',
-        'related', 'children', 'parents', 'pois', 'review', 'published',
-        'publication_date', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'source', 'portal', 'length_2d', 'uuid',
+        'children', 'parents', 'pois', 'review', 'published', 'publication_date', 'date_insert',
+        'date_update', 'cities', 'districts', 'areas', 'source', 'portal', 'length_2d', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -204,17 +202,12 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
     pass
 
 
-class TrekRelationshipFormsetMixin(FormsetMixin):
-    context_name = 'relationship_formset'
-    formset_class = TrekRelationshipFormSet
-
-
-class TrekCreate(TrekRelationshipFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
+class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
     form_class = TrekForm
 
 
-class TrekUpdate(TrekRelationshipFormsetMixin, MapEntityUpdate):
+class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
     form_class = TrekForm
 

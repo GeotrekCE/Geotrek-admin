@@ -448,7 +448,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         'themes': 'label',
         'labels': 'name',
         'difficulty': 'difficulty',
-        'related_treks': 'eid',
         'practice': 'name',
         'networks': 'network',
         'route': 'route',
