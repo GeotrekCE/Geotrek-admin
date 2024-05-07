@@ -5,6 +5,10 @@ CHANGELOG
 2.105.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Hotfix**
+
+- Bump to mapentity 8.8.1 to get a fix
+
 
 2.105.0 (2024-05-07)
 --------------------
