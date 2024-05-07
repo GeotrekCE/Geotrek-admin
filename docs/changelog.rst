@@ -31,6 +31,7 @@ CHANGELOG
 - Add `report` model on Intervention filters in module list (#3972)
 - Homogenize `structure` field in APIv2 to always return ids instead of names (#3007)
 - Add structures to Aggregator (#3569)
+- Allow to filter flatpages by portal on admin list page
 
 
 2.104.2 (2024-04-04)

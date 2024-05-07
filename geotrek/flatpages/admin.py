@@ -24,7 +24,10 @@ else:  # pragma: no cover
 
 class FlatPageAdmin(BaseAdmin):
     list_display = ('title', 'published', 'publication_date', 'portals_for_display', )
-    list_filter = ('published', )
+    list_filter = (
+        'published',
+        ("portals", admin.filters.RelatedOnlyFieldListFilter),
+    )
     search_fields = ('title', 'content')
     form = movenodeform_factory(flatpages_models.FlatPage, form=FlatPageForm)
 
