@@ -1,8 +1,8 @@
-geotrek-admin (2.104.2+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.105.0) RELEASED; urgency=medium
 
-  * 
+  * New Package release
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Thu, 04 Apr 2024 18:26:53 +0200
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 14:29:19 +0200
 
 geotrek-admin (2.104.2) RELEASED; urgency=medium
 
