@@ -933,6 +933,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
                                 ('tourism', 'sources.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_ids.json'),
                                 ('tourism', 'touristiccontent.json')]
@@ -963,6 +964,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.mock_json_order = [('tourism', 'structure.json'),
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_ids.json'),
@@ -998,6 +1000,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.mock_time = 0
         self.mock_json_order = [('tourism', 'structure.json'),
                                 ('tourism', 'touristicevent_type.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristicevent_ids.json'),
                                 ('tourism', 'touristicevent.json')]

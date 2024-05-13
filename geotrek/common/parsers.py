@@ -39,7 +39,7 @@ from paperclip.models import attachment_upload, random_suffix_regexp
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import FileType, Attachment, License
+from geotrek.common.models import FileType, Attachment, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
@@ -1350,6 +1350,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
+        # Update sources if applicable
+        if "source" in self.url_categories.keys():
+            self.get_sources_extra_fields()
+
     def replace_mapping(self, label, route):
         for key, list_map in self.mapping.get(route, {}).items():
             if label in list_map:
@@ -1476,6 +1480,34 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 yield row
 
             self.next_url = self.root['next']
+
+    def get_sources_extra_fields(self):
+        response = self.request_or_retry(f"{self.url}/api/v2/source/")
+        create = self.field_options['source'].get("create", False)
+        if create:
+            for result in response.json()['results']:
+                name = result['name']
+                pictogram_url = result['pictogram']
+                website = result['website']
+                source, created = RecordSource.objects.update_or_create(**{'name': name}, defaults={'website': website})
+                if created:
+                    self.add_warning(_(f"Source '{name}' did not exist in Geotrek-Admin and was automatically created"))
+                if not pictogram_url and source.pictogram:
+                    source.pictogram.delete()
+                elif pictogram_url:
+                    pictogram_filename = os.path.basename(pictogram_url)
+                    if not source.pictogram or pictogram_filename != source.pictogram.file.name:
+                        try:
+                            response = self.request_or_retry(pictogram_url)
+                        except (DownloadImportError, requests.exceptions.ConnectionError):
+                            self.add_warning(_("Failed to download '{url}'").format(url=pictogram_url))
+                            return
+                        if response.status_code != requests.codes.ok:
+                            self.add_warning(_("Failed to download '{url}'").format(url=pictogram_url))
+                            return
+                        if response.content:
+                            pictogram_file = ContentFile(response.content)
+                            source.pictogram.save(pictogram_filename, pictogram_file)
 
 
 class ApidaeBaseParser(Parser):

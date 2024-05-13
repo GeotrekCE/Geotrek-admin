@@ -5,6 +5,10 @@ CHANGELOG
 2.105.1+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Add sources websites and pictograms to Aggregator (#3569)
+
 
 2.105.1 (2024-05-07)
 --------------------
