@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add sources websites and pictograms to Aggregator (#3569)
 
+**Hotfix**
+
+- Improve performance on retrieving Sources in APIv2 (fixes #4079)
+
 
 2.105.1 (2024-05-07)
 --------------------

@@ -2805,7 +2805,7 @@ class FlatPageTestCase(TestCase):
         cls.source = common_factory.RecordSourceFactory()
         cls.portal = common_factory.TargetPortalFactory()
         cls.page1 = flatpages_factory.FlatPageFactory(
-            title='AAA', published=True, content='Blah',
+            title='AAA', published=True, published_fr=True, content='Blah',
             sources=[cls.source], portals=[cls.portal]
         )
         cls.page2 = flatpages_factory.FlatPageFactory(
@@ -2828,7 +2828,7 @@ class FlatPageTestCase(TestCase):
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
                 'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
                 'portals': [self.portal.pk],
-                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'published': {'en': True, 'es': False, 'fr': True, 'it': False},
                 'source': [self.source.pk],
                 'attachments': [],
                 'parent': None,
@@ -2875,8 +2875,9 @@ class FlatPageTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         resp_data = response.json()
-        self.assertEqual(resp_data["count"], 1)
-        self.assertEqual(resp_data["results"][0]["id"], self.page2.id)
+        self.assertEqual(resp_data["count"], 2)
+        self.assertEqual(resp_data["results"][0]["id"], self.page1.id)
+        self.assertEqual(resp_data["results"][1]["id"], self.page2.id)
 
     def test_list_returns_pages_associated_to_portals(self):
         portal1 = common_factory.TargetPortalFactory()
@@ -3089,7 +3090,7 @@ class FlatPageTestCase(TestCase):
             'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
             'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
             'portals': [self.portal.pk],
-            'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+            'published': {'en': True, 'es': False, 'fr': True, 'it': False},
             'source': [self.source.pk],
             'attachments': [],
             'parent': None,
@@ -3149,10 +3150,24 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.json()['results'][0]['title']['en'], 'AAA')
 
     def test_filter_sources_by_portal(self):
-        response = self.client.get('/api/v2/source/', {'portals': self.portal.pk})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['count'], 1)
-        self.assertEqual(response.json()['results'][0]['name'], self.source.name)
+        # 5 queries for 5 related objects
+        # 1 query for select on IDs
+        # 1 count query
+        with self.assertNumQueries(7):
+            response = self.client.get('/api/v2/source/', {'portals': self.portal.pk})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['count'], 1)
+            self.assertEqual(response.json()['results'][0]['name'], self.source.name)
+
+    def test_filter_sources_by_lang(self):
+        # 5 queries for 5 related objects
+        # 1 query for select on IDs
+        # 1 count query
+        with self.assertNumQueries(7):
+            response = self.client.get('/api/v2/source/', {'language': 'fr'})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()['count'], 1)
+            self.assertEqual(response.json()['results'][0]['name'], self.source.name)
 
 
 class MenuItemTestCase(TestCase):
