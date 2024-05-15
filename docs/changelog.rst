@@ -11,6 +11,8 @@ CHANGELOG
 
 **Bug fixes**
 - Fix view `v_treks` (fixes #4099)
+- Fix empty linetring in reorder_topology cmd (fixes #4092)
+
 
 2.106.0 (2024-05-15)
 --------------------
