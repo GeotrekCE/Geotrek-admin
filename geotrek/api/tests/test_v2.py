@@ -2828,7 +2828,7 @@ class FlatPageTestCase(TestCase):
                 'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
                 'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
                 'portals': [self.portal.pk],
-                'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+                'published': {'en': True, 'es': False, 'fr': True, 'it': False},
                 'source': [self.source.pk],
                 'attachments': [],
                 'parent': None,
@@ -2875,8 +2875,9 @@ class FlatPageTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         resp_data = response.json()
-        self.assertEqual(resp_data["count"], 1)
-        self.assertEqual(resp_data["results"][0]["id"], self.page2.id)
+        self.assertEqual(resp_data["count"], 2)
+        self.assertEqual(resp_data["results"][0]["id"], self.page1.id)
+        self.assertEqual(resp_data["results"][1]["id"], self.page2.id)
 
     def test_list_returns_pages_associated_to_portals(self):
         portal1 = common_factory.TargetPortalFactory()
@@ -3089,7 +3090,7 @@ class FlatPageTestCase(TestCase):
             'title': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
             'content': {'en': 'Blah', 'es': None, 'fr': None, 'it': None},
             'portals': [self.portal.pk],
-            'published': {'en': True, 'es': False, 'fr': False, 'it': False},
+            'published': {'en': True, 'es': False, 'fr': True, 'it': False},
             'source': [self.source.pk],
             'attachments': [],
             'parent': None,
