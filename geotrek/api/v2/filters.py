@@ -1141,19 +1141,39 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNot
 
 class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
+
+        # Prepare language query
+        lang_query = Q()
+        language = request.GET.get('language')
+        if language:
+            # one language is specified
+            lang_query = Q(**{build_localized_fieldname('published', language): True})
+        else:
+            # no language specified. Check for all.
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                lang_query |= Q(**{build_localized_fieldname('published', lang): True})
+
+        # Prepare portal queries
         portals = request.GET.get('portals')
-        portals_query = Q()
         if portals:
-            related_portal_in = '{}__portals__in'.format('flatpages')
-            portals_query = Q(**{related_portal_in: portals.split(',')})
-        set_1 = self.filter_queryset_related_objects_published(qs, request, 'flatpages', portals_query)
-        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
-        set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontents')
-        set_4 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevents')
-        set_5 = qs.none()
+            portals_query = Q(**{'portals__in': portals.split(',')})
+            portal_query = Q(**{'portal__in': portals.split(',')})
+        else:
+            portal_query = Q()
+            portals_query = Q()
+
+        # Extract distinct sources
+        flatpages_sources = list(FlatPage.objects.filter(lang_query, portals_query).prefetch_related('portals, source').values_list('source__pk', flat=True))
+        treks_sources = list(Trek.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        touristiccontent_sources = list(TouristicContent.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        touristicevent_sources = list(TouristicEvent.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        all_sources_pks = flatpages_sources + treks_sources + touristiccontent_sources + touristicevent_sources
         if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-            set_5 = self.filter_queryset_related_objects_published_by_portal(qs, request, 'sites')
-        return (set_1 | set_2 | set_3 | set_4 | set_5).distinct()
+            sites_sources = list(Site.objects.filter(lang_query, portal_query).prefetch_related('portal, source').values_list('source__pk', flat=True))
+            all_sources_pks += sites_sources
+
+        # Return distinct sources
+        return qs.filter(pk__in=set(all_sources_pks))
 
 
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
