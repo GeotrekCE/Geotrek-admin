@@ -422,3 +422,6 @@ class CommonLiveTest(MapEntityLiveTest):
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
+
+    def tearDown(self):
+        translation.deactivate()
