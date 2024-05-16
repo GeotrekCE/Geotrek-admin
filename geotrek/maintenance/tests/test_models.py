@@ -98,23 +98,23 @@ class InterventionTest(TestCase):
         TrailFactory.create(paths=[p], name='trail_2')
         infra = InfrastructureFactory.create(paths=[p])
         intervention = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
+        self.assertQuerySetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
 
     def test_paths_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
         infra = InfrastructureFactory.create(paths=[p_infra])
         intervention_infra = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
 
         p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
         signage = SignageFactory.create(paths=[p_signage])
         blade = BladeFactory.create(signage=signage)
         intervention_blade = InterventionFactory.create(target=blade)
-        self.assertQuerysetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
 
         course = CourseFactory.create()
         intervention_course = InterventionFactory.create(target=course)
-        self.assertQuerysetEqual(intervention_course.paths, [], transform=str)
+        self.assertQuerySetEqual(intervention_course.paths, [], transform=str)
 
     def test_helpers(self):
         """
@@ -334,7 +334,7 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
 
     def test_trails_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
@@ -355,7 +355,7 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
 
     def test_intervention_contractors(self):
         project = ProjectFactory.create()

@@ -63,6 +63,7 @@ MANAGERS = ADMINS
 TMP_DIR = os.path.join(TMP_DIR, 'tests')
 if os.path.exists(TMP_DIR):
     shutil.rmtree(TMP_DIR)
+os.makedirs(TMP_DIR)
 SESSIONS_DIR = os.path.join(TMP_DIR, 'sessions')
 os.makedirs(SESSIONS_DIR)
 

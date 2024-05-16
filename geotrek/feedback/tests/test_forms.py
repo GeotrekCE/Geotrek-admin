@@ -303,6 +303,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         form = InterventionForm(user=user, instance=interv, data=data)
         form.is_valid()
         form.save()
+        self.interv_report.refresh_from_db()
         # Assert report changes status and manager is notified
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(self.interv_report.assigned_user, WorkflowManager.objects.first().user)

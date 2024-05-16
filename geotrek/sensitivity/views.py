@@ -119,7 +119,7 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
         area = self.get_object()
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
-* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
+* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.headers['host'], timestamp=datetime.now())
         is_aerial = area.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
         if is_aerial and area.openair():
             result = file_header + area.openair()
@@ -145,7 +145,7 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
         areas = self.get_queryset()
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
-* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
+* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.headers['host'], timestamp=datetime.now())
         airspace_list = [a.openair() for a in areas if a.openair()]
         airspace_core = '\n\n'.join(airspace_list)
         airspace_file = file_header + airspace_core

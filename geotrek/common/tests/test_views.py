@@ -154,7 +154,7 @@ class ViewsImportTest(TestCase):
 
     def test_import_form_access_other_language(self):
         url = reverse('common:import_dataset')
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr')
+        response = self.client.get(url, headers={"accept-language": 'fr'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Communes')
 

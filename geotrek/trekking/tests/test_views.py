@@ -672,7 +672,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         for lang, expected in [('fr', self.trek.name_fr),
                                ('it', self.trek.name_it)]:
             self.login()
-            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), headers={"accept-language": lang})
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
@@ -682,7 +682,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         for lang, expected in [('fr', self.trek.published_fr),
                                ('it', self.trek.published_it)]:
             self.login()
-            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), headers={"accept-language": lang})
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['published'], expected)

@@ -143,7 +143,6 @@ USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
-USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -185,7 +184,14 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'

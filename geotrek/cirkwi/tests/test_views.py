@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from django.utils.timezone import utc, make_aware
+from django.utils.timezone import make_aware
 
 from geotrek.common.tests.factories import AttachmentFactory, LabelFactory, RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
@@ -21,7 +21,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.path = PathFactory.create()
-        cls.creation = make_aware(datetime.datetime(2014, 1, 1), utc)
+        cls.creation = make_aware(datetime.datetime(2014, 1, 1), datetime.timezone.utc)
         cls.trek = TrekFactory.create(published=True, paths=[cls.path])
         cls.trek.date_insert = cls.creation
         cls.trek.save()

@@ -51,11 +51,13 @@ class RatingAdmin(MergeActionMixin, TabbedTranslationAdmin):
     search_fields = ('name', 'description', 'scale__name')
     merge_field = 'name'
 
+    @admin.display(
+        description=_("Color")
+    )
     def color_markup(self, obj):
         if not obj.color:
             return ''
         return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
-    color_markup.short_description = _("Color")
 
 
 class RatingAdminInLine(TranslationTabularInline):

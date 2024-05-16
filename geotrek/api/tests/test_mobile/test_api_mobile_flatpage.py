@@ -128,11 +128,11 @@ class FlatPageTest(TestCase):
         _create_flatpage_and_menuitem(published_fr=True)
 
     def get_flatpage_list(self, params=None):
-        return self.client.get(reverse('apimobile:flatpage-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:flatpage-list'), params, headers={"accept-language": 'fr'})
 
     def get_flatpage_detail(self, id_flatpage, params=None):
         return self.client.get(reverse('apimobile:flatpage-detail', args=(id_flatpage,)),
-                               params, HTTP_ACCEPT_LANGUAGE='fr')
+                               params, headers={"accept-language": 'fr'})
 
     def test_flatpage_list(self):
         response = self.get_flatpage_list()
@@ -155,7 +155,7 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=(menu(page).pk, )),
-            HTTP_ACCEPT_LANGUAGE='fr')
+            headers={"accept-language": 'fr'})
 
         self.assertEqual(resp.status_code, 200)
         title = resp.json()["title"]
@@ -163,7 +163,7 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=(menu(page).pk,)),
-            HTTP_ACCEPT_LANGUAGE='en')
+            headers={"accept-language": 'en'})
 
         self.assertEqual(resp.status_code, 200)
         title = resp.json()["title"]
@@ -173,7 +173,7 @@ class FlatPageTest(TestCase):
         _create_flatpage_and_menuitem(published_en=True, published_fr=True, title_fr="Bonjour", title_en="Hello")
         _create_flatpage_and_menuitem(published_en=True, published_fr=True, title_fr="Au revoir", title_en="Goodbye")
 
-        resp = self.client.get(reverse('apimobile:flatpage-list'), HTTP_ACCEPT_LANGUAGE='fr')
+        resp = self.client.get(reverse('apimobile:flatpage-list'), headers={"accept-language": 'fr'})
 
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
@@ -181,7 +181,7 @@ class FlatPageTest(TestCase):
         self.assertEqual(results[2]["title"], "Bonjour")
         self.assertEqual(results[3]["title"], "Au revoir")
 
-        resp = self.client.get(reverse('apimobile:flatpage-list'), HTTP_ACCEPT_LANGUAGE='en')
+        resp = self.client.get(reverse('apimobile:flatpage-list'), headers={"accept-language": 'en'})
 
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
@@ -197,7 +197,7 @@ class FlatPageTest(TestCase):
         page2 = _create_flatpage_and_menuitem(published_en=False, published_fr=True)
         page3 = _create_flatpage_and_menuitem(published_en=True, published_fr=True)
 
-        resp = self.client.get(reverse('apimobile:flatpage-list'), HTTP_ACCEPT_LANGUAGE='fr')
+        resp = self.client.get(reverse('apimobile:flatpage-list'), headers={"accept-language": 'fr'})
 
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
@@ -206,7 +206,7 @@ class FlatPageTest(TestCase):
         self.assertIn(menu(page2).id, page_ids)
         self.assertIn(menu(page3).id, page_ids)
 
-        resp = self.client.get(reverse('apimobile:flatpage-list'), HTTP_ACCEPT_LANGUAGE='en')
+        resp = self.client.get(reverse('apimobile:flatpage-list'), headers={"accept-language": 'en'})
 
         self.assertEqual(resp.status_code, 200)
         results = resp.json()
@@ -221,13 +221,13 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=(menu(page1).pk, )),
-            HTTP_ACCEPT_LANGUAGE='fr')
+            headers={"accept-language": 'fr'})
 
         self.assertEqual(resp.status_code, 404)
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=(menu(page2).pk,)),
-            HTTP_ACCEPT_LANGUAGE='en')
+            headers={"accept-language": 'en'})
 
         self.assertEqual(resp.status_code, 404)
 
@@ -242,7 +242,7 @@ class FlatPageTest(TestCase):
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=[menu(page1).pk]),
             data={"portal": portal2.name},
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["id"], menu(page1).id)
@@ -250,14 +250,14 @@ class FlatPageTest(TestCase):
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=[menu(page2).pk]),
             data={"portal": portal2.name},
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
         self.assertEqual(resp.status_code, 404)
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=[menu(page3).pk]),
             data={"portal": portal2.name},
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["id"], menu(page3).id)
@@ -265,7 +265,7 @@ class FlatPageTest(TestCase):
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=[menu(page4).pk]),
             data={"portal": portal2.name},
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["id"], menu(page4).id)
@@ -282,7 +282,7 @@ class FlatPageTest(TestCase):
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
             data={"portal": portal2.name},
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -307,7 +307,7 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -326,7 +326,7 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-list'),
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
 
         self.assertEqual(resp.status_code, 200)
@@ -341,7 +341,7 @@ class FlatPageTest(TestCase):
 
         resp = self.client.get(
             reverse('apimobile:flatpage-detail', args=(menu_item.pk, )),
-            HTTP_ACCEPT_LANGUAGE='fr'
+            headers={"accept-language": 'fr'}
         )
 
         self.assertEqual(resp.status_code, 200)

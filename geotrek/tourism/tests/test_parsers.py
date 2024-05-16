@@ -411,7 +411,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             list(content.type1.all().values_list('label', flat=True)),
             ['Type A', 'Type B']
         )
-        self.assertQuerysetEqual(content.type2.all(), [])
+        self.assertQuerySetEqual(content.type2.all(), [])
         self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
@@ -498,9 +498,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(str(event.type), "Constant Event")
-        self.assertQuerysetEqual(event.themes.all(), ["Theme 1", "Theme 2"], transform=str)
-        self.assertQuerysetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
-        self.assertQuerysetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
+        self.assertQuerySetEqual(event.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerySetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerySetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_constant_fields(self, mocked):
@@ -523,11 +523,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(str(content.category), "Constant Content")
-        self.assertQuerysetEqual(content.type1.all(), ["Type1 1", "Type1 2"], transform=str)
-        self.assertQuerysetEqual(content.type2.all(), ["Type2 1", "Type2 2"], transform=str)
-        self.assertQuerysetEqual(content.themes.all(), ["Theme 1", "Theme 2"], transform=str)
-        self.assertQuerysetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
-        self.assertQuerysetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
+        self.assertQuerySetEqual(content.type1.all(), ["Type1 1", "Type1 2"], transform=str)
+        self.assertQuerySetEqual(content.type2.all(), ["Type2 1", "Type2 2"], transform=str)
+        self.assertQuerySetEqual(content.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerySetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerySetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @mock.patch('geotrek.common.parsers.requests.head')

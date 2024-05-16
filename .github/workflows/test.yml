@@ -54,7 +54,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -217,9 +217,13 @@ jobs:
     name: Tests E2E docker
     runs-on: ubuntu-20.04
     needs: [build_docker_image]
+    env:
+      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
+
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -256,7 +260,11 @@ jobs:
 
       - name: Prepare nginx
         run: |
+          sudo service apache2 stop
+          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get autoremove
           sudo apt-get install -q -y nginx
+          sudo unlink /etc/nginx/sites-enabled/default
           sudo mkdir /var/www/geotrek -p
           ls -als
           pwd
@@ -271,7 +279,7 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8000"; do
+          while ! nc -z "127.0.0.1" "8001"; do
             sleep 0.1
           done
 
@@ -299,7 +307,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test

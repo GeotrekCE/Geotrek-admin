@@ -47,7 +47,7 @@ class SettingsMobileTest(TestCase):
         cls.information_desk = tourism_factories.InformationDeskFactory.create(type=cls.information_desk_type)
 
     def get_settings(self, params=None):
-        return self.client.get(reverse('apimobile:settings'), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:settings'), params, headers={"accept-language": 'fr'})
 
     def test_settings_structure(self):
         response = self.get_settings()
