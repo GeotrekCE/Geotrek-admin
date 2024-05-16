@@ -504,7 +504,7 @@ Map screenshots
 ~~~~~~~~~~~~~~~
 
 .. code-block:: python
-
+    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
     SHOW_POIS_ON_MAP_SCREENSHOT = True
     SHOW_SERVICES_ON_MAP_SCREENSHOT = True
     SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
