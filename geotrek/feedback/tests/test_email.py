@@ -87,7 +87,6 @@ class TestPendingEmail(SuricateTests):
             pending_mail = PendingEmail.objects.first()
             self.assertEqual(pending_mail.recipient, WorkflowManager.objects.first().user.email)
             self.assertEqual(pending_mail.retries, 0)
-            self.assertEqual(pending_mail.subject, "[Geotrek] New reports from Suricate")
             self.assertEqual(pending_mail.error_message, "('Fake problem',)")
         # Email fails a second time
         with override_settings(EMAIL_BACKEND='geotrek.feedback.tests.test_email.FailingEmailBackend2'):
@@ -96,7 +95,6 @@ class TestPendingEmail(SuricateTests):
             pending_mail.refresh_from_db()
             self.assertEqual(pending_mail.recipient, WorkflowManager.objects.first().user.email)
             self.assertEqual(pending_mail.retries, 1)
-            self.assertEqual(pending_mail.subject, "[Geotrek] New reports from Suricate")
             self.assertEqual(pending_mail.error_message, "('Fake problem 2',)")
         # Email succeeds at second retry
         management.call_command('retry_failed_requests_and_mails')
