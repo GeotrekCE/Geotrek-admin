@@ -9,6 +9,9 @@ CHANGELOG
 
 - Improve information about upgrading geotrek-admin version with debian
 
+**Bug fixes**
+- Fix view `v_treks` (fixes #4099)
+
 2.106.0 (2024-05-15)
 --------------------
 
