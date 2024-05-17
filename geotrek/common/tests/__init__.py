@@ -304,7 +304,7 @@ class CommonLiveTest(MapEntityLiveTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        user = SuperUserFactory.create()
         self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
@@ -324,6 +324,11 @@ class CommonLiveTest(MapEntityLiveTest):
         self.assertTrue(default_storage.exists(image_path))
 
         mapimage_url = '%s%s?context&lang=fr' % (self.live_server_url, obj.get_detail_url())
+        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        url_called = mock_requests.get.call_args_list[0]
+        self.assertTrue(url_called.startswith(screenshot_url))
+
+        mapimage_url = '%s%s?context&lang=en' % (self.live_server_url, obj.get_detail_url())
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
@@ -422,3 +427,6 @@ class CommonLiveTest(MapEntityLiveTest):
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
+
+    def tearDown(self):
+        translation.deactivate()

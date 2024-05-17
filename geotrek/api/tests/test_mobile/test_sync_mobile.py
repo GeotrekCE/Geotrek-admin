@@ -14,6 +14,7 @@ from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.utils import translation
 from landez.sources import DownloadError
 from modeltranslation.utils import build_localized_fieldname
 from PIL import Image
@@ -229,7 +230,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
+        translation.deactivate()
         cls.portals = []
 
         cls.portal_a = TargetPortalFactory()

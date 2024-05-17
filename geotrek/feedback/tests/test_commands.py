@@ -4,11 +4,12 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.feedback.models import PendingEmail, PendingSuricateAPIRequest, Report
 from geotrek.feedback.tests.factories import ReportFactory
 
 
-class TestRemoveEmailsOlders(TestCase):
+class TestRemoveEmailsOlders(TranslationResetMixin, TestCase):
     """Test command erase_emails, if older emails are removed"""
     @classmethod
     def setUpTestData(cls):
