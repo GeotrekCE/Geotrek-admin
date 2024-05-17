@@ -202,7 +202,7 @@ gunicorn==22.0.0
     # via geotrek (setup.py)
 html5lib==1.1
     # via weasyprint
-idna==3.4
+idna==3.7
     # via requests
 importlib-metadata==6.8.0
     # via
