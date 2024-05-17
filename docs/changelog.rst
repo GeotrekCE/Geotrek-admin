@@ -8,7 +8,6 @@ CHANGELOG
 **Documentation**
 
 - Improve information about upgrading geotrek-admin version with debian
-- Remove obsolete SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT parameter
 
 2.106.0 (2024-05-15)
 --------------------
