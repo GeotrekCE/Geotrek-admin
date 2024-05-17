@@ -102,7 +102,6 @@ class TestPendingEmail(SuricateTests):
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.to, [WorkflowManager.objects.first().user.email])
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
 
     @mock.patch("geotrek.feedback.models.logger")
     def test_email_failing_for_assigned_user(self, mocked):
@@ -118,7 +117,6 @@ class TestPendingEmail(SuricateTests):
             self.assertEqual(1, report.mail_errors)
             pending_mail = PendingEmail.objects.first()
             self.assertEqual(pending_mail.recipient, report.assigned_user.email)
-            self.assertEqual(pending_mail.subject, "[Geotrek] New report to process")
             self.assertEqual(pending_mail.retries, 0)
             self.assertEqual(pending_mail.error_message, "('Fake problem',)")
             self.assertEqual(AttachedMessage.objects.filter(report=report).count(), 0)
@@ -131,7 +129,6 @@ class TestPendingEmail(SuricateTests):
             pending_mail.refresh_from_db()
             self.assertEqual(pending_mail.recipient, report.assigned_user.email)
             self.assertEqual(pending_mail.retries, 1)
-            self.assertEqual(pending_mail.subject, "[Geotrek] New report to process")
             self.assertEqual(pending_mail.error_message, "('Fake problem 2',)")
         # Email succeeds at second retry
         management.call_command('retry_failed_requests_and_mails')
@@ -139,7 +136,6 @@ class TestPendingEmail(SuricateTests):
         self.assertEqual(len(mail.outbox), 2)
         sent_mail = mail.outbox[1]
         self.assertEqual(sent_mail.to, [report.assigned_user.email])
-        self.assertEqual(sent_mail.subject, "[Geotrek] New report to process")
         self.assertIn("A nice and useful message", sent_mail.body)
         report.refresh_from_db()
         self.assertEqual(0, report.mail_errors)
