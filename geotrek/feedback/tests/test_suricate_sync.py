@@ -129,7 +129,7 @@ class SuricateTests(TranslationResetMixin, TestCase):
         cls.user = UserFactory()
         UserProfileFactory.create(user=cls.user)
         cls.workflow_manager = WorkflowManagerFactory(user=cls.user)
-        cls.admin = SuperUserFactory(username="Admin", password="drowssap")
+        cls.admin = SuperUserFactory()
         cls.programmed_status = ReportStatusFactory(identifier='programmed', label="Programmé", timer_days=7)
 
     def setUp(self):

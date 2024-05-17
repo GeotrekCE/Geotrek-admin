@@ -10,11 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Erase emails older than 1 year from feedbacks."
+    help = "Anonymize email addresses from reports older than a given number of days."
 
     def add_arguments(self, parser):
         parser.add_argument('-d', '--days',
-                            help="Erase mails older than DAYS (default: %(default)s)",
+                            help="number of days to keep (default: %(default)s)",
                             type=int,
                             default=365)
         parser.add_argument('--dry-run',
@@ -29,6 +29,6 @@ class Command(BaseCommand):
 
         if not options['dry_run']:
             updated_reports = older_reports.update(email='')
-            logger.info('{0} email(s) erased'.format(updated_reports))
+            logger.info('{0} email(s) anonymised'.format(updated_reports))
         else:
             logger.info('Dry run mode,{0} report(s) should be modified'.format(older_reports.count(),))
