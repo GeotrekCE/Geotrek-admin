@@ -21,7 +21,7 @@ backports-zoneinfo==0.2.1
     #   kombu
 beautifulsoup4==4.12.2
     # via mapentity
-billiard==4.1.0
+billiard==4.2.0
     # via celery
 btrees==5.0
     # via zodb
@@ -37,7 +37,7 @@ cairosvg==2.7.1
     # via
     #   geotrek (setup.py)
     #   weasyprint
-celery==5.3.4
+celery==5.4.0
     # via
     #   django-celery-results
     #   geotrek (setup.py)
@@ -214,7 +214,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.4
     # via coreschema
-kombu==5.3.2
+kombu==5.3.7
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
@@ -370,7 +370,7 @@ urllib3==1.26.18
     #   sentry-sdk
 values==2020.12.3
     # via env-file
-vine==5.0.0
+vine==5.1.0
     # via
     #   amqp
     #   celery
