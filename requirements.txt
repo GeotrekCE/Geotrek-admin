@@ -315,7 +315,7 @@ requests==2.32.0
     #   django-embed-video
     #   landez
     #   mapentity
-rjsmin==1.2.1
+rjsmin==1.2.2
     # via django-compressor
 ruamel-yaml==0.17.35
     # via drf-yasg
