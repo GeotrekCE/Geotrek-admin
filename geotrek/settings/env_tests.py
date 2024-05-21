@@ -76,3 +76,4 @@ SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
 MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
 DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image
 REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"  # celery broker url
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
