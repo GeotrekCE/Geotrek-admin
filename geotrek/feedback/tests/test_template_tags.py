@@ -14,7 +14,6 @@ from geotrek.maintenance.tests.factories import ReportInterventionFactory
 
 
 class TestFeedbackTemplateTags(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         cls.user1 = UserFactory(username="CCCC")

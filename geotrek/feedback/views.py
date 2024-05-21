@@ -66,15 +66,14 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
         'date_insert', 'date_update', 'assigned_user'
     ]
 
-    def get_context_data(self, **kwargs):
-        # Remove email from exports in workflow mode for user that are neither superusers or workflow manager
-        if settings.SURICATE_WORKFLOW_ENABLED and 'email' in self.mandatory_columns and not (self.request.user.is_superuser or self.request.user.pk in list(
-                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
-            self.mandatory_columns.remove('email')
-        elif settings.SURICATE_WORKFLOW_ENABLED and 'email' not in self.mandatory_columns and (self.request.user.is_superuser or self.request.user.pk in list(
-                feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
-            self.mandatory_columns.append('email')
-        return super().get_context_data(**kwargs)
+    def get_columns(self):
+        """ Override columns to remove email if user is noy superuser nor in workflow managers """
+        columns = super().get_columns()
+        if not self.request.user.is_superuser:
+            if (settings.SURICATE_WORKFLOW_ENABLED and
+                    not feedback_models.WorkflowManager.objects.filter(user_id=self.request.user.pk).exists()):
+                columns.remove('email')
+        return columns
 
 
 class ReportCreate(mapentity_views.MapEntityCreate):
@@ -103,11 +102,11 @@ class ReportViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
-        if settings.SURICATE_WORKFLOW_ENABLED and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and not (
-            self.request.user.is_superuser or self.request.user.pk in
-            list(feedback_models.WorkflowManager.objects.values_list('user', flat=True))
-        ):
-            qs = qs.filter(assigned_user=self.request.user)
+        if not self.request.user.is_superuser:
+            if (settings.SURICATE_WORKFLOW_ENABLED and
+                    not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION") and
+                    not feedback_models.WorkflowManager.objects.filter(user_id=self.request.user.pk).exists()):
+                qs = qs.filter(assigned_user=self.request.user)
 
         if self.format_kwarg == 'geojson':
             number = 'eid' if settings.SURICATE_WORKFLOW_ENABLED else 'id'

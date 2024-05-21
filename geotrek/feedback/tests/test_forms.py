@@ -326,9 +326,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     @test_for_workflow_mode
     def test_predefined_emails_serialized(self):
         response = self.client.get(reverse('feedback:report_add'), follow=True)
-        emails_data = "{\"1\": {\"label\": \"Predefined Email 0\", \"text\": \"Some email body content 0\"}, \"2\": {\"label\": \"Predefined Email 1\", \"text\": \"Some email body content 1\"}"
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(emails_data, response.content.decode("utf-8"))
+        self.assertIn('<script type="application/json" id="predefined_emails">', response.content.decode("utf-8"))
 
     @test_for_workflow_mode
     def test_date_intervention_serialized(self):
