@@ -44,7 +44,7 @@ More information on product website http://geotrek.fr
 Documentation
 -------------
 
-* `User manual (in french) <https://geotrek.readthedocs.io/en/master/usage/overview.html>`_
+* `User manual (in french) <https://geotrek.readthedocs.io/en/latest/usage/overview.html>`_
 * `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
 * Help us translate `on Weblate <https://weblate.makina-corpus.net/>`_
 
