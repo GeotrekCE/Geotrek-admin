@@ -298,7 +298,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
                              self.expected_column_formatlist_extra)
 
 
-class CommonLiveTest(MapEntityLiveTest):
+class CommonLiveTest(TranslationResetMixin, MapEntityLiveTest):
     @mock.patch('mapentity.helpers.requests')
     def test_map_image_other_language(self, mock_requests):
         if self.model is None:
