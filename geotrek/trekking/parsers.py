@@ -435,6 +435,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             'informationsEquipement.itineraire.referencesCartographiques',
             'informationsEquipement.itineraire.referencesTopoguides',
         ),
+        'structure': 'gestion.membreProprietaire.nom',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -452,6 +453,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         'networks': 'network',
         'route': 'route',
         'accessibilities': 'name',
+        'structure': 'name',
     }
     field_options = {
         'source': {'create': True},
@@ -476,6 +478,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         },
         'accessibilities': {'create': True},
         'geom': {'required': True},
+        'structure': {'create': True},
     }
     non_fields = {
         'attachments': 'illustrations',

@@ -5,6 +5,10 @@ CHANGELOG
 2.106.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- ApidaeTrekParser now imports field `membreProprietaire` as the structure
+
 **Documentation**
 
 - Improve information about upgrading geotrek-admin version with debian

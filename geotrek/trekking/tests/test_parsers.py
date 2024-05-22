@@ -937,6 +937,7 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(len(trek.source.all()), 1)
         self.assertEqual(trek.source.first().name, 'Office de tourisme de Sallanches')
         self.assertEqual(trek.source.first().website, 'https://www.example.net/ot-sallanches')
+        self.assertEqual(trek.structure.name, 'Office de tourisme de Sallanches')
 
         self.assertTrue(trek.difficulty is not None)
         self.assertEqual(trek.difficulty.difficulty_en, 'Level red – hard')
