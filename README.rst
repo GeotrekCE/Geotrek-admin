@@ -64,6 +64,7 @@ License
 
 .. image:: https://geotrek.fr/assets/img/logo_makina.svg
     :target: https://territoires.makina-corpus.com/
+    :width: 170
 
 .. image:: https://geotrek.fr/assets/img/logo_autonomens-h120m.png
     :target: https://datatheca.com
