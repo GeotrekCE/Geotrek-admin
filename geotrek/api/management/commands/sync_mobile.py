@@ -512,7 +512,7 @@ class Command(BaseCommand):
             for language in options['languages'].split(','):
                 if language not in settings.MODELTRANSLATION_LANGUAGES:
                     raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".
-                                       format(lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
+                                       format(lang_n=language, langs=tuple(settings.MODELTRANSLATION_LANGUAGES)))
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
