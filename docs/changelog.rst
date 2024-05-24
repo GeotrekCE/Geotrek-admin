@@ -13,6 +13,7 @@ CHANGELOG
 
 - Fix swapped plural and singular translations for Annotation Categories (#4032)
 - Filter out deleted services in API responses (#4284)
+- MenuItems with platform "Mobile" are now hidden on public API (#4127)
 
 **Bug fixes**
 
