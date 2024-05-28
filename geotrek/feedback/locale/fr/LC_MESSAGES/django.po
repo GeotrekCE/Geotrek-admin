@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-30 14:03+0000\n"
+"POT-Creation-Date: 2024-06-03 08:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,10 @@ msgstr "Année de création"
 
 msgid "Update year"
 msgstr "Année de mise à jour"
+
+msgid "Leave this field empty not to forward Report to Suricate"
+msgstr ""
+"Le signalement ne sera pas transmis à Suricate si ce champ est laissé vide."
 
 msgid "Message for sentinel"
 msgstr "Message pour la sentinelle"
@@ -121,6 +125,9 @@ msgstr "Créer un signalement"
 #, python-brace-format
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
+
+msgid "New feedback"
+msgstr "Nouveau signalement"
 
 msgid "to"
 msgstr "à"
@@ -311,9 +318,16 @@ msgstr ""
 msgid "%(email)s has sent a feedback."
 msgstr "%(email)s a signalé un problème."
 
+msgid "A new feedback has been sent."
+msgstr "Un problème a été signalé."
+
 #, python-format
 msgid "Comment : %(comment)s"
 msgstr "Commentaire : %(comment)s"
+
+#, python-format
+msgid "Trek : %(name)s"
+msgstr "Randonnée : %(name)s"
 
 #, python-format
 msgid ""

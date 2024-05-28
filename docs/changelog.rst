@@ -10,6 +10,8 @@ CHANGELOG
 - ApidaeTrekParser now imports field `membreProprietaire` as the structure
 - Exclude deleted areas from OpenAir export (fixes #4140)
 - Add filter by creation year and update year to Report list (#4085)
+- Make email address optional in `Report` form (#4085)
+- Add more information to email received by managers on new `Report` (#4085)
 
 **Documentation**
 
@@ -19,6 +21,7 @@ CHANGELOG
 **Bug fixes**
 - Fix view `v_treks` (fixes #4099)
 - Prevent trek map screenshot error if type of associated information desk have not pictogram
+
 
 2.106.0 (2024-05-15)
 --------------------

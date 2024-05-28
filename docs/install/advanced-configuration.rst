@@ -953,7 +953,9 @@ To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) l
 
 **2 - Suricate Standard**
 
-This mode simply forwards all reports to Suricate, using the Standard API to post reports.
+This mode forwards reports to Suricate, using the Standard API to post reports.
+
+Reports are forwarded as long as we enter a value for the `email address` field at creation, otherwise they are kept for internal usage only.
 
 Set your account settings in ``custom.py``:
 

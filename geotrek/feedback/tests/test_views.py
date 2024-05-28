@@ -1,5 +1,6 @@
 import csv
 import json
+import re
 from io import StringIO
 from unittest import mock
 
@@ -17,18 +18,14 @@ from rest_framework.reverse import reverse
 from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.feedback import models as feedback_models
 from geotrek.maintenance.tests.factories import (
-    InfrastructureInterventionFactory,
-    ReportInterventionFactory,
-)
+    InfrastructureInterventionFactory, ReportInterventionFactory)
 
-from . import factories as feedback_factories
-from .test_suricate_sync import (
-    SURICATE_REPORT_SETTINGS,
-    test_for_all_suricate_modes,
-    test_for_report_and_basic_modes,
-    test_for_workflow_mode,
-)
 from ...common.tests import CommonTest
+from . import factories as feedback_factories
+from .test_suricate_sync import (SURICATE_REPORT_SETTINGS,
+                                 test_for_all_suricate_modes,
+                                 test_for_report_and_basic_modes,
+                                 test_for_workflow_mode)
 
 
 class ReportViewsetMailSend(TestCase):
@@ -161,6 +158,7 @@ class ReportViewsTest(CommonTest):
         data['name'] = 'Anonymous'
         response = self.client.post(self._get_add_url(), data)
         self.assertEqual(response.status_code, 302)
+        self.assertTrue(re.match(r"/report/[0-9]*/", response.url))
         obj = self.model.objects.last()
         self.assertEqual(obj.email, data['email'])
         self.logout()
@@ -244,6 +242,20 @@ class ReportViewsTest(CommonTest):
                                             'draw': 1,
                                             'recordsFiltered': 1,
                                             'recordsTotal': 1})
+
+    @test_for_workflow_mode
+    def test_creation_redirects_to_list_view(self):
+        data = {
+            'geom': '{"type": "Point", "coordinates": [0, 0]}',
+            'email': 'yeah@you.com',
+            'activity': feedback_factories.ReportActivityFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
+            'category': feedback_factories.ReportCategoryFactory.create().pk,
+            'comment': 'a comment'
+        }
+        response = self.client.post(self.model.get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, expected_url=reverse('feedback:report_list'))
 
 
 class SuricateViewPermissions(AuthentFixturesMixin, TestCase):

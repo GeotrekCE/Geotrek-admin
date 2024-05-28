@@ -1,11 +1,18 @@
 {% load i18n l10n %}
 {% autoescape off %}
-{% blocktrans with email=report.email %}{{email}} has sent a feedback.{% endblocktrans %}
+{% if report.email %}
+    {% blocktrans with email=report.email %}{{email}} has sent a feedback.{% endblocktrans %}
+{% else %}
+    {% trans "A new feedback has been sent." %}
+{% endif %}
 
 {% trans "Activity" %} : {{report.activity}}
 {% if report.comment %}{% blocktrans with comment=report.comment_text|striptags %}Comment : {{comment}}{% endblocktrans %}{% endif %}
 {% trans "Category" %} : {{report.category}}
 {% trans "Problem magnitude" %} : {{report.problem_magnitude}}
+{% if report.related_trek %}{% blocktrans with name=report.related_trek.name|striptags %}Trek : {{name}}{% endblocktrans %}{% endif %}
+{% trans "Report" %} {% if report.eid|length %}{{report.eid}}{%else%}{{report.id}}{%endif%}
+    https://{{report.full_url}}
 
 {% if report.geom %}{% blocktrans with lat=report.geom_wgs84.y|stringformat:".6f" lng=report.geom_wgs84.x|stringformat:".6f" %}
 Lat : {{lat}} / Lon : {{lng}}
