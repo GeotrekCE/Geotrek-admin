@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,10 +24,10 @@ msgstr ""
 msgid "Linked content"
 msgstr ""
 
-msgid "Related to"
+msgid "Title"
 msgstr ""
 
-msgid "Title"
+msgid "Related to"
 msgstr ""
 
 msgid "Common"
@@ -460,6 +460,11 @@ msgid "Model {model}"
 msgstr ""
 
 msgid "Geotrek-admin"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
 msgstr ""
 
 msgid "Import from web."
