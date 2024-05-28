@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-10 08:08+0000\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,6 +62,9 @@ msgstr "Service"
 msgid "Trail"
 msgstr "Sentier"
 
+msgid "Report"
+msgstr ""
+
 msgid "Outdoor Course"
 msgstr "Parcours Outdoor"
 
@@ -101,8 +104,8 @@ msgstr ""
 msgid "Year of activity"
 msgstr "Année d'activité"
 
-msgid "Intervention contractors"
-msgstr "Prestataires des interventions"
+msgid "Contractors"
+msgstr "Prestataires"
 
 msgid "Days"
 msgstr "Jours"
@@ -166,9 +169,6 @@ msgstr "Coût héliportage"
 
 msgid "Contractor cost"
 msgstr "Coût prestataire"
-
-msgid "Contractors"
-msgstr "Prestataires"
 
 msgid "3D Length"
 msgstr "Longueur 3D"
@@ -292,6 +292,9 @@ msgstr "Financeurs"
 
 msgid "Projects"
 msgstr "Chantiers"
+
+msgid "Intervention contractors"
+msgstr "Prestataires des interventions"
 
 msgid "Period"
 msgstr "Période"
