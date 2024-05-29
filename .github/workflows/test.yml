@@ -127,6 +127,23 @@ jobs:
         ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
         ./venv/bin/python3 ./manage.py compilemessages
 
+      - name: Generate translation files
+        run: |
+          ./venv/bin/python3 ./manage.py makemessages -a --no-location --no-obsolete
+
+      - uses: tj-actions/verify-changed-files@v18
+        id: verify-changed-translations
+        with:
+          files: |
+            **/*.po
+
+      - name: Verify translation files changed
+        if: steps.verify-changed-translations.outputs.files_changed == 'true'
+        run: |
+          echo "Translation file(s) changed: ${{ steps.verify-changed-translations.outputs.changed_files }}"
+          git diff
+          core.setFailed('Please fix your translation files with ./manage.py makemessages -a --no-location --no-obsolete')
+
     - name: Check missing migrations
       run: |
         ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check

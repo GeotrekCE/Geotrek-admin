@@ -54,17 +54,17 @@ jobs:
 
       - name: Generate translation files
         run: |
-          python3 ./manage.py makemessages -a --no-location --no-obsolete
+          ./venv/bin/python ./manage.py makemessages -a --no-location --no-obsolete
 
       - uses: tj-actions/verify-changed-files@v18
-        id: verify-changed-files
+        id: verify-changed-translations
         with:
           files: |
             **/*.po
 
       - name: Verify translation files changed
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        if: steps.verify-changed-translations.outputs.files_changed == 'true'
         run: |
-          echo "Translation file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
+          echo "Translation file(s) changed: ${{ steps.verify-changed-translations.outputs.changed_files }}"
           git diff
           core.setFailed('Please fix your translation files with ./manage.py makemessages -a --no-location --no-obsolete')
