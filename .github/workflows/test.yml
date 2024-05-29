@@ -131,7 +131,7 @@ jobs:
       run: |
         ./venv/bin/python3 ./manage.py makemessages -a --no-location --no-obsolete
 
-    - uses: tj-actions/verify-changed-files@v18
+    - uses: tj-actions/verify-changed-files@v17
       id: verify-changed-translations
       with:
         files: |
