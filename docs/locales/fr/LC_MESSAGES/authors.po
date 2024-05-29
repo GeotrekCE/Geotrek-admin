@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-03 16:13+0000\n"
+"POT-Creation-Date: 2023-09-08 08:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,123 +109,114 @@ msgstr ""
 msgid "Hugo Hasson"
 msgstr ""
 
-#: ../../authors.rst:29
-msgid "Joaquim Nallar"
-msgstr ""
-
-#: ../../authors.rst:35
+#: ../../authors.rst:34
 msgid "Parc national des Ecrins"
 msgstr ""
 
-#: ../../authors.rst:37
+#: ../../authors.rst:36
 msgid "Camille Monchicourt"
 msgstr ""
 
-#: ../../authors.rst:38
+#: ../../authors.rst:37
 msgid "Théo Lechémia"
 msgstr ""
 
-#: ../../authors.rst:39
+#: ../../authors.rst:38
 msgid "Élie Bouttier"
 msgstr ""
 
-#: ../../authors.rst:42
+#: ../../authors.rst:41
 msgid "Others"
 msgstr ""
 
-#: ../../authors.rst:44
+#: ../../authors.rst:43
 msgid "Michaël Viadere (OpenIG)"
 msgstr ""
 
-#: ../../authors.rst:45
+#: ../../authors.rst:44
 msgid "Guillaume Boitel"
 msgstr ""
 
-#: ../../authors.rst:46
+#: ../../authors.rst:45
 msgid "Jean Lenormand"
 msgstr ""
 
-#: ../../authors.rst:47
+#: ../../authors.rst:46
 msgid "Claude Paroz"
 msgstr ""
 
-#: ../../authors.rst:48
+#: ../../authors.rst:47
 msgid "Amandine Sahl (Parc National des Cévennes)"
 msgstr ""
 
-#: ../../authors.rst:49
+#: ../../authors.rst:48
 msgid "Frédéric Cloitre (LPO AuRA)"
 msgstr ""
 
-#: ../../authors.rst:50
+#: ../../authors.rst:49
 msgid "Idrissa Djepa Creutz (OepnIG / Parc National des Cévennes)"
 msgstr ""
 
-#: ../../authors.rst:51
+#: ../../authors.rst:50
 msgid "Yannick LE DUC"
 msgstr ""
 
-#: ../../authors.rst:52
+#: ../../authors.rst:51
 msgid "Guillaume Boitel (Parc National de Port Cros)"
 msgstr ""
 
-#: ../../authors.rst:53
+#: ../../authors.rst:52
 msgid "Pierre Loicq (Parc National de la Vanoise)"
 msgstr ""
 
-#: ../../authors.rst:54
-msgid "Nathanaël (@roipoussiere)"
-msgstr ""
-
-#: ../../authors.rst:57
+#: ../../authors.rst:55
 msgid "Credits"
 msgstr ""
 
-#: ../../authors.rst:59
+#: ../../authors.rst:57
 msgid "*Information desk* by Alex Berkowitz from The Noun Project"
 msgstr ""
 
-#: ../../authors.rst:60
+#: ../../authors.rst:58
 msgid "*Calendar* by Laurent Patain from The Noun Project"
 msgstr ""
 
-#: ../../authors.rst:61
+#: ../../authors.rst:59
 msgid "*Restaurant* designed by Roberto Pinto from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:62
+#: ../../authors.rst:60
 msgid "*Kayak* designed by johanna from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:63
+#: ../../authors.rst:61
 msgid "*Luggage* designed by Luis Prado from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:64
+#: ../../authors.rst:62
 msgid "*Location* designed by Jacob Lowe from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:65
+#: ../../authors.rst:63
 msgid "*Food* designed by Rémy Médard from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:66
+#: ../../authors.rst:64
 msgid "*Climbing* designed by Eric Milet from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:67
+#: ../../authors.rst:65
 msgid "*Box Office* designed by Alessio Damiano from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:68
+#: ../../authors.rst:66
 msgid "*Steep Descent* designed by Sergey Patutin from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:69
+#: ../../authors.rst:67
 msgid "*Landscape* by Adrien Coquet from the Noun Project"
 msgstr ""
 
-#: ../../authors.rst:70
+#: ../../authors.rst:68
 msgid "*Ski course* by Sahua D from the Noun Project"
 msgstr ""
-

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-03 22:36+0000\n"
+"POT-Creation-Date: 2023-09-12 08:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -60,8 +60,8 @@ msgid "to managers when a feedback report is created"
 msgstr ""
 
 #: ../../install/advanced-configuration.rst:29
-#: ../../install/advanced-configuration.rst:527
-#: ../../install/advanced-configuration.rst:538
+#: ../../install/advanced-configuration.rst:525
+#: ../../install/advanced-configuration.rst:536
 msgid ""
 "Email configuration takes place in ``/opt/geotrek-"
 "admin/var/conf/custom.py``, where you control recipients emails "
@@ -101,21 +101,19 @@ msgstr ""
 
 #: ../../install/advanced-configuration.rst:56
 msgid ""
-"In order to enable swagger module to auto-document API, in the custom "
-"settings file, add the following code:"
+"In order to enable swagger module to auto-document API ``/api/v2/``, in "
+"the custom settings file, add the following code:"
 msgstr ""
 
 #: ../../install/advanced-configuration.rst:64
-msgid ""
-"Then run ``sudo dpkg-reconfigure -u geotrek-admin``. The API swagger "
-"documentation is now availaible here : `<GEOTREK_ADMIN_URL>/api/v2`"
+msgid "Then run ``sudo dpkg-reconfigure -u geotrek-admin``."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:68
+#: ../../install/advanced-configuration.rst:67
 msgid "Share services between several Geotrek instances"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:70
+#: ../../install/advanced-configuration.rst:69
 msgid ""
 "As explained :ref:`in the design section <design-section>`, *Geotrek-"
 "admin* relies on several services. They are generic and reusable, and can"
@@ -123,621 +121,612 @@ msgid ""
 "resources for example."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:74
+#: ../../install/advanced-configuration.rst:73
 msgid ""
 "A simple way to achieve this is to install one instance with everything "
 "as usual (*standalone*), and plug the other instances on its underlying "
 "services."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:79
+#: ../../install/advanced-configuration.rst:78
 msgid "Capture and conversion"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:81
+#: ../../install/advanced-configuration.rst:80
 msgid ""
 "If you want to use external services, in ``.env``, add following "
 "variables:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:90
+#: ../../install/advanced-configuration.rst:89
 msgid ""
 "Then, you can delete all screamshotter and convertit references in "
 "``docker-compose.yml``."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:94
+#: ../../install/advanced-configuration.rst:93
 msgid "Shutdown useless services"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:96
+#: ../../install/advanced-configuration.rst:95
 msgid ""
 "Now that your instances point the shared server. You can shutdown the "
 "useless services on each instance."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:99
+#: ../../install/advanced-configuration.rst:98
 msgid "Start by stopping everything:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:107
+#: ../../install/advanced-configuration.rst:106
 msgid "Control number of workers and request timeouts"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:109
+#: ../../install/advanced-configuration.rst:108
 msgid ""
 "By default, the application runs on 4 processes, and timeouts after 30 "
 "seconds."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:111
+#: ../../install/advanced-configuration.rst:110
 msgid ""
 "To control those values, edit and fix your ``docker-compose.yml`` file in"
 " web and api section."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:113
+#: ../../install/advanced-configuration.rst:112
 msgid ""
 "To know how many workers you should set, please refer to `gunicorn "
 "documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html"
 "#how-many-workers>`_."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:117
+#: ../../install/advanced-configuration.rst:116
 msgid "External authent"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:119
+#: ../../install/advanced-configuration.rst:118
 msgid "You can authenticate user against a remote database table or view."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:121
+#: ../../install/advanced-configuration.rst:120
 msgid ""
 "To enable this feature, fill these fields in ``/opt/geotrek-"
 "admin/var/conf/custom.py``:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:137
+#: ../../install/advanced-configuration.rst:136
 msgid "Expected columns in table/view are :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:139
+#: ../../install/advanced-configuration.rst:138
 msgid "username : string (*unique*)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:140
+#: ../../install/advanced-configuration.rst:139
 msgid "first_name : string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:141
+#: ../../install/advanced-configuration.rst:140
 msgid "last_name : string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:142
+#: ../../install/advanced-configuration.rst:141
 msgid "password : string (simple md5 encoded, or full hashed and salted password)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:143
+#: ../../install/advanced-configuration.rst:142
 msgid "email : string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:144
+#: ../../install/advanced-configuration.rst:143
 msgid ""
 "level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking "
 "manager, 5: management and trekking editor, 6: administrator)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:145
+#: ../../install/advanced-configuration.rst:144
 msgid "structure : string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:146
+#: ../../install/advanced-configuration.rst:145
 msgid "lang : string (language code)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:150
+#: ../../install/advanced-configuration.rst:149
 msgid ""
 "The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path "
 "(``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:152
+#: ../../install/advanced-configuration.rst:151
 msgid "User management will be disabled from Administration backoffice."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:154
+#: ../../install/advanced-configuration.rst:153
 msgid ""
 "In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* "
 "line in settings file, and restart instance (see paragraph above)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:157
+#: ../../install/advanced-configuration.rst:156
 msgid ""
 "Geotrek-admin can support many types of users authentication (LDAP, "
 "oauth, ...), contact us for more details."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:161
+#: ../../install/advanced-configuration.rst:160
 msgid "Custom SQL"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:163
+#: ../../install/advanced-configuration.rst:162
 msgid ""
 "Put your custom SQL in a file name ``/opt/geotrek-"
 "admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:165
+#: ../../install/advanced-configuration.rst:164
 msgid "app name is the name of the Django application, eg. trekking or tourism"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:166
+#: ../../install/advanced-configuration.rst:165
 msgid ""
 "``pre_``… scripts are executed before Django migrations and ``post_``… "
 "scripts after"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:167
+#: ../../install/advanced-configuration.rst:166
 msgid ""
 "script are executed in INSTALLED_APPS order, then by alphabetical order "
 "of script names"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:171
+#: ../../install/advanced-configuration.rst:170
 msgid "Map settings"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:174
+#: ../../install/advanced-configuration.rst:173
 msgid "Change or add WMTS tiles layers (IGN, OSM, Mapbox…)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:176
+#: ../../install/advanced-configuration.rst:175
 msgid ""
 "By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM"
 " black and white):"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:196
+#: ../../install/advanced-configuration.rst:195
 msgid "You can change or add more basemaps layers like this:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:202
+#: ../../install/advanced-configuration.rst:201
 msgid "Specify the tiles URLs this way in your custom Django setting file:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:211
+#: ../../install/advanced-configuration.rst:210
 msgid "Example with IGN and OSM basemaps:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:225
+#: ../../install/advanced-configuration.rst:224
 msgid ""
 "To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may "
 "need an API key. You can find more information about this on "
 "https://geoservices.ign.fr/services-web-issus-des-scans-ign."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:228
+#: ../../install/advanced-configuration.rst:227
 msgid "Map layers zoom"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:230
+#: ../../install/advanced-configuration.rst:229
 msgid "You can define the max_zoom the user can zoom for all tiles."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:236
+#: ../../install/advanced-configuration.rst:235
 msgid ""
 "*It can be interesting when your tiles can't go to a zoom. For example "
 "OpenTopoMap is 17.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:240
+#: ../../install/advanced-configuration.rst:239
 msgid "Map layers colors and style"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:242
+#: ../../install/advanced-configuration.rst:241
 msgid ""
 "All layers colors can be customized from the settings. See `Leaflet "
 "reference <http://leafletjs.com/reference.html#path>`_ for vectorial "
 "layer style."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:250
+#: ../../install/advanced-configuration.rst:249
 msgid "Or change just one parameter (the opacity for example):"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:257
+#: ../../install/advanced-configuration.rst:256
 msgid ""
 "Regarding colors that depend from database content, such as land layers "
 "(physical types, work management...) or restricted areas. We use a "
 "specific setting that receives a list of colors:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:266
+#: ../../install/advanced-configuration.rst:265
 msgid ""
 "See the default values in ``geotrek/settings/base.py`` for the complete "
 "list of available styles."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:287
+#: ../../install/advanced-configuration.rst:286
 msgid "Color of the different layers on the map"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:302
+#: ../../install/advanced-configuration.rst:300
 msgid "Color of the different layers on the top right for landing."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:304
+#: ../../install/advanced-configuration.rst:302
 msgid ""
 "For land, physical, competence, signagemanagement, workmanagement should "
 "have 5 values."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:305
+#: ../../install/advanced-configuration.rst:303
 msgid ""
 "For restricted Area: add as many color as your number of restricted area "
 "type"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:307
+#: ../../install/advanced-configuration.rst:305
 msgid "**Restart** the application for changes to take effect."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:311
+#: ../../install/advanced-configuration.rst:309
 msgid "External raster layers"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:313
+#: ../../install/advanced-configuration.rst:311
 msgid ""
 "It is possible to add overlay tiles layer on maps. For example, it can be"
 " useful to:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:315
+#: ../../install/advanced-configuration.rst:313
 msgid "Get the cadastral parcels on top of satellite images"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:316
+#: ../../install/advanced-configuration.rst:314
 msgid ""
 "Home made layers (*with Tilemill or QGisMapserver for example*). Like the"
 " park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths"
 " that are marked as invisible in the database!"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:320
+#: ../../install/advanced-configuration.rst:318
 msgid "In ``custom.py``, just add the following lines:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:330
+#: ../../install/advanced-configuration.rst:328
 msgid "**Expected properties:**"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:332
+#: ../../install/advanced-configuration.rst:330
 msgid "For ``GeoJSON`` files, you can provide the following properties :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:334
+#: ../../install/advanced-configuration.rst:332
 msgid "``title``: string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:335
+#: ../../install/advanced-configuration.rst:333
 msgid "``description``: string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:336
+#: ../../install/advanced-configuration.rst:334
 msgid "``website``: string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:337
+#: ../../install/advanced-configuration.rst:335
 msgid "``phone``: string"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:338
+#: ../../install/advanced-configuration.rst:336
 msgid "``pictures``: list of objects with ``url`` and ``copyright`` attributes"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:339
+#: ../../install/advanced-configuration.rst:337
 msgid "``category``: object with ``id`` and ``label`` attributes"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:343
+#: ../../install/advanced-configuration.rst:341
 msgid "Geographical CRUD"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:349
+#: ../../install/advanced-configuration.rst:347
 msgid "Minimum distance to merge 2 paths in unit of SRID"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:351
+#: ../../install/advanced-configuration.rst:349
 msgid ""
 "*Change the distance. Better to keep it like this. Not used when "
 "``TREKKING_TOPOLOGY_ENABLED = True``.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:357
+#: ../../install/advanced-configuration.rst:355
 msgid "Distance of snapping for the cursor in pixels on Leaflet map."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:363
+#: ../../install/advanced-configuration.rst:361
 msgid "Minimum distance to merge 2 paths."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:365
+#: ../../install/advanced-configuration.rst:363
 msgid ""
 "*Change the distance. Should be higher or the same as "
 "PATH_SNAPPING_DISTANCE*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:367
+#: ../../install/advanced-configuration.rst:365
 msgid "*Used when TREKKING_TOPOLOGY_ENABLED = True*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:373
+#: ../../install/advanced-configuration.rst:371
 msgid "Points of reference are enabled on form of treks."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:379
+#: ../../install/advanced-configuration.rst:377
 msgid "Points of reference are enabled on form of otudoor courses."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:385
+#: ../../install/advanced-configuration.rst:383
 msgid ""
 "Land objects are added on other objects (path for example) with offset, "
 "avoiding overlay."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:387
+#: ../../install/advanced-configuration.rst:385
 msgid ""
 "*You should not change it to avoid overlay except if you want to have "
 "more overlay.* *You can do for example for :*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:409
+#: ../../install/advanced-configuration.rst:407
 msgid "All settings used to generate altimetric profile."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:411
+#: ../../install/advanced-configuration.rst:409
 msgid ""
 "*All these settings can be modified but you need to check the result "
 "every time*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:413
+#: ../../install/advanced-configuration.rst:411
 msgid "*The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:417
+#: ../../install/advanced-configuration.rst:415
 msgid "Disable darker map backgrounds"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:419
+#: ../../install/advanced-configuration.rst:417
 msgid ""
 "Since IGN map backgrounds are very dense and colourful, a dark opacity is"
 " applied. In order to disable, change this MapEntity setting:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:428
+#: ../../install/advanced-configuration.rst:426
 msgid "Map screenshots"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:438
+#: ../../install/advanced-configuration.rst:436
 msgid "Show objects on maps of PDF"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:444
+#: ../../install/advanced-configuration.rst:442
 msgid "Size in pixels of the capture."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:446
+#: ../../install/advanced-configuration.rst:444
 msgid ""
 "*Be careful with your pdfs.* *If you change this value, pdfs will be "
 "rendered differently*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:451
+#: ../../install/advanced-configuration.rst:449
 msgid "Modules and components"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:454
+#: ../../install/advanced-configuration.rst:452
 msgid "Enable Apps"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:456
+#: ../../install/advanced-configuration.rst:454
 msgid ""
 "In order to disable a full set of modules, in the custom settings file, "
 "add the following code:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:467
+#: ../../install/advanced-configuration.rst:465
 msgid "In order to remove notion of trails:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:473
+#: ../../install/advanced-configuration.rst:471
 msgid "In order to remove landedge model:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:479
+#: ../../install/advanced-configuration.rst:477
 msgid "In order to remove zoning combo-boxes on list map:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:487
+#: ../../install/advanced-configuration.rst:485
 msgid "In order to hide TouristicContents and TouristicEvents on menu:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:493
+#: ../../install/advanced-configuration.rst:491
 msgid "In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:499
+#: ../../install/advanced-configuration.rst:497
 msgid "In order to hide the accessibility menu for attachments:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:507
+#: ../../install/advanced-configuration.rst:505
 msgid ""
 "By doing so, some software upgrades may not be as smooth as usual. Never "
 "forget to mention this customization if you ask for community support."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:512
+#: ../../install/advanced-configuration.rst:510
 msgid "Paths"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:518
+#: ../../install/advanced-configuration.rst:516
 msgid ""
 "If false, it forbid to delete a path when at least one topology is linked"
 " to this path."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:525
+#: ../../install/advanced-configuration.rst:523
 msgid ""
 "If True, it sends a message to managers (MANAGERS) whenever a path has "
 "been changed to draft."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:536
+#: ../../install/advanced-configuration.rst:534
 msgid ""
 "If True, it sends a message to managers (MANAGERS) whenever an object "
 "which can be published has been changed to review mode."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:543
+#: ../../install/advanced-configuration.rst:541
 msgid "Signage and Blade"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:546
+#: ../../install/advanced-configuration.rst:544
 msgid ""
 "``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) "
 "allow to enable or disable blades and lines submodules."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:548
+#: ../../install/advanced-configuration.rst:546
 msgid ""
 "``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to "
 "have the `direction` field on lines instead of blades."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:554
+#: ../../install/advanced-configuration.rst:552
 msgid "Type of the blade code (str or int)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:556
+#: ../../install/advanced-configuration.rst:554
 msgid "*It can be str or int.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:558
+#: ../../install/advanced-configuration.rst:556
 msgid "*If you have an integer code : int*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:560
+#: ../../install/advanced-configuration.rst:558
 msgid "*If you have an string code : str*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:566
+#: ../../install/advanced-configuration.rst:564
 msgid ""
 "Correspond to the format of blades. Show N3-1 for the blade 1 of the "
 "signage N3."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:568
+#: ../../install/advanced-configuration.rst:566
 msgid "*If you want to change : move information under bracket*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:570
+#: ../../install/advanced-configuration.rst:568
 msgid "*You can also remove one element between bracket*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:572
+#: ../../install/advanced-configuration.rst:570
 msgid "*You can do for exemple :* *\"CD99.{signagecode}.{bladenumber}\"*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:575
+#: ../../install/advanced-configuration.rst:573
 msgid "*It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:577
-#: ../../install/advanced-configuration.rst:592
+#: ../../install/advanced-configuration.rst:575
+#: ../../install/advanced-configuration.rst:590
 msgid "*signagecode is the code of the signage*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:578
-#: ../../install/advanced-configuration.rst:593
+#: ../../install/advanced-configuration.rst:576
+#: ../../install/advanced-configuration.rst:591
 msgid "*bladenumber is the number of the blade*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:584
+#: ../../install/advanced-configuration.rst:582
 msgid "Correspond to the format used in export of lines. Used in csv of signage."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:586
+#: ../../install/advanced-configuration.rst:584
 msgid ""
 "*Similar with above* *You can do for example :* "
 "*\"CD99.{signagecode}-{bladenumber}.{linenumber}\"*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:590
+#: ../../install/advanced-configuration.rst:588
 msgid ""
 "*It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of"
 " XIDNZEIU)*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:594
+#: ../../install/advanced-configuration.rst:592
 msgid "*linenumber is the number of the line*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:598
+#: ../../install/advanced-configuration.rst:596
 msgid "Diving"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:600
+#: ../../install/advanced-configuration.rst:598
 msgid ""
 "In order to enable diving module, in the custom settings file, add the "
 "following code:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:608
-#: ../../install/advanced-configuration.rst:645
+#: ../../install/advanced-configuration.rst:606
+#: ../../install/advanced-configuration.rst:633
 msgid "Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:610
+#: ../../install/advanced-configuration.rst:608
 msgid ""
 "You can also insert diving minimal data (default practices, difficulties,"
 " levels and group permissions values):"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:617
+#: ../../install/advanced-configuration.rst:615
 msgid "You can insert licenses of attachments with this command :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:625
-#: ../../install/loading-data.rst:34
-msgid "Land"
-msgstr ""
-
-#: ../../install/advanced-configuration.rst:627
-msgid "You can insert circulation and authorization types with this command :"
-msgstr ""
-
-#: ../../install/advanced-configuration.rst:635
+#: ../../install/advanced-configuration.rst:623
 msgid "Outdoor"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:637
+#: ../../install/advanced-configuration.rst:625
 msgid ""
 "In order to enable Outdoor module, in the custom settings file, add the "
 "following code:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:647
+#: ../../install/advanced-configuration.rst:635
 msgid "You can also insert Outdoor minimal data:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:653
+#: ../../install/advanced-configuration.rst:641
 msgid ""
 "After installing Outdoor module, you have to add permissions to your user"
 " groups on outdoor sites and courses."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:655
+#: ../../install/advanced-configuration.rst:643
 msgid ""
 "Note: Outdoor module is not compatible with PostGIS <= 2.4 that is "
 "included in Ubuntu 18.04. You should either upgrade to Ubuntu 20.04 or "
@@ -745,89 +734,85 @@ msgid ""
 "https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:660
+#: ../../install/advanced-configuration.rst:648
 msgid "Sensitive areas"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:662
+#: ../../install/advanced-configuration.rst:650
 msgid ""
 "In order to enable sensitivity module, in the custom settings file, add "
 "the following code:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:670
+#: ../../install/advanced-configuration.rst:658
 msgid "See `sensitivity section <./sensitivity.html>`_ for settings and imports."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:673
-msgid "You can insert rules of sensitive area with these commands :"
-msgstr ""
-
-#: ../../install/advanced-configuration.rst:682
+#: ../../install/advanced-configuration.rst:661
 msgid "Feedback reports settings"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:685
+#: ../../install/advanced-configuration.rst:664
 msgid "Send acknowledge email"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:691
+#: ../../install/advanced-configuration.rst:670
 msgid ""
 "If false, no email will be sent to the sender of any feedback on Geotrek-"
 "rando website"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:695
+#: ../../install/advanced-configuration.rst:674
 msgid "Suricate support"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:697
+#: ../../install/advanced-configuration.rst:676
 msgid ""
 "Geotrek reports can work together with Suricate API, using one of 3 "
 "modes. Proceed through a mode full configuration before proceeding to the"
 " next mode."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:699
+#: ../../install/advanced-configuration.rst:678
 msgid "**1** - No Suricate (default)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:701
+#: ../../install/advanced-configuration.rst:680
 msgid "This mode sends no report data to Suricate."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:703
+#: ../../install/advanced-configuration.rst:682
 msgid ""
 "To initialize Report forms (Geotrek-admin, Geotrek-rando-v2, Geotrek-"
 "rando-v3) load lists for categories, activities, statuses and problem "
 "magnitude:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:709
+#: ../../install/advanced-configuration.rst:688
 msgid ""
 "To make these lists available for your Geotrek-rando-v2, run "
 "``sync_rando`` (see :ref:`synchronization <synchronization-section>`)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:712
+#: ../../install/advanced-configuration.rst:691
 msgid "**2** - Suricate Standard"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:714
+#: ../../install/advanced-configuration.rst:693
 msgid ""
 "This mode simply forwards all reports to Suricate, using the Standard API"
 " to post reports."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:716
+#: ../../install/advanced-configuration.rst:695
 msgid "Set your account settings in ``custom.py``:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:729
+#: ../../install/advanced-configuration.rst:708
 msgid "**3** - Suricate Management (Workflow)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:731
+#: ../../install/advanced-configuration.rst:710
 msgid ""
 "This mode allows to retrieve reports and related data directly from "
 "Suricate, using the Management API to get data. It is used to process and"
@@ -838,37 +823,37 @@ msgid ""
 "admin/issues/2366#issuecomment-1113435035"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:734
+#: ../../install/advanced-configuration.rst:713
 msgid "Set your settings in ``custom.py`` :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:752
+#: ../../install/advanced-configuration.rst:731
 msgid "You can use the following command to test your connection settings:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:758
+#: ../../install/advanced-configuration.rst:737
 msgid "Load lists for activities and/or report statuses from Suricate:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:764
+#: ../../install/advanced-configuration.rst:743
 msgid "Load alerts from Suricate (located in your bounding box) :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:770
+#: ../../install/advanced-configuration.rst:749
 msgid ""
 "To make these lists available for your Geotrek-rando, run ``sync_rando`` "
 "(see :ref:`synchronization <synchronization-section>`)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:772
+#: ../../install/advanced-configuration.rst:751
 msgid "Then load extra required statuses for Reports and Interventions:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:783
+#: ../../install/advanced-configuration.rst:762
 msgid "Go to the Admin Site and"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:780
+#: ../../install/advanced-configuration.rst:759
 msgid ""
 "if you want to include the moderation steps (`SKIP_MANAGER_MODERATION = "
 "False`), select a user as Workflow Manager "
@@ -876,7 +861,7 @@ msgid ""
 "other users."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:781
+#: ../../install/advanced-configuration.rst:760
 msgid ""
 "select a district as Workflow District "
 "(`/admin/feedback/workflowdistrict/`). This zone defines the area of "
@@ -884,7 +869,7 @@ msgid ""
 " be excluded from workflow."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:782
+#: ../../install/advanced-configuration.rst:761
 msgid ""
 "create predefined emails (`/admin/feedback/predefinedemail/`) to notify "
 "Suricate Sentinels and Administrators. You can use "
@@ -894,13 +879,13 @@ msgid ""
 "under `/admin/auth/user/`)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:783
+#: ../../install/advanced-configuration.rst:762
 msgid ""
 "make sure Users involved in the workflow have proper permissions to "
 "create and update Reports and Interventions (`/admin/auth/user/`)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:785
+#: ../../install/advanced-configuration.rst:764
 msgid ""
 "Be aware that, when enabling Suricate Management mode, Suricate becomes "
 "the master database for reports. This means **reports created in Geotrek-"
@@ -911,21 +896,21 @@ msgid ""
 "`cron` for instance) :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:795
+#: ../../install/advanced-configuration.rst:774
 msgid "Display reports with status defined colors"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:801
+#: ../../install/advanced-configuration.rst:780
 msgid ""
 "Go to the Admin Site and select colors to display for each status "
 "(`/admin/feedback/reportstatus/`)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:805
+#: ../../install/advanced-configuration.rst:784
 msgid "Use timers to receive alerts for your reports"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:807
+#: ../../install/advanced-configuration.rst:786
 msgid ""
 "It is possible to enable receiving email alerts for reports that have "
 "remained in the same status for too long. For instance, I can create two "
@@ -937,301 +922,301 @@ msgid ""
 " or to managers (setting `MANAGERS`) if there is no assigned user."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:812
+#: ../../install/advanced-configuration.rst:791
 msgid "To enable the alerts :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:814
+#: ../../install/advanced-configuration.rst:793
 msgid ""
 "Go to the Admin Site and set \"Timer days\" to some integer other than 0 "
 "in relevant statuses (`/admin/feedback/reportstatus/`)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:816
+#: ../../install/advanced-configuration.rst:795
 msgid ""
 "Select the \"Uses timers\" checkbox on reports that you wish to receive "
 "alerts for (in report update form)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:818
+#: ../../install/advanced-configuration.rst:797
 msgid ""
 "Make sure to run this commands daily to send email alerts and clear "
 "obsolete timers (thanks to `cron` for instance) :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:826
+#: ../../install/advanced-configuration.rst:805
 msgid "Anonymize feedback reports"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:828
+#: ../../install/advanced-configuration.rst:807
 msgid ""
 "To be compliant to GDPR, you cannot keep personnal data infinitely, and "
 "should notice your users on how many time you keep their email."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:831
+#: ../../install/advanced-configuration.rst:810
 msgid ""
 "A Django command is available to anonymize reports, by default older than"
 " 365 days."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:838
+#: ../../install/advanced-configuration.rst:817
 msgid "Or if you want to erase emails for reports older than 90 days"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:846
+#: ../../install/advanced-configuration.rst:825
 msgid "Attachments"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:849
+#: ../../install/advanced-configuration.rst:828
 msgid "View attachments in the browser"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:851
+#: ../../install/advanced-configuration.rst:830
 msgid ""
 "Attached files are downloaded by default by browser, with the following "
 "line, files will be opened in the browser :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:860
+#: ../../install/advanced-configuration.rst:839
 msgid "Resizing uploaded pictures"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:862
+#: ../../install/advanced-configuration.rst:841
 msgid ""
 "Attached pictures can be resized at upload by enabling "
 "``PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD``:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:868
+#: ../../install/advanced-configuration.rst:847
 msgid ""
 "These corresponding height/width parameters can be overriden to select "
 "resized image size:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:877
+#: ../../install/advanced-configuration.rst:856
 msgid "Prohibit usage of big pictures and small width / height"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:879
+#: ../../install/advanced-configuration.rst:858
 msgid "If you want to prohibit the usage of heavy pictures:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:885
+#: ../../install/advanced-configuration.rst:864
 msgid "If you want to prohibit the usage of small pictures in pixels:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:892
+#: ../../install/advanced-configuration.rst:871
 msgid "These 3 settings will also not allow downloading images from the parsers."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:896
+#: ../../install/advanced-configuration.rst:875
 msgid "Prohibit usage of certain file types"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:898
+#: ../../install/advanced-configuration.rst:877
 msgid ""
 "Paperclip will only accept attachment files matching a list of allowed "
 "extensions. Here is the default value for this setting, which you can "
 "extend if needed:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:929
+#: ../../install/advanced-configuration.rst:908
 msgid ""
 "It will verify that the mimetype of the file matches the extension. You "
 "can add extra allowed mimetypes for a given extension with the following "
 "syntax:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:935
+#: ../../install/advanced-configuration.rst:914
 msgid "You can also entirely deactivate these checks with the following:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:941
+#: ../../install/advanced-configuration.rst:920
 msgid "These 2 settings will also not allow downloading images from the parsers."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:945
+#: ../../install/advanced-configuration.rst:924
 msgid "Interface"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:948
+#: ../../install/advanced-configuration.rst:927
 msgid "Configure columns displayed in lists views and exports"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:950
+#: ../../install/advanced-configuration.rst:929
 msgid ""
 "For each module, use the following syntax to configure columns to display"
 " in the main table."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:957
+#: ../../install/advanced-configuration.rst:936
 msgid ""
 "For each module, use the following syntax to configure columns to export "
 "as CSV or SHP."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:964
+#: ../../install/advanced-configuration.rst:943
 msgid ""
 "Please refer to the \"settings detail\" section for a complete list of "
 "modules and available columms."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:966
+#: ../../install/advanced-configuration.rst:945
 msgid ""
 "Another setting exists to enable a more detailed export of jobs costs in "
 "the interventions module. When enabling this settings, interventions list"
 " exports will contain a new column for each job's total cost."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:974
+#: ../../install/advanced-configuration.rst:953
 msgid "Custom columns available"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:976
+#: ../../install/advanced-configuration.rst:955
 msgid ""
 "A (nearly?) exhaustive list of attributes available for display and "
 "export as columns in each module."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:1915
+#: ../../install/advanced-configuration.rst:1867
 msgid "Configure form fields in creation views"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:1917
+#: ../../install/advanced-configuration.rst:1869
 msgid ""
 "For each module, use the following syntax to configure fields to hide in "
 "the creation form."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:1924
+#: ../../install/advanced-configuration.rst:1876
 msgid ""
 "Please refer to the \"settings detail\" section for a complete list of "
 "modules and hideable fields."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:1928
+#: ../../install/advanced-configuration.rst:1880
 msgid "Hideable form fields"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:1930
+#: ../../install/advanced-configuration.rst:1882
 msgid "An exhaustive list of form fields hideable in each module."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2228
+#: ../../install/advanced-configuration.rst:2178
 msgid "Configure form fields required or needed for review or publication"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2230
+#: ../../install/advanced-configuration.rst:2180
 msgid ""
 "Set 'error_on_publication' to avoid publication without completeness "
 "fields and 'error_on_review' if you want this fields to be required "
 "before sending to review."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2237
+#: ../../install/advanced-configuration.rst:2187
 msgid ""
 "For each module, configure fields to be needed or required on review or "
 "publication"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2248
+#: ../../install/advanced-configuration.rst:2198
 msgid "Edition"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2251
+#: ../../install/advanced-configuration.rst:2201
 msgid "WYSIWYG editor configuration"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2253
+#: ../../install/advanced-configuration.rst:2203
 msgid "Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2255
+#: ../../install/advanced-configuration.rst:2205
 msgid ""
 "Its configuration can be customized using advanced settings (see above "
 "paragraph)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2257
+#: ../../install/advanced-configuration.rst:2207
 msgid ""
 "For example, in order to control which buttons are to be shown, and which"
 " tags are to be kept when cleaning-up, add this bloc :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2267
+#: ../../install/advanced-configuration.rst:2217
 msgid "This will apply to all text fields."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2269
+#: ../../install/advanced-configuration.rst:2219
 msgid ""
 "For more information on configuration entries available, please refer to "
 "the official documentation of *TinyMCE version 3*."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2274
+#: ../../install/advanced-configuration.rst:2224
 msgid "Max characters count"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2276
+#: ../../install/advanced-configuration.rst:2226
 msgid ""
 "Add ``MAX_CHARACTERS`` setting to be able to define a maximum number of "
 "characters for text fields (to be used with django-mapentity >= 8.1)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2283
+#: ../../install/advanced-configuration.rst:2233
 msgid ""
 "This will apply to all text fields. See `this issue "
 "<https://github.com/GeotrekCE/Geotrek-admin/issues/2901>`_ for details."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2288
+#: ../../install/advanced-configuration.rst:2238
 msgid "Copyright on pictures"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2290
+#: ../../install/advanced-configuration.rst:2240
 msgid ""
 "If you want copyright added to your pictures, change "
 "``THUMBNAIL_COPYRIGHT_FORMAT`` to this:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2296
+#: ../../install/advanced-configuration.rst:2246
 msgid "You can also add ``{legend}``:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2298
+#: ../../install/advanced-configuration.rst:2248
 msgid "*\"{title}-:-{author}-:-{legend}\"*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2306
+#: ../../install/advanced-configuration.rst:2256
 msgid "Facebook configuration"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2308
+#: ../../install/advanced-configuration.rst:2258
 msgid ""
 "When a content is shared to Facebook in Geotrek-rando V2, it needs static"
 " html files built by synchronization (thanks to option ``--rando-url``)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2311
+#: ../../install/advanced-configuration.rst:2261
 msgid ""
 "In Facebook developper dashboard, create a Facebook app dedicated to "
 "Geotrek-rando and activate it."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2315
+#: ../../install/advanced-configuration.rst:2265
 msgid "In ``custom.py`` set Facebook App ID:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2321
+#: ../../install/advanced-configuration.rst:2271
 msgid "you can also override these settings:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2331
+#: ../../install/advanced-configuration.rst:2281
 msgid "Override translations"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2333
+#: ../../install/advanced-configuration.rst:2283
 msgid ""
 "Translations are managed by https://weblate.makina-corpus.net/ where you "
 "can contribute. But you can also override default translation files "
@@ -1240,17 +1225,17 @@ msgid ""
 "packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``)."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2337
+#: ../../install/advanced-configuration.rst:2287
 msgid ""
 "Don't edit these default files, use them to find which words you want to "
 "override."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2339
+#: ../../install/advanced-configuration.rst:2289
 msgid "Create the custom translations destination folder:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2341
+#: ../../install/advanced-configuration.rst:2291
 msgid ""
 "Create a ``django.po`` file in ``/opt/geotrek-"
 "admin/var/conf/extra_locale`` directory. You can do one folder and one "
@@ -1259,23 +1244,23 @@ msgid ""
 "translation overriding)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2345
+#: ../../install/advanced-configuration.rst:2295
 msgid "Override the translations that you want in these files."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2347
+#: ../../install/advanced-configuration.rst:2297
 msgid "Example of content for the French translation overriding:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2377
+#: ../../install/advanced-configuration.rst:2327
 msgid "Apply changes (French translation in this example):"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2388
+#: ../../install/advanced-configuration.rst:2338
 msgid "Override public PDF templates"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2390
+#: ../../install/advanced-configuration.rst:2340
 msgid ""
 "PDF are generated from HTML templates, using `Django templating "
 "<https://docs.djangoproject.com/en/1.11/ref/templates/>`_. Treks, "
@@ -1283,33 +1268,33 @@ msgid ""
 "exported in PDF files."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2393
+#: ../../install/advanced-configuration.rst:2343
 msgid "Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2394
+#: ../../install/advanced-configuration.rst:2344
 msgid ""
 "Touristic contents : "
 "``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2395
+#: ../../install/advanced-configuration.rst:2345
 msgid ""
 "Touristic events : "
 "``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2396
+#: ../../install/advanced-configuration.rst:2346
 msgid "Outdoor sites : ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2397
+#: ../../install/advanced-configuration.rst:2347
 msgid ""
 "Outdoor courses : "
 "``geotrek/outdoor/templates/outdoor/course_public_pdf.html``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2399
+#: ../../install/advanced-configuration.rst:2349
 msgid ""
 "Overriden templates have to be located in ``/opt/geotrek-"
 "admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = "
@@ -1320,7 +1305,7 @@ msgid ""
 "inside your file::"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2406
+#: ../../install/advanced-configuration.rst:2356
 #, python-format
 msgid ""
 "These templates derive from base templates, which content is organized in"
@@ -1330,14 +1315,14 @@ msgid ""
 "admin/var/conf/extra_templates/trekking/trek_public_pdf.html``."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2410
+#: ../../install/advanced-configuration.rst:2360
 msgid ""
 "It is also possible to use color defined for practice for pictogram by "
 "adding in your ``/opt/geotrek-"
 "admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file::"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2415
+#: ../../install/advanced-configuration.rst:2365
 msgid ""
 "CSS can be overriden like html templates: copy them to "
 "``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` "
@@ -1346,11 +1331,11 @@ msgid ""
 "example."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2418
+#: ../../install/advanced-configuration.rst:2368
 msgid "**You can also create a template for each portal.**"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2420
+#: ../../install/advanced-configuration.rst:2370
 msgid ""
 "Add a folder ``portal_{id_portal}`` (portal ids are located in the portal"
 " url path ``/admin/common/targetportal/{id_portal}``) in ``/opt/geotrek-"
@@ -1358,7 +1343,7 @@ msgid ""
 "add at the top of your file:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2428
+#: ../../install/advanced-configuration.rst:2378
 msgid ""
 "The template for a specific portal will use the modification made on the "
 "overriden template in  ``/opt/geotrek-"
@@ -1366,24 +1351,24 @@ msgid ""
 "specific  block)"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2433
+#: ../../install/advanced-configuration.rst:2383
 msgid ""
 "This modification is not mandatory, if you have multiple portal and you "
 "want to modify the template of only one portal, you create one folder for"
 " this specific portal"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2435
+#: ../../install/advanced-configuration.rst:2385
 msgid "**You might need to use your own images in the PDF templates.**"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2437
+#: ../../install/advanced-configuration.rst:2387
 msgid ""
 "Add your own images in ``/opt/geotrek-"
 "admin/var/conf/extra_static/images/``."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2439
+#: ../../install/advanced-configuration.rst:2389
 #, python-format
 msgid ""
 "You can then use these images in your PDF templates with ``{% static "
@@ -1391,137 +1376,137 @@ msgid ""
 "the file."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2441
+#: ../../install/advanced-configuration.rst:2391
 msgid ""
 "Example of a customised template (``/opt/geotrek-"
 "admin/var/conf/extra_templates/trekking/trek_public_pdf.html``) with a "
 "customised logo and URL:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2458
+#: ../../install/advanced-configuration.rst:2408
 msgid ""
 "The default template may change in the future versions. You will be in "
 "charge of porting the modification to your copy."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2461
+#: ../../install/advanced-configuration.rst:2411
 msgid ""
 "Test your modifications by exporting a trek or a content to PDF from "
 "Geotrek-admin application. To get your modifications available for Rando "
 "application, launch the ``sync_rando`` command."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2466
+#: ../../install/advanced-configuration.rst:2416
 msgid "PDF as booklet"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2469
+#: ../../install/advanced-configuration.rst:2419
 msgid "USE_BOOKLET_PDF = True"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2471
+#: ../../install/advanced-configuration.rst:2421
 msgid ""
 "Use booklet for PDF. During the synchro, pois details will be removed, "
 "and the pages will be merged. It is possible to customize the pdf, with "
 "trek_public_booklet_pdf.html."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2475
+#: ../../install/advanced-configuration.rst:2425
 msgid "Custom font in public document template"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2477
+#: ../../install/advanced-configuration.rst:2427
 msgid ""
 "In order to use custom fonts in trek PDF, it is necessary to install the "
 "font files on the server."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2480
+#: ../../install/advanced-configuration.rst:2430
 msgid ""
 "*Microsoft* fonts like *Arial* and *Verdana* can be installed via the "
 "package manager:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2487
+#: ../../install/advanced-configuration.rst:2437
 msgid ""
 "For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder"
 " ``/usr/local/share/fonts/custom/`` as root, and run the following "
 "command:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2494
+#: ../../install/advanced-configuration.rst:2444
 msgid "For more information, check out Ubuntu documentation."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2498
+#: ../../install/advanced-configuration.rst:2448
 msgid "Custom colors in public document template"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2500
+#: ../../install/advanced-configuration.rst:2450
 msgid ""
 "Trek export geometries are translucid red by default. In order to control"
 " the apparence of objects in public trek PDF exports, use the following "
 "setting:"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2507
+#: ../../install/advanced-configuration.rst:2457
 msgid "See *Leaflet* reference documentation for detail about layers apparence."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2511
+#: ../../install/advanced-configuration.rst:2461
 msgid "Primary color in PDF templates"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2513
+#: ../../install/advanced-configuration.rst:2463
 msgid ""
 "You can override ``PRIMARY_COLOR`` to change emphase text in PDF export. "
 "Beware of contrast, white colour is used for text so we advise you to "
 "avoid light colour."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2522
+#: ../../install/advanced-configuration.rst:2472
 msgid "Custom logos"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2524
+#: ../../install/advanced-configuration.rst:2474
 msgid "You might also need to deploy logo images in the following places :"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2526
+#: ../../install/advanced-configuration.rst:2476
 msgid "``var/conf/extra_static/images/favicon.png``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2527
+#: ../../install/advanced-configuration.rst:2477
 msgid "``var/conf/extra_static/images/logo-login.png``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2528
+#: ../../install/advanced-configuration.rst:2478
 msgid "``var/conf/extra_static/images/logo-header.png``"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2532
+#: ../../install/advanced-configuration.rst:2482
 msgid "Settings for Geotrek-rando"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2535
+#: ../../install/advanced-configuration.rst:2485
 msgid "Synchro Geotrek-rando"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2537
+#: ../../install/advanced-configuration.rst:2487
 msgid ""
 "With Geotrek-rando V2, there is a synchronization mechanism to expose "
 "Geotrek-admin contents in json files generated automatically. This is no "
 "more used in Geotrek-rando V3."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2544
+#: ../../install/advanced-configuration.rst:2494
 msgid ""
 "Path on your server where the data for Geotrek-rando website will be "
 "generated"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2546
-#: ../../install/advanced-configuration.rst:2666
+#: ../../install/advanced-configuration.rst:2496
+#: ../../install/advanced-configuration.rst:2616
 msgid ""
 "*If you want to modify it, do not forget to import os at the top of the "
 "file.* *Check* `import Python "
@@ -1529,177 +1514,177 @@ msgid ""
 "information*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2553
+#: ../../install/advanced-configuration.rst:2503
 msgid "Options of the sync_rando command in Geotrek-admin interface."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2557
+#: ../../install/advanced-configuration.rst:2507
 msgid "Distances"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2564
+#: ../../install/advanced-configuration.rst:2514
 msgid ""
 "Distance to which tourist contents, tourist events, treks, pois, services"
 " will be displayed"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2566
+#: ../../install/advanced-configuration.rst:2516
 msgid "*This distance can be changed by practice for treks in the admin.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2572
+#: ../../install/advanced-configuration.rst:2522
 msgid "Distance to which dives will be displayed."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2576
+#: ../../install/advanced-configuration.rst:2526
 msgid "Limits"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2582
+#: ../../install/advanced-configuration.rst:2532
 msgid "Limit of the number of pois on treks pdf."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2584
+#: ../../install/advanced-configuration.rst:2534
 msgid "*14 is already a huge amount of POI, but it's possible to add more*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2590
+#: ../../install/advanced-configuration.rst:2540
 msgid "Limit of the number of information desks on treks pdf."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2592
+#: ../../install/advanced-configuration.rst:2542
 msgid "*You can put -1 if you want all the information desks*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2596
+#: ../../install/advanced-configuration.rst:2546
 msgid "Cateogories"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2602
+#: ../../install/advanced-configuration.rst:2552
 msgid ""
 "On the Geotrek-rando v2 website, treks practices will be displayed "
 "separately"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2604
+#: ../../install/advanced-configuration.rst:2554
 msgid "*Field order for each practices in admin will be take in account*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2610
+#: ../../install/advanced-configuration.rst:2560
 msgid ""
 "On the Geotrek-rando v2 website, accessibilites will be displayed "
 "separately"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2616
+#: ../../install/advanced-configuration.rst:2566
 msgid ""
 "On the Geotrek-rando v2 website, if a trek has a children it will be "
 "displayed separately"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2622
+#: ../../install/advanced-configuration.rst:2572
 msgid ""
 "On the Geotrek-rando v2 website, dives practices will be displayed "
 "separately"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2628
+#: ../../install/advanced-configuration.rst:2578
 msgid "On the Geotrek-rando v2 website, treks near other are hidden"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2634
+#: ../../install/advanced-configuration.rst:2584
 msgid ""
 "It enables correlated pictures on Gotrek-rando v2 to be displayed in the "
 "slideshow"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2640
+#: ../../install/advanced-configuration.rst:2590
 msgid ""
 "On Geotrek-rando v2 website, only PDF imported with filetype "
 "\"Topoguide\" will be used and not autogenerated."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2650
+#: ../../install/advanced-configuration.rst:2600
 msgid "Order of all the objects without practices on Geotrek-rando website"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2652
+#: ../../install/advanced-configuration.rst:2602
 msgid "*All the settings about order are the order inside Geotrek-rando website.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2654
+#: ../../install/advanced-configuration.rst:2604
 msgid ""
 "*Practices of diving, treks and categories of touristic contents are "
 "taken in account*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2658
+#: ../../install/advanced-configuration.rst:2608
 msgid "Settings for Geotrek-mobile"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2664
+#: ../../install/advanced-configuration.rst:2614
 msgid "Path on your server where the datas for mobile will be saved"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2673
+#: ../../install/advanced-configuration.rst:2623
 msgid "Options of the sync_mobile command"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2679
+#: ../../install/advanced-configuration.rst:2629
 msgid ""
 "Number max of pictures that will be displayed and synchronized for each "
 "object (trek, poi, etc.) in the mobile app."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2685
+#: ../../install/advanced-configuration.rst:2635
 msgid "URL's Tiles used for the mobile."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2687
+#: ../../install/advanced-configuration.rst:2637
 msgid "*Change for IGN:*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2702
+#: ../../install/advanced-configuration.rst:2652
 msgid "Intervals of the mobile for the length filter"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2704
+#: ../../install/advanced-configuration.rst:2654
 msgid "*Interval key is in meters.* *You can add new intervals*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2726
+#: ../../install/advanced-configuration.rst:2676
 msgid "Intervals of the mobile for the ascent filter"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2728
+#: ../../install/advanced-configuration.rst:2678
 msgid "*Do the same as above*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2740
+#: ../../install/advanced-configuration.rst:2690
 msgid "Intervals of the mobile for the duration filter"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2742
+#: ../../install/advanced-configuration.rst:2692
 msgid ""
 "*Check MOBILE_LENGTH_INTERVALS comment to use it, here interval "
 "correspond to 1 unit of hour*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2759
+#: ../../install/advanced-configuration.rst:2709
 msgid "List of all the filters enabled on mobile."
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2761
+#: ../../install/advanced-configuration.rst:2711
 msgid ""
 "*Remove any of the filters if you don't want one of them. It's useless to"
 " add other one.*"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2766
+#: ../../install/advanced-configuration.rst:2716
 msgid "Settings details"
 msgstr ""
 
-#: ../../install/advanced-configuration.rst:2768
+#: ../../install/advanced-configuration.rst:2718
 msgid "Search settings in this page to have information."
 msgstr ""
 
@@ -2017,11 +2002,11 @@ msgid "Create user and database, enable PostGIS extension"
 msgstr ""
 
 #: ../../install/docker.rst:23
-msgid "Run ``docker-compose run --rm web update.sh``"
+msgid "Run ``docker compose run --rm web update.sh``"
 msgstr ""
 
 #: ../../install/docker.rst:24
-msgid "Run ``docker-compose up``"
+msgid "Run ``docker compose up``"
 msgstr ""
 
 #: ../../install/docker.rst:25
@@ -2530,7 +2515,7 @@ msgstr ""
 msgid "Start import from command line"
 msgstr ""
 
-#: ../../install/import.rst:283 ../../install/sensitivity.rst:74
+#: ../../install/import.rst:283 ../../install/sensitivity.rst:88
 msgid "Just run:"
 msgstr ""
 
@@ -2684,194 +2669,55 @@ msgstr ""
 msgid "``sudo geotrek help loadinfrastructure``"
 msgstr ""
 
-#: ../../install/import.rst:542
-msgid ""
-"Load a layer with point geometries and import entities as infrastructures"
-" objects."
-msgstr ""
-
-#: ../../install/import.rst:544
-msgid ""
-"expected formats for the `point_layer` file are shapefile or geojson "
-"(other geodjango supported-formats may work but untested),"
-msgstr ""
-
-#: ../../install/import.rst:545
-msgid ""
-"the command updates existing Infrastructure objects based on the `eid` "
-"field (external ID),"
-msgstr ""
-
-#: ../../install/import.rst:546
-msgid ""
-"if the Infrastructure object does not exist (or if `eid` is not "
-"specified) it is created."
-msgstr ""
-
-#: ../../install/import.rst:549
-msgid "**Usage example**"
-msgstr ""
-
-#: ../../install/import.rst:564
-msgid ""
-"The command expects entries from `point_layer` file to have the the "
-"following fields: `shpname`, `shptype`, `shpdesc`, `shpyear` and `shpid`."
-msgstr ""
-
-#: ../../install/import.rst:565
-msgid ""
-"A default value is provided for the condition. It will be set for all "
-"imported infrastructures."
-msgstr ""
-
-#: ../../install/import.rst:566
-msgid ""
-"A default value is provided for the year in addition to the field "
-"mapping. In case the shapefile entry does not have a year attribute the "
-"command will take the default value instead."
-msgstr ""
-
-#: ../../install/import.rst:567
-msgid ""
-"The command will select or create InfrastructureType values based on the "
-"`type` argument, taking the default value \"A\" for the category."
-msgstr ""
-
-#: ../../install/import.rst:569
-msgid "**Required fields**"
-msgstr ""
-
-#: ../../install/import.rst:571
-msgid ""
-"The following fields are mandatory to create an Infrastructure object: "
-"`name`, `type` and `category`. For each of those fields either an import "
-"field and/or a default value MUST be provided. If the command is unable "
-"to determine values for those fields for a given layer, the layer is "
-"skipped with an error message."
-msgstr ""
-
-#: ../../install/import.rst:573
-msgid "**Default values**"
-msgstr ""
-
-#: ../../install/import.rst:575
-msgid ""
-"When a default value is provided without a fieldname to import the "
-"default value is set for all Infrastructure objects."
-msgstr ""
-
-#: ../../install/import.rst:576
-msgid ""
-"When a default value is provided in addition to a fieldname to import it "
-"is used as a fallback for entries without the specified import field."
-msgstr ""
-
-#: ../../install/import.rst:578
-msgid "**Selection and addition of parameterized values**"
-msgstr ""
-
-#: ../../install/import.rst:580
-msgid ""
-"Infrastructure objects have several values from Geotrek's parameterized "
-"values sets:"
-msgstr ""
-
-#: ../../install/import.rst:582
-msgid ""
-"`type` from InfrastructureType values (and `category` which is implied by"
-" the `type` value),"
-msgstr ""
-
-#: ../../install/import.rst:583
-msgid "`condition` from InfrastructureCondition values."
-msgstr ""
-
-#: ../../install/import.rst:585
-msgid ""
-"New parameterized values are created and added to Geotrek Admin if "
-"necessary. The command checks if the imported `type` value already exists"
-" by looking for an InfrastructureType with the right `type` + `category`."
-msgstr ""
-
-#: ../../install/import.rst:591
-msgid "Selected or added InfrastructureType value:"
-msgstr ""
-
-#: ../../install/import.rst:593
-msgid "label <- value of `type` import field"
-msgstr ""
-
-#: ../../install/import.rst:594
-msgid "type <- value of `cat` import field"
-msgstr ""
-
-#: ../../install/import.rst:595 ../../install/import.rst:606
-msgid ""
-"optionnally if `--use-structure`: structure <- the structure value "
-"(import field or default)"
-msgstr ""
-
-#: ../../install/import.rst:597
-msgid "For InfrastructureCondition the check uses the `condition` argument."
-msgstr ""
-
-#: ../../install/import.rst:603
-msgid "Selected or added InfrastructureCondition value:"
-msgstr ""
-
-#: ../../install/import.rst:605
-msgid "label <- value of `cond` field"
-msgstr ""
-
-#: ../../install/import.rst:610
+#: ../../install/import.rst:523
 msgid "Import Dive"
 msgstr ""
 
-#: ../../install/import.rst:612
+#: ../../install/import.rst:525
 msgid "``sudo geotrek help loaddive``"
 msgstr ""
 
-#: ../../install/import.rst:650
+#: ../../install/import.rst:563
 msgid "Import Signage"
 msgstr ""
 
-#: ../../install/import.rst:653
+#: ../../install/import.rst:566
 msgid "``sudo geotrek help loadsignage``"
 msgstr ""
 
-#: ../../install/import.rst:717
+#: ../../install/import.rst:630
 msgid "Import Cities"
 msgstr ""
 
-#: ../../install/import.rst:720
+#: ../../install/import.rst:633
 msgid "``sudo geotrek help loadcities``"
 msgstr ""
 
-#: ../../install/import.rst:756
+#: ../../install/import.rst:669
 msgid "Import Districts"
 msgstr ""
 
-#: ../../install/import.rst:759
+#: ../../install/import.rst:672
 msgid "``sudo geotrek help loaddistricts``"
 msgstr ""
 
-#: ../../install/import.rst:795
+#: ../../install/import.rst:708
 msgid "Import Restricted areas"
 msgstr ""
 
-#: ../../install/import.rst:798
+#: ../../install/import.rst:711
 msgid "``sudo geotrek help loadrestrictedareas``"
 msgstr ""
 
-#: ../../install/import.rst:833
+#: ../../install/import.rst:746
 msgid "Exploitation commands"
 msgstr ""
 
-#: ../../install/import.rst:836
+#: ../../install/import.rst:749
 msgid "Delete attachment from disk"
 msgstr ""
 
-#: ../../install/import.rst:838
+#: ../../install/import.rst:751
 msgid ""
 "When an attachment (eg. pictures) is removed, its file is not "
 "automatically removed from disk. You have to run ``sudo geotrek "
@@ -2880,11 +2726,11 @@ msgid ""
 "thumbnails."
 msgstr ""
 
-#: ../../install/import.rst:844
+#: ../../install/import.rst:757
 msgid "Remove duplicate paths"
 msgstr ""
 
-#: ../../install/import.rst:846
+#: ../../install/import.rst:759
 msgid ""
 "Duplicate paths can appear while adding paths with commands or directly "
 "in the application. Duplicate paths can cause some problems of routing "
@@ -2892,37 +2738,37 @@ msgid ""
 "MultiLineStrings instead of LineStrings)."
 msgstr ""
 
-#: ../../install/import.rst:849
+#: ../../install/import.rst:762
 msgid "You have to run ``sudo geotrek remove_duplicate_paths``"
 msgstr ""
 
-#: ../../install/import.rst:851
+#: ../../install/import.rst:764
 msgid ""
 "During the process of the command, every topology on a duplicate path "
 "will be set on the original path, and the duplicate path will be deleted."
 msgstr ""
 
-#: ../../install/import.rst:855
+#: ../../install/import.rst:768
 msgid "Unset structure on categories"
 msgstr ""
 
-#: ../../install/import.rst:857
+#: ../../install/import.rst:770
 msgid ""
 "Use this command if you wish to undo linking categories to structures for"
 " some models."
 msgstr ""
 
-#: ../../install/import.rst:860
+#: ../../install/import.rst:773
 msgid "You have to run ``sudo geotrek unset_structure``"
 msgstr ""
 
-#: ../../install/import.rst:889
+#: ../../install/import.rst:802
 msgid ""
 "You can't chose for each choice which set of category you want to unset "
 "structures, it will happen for all categories"
 msgstr ""
 
-#: ../../install/import.rst:892
+#: ../../install/import.rst:805
 msgid ""
 "Firstly, if a categroy is linked to a structure, it creates the same "
 "category but with no structure associated. Secondly, every element with "
@@ -2930,11 +2776,11 @@ msgid ""
 "categories are removed."
 msgstr ""
 
-#: ../../install/import.rst:899
+#: ../../install/import.rst:812
 msgid "Reorder topologies"
 msgstr ""
 
-#: ../../install/import.rst:901
+#: ../../install/import.rst:814
 msgid ""
 "All topologies have information about which path they go through on and "
 "in which order. Actually, when a path is split in 2 by another path, a "
@@ -2944,13 +2790,13 @@ msgid ""
 "geotrek reorder_topologies``"
 msgstr ""
 
-#: ../../install/import.rst:907
+#: ../../install/import.rst:820
 msgid ""
 "It removes a lot of useless information which can accelerate the process "
 "of editing topologies afterward."
 msgstr ""
 
-#: ../../install/import.rst:910
+#: ../../install/import.rst:823
 msgid ""
 "During the process of this command, it tries to find a good order of "
 "passage on the paths which creates only one Linestring from start to end."
@@ -2959,28 +2805,28 @@ msgid ""
 "managed during topologies' display."
 msgstr ""
 
-#: ../../install/import.rst:915
+#: ../../install/import.rst:828
 msgid ""
 "It can happens that this algorithm can't find any solution and will "
 "genereate a MultiLineString. This will be displayed at the end of the "
 "reorder"
 msgstr ""
 
-#: ../../install/import.rst:921
+#: ../../install/import.rst:834
 msgid "Automatic commands"
 msgstr ""
 
-#: ../../install/import.rst:924
+#: ../../install/import.rst:837
 msgid ""
 "You can set up automatic commands by creating a `cron` file under "
 "``/etc/cron.d/geotrek_command`` that contains:"
 msgstr ""
 
-#: ../../install/import.rst:930
+#: ../../install/import.rst:843
 msgid "example :"
 msgstr ""
 
-#: ../../install/import.rst:937
+#: ../../install/import.rst:850
 msgid "This example will automatically reorder topologies at 4 am every day."
 msgstr ""
 
@@ -3440,6 +3286,10 @@ msgstr ""
 msgid "Formats: Shapefile or pure SQL dump (CREATE TABLE + INSERT)"
 msgstr ""
 
+#: ../../install/loading-data.rst:34
+msgid "Land"
+msgstr ""
+
 #: ../../install/loading-data.rst:36
 msgid "Cities polygons (Shapefile or SQL, simple and valid Multi-Polygons)"
 msgstr ""
@@ -3552,96 +3402,100 @@ msgid "Restore backup:"
 msgstr ""
 
 #: ../../install/maintenance.rst:57
-msgid ""
-"If errors persist, rename your database and recreate a fresh one, then "
-"restore."
+msgid "If errors occurs on restore, try to add ``--clean`` option."
 msgstr ""
 
 #: ../../install/maintenance.rst:59
+msgid ""
+"If errors persists, rename your database and recreate a fresh one, then "
+"restore."
+msgstr ""
+
+#: ../../install/maintenance.rst:61
 msgid "Extract media and configuration files:"
 msgstr ""
 
-#: ../../install/maintenance.rst:66
+#: ../../install/maintenance.rst:68
 msgid "Follow *Fresh installation* method. Choose to manage database by yourself."
 msgstr ""
 
-#: ../../install/maintenance.rst:70
+#: ../../install/maintenance.rst:72
 msgid "PostgreSQL optimization"
 msgstr ""
 
-#: ../../install/maintenance.rst:72
+#: ../../install/maintenance.rst:74
 msgid "Increase ``shared_buffers`` and ``work_mem`` according to your RAM"
 msgstr ""
 
-#: ../../install/maintenance.rst:74
+#: ../../install/maintenance.rst:76
 msgid ""
 "`Log long queries "
 "<http://wiki.postgresql.org/wiki/Logging_Difficult_Queries>`_"
 msgstr ""
 
-#: ../../install/maintenance.rst:76
+#: ../../install/maintenance.rst:78
 msgid ""
 "Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for "
 "monitoring"
 msgstr ""
 
-#: ../../install/maintenance.rst:80
+#: ../../install/maintenance.rst:82
 msgid "Access your database securely on your local machine (QGIS)"
 msgstr ""
 
-#: ../../install/maintenance.rst:82
+#: ../../install/maintenance.rst:84
 msgid ""
 "Instead of opening your database to the world (by opening the 5432 port "
 "for example), you can use `SSH tunnels "
 "<http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_."
 msgstr ""
 
-#: ../../install/maintenance.rst:87
+#: ../../install/maintenance.rst:89
 msgid "Manage Cache"
 msgstr ""
 
-#: ../../install/maintenance.rst:89
+#: ../../install/maintenance.rst:91
 msgid "You can purge application cache with command or in admin interface"
 msgstr ""
 
-#: ../../install/maintenance.rst:97
+#: ../../install/maintenance.rst:99
 msgid "Major evolutions from version 2.33"
 msgstr ""
 
-#: ../../install/maintenance.rst:99
+#: ../../install/maintenance.rst:101
 msgid ""
 "From version 2.33, Geotrek-admin is packaged in a debian package. This "
 "mean several things :"
 msgstr ""
 
-#: ../../install/maintenance.rst:101
+#: ../../install/maintenance.rst:103
 msgid "a system user ``geotrek`` is created on install ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:103
+#: ../../install/maintenance.rst:105
 msgid "base code is located in ``/opt/geotrek-admin`` folder ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:105
+#: ../../install/maintenance.rst:107
 msgid ""
 "``geotrek`` is the new command, replacing ``bin/django``, and must be run"
 " in root (system user ``geotrek`` is used after) ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:107
+#: ../../install/maintenance.rst:109
 msgid ""
 "there is no more ``settings.ini`` but an ``env`` file with environment "
 "variables ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:109
+#: ../../install/maintenance.rst:111
 msgid ""
 "configuration files (custom.py et env), parsers and all customisation "
 "files (templates and translations) are now located in ``/opt/geotrek-"
 "admin/var/conf`` ;"
 msgstr ""
 
-#: ../../install/maintenance.rst:111
+#: ../../install/maintenance.rst:113
 msgid ""
 "we advise you to configure data synchronization in ``/opt/geotrek-"
 "admin/var``"
@@ -3703,18 +3557,53 @@ msgid "or:"
 msgstr ""
 
 #: ../../install/sensitivity.rst:69
-msgid ""
-"You can refer to sensitivy module usage to format correctly the import "
-"files (:ref:`Import`)"
+msgid "Attributes for \"zones sensibles espèce\" are:"
 msgstr ""
-"Vous pouvez vous référer à la documentation de l'usage du module sensibilité pour "
-"le format de fichier attendu (:ref:`Import`)"
 
-#: ../../install/sensitivity.rst:72
-msgid "Sync to Geotrek-rando"
+#: ../../install/sensitivity.rst:71
+msgid ""
+"espece : species name. Mandatory. A species with this name must have been"
+" previously created."
+msgstr ""
+
+#: ../../install/sensitivity.rst:72 ../../install/sensitivity.rst:78
+msgid "contact : contact (text or HTML format). Optional."
+msgstr ""
+
+#: ../../install/sensitivity.rst:73 ../../install/sensitivity.rst:79
+msgid "descriptio : description (text or HTML format). Optional."
+msgstr ""
+
+#: ../../install/sensitivity.rst:75
+msgid "Attributes for \"zones sensibles réglementaires\" are:"
+msgstr ""
+
+#: ../../install/sensitivity.rst:77
+msgid "name: zone name."
 msgstr ""
 
 #: ../../install/sensitivity.rst:80
+msgid ""
+"periode : month numbers of zone occupation, separated by comas, without "
+"spaces (ex. « 6,7,8 » for june, july and august)"
+msgstr ""
+
+#: ../../install/sensitivity.rst:81
+msgid ""
+"pratiques : sport practices names, separated by comas, without spaces "
+"(ex. « Terrestre,Aérien »). A sport practice with this name must have "
+"been previously created."
+msgstr ""
+
+#: ../../install/sensitivity.rst:82
+msgid "url : card url. Optional."
+msgstr ""
+
+#: ../../install/sensitivity.rst:86
+msgid "Sync to Geotrek-rando"
+msgstr ""
+
+#: ../../install/sensitivity.rst:94
 msgid ""
 "as usual. If sensitivity module is enabled, sensitive areas will be "
 "automatically synced."
@@ -3937,63 +3826,5 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Search settings in advanced configuration to have information."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "In order to enable swagger module "
-#~ "to auto-document API ``/api/v2/``, in"
-#~ " the custom settings file, add the"
-#~ " following code:"
-#~ msgstr ""
-
-#~ msgid "Then run ``sudo dpkg-reconfigure -u geotrek-admin``."
-#~ msgstr ""
-
-#~ msgid "If errors occurs on restore, try to add ``--clean`` option."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "If errors persists, rename your database"
-#~ " and recreate a fresh one, then "
-#~ "restore."
-#~ msgstr ""
-
-#~ msgid "Attributes for \"zones sensibles espèce\" are:"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "espece : species name. Mandatory. A "
-#~ "species with this name must have "
-#~ "been previously created."
-#~ msgstr ""
-
-#~ msgid "contact : contact (text or HTML format). Optional."
-#~ msgstr ""
-
-#~ msgid "descriptio : description (text or HTML format). Optional."
-#~ msgstr ""
-
-#~ msgid "Attributes for \"zones sensibles réglementaires\" are:"
-#~ msgstr ""
-
-#~ msgid "name: zone name."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "periode : month numbers of zone "
-#~ "occupation, separated by comas, without "
-#~ "spaces (ex. « 6,7,8 » for june,"
-#~ " july and august)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "pratiques : sport practices names, "
-#~ "separated by comas, without spaces (ex."
-#~ " « Terrestre,Aérien »). A sport "
-#~ "practice with this name must have "
-#~ "been previously created."
-#~ msgstr ""
-
-#~ msgid "url : card url. Optional."
 #~ msgstr ""
 
