@@ -9,6 +9,23 @@ Sensitivity module usage
 
     The official address of the Geotrek instance of the BiodivSports project is: https://biodiv-sports.fr, and is the base url for the following API URLs.
 
+###########################
+Import data (automatically)
+###########################
+
+It is possible to import automatically data from Biodiv'sport. To do so, you just need to follow those steps : 
+
+- Click on the **user link** at top right, then on **Imports**,
+- Under the section **Data to import from network**, select **Biodiv'Sports **
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right
+
+When the import is done, you can check the Sensitivity module in Geotrek and you'll find data inside.
+
+.. warning:: 
+  If you don't see any data in your area, it means that Biodiv'Sport does not contains data for your territory. Then it is widely recommended to add your data directly into Biodiv'Sport, as it will be available for multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sport go visit their website : https://biodiv-sports.fr
+
 
 .. _Import:
 
