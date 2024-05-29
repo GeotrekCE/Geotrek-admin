@@ -69,13 +69,13 @@ Import
 ======
 
 - Click on the **user link** at top right, then on **Imports**,
-- select the type of data to be imported (**species** or **regulatory area**),
-- select the *.zip* file to be imported,
-- select the correct encoding (``UTF8`` or ``Windows-1252``)
-- click on **Import**,
-- wait a few seconds,
-- the import progress is displayed on the right,
-- click on **Display report** to see any unimported lines.
+- Select the type of data to be imported (**species** or **regulatory area**),
+- Select the *.zip* file to be imported,
+- Select the correct encoding (``UTF8`` or ``Windows-1252``)
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right,
+- Click on **Display report** to see any unimported lines.
 
 
 .. warning:: 
