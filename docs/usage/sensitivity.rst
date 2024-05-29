@@ -30,7 +30,7 @@ When the import is done, you can check the Sensitivity module in Geotrek and you
 .. _Import:
 
 ############
-Import areas
+Import areas (manually)
 ############
 
 Data preparation
