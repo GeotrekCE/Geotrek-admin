@@ -66,7 +66,7 @@ or:
 
     sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
 
-You can refer to sensitivy module usage to format correctly the import files (:ref:`Import`)
+You can refer to sensitivity module usage to format correctly the import files (:ref:`Import`)
 
 Sync to Geotrek-rando
 ---------------------
