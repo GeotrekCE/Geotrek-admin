@@ -9,7 +9,7 @@ from mapentity.helpers import is_file_uptodate
 
 from .helpers import AltimetryHelper
 
-
+_("This is a translation string")
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
