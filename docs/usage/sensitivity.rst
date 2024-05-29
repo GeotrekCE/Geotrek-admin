@@ -1,7 +1,7 @@
 .. _sensitivity-usage-section:
 
 ======================
-Sensitivy module usage
+Sensitivity module usage
 ======================
 
 .. note::
