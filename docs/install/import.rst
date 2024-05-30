@@ -358,7 +358,7 @@ It is possible to import automatically data from Biodiv'Sport. To do so, you jus
 
 When the import is done, you can check the Sensitivity module in Geotrek and you'll find data inside.
 
-It is also possible to import sensitive areas through commande line:
+It is also possible to import sensitive areas through command line:
 
 .. code-block :: bash
 
