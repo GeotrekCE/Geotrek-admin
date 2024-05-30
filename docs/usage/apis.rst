@@ -204,7 +204,7 @@ This section will focus on some common parameters useful to work with sensitivit
 
    **Filtering fields**
 
-   - ``fields`` : list of expected fields (see :ref:`Field Descriptions <FielDesc>`)
+   - ``fields``: List of expected fields (see :ref:`Field Descriptions <FielDesc>`)
 
    - Expected values: List of field names, comma separated
    - e.g. ``/api/v2/sensitivearea/?fields=name,geometry``
