@@ -1,0 +1,56 @@
+version: "3"
+
+x-images:
+  django: &django
+    image: geotrekce/admin:${GEOTREK_VERSION:-latest}
+    user: ${UID:-0}:${GID:-0}
+    env_file:
+      - .env
+    volumes:
+      - ./var:/opt/geotrek-admin/var
+
+services:
+  memcached:
+    image: memcached:1.5-alpine
+
+  redis:
+    image: redis:5.0-alpine
+    volumes:
+      - redis:/data
+
+  convertit:
+    image: makinacorpus/convertit:latest
+
+  screamshotter:
+    image: makinacorpus/screamshotter:v2
+
+  celery:
+    <<: [ *django ]
+    depends_on:
+      - memcached
+      - redis
+
+    command: celery -A geotrek worker -c 1
+
+  web:
+    <<: [ *django ]
+    ports:
+      - "${WEB_PORT:-8001}:8000"
+    volumes:
+      - ./var:/opt/geotrek-admin/var
+    depends_on:
+      - memcached
+      - redis
+      - screamshotter
+      - convertit
+
+  api:
+    <<: [ *django ]
+    ports:
+      - "${API_PORT:-8002}:8000"
+    depends_on:
+      - memcached
+      - redis
+
+volumes:
+  redis:

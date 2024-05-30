@@ -1,5 +1,6 @@
 from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoiceFilter, ChoiceFilter
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
@@ -46,7 +47,14 @@ class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFi
 
     def filter_intervention_year(self, qs, name, value):
         signage_ct = ContentType.objects.get_for_model(Signage)
-        interventions = Intervention.objects.filter(target_type=signage_ct, date__year__in=value) \
+        q_1 = Q()
+        for subvalue in value:
+            # Intervention started in year 'subvalue', ended in year 'subvalue',
+            # or was ongoing in year 'subvalue'
+            q_1 = q_1 | Q(begin_date__year__lt=subvalue, end_date__year__gt=subvalue)
+        q = Q(begin_date__year__in=value) | Q(end_date__year__in=value) | q_1
+        q = Q(q, target_type=signage_ct)
+        interventions = Intervention.objects.filter(q) \
             .values_list('target_id', flat=True)
         return qs.filter(id__in=interventions).distinct()
 

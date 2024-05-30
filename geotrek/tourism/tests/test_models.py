@@ -6,10 +6,9 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.test.utils import override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType
+from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
@@ -51,7 +50,6 @@ class InformationDeskTest(TestCase):
     def test_cascading_deletions(self):
         categ = TouristicContentCategoryFactory()
         contenttype = TouristicContentType1Factory(category=categ)
-        clear_internal_user_cache()
         contenttype_pk = contenttype.pk
         caregory_pk = categ.pk
         category_repr = str(categ)
@@ -148,6 +146,10 @@ class OrganizerModelTest(TestCase):
     def test_str(self):
         organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
         self.assertEqual('foo bar', str(organizer))
+
+    def test_get_add_url(self):
+        url = TouristicEventOrganizer.get_add_url()
+        self.assertEqual(url, "/popup/add/organizer/")
 
 
 class TouristicEventModelTest(TestCase):

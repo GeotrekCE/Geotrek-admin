@@ -17,7 +17,8 @@ class TestGeotrekSignageParser(GeotrekSignageParser):
         'sealing': {'create': True, },
         'conditions': {'create': True, },
         'type': {'create': True},
-        'geom': {'required': True}
+        'geom': {'required': True},
+        'structure': {'create': True}
     }
 
 
@@ -33,7 +34,8 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('signage', 'signage_sealing.json'),
+        self.mock_json_order = [('signage', 'structure.json'),
+                                ('signage', 'signage_sealing.json'),
                                 ('signage', 'signage_conditions.json'),
                                 ('signage', 'signage_type.json'),
                                 ('signage', 'signage_ids.json'),
@@ -49,6 +51,7 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         signage = Signage.objects.all().first()
         self.assertEqual(str(signage.name), 'test gard')
         self.assertEqual(str(signage.type), 'Limite Cœur')
+        self.assertEqual(str(signage.structure), 'Struct1')
         self.assertEqual(str(signage.sealing), 'Socle béton')
         conditions = [str(c.label) for c in signage.conditions.all()]
         self.assertEqual(conditions, ["Dégradé"])

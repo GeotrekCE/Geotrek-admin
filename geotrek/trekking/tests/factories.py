@@ -225,18 +225,6 @@ class TrekWithServicesFactory(TrekFactory):
             service2.type.practices.add(obj.practice)
 
 
-class TrekRelationshipFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.TrekRelationship
-
-    has_common_departure = False
-    has_common_edge = False
-    is_circuit_step = False
-
-    trek_a = factory.SubFactory(TrekFactory)
-    trek_b = factory.SubFactory(TrekFactory)
-
-
 class POITypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.POIType

@@ -1,0 +1,2 @@
+[console_scripts]
+sphinx-intl = sphinx_intl.commands:main

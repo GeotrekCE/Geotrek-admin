@@ -23,10 +23,12 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return outdoor_models.Site.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .select_related('parent', 'practice', 'type') \
             .prefetch_related(Prefetch('attachments',
                                        queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
                               Prefetch('view_points',
-                                       queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
+                                       queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID))),
+                              'information_desks', 'labels', 'managers', 'pois_excluded', 'portal', 'ratings', 'source', 'themes', 'web_links') \
             .order_by('name')  # Required for reliable pagination
 
 
@@ -56,7 +58,7 @@ class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
 
 class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
-        api_filters.CourseRelatedPortalFilter,
+        api_filters.CourseRelatedFilter,
     )
     serializer_class = api_serializers.CourseTypeSerializer
     queryset = outdoor_models.CourseType.objects \
@@ -73,7 +75,7 @@ class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
 class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
         api_filters.GeotrekRatingFilter,
-        api_filters.SiteRelatedPortalFilter,
+        api_filters.SitesRelatedPortalAndCourseRelatedFilter
     )
     serializer_class = api_serializers.OutdoorRatingSerializer
     queryset = outdoor_models.Rating.objects \
@@ -93,6 +95,10 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
         activate(self.request.GET.get('language'))
         return outdoor_models.Course.objects \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+            .select_related('type') \
             .prefetch_related(Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))) \
+                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
+                              Prefetch('course_children', queryset=outdoor_models.OrderedCourseChild.objects.select_related('parent', 'child')),
+                              Prefetch('course_parents', queryset=outdoor_models.OrderedCourseChild.objects.select_related('parent', 'child')),
+                              'parent_sites', 'pois_excluded', 'ratings') \
             .order_by('name')  # Required for reliable pagination

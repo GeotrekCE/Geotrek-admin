@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import os
 from collections import OrderedDict
 from io import StringIO
@@ -23,32 +22,25 @@ from rest_framework.reverse import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
-from geotrek.common.templatetags import geotrek_tags
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin, GeotrekAPITestCase
-from geotrek.common.tests.factories import (AttachmentFactory, ThemeFactory, LabelFactory, RecordSourceFactory,
-                                            TargetPortalFactory)
+from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
+from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.models import Signage
-from geotrek.signage.tests.factories import SignageFactory
 from geotrek.tourism.tests import factories as tourism_factories
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
 from geotrek.trekking import views as trekking_views
-from geotrek.trekking.filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
 from .base import TrekkingManagerTest
 from .factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
-                        TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
+                        ServiceFactory, ServiceTypeFactory,
                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                         TrekWithSignagesFactory, PracticeFactory)
-from ..models import POI, Trek, Service, OrderedTrekChild
+from ..models import POI, Trek, Service
 
 
-class POIViewsTest(GeotrekAPITestCase, CommonTest):
+class POIViewsTest(CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
@@ -63,40 +55,8 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'areas': [],
-            'cities': [],
-            'description': '<p>Description</p>',
-            'districts': [],
-            'filelist_url': '/paperclip/get/trekking/poi/{}/'.format(self.obj.pk),
-            'files': [],
-            'map_image_url': '/image/poi-{}.png'.format(self.obj.pk),
-            'max_elevation': 0,
-            'min_elevation': 0,
-            'name': 'POI',
-            'pictures': [],
-            'printable': '/api/en/pois/{}/poi.pdf'.format(self.obj.pk),
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False},
-            ],
-            'slug': 'poi',
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'thumbnail': None,
-            'type': {
-                'id': self.obj.type.pk,
-                'label': 'POI type',
-                'pictogram': '/media/upload/poi-type.png',
-            },
-            'videos': [],
+            'name': self.obj.name,
+            'published': self.obj.published
         }
 
     def get_expected_datatables_attrs(self):
@@ -225,7 +185,7 @@ class POIViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(response.status_code, 404)
 
 
-class TrekViewsTest(GeotrekAPITestCase, CommonTest):
+class TrekViewsTest(CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
@@ -241,117 +201,8 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'access': '<p>Access</p>',
-            'accessibilities': [],
-            'accessibility_advice': '<p>Accessibility advice</p>',
-            'accessibility_covering': '<p>Accessibility covering</p>',
-            'accessibility_exposure': '<p>Accessibility exposure</p>',
-            'accessibility_level': {'id': self.obj.accessibility_level.pk, 'label': 'Easy'},
-            'accessibility_signage': '<p>Accessibility signage</p>',
-            'accessibility_slope': '<p>Accessibility slope</p>',
-            'accessibility_width': '<p>Accessibility width</p>',
-            'advice': '<p>Advice</p>',
-            'advised_parking': '<p>Advised parking</p>',
-            'altimetric_profile': '/api/en/treks/{}/profile.json'.format(self.obj.pk),
-            'ambiance': '<p>Ambiance</p>',
-            'areas': [],
-            'arrival': 'Arrival',
-            'ascent': 0,
-            'category': {
-                'id': 'T',
-                'label': 'Hike',
-                'order': 1,
-                'pictogram': '/static/trekking/trek.svg',
-                'slug': 'trek',
-                'type2_label': 'Accessibility type',
-            },
-            'children': [],
-            'cities': [],
-            'departure': 'Departure',
-            'descent': 0,
-            'description': '<p>Description</p>',
-            'description_teaser': '<p>Description teaser</p>',
-            'difficulty': {
-                'id': self.obj.difficulty.pk,
-                'label': 'Difficulty',
-                'pictogram': '/media/upload/difficulty.png',
-            },
-            'accessibility_infrastructure': '<p>Accessibility infrastructure</p>',
-            'districts': [],
-            'dives': [],
-            'duration': 1.5,
-            'duration_pretty': '1 h 30',
-            'elevation_area_url': '/api/en/treks/{}/dem.json'.format(self.obj.pk),
-            'elevation_svg_url': '/api/en/treks/{}/profile.svg'.format(self.obj.pk),
-            'gear': '<p>Gear</p>',
-            'filelist_url': '/paperclip/get/trekking/trek/{}/'.format(self.obj.pk),
-            'files': [],
-            'gpx': '/api/en/treks/{}/trek.gpx'.format(self.obj.pk),
-            'information_desks': [],
-            'labels': [],
-            'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
-            'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
-            'max_elevation': 0,
-            'min_elevation': 0,
-            'name': 'Trek',
-            'networks': [],
-            'next': {},
-            'parents': [],
-            'parking_location': [-1.3630753, -5.9838497],
-            'pictures': [],
-            'points_reference': None,
-            'portal': [],
-            'practice': {
-                'id': self.obj.practice.pk,
-                'label': 'Usage',
-                'pictogram': '/media/upload/practice.png',
-            },
-            'previous': {},
-            'printable': '/api/en/treks/{}/trek.pdf'.format(self.obj.pk),
-            'public_transport': '<p>Public transport</p>',
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'relationships': [],
-            'route': {
-                'id': self.obj.route.pk,
-                'label': 'Route',
-                'pictogram': '/media/upload/routes.png',
-            },
-            'slope': 0.0,
-            'slug': 'trek',
-            'source': [],
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': 'My structure',
-            },
-            'themes': [],
-            'thumbnail': None,
-            'touristic_contents': [],
-            'touristic_events': [],
-            'treks': [],
-            'type2': [],
-            'usages': [{
-                'id': self.obj.practice.pk,
-                'label': 'Usage',
-                'pictogram': '/media/upload/practice.png'
-            }],
-            'videos': [],
-            'web_links': [],
-            'reservation_id': 'XXXXXXXXX',
-            'reservation_system': self.obj.reservation_system.name,
-            'ratings': [],
-            'ratings_description': '',
+            'name': self.obj.name,
+            'published': self.obj.published
         }
 
     def get_expected_datatables_attrs(self):
@@ -409,23 +260,6 @@ class TrekViewsTest(GeotrekAPITestCase, CommonTest):
             'accessibilities': AccessibilityFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
             'information_desks': tourism_factories.InformationDeskFactory.create().pk,
-
-            'trek_relationship_a-TOTAL_FORMS': '2',
-            'trek_relationship_a-INITIAL_FORMS': '0',
-            'trek_relationship_a-MAX_NUM_FORMS': '',
-
-            'trek_relationship_a-0-id': '',
-            'trek_relationship_a-0-trek_b': TrekFactory.create().pk,
-            'trek_relationship_a-0-has_common_edge': 'on',
-            'trek_relationship_a-0-has_common_departure': 'on',
-            'trek_relationship_a-0-is_circuit_step': '',
-
-            'trek_relationship_a-1-id': '',
-            'trek_relationship_a-1-trek_b': TrekFactory.create().pk,
-            'trek_relationship_a-1-has_common_edge': '',
-            'trek_relationship_a-1-has_common_departure': '',
-            'trek_relationship_a-1-is_circuit_step': 'on',
-
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             good_data['topology'] = '{"paths": [%s]}' % self.path.pk
@@ -606,7 +440,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         poislayer = response.json()
         poifeature = poislayer['features'][0]
-        self.assertTrue('thumbnail' in poifeature['properties'])
         self.assertEqual(len(poislayer['features']), 1)
         self.assertEqual(poifeature['properties']['name'], poi.name)
 
@@ -622,50 +455,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
         AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
         self.assertEqual(POI.objects.filter(published=True).count(), 1)
-
-        response = self.client.get('/api/en/pois.geojson')
-        self.assertEqual(response.status_code, 200)
-        poislayer = response.json()
-        poifeature = poislayer['features'][0]
-        self.assertTrue('thumbnail' in poifeature['properties'])
-        self.assertEqual(len(poislayer['features']), 1)
-        self.assertEqual(poifeature['properties']['name'], poi.name)
-
-    def test_infrastructures_geojson(self):
-        infra = InfrastructureFactory.create()
-        infra2 = InfrastructureFactory.create()
-        self.assertEqual(Infrastructure.objects.count(), 2)
-        infra.published = True
-        infra2.published = False
-        infra.save()
-        infra2.save()
-
-        self.assertEqual(Infrastructure.objects.filter(published=True).count(), 1)
-
-        response = self.client.get('/api/en/infrastructures.geojson')
-        self.assertEqual(response.status_code, 200)
-        infraslayer = response.json()
-        infrafeature = infraslayer['features'][0]
-        self.assertEqual(len(infraslayer['features']), 1)
-        self.assertEqual(infrafeature['properties']['name'], infra.name)
-
-    def test_signages_geojson(self):
-        signa = SignageFactory.create()
-        signa2 = SignageFactory.create()
-        self.assertEqual(Signage.objects.count(), 2)
-        signa.published = True
-        signa2.published = False
-        signa.save()
-        signa2.save()
-
-        self.assertEqual(Signage.objects.filter(published=True).count(), 1)
-
-        response = self.client.get('/api/en/signages.geojson')
-        self.assertEqual(response.status_code, 200)
-        poislayer = response.json()
-        poifeature = poislayer['features'][0]
-        self.assertEqual(len(poislayer['features']), 1)
-        self.assertEqual(poifeature['properties']['name'], signa.name)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)
@@ -777,350 +566,6 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 403)
 
 
-class TrekJSONSetUp(TrekkingManagerTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
-        cls.city = CityFactory(geom=polygon)
-        cls.district = DistrictFactory(geom=polygon)
-
-        trek_args = {'name': 'Step 2',
-                     'points_reference': MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
-                     'parking_location': Point(0, 0, srid=settings.SRID)}
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
-            cls.trek = TrekFactory.create(
-                paths=[path1],
-                **trek_args
-            )
-        else:
-            cls.trek = TrekFactory.create(
-                geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID,
-                **trek_args
-            )
-        cls.attachment = AttachmentFactory.create(content_object=cls.trek,
-                                                  attachment_file=get_dummy_uploaded_image())
-
-        cls.information_desk = tourism_factories.InformationDeskFactory.create()
-        cls.trek.information_desks.add(cls.information_desk)
-
-        cls.theme = ThemeFactory.create()
-        cls.trek.themes.add(cls.theme)
-
-        cls.accessibility = AccessibilityFactory.create()
-        cls.trek.accessibilities.add(cls.accessibility)
-
-        cls.network = TrekNetworkFactory.create()
-        cls.trek.networks.add(cls.network)
-
-        cls.weblink = WebLinkFactory.create()
-        cls.trek.web_links.add(cls.weblink)
-
-        cls.label = LabelFactory.create()
-        cls.trek.labels.add(cls.label)
-
-        cls.source = RecordSourceFactory.create()
-        cls.trek.source.add(cls.source)
-
-        cls.portal = TargetPortalFactory.create()
-        cls.trek.portal.add(cls.portal)
-        trek_b_args = {'published': True}
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
-            cls.trek_b = TrekFactory.create(paths=[path2], **trek_b_args)
-            TrekFactory(paths=[path2], published=False)  # not published
-            cls.trek3 = TrekFactory(paths=[path2], published=True)  # deleted
-            cls.trek3.delete()
-            TrekFactory(paths=[PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID)],
-                        published=True)  # too far
-        else:
-            cls.trek_b = TrekFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, **trek_b_args)
-            TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=False)
-            trek3 = TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=True)
-            trek3.delete()
-            TrekFactory(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID, published=True)  # too far
-
-        TrekRelationshipFactory.create(has_common_departure=True,
-                                       has_common_edge=False,
-                                       is_circuit_step=True,
-                                       trek_a=cls.trek,
-                                       trek_b=cls.trek_b)
-
-        cls.touristic_content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                                          published=True)
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                  published=False)  # not published
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                  published=True).delete()  # deleted
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1000 1000)' % settings.SRID,
-                                                  published=True)  # too far
-        cls.touristic_event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                                                      published=True)
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                                published=False)  # not published
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                                published=True).delete()  # deleted
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID,
-                                                published=True)  # too far
-
-        cls.parent = TrekFactory.create(published=True, name='Parent')
-        cls.child1 = TrekFactory.create(published=False, name='Child 1')
-        cls.child2 = TrekFactory.create(published=True, name='Child 2')
-        cls.sibling = TrekFactory.create(published=True, name='Sibling')
-        OrderedTrekChild(parent=cls.parent, child=cls.trek, order=0).save()
-        OrderedTrekChild(parent=cls.trek, child=cls.child1, order=3).save()
-        OrderedTrekChild(parent=cls.trek, child=cls.child2, order=2).save()
-        OrderedTrekChild(parent=cls.parent, child=cls.sibling, order=1).save()
-        cls.pk = cls.trek.pk
-
-    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
-    def setUp(self):
-        self.login()
-        url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
-        self.response = self.client.get(url)
-        self.result = self.response.json()
-
-
-@override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
-class TrekPracticeTest(TrekJSONSetUp):
-    def test_touristic_contents_practice(self):
-        self.assertEqual(len(self.result['touristic_contents']), 1)
-        self.assertDictEqual(self.result['touristic_contents'][0], {
-            'id': self.touristic_content.pk,
-            'category_id': self.touristic_content.prefixed_category_id})
-
-
-class TrekJSONDetailTest(TrekJSONSetUp):
-    """ Since we migrated some code to Django REST Framework, we should test
-    the migration extensively. Geotrek-rando mainly relies on this view.
-    """
-
-    def test_related_urls(self):
-        self.assertEqual(self.result['elevation_area_url'],
-                         '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
-        self.assertEqual(self.result['map_image_url'],
-                         '/image/trek-%s-en.png' % self.pk)
-        self.assertEqual(self.result['altimetric_profile'],
-                         '/api/en/treks/{pk}/profile.json'.format(pk=self.pk))
-        self.assertEqual(self.result['filelist_url'],
-                         '/paperclip/get/trekking/trek/%s/' % self.pk)
-        self.assertEqual(self.result['gpx'],
-                         '/api/en/treks/{pk}/{slug}.gpx'.format(pk=self.pk, slug=self.trek.slug))
-        self.assertEqual(self.result['kml'],
-                         '/api/en/treks/{pk}/{slug}.kml'.format(pk=self.pk, slug=self.trek.slug))
-        self.assertEqual(self.result['printable'],
-                         '/api/en/treks/{pk}/{slug}.pdf'.format(pk=self.pk, slug=self.trek.slug))
-
-    def test_thumbnail(self):
-        self.assertEqual(self.result['thumbnail'],
-                         os.path.join(settings.MEDIA_URL,
-                                      self.attachment.attachment_file.name) + '.120x120_q85_crop.png')
-
-    def test_published_status(self):
-        self.assertDictEqual(self.result['published_status'][0],
-                             {'lang': 'en', 'status': True, 'language': 'English'})
-
-    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
-    def test_pictures(self):
-        url = '{url}.800x800_q85_watermark-{id}.png'.format(
-            url=self.attachment.attachment_file.url,
-            id=hashlib.md5(
-                settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
-                    author=self.attachment.author,
-                    title=self.attachment.title,
-                    legend=self.attachment.legend).encode()).hexdigest())
-        self.assertDictEqual(self.result['pictures'][0],
-                             {'url': url,
-                              'title': self.attachment.title,
-                              'legend': self.attachment.legend,
-                              'author': self.attachment.author})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_networks(self):
-        self.assertDictEqual(self.result['networks'][0],
-                             {"id": self.network.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.network.pictogram.name),
-                              "name": self.network.network})
-
-    def test_practice_not_none(self):
-        self.assertDictEqual(self.result['practice'],
-                             {"id": self.trek.practice.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              "label": self.trek.practice.name})
-
-    def test_usages(self):  # Rando v1 compat
-        self.assertDictEqual(self.result['usages'][0],
-                             {"id": self.trek.practice.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              "label": self.trek.practice.name})
-
-    def test_accessibilities(self):
-        self.assertDictEqual(self.result['accessibilities'][0],
-                             {"id": self.accessibility.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
-                              "label": self.accessibility.name})
-
-    def test_themes(self):
-        self.assertDictEqual(self.result['themes'][0],
-                             {"id": self.theme.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
-                              "label": self.theme.label})
-
-    def test_labels(self):
-        self.assertDictEqual(self.result['labels'][0],
-                             {"id": self.label.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.label.pictogram.name),
-                              "name": self.label.name,
-                              "advice": self.label.advice,
-                              "filter_rando": self.label.filter})
-
-    def test_weblinks(self):
-        self.assertDictEqual(self.result['web_links'][0],
-                             {"id": self.weblink.id,
-                              "url": self.weblink.url,
-                              "name": self.weblink.name,
-                              "category": {
-                                  "id": self.weblink.category.id,
-                                  "pictogram": os.path.join(settings.MEDIA_URL, self.weblink.category.pictogram.name),
-                                  "label": self.weblink.category.label}
-                              })
-
-    def test_route_not_none(self):
-        self.assertDictEqual(self.result['route'],
-                             {"id": self.trek.route.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.route.pictogram.name),
-                              "label": self.trek.route.route})
-
-    def test_difficulty_not_none(self):
-        self.assertDictEqual(self.result['difficulty'],
-                             {"id": self.trek.difficulty.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.difficulty.pictogram.name),
-                              "label": self.trek.difficulty.difficulty})
-
-    def test_information_desks(self):
-        desk_type = self.information_desk.type
-        self.maxDiff = None
-        self.assertDictEqual(self.result['information_desks'][0],
-                             {'accessibility': self.information_desk.accessibility,
-                              'description': self.information_desk.description,
-                              'email': self.information_desk.email,
-                              'label_accessibility': {
-                                  'id': self.information_desk.label_accessibility.pk,
-                                  'pictogram': self.information_desk.label_accessibility.pictogram.url,
-                                  'label': self.information_desk.label_accessibility.label,
-                              },
-                              'latitude': self.information_desk.latitude,
-                              'longitude': self.information_desk.longitude,
-                              'name': self.information_desk.name,
-                              'phone': self.information_desk.phone,
-                              'photo_url': self.information_desk.photo_url,
-                              'postal_code': self.information_desk.postal_code,
-                              'street': self.information_desk.street,
-                              'municipality': self.information_desk.municipality,
-                              'website': self.information_desk.website,
-                              'type': {
-                                  'id': desk_type.id,
-                                  'pictogram': desk_type.pictogram.url,
-                                  'label': desk_type.label}})
-
-    def test_relationships(self):
-        self.assertDictEqual(self.result['relationships'][0],
-                             {'published': self.trek_b.published,
-                              'has_common_departure': True,
-                              'has_common_edge': False,
-                              'is_circuit_step': True,
-                              'trek': {'pk': self.trek_b.pk,
-                                       'id': self.trek_b.id,
-                                       'slug': self.trek_b.slug,
-                                       'category_slug': 'trek',
-                                       'name': self.trek_b.name}})
-
-    def test_parking_location_in_wgs84(self):
-        parking_location = self.result['parking_location']
-        self.assertAlmostEqual(parking_location[0], -1.3630812101179008)
-
-    def test_points_reference_are_exported_in_wgs84(self):
-        geojson = self.result['points_reference']
-        self.assertEqual(geojson['type'], 'MultiPoint')
-        self.assertAlmostEqual(geojson['coordinates'][0][0], -1.363081210117901)
-
-    def test_touristic_contents(self):
-        self.assertEqual(len(self.result['touristic_contents']), 1)
-        self.assertDictEqual(self.result['touristic_contents'][0], {
-            'id': self.touristic_content.pk,
-            'category_id': self.touristic_content.prefixed_category_id})
-
-    def test_touristic_events(self):
-        self.assertEqual(len(self.result['touristic_events']), 1)
-        self.assertDictEqual(self.result['touristic_events'][0], {
-            'id': self.touristic_event.pk,
-            'category_id': self.touristic_event.prefixed_category_id})
-
-    def test_close_treks(self):
-        self.assertEqual(len(self.result['treks']), 1)
-        self.assertDictEqual(self.result['treks'][0], {
-            'id': self.trek_b.pk,
-            'category_id': self.trek_b.prefixed_category_id})
-
-    def test_type2(self):
-        self.assertDictEqual(self.result['type2'][0],
-                             {"id": self.accessibility.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
-                              "name": self.accessibility.name})
-
-    def test_category(self):
-        self.assertDictEqual(self.result['category'],
-                             {"id": 'T',
-                              "order": 1,
-                              "label": "Hike",
-                              "slug": "trek",
-                              "type2_label": "Accessibility type",
-                              "pictogram": "/static/trekking/trek.svg"})
-
-    def test_sources(self):
-        self.assertDictEqual(self.result['source'][0], {
-            'name': self.source.name,
-            'website': self.source.website,
-            "pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
-
-    def portals(self):
-        self.assertDictEqual(self.result['portal'][0], {
-            'name': self.portal.name,
-            'website': self.portal.website, })
-
-    def test_children(self):
-        self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])
-
-    def test_parents(self):
-        self.assertEqual(self.result['parents'], [self.parent.pk])
-
-    def test_previous(self):
-        self.assertDictEqual(self.result['previous'],
-                             {"%s" % self.parent.pk: None})
-
-    def test_next(self):
-        self.assertDictEqual(self.result['next'],
-                             {"%s" % self.parent.pk: self.sibling.pk})
-
-    def test_picture_print(self):
-        self.assertIn(self.attachment.attachment_file.name, self.trek.picture_print.name)
-        self.assertIn('.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
-
-    def test_thumbnail_display(self):
-        self.assertIn('<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
-                      % self.attachment.attachment_file.name, self.trek.thumbnail_display)
-
-    def test_thumbnail_csv_display(self):
-        self.assertIn('%s.120x120_q85_crop.png'
-                      % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
-
-    def test_reservation(self):
-        self.assertEqual(self.result['reservation_system'], self.trek.reservation_system.name)
-        self.assertEqual(self.result['reservation_id'], 'XXXXXXXXX')
-
-
 class TrekPointsReferenceTest(TrekkingManagerTest):
     @classmethod
     def setUpTestData(cls):
@@ -1174,10 +619,7 @@ class TrekGPXTest(TrekkingManagerTest):
         self.login()
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
-        self.parsed = BeautifulSoup(self.response.content, 'lxml')
-
-    def tearDown(self):
-        translation.deactivate()
+        self.parsed = BeautifulSoup(self.response.content, features='xml')
 
     def test_gpx_is_served_with_content_type(self):
         self.assertEqual(self.response.status_code, 200)
@@ -1224,26 +666,13 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         cls.trek.save()
 
     def tearDown(self):
-        translation.deactivate()
         self.client.logout()
-
-    def test_json_translation(self):
-        for lang, expected in [('fr', self.trek.name_fr),
-                               ('it', 404)]:
-            url = '/api/{lang}/treks/{pk}.json'.format(lang=lang, pk=self.trek.pk)
-            response = self.client.get(url)
-            if expected == 404:
-                self.assertEqual(response.status_code, 404)
-            else:
-                self.assertEqual(response.status_code, 200)
-                obj = response.json()
-                self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
         for lang, expected in [('fr', self.trek.name_fr),
                                ('it', self.trek.name_it)]:
             self.login()
-            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), headers={"accept-language": lang})
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
@@ -1253,7 +682,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         for lang, expected in [('fr', self.trek.published_fr),
                                ('it', self.trek.published_it)]:
             self.login()
-            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), HTTP_ACCEPT_LANGUAGE=lang)
+            response = self.client.get(reverse('trekking:trek-drf-list', format="geojson"), headers={"accept-language": lang})
             self.assertEqual(response.status_code, 200)
             obj = response.json()
             self.assertEqual(obj['features'][0]['properties']['published'], expected)
@@ -1284,24 +713,6 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
             self.client.logout()  # Django 1.6 keeps language in session
-
-
-class TemplateTagsTest(TestCase):
-    def test_duration(self):
-        self.assertEqual("15 min", geotrek_tags.duration(0.25))
-        self.assertEqual("30 min", geotrek_tags.duration(0.5))
-        self.assertEqual("1 h", geotrek_tags.duration(1))
-        self.assertEqual("1 h 45", geotrek_tags.duration(1.75))
-        self.assertEqual("3 h 30", geotrek_tags.duration(3.5))
-        self.assertEqual("4 h", geotrek_tags.duration(4))
-        self.assertEqual("6 h", geotrek_tags.duration(6))
-        self.assertEqual("10 h", geotrek_tags.duration(10))
-        self.assertEqual("1 day", geotrek_tags.duration(24))
-        self.assertEqual("2 days", geotrek_tags.duration(32))
-        self.assertEqual("2 days", geotrek_tags.duration(48))
-        self.assertEqual("3 days", geotrek_tags.duration(49))
-        self.assertEqual("8 days", geotrek_tags.duration(24 * 8))
-        self.assertEqual("9 days", geotrek_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
@@ -1451,7 +862,7 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
 
 
-class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
+class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory
@@ -1460,17 +871,14 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
     expected_column_list_extra = ['id', 'name', 'type', 'eid']
     expected_column_formatlist_extra = ['id', 'type', 'eid']
 
-    def get_expected_json_attrs(self):
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
         return {
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': 'My structure'
-            },
-            'type': {
-                'id': self.obj.type.pk,
-                'name': 'Service type',
-                'pictogram': '/media/upload/service-type.png'
-            }
+            'id': self.obj.pk,
+            'name': str(self.obj),
+            'published': self.obj.type.published
         }
 
     def get_expected_datatables_attrs(self):
@@ -1546,34 +954,6 @@ class ServiceViewsTest(GeotrekAPITestCase, CommonTest):
         self.assertEqual(response.status_code, 404)
 
 
-class ServiceJSONTest(TrekkingManagerTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.service = ServiceFactory.create(type__published=True)
-        cls.pk = cls.service.pk
-
-    def setUp(self):
-        self.login()
-
-    def test_list(self):
-        url = '/api/en/services.json'
-        self.response = self.client.get(url)
-        self.result = self.response.json()
-        self.assertEqual(len(self.result), 1)
-        self.assertTrue('type' in self.result[0])
-
-    def test_detail(self):
-        url = '/api/en/services/%s.json' % self.pk
-        self.response = self.client.get(url)
-        self.result = self.response.json()
-        self.assertDictEqual(self.result['type'],
-                             {'id': self.service.type.pk,
-                              'name': self.service.type.name,
-                              'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
-                              })
-
-
 class TrekPDFChangeAlongLinkedSignages(TestCase):
     def setUp(self):
         self.trek = TrekWithSignagesFactory.create()
@@ -1625,8 +1005,9 @@ class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
         mock_get.return_value.content = b'xxx'
         # Assert first access to PDF will trigger screenshot
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
-        self.client.get(
-            reverse('trekking:trek_printable', kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        response = self.client.get(reverse('trekking:trek_printable',
+                                           kwargs={'lang': 'fr', 'pk': self.trek.pk, 'slug': self.trek.slug}))
+        self.assertEqual(response.status_code, 200)
         # Assert second access to PDF will not trigger screenshot
         self.trek.refresh_from_db()
         self.assertTrue(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
@@ -1652,78 +1033,3 @@ class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
         self.trek.infrastructures[0].delete()
         self.trek.refresh_from_db()
         self.assertFalse(is_file_uptodate(self.trek.get_map_image_path('fr'), self.trek.get_date_update()))
-
-
-class TrekFilterTest(TestCase):
-    factory = TrekFactory
-    filterset = TrekFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = TrekFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        trek1 = TrekFactory.create(provider='my_provider1')
-        trek2 = TrekFactory.create(provider='my_provider2')
-
-        filter_set = TrekFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(trek1, filter_set.qs)
-        self.assertIn(trek2, filter_set.qs)
-
-
-class POIFilterTest(TestCase):
-    factory = POIFactory
-    filterset = POIFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = POIFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        poi1 = POIFactory.create(provider='my_provider1')
-        poi2 = POIFactory.create(provider='my_provider2')
-
-        filter_set = POIFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(poi1, filter_set.qs)
-        self.assertIn(poi2, filter_set.qs)
-
-
-class ServiceFilterTest(TestCase):
-    factory = ServiceFactory
-    filterset = ServiceFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = ServiceFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        service1 = ServiceFactory.create(provider='my_provider1')
-        service2 = ServiceFactory.create(provider='my_provider2')
-
-        filter_set = ServiceFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(service1, filter_set.qs)
-        self.assertIn(service2, filter_set.qs)

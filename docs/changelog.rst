@@ -2,12 +2,249 @@
 CHANGELOG
 =========
 
-2.101.4+dev (XXXX-XX-XX)
+2.106.0+dev (XXXX-XX-XX)
 ------------------------
+
+**Improvements**
+
+- ApidaeTrekParser now imports field `membreProprietaire` as the structure
+- Integration of sensitivity module notices (import and public api usage)
+
+**Documentation**
+
+- Improve information about upgrading geotrek-admin version with debian
+
+**Bug fixes**
+- Fix view `v_treks` (fixes #4099)
+
+2.106.0 (2024-05-15)
+--------------------
+
+**Improvements**
+
+- Add sources websites and pictograms to Aggregator (#3569)
+
+**Hotfix**
+
+- Improve performance on retrieving Sources in APIv2 (fixes #4079)
+
+
+2.105.1 (2024-05-07)
+--------------------
+
+**Hotfix**
+
+- Bump to mapentity 8.8.1 to get a fix
+
+
+2.105.0 (2024-05-07)
+--------------------
+
+**Breaking changes**
+
+- This version removes the concept of "Related treks". If you have any information left in your database associated with this concept it'll be deleted (refs #3750 and #550)
+
+**Bug fixes**
+
+- Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
+- Fix crash on migrate when db username or dbname contains dash
+- Fix Intervention end date should only be mandatory in last step of Suricate Workflow (refs #3825)"
+- Change label filter intervention contractors and filter null value on project contractors detail view (#3820)
+- Sort attachements in API V2 for OutdoorSites and TouristicContent objects (fixes #4071)
+- Expose missing Sources in APIv2 (fixes #4079)
+- MenuItem `open_in_new_tab` is now set to False when no target (#4093)
+- Fix MenuItem title max length in flatpages migration 0010 (#4095)
+
+**Documentation**
+
+- Improve static pages documentation (#4050)
+- Add usage of update script to docker documentation
+
+**Improvements**
+
+- Remove unused `postgres` volume in docker compose file for production
+- Add `report` model on Intervention filters in module list (#3972)
+- Homogenize `structure` field in APIv2 to always return ids instead of names (#3007)
+- Add structures to Aggregator (#3569)
+- Allow to filter flatpages by portal on admin list page
+
+
+2.104.2 (2024-04-04)
+--------------------
+
+**Bug fixes**
+
+- New menu items targeting static page now open it in the same tab
+- Ensure migration steps for menu items can be run separately
+- Blockquote style in flat page content is now persistent on saving
+
+**Documentation**
+
+- Fix RST syntax (#4047)
+
+2.104.1 (2024-04-03)
+--------------------
+
+**Bug fixes**
+
+- Set MenuItem `open_in_new_tab` to False during migration when the target is a flat page
+
+
+2.104.0 (2024-04-03)
+--------------------
+
+**WARNING!**
+
+This version breaks the flat pages API. Upgrade first to Geotrek-rando 3.19.0 (simultaneously released on April 2024) or more, for a smooth transition.
+
+**Features**
+
+- Add new menu headers and flat pages with tree hierarchies (#3918, #3936, #4027, #4028, #4029)
+- Clean and improve flat pages (#3884, #3074, #3075, #2208)
+- Add styling and embedding tools for FlatPages content (refs #3921, #3922, #4019)
+- Add local image upload into content of flat pages (ref #3552)
+
+**Bug fixes**
+
+- Fix API crash when using an SVG file for information desks (fixes #3860)
+- Fix mobile sync crash when a theme has no pictogram (fixes #3814)
+
+**Breaking changes**
+
+- This version brings a lot of changes to flat pages and the corresponding API endpoints. In order not to break your Geotrek-rando website it is mandatory to update first Geotrek-rando to 3.19.0 (or more) before upgrading your Geotrek-admin to this version. Note that Geotrek-rando handles the upgrade smoothly and can handle both old and new flat pages.
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed (#3752)
+
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
+**Maintenance**
+
+- Bump mapentity from 8.7.2 to 8.7.3
+
+**Documentation**
+
+- Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing deprecated ``MAX_CHARACTERS`` (#3844)
+
+
+2.103.2 (2024-03-22)
+--------------------
+
+**Bug fixes**
+
+- Fix bug deleted blades still displayed on detail view of signages (fix #4003)
+- Fix interferences on `practice` mapping in Aggregator by changing calls order in GeotrekOutdoorParser (refs #3569)
+
+**Maintenance**
+
+- Bump mapentity from 8.7.1 to 8.7.2
+
+**Development**
+
+- Add git to Dockerfile build staging
+
+
+2.103.1 (2024-03-15)
+--------------------
+
+**Maintenance**
+
+- Bump mapentity from 8.7.0 to 8.7.1
+
+**Hot fix**
+
+- Fix fonts in public PDF (docker image only)
+
+
+2.103.0 (2024-03-14)
+------------------------
+
+**Bug fixes**
+
+- Fix bug in "portals" filter on outdoor_rating endpoint in API V2 (fix #3997)
+
+
+2.102.2 (2024-03-13)
+--------------------
+
+**WARNING!**
+Do not use - Causes bug in Geotrek-Rando-v3 exposing Outdoor data
 
 **New features**
 
--Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
+- Add `include_externals` filter to Cirkwi trek exports, to allow excluding treks with an external id (eid) (#3947)
+- Tourism : add price to TouristicEvent model - ref #3587
+- Add `check_versions` command to check Geotrek, Python, Django, PostgreSQL and PostGIS versions.
+- Add ``GeotrekCourseParser`` and ``GeotrekSiteParser`` in Aggregator to retrieve Outdoor models (refs #3569)
+- Add trail on leaflet overlay
+
+**Bug fixes**
+
+- Fix cache key for zoning cities
+- Change signage group on leaflet overlay
+- Add some translation on leaflet overlay layer
+
+**Improvements**
+
+- Add popup button to add organizer in touristic event form
+- Change the `organizer` field of `TouristicEvent` model to a many to many field named `organizers` (#3587)
+- Update favicon with current Geotrek logo
+- Add intervention geometries union in projects database view (``v_projects``) (#3892)
+
+**Documentation**
+
+- Reorganize major sections in documentation, and add content
+
+**Minor fixes**
+
+- Add missing translation in intervention form (refs #3825)
+
+**Maintenance**
+
+- Upgrade django-mapentity to 8.7.1
+
+2.102.1 (2024-02-20)
+--------------------
+
+**Hot fix**
+
+- Remove workforce cost (#3824)
+
+
+2.102.0 (2024-02-19)
+--------------------
+
+**Minor changes**
+
+- Update all translation files
+
+**Bug fixes**
+
+- Signage & Blade conditions translations + admin BladeCondition entry (#3847)
+- Add intervention date filter and add intervention years filter (#3825)
+
+**Documentation**
+
+- Improve performance in spatial intersection (zoning district and zoning city) for sql views (#3600)
+
+**New features**
+
+- Add UUIDs of parent and children ``Courses`` and ``Sites`` in APIv2 (#3569)
+
+**Improvements**
+
+- Add missing translations for fields on ``Courses`` and ``Sites`` in APIv2 (#3569)
+- Allow Apidae Trek parser to handle traces not in utf-8
+- Add workforce cost into intervention model (#3824)
+- Add contractor to intervention model (#3820)
+
+
+2.101.5 (2024-01-11)
+--------------------
+
+**New features**
+
+- Land: Add ``CirculationEdge`` model to manage circulation types and authorization types in the land module (#3578)
 - Generalize``AccessMean`` model and add field ``access`` to ``Intervention`` (#3819)
 
 **Improvements**
@@ -15,16 +252,27 @@ CHANGELOG
 - Add rules fixture on sensitive area (#3470)
 - Change condition on signage & blade to select many of them (#3847)
 - Allow to set headers in requests from Parsers (#3861)
-- Sort bladeType alphabetically #3821
+- Sort bladeType alphabetically (#3821)
+- Update ``Intervention`` model to have begin & end date (#3825)
 
 **Documentation**
 
 - Improve documentation for database restore
-- Integration of sensitivity module notices (import and public api usage)
+- Improve documentation aboute suricate's workflow (#3070)
+- Update layer section for maps since IGN updates
+
+**Maintenance**
+
+- Update ``check_ign_keys`` script to match new IGN urls
+- Update ``base.py`` configuration for layers
+- Add ``merge_segmented_paths`` command to find and merge paths (#3607)
 
 **Bug fixes**
 
 - Extract all geometry types in views `v_outdoor_sites` and `v_outdoor_courses` (#3603)
+- Display only related interventions on project detail map (#3878)
+- Maintenance appears several times on some zoning filters (#3881)
+- Fix sub-language usage (en-US, zh-hant, ...) (#3801)
 
 
 2.101.4     (2023-11-15)

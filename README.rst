@@ -44,7 +44,7 @@ More information on product website http://geotrek.fr
 Documentation
 -------------
 
-* `User manual (in french) <https://geotrek.readthedocs.io/en/master/usage/overview.html>`_
+* `User manual (in french) <https://geotrek.readthedocs.io/en/latest/usage/overview.html>`_
 * `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
 * Help us translate `on Weblate <https://weblate.makina-corpus.net/>`_
 
@@ -63,7 +63,8 @@ License
 * Copyright (c) 2012-2023 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
 .. image:: https://geotrek.fr/assets/img/logo_makina.svg
-    :target: http://www.makina-corpus.com
+    :target: https://territoires.makina-corpus.com/
+    :width: 170
 
 .. image:: https://geotrek.fr/assets/img/logo_autonomens-h120m.png
     :target: https://datatheca.com

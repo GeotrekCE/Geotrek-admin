@@ -1,8 +1,6 @@
-from tempfile import TemporaryDirectory
-
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests.factories import SuperUserFactory
 from paperclip.models import random_suffix_regexp
@@ -16,7 +14,6 @@ from geotrek.trekking.tests.factories import (DifficultyLevelFactory,
                                               POIFactory, TrekFactory)
 
 
-@override_settings(MEDIA_ROOT=TemporaryDirectory().name)
 class AttachmentAdminTest(TestCase):
     @classmethod
     def setUpTestData(cls):

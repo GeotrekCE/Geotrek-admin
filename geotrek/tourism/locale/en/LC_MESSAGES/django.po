@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 11:13+0000\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,7 +63,7 @@ msgid "Start date is after end date"
 msgstr ""
 
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 msgid "Information desk type"
 msgstr ""
@@ -249,10 +249,13 @@ msgstr ""
 msgid "Touristic contents"
 msgstr ""
 
-msgid "touristic-content"
+msgid "Published touristic contents"
 msgstr ""
 
-msgid "Published touristic contents"
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
 msgstr ""
 
 msgid "Touristic event type"
@@ -339,6 +342,12 @@ msgstr ""
 msgid "Intervention duration"
 msgstr ""
 
+msgid "Price"
+msgstr ""
+
+msgid "0 means free"
+msgstr ""
+
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
@@ -357,9 +366,6 @@ msgstr ""
 
 #, python-brace-format
 msgid "from {begin} to {end}"
-msgstr ""
-
-msgid "touristic-event"
 msgstr ""
 
 msgid "Display order"
@@ -446,6 +452,9 @@ msgid "Total"
 msgstr ""
 
 msgid "Date"
+msgstr ""
+
+msgid "Add Organizer"
 msgstr ""
 
 msgid "Invalid geometry value."

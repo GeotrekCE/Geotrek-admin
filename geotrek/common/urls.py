@@ -9,7 +9,7 @@ from . import views
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}"
+    regex = "[a-z]{2}(-[a-z]{2,4})?"   # noqa
 
 
 register_converter(LangConverter, "lang")
@@ -26,14 +26,6 @@ urlpatterns = [
         name="import_update_json",
     ),
     path("commands/import", views.import_view, name="import_dataset"),
-    path("commands/sync", views.SyncRandoRedirect.as_view(), name="sync_randos"),
-    path("commands/syncview", views.sync_view, name="sync_randos_view"),
-    path("commands/statesync/", views.sync_update_json, name="sync_randos_state"),
-    path(
-        "api/<lang:lang>/themes.json",
-        views.ThemeViewSet.as_view({"get": "list"}),
-        name="themes_json",
-    ),
     path(
         "hdviewpoint/annotate/<int:pk>",
         views.HDViewPointAnnotate.as_view(),
@@ -98,6 +90,7 @@ class PublishableEntityOptions(MapEntityOptions):
                     name=self.modelname
                 ),
                 self.markup_public_view.as_view(model=self.model),
+                name="%s_markup_html" % self.modelname,
             ),
         ]
         return publishable_views + mapentity_views

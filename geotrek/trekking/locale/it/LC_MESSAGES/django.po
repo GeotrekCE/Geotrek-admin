@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 11:17+0100\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -58,9 +58,6 @@ msgstr "Avanzate"
 
 msgid "Accessibility"
 msgstr "Accessibilità"
-
-msgid "Related treks"
-msgstr "Itinerari correlati"
 
 msgid "Insert service:"
 msgstr "Inserisci servizio:"
@@ -286,9 +283,6 @@ msgstr "Link web"
 msgid "External resources"
 msgstr "Risorse esterne"
 
-msgid "Connections between treks"
-msgstr "Collegamenti tra i itinerario"
-
 msgid "Information desks"
 msgstr "Luoghi di informazione"
 
@@ -334,10 +328,6 @@ msgstr "Aggiungere un itinerario"
 msgid "Cannot use itself as child trek."
 msgstr "Impossibile utilizzare un percorso come bambinio proprio."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itinerario"
-
 msgid "Sensitive area"
 msgstr "Area di sensibilità"
 
@@ -356,20 +346,6 @@ msgstr "Infrastrutture"
 msgid "Published treks"
 msgstr "Itinerari pubblicati"
 
-msgid "Common departure"
-msgstr "Partenza in comune"
-
-msgid "Common edge"
-msgstr "Sezione comune"
-
-msgid "Circuit step"
-msgstr "Tappa del circuito"
-
-msgid "Trek relationship"
-msgstr "Reti escursionistiche"
-
-msgid "Trek relationships"
-msgstr "Collegamenti tra itinerari"
 
 msgid "Path"
 msgstr "Sezione"
@@ -446,6 +422,9 @@ msgstr "Tipo di PDI"
 msgid "POI types"
 msgstr "Tipi di PDI"
 
+msgid "Public name (Change carefully)"
+msgstr ""
+
 msgid "Service type"
 msgstr "Tipo di servizio"
 
@@ -456,9 +435,6 @@ msgid "Service"
 msgstr "Servizio"
 
 msgid "Published"
-msgstr ""
-
-msgid "Waiting for publication"
 msgstr ""
 
 msgid "Published Services"
@@ -522,16 +498,6 @@ msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itineranza"
-
-msgid "Itinerancy"
-msgstr "itinerari a tappe"
-
-msgid "Hike"
-msgstr "Escursione"
-
 msgid "Attached files"
 msgstr ""
 
@@ -581,11 +547,8 @@ msgstr "Stampa opuscolo"
 msgid "Photos accessibility"
 msgstr ""
 
-msgid "yes"
-msgstr "si"
-
-msgid "no"
-msgstr ""
+msgid "Itinerancy"
+msgstr "itinerari a tappe"
 
 msgid "Child of:"
 msgstr "Bambino di:"
@@ -716,9 +679,6 @@ msgstr "Aggiungere un nuovo pdi"
 
 msgid "Add a new service"
 msgstr "Aggiungere un nuovo servizio"
-
-msgid "Sync"
-msgstr "Sincro"
 
 msgid "Add Web link"
 msgstr "Aggiungi link Web"

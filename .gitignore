@@ -43,7 +43,6 @@ docs/_build/
 /env/
 /pyvenv.cfg
 /.env
-/docker-compose.yml
 /build/
 
 /cypress/videos/
@@ -61,3 +60,5 @@ docs/_build/
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
 /dpkg/
+/coverage.lcov
+/htmlcov/

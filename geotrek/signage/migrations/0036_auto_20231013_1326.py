@@ -16,8 +16,8 @@ def copy_infrastructure_conditions(apps, schema_editor):
 
     # Copy InfrastructureCondition to SignageCondition and BladeCondition
     for condition in InfrastructureCondition.objects.all():
-        SignageCondition.objects.get_or_create(label=condition.label)
-        BladeCondition.objects.get_or_create(label=condition.label)
+        SignageCondition.objects.get_or_create(label=condition.label, structure=condition.structure)
+        BladeCondition.objects.get_or_create(label=condition.label, structure=condition.structure)
 
     # Associate signage condition to signage condition_tmp
     for signage in Signage.objects.exclude(condition__isnull=True):

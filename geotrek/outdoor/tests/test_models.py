@@ -6,7 +6,6 @@ from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.geos.point import GEOSGeometry, Point
 from django.test import TestCase, override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.outdoor.models import (ChildCoursesExistError, ChildSitesExistError, CourseType, Rating, RatingScale, Site,
@@ -23,15 +22,16 @@ class SiteTest(TestCase):
     def test_published_children(self):
         parent = SiteFactory(name='parent')
         SiteFactory(name='child1', parent=parent, published=False)
-        SiteFactory(name='child2', parent=parent, published=True)
-        self.assertQuerysetEqual(parent.published_children, ['<Site: child2>'])
+        child_2 = SiteFactory(name='child2', parent=parent, published=True)
+        self.assertListEqual(list(parent.published_children.values_list('pk', flat=True)), [child_2.pk])
 
     def test_published_children_by_lang(self):
         parent = SiteFactory(name='parent')
         SiteFactory(name='child1', parent=parent, published=False)
-        SiteFactory(name='child2', parent=parent, published_en=True)
-        SiteFactory(name='child3', parent=parent, published_fr=True)
-        self.assertQuerysetEqual(parent.published_children, ['<Site: child2>', '<Site: child3>'])
+        child_2 = SiteFactory(name='child2', parent=parent, published_en=True)
+        child_3 = SiteFactory(name='child3', parent=parent, published_fr=True)
+        self.assertListEqual(list(parent.published_children.values_list('pk', flat=True)),
+                             [child_2.pk, child_3.pk])
 
     def test_validate_collection_geometrycollection(self):
         site_simple = SiteFactory.create(name='site',
@@ -125,22 +125,26 @@ class SiteSuperTest(TestCase):
         )
 
     def test_super_practices_descendants(self):
-        self.assertQuerysetEqual(self.parent.super_practices, ['<Practice: Aaa>', '<Practice: Bbb>'])
+        self.assertListEqual(list(self.parent.super_practices.values_list('name', flat=True)),
+                             ['Aaa', 'Bbb'])
 
     def test_super_practices_ascendants(self):
-        self.assertQuerysetEqual(self.grandchild2.super_practices, [])
+        self.assertListEqual(list(self.grandchild2.super_practices.values_list('pk', flat=True)),
+                             [])
 
     def test_super_sectors_descendants(self):
-        self.assertQuerysetEqual(self.parent.super_sectors, ['<Sector: Axx>', '<Sector: Bxx>'])
+        self.assertListEqual(list(self.parent.super_sectors.values_list('name', flat=True)),
+                             ['Axx', 'Bxx'])
 
     def test_super_sectors_ascendants(self):
-        self.assertQuerysetEqual(self.grandchild2.super_sectors, [])
+        self.assertListEqual(list(self.grandchild2.super_sectors.values_list('name', flat=True)),
+                             [])
 
     def test_super_orientation_descendants(self):
-        self.assertEqual(self.parent.super_orientation, ['N', 'E', 'S'])
+        self.assertListEqual(self.parent.super_orientation, ['N', 'E', 'S'])
 
     def test_super_orientation_ascendants(self):
-        self.assertEqual(self.grandchild2.super_orientation, [])
+        self.assertListEqual(self.grandchild2.super_orientation, [])
 
     def test_super_wind_descendants(self):
         self.assertEqual(self.parent.super_wind, ['N', 'E', 'S'])
@@ -149,11 +153,11 @@ class SiteSuperTest(TestCase):
         self.assertEqual(self.grandchild2.super_wind, [])
 
     def test_super_managers_descendants(self):
-        self.assertQuerysetEqual(self.parent.super_managers,
-                                 ['<Organism: a>', '<Organism: b>', '<Organism: b>', '<Organism: c>'])
+        self.assertListEqual(list(self.parent.super_managers.values_list('organism', flat=True)),
+                             ['a', 'b', 'b', 'c'])
 
     def test_super_managers_ascendants(self):
-        self.assertQuerysetEqual(self.grandchild2.super_managers, [])
+        self.assertListEqual(list(self.grandchild2.super_managers.values_list('pk', flat=True)), [])
 
     def test_super_practices_display(self):
         self.assertEqual(self.alone.super_practices_display, "")
@@ -174,7 +178,6 @@ class SectorTest(TestCase):
         rating = RatingFactory(scale=rating_scale)
         site_type = SiteTypeFactory(practice=practice)
         course_type = CourseTypeFactory(practice=practice)
-        clear_internal_user_cache()
         practice_pk = practice.pk
         practice_repr = str(practice)
         rating_scale_pk = rating_scale.pk

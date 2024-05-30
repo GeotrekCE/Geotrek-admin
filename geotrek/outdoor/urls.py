@@ -1,5 +1,4 @@
 from django.conf import settings
-from rest_framework.routers import DefaultRouter
 
 from geotrek.common.urls import PublishableEntityOptions
 from geotrek.outdoor import models as outdoor_models
@@ -8,12 +7,8 @@ from mapentity.registry import registry
 
 
 app_name = 'outdoor'
+
 urlpatterns = []
-
-router = DefaultRouter(trailing_slash=False)
-
-router.register(r'^api/(?P<lang>[a-z]{2})/courses', outdoor_views.CourseAPIViewSet, basename='course')
-router.register(r'^api/(?P<lang>[a-z]{2})/sites', outdoor_views.SiteAPIViewSet, basename='site')
 
 
 class SiteEntityOptions(PublishableEntityOptions):
@@ -28,7 +23,6 @@ class CourseEntityOptions(PublishableEntityOptions):
     markup_public_view = outdoor_views.CourseMarkupPublic
 
 
-urlpatterns += router.urls
 urlpatterns += registry.register(outdoor_models.Site, SiteEntityOptions,
                                  menu=settings.SITE_MODEL_ENABLED)
 urlpatterns += registry.register(outdoor_models.Course, CourseEntityOptions,

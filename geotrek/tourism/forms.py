@@ -4,9 +4,11 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.tourism.widgets import AutoLocateMapWidget
 
 from crispy_forms.layout import Div, HTML, Fieldset
+from mapentity.widgets import SelectMultipleWithPop
+
 
 from .models import (TouristicContent, TouristicEvent, TouristicEventParticipantCount,
-                     TouristicEventParticipantCategory)
+                     TouristicEventParticipantCategory, TouristicEventOrganizer)
 from geotrek.common.forms import CommonForm
 
 
@@ -84,6 +86,7 @@ class TouristicEventForm(CommonForm):
                     'start_time',
                     'end_time',
                     'duration',
+                    'price',
                     'place',
                     'meeting_point',
                     'description_teaser',
@@ -93,7 +96,7 @@ class TouristicEventForm(CommonForm):
                     'contact',
                     'email',
                     'website',
-                    'organizer',
+                    'organizers',
                     'speaker',
                     'accessibility',
                     'bookable',
@@ -129,10 +132,10 @@ class TouristicEventForm(CommonForm):
     class Meta:
         fields = ['name', 'place', 'review', 'published', 'description_teaser', 'description',
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'start_time', 'end_time', 'contact', 'email', 'website', 'organizer', 'speaker',
+                  'start_time', 'end_time', 'contact', 'email', 'website', 'organizers', 'speaker',
                   'type', 'accessibility', 'capacity', 'booking', 'target_audience',
                   'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure', 'bookable',
-                  'cancelled', 'cancellation_reason', 'preparation_duration', 'intervention_duration']
+                  'cancelled', 'cancellation_reason', 'preparation_duration', 'intervention_duration', 'price']
         model = TouristicEvent
         widgets = {'geom': AutoLocateMapWidget()}
 
@@ -142,10 +145,17 @@ class TouristicEventForm(CommonForm):
         self.fields['end_date'].widget.attrs['placeholder'] = _('dd/mm/yyyy')
         self.fields['start_time'].widget.attrs['placeholder'] = _('HH:MM')
         self.fields['end_time'].widget.attrs['placeholder'] = _('HH:MM')
+        if self.user.has_perm("tourism.add_touristiceventorganizer"):
+            self.fields['organizers'].widget = SelectMultipleWithPop(
+                choices=self.fields['organizers'].choices,
+                add_url=TouristicEventOrganizer.get_add_url()
+            )
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'source']:
             self.fields[f].help_text = ''
-        participants_count = {p.category.pk: p.count for p in self.instance.participants.select_related('category').all()}
+        participants_count = {}
+        if self.instance and self.instance.pk:
+            participants_count = {p.category.pk: p.count for p in self.instance.participants.select_related('category').all()}
         categories = TouristicEventParticipantCategory.objects.all()
         if not categories:
             self.fieldslayout[0][1][1][0].append(HTML(_("Please add a participant category in admin interface in order to complete the number of participants.")))
@@ -189,3 +199,9 @@ class TouristicEventForm(CommonForm):
                 TouristicEventParticipantCount.objects.update_or_create(event=self.instance, category=category, defaults={'count': count})
             else:
                 TouristicEventParticipantCount.objects.filter(event=self.instance, category=category).delete()
+
+
+class TouristicEventOrganizerFormPopup(CommonForm):
+    class Meta:
+        model = TouristicEventOrganizer
+        fields = ['label']

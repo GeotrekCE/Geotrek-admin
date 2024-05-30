@@ -1,9 +1,10 @@
 from django.http import HttpResponse
-
 from django.views.generic import ListView
-from geotrek.trekking.models import Trek, POI
+
 from geotrek.cirkwi.filters import CirkwiPOIFilterSet, CirkwiTrekFilterSet
-from geotrek.cirkwi.serializers import CirkwiTrekSerializer, CirkwiPOISerializer
+from geotrek.cirkwi.serializers import (CirkwiPOISerializer,
+                                        CirkwiTrekSerializer)
+from geotrek.trekking.models import POI, Trek
 
 
 class CirkwiTrekView(ListView):

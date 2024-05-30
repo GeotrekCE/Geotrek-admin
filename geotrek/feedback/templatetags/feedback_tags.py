@@ -63,7 +63,7 @@ def resolved_intervention_info(report):
                     username = user.username
 
             resolved_intervention_info = {
-                "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
+                "end_date": report.interventions.first().end_date.strftime("%d/%m/%Y") if report.interventions else None,
                 "username": username
             }
             return json.dumps(resolved_intervention_info)

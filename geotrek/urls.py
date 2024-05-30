@@ -55,12 +55,12 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.diving.urls')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.tourism.urls')))
-if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.flatpages.urls')))
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.feedback.urls')))
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.sensitivity.urls')))
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    urlpatterns.append(path('flatpages/', include('geotrek.flatpages.urls')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.api.v2.urls')))
     if 'geotrek.flatpages' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS and 'geotrek.tourism' in settings.INSTALLED_APPS:

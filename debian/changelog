@@ -1,8 +1,86 @@
-geotrek-admin (2.101.4+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.106.0+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Joaquim <joaquim@joaquim-ThinkPad-P14s-Gen-2a>  Wed, 15 Nov 2023 14:47:02 +0100
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 May 2024 16:45:07 +0200
+
+geotrek-admin (2.106.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 May 2024 16:06:15 +0200
+
+geotrek-admin (2.105.1) RELEASED; urgency=medium
+
+  *  New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 19:42:46 +0200
+
+geotrek-admin (2.105.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 14:29:19 +0200
+
+geotrek-admin (2.104.2) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Thu, 04 Apr 2024 18:21:22 +0200
+
+geotrek-admin (2.104.1) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Wed, 03 Apr 2024 17:40:00 +0200
+
+geotrek-admin (2.104.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Wed, 03 Apr 2024 13:34:03 +0200
+
+geotrek-admin (2.103.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 22 Mar 2024 16:03:23 +0100
+
+geotrek-admin (2.103.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 15 Mar 2024 16:21:41 +0100
+
+geotrek-admin (2.103.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 14 Mar 2024 11:05:35 +0100
+
+geotrek-admin (2.102.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 13 Mar 2024 17:12:52 +0100
+
+geotrek-admin (2.102.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Tue, 20 Feb 2024 10:33:07 +0100
+
+geotrek-admin (2.102.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Mon, 19 Feb 2024 16:54:29 +0100
+
+geotrek-admin (2.101.5) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Thu, 11 Jan 2024 15:02:05 +0100
 
 geotrek-admin (2.101.4) RELEASED; urgency=medium
 

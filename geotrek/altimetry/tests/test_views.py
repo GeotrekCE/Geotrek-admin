@@ -11,7 +11,7 @@ from geotrek.trekking.tests.factories import TrekFactory
 class ProfileViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(password='booh')
+        cls.user = UserFactory()
 
     def test_profile_model_do_not_exist(self):
         self.client.force_login(user=self.user)

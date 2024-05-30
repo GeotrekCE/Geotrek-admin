@@ -12,6 +12,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.signals import log_cascade_deletion
+from modeltranslation.utils import build_localized_fieldname
 from mptt.models import MPTTModel, TreeForeignKey
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
@@ -249,7 +250,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PicturesMixin, PublishableMi
             return self.children.filter(published=True)
         q = Q()
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            q |= Q(**{'published_{}'.format(lang): True})
+            q |= Q(**{build_localized_fieldname('published', lang): True})
         return self.children.filter(q)
 
     @property

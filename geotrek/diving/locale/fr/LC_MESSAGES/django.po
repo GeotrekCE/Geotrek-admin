@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: 2020-04-22 06:45+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -131,10 +131,6 @@ msgstr "Plongée"
 msgid "Dives"
 msgstr "Plongées"
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "dive"
-msgstr "plongee"
-
 msgid "Add a new dive"
 msgstr "Ajouter une plongée"
 
@@ -170,20 +166,6 @@ msgstr "Événements touristiques"
 
 msgid "Published touristic events"
 msgstr "Événements touristiques publiés"
-
-msgid "Public print"
-msgstr "Impression grand public"
-
-msgid "Print"
-msgstr "Impr."
-
-#, fuzzy
-#| msgid "Public print"
-msgid "Public print booklet"
-msgstr "Impression grand public"
-
-msgid "Print booklet"
-msgstr ""
 
 msgid "Attributes"
 msgstr "Informations"

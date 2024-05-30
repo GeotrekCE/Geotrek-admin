@@ -46,9 +46,9 @@ class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
-    extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    extra_column_list = ['heliport_cost', 'contractor_cost', 'disorders', 'jobs']
+    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'contractor_cost', 'disorders', 'jobs']
+    expected_column_formatlist_extra = ['id', 'heliport_cost', 'contractor_cost', 'disorders', 'jobs']
     expected_json_geom = {'coordinates': [[3.0, 46.5],
                                           [3.001304, 46.5009004]],
                           'type': 'LineString'}
@@ -74,15 +74,17 @@ class InterventionViewsTest(CommonTest):
         InterventionStatusFactory.create()
         good_data = {
             'name': 'test',
-            'date': '2012-08-23',
+            'begin_date': '2012-08-23',
+            'end_date': "",
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
             'area': 0,
-            'subcontract_cost': 0.0,
+            'contractor_cost': 0.0,
             'stake': StakeFactory.create().pk,
             'height': 0.0,
             'project': '',
+            'contractors': [],
             'width': 0.0,
             'length': 0.0,
             'status': InterventionStatus.objects.all()[0].pk,
@@ -112,7 +114,8 @@ class InterventionViewsTest(CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'date': '30/03/2022',
+            'begin_date': '30/03/2022',
+            'end_date': None,
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'stake': self.obj.stake.stake,
@@ -254,6 +257,7 @@ class InterventionViewsTest(CommonTest):
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
         access_mean = AccessMeanFactory()
         data['access'] = access_mean.pk
@@ -353,6 +357,7 @@ class InterventionViewsTest(CommonTest):
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
@@ -523,6 +528,7 @@ class ProjectViewsTest(CommonTest):
             'global_cost': '12',
             'comments': '',
             'contractors': ContractorFactory.create().pk,
+            'intervention_contractors': [],
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
 
@@ -766,17 +772,6 @@ class TestDetailedJobCostsExports(TestCase):
         self.manday1.delete()
         reader_csv = self.get_csv_reader_names('/intervention/list/export/')
         self.assertNotIn(self.job1_column_name, reader_csv.fieldnames)
-
-        # Test column translations don't mess it up
-        self.client.post("/i18n/setlang/", {"language": "fr"})
-        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
-        field_to_test = f"Coût_{self.job2}"
-        self.assertIn(field_to_test, reader_csv.fieldnames)
-        for elem in reader_csv:
-            # Decimal work only with '.' before decimal numbers, here we have "," because we are in french
-            english_field_format_num = elem[field_to_test].replace(",", ".")
-            self.assertEqual(Decimal(english_field_format_num), self.job2.cost * self.manday2.nb_days)
-        self.client.post("/i18n/setlang/", {"language": "fr"})
 
     def test_shp_detailed_cost_content(self):
         '''Test SHP job costs exports contain accurate total price'''

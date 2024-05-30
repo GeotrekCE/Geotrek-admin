@@ -102,7 +102,7 @@ class BladeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
-    number = 1
+    number = factory.Sequence(lambda n: "%s" % n)
     type = factory.SubFactory(BladeTypeFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
     color = factory.SubFactory(BladeColorFactory)

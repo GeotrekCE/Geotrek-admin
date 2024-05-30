@@ -2,6 +2,11 @@
 Import data
 ===========
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Import paths
 ============
 
@@ -48,9 +53,12 @@ To import a shapefile containing your paths, use the command ``loadpaths``::
         --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
         --encoding latin9 -i
 
+.. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)
 =============================================
+
+.. _configure-apidae-ex-sitra-import:
 
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
@@ -163,14 +171,11 @@ Sensitive areas import
 
 When sensitive areas module is enabled, Geotrek provides 3 parsers to import data:
 
-* Import sensitive areas from http://biodiv-sports.fr (``geotrek.sensitivity.parsers.BiodivParser``). By default this
+* **Import sensitive areas from http://biodiv-sports.fr** (``geotrek.sensitivity.parsers.BiodivParser``). By default this
   parser imports all sensitive areas in configured spatial extent.
-* Import species sensitive areas from a ziped shapefile. Imported field names are: ``espece`` (required), ``contact``
-  and ``descriptio``.
-  Species with corresponding names have to be created manually before import.
-* Import regulatory sensitive areas from a ziped shapefile. Imported field names are: ``nom`` (required), ``contact``,
-  ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``.
-  Practices with corresponding names have to be created manually before import.
+* **Import species sensitive areas from a zipped shapefile**. 
+  Imported field names are: ``espece`` (required), ``contact`` and ``descriptio``. Species with corresponding names have to be created manually before import.
+* **Import regulatory sensitive areas from a zipped shapefile**. Imported field names are: ``nom`` (required), ``contact``, ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``. Practices with corresponding names have to be created manually before import.
 
 You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py``
 file.
@@ -335,6 +340,97 @@ Then run in command line
 
 Treks are now imported into your own instance.
 
+.. _import-sensitive-areas:
+
+Import sensitive areas
+======================
+
+Import from https://biodiv-sports.fr
+------------------------------------
+
+It is possible to import automatically data from Biodiv'sport. To do so, you just need to follow those steps : 
+
+- Click on the **user link** at top right, then on **Imports**,
+- Under the section **Data to import from network**, select **Biodiv'Sports **
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right
+
+When the import is done, you can check the Sensitivity module in Geotrek and you'll find data inside.
+
+It is also possible to import sensitive areas through commande line:
+
+.. code-block :: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
+
+.. warning:: 
+  If you don't see any data in your area, it means that Biodiv'Sport does not contains data for your territory. 
+  Then it is widely recommended to add your data directly into Biodiv'Sport, as it will be available for 
+  multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sport 
+  go visit their website : https://biodiv-sports.fr
+
+
+Import from shapefile
+---------------------
+
+Imported data must be in standard ESRI shapefile format. 
+The various Shapefile files (``.shp``, ``.shx``, ``.dbf``, ``.prj``, *etc*.) must be assembled in a zip archive.
+
+.. warning::
+  Please note! The description field name ``descriptio`` does not include the final ``n``, as field names are limited to 10 characters in shapefiles.
+
+Attribute data for sensitive areas species
+
+- ``espece``: Species name. Mandatory. A species with this name must first have been created in Biodiv'sports. Otherwise, import of the line will fail.
+- ``contact``: Contact in text or HTML format. *Optional*.
+- ``descriptio``: Description in text or HTML format. *Optional*. 
+
+.. warning::
+  Species name must strictly respect the species name string (accentuation, case and punctuation).
+
+Attribute data for regulatory sensitive areas:
+
+- ``name`` : Area name
+- ``contact`` : Contact in text or HTML format. *Optional*.
+- ``descriptio`` : Description in text or HTML format. *Optional*.
+- ``periode``: Numbers of the months in which the area is occupied, **comma separated** and **without spaces** (e.g. ``6,7,8`` for June, July and August).
+- ``practices``: Names of practices, separated by commas, without spaces (e.g. ``Terrestre,Aerien,Vertical``), see :ref:`Practices`. Otherwise, the line import will fail.
+- ``url`` : Record url. *Optional*.
+
+Import from web interface
+
+- Click on the **user link** at top right, then on **Imports**,
+- Select the type of data to be imported (**species** or **regulatory area**),
+- Select the *.zip* file to be imported,
+- Select the correct encoding (``UTF8`` or ``Windows-1252``)
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right,
+- Click on **Display report** to see any unimported lines.
+
+.. figure:: ../images/advanced-configuration/import_shapefile.png
+   :alt: Import shapefile in user interface
+   :align: center
+
+   Import shapefile in user interface
+
+On command line, run:
+
+.. code-block:: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
+
+or:
+
+.. code-block:: bash
+
+    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
+
+
+.. warning:: 
+  Relaunching an import **with the same file** will create duplicates.
+
 
 Import other datas from a file
 ==============================
@@ -374,6 +470,8 @@ To get help about a command:
 ::
 
     sudo geotrek help <subcommand>
+    
+.. _import-dem-altimetry:
 
 
 Import DEM (altimetry)
@@ -407,6 +505,7 @@ Import DEM (altimetry)
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
+.. _import-pois:
 
 Import POIs
 -----------
@@ -451,7 +550,7 @@ Import POIs
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-infrastructure:
 
 Import Infrastructure
 ---------------------
@@ -544,7 +643,6 @@ Load a layer with point geometries and import entities as infrastructures object
 - expected formats for the `point_layer` file are shapefile or geojson (other geodjango supported-formats may work but untested),
 - the command updates existing Infrastructure objects based on the `eid` field (external ID),
 - if the Infrastructure object does not exist (or if `eid` is not specified) it is created.
-
 
 **Usage example**
 
@@ -644,7 +742,7 @@ Import Dive
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
-
+.. _import-signage:
 
 Import Signage
 --------------
@@ -851,6 +949,52 @@ You have to run ``sudo geotrek remove_duplicate_paths``
 During the process of the command, every topology on a duplicate path will be set on the original path, and the duplicate path will be deleted.
 
 
+Merge segmented paths
+----------------------
+
+A path network is most optimized when there is only one path between intersections.
+If the path database includes many fragmented paths, they could be merged to improve performances.
+
+You can run ``sudo geotrek merge_segmented_paths``. 
+
+.. danger::
+    This command can take several hours to run. During the process, every topology on a path will be set on the path it is merged with, but it would still be more efficient (and safer) to run it before creating topologies. 
+
+Before :
+::
+
+       p1      p2      p3      p5     p6     p7      p8     p9     p14
+    +-------+------+-------+------+-------+------+-------+------+------+
+                   |                             |
+                   |  p4                         |  p13
+                   |                             |
+                   +                             +-------
+                   |                             |       |
+                   |  p10                        |   p16 |
+             p11   |                             |       |
+            +------+------+ p15                  --------
+                   |
+                   |  p12
+                   |
+
+After :
+::
+
+           p1                     p6                       p14
+    +--------------+-----------------------------+---------------------+
+                   |                             |
+                   |                             |  p13
+                   |                             |
+                   |  p10                        +-------
+                   |                             |       |
+                   |                             |   p16 |
+             p11   |                             |       |
+            +------+------+ p15                  --------
+                   |
+                   |  p12
+                   |
+
+
 Unset structure on categories
 -----------------------------
 
@@ -912,7 +1056,7 @@ only one Linestring from start to end. It stays as close as possible to the corr
 when the order is not well managed during topologies' display.
 
 .. danger::
-    It can happens that this algorithm can't find any solution and will genereate a MultiLineString.
+    It can happen that this algorithm can't find any solution and will genereate a MultiLineString.
     This will be displayed at the end of the reorder
 
 

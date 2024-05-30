@@ -49,7 +49,7 @@ POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 
 TOURISTIC_EVENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'name', 'description_teaser', 'description', 'themes', 'pictures', 'begin_date', 'end_date', 'duration',
-    'start_time', 'contact', 'email', 'website', 'organizer', 'speaker', 'type', 'accessibility', 'meeting_point',
+    'start_time', 'contact', 'email', 'website', 'organizer', 'organizers', 'speaker', 'type', 'accessibility', 'meeting_point',
     'capacity', 'booking', 'target_audience', 'practical_info', 'approved',
 ])
 
@@ -120,21 +120,21 @@ class BaseApiTest(TestCase):
         cls.city2 = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)), published=False)
 
     def get_treks_list(self, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-list'), params, headers={"accept-language": lang})
 
     def get_treks_detail(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, headers={"accept-language": lang})
 
     def get_poi_list(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, headers={"accept-language": lang})
 
     def get_touristic_content_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
     def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
 
 class APIAccessTestCase(BaseApiTest):

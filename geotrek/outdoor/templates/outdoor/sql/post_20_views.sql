@@ -215,20 +215,18 @@ SELECT a.id,
 FROM public.outdoor_site a
 JOIN outdoor_site_geom sg ON a.id = sg.id AND NOT ST_IsEmpty(sg.geom)
 LEFT JOIN authent_structure b ON a.structure_id = b.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM
-         outdoor_site a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) c ON a.id = c.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM
-         outdoor_site a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) d ON a.id = d.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) c ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) d ON true
 LEFT JOIN outdoor_sitetype e ON a.type_id = e.id
 LEFT JOIN outdoor_practice f ON a.practice_id = f.id
 LEFT JOIN

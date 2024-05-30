@@ -54,7 +54,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -76,9 +76,10 @@ jobs:
         path: |
           ./venv
 
-        key: pip-${{ matrix.python-version }}
+        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}
+          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          pip-${{ matrix.python-version }}-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -112,13 +113,19 @@ jobs:
     - name: Install python dependencies
       run: |
         python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools
+        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
 
     - name: Create test required directories
       run: |
         mkdir -p ./var/log ./var/cache/sessions
+
+    - name: Prepare environment
+      run: |
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
+        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python3 ./manage.py compilemessages
 
     - name: Check missing migrations
       run: |
@@ -128,23 +135,18 @@ jobs:
       run: |
         ENV=dev ./venv/bin/python3 ./manage.py migrate
 
-    - name: Prepare environment
-      run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
-
     - name: Launch Celery
       run: |
         ./venv/bin/celery -A geotrek worker -c 1 &
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run ./manage.py test -v 3
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
-    - uses: codecov/codecov-action@v3
+    # codecov-action version 3.1.4 is the last version supported by bionic (3.1.5 requires node 20)
+    - uses: codecov/codecov-action@v3.1.4
       with:
         files: ./coverage.xml
         env_vars: OS,ENV
@@ -161,7 +163,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Build Docker image
         run: |
-          docker build -t geotrek:latest .
+          docker build -f ./docker/Dockerfile -t geotrek:latest .
       - name: Upload image
         uses: ishworkh/docker-image-artifact-upload@v1
         with:
@@ -215,9 +217,13 @@ jobs:
     name: Tests E2E docker
     runs-on: ubuntu-20.04
     needs: [build_docker_image]
+    env:
+      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
+
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -236,7 +242,8 @@ jobs:
       - name: Launch service
         run: |
           docker tag geotrek:latest geotrekce/admin:latest
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          cp docker/install/.env.dist .env
+          cp docker/install/docker-compose.yml docker-compose.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/localhost/geotrek.local/' .env
@@ -246,14 +253,18 @@ jobs:
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
-          docker-compose run web update.sh
+          docker compose run web update.sh
           make load_data
           make load_test_integration
-          docker-compose up -d
+          docker compose up -d
 
       - name: Prepare nginx
         run: |
+          sudo service apache2 stop
+          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get autoremove
           sudo apt-get install -q -y nginx
+          sudo unlink /etc/nginx/sites-enabled/default
           sudo mkdir /var/www/geotrek -p
           ls -als
           pwd
@@ -268,7 +279,7 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8000"; do
+          while ! nc -z "127.0.0.1" "8001"; do
             sleep 0.1
           done
 
@@ -296,7 +307,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test

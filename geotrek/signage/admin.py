@@ -2,25 +2,29 @@ from django.contrib import admin
 from django.db.models import Q
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from geotrek.signage.models import LinePictogram, SignageType, Color, Sealing, Direction, BladeType, SignageCondition
+from geotrek.signage.models import LinePictogram, SignageType, Color, Sealing, Direction, BladeType, SignageCondition, BladeCondition
 
 
+@admin.register(Color)
 class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
 
 
+@admin.register(Direction)
 class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
 
 
+@admin.register(LinePictogram)
 class LinePictogramAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
     list_display = ('label', 'pictogram_img', 'code')
 
 
+@admin.register(Sealing)
 class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
     merge_field = 'label'
@@ -57,6 +61,7 @@ class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure', )
 
 
+@admin.register(BladeType)
 class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
     merge_field = 'label'
@@ -93,6 +98,7 @@ class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure', )
 
 
+@admin.register(SignageType)
 class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
     merge_field = 'label'
@@ -129,7 +135,8 @@ class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('structure', )
 
 
-class SignageConditionAdmin(MergeActionMixin, admin.ModelAdmin):
+@admin.register(BladeCondition, SignageCondition)
+class ModelConditionAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure__name')
     merge_field = "label"
 
@@ -163,12 +170,3 @@ class SignageConditionAdmin(MergeActionMixin, admin.ModelAdmin):
         if not request.user.has_perm('authent.can_bypass_structure'):
             return ()
         return ('structure',)
-
-
-admin.site.register(SignageType, SignageTypeAdmin)
-admin.site.register(Color, ColorBladeAdmin)
-admin.site.register(Sealing, SealingAdmin)
-admin.site.register(Direction, DirectionBladeAdmin)
-admin.site.register(BladeType, BladeTypeAdmin)
-admin.site.register(LinePictogram, LinePictogramAdmin)
-admin.site.register(SignageCondition, SignageConditionAdmin)

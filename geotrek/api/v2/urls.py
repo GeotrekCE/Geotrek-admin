@@ -24,6 +24,7 @@ if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     router.register('infrastructure_usage_difficulty_level', api_views.InfrastructureUsageDifficultyLevelViewSet, basename='infrastructure-usage-difficulty')
     router.register('infrastructure_maintenance_difficulty_level', api_views.InfrastructureMaintenanceDifficultyLevelViewSet, basename='infrastructure-maintenance-difficulty')
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    router.register('feedback_report', api_views.ReportViewSet, basename='feedback-report')
     router.register('feedback_status', api_views.ReportStatusViewSet, basename='feedback-status')
     router.register('feedback_category', api_views.ReportCategoryViewSet, basename='feedback-category')
     router.register('feedback_activity', api_views.ReportActivityViewSet, basename='feedback-activity')
@@ -95,4 +96,9 @@ _urlpatterns += [
     path('version', api_views.GeotrekVersionAPIView.as_view()),
     path('', include(router.urls)),
 ]
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    _urlpatterns += [
+        path('menu_item/<int:pk>/', api_views.MenuItemRetrieveView.as_view(), name='menu-item-detail'),
+        path('menu_item/', api_views.MenuItemTreeView.as_view(), name='menu-item-tree'),
+    ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]

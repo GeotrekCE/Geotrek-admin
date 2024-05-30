@@ -127,12 +127,6 @@
             </td>
         </tr>
         <tr>
-            <th>{% trans "Related treks" %}</th>
-            <td>
-                {% valuelist trek.relationships.all field='relation' %}
-            </td>
-        </tr>
-        <tr>
             <th>{% trans "Itinerancy" %}</th>
             <td>
                 {% if trek.parents %}

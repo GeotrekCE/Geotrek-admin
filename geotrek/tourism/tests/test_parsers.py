@@ -407,11 +407,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info)
         self.assertTrue(content.published)
         self.assertEqual(content.category, category)
-        self.assertQuerysetEqual(
-            content.type1.all(),
-            ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
+        self.assertListEqual(
+            list(content.type1.all().values_list('label', flat=True)),
+            ['Type A', 'Type B']
         )
-        self.assertQuerysetEqual(content.type2.all(), [])
+        self.assertQuerySetEqual(content.type2.all(), [])
         self.assertEqual(Attachment.objects.count(), 4)
         self.assertEqual(Attachment.objects.first().content_object, content)
 
@@ -461,12 +461,15 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
-        self.assertEqual(str(event.organizer), 'Toto')
         self.assertEqual(str(event.start_time), '09:00:00')
         self.assertEqual(event.type.type, 'Sports')
-        self.assertQuerysetEqual(
-            event.themes.all(),
-            ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
+        self.assertListEqual(
+            list(event.themes.all().values_list('label', flat=True)),
+            ['Cyclisme', 'Sports cyclistes']
+        )
+        self.assertListEqual(
+            list(event.organizers.all().values_list('label', flat=True)),
+            ['Toto']
         )
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(TouristicEventApidaeParser().filter_capacity("capacity", "12"), 12)
@@ -495,9 +498,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(str(event.type), "Constant Event")
-        self.assertQuerysetEqual(event.themes.all(), ["Theme 1", "Theme 2"], transform=str)
-        self.assertQuerysetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
-        self.assertQuerysetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
+        self.assertQuerySetEqual(event.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerySetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerySetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_content_apidae_constant_fields(self, mocked):
@@ -520,11 +523,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(str(content.category), "Constant Content")
-        self.assertQuerysetEqual(content.type1.all(), ["Type1 1", "Type1 2"], transform=str)
-        self.assertQuerysetEqual(content.type2.all(), ["Type2 1", "Type2 2"], transform=str)
-        self.assertQuerysetEqual(content.themes.all(), ["Theme 1", "Theme 2"], transform=str)
-        self.assertQuerysetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
-        self.assertQuerysetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
+        self.assertQuerySetEqual(content.type1.all(), ["Type1 1", "Type1 2"], transform=str)
+        self.assertQuerySetEqual(content.type2.all(), ["Type2 1", "Type2 2"], transform=str)
+        self.assertQuerySetEqual(content.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerySetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerySetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('geotrek.common.parsers.requests.get')
     @mock.patch('geotrek.common.parsers.requests.head')
@@ -625,7 +628,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 2)
-        content = TouristicContent.objects.first()
+        content = TouristicContent.objects.last()
         self.assertEqual(content.eid, "HOTCEN0280010001")
         self.assertEqual(content.name, "Hôtel du Perche")
         self.assertEqual(content.description[:27], "")
@@ -716,16 +719,14 @@ class ParserTests(TranslationResetMixin, TestCase):
 
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
-        self.assertQuerysetEqual(event.portal.all(), ['<TargetPortal: Itinérance>'])
+        self.assertListEqual(list(event.portal.all().values_list('name', flat=True)), ['Itinérance'])
         call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28OtherPortal',
                      verbosity=0)
 
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
-        self.assertQuerysetEqual(event.portal.all(),
-                                 ['<TargetPortal: Itinérance>',
-                                  '<TargetPortal: Other_portal>'],
-                                 ordered=False)
+        self.assertListEqual(list(event.portal.all().values_list('name', flat=True)),
+                             ['Itinérance', 'Other_portal'])
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_information_desk_apidae(self, mocked):
@@ -871,6 +872,10 @@ class LEIParserTest(TranslationResetMixin, TestCase):
         self.assertIn("Description A", event.description)
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().content_object, event)
+        self.assertListEqual(
+            list(event.organizers.all().values_list('label', flat=True)),
+            ['Resp Event A']
+        )
 
 
 class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
@@ -878,6 +883,7 @@ class TestGeotrekTouristicContentParser(GeotrekTouristicContentParser):
 
     field_options = {
         "category": {'create': True},
+        "structure": {'create': True},
         'themes': {'create': True},
         'source': {'create': True},
         'type1': {'create': True, 'fk': 'category'},
@@ -898,6 +904,7 @@ class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
         'source': {'create': True},
         'type': {'create': True, },
         'geom': {'required': True},
+        'structure': {'create': True},
     }
 
 
@@ -922,8 +929,10 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_ids.json'),
@@ -941,6 +950,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(touristic_content.category), 'Sorties')
         self.assertEqual(str(touristic_content.type1.first()), 'Ane')
         self.assertEqual(str(touristic_content.name), "Balad'âne")
+        self.assertEqual(str(touristic_content.structure), "Struct1")
         self.assertEqual(str(touristic_content.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_content.geom.x, 568112.6362873032, places=5)
         self.assertAlmostEqual(touristic_content.geom.y, 6196929.676669887, places=5)
@@ -951,8 +961,10 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create_create_categories(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristiccontent_category.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_themes.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristiccontent_category.json'),
                                 ('tourism', 'touristiccontent_ids.json'),
@@ -986,7 +998,9 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('tourism', 'touristicevent_type.json'),
+        self.mock_json_order = [('tourism', 'structure.json'),
+                                ('tourism', 'touristicevent_type.json'),
+                                ('tourism', 'sources.json'),
                                 ('tourism', 'sources.json'),
                                 ('tourism', 'touristicevent_ids.json'),
                                 ('tourism', 'touristicevent.json')]
@@ -1001,6 +1015,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 2)
         touristic_event = TouristicEvent.objects.all().first()
         self.assertEqual(str(touristic_event.type), 'Spectacle')
+        self.assertEqual(str(touristic_event.structure), 'Struct1')
         self.assertEqual(str(touristic_event.name), "Autrefois le Couserans")
         self.assertEqual(str(touristic_event.source.first().name), "Une source numero 2")
         self.assertAlmostEqual(touristic_event.geom.x, 548907.5259389633, places=5)

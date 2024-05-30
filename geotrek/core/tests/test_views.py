@@ -1,32 +1,38 @@
-import os
 import re
-from unittest import skipIf, mock
+from unittest import mock, skipIf
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
+from django.core.files.storage import default_storage
 from django.test import TestCase
-
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import UserFactory
 
-from geotrek.common.tests import CommonTest
-
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
-
-from geotrek.core.models import Path, Trail, PathSource
-from geotrek.core.filters import PathFilterSet, TrailFilterSet
-
-from geotrek.trekking.tests.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.common.tests import CommonTest
+from geotrek.core.models import Path, PathSource, Trail
+from geotrek.core.tests.factories import (
+    ComfortFactory,
+    PathFactory,
+    StakeFactory,
+    TopologyFactory,
+    TrailFactory,
+)
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import SignageFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
-from geotrek.core.tests.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
-from geotrek.zoning.tests.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.trekking.tests.factories import POIFactory, ServiceFactory, TrekFactory
+from geotrek.zoning.tests.factories import (
+    CityFactory,
+    DistrictFactory,
+    RestrictedAreaFactory,
+    RestrictedAreaTypeFactory,
+)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -654,7 +660,7 @@ class PathKmlGPXTest(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
         self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
-        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, features='xml')
 
         self.kml_response = self.client.get(reverse('core:path_kml_detail', args=('en', self.path.pk, 'slug')))
 
@@ -765,10 +771,10 @@ class TrailViewsTest(CommonTest):
         trail = TrailFactory(date_update="2000-01-01")
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
-        with open(trail.get_map_image_path(), 'wb') as f:
+        with open(default_storage.path(trail.get_map_image_path()), 'wb') as f:
             f.write(b'***' * 1000)
 
-        self.assertEqual(os.path.getsize(trail.get_map_image_path()), 3000)
+        self.assertEqual(default_storage.size(trail.get_map_image_path()), 3000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 
@@ -777,7 +783,7 @@ class TrailViewsTest(CommonTest):
 
         trail = TrailFactory(offset=3.14)
         response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
-        soup = bs4.BeautifulSoup(response.content, 'lxml')
+        soup = bs4.BeautifulSoup(response.content, features='html.parser')
         textarea_field = soup.find(id="id_topology")
         self.assertIn('"kind": "TMP"', textarea_field.text)
         self.assertIn('"offset": 3.14', textarea_field.text)
@@ -797,7 +803,7 @@ class TrailViewsTest(CommonTest):
 
     def test_perfs_export_csv(self):
         self.modelfactory.create()
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             self.client.get(self.model.get_format_list_url() + '?format=csv')
 
 
@@ -812,7 +818,7 @@ class TrailKmlGPXTest(TestCase):
         self.client.force_login(self.user)
 
         self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
-        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, features='xml')
 
         self.kml_response = self.client.get(reverse('core:trail_kml_detail', args=('en', self.trail.pk, 'slug')))
 
@@ -866,59 +872,9 @@ class RemovePathKeepTopology(TestCase):
         poi.reload()
         e1.reload()
 
-        self.assertEqual(len(Path.objects.all()), 1)
+        self.assertEqual(Path.objects.all().count(), 1)
 
         self.assertEqual(e1.deleted, True)
         self.assertEqual(poi.deleted, False)
 
         self.assertAlmostEqual(1.5, poi.offset)
-
-
-class PathFilterTest(CommonTest, AuthentFixturesTest):
-    factory = PathFactory
-    filterset = PathFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = PathFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        path1 = PathFactory.create(provider='my_provider1')
-        path2 = PathFactory.create(provider='my_provider2')
-
-        filter_set = PathFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(path1, filter_set.qs)
-        self.assertIn(path2, filter_set.qs)
-
-
-class TrailFilterTest(CommonTest, AuthentFixturesTest):
-    factory = TrailFactory
-    filterset = TrailFilterSet
-
-    def test_provider_filter_without_provider(self):
-        filter_set = TrailFilterSet(data={})
-        filter_form = filter_set.form
-
-        self.assertTrue(filter_form.is_valid())
-        self.assertEqual(0, filter_set.qs.count())
-
-    def test_provider_filter_with_providers(self):
-        trail1 = TrailFactory.create(provider='my_provider1')
-        trail2 = TrailFactory.create(provider='my_provider2')
-
-        filter_set = TrailFilterSet()
-        filter_form = filter_set.form
-
-        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
-        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
-
-        self.assertIn(trail1, filter_set.qs)
-        self.assertIn(trail2, filter_set.qs)

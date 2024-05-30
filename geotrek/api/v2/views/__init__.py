@@ -10,7 +10,8 @@ from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, Reservatio
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    from .feedback import ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet, ReportProblemMagnitudeViewSet  # noqa
+    from .feedback import (ReportStatusViewSet, ReportActivityViewSet, ReportCategoryViewSet,  # noqa
+                           ReportProblemMagnitudeViewSet, ReportViewSet)  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from .trekking import (TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet,  # noqa
                            DifficultyViewSet, NetworkViewSet, PracticeViewSet, AccessibilityLevelViewSet,  # noqa
@@ -28,7 +29,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from .outdoor import (SiteViewSet, OutdoorPracticeViewSet, SiteTypeViewSet, CourseTypeViewSet,  # noqa
                           OutdoorRatingScaleViewSet, OutdoorRatingViewSet, CourseViewSet, SectorViewSet)  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    from .flatpages import FlatPageViewSet  # noqa
+    from .flatpages import MenuItemTreeView, FlatPageViewSet, MenuItemRetrieveView  # noqa
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     from .infrastructure import InfrastructureTypeViewSet, InfrastructureViewSet, InfrastructureUsageDifficultyLevelViewSet, InfrastructureConditionViewSet, InfrastructureMaintenanceDifficultyLevelViewSet  # noqa
 if 'geotrek.signage' in settings.INSTALLED_APPS:
