@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-03 16:13+0000\n"
+"POT-Creation-Date: 2023-09-08 08:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -141,9 +141,7 @@ msgid "All new lines of code are tested"
 msgstr ""
 
 #: ../../CONTRIBUTING.rst:47
-msgid ""
-"There is an entry in the changelog file (with the corresponding issue "
-"referenced)"
+msgid "There is an entry in the changelog file"
 msgstr ""
 
 #: ../../CONTRIBUTING.rst:49
@@ -515,7 +513,4 @@ msgid ""
 "https://packages.geotrek.fr (see ``.circleci/config.yml`` file for "
 "details)"
 msgstr ""
-
-#~ msgid "There is an entry in the changelog file"
-#~ msgstr ""
 
