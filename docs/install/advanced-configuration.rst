@@ -809,7 +809,7 @@ Sensitive areas
 .. note::
     The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas. 
 
-    The official address of the Geotrek instance of the BiodivSports project is: https://biodiv-sports.fr, and is the base url for the following API URLs.
+    The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
 
 
 .. envvar:: INSTALLED_APPS for Sensitive areas
