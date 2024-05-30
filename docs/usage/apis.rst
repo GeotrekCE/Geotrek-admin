@@ -200,7 +200,7 @@ This section will focus on some common parameters useful to work with sensitivit
    - Expected values: List of bbox coordinates (respectively longitude and latitude South-West then North-East corner), comma separated.
    - e.g. ``/api/v2/sensitivearea/?in_bbox=5.0,45.0,6.0,46.0``
 
-   full example https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson&language=fr&practices=1,2&period=4,5,6,7&in_bbox=5.0,45.0,6.0,46.0
+   Full example https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson&language=fr&practices=1,2&period=4,5,6,7&in_bbox=5.0,45.0,6.0,46.0
 
    **Filtering fields**
 
