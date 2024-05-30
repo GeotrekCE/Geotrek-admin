@@ -15,6 +15,7 @@ CHANGELOG
 
 **Bug fixes**
 - Fix view `v_treks` (fixes #4099)
+- Prevent trek map screenshot error if type of associated information desk have not pictogram
 
 2.106.0 (2024-05-15)
 --------------------
