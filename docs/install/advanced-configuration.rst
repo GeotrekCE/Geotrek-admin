@@ -821,7 +821,7 @@ Sensitive areas
         INSTALLED_APPS += ('geotrek.sensitivity', )
 
 
-    You can insert rules of sensitive area with these commands :
+    You can insert rules of sensitive area with these commands:
 
     .. code-block:: bash
 
