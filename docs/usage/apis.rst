@@ -185,7 +185,7 @@ This section will focus on some common parameters useful to work with sensitivit
    - Expected values: List of month number (from 1 to 12), comma separated
    - e.g. ``/api/v2/sensitivearea/?period=4,5,6,7``
 
-   - ``practices`` : Outdoor sport practices
+   - ``practices`` : Sport practices
 
    - Expected values: List of practices ids (see :envvar:`Sport practices`)
    - e.g. ``/api/v2/sensitivearea/?practices=1,2``
