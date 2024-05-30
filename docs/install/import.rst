@@ -348,7 +348,7 @@ Import sensitive areas
 Import from https://biodiv-sports.fr
 ------------------------------------
 
-It is possible to import automatically data from Biodiv'sport. To do so, you just need to follow those steps : 
+It is possible to import automatically data from Biodiv'Sport. To do so, you just need to follow those steps:
 
 - Click on the **user link** at top right, then on **Imports**,
 - Under the section **Data to import from network**, select **Biodiv'Sports**
