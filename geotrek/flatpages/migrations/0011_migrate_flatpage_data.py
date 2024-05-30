@@ -134,9 +134,9 @@ def create_menu_items_from_flatpages(apps, schema_editor):
         for src, dst in menu_fields.items():
             if src in flatpage_translated_fields:
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    translation.activate(lang)
-                    loc_dst = build_localized_fieldname(dst, lang)
-                    menu_kwargs[loc_dst] = getattr(page, src)
+                    with translation.override(lang):
+                        loc_dst = build_localized_fieldname(dst, lang)
+                        menu_kwargs[loc_dst] = getattr(page, src)
             else:
                 menu_kwargs[dst] = getattr(page, src)
 
