@@ -209,7 +209,7 @@ This section will focus on some common parameters useful to work with sensitivit
    - Expected values: List of field names, comma separated
    - e.g. ``/api/v2/sensitivearea/?fields=name,geometry``
 
-   - ``omit`` : list of excluded fields (see :ref:`Field Descriptions <FielDesc>`)
+   - ``omit``: List of excluded fields (see :ref:`Field Descriptions <FielDesc>`)
 
    - Expected values: List of field names, comma separated
    - e.g. ``/api/v2/sensitivearea/?omit=name,geometry``
