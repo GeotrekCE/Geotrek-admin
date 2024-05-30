@@ -137,8 +137,8 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
 
     def get_queryset(self):
         aerial_practice = SportPractice.objects.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES)
-        return SensitiveArea.objects.filter(
-            species__practices__in=aerial_practice, published=True, deleted=False
+        return SensitiveArea.objects.existing().filter(
+            species__practices__in=aerial_practice, published=True
         ).select_related('species')
 
     def render_to_response(self, context):
