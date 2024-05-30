@@ -241,7 +241,7 @@ This section will focus on some common parameters useful to work with sensitivit
    - ``create_datetime``: create timestamp.
 
 .. note::
-   Species informations are commons for each species areas share Zones sharing the same ``species_id`` value also share the same values for the ``name``, ``period``, ``practices`` and ``info_url`` fields.
+   Species informations are commons for each species areas sharing the same ``species_id`` value, also share the same values for the ``name``, ``period``, ``practices`` and ``info_url`` fields.
 
 
 
