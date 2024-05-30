@@ -334,7 +334,7 @@ edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
 Then run in command line
 
-::
+.. code-block:: bash
 
     sudo geotrek import DemoGeotrekTrekParser
 
@@ -351,7 +351,7 @@ Import from https://biodiv-sports.fr
 It is possible to import automatically data from Biodiv'sport. To do so, you just need to follow those steps : 
 
 - Click on the **user link** at top right, then on **Imports**,
-- Under the section **Data to import from network**, select **Biodiv'Sports **
+- Under the section **Data to import from network**, select **Biodiv'Sports**
 - Click on **Import**,
 - Wait a few seconds,
 - The import progress is displayed on the right
@@ -395,7 +395,7 @@ Attribute data for regulatory sensitive areas:
 - ``contact`` : Contact in text or HTML format. *Optional*.
 - ``descriptio`` : Description in text or HTML format. *Optional*.
 - ``periode``: Numbers of the months in which the area is occupied, **comma separated** and **without spaces** (e.g. ``6,7,8`` for June, July and August).
-- ``practices``: Names of practices, separated by commas, without spaces (e.g. ``Terrestre,Aerien,Vertical``), see :ref:`Practices`. Otherwise, the line import will fail.
+- ``practices``: Names of practices, separated by commas, without spaces (e.g. ``Terrestre,Aerien,Vertical``), see :envvar:`Sport practices`. Otherwise, the line import will fail.
 - ``url`` : Record url. *Optional*.
 
 Import from web interface

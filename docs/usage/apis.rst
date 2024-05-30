@@ -107,8 +107,8 @@ Les randonnées VTT, trail, vélo et les tours itinérants sont également inté
 Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 
 
 
-Module sensibilité ou Biodiv'Sports
------------------------------------
+Sensitivity module (or Biodiv'Sports)
+-------------------------------------
 
 .. note::
 
@@ -118,11 +118,6 @@ The Geotrek API provides a set of parameters that can be used to filter and sort
 
 This section will focus on some common parameters useful to work with sensitivity information and will as give details about some endpoints.
 
-
-Requesting URLs
-^^^^^^^^^^^^^^^
-
-.. _Common Parameters:
 
 .. envvar:: Commons parameters
 
@@ -154,7 +149,6 @@ Requesting URLs
          "name":"Land"
       }
 
-.. _Practices:
 
 .. envvar:: Sport practices
 
@@ -163,6 +157,7 @@ Requesting URLs
    ``/api/v2/sensitivearea_practice/``
 
    e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/
+
 
 .. envvar:: Sensitive areas
 
@@ -180,7 +175,7 @@ Requesting URLs
 
    Data can be filtered through those parameters:
 
-   - ``language`` : API language (see :ref:`Common Parameters`)
+   - ``language`` : API language (see :envvar:`Commons parameters`)
 
    - Expected values: ``fr``, ``en``, ``es`` or ``it``
    - e.g. ``/api/v2/sensitivearea/?language=fr``
@@ -192,7 +187,7 @@ Requesting URLs
 
    - ``practices`` : Outdoor sport practices
 
-   - Expected values: List of practices ids (see :ref:`Practices`)
+   - Expected values: List of practices ids (see :envvar:`Sport practices`)
    - e.g. ``/api/v2/sensitivearea/?practices=1,2``
 
    - ``structure`` : Organization that declared the sensitive area. 
@@ -220,8 +215,7 @@ Requesting URLs
    - e.g. ``/api/v2/sensitivearea/?omit=name,geometry``
 
    .. warning::
-   **GeoJSON** format expect at least `id` and `geometry` fields.
-
+      **GeoJSON** format expect at least `id` and `geometry` fields.
 
    .. _FielDesc:
 
