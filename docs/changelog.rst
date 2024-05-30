@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - ApidaeTrekParser now imports field `membreProprietaire` as the structure
+- Exclude deleted areas from OpenAir export (fixes #4140)
 
 **Documentation**
 
