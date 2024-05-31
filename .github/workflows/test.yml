@@ -147,9 +147,9 @@ jobs:
 
     - name: Save coverage
       uses: actions/upload-artifact@v2
-        with:
-            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-            path: coverage.xml
+      with:
+        name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+        path: coverage.xml
 
   upload_coverage:
     name: Upload coverage to codecov
