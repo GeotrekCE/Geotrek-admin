@@ -170,7 +170,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-            path: coverage.xml
+            path: .
 
       - uses: codecov/codecov-action@v4
         with:
