@@ -60,10 +60,6 @@ class VarTmpTestCase(TestCase):
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
 class SyncMobileTilesTest(VarTmpTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tiles, mock_tileslist):
         output = StringIO()
@@ -350,8 +346,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()
-        information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
-        cls.info_desk = InformationDeskFactory.create(type=information_desk_type)
+        cls.information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
+        cls.info_desk = InformationDeskFactory.create(type=cls.information_desk_type)
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
