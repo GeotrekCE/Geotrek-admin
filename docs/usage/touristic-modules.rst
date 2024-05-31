@@ -407,8 +407,6 @@ Dans le cas d'un Geotrek-admin avec segmentation dynamique, chaque POI est autom
 
 Afin qu'un POI rattaché à un tronçon remonte bien sur la fiche d'un itinéraire, il faut que ce dernier parcourt le tronçon sur une longueur suffisante pour pouvoir être associé par segmentation dynamique.
 
-.. image:: ../images/user-manual/poi-segmentationdynamique.jpg
-
 Pour en savoir plus sur la segmentation dynamique/référencement linéaire, `consulter l'article <https://makina-corpus.com/sig-cartographie/la-segmentation-dynamique>`_ 
 
 Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import POIs <import-pois>`
