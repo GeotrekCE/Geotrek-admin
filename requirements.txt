@@ -18,6 +18,7 @@ backports-zoneinfo==0.2.1
     # via
     #   celery
     #   django
+    #   djangorestframework
     #   kombu
 beautifulsoup4==4.12.2
     # via mapentity
@@ -296,7 +297,6 @@ pytz==2023.3.post1
     # via
     #   datetime
     #   django-modelcluster
-    #   djangorestframework
     #   djangorestframework-datatables
     #   drf-yasg
 pyvips==2.2.1
