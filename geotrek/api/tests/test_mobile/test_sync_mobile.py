@@ -570,7 +570,9 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                  Trek.objects.filter(**{build_localized_fieldname('published', lang): True}).count())
 
     def test_sync_treks_informationdesk_photo_missing(self):
-        os.remove(self.info_desk.photo.path)
+        """ Sync mobile should not fail if information desk photo is missing """
+        info_desk = InformationDeskFactory.create(type=self.information_desk_type)
+        os.remove(info_desk.photo.path)
         output = StringIO()
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
