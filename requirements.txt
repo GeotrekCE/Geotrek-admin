@@ -299,7 +299,7 @@ pytz==2023.3.post1
     #   django-modelcluster
     #   djangorestframework-datatables
     #   drf-yasg
-pyvips==2.2.1
+pyvips==2.2.3
     # via large-image-source-vips
 rcssmin==1.1.1
     # via django-compressor
