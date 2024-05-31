@@ -157,7 +157,7 @@ django-weasyprint==1.1.0.post2
     # via
     #   geotrek (setup.py)
     #   mapentity
-djangorestframework==3.14.0
+djangorestframework==3.15.1
     # via
     #   django-large-image
     #   djangorestframework-datatables
