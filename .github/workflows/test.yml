@@ -145,13 +145,39 @@ jobs:
         ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
-    # codecov-action version 3.1.4 is the last version supported by bionic (3.1.5 requires node 20)
-    - uses: codecov/codecov-action@v3.1.4
-      with:
-        files: ./coverage.xml
-        env_vars: OS,ENV
-        token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
-        fail_ci_if_error: true # optional (default = false)
+    - name: Save coverage
+      uses: actions/upload-artifact@v2
+        with:
+            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+            path: coverage.xml
+
+  upload_coverage:
+    name: Upload coverage to codecov
+    runs-on: ubuntu-latest
+    needs: [ test ]
+    strategy:
+      matrix:
+        os: ['bionic-3.8', 'focal-3.8']
+        python-version: ['3.8']
+        tests-env: ['tests', 'tests_nds']
+
+    env:
+      ENV: ${{ matrix.tests-env }}
+      OS: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v2
+        with:
+            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+            path: coverage.xml
+
+      - uses: codecov/codecov-action@v4
+        with:
+            files: ./coverage.xml
+            env_vars: OS,ENV
+            token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+            fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
