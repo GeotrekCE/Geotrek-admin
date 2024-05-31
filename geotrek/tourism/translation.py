@@ -6,36 +6,36 @@ from geotrek.tourism import models as tourism_models
 
 
 class InformationDeskTO(TranslationOptions):
-    fields = ('name', 'description', 'accessibility')
+    all_fields = ('name', 'description', 'accessibility')
 
 
 translator.register(tourism_models.InformationDesk, InformationDeskTO)
 
 
 class InformationDeskTypeTO(TranslationOptions):
-    fields = ('label',)
+    all_fields = ('label',)
 
 
 translator.register(tourism_models.InformationDeskType, InformationDeskTypeTO)
 
 
 class CancellationReasonTO(TranslationOptions):
-    fields = ('label',)
+    all_fields = ('label',)
 
 
 translator.register(tourism_models.CancellationReason, CancellationReasonTO)
 
 
 class LabelAccessibilityTO(TranslationOptions):
-    fields = ('label',)
+    all_fields = ('label',)
 
 
 translator.register(tourism_models.LabelAccessibility, LabelAccessibilityTO)
 
 
 class TouristicContentTO(TranslationOptions):
-    fields = ('name', 'description_teaser', 'description', 'practical_info', 'accessibility',
-              ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    all_fields = ('name', 'description_teaser', 'description', 'practical_info', 'accessibility',) + (
+        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 
@@ -43,7 +43,7 @@ translator.register(tourism_models.TouristicContent, TouristicContentTO)
 
 
 class TouristicContentCategoryTO(TranslationOptions):
-    fields = ('label', 'type1_label', 'type2_label')
+    all_fields = ('label', 'type1_label', 'type2_label')
 
 
 translator.register(tourism_models.TouristicContentCategory,
@@ -51,7 +51,7 @@ translator.register(tourism_models.TouristicContentCategory,
 
 
 class TouristicContentTypeTO(TranslationOptions):
-    fields = ('label',)
+    all_fields = ('label',)
 
 
 translator.register(tourism_models.TouristicContentType,
@@ -60,7 +60,7 @@ translator.register(tourism_models.TouristicContentType,
 
 # https://github.com/deschler/django-modeltranslation/issues/206#issuecomment-313228015
 class TouristicContentSubTypeTO(TranslationOptions):
-    fields = ()
+    all_fields = ()
 
 
 translator.register(tourism_models.TouristicContentType1,
@@ -70,16 +70,16 @@ translator.register(tourism_models.TouristicContentType2,
 
 
 class TouristicEventTypeTO(TranslationOptions):
-    fields = ('type',)
+    all_fields = ('type',)
 
 
 translator.register(tourism_models.TouristicEventType, TouristicEventTypeTO)
 
 
 class TouristicEventTO(TranslationOptions):
-    fields = ('name', 'description_teaser', 'description', 'meeting_point',
-              'accessibility', 'booking', 'practical_info', 'target_audience',
-              ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    all_fields = ('name', 'description_teaser', 'description', 'meeting_point',
+                  'accessibility', 'booking', 'practical_info', 'target_audience',
+                  ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 

@@ -4,7 +4,7 @@ from modeltranslation.translator import translator, TranslationOptions
 
 
 class InfrastructureTO(TranslationOptions):
-    fields = ('accessibility', 'description', 'name') + (
+    all_fields = ('accessibility', 'description', 'name') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 

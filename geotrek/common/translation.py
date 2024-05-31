@@ -4,19 +4,19 @@ from geotrek.common.models import TargetPortal, Theme, Label, HDViewPoint
 
 
 class ThemeTO(TranslationOptions):
-    fields = ('label', )
+    all_fields = ('label', )
 
 
 class TargetPortalTO(TranslationOptions):
-    fields = ('title', 'description')
+    all_fields = ('title', 'description')
 
 
 class LabelTO(TranslationOptions):
-    fields = ('name', 'advice')
+    all_fields = ('name', 'advice')
 
 
 class HDViewPointTO(TranslationOptions):
-    fields = ('title', 'legend')
+    all_fields = ('title', 'legend')
 
 
 translator.register(Theme, ThemeTO)

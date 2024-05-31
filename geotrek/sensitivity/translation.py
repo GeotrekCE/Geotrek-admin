@@ -4,19 +4,19 @@ from geotrek.sensitivity.models import Rule, SportPractice, Species, SensitiveAr
 
 # Sensitivity app
 class RuleTO(TranslationOptions):
-    fields = ('name', 'description', )
+    all_fields = ('name', 'description', )
 
 
 class SportPracticeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class SpeciesTO(TranslationOptions):
-    fields = ('name', 'url', )
+    all_fields = ('name', 'url', )
 
 
 class SensitiveAreaTO(TranslationOptions):
-    fields = ('description', )
+    all_fields = ('description', )
 
 
 translator.register(Rule, RuleTO)

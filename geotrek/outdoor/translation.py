@@ -4,37 +4,37 @@ from modeltranslation.translator import translator, TranslationOptions
 
 
 class SiteTO(TranslationOptions):
-    fields = ('name', 'description', 'description_teaser', 'ambiance', 'accessibility', 'advice', 'period') + (
+    all_fields = ('name', 'description', 'description_teaser', 'ambiance', 'accessibility', 'advice', 'period') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 
 class SectorTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class SiteTypeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class CourseTypeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class RatingScaleTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class RatingTO(TranslationOptions):
-    fields = ('name', 'description')
+    all_fields = ('name', 'description')
 
 
 class CourseTO(TranslationOptions):
-    fields = ('name', 'description', 'equipment', 'accessibility', 'advice', 'gear', 'ratings_description') + (
+    all_fields = ('name', 'description', 'equipment', 'accessibility', 'advice', 'gear', 'ratings_description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
