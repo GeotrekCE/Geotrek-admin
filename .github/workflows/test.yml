@@ -33,6 +33,8 @@ env:
   REDIS_HOST: 127.0.0.1
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
   LANG: C.UTF-8
+  LANGUAGES: en fr
+  LANGUAGE_CODE: en
 
 jobs:
   test:
@@ -129,11 +131,11 @@ jobs:
 
     - name: Check missing migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=tests ./venv/bin/python3 ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py migrate
+        ENV=tests ./venv/bin/python3 ./manage.py migrate
 
     - name: Launch Celery
       run: |
