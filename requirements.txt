@@ -4,7 +4,7 @@
 #
 #    pip-compile --strip-extras
 #
-amqp==5.1.1
+amqp==5.2.0
     # via kombu
 appy==1.0.15
     # via django-appypod
