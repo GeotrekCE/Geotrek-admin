@@ -33,6 +33,8 @@ env:
   REDIS_HOST: 127.0.0.1
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
   LANG: C.UTF-8
+  LANGUAGES: en fr
+  LANGUAGE_CODE: en
 
 jobs:
   test:
