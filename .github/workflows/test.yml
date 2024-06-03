@@ -131,11 +131,11 @@ jobs:
 
     - name: Check missing migrations
       run: |
-        ENV=tests ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=tests ./venv/bin/python3 ./manage.py migrate
+        ENV=dev ./venv/bin/python3 ./manage.py migrate
 
     - name: Launch Celery
       run: |
