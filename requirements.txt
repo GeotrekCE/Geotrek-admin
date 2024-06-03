@@ -247,7 +247,7 @@ packaging==24.0
     #   drf-yasg
     #   gunicorn
     #   large-image-source-vips
-palettable==3.3.0
+palettable==3.3.3
     # via large-image
 paperclip==2.7.2
     # via
