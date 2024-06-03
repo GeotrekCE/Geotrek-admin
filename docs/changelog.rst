@@ -13,6 +13,7 @@ CHANGELOG
 **Documentation**
 
 - Improve information about upgrading geotrek-admin version with debian
+- Add details about dynamic segmentation for POIs
 
 **Bug fixes**
 - Fix view `v_treks` (fixes #4099)
