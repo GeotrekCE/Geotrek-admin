@@ -11,11 +11,15 @@ CHANGELOG
 
 https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
 
+**New features**
+
+- Add filter by creation year and update year to Report list (#4085)
+- Add provider field and filter to Report (refs #4085)
+
 **Improvements**
 
 - ApidaeTrekParser now imports field `membreProprietaire` as the structure
 - Exclude deleted areas from OpenAir export (fixes #4140)
-- Add filter by creation year and update year to Report list (#4085)
 - Make email address optional in `Report` form (#4085)
 - Add more information to email received by managers on new `Report` (#4085)
 

@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 
-from geotrek.common.mixins.managers import NoDeleteManager, TimestampedChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin, TimestampedChoicesMixin
 
 
 class SelectableUserManager(models.Manager):
@@ -9,5 +9,5 @@ class SelectableUserManager(models.Manager):
         return super().get_queryset().filter(userprofile__isnull=False)
 
 
-class ReportManager(NoDeleteManager, TimestampedChoicesMixin):
+class ReportManager(NoDeleteManager, TimestampedChoicesMixin, ProviderChoicesMixin):
     pass

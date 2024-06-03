@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.db.models import Manager as DefaultManager
 from django.views.generic.dates import timezone_today

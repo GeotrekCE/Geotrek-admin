@@ -17,6 +17,7 @@ SELECT a.id,
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        a.comment AS "Comment",
+       a.provider AS "Provider",
        a.geom
 FROM public.feedback_report a
 LEFT JOIN public.feedback_reportactivity b ON a.activity_id = b.id

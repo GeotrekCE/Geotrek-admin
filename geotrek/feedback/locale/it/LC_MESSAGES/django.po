@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-04 08:04+0000\n"
+"POT-Creation-Date: 2024-06-04 15:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,6 +25,9 @@ msgid "Creation year"
 msgstr ""
 
 msgid "Update year"
+msgstr ""
+
+msgid "Provider"
 msgstr ""
 
 msgid "Leave this field empty not to forward Report to Suricate"
@@ -314,6 +317,9 @@ msgid "Comment : %(comment)s"
 msgstr ""
 
 msgid "Trek"
+msgstr ""
+
+msgid "Report origin"
 msgstr ""
 
 #, python-format
