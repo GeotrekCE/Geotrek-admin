@@ -401,6 +401,8 @@ zodb==5.8.1
     # via appy
 zodbpickle==3.0.1
     # via zodb
+zope-deferredimport==5.0
+    # via persistent
 zope-interface==6.0
     # via
     #   btrees
@@ -408,6 +410,9 @@ zope-interface==6.0
     #   persistent
     #   transaction
     #   zodb
+    #   zope-proxy
+zope-proxy==5.2
+    # via zope-deferredimport
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
