@@ -238,7 +238,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     def send_report_to_managers(self, template_name="feedback/report_email.txt"):
         if self.email:
-            subject = _("Feedback from {email}").format(email=self.email)
+            subject = _("Feedback from %(email)s") % {"email": self.email}
         else:
             subject = _("New feedback")
         message = render_to_string(template_name, {"report": self})
