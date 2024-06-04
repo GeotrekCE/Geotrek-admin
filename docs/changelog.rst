@@ -5,6 +5,12 @@ CHANGELOG
 2.106.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Breaking changes**
+
+- This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+
 **Improvements**
 
 - ApidaeTrekParser now imports field `membreProprietaire` as the structure
@@ -19,8 +25,16 @@ CHANGELOG
 - Add details about dynamic segmentation for POIs
 
 **Bug fixes**
+
 - Fix view `v_treks` (fixes #4099)
 - Prevent trek map screenshot error if type of associated information desk have not pictogram
+- Fix map screenshot and default log in ODT files (with mapentity update)
+- Fix DOC and PDF converted downloaded file names (with mapentity update)
+
+**Maintenance**
+
+- Bump to django 4.2
+- Bump mapentity to 8.9.0
 
 
 2.106.0 (2024-05-15)
