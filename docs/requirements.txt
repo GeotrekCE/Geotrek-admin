@@ -98,7 +98,7 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 tornado==6.4
     # via livereload
-urllib3==1.26.18
+urllib3==2.2.1
     # via
     #   -c docs/../requirements.txt
     #   requests
