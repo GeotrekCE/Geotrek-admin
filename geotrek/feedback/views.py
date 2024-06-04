@@ -81,7 +81,9 @@ class ReportCreate(mapentity_views.MapEntityCreate):
     form_class = ReportForm
 
     def get_success_url(self):
-        return reverse('feedback:report_list')
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            return reverse('feedback:report_list')
+        return super().get_success_url()
 
 
 class ReportUpdate(mapentity_views.MapEntityUpdate):

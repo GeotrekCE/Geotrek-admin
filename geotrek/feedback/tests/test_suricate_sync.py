@@ -336,7 +336,7 @@ class SuricateAPITests(SuricateTests):
     @mock.patch("geotrek.feedback.helpers.SuricateMessenger.post_report")
     def test_save_on_report_posts_to_suricate_in_report_mode(self, post_report):
         """Test post to suricate on save Report in Suricate Report Mode"""
-        report = Report.objects.create()
+        report = Report.objects.create(email="iam@test.email")
         post_report.assert_called_once_with(report)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
@@ -356,7 +356,7 @@ class SuricateAPITests(SuricateTests):
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_save_on_report_doesnt_post_to_suricate_in_no_suricate_mode(self, post_report):
         """Test save does not post to suricate on save Report in No Suricate Mode"""
-        Report.objects.create()
+        Report.objects.create(email="iam@test.email")
         post_report.assert_not_called()
 
     @mock.patch("geotrek.feedback.helpers.requests.post")

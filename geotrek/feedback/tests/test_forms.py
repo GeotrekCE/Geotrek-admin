@@ -77,8 +77,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
+        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)
 
     @test_for_report_and_basic_modes
@@ -97,8 +97,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn('message_administrators', keys)
         self.assertNotIn('message_sentinel_predefined', keys)
         self.assertNotIn('message_supervisor', keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
-        self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
+        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
 
     @test_for_workflow_mode
