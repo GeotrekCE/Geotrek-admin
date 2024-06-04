@@ -130,7 +130,7 @@ django-compressor==4.4
     # via mapentity
 django-crispy-forms==1.13.0
     # via mapentity
-django-embed-video==1.4.9
+django-embed-video==1.4.10
     # via
     #   mapentity
     #   paperclip
