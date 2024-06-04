@@ -24,7 +24,7 @@ beautifulsoup4==4.12.2
     # via mapentity
 billiard==4.2.0
     # via celery
-btrees==5.0
+btrees==6.0
     # via zodb
 cachetools==5.3.1
     # via large-image
