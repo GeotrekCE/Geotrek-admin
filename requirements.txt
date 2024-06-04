@@ -279,7 +279,7 @@ psycopg2==2.9.7
     # via geotrek (setup.py)
 pycparser==2.22
     # via cffi
-pygal==3.0.0
+pygal==3.0.4
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
