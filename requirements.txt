@@ -277,7 +277,7 @@ psutil==5.9.5
     # via large-image
 psycopg2==2.9.7
     # via geotrek (setup.py)
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pygal==3.0.0
     # via geotrek (setup.py)
