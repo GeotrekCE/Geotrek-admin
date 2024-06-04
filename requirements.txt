@@ -20,7 +20,7 @@ backports-zoneinfo==0.2.1
     #   django
     #   djangorestframework
     #   kombu
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via mapentity
 billiard==4.2.0
     # via celery
