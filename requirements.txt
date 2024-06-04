@@ -403,7 +403,7 @@ zodbpickle==3.0.1
     # via zodb
 zope-deferredimport==5.0
     # via persistent
-zope-interface==6.0
+zope-interface==6.4.post2
     # via
     #   btrees
     #   datetime
