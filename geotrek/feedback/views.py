@@ -63,7 +63,8 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     default_extra_columns = [
         'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update', 'assigned_user'
+        'date_insert', 'date_update', 'assigned_user',
+        'provider'
     ]
 
     def get_columns(self):

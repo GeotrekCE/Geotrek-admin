@@ -190,6 +190,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
     sync_errors = models.IntegerField(verbose_name=_("Synchronisation error"), default=0, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
     mail_errors = models.IntegerField(verbose_name=_("Mail error"), default=0, help_text=_("A notification email could not be sent. Please contact an administrator"))
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
     objects = ReportManager()
 

@@ -21,6 +21,8 @@
 
 {% trans "Report" %} {% if report.eid|length %}{{ report.eid }}{% else %}{{ report.id }}{% endif %} : https://{{report.full_url}}
 
+{% if report.provider %}{% trans "Report origin" %} : {{ report.provider }}{% endif %}
+
 {% if report.geom %}{% blocktrans with lat=report.geom_wgs84.y|stringformat:".6f" lng=report.geom_wgs84.x|stringformat:".6f" %}
 Lat : {{ lat }} / Lon : {{ lng }}
 https://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}

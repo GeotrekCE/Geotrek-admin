@@ -1674,7 +1674,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "created_in_suricate",
         "last_updated_in_suricate",
         "assigned_user",
-        "uses_timers"
+        "uses_timers",
+        "provider"
     ]
     COLUMNS_LISTS["sensitivity_view"] = [
         "structure",
@@ -2218,7 +2219,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "created_in_suricate",
         "last_updated_in_suricate",
         "assigned_user",
-        "uses_timers"
+        "uses_timers",
+        "provider"
     ]
     COLUMNS_LISTS["sensitivity_export"] = [
         "species",
