@@ -1067,6 +1067,30 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
 
     @mock.patch('requests.get')
+    def test_trek_plan_without_extension_property(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_with_plan_without_extension_prop.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
+
+    @mock.patch('requests.get')
+    def test_trek_plan_with_no_extension_at_all(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_with_plan_with_no_extension_at_all.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
     def test_trek_not_imported_when_no_plan_attached(self, mocked_get):
         output_stdout = StringIO()
         mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
