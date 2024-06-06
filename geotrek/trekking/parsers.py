@@ -899,7 +899,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plans = [item for item in items if item['type'] == 'PLAN']
         if not plans:
             raise RowImportError('The trek from APIDAE has no attachment with the type "PLAN"')
-        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0]['extension'] in supported_extensions]
+        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0].get('extension') in supported_extensions]
         if not supported_plans:
             raise RowImportError(
                 "The trek from APIDAE has no attached \"PLAN\" in a supported format. "
