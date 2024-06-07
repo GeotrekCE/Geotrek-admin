@@ -59,7 +59,7 @@ pytz==2023.3.post1
     # via
     #   -c docs/../requirements.txt
     #   babel
-requests==2.32.0
+requests==2.32.3
     # via
     #   -c docs/../requirements.txt
     #   sphinx
