@@ -112,8 +112,7 @@ Restore files on the new server:
 PostgreSQL
 ~~~~~~~~~~
 
-Geotrek-admin support PostgreSQL 10+ and PostGIS 2.5+ for now.
-In next release, Django 4.2 will drop PostgreSQL < 12 support.
+Geotrek-admin support PostgreSQL 12+ and PostGIS 2.5+ for now.
 We recommend to upgrade to PostgreSQL 16 and PostGIS 3.4.
 
 You can check your PostgreSQL version with the following command:
