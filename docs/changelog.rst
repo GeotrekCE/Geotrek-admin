@@ -5,6 +5,9 @@ CHANGELOG
 2.107.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Documentation**
+
+- Improve PostgreSQL upgrade documentation
 
 2.107.0 (2024-06-07)
 ------------------------
