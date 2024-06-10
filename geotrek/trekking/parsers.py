@@ -939,6 +939,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 geos = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
                 if geos:
                     break
+            else:
+                raise RowImportError("No LineString feature found in GPX layers tracks or routes")
             geos.transform(settings.SRID)
             return geos
 
