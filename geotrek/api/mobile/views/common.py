@@ -71,7 +71,7 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all practices"),
                     "hideAllLabel": _("Hide all practices")
                 })
-            if filter == 'duration':
+            if filter == 'duration' or filter == 'durations':  # plural is for configuration retro-compatibility
                 filters.append({
                     "id": "duration",
                     "type": "interval",
