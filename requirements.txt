@@ -303,7 +303,7 @@ pyvips==2.2.3
     # via large-image-source-vips
 rcssmin==1.1.1
     # via django-compressor
-redis==4.5.4
+redis==5.0.5
     # via geotrek (setup.py)
 reportlab==4.1.0
     # via
