@@ -3215,7 +3215,7 @@ Settings for Geotrek-mobile
         'difficulty',
         'durations',
         'ascent',
-        'lengths',
+        'length',
         'themes',
         'route',
         'districts',

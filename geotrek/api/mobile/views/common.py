@@ -29,9 +29,9 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all difficulties"),
                     "hideAllLabel": _("Hide all difficulties")
                 })
-            if filter == 'lengths':
+            if filter == 'length' or filter == 'lengths':  # plural is for configuration retro-compatibility
                 filters.append({
-                    "id": "lengths",
+                    "id": "length",
                     "type": "interval",
                     "showAllLabel": _("Show all lengths"),
                     "hideAllLabel": _("Hide all lengths")
