@@ -9,6 +9,12 @@ CHANGELOG
 
 - Improve PostgreSQL upgrade documentation
 
+**Bug fixes**
+
+- Fix: 'length' filter can now be displayed on mobile apps
+- Fix: make 'duration' mobile filter consistent in doc
+
+
 2.107.0 (2024-06-07)
 ------------------------
 

@@ -795,7 +795,7 @@ ENABLED_MOBILE_FILTERS = [
     'difficulty',
     'duration',
     'ascent',
-    'lengths',
+    'length',
     'themes',
     'route',
     'districts',
@@ -925,4 +925,3 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
-

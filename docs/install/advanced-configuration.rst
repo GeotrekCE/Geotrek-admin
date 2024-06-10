@@ -3213,9 +3213,9 @@ Settings for Geotrek-mobile
         ENABLED_MOBILE_FILTERS = [
         'practice',
         'difficulty',
-        'durations',
+        'duration',
         'ascent',
-        'lengths',
+        'length',
         'themes',
         'route',
         'districts',
