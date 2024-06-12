@@ -483,9 +483,7 @@ LEAFLET_CONFIG = {
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
-                              'core/dijkstra.js',
-                              'core/multipath.js',
-                              'core/topology_helper.js']}
+                              'core/multipath.js']}
     }
 }
 
