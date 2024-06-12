@@ -234,6 +234,16 @@ class LoadPathsCommandTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ReorderTopologiesPathAggregationTest(TestCase):
+
+    def assertRecursiveAlmostEqual(self, a, b):
+        if type(a) is float:
+            assert type(b) is float
+            self.assertAlmostEqual(a, b)
+        else:
+            assert len(a) == len(b)
+            for i in range(len(a)):
+                self.assertRecursiveAlmostEqual(a[i], b[i])
+
     def setUp(self):
         """
         ⠳               ⠞
@@ -432,16 +442,17 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                          [0, 0, 1, 1, 2, 3, 3, 4, 4])
         call_command('reorder_topologies', verbosity=0)
         geometries = self.get_geometries(topo)
-        self.assertEqual(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
-                                      LineString((700035, 6600035), (700050, 6600050), srid=2154),
-                                      LineString((700050, 6600050), (700035, 6600065), srid=2154),
-                                      LineString((700035, 6600065),
-                                                 (700007.142857143, 6600092.85714286), srid=2154),
-                                      Point(700007.142857143, 6600092.85714286, srid=2154),
-                                      LineString((700007.142857143, 6600092.85714286), (700035, 6600065), srid=2154),
-                                      LineString((700035, 6600065), (700050, 6600050), srid=2154),
-                                      LineString((700050, 6600050), (700075, 6600075), srid=2154),
-                                      LineString((700075, 6600075), (700100, 6600100), srid=2154)])
+        for geom, expected in zip(geometries, [LineString((700000, 6600000), (700035, 6600035), srid=2154),
+                                               LineString((700035, 6600035), (700050, 6600050), srid=2154),
+                                               LineString((700050, 6600050), (700035, 6600065), srid=2154),
+                                               LineString((700035, 6600065),
+                                                          (700007.142857143, 6600092.85714286), srid=2154),
+                                               Point(700007.142857143, 6600092.85714286, srid=2154),
+                                               LineString((700007.142857143, 6600092.85714286), (700035, 6600065), srid=2154),
+                                               LineString((700035, 6600065), (700050, 6600050), srid=2154),
+                                               LineString((700050, 6600050), (700075, 6600075), srid=2154),
+                                               LineString((700075, 6600075), (700100, 6600100), srid=2154)]):
+            self.assertRecursiveAlmostEqual(geom, expected)
 
         self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
                          [0, 1, 2, 3, 4, 5, 6, 7, 8])
@@ -616,11 +627,12 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                                          srid=settings.SRID), topo.geom)
         PathFactory.create(geom=LineString(Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID))
         topo.reload()
-        self.assertEqual(MultiLineString(LineString((700000, 6600000), (700045, 6600045)),
-                                         LineString((700045, 6600045), (700050, 6600050)),
-                                         LineString((700050, 6600050), (700025, 6600075)),
-                                         LineString((700050, 6600050), (700100, 6600100)),
-                                         srid=settings.SRID), topo.geom)
+        for expected, geom in zip(MultiLineString(LineString((700000, 6600000), (700045, 6600045)),
+                                                  LineString((700045, 6600045), (700050, 6600050)),
+                                                  LineString((700050, 6600050), (700025, 6600075)),
+                                                  LineString((700050, 6600050), (700100, 6600100)),
+                                                  srid=settings.SRID), topo.geom):
+            self.assertRecursiveAlmostEqual(expected, geom)
         self.assertEqual(list(PathAggregation.objects.filter(topo_object=topo).values_list('order', flat=True)),
                          [0, 0, 1, 2, 3])
         output = StringIO()
