@@ -238,7 +238,7 @@ function initAnnotationsWidget(map) {
             }
             var entry = $('#annotationlist .entry#sample').clone();
             entry.attr({ id: '', 'annotation-id': id });
-            entry.on('click', () => edit_label(entry));
+            entry.on('click', edit_label);
             entry.find('.entry-name').text(annotation.name());
             if (query.editing == id) {
                 entry.find('.entry-adjust').hide();
@@ -258,10 +258,14 @@ function initAnnotationsWidget(map) {
         }
     }
 
-    function edit_label(entry) {
+    function edit_label(event) {
+        var entry = $(event.currentTarget);
         // When clicking annotation name, display text input allowing to change it
-        span = entry.find('.entry-name')
-        text_input = `<input id="label_input" value='${span.text()}' />`;
+        var span = entry.find('.entry-name')
+        if (span.find('input').length) {
+            return
+        }
+        var text_input = `<input id="label_input" value='${span.text()}' />`;
         $(span).html(text_input);
         $('#label_input').focus();
         $('#label_input').on('blur', () => update_edited_label(entry));
