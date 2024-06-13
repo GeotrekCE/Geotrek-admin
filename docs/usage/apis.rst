@@ -182,7 +182,7 @@ This section focuses on some common parameters useful to work with sensitivity i
 
    - ``period`` : Sensitivy period (months list)
 
-   - Expected values: List of month number (from 1 to 12), comma separated
+   - Expected values: List of month numbers (from 1 to 12), comma separated
    - e.g. ``/api/v2/sensitivearea/?period=4,5,6,7``
 
    - ``practices`` : Sport practices
