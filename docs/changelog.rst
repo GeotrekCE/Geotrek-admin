@@ -5,6 +5,10 @@ CHANGELOG
 2.107.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Allows user to edit flatpage WYSIWYG button-link and suggestion block
+
 **Documentation**
 
 - Improve PostgreSQL upgrade documentation
