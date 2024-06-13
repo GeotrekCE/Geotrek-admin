@@ -116,7 +116,7 @@ Sensitivity module (or Biodiv'Sports)
 
 The Geotrek API provides a set of parameters that can be used to filter and sort data. There is a Swagger documentation (see :ref:`advanced-configuration-section` to enable it on your instance if needed) existing to test and browse those parameters that can be find at this address : ``/api/v2/``.
 
-This section will focus on some common parameters useful to work with sensitivity information and will as give details about some endpoints.
+This section focuses on some common parameters useful to work with sensitivity information and gives details about some endpoints.
 
 
 .. envvar:: Commons parameters
