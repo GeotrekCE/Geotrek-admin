@@ -152,7 +152,7 @@ This section will focus on some common parameters useful to work with sensitivit
 
 .. envvar:: Sport practices
 
-   List of outdoor practices
+   List of sport practices
 
    ``/api/v2/sensitivearea_practice/``
 
