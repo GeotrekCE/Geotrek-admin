@@ -122,7 +122,7 @@ This section will focus on some common parameters useful to work with sensitivit
 .. envvar:: Commons parameters
 
 
-   If ``language`` parameter is provided, api returns directly translated field, else, a dictionnary of traductions is returned
+   If ``language`` parameter is provided, API returns directly translated fields, else, a dictionnary of traductions is returned
       
    e.g. ``/api/v2/sensitivearea_practice/1/?``
 
