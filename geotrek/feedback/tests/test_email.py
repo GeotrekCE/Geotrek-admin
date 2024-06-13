@@ -28,8 +28,12 @@ class FailingEmailBackend2(BaseEmailBackend):
 
 
 class EmailSendingTest(SuricateTests):
-    def test_a_mail_is_sent_on_report_creation(self):
-        ReportFactory.create()
+    def test_a_mail_is_sent_to_manager_on_report_creation(self):
+        ReportFactory.create(email="iam@test.email")
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_a_mail_is_sent_to_manager_on_report_with_no_email_field_creation(self):
+        ReportFactory.create(email="")
         self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(SURICATE_REPORT_ENABLED=False)

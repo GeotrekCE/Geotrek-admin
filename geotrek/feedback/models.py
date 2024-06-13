@@ -28,7 +28,7 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
-from .managers import SelectableUserManager
+from .managers import ReportManager, SelectableUserManager
 
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     from geotrek.maintenance.models import Intervention
@@ -117,8 +117,7 @@ class PendingSuricateAPIRequest(models.Model):
 
 class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, ZoningPropertiesMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
-
-    email = models.EmailField(verbose_name=_("Email"))
+    email = models.EmailField(blank=True, default="", verbose_name=_("Email"))
     comment = models.TextField(blank=True, default="", verbose_name=_("Comment"))
     activity = models.ForeignKey(
         "ReportActivity",
@@ -191,6 +190,9 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
     sync_errors = models.IntegerField(verbose_name=_("Synchronisation error"), default=0, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
     mail_errors = models.IntegerField(verbose_name=_("Mail error"), default=0, help_text=_("A notification email could not be sent. Please contact an administrator"))
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+
+    objects = ReportManager()
 
     class Meta:
         verbose_name = _("Report")
@@ -236,7 +238,10 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         return html.unescape(self.comment)
 
     def send_report_to_managers(self, template_name="feedback/report_email.txt"):
-        subject = _("Feedback from {email}").format(email=self.email)
+        if self.email:
+            subject = _("Feedback from %(email)s") % {"email": self.email}
+        else:
+            subject = _("New feedback")
         message = render_to_string(template_name, {"report": self})
         mail_managers(subject, message, fail_silently=False)
 
@@ -249,16 +254,19 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
-        if not self.pk:  # New report should alert
+        just_created = not self.pk  # New report should alert managers
+        super().save(*args, **kwargs)
+        if just_created:
             self.try_send_report_to_managers()
-        super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_report_mode(self, *args, **kwargs):
         """Save method for Suricate Report mode"""
-        if not self.pk:  # New report should alert managers AND be sent to Suricate
-            self.try_send_report_to_managers()
+        just_created = not self.pk  # New report should alert managers AND be sent to Suricate
+        if just_created and self.email:  # New reports are not forwarded if there is no email (internal usage only)
             self.get_suricate_messenger().post_report(self)
-        super().save(*args, **kwargs)  # Report updates should do nothing more
+        super().save(*args, **kwargs)
+        if just_created:
+            self.try_send_report_to_managers()
 
     def save_suricate_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""

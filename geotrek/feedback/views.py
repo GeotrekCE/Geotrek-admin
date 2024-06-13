@@ -16,7 +16,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from . import models as feedback_models
 from . import serializers as feedback_serializers
-from .filters import ReportFilterSet, ReportNoEmailFilterSet
+from .filters import ReportFilterSet, ReportEmailFilterSet
 from .forms import ReportForm
 
 import logging
@@ -33,7 +33,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         .prefetch_related("attachments")
     )
     model = feedback_models.Report
-    filterform = ReportFilterSet
+    filterform = ReportEmailFilterSet
     mandatory_columns = ['id', 'eid', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
     searchable_columns = ['id', 'eid']
@@ -50,7 +50,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         # Remove email from available filters in workflow mode for supervisors
         if settings.SURICATE_WORKFLOW_ENABLED and not (self.request.user.is_superuser or self.request.user.pk in list(
                 feedback_models.WorkflowManager.objects.values_list('user', flat=True))):
-            self._filterform = ReportNoEmailFilterSet()
+            self._filterform = ReportFilterSet()
             self._filterform.helper = FormHelper()
             self._filterform.helper.field_class = 'form-control-sm'
             self._filterform.helper.submit = None
@@ -63,7 +63,8 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     default_extra_columns = [
         'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update', 'assigned_user'
+        'date_insert', 'date_update', 'assigned_user',
+        'provider'
     ]
 
     def get_columns(self):
@@ -81,7 +82,9 @@ class ReportCreate(mapentity_views.MapEntityCreate):
     form_class = ReportForm
 
     def get_success_url(self):
-        return reverse('feedback:report_list')
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            return reverse('feedback:report_list')
+        return super().get_success_url()
 
 
 class ReportUpdate(mapentity_views.MapEntityUpdate):
@@ -97,7 +100,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    filterset_class = ReportFilterSet
+    filterset_class = ReportEmailFilterSet
     mapentity_list_class = ReportList
 
     def get_queryset(self):

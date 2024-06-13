@@ -40,7 +40,7 @@ jobs:
           pip-compile -q --strip-extras docs/requirements.in
 
       - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v17
+        uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
         with:
           files: |

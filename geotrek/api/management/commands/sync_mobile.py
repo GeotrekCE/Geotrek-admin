@@ -474,12 +474,11 @@ class Command(BaseCommand):
                 )
                 current_value = current_value + step_value
 
-            translation.activate(lang)
-            self.sync_settings_json(lang)
-            if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-                self.sync_flatpage(lang)
-            self.sync_trekking(lang)
-            translation.deactivate()
+            with translation.override(lang):
+                self.sync_settings_json(lang)
+                if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+                    self.sync_flatpage(lang)
+                self.sync_trekking(lang)
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):

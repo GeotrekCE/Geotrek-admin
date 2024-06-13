@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2024-06-04 15:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,19 @@ msgstr ""
 
 msgid "Feedback"
 msgstr "Retours utilisateurs"
+
+msgid "Creation year"
+msgstr "Année de création"
+
+msgid "Update year"
+msgstr "Année de mise à jour"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Leave this field empty not to forward Report to Suricate"
+msgstr ""
+"Le signalement ne sera pas transmis à Suricate si ce champ est laissé vide."
 
 msgid "Message for sentinel"
 msgstr "Message pour la sentinelle"
@@ -112,9 +125,12 @@ msgstr "Signalements"
 msgid "Add a new feedback"
 msgstr "Créer un signalement"
 
-#, python-brace-format
-msgid "Feedback from {email}"
-msgstr "Signalement de {email}"
+#, python-format
+msgid "Feedback from %(email)s"
+msgstr "Signalement de %(email)s"
+
+msgid "New feedback"
+msgstr "Nouveau signalement"
 
 msgid "to"
 msgstr "à"
@@ -138,7 +154,7 @@ msgid "Paths"
 msgstr ""
 
 msgid "Treks"
-msgstr ""
+msgstr "Itinéraires"
 
 msgid "POIs"
 msgstr ""
@@ -305,19 +321,28 @@ msgstr ""
 msgid "%(email)s has sent a feedback."
 msgstr "%(email)s a signalé un problème."
 
+msgid "A new feedback has been sent."
+msgstr "Un problème a été signalé."
+
 #, python-format
 msgid "Comment : %(comment)s"
 msgstr "Commentaire : %(comment)s"
+
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "Report origin"
+msgstr "Provenance du signalement"
 
 #, python-format
 msgid ""
 "\n"
 "Lat : %(lat)s / Lon : %(lng)s\n"
-"http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 msgstr ""
 "\n"
 "Lat : %(lat)s / Lon : %(lng)s\n"
-"http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 
 msgid "New reports have been imported from Suricate."
 msgstr "De nouveaux signalements ont été importés depuis Suricate."

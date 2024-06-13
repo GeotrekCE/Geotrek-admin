@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2024-06-04 15:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Feedback"
+msgstr ""
+
+msgid "Creation year"
+msgstr ""
+
+msgid "Update year"
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Leave this field empty not to forward Report to Suricate"
 msgstr ""
 
 msgid "Message for sentinel"
@@ -107,8 +119,11 @@ msgstr ""
 msgid "Add a new feedback"
 msgstr ""
 
-#, python-brace-format
-msgid "Feedback from {email}"
+#, python-format
+msgid "Feedback from %(email)s"
+msgstr ""
+
+msgid "New feedback"
 msgstr ""
 
 msgid "to"
@@ -294,15 +309,24 @@ msgstr ""
 msgid "%(email)s has sent a feedback."
 msgstr ""
 
+msgid "A new feedback has been sent."
+msgstr ""
+
 #, python-format
 msgid "Comment : %(comment)s"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Report origin"
 msgstr ""
 
 #, python-format
 msgid ""
 "\n"
 "Lat : %(lat)s / Lon : %(lng)s\n"
-"http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 msgstr ""
 
 msgid "New reports have been imported from Suricate."

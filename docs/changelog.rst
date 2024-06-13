@@ -2,20 +2,58 @@
 CHANGELOG
 =========
 
-2.106.0+dev (XXXX-XX-XX)
+2.107.0+dev (XXXX-XX-XX)
 ------------------------
+
+**Documentation**
+
+- Improve PostgreSQL upgrade documentation
+- Integration of sensitivity module notices (import and public api usage)
+
+**Bug fixes**
+
+- Fix: 'length' filter can now be displayed on mobile apps
+- Fix: make 'duration' mobile filter consistent in doc
+
+
+2.107.0 (2024-06-07)
+------------------------
+
+**Breaking changes**
+
+- This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+
+**New features**
+
+- Add filter by creation year and update year to Report list (#4085)
+- Add provider field and filter to Report (refs #4085)
 
 **Improvements**
 
 - ApidaeTrekParser now imports field `membreProprietaire` as the structure
-- Integration of sensitivity module notices (import and public api usage)
+- Exclude deleted areas from OpenAir export (fixes #4140)
+- Make email address optional in `Report` form (#4085)
+- Add more information to email received by managers on new `Report` (#4085)
 
 **Documentation**
 
 - Improve information about upgrading geotrek-admin version with debian
+- Add details about dynamic segmentation for POIs
 
 **Bug fixes**
+
 - Fix view `v_treks` (fixes #4099)
+- Prevent trek map screenshot error if type of associated information desk have not pictogram
+- Fix map screenshot and default log in ODT files (with mapentity update)
+- Fix DOC and PDF converted downloaded file names (with mapentity update)
+
+**Maintenance**
+
+- Bump to django 4.2
+- Bump mapentity to 8.9.0
+
 
 2.106.0 (2024-05-15)
 --------------------

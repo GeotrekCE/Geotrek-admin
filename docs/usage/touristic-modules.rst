@@ -403,6 +403,12 @@ Points d'intérêts (POI)
 
 Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmentation dynamique, en fonction des tronçons communs de l'itinéraire et des POIs.
 
+Dans le cas d'un Geotrek-admin avec segmentation dynamique, chaque POI est automatiquement rattaché au tronçon le plus proche, même si ce dernier se trouve à des kilomètres de distance. 
+
+Afin qu'un POI rattaché à un tronçon remonte bien sur la fiche d'un itinéraire, il faut que ce dernier parcourt le tronçon sur une longueur suffisante pour pouvoir être associé par segmentation dynamique.
+
+Pour en savoir plus sur la segmentation dynamique/référencement linéaire, `consulter l'article <https://makina-corpus.com/sig-cartographie/la-segmentation-dynamique>`_ 
+
 Pour importer automatiquement des éléments de POIs, se référer à la section :ref:`Import POIs <import-pois>`
 
 .. note::

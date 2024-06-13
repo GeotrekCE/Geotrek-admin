@@ -1656,6 +1656,10 @@ class ReportAPISerializer(rest_serializers.ModelSerializer):
             'geom': {'write_only': True},
         }
 
+    def create(self, validated_data):
+        validated_data['provider'] = "API"
+        return super().create(validated_data)
+
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
 

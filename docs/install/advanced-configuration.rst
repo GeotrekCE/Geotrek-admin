@@ -902,7 +902,9 @@ To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) l
 
 **2 - Suricate Standard**
 
-This mode simply forwards all reports to Suricate, using the Standard API to post reports.
+This mode forwards reports to Suricate, using the Standard API to post reports.
+
+Reports are forwarded as long as we enter a value for the `email address` field at creation, otherwise they are kept for internal usage only.
 
 Set your account settings in ``custom.py``:
 
@@ -1621,7 +1623,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "created_in_suricate",
         "last_updated_in_suricate",
         "assigned_user",
-        "uses_timers"
+        "uses_timers",
+        "provider"
     ]
     COLUMNS_LISTS["sensitivity_view"] = [
         "structure",
@@ -2165,7 +2168,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "created_in_suricate",
         "last_updated_in_suricate",
         "assigned_user",
-        "uses_timers"
+        "uses_timers",
+        "provider"
     ]
     COLUMNS_LISTS["sensitivity_export"] = [
         "species",
@@ -3158,9 +3162,9 @@ Settings for Geotrek-mobile
         ENABLED_MOBILE_FILTERS = [
         'practice',
         'difficulty',
-        'durations',
+        'duration',
         'ascent',
-        'lengths',
+        'length',
         'themes',
         'route',
         'districts',

@@ -45,7 +45,7 @@ jinja2==3.1.4
     #   sphinx
 livereload==2.6.3
     # via sphinx-autobuild
-markupsafe==2.1.3
+markupsafe==2.1.5
     # via
     #   -c docs/../requirements.txt
     #   jinja2
@@ -59,7 +59,7 @@ pytz==2023.3.post1
     # via
     #   -c docs/../requirements.txt
     #   babel
-requests==2.32.0
+requests==2.32.3
     # via
     #   -c docs/../requirements.txt
     #   sphinx
@@ -98,7 +98,7 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 tornado==6.4
     # via livereload
-urllib3==1.26.18
+urllib3==2.2.1
     # via
     #   -c docs/../requirements.txt
     #   requests
