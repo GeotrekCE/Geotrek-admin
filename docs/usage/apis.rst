@@ -180,7 +180,7 @@ This section focuses on some common parameters useful to work with sensitivity i
    - Expected values: ``fr``, ``en``, ``es`` or ``it``
    - e.g. ``/api/v2/sensitivearea/?language=fr``
 
-   - ``period`` : Sensitivy period (monthes list)
+   - ``period`` : Sensitivy period (months list)
 
    - Expected values: List of month number (from 1 to 12), comma separated
    - e.g. ``/api/v2/sensitivearea/?period=4,5,6,7``
