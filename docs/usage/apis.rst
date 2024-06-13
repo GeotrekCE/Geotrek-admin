@@ -173,7 +173,7 @@ This section focuses on some common parameters useful to work with sensitivity i
 
    **Filtering data**
 
-   Data can be filtered through those parameters:
+   Data can be filtered through these parameters:
 
    - ``language`` : API language (see :envvar:`Commons parameters`)
 
