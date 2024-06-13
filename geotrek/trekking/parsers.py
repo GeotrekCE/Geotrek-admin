@@ -1111,12 +1111,19 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     @staticmethod
     def _make_duration(duration_in_minutes=None, duration_in_days=None):
-        """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
-         non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
-        if duration_in_minutes:
-            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
-        elif duration_in_days:
+        """Returns the duration in hours. There are 2 use cases:
+
+        1. the parsed trek is a one-day trip: only the duration in minutes is provided from Apiade.
+        2. the parsed trek is a multiple-day trip: the duration_in_days is provided. The duration_in_minutes may be provided
+          as a crude indication of how long each step is. That second value does not fit in Geotrek model.
+
+        So the duration_in_days is used if provided (and duration_in_minutes discarded), it means we are in the use case 2.
+        Otherwise the duration_in_minutes is used, it means use case 1.
+        """
+        if duration_in_days:
             return float(duration_in_days * 24)
+        elif duration_in_minutes:
+            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
         else:
             return None
 
