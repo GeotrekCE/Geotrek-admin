@@ -51,14 +51,16 @@ packaging==24.0
     # via
     #   -c requirements.txt
     #   build
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r dev-requirements.in
 pycodestyle==2.11.0
     # via flake8
 pyflakes==3.2.0
     # via flake8
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 python-dateutil==2.8.2
     # via
     #   -c requirements.txt
