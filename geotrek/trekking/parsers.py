@@ -1014,13 +1014,24 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     def _maybe_get_linestring_from_layer(layer):
         if layer.num_feat == 0:
             return None
-        first_feature = layer[0]
-        geos = ApidaeTrekParser._convert_to_geos(first_feature.geom)
-        if geos.geom_type == 'MultiLineString':
-            geos = geos.merged
+        geoms = []
+        for feat in layer:
+            if feat.geom.num_coords == 0:
+                continue
+            geos = ApidaeTrekParser._convert_to_geos(feat.geom)
             if geos.geom_type == 'MultiLineString':
-                raise RowImportError(_("The geometry cannot be converted to a single continuous LineString feature"))
-        return geos
+                geos = geos.merged  # If possible we merge the MultiLineString into a LineString
+                if geos.geom_type == 'MultiLineString':
+                    raise RowImportError(_("Feature geometry cannot be converted to a single continuous LineString feature"))
+            geoms.append(geos)
+
+        full_geom = MultiLineString(geoms)
+        full_geom.srid = geoms[0].srid
+        full_geom = full_geom.merged  # If possible we merge the MultiLineString into a LineString
+        if full_geom.geom_type == 'MultiLineString':
+            raise RowImportError(_("Geometries from various features cannot be converted to a single continuous LineString feature"))
+
+        return full_geom
 
     @staticmethod
     def _find_matching_practice_in_mapping(activities_ids, mapping):
