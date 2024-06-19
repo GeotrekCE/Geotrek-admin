@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Allows user to edit flatpage WYSIWYG button-link and suggestion block
+- Display years in Report filter in descending order (#4085)
 
 **Documentation**
 
