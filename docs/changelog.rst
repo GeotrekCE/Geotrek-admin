@@ -9,6 +9,7 @@ CHANGELOG
 
 - Allows user to edit flatpage WYSIWYG button-link and suggestion block
 - Display years in Report filter in descending order (#4085)
+- Change CSS overflow in filters popup, to display full select dropdowns (with mapentity update)
 
 **Documentation**
 
