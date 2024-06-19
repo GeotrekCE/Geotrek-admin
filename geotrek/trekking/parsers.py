@@ -691,7 +691,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             val=[manager['nom']]
         )
         source = sources[0]
-        source.website = manager['siteWeb']
+        if 'siteWeb' in manager:
+            source.website = manager['siteWeb']
         source.save()
         return sources
 
