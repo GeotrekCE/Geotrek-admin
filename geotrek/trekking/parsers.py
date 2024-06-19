@@ -999,6 +999,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             return None
         geoms = []
         for feat in layer:
+            if feat.geom.num_coords == 0:
+                continue
             geos = ApidaeTrekParser._convert_to_geos(feat.geom)
             if geos.geom_type == 'MultiLineString':
                 geos = geos.merged
