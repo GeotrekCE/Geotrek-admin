@@ -20,6 +20,8 @@ CHANGELOG
 - Fix: Label annotation becoming empty when double-clicked (refs #3927)
 - Fix: missing default values in SQL template for Report model (#4085)
 - Fix: users cannot add attachment to Report model (#4085)
+- Fix: remove legacy default value for `external_uuid` in database for Report model (#4085)
+
 
 2.107.0 (2024-06-07)
 ------------------------
