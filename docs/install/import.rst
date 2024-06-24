@@ -368,7 +368,7 @@ It is also possible to import sensitive areas through command line:
   If you don't see any data in your area, it means that Biodiv'Sports does not contains data for your territory. 
   Then it is widely recommended to add your data directly into Biodiv'Sports, as it will be available for 
   multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sports 
-  go visit their website : https://biodiv-sports.fr
+  go visit its website: https://biodiv-sports.fr
 
 
 Import from shapefile
