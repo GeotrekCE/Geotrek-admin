@@ -6,7 +6,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     tinymce.PluginManager.add('button-link', function (editor, url) {
-        var openDialogButtonLink = function () {
+        var openDialogButtonLink = function (defaultValues, element) {
             return editor.windowManager.open({
                 title: 'Lien bouton',
                 body: {
@@ -41,21 +41,35 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 ],
                 initialData: {
-                    label: tinymce.activeEditor.selection.getContent(),
+                    label: defaultValues && defaultValues.label || tinymce.activeEditor.selection.getContent(),
+                    target: defaultValues ? !!defaultValues.target : false,
+                    link: defaultValues ? defaultValues.link.replace(window.location.origin, '') : ''
                 },
                 onSubmit: function (api) {
                     var data = api.getData();
                     if (!data.link || !data.label) {
                         return;
                     }
-                    var target = data.target ? ' target="_blank" rel="noopener noreferrer" ' : '';
-                    editor.insertContent('<a class="button-link"' + target + 'href="' + data.link + '">' + data.label + '</a>');
+                    if (element) {
+                        element.textContent = data.label;
+                        element.href = data.link.replace(window.location.origin, '');
+                        if (data.target) {
+                            element.setAttribute('target', '_blank')
+                            element.setAttribute('rel', 'noopener noreferrer')
+                        } else {
+                            element.removeAttribute('target')
+                            element.removeAttribute('rel')
+                        }
+                    } else {
+                        var target = data.target ? ' target="_blank" rel="noopener noreferrer" ' : '';
+                        editor.insertContent('<a class="button-link"' + target + 'href="' + data.link + '">' + data.label + '</a>');
+                    }
                     api.close();
                 }
             });
         };
 
-        var openDialogSuggestion = function () {
+        var openDialogSuggestion = function (defaultValues, element) {
             return editor.windowManager.open({
                 title: 'Suggestions',
                 body: {
@@ -95,15 +109,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         primary: true
                     }
                 ],
-                initialData: {
-                    label: tinymce.activeEditor.selection.getContent(),
-                },
+                initialData: Object.assign(defaultValues || {}, {
+                    label: defaultValues && defaultValues.label || tinymce.activeEditor.selection.getContent(),
+                }),
                 onSubmit: function (api) {
                     var data = api.getData();
                     if (!data.type || !data.ids) {
                         return;
                     }
-                    editor.insertContent('<div class="suggestions" data-label="' + data.label + '" data-type="' + data.type + '" data-ids="' + data.ids + '" style="display: none" contenteditable="false"></div>');
+                    if (element) {
+                        element.dataset.label = data.label;
+                        element.dataset.type = data.type;
+                        element.dataset.ids = data.ids;
+                    } else {
+                        editor.insertContent('<div class="suggestions" data-label="' + data.label + '" data-type="' + data.type + '" data-ids="' + data.ids + '" style="display: none" contenteditable="false"></div>');
+                    }
                     api.close();
                 }
             });
@@ -122,6 +142,18 @@ document.addEventListener("DOMContentLoaded", function () {
             onAction: function () {
                 /* Open window */
                 openDialogSuggestion();
+            }
+        });
+
+        /* Edit button-link/suggestions block when clicking on it */
+        editor.on('click', function (e) {
+            const element = e.target;
+            if (element.classList.contains('button-link')) {
+                openDialogButtonLink({ label: element.textContent, link: element.href, target: element.target }, element)
+            }
+            if (element.classList.contains('suggestions')) {
+                const data = element.dataset;
+                openDialogSuggestion({ type: data.type, label: data.label, ids: data.ids }, element)
             }
         });
     })

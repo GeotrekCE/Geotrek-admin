@@ -5,6 +5,10 @@ CHANGELOG
 2.107.0+dev (XXXX-XX-XX)
 ------------------------
 
+**Improvements**
+
+- Allows user to edit flatpage WYSIWYG button-link and suggestion block
+
 **Documentation**
 
 - Improve PostgreSQL upgrade documentation
@@ -14,6 +18,7 @@ CHANGELOG
 
 - Fix: 'length' filter can now be displayed on mobile apps
 - Fix: make 'duration' mobile filter consistent in doc
+- Fix: Label annotation becoming empty when double-clicked (refs #3927)
 
 
 2.107.0 (2024-06-07)
