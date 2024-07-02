@@ -20,6 +20,7 @@ CHANGELOG
 - Fix: 'length' filter can now be displayed on mobile apps
 - Fix: make 'duration' mobile filter consistent in doc
 - Fix: Label annotation becoming empty when double-clicked (refs #3927)
+- Fix: Too long linestring can't store elevation chart in default cache
 - Fix: missing default values in SQL template for Report model (#4085)
 - Fix: users cannot add attachment to Report model (#4085)
 - Fix: remove legacy default value for `external_uuid` in database for Report model (#4085)
