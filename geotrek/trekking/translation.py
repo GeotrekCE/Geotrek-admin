@@ -8,67 +8,68 @@ from geotrek.trekking import models as trekking_models
 # Trek app
 
 class TrekTO(TranslationOptions):
-    fields = ('name', 'departure', 'arrival', 'description_teaser', 'description', 'ambiance', 'access',
-              'accessibility_infrastructure', 'advice', 'gear', 'accessibility_signage', 'accessibility_slope',
-              'accessibility_covering', 'accessibility_exposure', 'accessibility_width',
-              'accessibility_advice', 'advised_parking', 'public_transport', 'ratings_description') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    all_fields = (
+        'name', 'departure', 'arrival', 'description_teaser', 'description', 'ambiance', 'access',
+        'accessibility_infrastructure', 'advice', 'gear', 'accessibility_signage', 'accessibility_slope',
+        'accessibility_covering', 'accessibility_exposure', 'accessibility_width',
+        'accessibility_advice', 'advised_parking', 'public_transport', 'ratings_description'
+    ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 
 class POITO(TranslationOptions):
-    fields = ('name', 'description') + (
+    all_fields = ('name', 'description') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()
     )
     fallback_undefined = {'published': None}
 
 
 class POITypeTO(TranslationOptions):
-    fields = ('label', )
+    all_fields = ('label', )
 
 
 class TrekNetworkTO(TranslationOptions):
-    fields = ('network', )
+    all_fields = ('network', )
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class AccessibilityTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class AccessibilityLevelTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class RouteTO(TranslationOptions):
-    fields = ('route', )
+    all_fields = ('route', )
 
 
 class DifficultyLevelTO(TranslationOptions):
-    fields = ('difficulty', )
+    all_fields = ('difficulty', )
 
 
 class WebLinkTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class WebLinkCategoryTO(TranslationOptions):
-    fields = ('label', )
+    all_fields = ('label', )
 
 
 class RatingScaleTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class RatingTO(TranslationOptions):
-    fields = ('name', 'description')
+    all_fields = ('name', 'description')
 
 
 class ServiceTypeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 # Register previously defined translation options

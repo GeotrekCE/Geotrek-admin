@@ -6,7 +6,7 @@ from geotrek.flatpages import models as flatpages_models
 
 
 class FlatPageTO(TranslationOptions):
-    fields = ('title', 'content', ) + (
+    all_fields = ('title', 'content', ) + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()
     )
 
@@ -15,7 +15,7 @@ translator.register(flatpages_models.FlatPage, FlatPageTO)
 
 
 class MenuItemTO(TranslationOptions):
-    fields = (
+    all_fields = (
         'title',
         'link_url', ) + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()

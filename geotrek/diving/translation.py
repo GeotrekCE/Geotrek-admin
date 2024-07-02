@@ -8,22 +8,23 @@ from geotrek.diving import models as diving_models
 # Trek app
 
 class DiveTO(TranslationOptions):
-    fields = ('name', 'departure', 'description_teaser', 'facilities',
-              'description', 'disabled_sport', 'advice') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
+    all_fields = (
+        'name', 'departure', 'description_teaser', 'facilities',
+        'description', 'disabled_sport', 'advice'
+    ) + (('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class DifficultyTO(TranslationOptions):
-    fields = ('name', )
+    all_fields = ('name', )
 
 
 class LevelTO(TranslationOptions):
-    fields = ('name', 'description')
+    all_fields = ('name', 'description')
 
 
 # Register previously defined translation options
