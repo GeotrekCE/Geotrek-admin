@@ -128,7 +128,7 @@ django-colorfield==0.10.1
     # via geotrek (setup.py)
 django-compressor==4.4
     # via mapentity
-django-crispy-forms==1.13.0
+django-crispy-forms==2.2
     # via mapentity
 django-embed-video==1.4.10
     # via
