@@ -209,6 +209,7 @@ importlib-metadata==6.8.0
     # via
     #   fiona
     #   markdown
+    #   pygal
 inflection==0.5.1
     # via drf-yasg
 itypes==1.2.0
