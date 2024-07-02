@@ -1,6 +1,6 @@
 ARG DISTRO=ubuntu:bionic
 
-FROM ${DISTRO} as base
+FROM ${DISTRO} AS base
 
 
 RUN apt-get update -qq -o Acquire::Languages=none && \
@@ -9,6 +9,7 @@ RUN apt-get update -qq -o Acquire::Languages=none && \
        env DEBIAN_FRONTEND=noninteractive apt-get install -yqq software-properties-common; \
        add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv; fi &&\
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
+    nano \
     dpkg-dev \
     debhelper \
     dh-virtualenv \
@@ -18,6 +19,9 @@ RUN apt-get update -qq -o Acquire::Languages=none && \
 
 
 WORKDIR /dpkg-build
+
+FROM base AS builder
+
 COPY debian ./debian
 
 RUN env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control

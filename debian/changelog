@@ -1,8 +1,8 @@
-geotrek-admin (2.107.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.107.1) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 07 Jun 2024 11:49:12 +0200
+ -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede@makina-corpus.com>  Tue, 02 Jul 2024 14:47:59 +0000
 
 geotrek-admin (2.107.0) RELEASED; urgency=medium
 
