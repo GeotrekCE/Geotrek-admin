@@ -334,11 +334,102 @@ edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
 Then run in command line
 
-::
+.. code-block:: bash
 
     sudo geotrek import DemoGeotrekTrekParser
 
 Treks are now imported into your own instance.
+
+.. _import-sensitive-areas:
+
+Import sensitive areas
+======================
+
+Import from https://biodiv-sports.fr
+------------------------------------
+
+It is possible to import automatically data from Biodiv'Sport. To do so, you just need to follow those steps:
+
+- Click on the **user link** at top right, then on **Imports**,
+- Under the section **Data to import from network**, select **Biodiv'Sports**
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right
+
+When the import is done, you can check the Sensitivity module in Geotrek and you'll find data inside.
+
+It is also possible to import sensitive areas through command line:
+
+.. code-block :: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
+
+.. warning:: 
+  If you don't see any data in your area, it means that Biodiv'Sports does not contains data for your territory. 
+  Then it is widely recommended to add your data directly into Biodiv'Sports, as it will be available for 
+  multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sports 
+  go visit its website: https://biodiv-sports.fr
+
+
+Import from shapefile
+---------------------
+
+Imported data must be in standard ESRI shapefile format. 
+The various Shapefile files (``.shp``, ``.shx``, ``.dbf``, ``.prj``, *etc*.) must be assembled in a zip archive.
+
+.. warning::
+  Please note! The description field name ``descriptio`` does not include the final ``n``, as field names are limited to 10 characters in shapefiles.
+
+Attribute data for sensitive areas species
+
+- ``espece``: Species name. Mandatory. A species with this name must first have been created in Biodiv'sports. Otherwise, import of the line will fail.
+- ``contact``: Contact in text or HTML format. *Optional*.
+- ``descriptio``: Description in text or HTML format. *Optional*. 
+
+.. warning::
+  Species name must strictly respect the species name string (accentuation, case and punctuation).
+
+Attribute data for regulatory sensitive areas:
+
+- ``name`` : Area name
+- ``contact`` : Contact in text or HTML format. *Optional*.
+- ``descriptio`` : Description in text or HTML format. *Optional*.
+- ``periode``: Numbers of the months in which the area is occupied, **comma separated** and **without spaces** (e.g. ``6,7,8`` for June, July and August).
+- ``practices``: Names of practices, separated by commas, without spaces (e.g. ``Terrestre,Aerien,Vertical``), see :envvar:`Sport practices`. Otherwise, the line import will fail.
+- ``url`` : Record url. *Optional*.
+
+Import from web interface
+
+- Click on the **user link** at top right, then on **Imports**,
+- Select the type of data to be imported (**species** or **regulatory area**),
+- Select the *.zip* file to be imported,
+- Select the correct encoding (``UTF8`` or ``Windows-1252``)
+- Click on **Import**,
+- Wait a few seconds,
+- The import progress is displayed on the right,
+- Click on **Display report** to see any unimported lines.
+
+.. figure:: ../images/advanced-configuration/import_shapefile.png
+   :alt: Import shapefile in user interface
+   :align: center
+
+   Import shapefile in user interface
+
+On command line, run:
+
+.. code-block:: bash
+
+    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
+
+or:
+
+.. code-block:: bash
+
+    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
+
+
+.. warning:: 
+  Relaunching an import **with the same file** will create duplicates.
 
 
 Import other datas from a file
