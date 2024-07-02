@@ -1,3 +1,9 @@
+geotrek-admin (2.107.1+dev) UNRELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede@makina-corpus.com>  Tue, 02 Jul 2024 14:47:59 +0000
+
 geotrek-admin (2.107.1) RELEASED; urgency=medium
 
   * New package release
