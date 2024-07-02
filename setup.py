@@ -28,17 +28,18 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='https://makina-corpus.com',
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
-                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     scripts=['manage.py'],
     install_requires=[
-        'Django==3.2.*',
+        'Django==4.2.*',
         'mapentity',
+        'chardet',
         'cairosvg',
         'cairocffi',
         'env_file',
         # pinned by requirements.txt
         'pymemcache',
+        'coreschema',
+        'coreapi',
         'psycopg2',
         'pdfimpose',
         'docutils',
@@ -67,9 +68,12 @@ setup(
         "weasyprint==52.5",  # newer version required libpango (not available in bionic)
         'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
         "django-clearcache",
+        "pyopenair",
+        "django-treebeard",
         # prod,
         'gunicorn',
         'sentry-sdk',
+        'easy-thumbnails[svg]',
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,

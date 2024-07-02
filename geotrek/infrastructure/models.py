@@ -13,6 +13,7 @@ from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
 from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
                                           GeotrekMapEntityMixin)
+from geotrek.common.models import AccessMean
 from geotrek.core.models import Topology, Path
 from geotrek.infrastructure.managers import InfrastructureGISManager
 
@@ -109,12 +110,9 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                             help_text=_("Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True,
                                    verbose_name=_("Description"), help_text=_("Specificites"))
-    access = models.ForeignKey(InfrastructureAccessMean,
+    access = models.ForeignKey(AccessMean,
                                verbose_name=_("Access mean"), blank=True, null=True,
                                on_delete=models.PROTECT)
-    condition = models.ForeignKey(InfrastructureCondition,
-                                  verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
@@ -148,7 +146,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def cities_display(self):
-        return [str(c) for c in self.cities] if hasattr(self, 'cities') else []
+        return ", ".join([str(c) for c in getattr(self, "cities", [])])
 
     @classproperty
     def cities_verbose_name(cls):
@@ -176,7 +174,9 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
                                          on_delete=models.PROTECT,
                                          related_name='infrastructures_set')
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-
+    condition = models.ForeignKey(InfrastructureCondition,
+                                  verbose_name=_("Condition"), blank=True, null=True,
+                                  on_delete=models.PROTECT)
     geometry_types_allowed = ["LINESTRING", "POINT"]
 
     class Meta:

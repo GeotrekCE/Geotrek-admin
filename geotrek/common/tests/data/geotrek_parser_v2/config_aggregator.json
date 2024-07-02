@@ -3,7 +3,8 @@
     "url": "URL_1",
     "data_to_import": [
       "Trek",
-      "POI"
+      "POI",
+      "InformationDesk"
     ],
     "mapping": {
       "trek_practice": {

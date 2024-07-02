@@ -28,12 +28,14 @@
 In brief
 --------
 
-* Manage paths, treks and POIs
+* Web mapping application offering GIS features
+* Manage paths, interventions, signage, treks, POIs, touristic events and so much more
 * Track maintenance of equipments and infrastructures
 * Control objets by district, protected areas, physical and legal status of paths
 * Compute 3D attributes using DEM draping
-* Publish a public website with `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando>`_ (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
-* Publish a public mobile application with `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile>`_ (e.g. `PNE <https://play.google.com/store/apps/details?id=com.makinacorpus.randoecrins>`_, `PNM-PNAM <https://itunes.apple.com/app/rando-marittime-mercantour/id1032288665?mt=8>`_)
+* Allow to interconnect with multiple applications to synchronize data (Suricate, Apidae, Tourinsoft, etc.)
+* Publish a public website with `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando-v3>`_ (e.g. `PNE <https://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <https://destination.marittimemercantour.eu/>`_)
+* Publish a public mobile application with `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile>`_ (e.g. `OTGC <https://play.google.com/store/apps/details?id=io.geotrek.grandcarcassonne>`_, `CD39 <https://apps.apple.com/app/jura-outdoor/id6446137384>`_)
 
 .. image:: http://geotrek.fr/assets/img/screen-1.png
 
@@ -42,7 +44,7 @@ More information on product website http://geotrek.fr
 Documentation
 -------------
 
-* More info at http://geotrek.fr (*french*)
+* `User manual (in french) <https://geotrek.readthedocs.io/en/latest/usage/overview.html>`_
 * `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
 * Help us translate `on Weblate <https://weblate.makina-corpus.net/>`_
 
@@ -58,10 +60,11 @@ License
 -------
 
 * OpenSource - BSD
-* Copyright (c) 2012-2018 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+* Copyright (c) 2012-2023 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
 .. image:: https://geotrek.fr/assets/img/logo_makina.svg
-    :target: http://www.makina-corpus.com
+    :target: https://territoires.makina-corpus.com/
+    :width: 170
 
 .. image:: https://geotrek.fr/assets/img/logo_autonomens-h120m.png
     :target: https://datatheca.com

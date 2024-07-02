@@ -1,15 +1,18 @@
 from django.conf import settings
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
 from geotrek.authent.tests.factories import PathManagerFactory
-from geotrek.infrastructure.models import (Infrastructure, INFRASTRUCTURE_TYPES)
+from geotrek.common.tests import CommonTest
 from geotrek.core.tests.factories import PathFactory
-from geotrek.infrastructure.tests.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                                    InfrastructureTypeFactory, InfrastructureConditionFactory,
-                                                    PointInfrastructureFactory)
+from geotrek.infrastructure.models import INFRASTRUCTURE_TYPES, Infrastructure
+from geotrek.infrastructure.tests.factories import (
+    InfrastructureConditionFactory,
+    InfrastructureFactory,
+    InfrastructureTypeFactory,
+    PointInfrastructureFactory,
+)
 
 
-class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
+class InfrastructureViewsTest(CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
@@ -24,35 +27,13 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'accessibility': '',
             'name': self.obj.name,
-            'publication_date': '2020-03-17',
-            'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'structure': {
-                'id': self.obj.structure.pk,
-                'name': self.obj.structure.name,
-            },
-            'type': {
-                'id': self.obj.type.pk,
-                'label': self.obj.type.label,
-                'pictogram': self.obj.type.pictogram.url if self.obj.type.pictogram else '/static/infrastructure/picto-infrastructure.png',
-            },
+            'published': self.obj.published,
         }
 
     def get_expected_datatables_attrs(self):
         return {
-            'cities': '[]',
+            'cities': '',
             'condition': self.obj.condition.label,
             'id': self.obj.pk,
             'name': self.obj.name_display,
@@ -88,10 +69,6 @@ class InfrastructureViewsTest(GeotrekAPITestCase, CommonTest):
         form = response.context['form']
         type = form.fields['type']
         self.assertTrue((infratype.pk, str(infratype)) in type.choices)
-
-    def test_no_pictogram(self):
-        self.modelfactory = InfrastructureNoPictogramFactory
-        super().test_api_detail_for_model()
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):

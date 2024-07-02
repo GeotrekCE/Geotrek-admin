@@ -6,6 +6,7 @@ from django.utils.translation import activate
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.api.v2 import filters as api_filters, serializers as api_serializers, viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
@@ -41,7 +42,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                               Prefetch('web_links',
                                        queryset=trekking_models.WebLink.objects.select_related('category')),
                               Prefetch('view_points',
-                                       queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
+                                       queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
             .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_3d_m=Length3D('geom_3d')) \
             .order_by("name")  # Required for reliable pagination
@@ -63,15 +64,15 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
             # no language specified. Check for all.
             q = Q()
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                field_name = 'published_{}'.format(lang)
+                field_name = build_localized_fieldname('published', lang)
                 if field_name in associated_published_fields:
-                    field_name_parent = 'trek_parents__parent__published_{}'.format(lang)
+                    field_name_parent = 'trek_parents__parent__{}'.format(build_localized_fieldname('published', lang))
                     q |= Q(**{field_name: True}) | Q(**{field_name_parent: True})
             qs = qs.filter(q)
         else:
             # one language is specified
-            field_name = 'published_{}'.format(language)
-            field_name_parent = 'trek_parents__parent__published_{}'.format(language)
+            field_name = build_localized_fieldname('published', language)
+            field_name_parent = 'trek_parents__parent__{}'.format(build_localized_fieldname('published', language))
             qs = qs.filter(Q(**{field_name: True}) | Q(**{field_name_parent: True}))
         return qs.distinct()
 
@@ -172,7 +173,7 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
                           Prefetch('attachments',
                                    queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
                           Prefetch('view_points',
-                                   queryset=HDViewPoint.objects.select_related('content_type', 'license'))) \
+                                   queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
         .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 

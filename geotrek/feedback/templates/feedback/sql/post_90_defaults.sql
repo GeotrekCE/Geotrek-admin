@@ -1,6 +1,6 @@
 -- Report
 ---------
--- email
+ALTER TABLE feedback_report ALTER COLUMN email SET DEFAULT '';
 ALTER TABLE feedback_report ALTER COLUMN comment SET DEFAULT '';
 -- activity
 -- category
@@ -9,13 +9,19 @@ ALTER TABLE feedback_report ALTER COLUMN comment SET DEFAULT '';
 -- geom
 -- related_trek
 -- created_in_suricate
+-- external_uuid
 ALTER TABLE feedback_report ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
+ALTER TABLE feedback_report ALTER COLUMN eid SET DEFAULT '';
 ALTER TABLE feedback_report ALTER COLUMN locked SET DEFAULT False;
 ALTER TABLE feedback_report ALTER COLUMN origin SET DEFAULT 'unknown';
 -- last_updated_in_suricate
+-- assigned_user
+ALTER TABLE feedback_report ALTER COLUMN sync_errors SET DEFAULT 0;
+ALTER TABLE feedback_report ALTER COLUMN mail_errors SET DEFAULT 0;
 ALTER TABLE feedback_report ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE feedback_report ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE feedback_report ALTER COLUMN deleted SET DEFAULT False;
+ALTER TABLE feedback_report ALTER COLUMN provider SET DEFAULT '';
 
 
 -- ReportActivity

@@ -17,13 +17,13 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Site.objects.provider_choices()
+        choices=lambda: Site.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Site
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'sector', 'practice', 'labels', 'themes', 'portal', 'source', 'information_desks',
+            'published', 'sector', 'practice', 'labels', 'themes', 'portal', 'source', 'information_desks',
             'web_links', 'type', 'orientation', 'wind', 'provider'
         ]
 
@@ -58,13 +58,13 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Course.objects.provider_choices()
+        choices=lambda: Course.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'parent_sites', 'parent_sites__practice__sector', 'parent_sites__practice', 'parent_sites__labels', 'parent_sites__themes',
+            'published', 'parent_sites', 'parent_sites__practice__sector', 'parent_sites__practice', 'parent_sites__labels', 'parent_sites__themes',
             'parent_sites__portal', 'parent_sites__source', 'parent_sites__type', 'orientation', 'wind',
             'height', 'provider'
         ]

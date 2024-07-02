@@ -3,15 +3,15 @@ from copy import deepcopy
 from django.utils.translation import gettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.forms.models import inlineformset_factory
 
 from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
-from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
+from crispy_forms.layout import Layout, Submit, HTML, Div
 from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop, MapWidget
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -19,35 +19,6 @@ from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild, RatingScale
 from django.db import transaction
 
-
-class TrekRelationshipForm(forms.ModelForm):
-    trek_b = forms.ModelChoiceField(queryset=Trek.objects.existing(), required=True,
-                                    label=_("Trek"))
-
-    class Meta:
-        fields = ('id',
-                  'trek_a',
-                  'trek_b',
-                  'has_common_departure',
-                  'has_common_edge',
-                  'is_circuit_step')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout('id',
-                                    'trek_a',
-                                    'trek_b',
-                                    'has_common_departure',
-                                    'has_common_edge',
-                                    'is_circuit_step',
-                                    'DELETE')
-
-
-TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through,
-                                                form=TrekRelationshipForm, fk_name='trek_a',
-                                                extra=1)
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -151,7 +122,6 @@ class TrekForm(BaseTrekForm):
                     'reservation_id',
                     'pois_excluded',
                     'hidden_ordered_children',
-                    Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane"
                 ),
@@ -188,7 +158,7 @@ class TrekForm(BaseTrekForm):
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
-        self.fields['name_%s' % settings.LANGUAGE_CODE].required = True
+        self.fields[build_localized_fieldname('name', settings.LANGUAGE_CODE)].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop('points_reference')
@@ -204,7 +174,7 @@ class TrekForm(BaseTrekForm):
                   'web_links', 'information_desks', 'source', 'portal']:
             self.fields[f].help_text = ''
 
-        if self.instance:
+        if self.instance and self.instance.pk:
             queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
                                                         .order_by('order')
             # init multiple children field with data
@@ -419,7 +389,7 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
-        arg_list = [f'name_{language[0]}' for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        arg_list = [build_localized_fieldname('name', language[0]) for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),

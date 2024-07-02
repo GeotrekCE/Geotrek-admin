@@ -4,11 +4,10 @@ from geotrek.signage.models import Signage
 
 class GeotrekSignageParser(GeotrekParser):
     """Geotrek parser for Signage"""
-
+    fill_empty_translated_fields = True
     url = None
     model = Signage
     constant_fields = {
-        "published": True,
         "deleted": False
     }
     replace_fields = {
@@ -16,17 +15,20 @@ class GeotrekSignageParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         'sealing': 'signage_sealing',
-        'condition': 'infrastructure_condition',
+        'conditions': 'signage_condition',
         'type': 'signage_type',
     }
     categories_keys_api_v2 = {
-        'condition': 'label',
+        "structure": "name",
+        'conditions': 'label',
         'sealing': 'label',
         'type': 'label'
     }
     natural_keys = {
-        'condition': 'label',
+        "structure": "name",
+        'conditions': 'label',
         'sealing': 'label',
         'type': 'label'
     }

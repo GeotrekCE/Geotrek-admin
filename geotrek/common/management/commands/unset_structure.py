@@ -1,9 +1,7 @@
 from collections import defaultdict
 
 from django.apps import apps
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import translation
 from django.db.models import ManyToManyField
 
 
@@ -77,7 +75,6 @@ class Command(BaseCommand):
         related_objs.delete()
 
     def handle(self, *args, **options):
-        translation.activate(settings.LANGUAGE_CODE)
         self.options = options
         self.get_all_items()
 

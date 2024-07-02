@@ -109,7 +109,7 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN meeting_point SET DEFAULT '';
 ALTER TABLE tourism_touristicevent ALTER COLUMN contact SET DEFAULT '';
 -- email
 -- website
-ALTER TABLE tourism_touristicevent ALTER COLUMN organizer SET DEFAULT '';
+-- organizer
 ALTER TABLE tourism_touristicevent ALTER COLUMN speaker SET DEFAULT '';
 -- type
 ALTER TABLE tourism_touristicevent ALTER COLUMN accessibility SET DEFAULT '';
@@ -135,6 +135,7 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- preparation_duration
 -- intervention_duration
 ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
+--price
 
 
 -- TouristicEventParticipantCount

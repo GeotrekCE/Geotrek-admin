@@ -7,7 +7,7 @@
     <tr>
         <td colspan="3">
         <strong>{% trans "Interventions" %}</strong>
-            {% with columns="target,name,status,stake,total_cost,date" %}
+            {% with columns="target,name,status,stake,total_cost,begin_date,end_date" %}
                 {% if modelname == "project" %}
                     {% valuetable object.interventions.existing enumeration=True columns=columns %}
                 {% else %}

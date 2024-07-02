@@ -71,7 +71,7 @@ class CommandLoadDemTest(TransactionTestCase):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         self.trek = TrekFactory.create(geom=LineString((605600, 6650000), (605900, 6650010), srid=2154))
-        with self.assertNumQueries(21):  # 5 for loaddem initial + 16 with selects and update geom
+        with self.assertNumQueries(22):  # 5 for loaddem initial + 17 with selects and update geom
             call_command('loaddem', filename, update_altimetry=True, verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())

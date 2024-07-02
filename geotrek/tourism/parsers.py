@@ -16,6 +16,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser, GeotrekParser, ApidaeBaseParser, LEIParser)
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
+from geotrek.trekking.parsers import GeotrekTrekParser
 
 
 class TouristicContentMixin:
@@ -245,7 +246,6 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         ),
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
-        'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'capacity': 'informationsFeteEtManifestation.nbParticipantsAttendu',
         'practical_info': (
@@ -283,14 +283,17 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         'illustrations'
     ]
     m2m_fields = {
-        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr'
+        'themes': 'informationsFeteEtManifestation.themes.*.libelleFr',
+        'organizers': ('informations.structureGestion.nom.libelleFr',),
     }
     natural_keys = {
         'themes': 'label',
         'type': 'type',
+        'organizers': 'label',
         'source': 'name',
         'portal': 'name',
     }
+    # separator = ","
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -299,6 +302,7 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
         self.field_options = self.field_options.copy()
         self.field_options['themes'] = {'create': True}
         self.field_options['type'] = {'create': True}
+        self.field_options['organizers'] = {'create': True}
         if self.type is not None:
             self.constant_fields['type'] = self.type
         if self.themes is not None:
@@ -936,15 +940,17 @@ class LEITouristicEventParser(LEIParser):
                     'ADRPROD_TEL', 'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
         'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL', 'ADRPREST_EMAIL2'),
         'website': ('ADRPROD_URL', 'ADRPREST_URL'),
-        'organizer': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE'),
         'speaker': ('CIVILITE_RESPONSABLE', 'NOM_RESPONSABLE', 'PRENOM_RESPONSABLE'),
         'type': 'TYPE_NOM',
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
-    m2m_fields = {}
+    m2m_fields = {
+        'organizers': ('RAISONSOC_PERSONNE_EN_CHARGE', 'RAISONSOC_RESPONSABLE')
+    }
     type = None
     natural_keys = {
         'category': 'label',
+        'organizers': 'label',
         'geom': {'required': True},
         'type': 'type',
     }
@@ -954,6 +960,7 @@ class LEITouristicEventParser(LEIParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.field_options['organizers'] = {'create': True}
         if self.type:
             self.constant_fields['type'] = self.type
 
@@ -962,9 +969,9 @@ class LEITouristicEventParser(LEIParser):
             val = val.replace('\n', '<br>')
         return val
 
-    def filter_organizer(self, src, val):
+    def filter_organizers(self, src, val):
         (first, second) = val
-        return first if first else second
+        return self.apply_filter('organizers', src, [first if first else second])
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val
@@ -990,11 +997,10 @@ class LEITouristicEventParser(LEIParser):
 
 class GeotrekTouristicContentParser(GeotrekParser):
     """Geotrek parser for TouristicContent"""
-
+    fill_empty_translated_fields = True
     url = None
     model = TouristicContent
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
 
@@ -1009,18 +1015,21 @@ class GeotrekTouristicContentParser(GeotrekParser):
     }
 
     url_categories = {
+        "structure": "structure",
         "category": "touristiccontent_category",
         "themes": "theme",
         "source": "source"
     }
 
     categories_keys_api_v2 = {
+        "structure": "name",
         'category': 'label',
         'themes': 'label',
         'source': 'name'
     }
 
     natural_keys = {
+        "structure": "name",
         'category': 'label',
         'themes': 'label',
         'type1': 'label',
@@ -1077,11 +1086,10 @@ class GeotrekTouristicContentParser(GeotrekParser):
 
 class GeotrekTouristicEventParser(GeotrekParser):
     """Geotrek parser for TouristicEvent"""
-
+    fill_empty_translated_fields = True
     url = None
     model = TouristicEvent
     constant_fields = {
-        'published': True,
         'deleted': False,
     }
     replace_fields = {
@@ -1089,14 +1097,17 @@ class GeotrekTouristicEventParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         "type": "touristicevent_type",
         "source": "source"
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         'type': 'type',
         'source': 'name'
     }
     natural_keys = {
+        "structure": "name",
         'type': 'type',
         'source': 'name'
     }
@@ -1108,6 +1119,7 @@ class GeotrekTouristicEventParser(GeotrekParser):
 
 class GeotrekInformationDeskParser(GeotrekParser):
     """Geotrek parser for InformationDesk"""
+    fill_empty_translated_fields = True
     url = None
     model = InformationDesk
     constant_fields = {}
@@ -1149,3 +1161,51 @@ class GeotrekInformationDeskParser(GeotrekParser):
         name = '%s%s' % (basename[:128], ext)
         file = UploadedFile(f, name=name)
         return file
+
+    def link_informationdesks(self, parser, datas, match_id_uuid, json_uuid_key):
+        model_imported = parser.model
+        field = "information_desks"
+        for row in datas['results']:
+            infodesks_to_set = [match_id_uuid.get(val) for val in row[field]
+                                if match_id_uuid.get(val)]
+            # object_result_field is the objects found for each field in initial_fields
+            # example every information desks for one trek
+            current_infodesks = getattr(model_imported.objects.get(
+                **{json_uuid_key: row[json_uuid_key]}),
+                field)
+            infodesks_to_remove = current_infodesks.exclude(
+                id__in=[object_result.pk for object_result in infodesks_to_set])
+            if infodesks_to_remove:
+                current_infodesks.remove(
+                    *infodesks_to_remove
+                )
+            getattr(model_imported.objects.get(**{json_uuid_key: row[json_uuid_key]}), field).add(
+                *infodesks_to_set)
+
+    def end_meta(self):
+        super().end_meta()
+        url = f"{self.url}/api/v2/informationdesk"
+        params = self.params_used
+        replace_fields = self.replace_fields
+        fields = f"{replace_fields.get('eid', 'uuid')},id"
+        params['fields'] = fields
+        params['page_size'] = 10000
+
+        response = self.request_or_retry(url, params=params)
+        datas = response.json()
+        match_id_uuid = {}
+        for result in datas['results']:
+            try:
+                match_id_uuid[result['id']] = InformationDesk.objects.get(uuid=result['uuid'])
+            except InformationDesk.DoesNotExist:
+                pass
+
+        url = f"{self.url}/api/v2/trek"
+        params = self.params_used
+        replace_fields = GeotrekTrekParser.replace_fields
+        fields = f"{replace_fields.get('eid', 'id')},information_desks"
+        params['fields'] = fields
+        params['page_size'] = 10000
+        response = self.request_or_retry(url, params=params)
+        datas = response.json()
+        self.link_informationdesks(GeotrekTrekParser, datas, match_id_uuid, replace_fields.get('eid', 'id'))

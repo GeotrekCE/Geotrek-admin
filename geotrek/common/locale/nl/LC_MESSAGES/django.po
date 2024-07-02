@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,21 +24,19 @@ msgstr ""
 msgid "Linked content"
 msgstr ""
 
-msgid "Related to"
+msgid "Title"
 msgstr ""
 
-msgid "Title"
+msgid "Related to"
 msgstr ""
 
 msgid "Common"
 msgstr ""
 
-#, python-format
-msgid "min %s"
+msgid "min"
 msgstr ""
 
-#, python-format
-msgid "max %s"
+msgid "max"
 msgstr ""
 
 msgid "This field is required to publish object."
@@ -75,9 +73,6 @@ msgstr ""
 msgid "Data to import from local file"
 msgstr ""
 
-msgid "Launch Sync"
-msgstr ""
-
 msgid "Overview of the tricky passage"
 msgstr ""
 
@@ -102,21 +97,6 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-msgid "Global tiles syncing ..."
-msgstr ""
-
-msgid "Trek tiles syncing ..."
-msgstr ""
-
-msgid "Tiles synced ..."
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "Sync ended"
-msgstr ""
-
 msgid "Geotrek Rando"
 msgstr ""
 
@@ -132,6 +112,9 @@ msgid ""
 msgstr ""
 
 msgid "Merge"
+msgstr ""
+
+msgid "Action"
 msgstr ""
 
 msgid "Insertion date"
@@ -357,7 +340,10 @@ msgstr ""
 msgid "HD Views"
 msgstr ""
 
-msgid "Add a new HD view"
+msgid "Access mean"
+msgstr ""
+
+msgid "Access means"
 msgstr ""
 
 #, python-brace-format
@@ -464,16 +450,24 @@ msgid ""
 msgstr ""
 
 #, python-brace-format
+msgid ""
+"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj."
+"pk}: "
+msgstr ""
+
+#, python-brace-format
 msgid "Model {model}"
 msgstr ""
 
 msgid "Geotrek-admin"
 msgstr ""
 
-msgid "Import from web."
+#, python-brace-format
+msgid ""
+"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
 msgstr ""
 
-msgid "Init sync ..."
+msgid "Import from web."
 msgstr ""
 
 msgid "Photos to illustrate information related to the accessibility of treks."
@@ -539,9 +533,6 @@ msgstr ""
 msgid "Square"
 msgstr ""
 
-msgid "Ellipse"
-msgstr ""
-
 msgid "Circle"
 msgstr ""
 
@@ -575,15 +566,18 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-msgid "Action"
-msgstr ""
-
 msgid "Full history"
 msgstr ""
 
 msgid ""
 "Add very high resolution images that will be automatically tiled and add "
 "annotations on it (points, lines, polygons and text)"
+msgstr ""
+
+msgid "Add a new HD view"
+msgstr ""
+
+msgid "Details"
 msgstr ""
 
 msgid "You are not allowed to see HD views."
@@ -651,27 +645,6 @@ msgstr ""
 
 #, python-format
 msgid "%(obj)s has changed state, it needs a review to be published. "
-msgstr ""
-
-msgid "Sync verifications"
-msgstr ""
-
-msgid "Sync in progress"
-msgstr ""
-
-msgid "An error occured"
-msgstr ""
-
-msgid "Public web site sync"
-msgstr ""
-
-msgid "Confirmation"
-msgstr ""
-
-msgid "Are you sure you want to sync ?"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 #, python-format

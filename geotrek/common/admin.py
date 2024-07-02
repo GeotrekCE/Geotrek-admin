@@ -63,6 +63,9 @@ class AttachmentAdmin(admin.ModelAdmin):
         """ Do not add from Adminsite. """
         return False
 
+    @admin.display(
+        description=_('Linked content')
+    )
     def content_link(self, obj):
         """Returns content object link"""
         try:
@@ -73,8 +76,6 @@ class AttachmentAdmin(admin.ModelAdmin):
         else:
             return format_html('<a data-pk="{}" href="{}" >{}</a>',
                                obj.object_id, content_url, obj.object_id)
-
-    content_link.short_description = _('Linked content')
 
 
 class ThemeAdmin(MergeActionMixin, TabbedTranslationAdmin):
@@ -100,7 +101,7 @@ class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
 
 
 class LabelAdmin(TabbedTranslationAdmin):
-    list_display = ('pictogram_img', 'name', 'filter')
+    list_display = ('pictogram_img', 'name', 'filter', 'published')
     list_display_links = ('name',)
     search_fields = ('name', )
 
@@ -118,6 +119,9 @@ class HDViewPointAdmin(admin.ModelAdmin):
         """ Do not add from Adminsite. """
         return False
 
+    @admin.display(
+        description=_('Title')
+    )
     def update_link(self, obj):
         """Returns link to HD View"""
         return format_html(
@@ -125,6 +129,9 @@ class HDViewPointAdmin(admin.ModelAdmin):
             obj.pk, obj.full_url, obj.title
         )
 
+    @admin.display(
+        description=_('Related to')
+    )
     def related_object_link(self, obj):
         """Returns content object link"""
         content_url = obj.content_object.get_detail_url()
@@ -133,8 +140,12 @@ class HDViewPointAdmin(admin.ModelAdmin):
             obj.object_id, content_url, str(obj.content_object)
         )
 
-    related_object_link.short_description = _('Related to')
-    update_link.short_description = _('Title')
+
+class AccessAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('label',)
+    search_fields = ('label',)
+    list_filter = ('label',)
+    merge_field = "label"
 
 
 admin.site.register(common_models.Organism, OrganismAdmin)
@@ -147,3 +158,4 @@ admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
 admin.site.register(common_models.Label, LabelAdmin)
 admin.site.register(common_models.License, LicenseAdmin)
 admin.site.register(common_models.HDViewPoint, HDViewPointAdmin)
+admin.site.register(common_models.AccessMean, AccessAdmin)

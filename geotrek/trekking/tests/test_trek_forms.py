@@ -36,7 +36,8 @@ class TrekRatingFormTest(TestCase):
         form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.trek.ratings.all(), ['<Rating: RatingScale : Rating>'])
+        self.assertListEqual(list(self.trek.ratings.all().values_list('pk', flat=True)),
+                             [self.rating.pk])
 
     def test_no_rating_save(self):
         data = {
@@ -52,7 +53,7 @@ class TrekRatingFormTest(TestCase):
         form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
-        self.assertQuerysetEqual(self.trek.ratings.all(), [])
+        self.assertQuerySetEqual(self.trek.ratings.all(), [])
 
     def test_ratings_clean(self):
         other_rating = RatingFactory()

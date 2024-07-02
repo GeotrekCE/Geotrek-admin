@@ -391,7 +391,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
             self.kind = self.__class__.KIND
 
     @property
-    def paths(self):
+    def paths(self):    # noqa
         return Path.objects.filter(aggregations__topo_object=self)
 
     @classproperty

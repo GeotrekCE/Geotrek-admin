@@ -2,6 +2,14 @@
 Installation
 ============
 
+.. contents::
+   :local:
+   :depth: 2
+
+
+Ubuntu package
+~~~~~~~~~~~~~~
+
 Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Focal Fossa 20.04 LTS server for production.
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
@@ -10,17 +18,18 @@ Lastly, for a developer instance, please follow :ref:`the dedicated procedure <d
 Requirements
 ------------
 
-A first estimation of minimal required system resources are:
+Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersection)
+which are executed on the database. This is especially true in the setup with a Geotrek Rando v3 portal requesting
+dynamic geometric data through the Geotrek API.
 
-* 2 cores
-* 4 Go RAM
-* 20 Go disk space
-
-For big instances required system resources are:
+In such a configuration the required system resources should be:
 
 * 4 cores
 * 8 Go RAM or more
 * 50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
+
+If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
+database server level.
 
 Software requirements are :
 
@@ -84,7 +93,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
 
 Extra steps
-------------------------------------------
+-----------
 
 We highly recommend installing an antivirus software to regularly scan uploaded files located under ``/opt/geotrek-admin/var/media/``.
 
@@ -126,161 +135,6 @@ Make sure to change alert recepient (``admin@example.com`` above) and make this 
 If a suspicious file is put in quarantine, you will need to manually delete the corresponding attachment from Geotrek-Admin (since the file for this attachment has moved to the quarantine folder, it will no longer be found).
 
 
-Upgrade
--------
-
-From Geotrek-admin >= 2.33
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Beforehand you shoud update your system's catalog:
-
-::
-
-   sudo apt-get update
-
-If your current version is <= 2.40.1 you should run instead:
-
-::
-
-   sudo apt-get update  --allow-releaseinfo-change
-
-To display the installed version and the latest upgradeable version, run:
-
-::
-
-   apt list --all-versions geotrek-admin
-
-To upgrade only geotrek-admin and its dependencies, run:
-
-::
-
-   sudo apt-get install geotrek-admin
-
-To upgrade geotrek-admin to a **specific version**, run:
-
-::
-
-   sudo apt-get install geotrek-admin=<version>
-
-For instance:
-
-::
-
-   sudo apt-get install geotrek-admin=2.97.4.ubuntu18.04
-
-or
-
-::
-
-   sudo apt-get install geotrek-admin=2.98.0.ubuntu20.04
-
-**Note:** all package versions remain available. Even when not listed with ``apt list``.
-
-Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
-
-::
-
-   sudo apt-mark hold geotrek-admin
-
-
-From Geotrek-admin <= 2.32
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-First of all, make sure your current Geotrek-admin version works correctly.
-Especially, after an upgrade of the Ubuntu distribution, you will have to run ``./install.sh``
-before proceeding with Geotrek-admin upgrade.
-
-Then, go inside your existing Geotrek-admin installation directory and run the dedicated migration script:
-
-::
-
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/migrate.sh | bash
-
-
-Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
-
-.. note ::
-
-    Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory
-    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``
-    (with spatial extent, map and modules configuration...).
-
-    See advanced configuration documentation for details.
-
-    The ``etc/settings.ini`` file is replaced by basic configuration, updated with
-    ``sudo dpkg-reconfigure geotrek-admin`` command (database, SRID, languages, server_name, timeout...).
-
-    Update your imports, synchronization and backup commands and directories.
-
-
-From Geotrek-admin <= 2.69.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**WARNING!**
-
-Starting from version 2.70.0, Geotrek now needs PostgreSQL extension 'pgrypto'.
-
-Make sure to run the following command **BEFORE** upgrading:
-
-``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
-
-
-Server migration
-----------------
-
-It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version.
-
-Backup settings, media files and database on the old server:
-
-::
-
-    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
-
-Restore files on the new server:
-::
-
-    scp old_server_ip:path/to/data.tgz .
-    tar xvzf data.tgz
-
-
-Ubuntu bionic PostGIS 2.5 upgrade
----------------------------------
-
-Geotrek-admin requires at least PostGIS 2.5.
-
-If you installed Geotrek-admin on bionic ubuntu with provided install method, you should update your database :
-::
-
-    # Firstly, backup your database (see previous section)
-    # install postgresql APT repository
-    # (from https://wiki.postgresql.org/wiki/Apt)
-
-    sudo apt install curl ca-certificates gnupg
-    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-    sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-    sudo apt update
-
-    # install postgis 2.5 on postgresql 10
-    sudo apt install postgresql-10-postgis-2.5-scripts
-    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";  # replace geotrekdb by your database name
-
-    # You database is now using postgis 2.5 !
-
-    # Troubleshooting
-    # If you encounter error with last command to update postgis, just drop view v_projects and retry
-    # This view will be recreated after next Geotrek-admin upgrade or dpkg-reconfigure.
-    sudo -u postgres psql -d geotrekdb -c "DROP VIEW v_projects;";
-    sudo -u postgres psql -d geotrekdb -c "ALTER EXTENSION POSTGIS UPDATE";
-
-    # Warning, by using postgresql official apt repo, next apt upgrade or apt full-upgrade will install postgresql-9.6 and postgis 3 along your database, because postgis meta-package has changed
-    # If your are not using postgresql-9.6, you can remove it (bionic postgresql default version is 10)
-    # sudo apt remove postgresql-9.6
-
-If you use an external database, you should adapt this method along your system
-
-
-
 Uninstallation
 --------------
 
@@ -302,6 +156,45 @@ To remove dependencies (convertit, screamshooter…), run:
 
    apt-get autoremove
 
-.. note ::
+.. note::
 
     PostgreSQL and its database will not be removed by these commands. If need be, remove them manually.
+
+
+
+.. _docker-section:
+
+Docker
+~~~~~~
+
+Docker is an alternative installation method, recommended for experts only.
+It allows to install several instances of Geotrek-admin on the same serveur,
+and to install it on other distributions than Ubuntu Linux 18.04.
+
+
+1. Install Docker and Docker Compose, either from your distribution or from upstream packages
+   (cf. https://docs.docker.com/install/)
+2. Download the code from https://github.com/GeotrekCE/Geotrek-admin/releases
+   or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/
+3. Unzip the tarball
+4. Copy docker/install folder where you want
+5. Edit ``docker-compose.yml`` to feed your needs if necessary
+6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary
+7. Create user and database, enable PostGIS extension
+8. Run ``docker compose run --rm web update.sh``
+9. Run ``docker compose up``
+10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
+
+Management commands
+-------------------
+
+Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker compose run --rm web ./manage.py …``
+
+Replace ``sudo dpkg-reconfigure geotrek-admin`` by ``cd <install directory>; docker compose run --rm web update.sh``
+
+To load minimal data and create an application superuser, run:
+
+::
+
+   docker compose run --rm web load_data.sh
+   docker compose run --rm web ./manage.py createsuperuser

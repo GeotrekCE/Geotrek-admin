@@ -128,7 +128,8 @@ class SuricateParser(SuricateGestionRequestManager):
                 "problem_magnitude": rep_magnitude,
                 "created_in_suricate": rep_creation,
                 "last_updated_in_suricate": rep_updated,
-                "eid": str(report["shortkeylink"])
+                "eid": str(report["shortkeylink"]),
+                "provider": "Suricate"
             }
 
             if should_update_status:

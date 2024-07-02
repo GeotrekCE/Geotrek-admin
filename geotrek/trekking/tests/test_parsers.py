@@ -7,6 +7,7 @@ from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
 from urllib.parse import urlparse
+from shutil import copy as copyfile
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
@@ -16,6 +17,7 @@ from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
 from geotrek.common.utils import testdata
+from geotrek.common.utils.file_infos import get_encoding_file
 from geotrek.common.models import Theme, FileType, Attachment, Label
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.core.tests.factories import PathFactory
@@ -142,7 +144,7 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.name, "Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
-        self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
+        self.assertListEqual(list(trek.themes.all().values_list('pk', flat=True)), [t.pk for t in self.themes])
         self.assertEqual(WKTWriter(precision=4).write(trek.geom), WKT)
 
 
@@ -203,7 +205,8 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
         'networks': {'create': True},
         'geom': {'required': True},
         'labels': {'create': True},
-        'source': {'create': True}
+        'source': {'create': True},
+        'structure': {'create': True, }
     }
 
 
@@ -221,6 +224,7 @@ class TestGeotrekPOIParser(GeotrekPOIParser):
 
     field_options = {
         'type': {'create': True, },
+        'structure': {'create': True, },
         'geom': {'required': True},
     }
 
@@ -230,6 +234,7 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
 
     field_options = {
         'type': {'create': True, },
+        'structure': {'create': True, },
         'geom': {'required': True},
     }
 
@@ -237,7 +242,6 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
-    app_label = 'trekking'
 
     @classmethod
     def setUpTestData(cls):
@@ -247,9 +251,19 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                                'trek.json', 'trek_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -262,13 +276,21 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         trek = Trek.objects.all().first()
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
         self.assertEqual(trek.name_it, "Foo bar")
+        self.assertEqual(trek.name_es, "Boucle du Pic des Trois Seigneurs")
+        self.assertEqual(trek.published, True)
+        self.assertEqual(trek.published_fr, True)
+        self.assertEqual(trek.published_en, True)
+        self.assertEqual(trek.published_it, False)
+        self.assertEqual(trek.published_es, False)
         self.assertEqual(str(trek.difficulty), 'Très facile')
+        self.assertEqual(str(trek.structure), 'Struct1')
         self.assertEqual(str(trek.practice), 'Cheval')
         self.assertAlmostEqual(trek.geom[0][0], 569946.9850365581, places=5)
         self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.source.first().name, "Une source numero 2")
+        self.assertEqual(trek.source.first().website, "https://www.ecrins-parcnational.fr")
         self.assertEqual(trek.labels.first().name, "Chien autorisé")
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
         self.assertEqual(Attachment.objects.get(object_id=trek.pk, license__isnull=False).license.label, "License")
@@ -277,9 +299,20 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create_multiple_page(self, mocked_head, mocked_get):
         class MockResponse:
-            mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                               'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                               'trek.json', 'trek_children.json', 'trek_children.json']
+            mock_json_order = [('trekking', 'structure.json'),
+                               ('trekking', 'trek_difficulty.json'),
+                               ('trekking', 'trek_route.json'),
+                               ('trekking', 'trek_theme.json'),
+                               ('trekking', 'trek_practice.json'),
+                               ('trekking', 'trek_accessibility.json'),
+                               ('trekking', 'trek_network.json'),
+                               ('trekking', 'trek_label.json'),
+                               ('trekking', 'sources.json'),
+                               ('trekking', 'sources.json'),
+                               ('trekking', 'trek_ids.json'),
+                               ('trekking', 'trek.json'),
+                               ('trekking', 'trek_children.json'),
+                               ('trekking', 'trek_children.json')]
             mock_time = 0
             total_mock_response = 1
 
@@ -287,8 +320,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                 self.status_code = status_code
 
             def json(self):
-                filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                        self.mock_json_order[self.mock_time])
+                filename = os.path.join('geotrek', self.mock_json_order[self.mock_time][0], 'tests', 'data',
+                                        'geotrek_parser_v2', self.mock_json_order[self.mock_time][1])
                 with open(filename, 'r') as f:
                     data_json = json.load(f)
                     if self.mock_json_order[self.mock_time] == 'trek.json':
@@ -327,9 +360,19 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create_attachment_max_size(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                                'trek.json', 'trek_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -346,9 +389,19 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     def test_update_attachment(self, mocked_head, mocked_get):
 
         class MockResponse:
-            mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                               'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                               'trek.json', 'trek_children.json', ]
+            mock_json_order = [('trekking', 'structure.json'),
+                               ('trekking', 'trek_difficulty.json'),
+                               ('trekking', 'trek_route.json'),
+                               ('trekking', 'trek_theme.json'),
+                               ('trekking', 'trek_practice.json'),
+                               ('trekking', 'trek_accessibility.json'),
+                               ('trekking', 'trek_network.json'),
+                               ('trekking', 'trek_label.json'),
+                               ('trekking', 'sources.json'),
+                               ('trekking', 'sources.json'),
+                               ('trekking', 'trek_ids.json'),
+                               ('trekking', 'trek.json'),
+                               ('trekking', 'trek_children.json')]
             mock_time = 0
             a = 0
 
@@ -358,8 +411,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             def json(self):
                 if len(self.mock_json_order) <= self.mock_time:
                     self.mock_time = 0
-                filename = os.path.join(os.path.dirname(__file__), 'data', 'geotrek_parser_v2',
-                                        self.mock_json_order[self.mock_time])
+                filename = os.path.join('geotrek', self.mock_json_order[self.mock_time][0], 'tests', 'data',
+                                        'geotrek_parser_v2', self.mock_json_order[self.mock_time][1])
 
                 self.mock_time += 1
                 with open(filename, 'r') as f:
@@ -380,25 +433,55 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Trek.objects.count(), 5)
         trek = Trek.objects.all().first()
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
-        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'11')
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'15')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 5)
         trek.refresh_from_db()
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
-        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'13')
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b'25')
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create_multiple_fr(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json', 'trek.json',
-                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
-                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json',
-                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
-                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json',
-                                'trek_ids_2.json', 'trek_2_after.json', 'trek_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children.json'),
+                                ('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids_2.json'),
+                                ('trekking', 'trek_2.json'),
+                                ('trekking', 'trek_children.json'),
+                                ('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids_2.json'),
+                                ('trekking', 'trek_2_after.json'),
+                                ('trekking', 'trek_children.json'), ]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -424,9 +507,14 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         trek = Trek.objects.get(name_fr="Étangs du Picot")
         self.assertEqual(trek.description_teaser_fr, "Chapeau")
         self.assertEqual(trek.description_teaser_it, "Cappello")
-        self.assertEqual(trek.description_teaser_es, "Sombrero")
+        self.assertEqual(trek.description_teaser_es, "Chapeau")
         self.assertEqual(trek.description_teaser_en, "Cap")
         self.assertEqual(trek.description_teaser, "Chapeau")
+        self.assertEqual(trek.published, True)
+        self.assertEqual(trek.published_fr, True)
+        self.assertEqual(trek.published_en, False)
+        self.assertEqual(trek.published_it, False)
+        self.assertEqual(trek.published_es, False)
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
         trek.refresh_from_db()
         self.assertEqual(Trek.objects.count(), 6)
@@ -435,19 +523,54 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.description_teaser_es, "Sombrero 2")
         self.assertEqual(trek.description_teaser_en, "Cap 2")
         self.assertEqual(trek.description_teaser, "Chapeau 2")
+        self.assertEqual(trek.published, True)
+        self.assertEqual(trek.published_fr, True)
+        self.assertEqual(trek.published_en, False)
+        self.assertEqual(trek.published_it, False)
+        self.assertEqual(trek.published_es, False)
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
     def test_create_multiple_en(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json', 'trek.json',
-                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
-                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json',
-                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
-                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json',
-                                'trek_ids_2.json', 'trek_2_after.json', 'trek_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children.json'),
+                                ('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids_2.json'),
+                                ('trekking', 'trek_2.json'),
+                                ('trekking', 'trek_children.json'),
+                                ('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids_2.json'),
+                                ('trekking', 'trek_2_after.json'),
+                                ('trekking', 'trek_children.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -474,9 +597,14 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         trek = Trek.objects.get(name_fr="Étangs du Picot")
         self.assertEqual(trek.description_teaser_fr, "Chapeau")
         self.assertEqual(trek.description_teaser_it, "Cappello")
-        self.assertEqual(trek.description_teaser_es, "Sombrero")
+        self.assertEqual(trek.description_teaser_es, "Cap")
         self.assertEqual(trek.description_teaser_en, "Cap")
         self.assertEqual(trek.description_teaser, "Cap")
+        self.assertEqual(trek.published, False)
+        self.assertEqual(trek.published_fr, True)
+        self.assertEqual(trek.published_en, False)
+        self.assertEqual(trek.published_it, False)
+        self.assertEqual(trek.published_es, False)
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrek2TrekParser', verbosity=0)
         trek.refresh_from_db()
         self.assertEqual(Trek.objects.count(), 6)
@@ -485,14 +613,29 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.description_teaser_es, "Sombrero 2")
         self.assertEqual(trek.description_teaser_en, "Cap 2")
         self.assertEqual(trek.description_teaser, "Cap 2")
+        self.assertEqual(trek.published, False)
+        self.assertEqual(trek.published_fr, True)
+        self.assertEqual(trek.published_en, False)
+        self.assertEqual(trek.published_it, False)
+        self.assertEqual(trek.published_es, False)
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     def test_children_do_not_exist(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                                'trek.json', 'trek_children_do_not_exist.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children_do_not_exist.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -509,9 +652,19 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_wrong_children_error(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json',
-                                'trek.json', 'trek_wrong_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_wrong_children.json'), ]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -529,11 +682,32 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_updated(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['trek_difficulty.json', 'trek_route.json', 'trek_theme.json', 'trek_practice.json',
-                                'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json', 'trek_ids.json', 'trek.json',
-                                'trek_children.json', 'trek_difficulty.json', 'trek_route.json', 'trek_theme.json',
-                                'trek_practice.json', 'trek_accessibility.json', 'trek_network.json', 'trek_label.json', 'sources.json',
-                                'trek_ids_2.json', 'trek_2.json', 'trek_children.json', ]
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids.json'),
+                                ('trekking', 'trek.json'),
+                                ('trekking', 'trek_children.json'),
+                                ('trekking', 'structure.json'),
+                                ('trekking', 'trek_difficulty.json'),
+                                ('trekking', 'trek_route.json'),
+                                ('trekking', 'trek_theme.json'),
+                                ('trekking', 'trek_practice.json'),
+                                ('trekking', 'trek_accessibility.json'),
+                                ('trekking', 'trek_network.json'),
+                                ('trekking', 'trek_label.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'sources.json'),
+                                ('trekking', 'trek_ids_2.json'),
+                                ('trekking', 'trek_2.json'),
+                                ('trekking', 'trek_children.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -574,7 +748,10 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['poi_type.json', 'poi_ids.json', 'poi.json']
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'poi_type.json'),
+                                ('trekking', 'poi_ids.json'),
+                                ('trekking', 'poi.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -589,6 +766,14 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(poi.name_fr, "Pic des Trois Seigneurs")
         self.assertEqual(poi.name_en, "Peak of the Three Lords")
         self.assertEqual(poi.name_it, "Picco dei Tre Signori")
+        self.assertEqual(poi.name_es, "Peak of the Three Lords")
+        self.assertEqual(poi.name_es, "Peak of the Three Lords")
+        self.assertEqual(poi.published, False)
+        self.assertEqual(poi.published_fr, True)
+        self.assertEqual(poi.published_en, False)
+        self.assertEqual(poi.published_it, False)
+        self.assertEqual(poi.published_es, False)
+        self.assertEqual(str(poi.structure), "Struct3")
         self.assertEqual(str(poi.type), 'Peak')
         self.assertAlmostEqual(poi.geom.x, 572298.7056448072, places=5)
         self.assertAlmostEqual(poi.geom.y, 6193580.839504813, places=5)
@@ -607,7 +792,10 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = ['service_type.json', 'service_ids.json', 'service.json']
+        self.mock_json_order = [('trekking', 'structure.json'),
+                                ('trekking', 'service_type.json'),
+                                ('trekking', 'service_ids.json'),
+                                ('trekking', 'service.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -619,6 +807,7 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Service.objects.count(), 2)
         service = Service.objects.all().first()
         self.assertEqual(str(service.type), 'Eau potable')
+        self.assertEqual(str(service.structure), 'Struct3')
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
         self.assertAlmostEqual(service.geom.y, 6192330.15779677, places=5)
 
@@ -748,6 +937,7 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(len(trek.source.all()), 1)
         self.assertEqual(trek.source.first().name, 'Office de tourisme de Sallanches')
         self.assertEqual(trek.source.first().website, 'https://www.example.net/ot-sallanches')
+        self.assertEqual(trek.structure.name, 'Office de tourisme de Sallanches')
 
         self.assertTrue(trek.difficulty is not None)
         self.assertEqual(trek.difficulty.difficulty_en, 'Level red – hard')
@@ -992,6 +1182,38 @@ class ApidaeTrekParserTests(TestCase):
         mocked_get.side_effect = self.make_dummy_get('trek_with_not_complete_illustration.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
         self.assertEqual(Attachment.objects.count(), 0)
+
+
+class TestApidaeTrekParserConvertEncodingFiles(TestCase):
+    data_dir = "geotrek/trekking/tests/data"
+
+    def setUp(self):
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+
+    def test_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_bad_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_bad_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertNotEqual(encoding, "utf-8")
+
+        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
+
+    def test_not_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_good_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_good_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertEqual(encoding, "utf-8")
+
+        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
 
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):

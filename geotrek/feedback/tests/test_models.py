@@ -12,9 +12,8 @@ from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
-from django.utils import timezone, translation
+from django.utils import timezone
 from freezegun.api import freeze_time
-from mapentity.middleware import clear_internal_user_cache
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek import __version__
@@ -49,13 +48,11 @@ class TestFeedbackModel(TestCase):
         cls.report = ReportFactory(email="mail@mail.fr", eid=666)
 
     def test_get_display_name(self):
-        translation.activate('en')
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
         self.assertEqual(self.report.name_display, s)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_get_display_name_suricate(self):
-        translation.activate('en')
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.eid}\">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
 
@@ -83,15 +80,14 @@ class TestTimerEventClass(SuricateWorkflowTests):
     def test_notification_dates_waiting(self):
         event = TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.deadline, event.date_event + timedelta(days=6))
+        self.assertEqual(event.deadline, event.date_event + timedelta(days=6))
 
     def test_notification_dates_programmed(self):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.deadline, event.date_event + timedelta(days=7))
+        self.assertEqual(event.deadline, event.date_event + timedelta(days=7))
         obj_repr = str(self.programmed_report)
         report_pk = self.programmed_report.pk
-        clear_internal_user_cache()
         self.programmed_report.delete(force=True)
         model_num = ContentType.objects.get_for_model(TimerEvent).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=event.pk)
@@ -115,7 +111,6 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.assertEqual(self.waiting_report.status, self.late_intervention_status)
 
     def test_cascading_deletion(self):
-        clear_internal_user_cache()
         ContentType.objects.clear_cache()
         status = ReportStatusFactory(timer_days=3)
         report = ReportFactory(uses_timers=True)
@@ -262,24 +257,24 @@ class TestPendingAPIRequests(SuricateTests):
         # Report lock fails the first time
         self.build_timeout_request_patch(mocked)
         self.assertRaises(Exception, report.lock_in_suricate())
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_lock_report = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_lock_report.request_type, "GET")
-        self.assertEquals(pending_lock_report.api, "MAN")
-        self.assertEquals(pending_lock_report.endpoint, "wsLockAlert")
-        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_external_uuid)}))
-        self.assertEquals(pending_lock_report.retries, 0)
-        self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_lock_report.request_type, "GET")
+        self.assertEqual(pending_lock_report.api, "MAN")
+        self.assertEqual(pending_lock_report.endpoint, "wsLockAlert")
+        self.assertEqual(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_external_uuid)}))
+        self.assertEqual(pending_lock_report.retries, 0)
+        self.assertEqual(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report lock fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_lock_report.refresh_from_db()
-        self.assertEquals(pending_lock_report.retries, 1)
-        self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_lock_report.retries, 1)
+        self.assertEqual(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Lock succeeds at second retry
         self.build_get_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -294,11 +289,11 @@ class TestPendingAPIRequests(SuricateTests):
                 assigned_user=self.user
             )
         )
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post_report = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_post_report.request_type, "POST")
-        self.assertEquals(pending_post_report.api, "STA")
-        self.assertEquals(pending_post_report.endpoint, "wsSendReport")
+        self.assertEqual(pending_post_report.request_type, "POST")
+        self.assertEqual(pending_post_report.api, "STA")
+        self.assertEqual(pending_post_report.endpoint, "wsSendReport")
         check = md5(
             (SuricateMessenger().standard_manager.PRIVATE_KEY_CLIENT_SERVER + 'john.doe@nowhere.com').encode()
         ).hexdigest()
@@ -317,18 +312,18 @@ class TestPendingAPIRequests(SuricateTests):
             'os': 'linux',
             'version': f"{__version__}"
         })
-        self.assertEquals(pending_post_report.params, params)
-        self.assertEquals(pending_post_report.retries, 0)
-        self.assertEquals(pending_post_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_post_report.params, params)
+        self.assertEqual(pending_post_report.retries, 0)
+        self.assertEqual(pending_post_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report sent fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post_report.refresh_from_db()
-        self.assertEquals(pending_post_report.retries, 1)
+        self.assertEqual(pending_post_report.retries, 1)
         # Report sent succeeds at second retry
         self.build_post_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -344,13 +339,13 @@ class TestPendingAPIRequests(SuricateTests):
             Exception,
             messenger.update_status(uid, self.status_waiting.identifier, "a nice and polite message", "a brief message")
         )
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         report.refresh_from_db()
-        self.assertEquals(1, report.sync_errors)
+        self.assertEqual(1, report.sync_errors)
         pending_post = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_post.request_type, "POST")
-        self.assertEquals(pending_post.api, "MAN")
-        self.assertEquals(pending_post.endpoint, "wsUpdateStatus")
+        self.assertEqual(pending_post.request_type, "POST")
+        self.assertEqual(pending_post.api, "MAN")
+        self.assertEqual(pending_post.endpoint, "wsUpdateStatus")
         check = md5(
             (messenger.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + messenger.gestion_manager.ID_ORIGIN + str(uid)).encode()
         ).hexdigest()
@@ -363,21 +358,21 @@ class TestPendingAPIRequests(SuricateTests):
             "check": check,
             "uid_alerte": str(uid)
         })
-        self.assertEquals(pending_post.params, params)
-        self.assertEquals(pending_post.retries, 0)
-        self.assertEquals(pending_post.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_post.params, params)
+        self.assertEqual(pending_post.retries, 0)
+        self.assertEqual(pending_post.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report sent fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post.refresh_from_db()
-        self.assertEquals(pending_post.retries, 1)
-        self.assertEquals(1, report.sync_errors)
+        self.assertEqual(pending_post.retries, 1)
+        self.assertEqual(1, report.sync_errors)
         # Report sent succeeds at second retry
         self.build_post_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
         report.refresh_from_db()
-        self.assertEquals(0, report.sync_errors)
+        self.assertEqual(0, report.sync_errors)
         # Special case
         # "waiting" status from suricate API does not override internal statuses on sync_suricate
         # therefore, we need to manually set report status to waiting here if this is the call that failed

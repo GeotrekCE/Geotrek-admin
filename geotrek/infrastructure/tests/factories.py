@@ -1,7 +1,7 @@
 import factory
 
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
+from geotrek.core.tests.factories import PointTopologyFactory, TopologyFactory
 
 from .. import models
 
@@ -28,13 +28,6 @@ class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
         model = models.InfrastructureCondition
 
     label = factory.Sequence(lambda n: "Condition %s" % n)
-
-
-class InfrastructureAccessMeanFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.InfrastructureAccessMean
-
-    label = factory.Sequence(lambda n: "Acces mean %s" % n)
 
 
 class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):

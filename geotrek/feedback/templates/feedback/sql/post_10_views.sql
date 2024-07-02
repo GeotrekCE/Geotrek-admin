@@ -17,21 +17,24 @@ SELECT a.id,
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
        a.comment AS "Comment",
+       a.provider AS "Provider",
        a.geom
 FROM public.feedback_report a
 LEFT JOIN public.feedback_reportactivity b ON a.activity_id = b.id
 LEFT JOIN public.feedback_reportcategory c ON a.category_id = c.id
 LEFT JOIN public.feedback_reportstatus d ON a.status_id = d.id
 LEFT JOIN public.feedback_reportproblemmagnitude e ON a.problem_magnitude_id = e.id
-LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM       feedback_report a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM            feedback_report a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 WHERE deleted IS FALSE 
 ;

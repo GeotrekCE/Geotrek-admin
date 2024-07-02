@@ -20,7 +20,8 @@ from mapentity.helpers import clone_attachment
 from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins.models import (GeotrekMapEntityMixin,
+from geotrek.common.mixins.models import (BasePublishableMixin,
+                                          GeotrekMapEntityMixin,
                                           OptionalPictogramMixin,
                                           PictogramMixin, PicturesMixin,
                                           PublishableMixin,
@@ -36,8 +37,7 @@ from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking.managers import (POIManager, ServiceManager, TrekManager,
-                                       TrekOrderedChildManager,
-                                       TrekRelationshipManager, WebLinkManager)
+                                       TrekOrderedChildManager, WebLinkManager)
 
 logger = logging.getLogger(__name__)
 
@@ -83,10 +83,6 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     @property
     def slug(self):
         return slugify(self.name) or str(self.pk)
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class RatingScale(RatingScaleMixin):
@@ -193,10 +189,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                    blank=True, null=True, verbose_name=_("Difficulty"))
     web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
-    related_treks = models.ManyToManyField('self', through='TrekRelationship',
-                                           verbose_name=_("Related treks"), symmetrical=False,
-                                           help_text=_("Connections between treks"),
-                                           related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                blank=True, verbose_name=_("Information desks"),
                                                help_text=_("Where to obtain information"))
@@ -239,11 +231,9 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def get_map_image_url(self):
         return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
-    def get_map_image_path(self):
-        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
-        if not os.path.exists(basefolder):
-            os.makedirs(basefolder)
-        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
+    def get_map_image_path(self, language=None):
+        lang = language or get_language()
+        return os.path.join('maps', '%s-%s-%s.png' % (self._meta.model_name, self.pk, lang))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
         extent = list(super().get_map_image_extent(srid))
@@ -267,23 +257,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
             extent[2] = max(extent[2], poi.geom.x)
             extent[3] = max(extent[3], poi.geom.y)
         return extent
-
-    @property
-    def related(self):
-        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
-
-    @classproperty
-    def related_verbose_name(cls):
-        return _("Related treks")
-
-    @property
-    def relationships(self):
-        # Does not matter if a or b
-        return TrekRelationship.objects.filter(trek_a=self)
-
-    @property
-    def published_relationships(self):
-        return self.relationships.filter(trek_b__published=True)
 
     @property
     def poi_types(self):
@@ -395,11 +368,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def tourism_treks(cls, tourism_object, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
-    # Rando v1 compat
-    @property
-    def usages(self):
-        return [self.practice] if self.practice else []
-
     @classmethod
     def get_create_label(cls):
         return _("Add a new trek")
@@ -459,17 +427,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         """
         Custom model validation
         """
-        if self.pk in self.trek_children.values_list('child__id', flat=True):
+        if self.pk and self.pk in self.trek_children.values_list('child__id', flat=True):
             raise ValidationError(_("Cannot use itself as child trek."))
-
-    @property
-    def prefixed_category_id(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
-            return 'I'
-        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            return self.practice.prefixed_id
-        else:
-            return Practice.id_prefix
 
     def distance(self, to_cls):
         if self.practice and self.practice.distance is not None:
@@ -522,20 +481,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return ','.join([str(source) for source in self.source.all()])
 
     @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
-
-    @property
-    def rando_url(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            category_slug = self.practice.slug
-        else:
-            category_slug = _('trek')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
         maplayers = [
@@ -577,42 +528,6 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
 
 
-class TrekRelationship(models.Model):
-    """
-    Relationships between treks : symmetrical aspect is managed by a trigger that
-    duplicates all couples (trek_a, trek_b)
-    """
-    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), default=False)
-    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), default=False)
-    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), default=False)
-
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", on_delete=models.CASCADE)
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"), on_delete=models.CASCADE)
-
-    objects = TrekRelationshipManager()
-
-    class Meta:
-        verbose_name = _("Trek relationship")
-        verbose_name_plural = _("Trek relationships")
-        unique_together = ('trek_a', 'trek_b')
-
-    def __str__(self):
-        return "%s <--> %s" % (self.trek_a, self.trek_b)
-
-    @property
-    def relation(self):
-        return "%s %s%s%s" % (
-            self.trek_b.name_display,
-            _("Departure") if self.has_common_departure else '',
-            _("Path") if self.has_common_edge else '',
-            _("Circuit") if self.is_circuit_step else ''
-        )
-
-    @property
-    def relation_display(self):
-        return self.relation
-
-
 class TrekNetwork(TimeStampedModelMixin, PictogramMixin):
     network = models.CharField(verbose_name=_("Name"), max_length=128)
 
@@ -638,10 +553,6 @@ class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
     @property
     def slug(self):
@@ -862,7 +773,9 @@ class POIType(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
+class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128,
+                            help_text=_("Public name (Change carefully)"))
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -904,8 +817,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
                                                              self.name)
         if self.type.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        elif self.type.review:
-            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @classproperty

@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 from mapentity.forms import MapEntityForm, SubmitButton
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.authent.models import (StructureOrNoneRelated, StructureRelated,
                                     default_structure)
@@ -196,7 +197,7 @@ class CommonForm(MapEntityForm):
     @property
     def any_published(self):
         """Check if form has published in at least one of the language"""
-        return any([self.cleaned_data.get(f'published_{language[0]}', False)
+        return any([self.cleaned_data.get(build_localized_fieldname('published', language[0]), False)
                     for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']])
 
     @property
@@ -205,7 +206,7 @@ class CommonForm(MapEntityForm):
         """
         languages = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
-            return [language for language in languages if self.cleaned_data.get(f'published_{language}', None)]
+            return [language for language in languages if self.cleaned_data.get(build_localized_fieldname('published', language), None)]
         else:
             if self.any_published:
                 return languages
@@ -237,12 +238,12 @@ class CommonForm(MapEntityForm):
             if field_required in translated_fields:
                 if self.cleaned_data.get('review') and settings.COMPLETENESS_LEVEL == 'error_on_review':
                     # get field for first language only
-                    field_required_lang = f"{field_required}_{settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0]}"
+                    field_required_lang = build_localized_fieldname(field_required, settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'][0][0])
                     missing_fields.append(field_required_lang)
                     self.add_error(field_required_lang, msg)
                 else:
                     for language in self.published_languages:
-                        field_required_lang = f'{field_required}_{language}'
+                        field_required_lang = build_localized_fieldname(field_required, language)
                         if not self.cleaned_data.get(field_required_lang):
                             missing_fields.append(field_required_lang)
                             self.add_error(field_required_lang, msg)
@@ -364,27 +365,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         )
 
 
-class SyncRandoForm(forms.Form):
-    """
-    Sync Rando View Form
-    """
-
-    @property
-    def helper(self):
-        helper = FormHelper()
-        helper.form_id = 'form-sync'
-        helper.form_action = reverse('common:sync_randos')
-        helper.form_class = 'search'
-        # submit button with boostrap attributes, disabled by default
-        helper.add_input(Button('sync-web', _("Launch Sync"),
-                                css_class="btn-primary",
-                                **{'data-toggle': "modal",
-                                   'data-target': "#confirm-submit",
-                                   'disabled': 'disabled'}))
-
-        return helper
-
-
 class AttachmentAccessibilityForm(forms.ModelForm):
     next = forms.CharField(widget=forms.HiddenInput())
 
@@ -416,7 +396,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        _('Submit attachment'),
                        css_class="btn-primary")
             ]
-            self.form_url = reverse('add_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:add_attachment_accessibility', kwargs={
                 'app_label': self._object._meta.app_label,
                 'model_name': self._object._meta.model_name,
                 'pk': self._object.pk
@@ -429,7 +409,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
                        css_class="btn-primary")
             ]
             self.fields['title'].widget.attrs['readonly'] = True
-            self.form_url = reverse('update_attachment_accessibility', kwargs={
+            self.form_url = reverse('common:update_attachment_accessibility', kwargs={
                 'attachment_pk': self.instance.pk
             })
 

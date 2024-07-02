@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 11:17+0100\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -59,9 +59,6 @@ msgstr "Avancé"
 
 msgid "Accessibility"
 msgstr "Accessibilité"
-
-msgid "Related treks"
-msgstr "Itinéraires liés"
 
 msgid "Insert service:"
 msgstr "Insérer un service :"
@@ -303,9 +300,6 @@ msgstr "Liens web"
 msgid "External resources"
 msgstr "Ressources externes"
 
-msgid "Connections between treks"
-msgstr "Liens entre les itinéraires"
-
 msgid "Information desks"
 msgstr "Lieux de renseignement"
 
@@ -351,10 +345,6 @@ msgstr "Ajouter un itinéraire"
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itineraire"
-
 msgid "Sensitive area"
 msgstr "Zone de sensibilité"
 
@@ -372,27 +362,6 @@ msgstr "Aménagements"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
-
-msgid "Common departure"
-msgstr "Départ en commun"
-
-msgid "Common edge"
-msgstr "Tronçon commun"
-
-msgid "Circuit step"
-msgstr "Étape de circuit"
-
-msgid "Trek relationship"
-msgstr "Réseaux randonnée"
-
-msgid "Trek relationships"
-msgstr "Liens entre itinéraires"
-
-msgid "Path"
-msgstr "Tronçons"
-
-msgid "Circuit"
-msgstr "Circuit"
 
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
@@ -463,6 +432,9 @@ msgstr "Type de POI"
 msgid "POI types"
 msgstr "Types de POI"
 
+msgid "Public name (Change carefully)"
+msgstr ""
+
 msgid "Service type"
 msgstr "Type de service"
 
@@ -474,9 +446,6 @@ msgstr "Service"
 
 msgid "Published"
 msgstr "Publié"
-
-msgid "Waiting for publication"
-msgstr "En attente de publication"
 
 msgid "Published Services"
 msgstr "Services publiés"
@@ -538,17 +507,9 @@ msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
 
 msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
-msgstr "La géométrie ne peut pas être convertie en une unique feature continue de type LineString"
-
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itinerance"
-
-msgid "Itinerancy"
-msgstr "Itinérance"
-
-msgid "Hike"
-msgstr "Randonnée"
+msgstr ""
+"La géométrie ne peut pas être convertie en une unique feature continue de "
+"type LineString"
 
 msgid "Attached files"
 msgstr ""
@@ -599,11 +560,8 @@ msgstr "Impr. livret"
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
 
-msgid "yes"
-msgstr "oui"
-
-msgid "no"
-msgstr "non"
+msgid "Itinerancy"
+msgstr "Itinérance"
 
 msgid "Child of:"
 msgstr "Enfant de:"
@@ -735,9 +693,6 @@ msgstr "Ajouter un POI"
 
 msgid "Add a new service"
 msgstr "Ajouter un service"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

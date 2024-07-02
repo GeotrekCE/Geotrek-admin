@@ -1,14 +1,18 @@
-from django.utils.translation import gettext_lazy as _
-
-from django_filters.filters import ModelMultipleChoiceFilter, ChoiceFilter
 import django_filters.rest_framework
-from django.db.models import Q
-from geotrek.authent.filters import StructureRelatedFilterSet
 from django import forms
 from django.utils.datetime_safe import datetime
+from django.utils.translation import gettext_lazy as _
+from django_filters.filters import ChoiceFilter, ModelMultipleChoiceFilter
 
-from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
+from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
+
+from .models import (
+    TouristicContent,
+    TouristicContentType1,
+    TouristicContentType2,
+    TouristicEvent,
+)
 
 
 class TypeField(forms.ModelMultipleChoiceField):
@@ -27,7 +31,7 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=TouristicContent.objects.provider_choices()
+        choices=lambda: TouristicContent.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -37,20 +41,6 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             'approved', 'source', 'portal', 'reservation_system',
             'provider'
         ]
-
-
-class AfterFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(end_date__gte=value)
-
-
-class BeforeFilter(django_filters.DateFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(begin_date__lte=value)
 
 
 class CompletedFilter(django_filters.BooleanFilter):
@@ -76,14 +66,14 @@ class CompletedFilter(django_filters.BooleanFilter):
 
 
 class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    after = AfterFilter(label=_("After"))
-    before = BeforeFilter(label=_("Before"))
+    after = django_filters.DateFilter(label=_("After"), lookup_expr='gte', field_name='end_date')
+    before = django_filters.DateFilter(label=_("Before"), lookup_expr='lte', field_name='begin_date')
     completed = CompletedFilter(label=_("Completed"))
     provider = ChoiceFilter(
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=TouristicEvent.objects.provider_choices()
+        choices=lambda: TouristicEvent.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -93,18 +83,3 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
             'before', 'approved', 'source', 'portal', 'provider',
             'bookable', 'cancelled', 'place'
         ]
-
-
-class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
-    ends_after = django_filters.DateFilter(method='events_end_after')
-
-    class Meta:
-        model = TouristicEvent
-        fields = ('ends_after', )
-
-    def events_end_after(self, queryset, name, value):
-        if not value:
-            return queryset
-        return queryset.filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=value)
-        )

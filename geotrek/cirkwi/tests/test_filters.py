@@ -2,13 +2,11 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
-from geotrek.common.tests.factories import TargetPortalFactory
-
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.core.tests.factories import PathFactory
-
-from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 from geotrek.cirkwi.filters import CirkwiPOIFilterSet, CirkwiTrekFilterSet
+from geotrek.common.tests.factories import TargetPortalFactory
+from geotrek.core.tests.factories import PathFactory
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 
 
 class CirkwiFilterTest(TestCase):
@@ -45,6 +43,19 @@ class CirkwiFilterTest(TestCase):
         self.assertEqual(qs.count(), 1)
         qs = CirkwiTrekFilterSet(data={"portals": 'a'}).qs
         self.assertEqual(qs.count(), 1)
+
+    def test_treks_include_externals(self):
+        self.trek.eid = "test_eid"
+        self.trek.save()
+        # Treks with eid are not excluded by default
+        qs = CirkwiTrekFilterSet().qs
+        self.assertEqual(qs.count(), 1)
+        # Treks with eid are not excluded
+        qs = CirkwiTrekFilterSet(data={"include_externals": "true"}).qs
+        self.assertEqual(qs.count(), 1)
+        # Treks with eid are excluded
+        qs = CirkwiTrekFilterSet(data={"include_externals": "false"}).qs
+        self.assertEqual(qs.count(), 0)
 
     def test_poi_filters_structures(self):
         other_structure = StructureFactory.create()

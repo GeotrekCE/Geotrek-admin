@@ -177,7 +177,7 @@
                             iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
                             iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
                         });
-                        return L.marker(latlng, {icon: infoDeskIcon});
+                        return L.marker(latlng, feature.properties.type.pictogram ? {icon: infoDeskIcon} : {});
                     }
                 }).addTo(map);
                 $('.map-panel').addClass('info_desks_loaded');

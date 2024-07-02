@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 11:17+0100\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,9 +57,6 @@ msgid "Advanced"
 msgstr ""
 
 msgid "Accessibility"
-msgstr ""
-
-msgid "Related treks"
 msgstr ""
 
 msgid "Insert service:"
@@ -281,9 +278,6 @@ msgstr ""
 msgid "External resources"
 msgstr ""
 
-msgid "Connections between treks"
-msgstr ""
-
 msgid "Information desks"
 msgstr ""
 
@@ -329,10 +323,6 @@ msgstr ""
 msgid "Cannot use itself as child trek."
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr ""
-
 msgid "Sensitive area"
 msgstr ""
 
@@ -349,27 +339,6 @@ msgid "Infrastructures"
 msgstr ""
 
 msgid "Published treks"
-msgstr ""
-
-msgid "Common departure"
-msgstr ""
-
-msgid "Common edge"
-msgstr ""
-
-msgid "Circuit step"
-msgstr ""
-
-msgid "Trek relationship"
-msgstr ""
-
-msgid "Trek relationships"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Circuit"
 msgstr ""
 
 msgid "Trek network"
@@ -441,6 +410,9 @@ msgstr ""
 msgid "POI types"
 msgstr ""
 
+msgid "Public name (Change carefully)"
+msgstr ""
+
 msgid "Service type"
 msgstr ""
 
@@ -451,9 +423,6 @@ msgid "Service"
 msgstr ""
 
 msgid "Published"
-msgstr ""
-
-msgid "Waiting for publication"
 msgstr ""
 
 msgid "Published Services"
@@ -510,16 +479,6 @@ msgid ""
 "The geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr ""
-
-msgid "Itinerancy"
-msgstr ""
-
-msgid "Hike"
-msgstr ""
-
 msgid "Attached files"
 msgstr ""
 
@@ -567,10 +526,7 @@ msgstr ""
 msgid "Photos accessibility"
 msgstr ""
 
-msgid "yes"
-msgstr ""
-
-msgid "no"
+msgid "Itinerancy"
 msgstr ""
 
 msgid "Child of:"
@@ -696,9 +652,6 @@ msgid "Add a new poi"
 msgstr ""
 
 msgid "Add a new service"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 msgid "Add Web link"

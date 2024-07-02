@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-22 13:07+0000\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,12 @@ msgstr ""
 msgid "Provider"
 msgstr ""
 
+msgid "Filter by one or more structure."
+msgstr ""
+
+msgid "Filter by one or more manager."
+msgstr ""
+
 msgid "Lines"
 msgstr ""
 
@@ -59,7 +65,25 @@ msgstr ""
 msgid "Signage Types"
 msgstr ""
 
+msgid "Label"
+msgstr ""
+
 msgid "Code"
+msgstr ""
+
+msgid "Complete description"
+msgstr ""
+
+msgid "Line pictogram"
+msgstr ""
+
+msgid "Line pictograms"
+msgstr ""
+
+msgid "Signage Condition"
+msgstr ""
+
+msgid "Signage Conditions"
 msgstr ""
 
 msgid "Manager"
@@ -72,6 +96,9 @@ msgid "Type"
 msgstr ""
 
 msgid "Coordinates"
+msgstr ""
+
+msgid "Condition"
 msgstr ""
 
 msgid "Signages"
@@ -98,13 +125,16 @@ msgstr ""
 msgid "Blade types"
 msgstr ""
 
+msgid "Blade Condition"
+msgstr ""
+
+msgid "Blade Conditions"
+msgstr ""
+
 msgid "Number"
 msgstr ""
 
 msgid "Color"
-msgstr ""
-
-msgid "Condition"
 msgstr ""
 
 msgid "Blades"
@@ -122,7 +152,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-msgid "Pictogram"
+msgid "Pictograms"
 msgstr ""
 
 msgctxt "duration"
@@ -150,7 +180,16 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+msgid "No result"
+msgstr ""
+
+msgid "Choose value(s)"
+msgstr ""
+
 msgid "External id"
+msgstr ""
+
+msgid "Conditions"
 msgstr ""
 
 msgid "Add a new blade"

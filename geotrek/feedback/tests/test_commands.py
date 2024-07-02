@@ -4,11 +4,12 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from geotrek.feedback.models import PendingEmail, PendingSuricateAPIRequest, Report
+from geotrek.common.tests import TranslationResetMixin
+from geotrek.feedback.models import PendingEmail, PendingSuricateAPIRequest
 from geotrek.feedback.tests.factories import ReportFactory
 
 
-class TestRemoveEmailsOlders(TestCase):
+class TestRemoveEmailsOlder(TranslationResetMixin, TestCase):
     """Test command erase_emails, if older emails are removed"""
     @classmethod
     def setUpTestData(cls):
@@ -23,26 +24,26 @@ class TestRemoveEmailsOlders(TestCase):
         self.old_report.save()
 
     def test_erase_old_emails(self):
+        """ Test if email addresses from old reports are removed. """
         output = StringIO()
         call_command('erase_emails', stdout=output)
-        old_report = Report.objects.get(id=self.old_report.id)
-        self.assertEqual(old_report.email, "")
-        self.assertEqual(old_report.__str__(), f"Report {old_report.pk}")
+        self.old_report.refresh_from_db()
+        self.assertEqual(self.old_report.email, "")
 
     def test_dry_run_command(self):
-        """Test if dry_run mode keeps emails"""
+        """Test if dry_run mode keeps email addresses."""
         output = StringIO()
         call_command('erase_emails', dry_run=True, stdout=output)
-        old_report = Report.objects.get(id=self.old_report.id)
-        self.assertEqual(old_report.email, "to_erase@you.com")
+        self.old_report.refresh_from_db()
+        self.assertEqual(self.old_report.email, "to_erase@you.com")
 
 
 class TestFlushPendingRequests(TestCase):
     def test_flush_all(self):
         PendingSuricateAPIRequest.objects.create(params="{}")
         PendingEmail.objects.create()
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
-        self.assertEquals(PendingEmail.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingEmail.objects.count(), 1)
         call_command('retry_failed_requests_and_mails', flush=True)
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
-        self.assertEquals(PendingEmail.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingEmail.objects.count(), 0)

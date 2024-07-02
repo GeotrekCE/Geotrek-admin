@@ -15,7 +15,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins.models import (TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin,
                                           GeotrekMapEntityMixin, get_uuid_duplication)
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, AccessMean
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path, Trail
@@ -23,7 +23,7 @@ from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from mapentity.models import DuplicateMixin
-
+from django.contrib.postgres.aggregates import ArrayAgg
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -37,7 +37,8 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     target = GenericForeignKey('target_type', 'target_id')
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, help_text=_("Brief summary"))
-    date = models.DateField(default=datetime.now, verbose_name=_("Date"), help_text=_("When ?"))
+    begin_date = models.DateField(default=datetime.now, blank=False, null=False, verbose_name=_("Begin date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
     subcontracting = models.BooleanField(verbose_name=_("Subcontracting"), default=False)
 
     # Technical information
@@ -48,7 +49,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
     # Costs
     material_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Material cost"))
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
-    subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"))
+    contractor_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Contractor cost"))
+    contractors = models.ManyToManyField('Contractor', related_name="interventions", blank=True,
+                                         verbose_name=_("Contractors"))
 
     # AltimetryMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
@@ -70,6 +73,9 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
                                 on_delete=models.SET_NULL, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
+    access = models.ForeignKey(AccessMean,
+                               verbose_name=_("Access mean"), blank=True, null=True,
+                               on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     objects = InterventionManager()
@@ -218,7 +224,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         return self.total_cost_mandays + \
             (self.material_cost or 0) + \
             (self.heliport_cost or 0) + \
-            (self.subcontract_cost or 0)
+            (self.contractor_cost or 0)
 
     @classproperty
     def total_cost_verbose_name(cls):
@@ -257,7 +263,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
         return self.name
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.date)
+        return "%s (%s)" % (self.name, self.begin_date)
 
     @classmethod
     def get_interventions(cls, obj):
@@ -545,8 +551,13 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
         return [str(i) for i in self.interventions.existing()]
 
     @property
-    def contractors_display(self):
-        return [str(c) for c in self.contractors.all()]
+    def intervention_contractors(self):
+        return self.interventions.aggregate(
+            intervention_contractors=ArrayAgg('contractors__contractor', distinct=True, filter=Q(contractors__isnull=False)))['intervention_contractors']
+
+    @classproperty
+    def intervention_contractors_verbose_name(cls):
+        return _("Intervention contractors")
 
     @property
     def founders_display(self):

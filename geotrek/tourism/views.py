@@ -1,39 +1,32 @@
 import logging
-import os
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q, Sum
-from django.http import Http404
+from django.core.exceptions import PermissionDenied
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.translation import gettext as _
-from django.views.generic import DetailView
-from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.utils.html import escape
+from django.views.generic import CreateView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin, MetaMixin
+from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.models import Trek
-from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
-from .forms import TouristicContentForm, TouristicEventForm
-from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
+from .filters import TouristicContentFilterSet, TouristicEventFilterSet
+from .forms import TouristicContentForm, TouristicEventForm, TouristicEventOrganizerFormPopup
+from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, TouristicEventOrganizer,
+                     InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
-                          TouristicContentAPIGeojsonSerializer, TouristicEventAPIGeojsonSerializer,
-                          InformationDeskGeojsonSerializer, TouristicContentAPISerializer, TouristicEventAPISerializer,
+                          TrekInformationDeskGeojsonSerializer,
                           TouristicContentGeojsonSerializer, TouristicEventGeojsonSerializer)
-
-if 'geotrek.diving' in settings.INSTALLED_APPS:
-    from geotrek.diving.models import Dive
 
 
 logger = logging.getLogger(__name__)
@@ -148,11 +141,6 @@ class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPu
     pass
 
 
-class TouristicContentMeta(MetaMixin, DetailView):
-    model = TouristicContent
-    template_name = 'tourism/touristiccontent_meta.html'
-
-
 class TouristicContentViewSet(GeotrekMapentityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
@@ -165,25 +153,6 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
-        return qs
-
-
-class TouristicContentAPIViewSet(APIViewSet):
-    model = TouristicContent
-    serializer_class = TouristicContentAPISerializer
-    geojson_serializer_class = TouristicContentAPIGeojsonSerializer
-
-    def get_queryset(self):
-        qs = TouristicContent.objects.existing()
-        qs = qs.filter(published=True)
-
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
 
@@ -200,13 +169,13 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     default_extra_columns = [
         'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'start_time', 'end_time',
-        'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility', 'bookable',
+        'contact', 'email', 'website', 'organizers', 'speaker', 'accessibility', 'bookable',
         'capacity', 'booking', 'target_audience', 'practical_info',
         'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved', 'uuid',
         'cancelled', 'cancellation_reason', 'total_participants', 'place',
-        'preparation_duration', 'intervention_duration',
+        'preparation_duration', 'intervention_duration', 'price'
     ]
 
     def get_queryset(self):
@@ -275,6 +244,23 @@ class TouristicEventDocumentPublicMixin:
         return context
 
 
+class TouristicEventOrganizerCreatePopup(CreateView):
+    model = TouristicEventOrganizer
+    form_class = TouristicEventOrganizerFormPopup
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.has_perm("tourism.add_touristiceventorganizer"):
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return HttpResponse("""
+            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
+        """ % (escape(form.instance._get_pk_val()), escape(form.instance)))
+
+
 class TouristicEventDocumentPublic(TouristicEventDocumentPublicMixin, DocumentPublic):
     pass
 
@@ -285,11 +271,6 @@ class TouristicEventDocumentBookletPublic(TouristicEventDocumentPublicMixin, Doc
 
 class TouristicEventMarkupPublic(TouristicEventDocumentPublicMixin, MarkupPublic):
     pass
-
-
-class TouristicEventMeta(MetaMixin, DetailView):
-    model = TouristicEvent
-    template_name = 'tourism/touristicevent_meta.html'
 
 
 class TouristicEventViewSet(GeotrekMapentityViewSet):
@@ -309,173 +290,12 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
         return qs
 
 
-class TouristicEventAPIViewSet(APIViewSet):
-    model = TouristicEvent
-    serializer_class = TouristicEventAPISerializer
-    geojson_serializer_class = TouristicEventAPIGeojsonSerializer
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_class = TouristicEventApiFilterSet
-
-    def get_queryset(self):
-        qs = TouristicEvent.objects.existing()
-        qs = qs.filter(published=True)
-
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        return qs
-
-
-class InformationDeskViewSet(viewsets.ModelViewSet):
-    model = InformationDesk
-    queryset = InformationDesk.objects.all()
-    serializer_class = InformationDeskGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.kwargs.get('type'):
-            qs = qs.filter(type_id=self.kwargs['type'])
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        return qs
-
-
 class TrekInformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
-    serializer_class = InformationDeskGeojsonSerializer
+    serializer_class = TrekInformationDeskGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         return trek.information_desks.all().annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class TrekTouristicContentViewSet(viewsets.ModelViewSet):
-    model = TouristicContent
-    serializer_class = TouristicContentAPIGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])
-        if not trek.is_public():
-            raise Http404
-        queryset = trek.touristic_contents.filter(published=True)
-
-        if 'categories' in self.request.GET:
-            queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
-
-        if 'source' in self.request.GET:
-            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            queryset = queryset.filter(portal__name=self.request.GET['portal'])
-
-        return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class TrekTouristicEventViewSet(viewsets.ModelViewSet):
-    model = TouristicEvent
-    serializer_class = TouristicEventAPIGeojsonSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])
-        if not trek.is_public():
-            raise Http404
-        queryset = trek.touristic_events.filter(published=True)
-
-        if 'source' in self.request.GET:
-            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
-
-        if 'portal' in self.request.GET:
-            queryset = queryset.filter(portal__name=self.request.GET['portal'])
-
-        return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-if 'geotrek.diving' in settings.INSTALLED_APPS:
-    class DiveTouristicContentViewSet(viewsets.ModelViewSet):
-        model = TouristicContent
-        permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-        def get_serializer_class(self):
-            renderer, media_type = self.perform_content_negotiation(self.request)
-            if getattr(renderer, 'format') == 'geojson':
-                return TouristicContentAPIGeojsonSerializer
-            else:
-                return TouristicContentAPISerializer
-
-        def get_queryset(self):
-            dive = get_object_or_404(Dive.objects.existing(), pk=self.kwargs['pk'])
-            queryset = dive.touristic_contents.filter(published=True)
-
-            if 'categories' in self.request.GET:
-                queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
-
-            if 'source' in self.request.GET:
-                queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
-
-            if 'portal' in self.request.GET:
-                queryset = queryset.filter(portal__name=self.request.GET['portal'])
-
-            return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-    class DiveTouristicEventViewSet(viewsets.ModelViewSet):
-        model = TouristicEvent
-        permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-        def get_serializer_class(self):
-            renderer, media_type = self.perform_content_negotiation(self.request)
-            if getattr(renderer, 'format') == 'geojson':
-                return TouristicEventAPIGeojsonSerializer
-            else:
-                return TouristicEventAPISerializer
-
-        def get_queryset(self):
-            dive = get_object_or_404(Dive.objects.existing(), pk=self.kwargs['pk'])
-
-            queryset = dive.touristic_events.filter(published=True)
-            if 'source' in self.request.GET:
-                queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
-            if 'portal' in self.request.GET:
-                queryset = queryset.filter(portal__name=self.request.GET['portal'])
-            return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
-class TouristicCategoryView(APIView):
-    """ touristiccategories.json generation for API """
-    renderer_classes = (JSONRenderer,)
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def get(self, request, format=None, lang=None):
-        response = []
-        content_categories = TouristicContentCategory.objects.all()
-
-        if request.GET.get('categories', False):
-            categories = request.GET['categories'].split(',')
-            content_categories.filter(pk__in=categories)
-
-        for cont_cat in content_categories:
-            response.append({'id': cont_cat.prefixed_id,
-                             'label': cont_cat.label,
-                             'type1_label': cont_cat.type1_label,
-                             'type2_label': cont_cat.type2_label,
-                             'pictogram': os.path.join(settings.MEDIA_URL, cont_cat.pictogram.url),
-                             'order': cont_cat.order,
-                             'slug': 'touristic-content'})
-
-        if request.GET.get('events', False):
-            response.append({'id': 'E',
-                             'label': _("Touristic events"),
-                             'type1_label': "",
-                             'type2_label': "",
-                             'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),
-                             'order': None,
-                             'slug': 'touristic-event'})
-
-        return Response(response)

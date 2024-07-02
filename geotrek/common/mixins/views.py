@@ -1,19 +1,16 @@
 import os
 from io import BytesIO
-from urllib.parse import urljoin
 
 from django.conf import settings
 from django.http import HttpResponseNotFound, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils import translation
 from django.utils.functional import classproperty
-from django.utils.translation import gettext as _
 from django.views import static
 from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
 from pdfimpose import PageList
 
-from geotrek.common.models import TargetPortal, FileType, Attachment
+from geotrek.common.models import FileType, Attachment
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
 
@@ -34,6 +31,9 @@ class CustomColumnsMixin:
         'PhysicalEdgeList': 'physicaledge_view',
         'PhysicalEdgeJsonList': 'physicaledge_view',
         'PhysicalEdgeFormatList': 'physicaledge_export',
+        'CirculationEdgeList': 'circulationedge_view',
+        'CirculationEdgeJsonList': 'circulationedge_view',
+        'CirculationEdgeFormatList': 'circulationedge_export',
         'CompetenceEdgeList': 'competenceedge_view',
         'CompetenceEdgeJsonList': 'competenceedge_view',
         'CompetenceEdgeFormatList': 'competenceedge_export',
@@ -158,31 +158,6 @@ def transform_pdf_booklet_callback(response):
     result = BytesIO()
     new_pdf.write(result)
     response.content = result.getvalue()
-
-
-class MetaMixin:
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET.get('lang')
-        portal = self.request.GET.get('portal')
-        context = super().get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        translation.activate(lang)
-        context['META_TITLE'] = _('Geotrek Rando')
-        translation.deactivate()
-        if portal:
-            try:
-                target_portal = TargetPortal.objects.get(name=portal)
-                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
-                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
-                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
-                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
-            except TargetPortal.DoesNotExist:
-                pass
-        return context
 
 
 class DocumentPortalMixin:

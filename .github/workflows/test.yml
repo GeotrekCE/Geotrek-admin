@@ -33,6 +33,8 @@ env:
   REDIS_HOST: 127.0.0.1
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
   LANG: C.UTF-8
+  LANGUAGES: en fr
+  LANGUAGE_CODE: en
 
 jobs:
   test:
@@ -54,7 +56,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -76,9 +78,10 @@ jobs:
         path: |
           ./venv
 
-        key: pip-${{ matrix.python-version }}
+        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}
+          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          pip-${{ matrix.python-version }}-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -112,7 +115,7 @@ jobs:
     - name: Install python dependencies
       run: |
         python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools
+        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
 
@@ -120,16 +123,19 @@ jobs:
       run: |
         mkdir -p ./var/log ./var/cache/sessions
 
-    - name: Check migrations
-      run: |
-        ./venv/bin/python3 ./manage.py makemigrations --check
-
     - name: Prepare environment
       run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
         ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
         ./venv/bin/python3 ./manage.py compilemessages
+
+    - name: Check missing migrations
+      run: |
+        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
+
+    - name: Check running migrations
+      run: |
+        ENV=dev ./venv/bin/python3 ./manage.py migrate
 
     - name: Launch Celery
       run: |
@@ -137,15 +143,43 @@ jobs:
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run ./manage.py test -v 3
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
-    - uses: codecov/codecov-action@v3
+    - name: Save coverage
+      uses: actions/upload-artifact@v2
       with:
-        files: ./coverage.xml
-        env_vars: OS,ENV
-        token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
-        fail_ci_if_error: true # optional (default = false)
+        name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+        path: coverage.xml
+
+  upload_coverage:
+    name: Upload coverage to codecov
+    runs-on: ubuntu-latest
+    needs: [ test ]
+    strategy:
+      matrix:
+        os: ['bionic-3.8', 'focal-3.8']
+        python-version: ['3.8']
+        tests-env: ['tests', 'tests_nds']
+
+    env:
+      ENV: ${{ matrix.tests-env }}
+      OS: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v2
+        with:
+            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+            path: .
+
+      - uses: codecov/codecov-action@v4
+        with:
+            files: ./coverage.xml
+            env_vars: OS,ENV
+            token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+            fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
@@ -154,10 +188,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Build Docker image
         run: |
-          docker build -t geotrek:latest .
+          docker build -f ./docker/Dockerfile -t geotrek:latest .
       - name: Upload image
         uses: ishworkh/docker-image-artifact-upload@v1
         with:
@@ -211,9 +245,13 @@ jobs:
     name: Tests E2E docker
     runs-on: ubuntu-20.04
     needs: [build_docker_image]
+    env:
+      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
+
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -232,7 +270,8 @@ jobs:
       - name: Launch service
         run: |
           docker tag geotrek:latest geotrekce/admin:latest
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          cp docker/install/.env.dist .env
+          cp docker/install/docker-compose.yml docker-compose.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/localhost/geotrek.local/' .env
@@ -242,14 +281,18 @@ jobs:
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
-          docker-compose run web update.sh
+          docker compose run web update.sh
           make load_data
           make load_test_integration
-          docker-compose up -d
+          docker compose up -d
 
       - name: Prepare nginx
         run: |
+          sudo service apache2 stop
+          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get autoremove
           sudo apt-get install -q -y nginx
+          sudo unlink /etc/nginx/sites-enabled/default
           sudo mkdir /var/www/geotrek -p
           ls -als
           pwd
@@ -264,7 +307,7 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8000"; do
+          while ! nc -z "127.0.0.1" "8001"; do
             sleep 0.1
           done
 
@@ -292,7 +335,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: postgis/postgis:12-2.5
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -388,7 +431,7 @@ jobs:
         with:
           args: '*.deb'
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
