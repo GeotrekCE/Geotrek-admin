@@ -52,6 +52,10 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
 - Improve information about upgrading geotrek-admin version with debian
 - Add details about dynamic segmentation for POIs
 
+**Improvements**
+
+- Change infrastructure condition field to ManyToMany field (#3970)
+
 **Bug fixes**
 
 - Fix view `v_treks` (fixes #4099)
@@ -63,6 +67,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
 
 - Bump to django 4.2
 - Bump mapentity to 8.9.0
+
 
 
 2.106.0 (2024-05-15)
@@ -115,7 +120,6 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
 - Homogenize `structure` field in APIv2 to always return ids instead of names (#3007)
 - Add structures to Aggregator (#3569)
 - Allow to filter flatpages by portal on admin list page
-
 
 2.104.2 (2024-04-04)
 --------------------
