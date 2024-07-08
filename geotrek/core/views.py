@@ -33,8 +33,6 @@ from .forms import PathForm, TrailForm, CertificationTrailFormSet
 from .models import AltimetryMixin, Path, Trail, Topology, CertificationTrail
 from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 
-import time
-
 logger = logging.getLogger(__name__)
 
 
@@ -323,8 +321,7 @@ class PathViewSet(GeotrekMapentityViewSet):
             for step in steps:
                 lat = step.get('lat')
                 lng = step.get('lng')
-                if (not isinstance(lat, (int, float)) or not isinstance(lng, (int, float))
-                    or lat < 0 or 90 < lat or lng < -180 or 180 < lng):
+                if (not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or lat < 0 or 90 < lat or lng < -180 or 180 < lng):
                     raise Exception("Each step should contain valid latitude and longitude")
         except Exception as exc:
             return Response({'error': '%s' % exc, }, 400)
