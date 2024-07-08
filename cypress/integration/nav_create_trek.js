@@ -25,9 +25,9 @@ describe('Create trek', () => {
         cy.visit('/trek/list');
         cy.wait('@tiles');
         cy.server();
-        cy.route('/api/path/drf/paths/graph.json').as('graph');
         cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
-        cy.wait('@graph');
+        // The linetopology control is enabled after the path layers are ready
+        cy.get('[data-test^="pathLayer-"]')
         cy.get("a.linetopology-control").click();
         cy.get("textarea[id='id_topology']").type('[{"pk": 2, "kind": "TREK", "offset": 0.0, "paths": [3], "positions": {"0": [0.674882030756843, 0.110030805790642]}}]', {
             force: true,
