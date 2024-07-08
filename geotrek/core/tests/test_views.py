@@ -1,5 +1,4 @@
 import re
-import json
 from unittest import mock, skipIf
 
 from bs4 import BeautifulSoup
@@ -860,6 +859,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(len(serialized[2].get('positions').items()), 1)
         self.assertEqual(len(serialized[2].get('positions').get(0)), 2)
         self.assertEqual(len(serialized[2].get('paths')), 1)
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
