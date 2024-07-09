@@ -26,10 +26,6 @@ describe('Create trek', () => {
         cy.wait('@tiles');
         cy.server();
         cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
-        cy.get("a.linetopology-control").click();
-        cy.clickOnPath(3, 67);
-        cy.clickOnPath(3, 11);
-        cy.get('[data-test^="route-step-"]');
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
         cy.get("a[href='#name_fr']").click();
@@ -49,6 +45,10 @@ describe('Create trek', () => {
         cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1');
         cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1');
         cy.setTinyMceContent('id_description_en', 'Description number 1');
+        cy.get("a.linetopology-control").click();
+        cy.clickOnPath(3, 67);
+        cy.clickOnPath(3, 11);
+        cy.get('[data-test^="route-step-"]');
         cy.get('#save_changes').click();
         cy.url().should('not.include', '/trek/add/');
         cy.get('.content').should('contain', 'Trek number 1');
