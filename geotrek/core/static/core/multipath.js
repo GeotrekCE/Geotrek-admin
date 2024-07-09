@@ -282,8 +282,6 @@ L.Handler.MultiPath = L.Handler.extend({
             if (!this._routeLayer)
                 return []
             var layers = this._routeLayer.__layerArray
-            console.log('layers', layers)
-            debugger;
             var sortedLayers = layers.toSorted((first, second) => {
                 return first.step_idx - second.step_idx
             })
