@@ -97,6 +97,10 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
+def get_route_exception_mock(steps):
+    raise Exception
+
+
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathViewsTest(CommonTest):
     model = Path
@@ -683,6 +687,16 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 400)
         response = self.get_route_geometry({"steps": [{"lat": 48.866667, "lng": "abc"}, {"lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+
+    @mock.patch('geotrek.core.path_router.PathRouter.get_route', get_route_exception_mock)
+    def test_route_geometry_fail_error_500(self):
+        response = self.get_route_geometry({
+            "steps": [
+                {"lat": 40.5267991, "lng": 0.5305685},
+                {"lat": 40.5266465, "lng": 0.5765381}
+            ]
+        })
+        self.assertEqual(response.status_code, 500)
 
     def test_route_geometry_fail_steps_not_on_paths(self):
         path_geom = LineString([
