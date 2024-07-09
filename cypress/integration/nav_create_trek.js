@@ -27,8 +27,8 @@ describe('Create trek', () => {
         cy.server();
         cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
         cy.get("a.linetopology-control").click();
-        cy.clickOnPath(0, 67);
-        cy.clickOnPath(0, 11);
+        cy.clickOnPath(3, 67);
+        cy.clickOnPath(3, 11);
         cy.get('[data-test^="route-step-"]');
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
