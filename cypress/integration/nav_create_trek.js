@@ -27,10 +27,9 @@ describe('Create trek', () => {
         cy.server();
         cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
         cy.get("a.linetopology-control").click();
-        cy.get("textarea[id='id_topology']").type('[{"pk": 2, "kind": "TREK", "offset": 0.0, "paths": [3], "positions": {"0": [0.674882030756843, 0.110030805790642]}}]', {
-            force: true,
-            parseSpecialCharSequences: false
-        });
+        cy.clickOnPath(0, 67);
+        cy.clickOnPath(0, 11);
+        cy.get('[data-test^="route-step-"]');
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
         cy.get("a[href='#name_fr']").click();
