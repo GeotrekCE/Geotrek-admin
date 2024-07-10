@@ -411,6 +411,8 @@ class PathRouter:
 
         from_node_idx = get_node_idx_per_id(from_node_id)
         to_node_idx = get_node_idx_per_id(to_node_id)
+        if from_node_idx is None or to_node_idx is None:
+            return []
         result = dijkstra(self.dijk_matrix, return_predecessors=True, indices=from_node_idx,
                           directed=False)
 
