@@ -1,7 +1,8 @@
-from unittest import skipIf
+from unittest import mock, skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
+from django.core.cache import caches
 from django.test import TestCase
 
 from geotrek.core.path_router import PathRouter
@@ -72,3 +73,44 @@ class PathRouterGraphGenerationTest(TestCase):
         self.assertDictEqual({'edges': {path.pk: {'id': path.pk, 'nodes_id': [1, 2]}},
                               'nodes': {1: {2: path.pk}, 2: {1: path.pk}}}, graph)
         self.assertAlmostEqual(length, 1.4142135623731)
+
+    def test_get_graph_from_cache(self):
+        ...
+
+
+class PathRouterTest(TestCase):
+    @mock.patch('django.core.cache.backends.locmem.LocMemCache.set')
+    def test_set_cs_graph_get_from_cache(self, mock_set):
+        ...
+        # PathFactory(geom=LineString((0, 0), (1, 1)))
+        # PathFactory(geom=LineString((2, 2), (3, 3)))
+        # path_router_1 = PathRouter()
+        # dijkstra_matrix_1 = path_router_1.dijk_matrix
+        # path_router_2 = PathRouter()
+        # dijkstra_matrix_2 = path_router_2.dijk_matrix
+        # # print(mock_set)
+        # self.assertEqual(mock_set.call_count, 2)
+
+    def test_get_edge_weight_incorrect_edge_id(self):
+        path = PathFactory(geom=LineString((0, 0), (1, 1)))
+        path_router = PathRouter()
+        edge_weight = path_router.get_edge_weight(path.pk + 1)
+        self.assertIsNone(edge_weight)
+
+    def test_get_shortest_path_incorrect_node_id(self):
+        PathFactory(geom=LineString((0, 0), (1, 1)))
+        path_router = PathRouter()
+        last_node_id = list(path_router.nodes.keys())[-1]
+        route = path_router.get_shortest_path(last_node_id, last_node_id + 1)
+        self.assertListEqual(route, [])
+
+    def test_get_edge_id_by_nodes_no_linking_edge(self):
+        path1 = PathFactory(geom=LineString((0, 0), (1, 1)))
+        path2 = PathFactory(geom=LineString((2, 2), (3, 3)))
+        path_router = PathRouter()
+        first_edge = path_router.edges[path1.pk]
+        first_node = path_router.nodes[first_edge['nodes_id'][0]]
+        last_edge = path_router.edges[path2.pk]
+        last_node = path_router.nodes[last_edge['nodes_id'][1]]
+        edge_id = path_router.get_edge_id_by_nodes(first_node, last_node)
+        self.assertIsNone(edge_id)
