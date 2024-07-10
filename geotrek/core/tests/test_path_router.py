@@ -1,4 +1,4 @@
-from unittest import mock, skipIf
+from unittest import skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
@@ -75,21 +75,39 @@ class PathRouterGraphGenerationTest(TestCase):
         self.assertAlmostEqual(length, 1.4142135623731)
 
     def test_get_graph_from_cache(self):
-        ...
+        PathFactory(geom=LineString((0, 0), (1, 1)))
+        cache = caches['fat']
+        mock_graph = {
+            'nodes': {1: {2: 1}, 2: {1: 1}, 3: {4: 2}, 4: {3: 2}},
+            'edges': {
+                1: {'id': 1, 'length': 1.4, 'nodes_id': [1, 2]},
+                2: {'id': 2, 'length': 1.4, 'nodes_id': [3, 4]}
+            }
+        }
+        cache.set('path_graph', (Path.no_draft_latest_updated(), mock_graph))
+        path_router = PathRouter()
+        self.assertEqual(path_router.nodes, mock_graph['nodes'])
+        self.assertEqual(path_router.edges, mock_graph['edges'])
 
 
 class PathRouterTest(TestCase):
-    @mock.patch('django.core.cache.backends.locmem.LocMemCache.set')
-    def test_set_cs_graph_get_from_cache(self, mock_set):
-        ...
-        # PathFactory(geom=LineString((0, 0), (1, 1)))
-        # PathFactory(geom=LineString((2, 2), (3, 3)))
-        # path_router_1 = PathRouter()
-        # dijkstra_matrix_1 = path_router_1.dijk_matrix
-        # path_router_2 = PathRouter()
-        # dijkstra_matrix_2 = path_router_2.dijk_matrix
-        # # print(mock_set)
-        # self.assertEqual(mock_set.call_count, 2)
+    def test_set_cs_graph_set_cache(self):
+        PathFactory(geom=LineString((0, 0), (1, 1)))
+        PathFactory(geom=LineString((2, 2), (3, 3)))
+        cache = caches['fat']
+        cached_data_before = cache.get('dijkstra_matrix')
+        self.assertIsNone(cached_data_before)
+        PathRouter()
+        cached_data_after = cache.get('dijkstra_matrix')
+        self.assertIsNotNone(cached_data_after)
+
+    def test_set_cs_graph_get_from_cache(self):
+        PathFactory(geom=LineString((0, 0), (1, 1)))
+        PathFactory(geom=LineString((2, 2), (3, 3)))
+        cache = caches['fat']
+        cache.set('dijkstra_matrix', (Path.no_draft_latest_updated(), 'mock cache data'))
+        path_router = PathRouter()
+        self.assertEqual(path_router.dijk_matrix, 'mock cache data')
 
     def test_get_edge_weight_incorrect_edge_id(self):
         path = PathFactory(geom=LineString((0, 0), (1, 1)))
