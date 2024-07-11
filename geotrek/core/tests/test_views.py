@@ -743,7 +743,7 @@ class PathViewsTest(CommonTest):
             [1.6108704, 43.4539158],
         ], srid=settings.API_SRID)
         path_geom.transform(settings.SRID)
-        PathFactory(geom=path_geom)
+        path = PathFactory(geom=path_geom)
 
         response = self.get_route_geometry({
             "steps": [
@@ -761,7 +761,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(len(serialized), 1)
         self.assertEqual(len(serialized[0].get('positions').items()), 1)
         self.assertEqual(len(serialized[0].get('positions').get(0)), 2)
-        self.assertEqual(len(serialized[0].get('paths')), 1)
+        self.assertListEqual(serialized[0].get('paths'), [path.pk])
 
     def test_route_geometry_not_fail_no_via_point_several_paths(self):
         pathGeom1 = LineString([
@@ -769,14 +769,14 @@ class PathViewsTest(CommonTest):
             [1.4451303, 43.5270311],
         ], srid=settings.API_SRID)
         pathGeom1.transform(settings.SRID)
-        PathFactory(geom=pathGeom1)
+        path1 = PathFactory(geom=pathGeom1)
 
         pathGeom2 = LineString([
             [1.4447021, 43.5803909],
             [1.4451303, 43.5270311],
         ], srid=settings.API_SRID)
         pathGeom2.transform(settings.SRID)
-        PathFactory(geom=pathGeom2)
+        path2 = PathFactory(geom=pathGeom2)
 
         response = self.get_route_geometry({
             "steps": [
@@ -795,7 +795,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(len(serialized[0].get('positions').items()), 2)
         self.assertEqual(len(serialized[0].get('positions').get(0)), 2)
         self.assertEqual(len(serialized[0].get('positions').get(1)), 2)
-        self.assertEqual(len(serialized[0].get('paths')), 2)
+        self.assertListEqual(serialized[0].get('paths'), [path1.pk, path2.pk])
 
     def test_route_geometry_not_fail_with_via_point_one_path(self):
         path_geom = LineString([
@@ -803,7 +803,7 @@ class PathViewsTest(CommonTest):
             [1.6108704, 43.4539158],
         ], srid=settings.API_SRID)
         path_geom.transform(settings.SRID)
-        PathFactory(geom=path_geom)
+        path = PathFactory(geom=path_geom)
 
         response = self.get_route_geometry({
             "steps": [
@@ -825,9 +825,9 @@ class PathViewsTest(CommonTest):
         for ser in serialized:
             self.assertEqual(len(ser.get('positions').items()), 1)
             self.assertEqual(len(ser.get('positions').get(0)), 2)
-            self.assertEqual(len(ser.get('paths')), 1)
+            self.assertListEqual(ser.get('paths'), [path.pk])
 
-    # def test_route_geometry_not_fail_with_via_points_several_paths(self):
+    # def test_route_geometry_not_fail_with_via_points_several_paths_old(self):
     #     pathGeom1 = LineString([
     #         [1.4451303, 43.5270311],
     #         [1.5305685, 43.5267991],
@@ -880,21 +880,21 @@ class PathViewsTest(CommonTest):
             [1.4451303, 43.5270311]
         ], srid=settings.API_SRID)
         pathGeom1.transform(settings.SRID)
-        PathFactory(geom=pathGeom1)
+        path1 = PathFactory(geom=pathGeom1)
 
         pathGeom2 = LineString([
             [1.4451303, 43.5270311],
             [1.5305685, 43.5267991],
         ], srid=settings.API_SRID)
         pathGeom2.transform(settings.SRID)
-        PathFactory(geom=pathGeom2)
+        path2 = PathFactory(geom=pathGeom2)
 
         pathGeom3 = LineString([
             [1.5305685, 43.5267991],
             [1.5277863, 43.6251412],
         ], srid=settings.API_SRID)
         pathGeom3.transform(settings.SRID)
-        PathFactory(geom=pathGeom3)
+        path3 = PathFactory(geom=pathGeom3)
 
         response = self.get_route_geometry({
             "steps": [
@@ -905,6 +905,30 @@ class PathViewsTest(CommonTest):
             ]
         })
         self.assertEqual(response.status_code, 200)
+
+        geometries = response.data.get('geojson').get('geometries')
+        self.assertEqual(len(geometries), 3)
+        self.assertEqual(len(geometries[0].get('coordinates')), 4)
+        self.assertEqual(len(geometries[1].get('coordinates')), 2)
+        self.assertEqual(len(geometries[2].get('coordinates')), 2)
+        for geom in geometries:
+            for coords in geom.get('coordinates'):
+                self.assertEqual(len(coords), 2)
+
+        serialized = response.data.get('serialized')
+        self.assertEqual(len(serialized), 3)
+        self.assertEqual(len(serialized[0].get('positions').items()), 3)
+        for pos in list(serialized[0].get('positions').values()):
+            self.assertEqual(len(pos), 2)
+        self.assertListEqual(serialized[0].get('paths'), [path1.pk, path2.pk, path3.pk])
+        self.assertEqual(len(serialized[1].get('positions').items()), 1)
+        for pos in list(serialized[1].get('positions').values()):
+            self.assertEqual(len(pos), 2)
+        self.assertListEqual(serialized[1].get('paths'), [path3.pk])
+        self.assertEqual(len(serialized[1].get('positions').items()), 1)
+        for pos in list(serialized[1].get('positions').values()):
+            self.assertEqual(len(pos), 2)
+        self.assertListEqual(serialized[1].get('paths'), [path3.pk])
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
