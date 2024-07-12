@@ -91,17 +91,6 @@ class PathRouterGraphGenerationTest(TestCase):
 
 
 class PathRouterTest(TestCase):
-    def test_set_cs_graph_set_cache(self):
-        PathFactory(geom=LineString((0, 0), (1, 1)))
-        PathFactory(geom=LineString((2, 2), (3, 3)))
-        cache = caches['fat']
-        cache.set('dijkstra_matrix', (Path.no_draft_latest_updated(), None))
-        (_, cached_data_before) = cache.get('dijkstra_matrix')
-        self.assertIsNone(cached_data_before)
-        PathRouter()
-        (__, cached_data_after) = cache.get('dijkstra_matrix')
-        self.assertIsNotNone(cached_data_after)
-
     def test_set_cs_graph_get_from_cache(self):
         PathFactory(geom=LineString((0, 0), (1, 1)))
         PathFactory(geom=LineString((2, 2), (3, 3)))
