@@ -26,7 +26,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekTrekQueryParamsFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.GeotrekRatingsFilter
+        api_filters.GeotrekRatingsFilter,
+        api_filters.GeotrekNetworksFilter
     )
     serializer_class = api_serializers.TrekSerializer
 
