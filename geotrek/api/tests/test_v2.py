@@ -300,6 +300,7 @@ class BaseApiTest(TestCase):
         cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
+        cls.network2 = trek_factory.TrekNetworkFactory.create()
         cls.rating = trek_factory.RatingFactory()
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
@@ -320,6 +321,7 @@ class BaseApiTest(TestCase):
         cls.treks[0].save()
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
+        cls.treks[1].networks.add(cls.network2)
         cls.treks[0].labels.add(cls.label)
         cls.treks[0].ratings.add(cls.rating)
         cls.treks[1].ratings.add(cls.rating2)
@@ -1132,6 +1134,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_networks_filter(self):
+        response = self.get_trek_list({'networks': self.network.pk})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'networks': 0})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
     def test_version_route(self):
         response = self.client.get("/api/v2/version")
         self.assertEqual(response.status_code, 200)
@@ -1284,6 +1299,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_ratings(self):
         response = self.get_trek_list({'ratings': f"{self.rating.pk},{self.rating2.pk}"})
+        self.assertEqual(len(response.json()['results']), 2)
+
+    def test_trek_networks(self):
+        response = self.get_trek_list({'networks': f"{self.network.pk},{self.network2.pk}"})
         self.assertEqual(len(response.json()['results']), 2)
 
     def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
