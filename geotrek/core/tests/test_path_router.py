@@ -25,15 +25,16 @@ class PathRouterGraphGenerationTest(TestCase):
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""
-            return ((0., x + 1.) for x in range(10, 100))
+            for x in range(10, 100):
+                yield (0., x + 1.)
 
-        r_point = gen_random_point().__next__
+        r_point_gen = gen_random_point()
 
-        e_1_2 = PathFactory(geom=LineString(p_1_1, r_point(), p_2_2))
-        e_2_3 = PathFactory(geom=LineString(p_2_2, r_point(), p_3_3))
+        e_1_2 = PathFactory(geom=LineString(p_1_1, next(r_point_gen), p_2_2))
+        e_2_3 = PathFactory(geom=LineString(p_2_2, next(r_point_gen), p_3_3))
 
         # Non connex
-        e_4_5 = PathFactory(geom=LineString(p_4_4, r_point(), p_5_5))
+        e_4_5 = PathFactory(geom=LineString(p_4_4, next(r_point_gen), p_5_5))
 
         graph = {
             'nodes': {
