@@ -356,7 +356,7 @@ typing-extensions==4.12.2
     #   asgiref
     #   django-modeltranslation
     #   kombu
-tzdata==2023.3
+tzdata==2024.1
     # via
     #   backports-zoneinfo
     #   celery
