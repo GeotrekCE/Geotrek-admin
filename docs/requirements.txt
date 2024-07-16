@@ -10,7 +10,7 @@ babel==2.15.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2023.7.22
+certifi==2024.7.4
     # via
     #   -c docs/../requirements.txt
     #   requests
