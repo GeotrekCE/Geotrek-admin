@@ -8,7 +8,7 @@ amqp==5.2.0
     # via kombu
 appy==1.0.15
     # via django-appypod
-asgiref==3.7.2
+asgiref==3.8.1
     # via django
 async-timeout==4.0.3
     # via redis
