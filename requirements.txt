@@ -187,7 +187,7 @@ easy-thumbnails==2.8.5
     #   paperclip
 env-file==2020.12.3
     # via geotrek (setup.py)
-filelock==3.8.0
+filelock==3.15.4
     # via django-large-image
 fiona==1.9.4.post1
     # via
