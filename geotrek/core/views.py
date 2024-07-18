@@ -331,16 +331,16 @@ class PathViewSet(GeotrekMapentityViewSet):
         except Exception as exc:
             return Response({'error': '%s' % exc, }, 400)
 
-        try:
-            path_router = PathRouter()
-            response = path_router.get_route(steps)
-            if response is not None:
-                status = 200
-            else:
-                response = {'error': 'No path between the given points'}
-                status = 400
-        except Exception as exc:
-            response, status = {'error': '%s' % exc, }, 500
+        # try:
+        path_router = PathRouter()
+        response = path_router.get_route(steps)
+        if response is not None:
+            status = 200
+        else:
+            response = {'error': 'No path between the given points'}
+            status = 400
+        # except Exception as exc:
+        #     response, status = {'error': '%s' % exc, }, 500
         return Response(response, status)
 
 

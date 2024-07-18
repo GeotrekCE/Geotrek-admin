@@ -173,6 +173,7 @@ class PathRouter:
 
     def get_route(self, steps):
         self.steps = steps
+        self.steps_topo = [self.get_snapped_point_info(step) for step in steps]
         line_strings, serialized_topology = self.compute_all_steps_paths()
         if line_strings == []:
             return None
@@ -183,24 +184,41 @@ class PathRouter:
 
         return {'geojson': geojson, 'serialized': serialized_topology}
 
+    def get_snapped_point_info(self, latlng):
+        # Transform the point to the right SRID
+        point = Point(latlng.get('lng'), latlng.get('lat'), srid=settings.API_SRID)
+        point.transform(settings.SRID)
+        # Get the closest path
+        # TODO: use an SQL function to get the closest path?
+        closest_path = Path.closest(point)
+        # Get which fraction of the Path this point is on
+        closest_path_geom = f"'{closest_path.geom}'"
+        point_geom = f"'{point.ewkt}'"
+        fraction_of_distance = sqlfunction('SELECT ST_LineLocatePoint',
+                                           closest_path_geom, point_geom)[0]
+        return {
+            'edge_id': closest_path.pk,
+            'fraction': fraction_of_distance
+        }
+
     def compute_all_steps_paths(self):
         all_line_strings = []  # Each elem is a linestring from one step to another
         serialized_topology = []  # Each elem is the topology from one step to another
         # Compute the shortest path for each pair of adjacent steps
-        for i in range(len(self.steps) - 1):
-            from_step = self.steps[i]
-            to_step = self.steps[i + 1]
+        for i in range(len(self.steps_topo) - 1):
+            from_step = self.steps_topo[i]
+            to_step = self.steps_topo[i + 1]
             # Get the linestrings (segments of paths) between those two steps,
             # then merge them into one
-            line_strings, serialized = self.compute_two_steps_path(from_step, to_step)
-            serialized_topology.append(serialized)
-            if line_strings == []:
-                return [], []
-            merged_line_string = self.merge_line_strings(line_strings)
-            all_line_strings.append(merged_line_string)
+            line_strings, serialized = self.get_two_steps_path(from_step, to_step)
+            # serialized_topology.append(serialized)
+            # if line_strings == []:
+            #     return [], []
+            # merged_line_string = self.merge_line_strings(line_strings)
+            # all_line_strings.append(merged_line_string)
         return all_line_strings, serialized_topology
 
-    def compute_two_steps_path(self, from_step, to_step):
+    def compute_two_steps_path_old(self, from_step, to_step):
         from_node_info, to_node_info = self.add_steps_to_graph(from_step, to_step)
         self.add_steps_to_matrix(from_node_info, to_node_info)
 
@@ -220,7 +238,27 @@ class PathRouter:
 
         return ls, topo
 
-    def test_pg_routing(self, from_step, to_step):
+    def get_two_steps_path(self, from_step, to_step):
+        '''
+        Parameters:
+            from_step ({edge_id: int, fraction: float})
+            to_step ({edge_id: int, fraction: float})
+        '''
+        if from_step.get('edge_id') == to_step.get('edge_id'):
+            # If both points are on same edge, split it from the start point to
+            # the end point
+            # TODO: send edge geometry to create_line_substring, or modify it so
+            # it gets the geom from an edge id
+            route_segment = [
+                self.create_line_substring(1, from_step.fraction, to_step.fraction),
+            ]
+        else:
+            # Compute the shortest path between the two points
+            route_segment = self.compute_two_steps_path(from_step, to_step)
+        # TODO: return the serialized topology
+        return route_segment, None
+
+    def compute_two_steps_path(self, from_step, to_step):
         query = """
                 WITH points as (
                     -- This is a virtual table of the points (start and end)
@@ -312,11 +350,12 @@ class PathRouter:
                 WHERE final_geometry IS NOT NULL;
                 """
 
+        start_edge = from_step.get('edge_id')
+        end_edge = to_step.get('edge_id')
+        start_fraction = from_step.get('fraction')
+        end_fraction = to_step.get('fraction')
+
         cursor = connection.cursor()
-        start_edge = 10
-        end_edge = 16
-        start_fraction = 0.75
-        end_fraction = 0.33
         cursor.execute(query, [
             start_edge, start_fraction,
             start_edge, start_fraction,
