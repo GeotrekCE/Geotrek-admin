@@ -25,6 +25,21 @@ class PathRouter:
         self.edges = graph['edges']
         self.set_cs_graph()
 
+    def set_path_graph(self):
+        """ Builds or updates the network topology """
+        cursor = connection.cursor()
+        query = """
+                SELECT
+                    pgr_createTopology(
+                        'core_path',
+                        0.00001,
+                        'geom',
+                        'id'
+                    )
+                """
+        cursor.execute(query)
+        return ('OK',) == cursor.fetchone()
+
     def generate_id(self):
         new_id = self.id_count
         self.id_count += 1
@@ -200,7 +215,117 @@ class PathRouter:
         self.remove_step_from_graph(from_node_info)
         self.remove_step_from_graph(to_node_info)
         self.remove_steps_from_matrix()
+
+        self.test_pg_routing()
+
         return ls, topo
+
+    def test_pg_routing(self, from_step, to_step):
+        query = """
+                WITH points as (
+                    -- This is a virtual table of the points (start and end)
+                    -- and their position on the closest edge
+                    SELECT
+                        points.pid,
+                        points.edge_id,
+                        ST_LineSubstring(
+                            core_path.geom,
+                            points.fraction_start,
+                            points.fraction_end
+                        ) AS geom
+                    FROM
+                        (VALUES
+                            (1, %s, 0, %s::float),
+                            (1, %s, %s::float, 1),
+                            (2, %s, 0, %s::float),
+                            (2, %s, %s::float, 1)
+                        ) AS points(pid, edge_id, fraction_start, fraction_end)
+                        JOIN core_path ON core_path.id = points.edge_id
+                ),
+
+                pgr AS (
+                    -- Get the route from point 1 to point 2 using pgr_withPoints.
+                    -- next_node, prev_geom and next_geom will be used later
+                    -- to reconstruct the final geometry of the shortest path.
+                    SELECT
+                        pgr.path_seq,
+                        pgr.node,
+                        pgr.edge,
+                        core_path.geom as edge_geom,
+                        (LEAD(pgr.node) OVER (ORDER BY path_seq))
+                            AS next_node,
+                        (LAG(core_path.geom) OVER (ORDER BY path_seq))
+                            AS prev_geom,
+                        (LEAD(core_path.geom) OVER (ORDER BY path_seq))
+                            AS next_geom
+                    FROM
+                        pgr_withPoints(
+                            'SELECT
+                                id,
+                                source,
+                                target,
+                                length as cost,
+                                length as reverse_cost
+                            FROM core_path
+                            ORDER by id',
+                            'SELECT *
+                            FROM (
+                                VALUES
+                                    (1, %s, %s::float),
+                                    (2, %s, %s::float)
+                                ) AS points (pid, edge_id, fraction)',
+                            -1, -2
+                        ) as pgr
+                        JOIN core_path ON core_path.id = pgr.edge
+                ),
+
+                route_geometry AS (
+                    -- Reconstruct the geometry edge by edge.
+                    -- At point 1 and 2, we get a portion of the edge.
+                    SELECT
+                        CASE
+                        WHEN node = -1 THEN  -- Start point
+                            (SELECT points.geom
+                                FROM points
+                                -- Get the edge portion that leads to the next edge
+                                WHERE points.pid = -pgr.node
+                                ORDER BY ST_Distance(points.geom, pgr.next_geom) ASC
+                                LIMIT 1)
+                        WHEN node = -2 THEN  -- End point
+                            (SELECT points.geom
+                                FROM points
+                                -- Get the edge portion that leads to the previous edge
+                                WHERE points.pid = -pgr.next_node
+                                ORDER BY ST_Distance(points.geom, pgr.prev_geom) ASC
+                                LIMIT 1)
+                        ELSE
+                            edge_geom -- Return the full edge's geometry
+                        END AS final_geometry,
+                        edge
+                    FROM pgr
+                )
+
+                SELECT
+                    final_geometry as geometry,
+                    edge
+                FROM route_geometry
+                WHERE final_geometry IS NOT NULL;
+                """
+
+        cursor = connection.cursor()
+        start_edge = 10
+        end_edge = 16
+        start_fraction = 0.75
+        end_fraction = 0.33
+        cursor.execute(query, [
+            start_edge, start_fraction,
+            start_edge, start_fraction,
+            end_edge, end_fraction,
+            end_edge, end_fraction,
+            start_edge, start_fraction,
+            end_edge, end_fraction
+        ])
+        print(cursor.fetchall())
 
     def add_steps_to_graph(self, from_step, to_step):
 
