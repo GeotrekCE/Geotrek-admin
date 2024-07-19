@@ -5,6 +5,10 @@ CHANGELOG
 2.108.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix empty linetring in reorder_topology cmd (fixes #4092)
+
 
 2.108.0     (2024-07-12)
 ------------------------
