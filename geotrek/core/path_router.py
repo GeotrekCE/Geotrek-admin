@@ -219,7 +219,7 @@ class PathRouter:
             # then merge them into one
             one_step_geometry, topology = self.get_two_steps_route(from_step, to_step)
             all_steps_topologies.append(topology)
-            if one_step_geometry == None:
+            if one_step_geometry is None:
                 return [], []
             print("one_step_geometry", one_step_geometry)
             print("topology", topology)
@@ -284,6 +284,7 @@ class PathRouter:
                         points.edge_id,
                         points.fraction_start,
                         points.fraction_end,
+                        -- TODO: use ST_SmartLineSubstring?
                         ST_LineSubstring(
                             core_path.geom,
                             points.fraction_start,
@@ -344,7 +345,7 @@ class PathRouter:
                                 WHERE points.pid = -pgr.node
                                 ORDER BY ST_Distance(points.geom, pgr.next_geom) ASC
                                 LIMIT 1)
-                        WHEN node = -2 THEN  -- End point
+                        WHEN next_node = -2 THEN  -- End point
                             (SELECT points.geom
                                 FROM points
                                 -- Get the edge portion that leads to the previous edge
@@ -359,7 +360,7 @@ class PathRouter:
                             WHEN node = -1 THEN
                                 (SELECT points.fraction_start
                                 FROM points
-                                WHERE points.pid = 1
+                                WHERE points.pid = -pgr.node
                                 ORDER BY points.fraction_start DESC
                                 LIMIT 1)
                             ELSE 0
@@ -368,7 +369,7 @@ class PathRouter:
                             WHEN next_node = -2 THEN
                                 (SELECT points.fraction_end
                                 FROM points
-                                WHERE points.pid = 2
+                                WHERE points.pid = -pgr.next_node
                                 ORDER BY points.fraction_end ASC
                                 LIMIT 1)
                             ELSE 1
@@ -409,8 +410,11 @@ class PathRouter:
                     for geometry in geometries
                 ],
                 {
-                    'positions': {},
-                    'paths': [],
+                    'positions': dict([
+                        (str(i), [fraction_starts[i], fraction_ends[i]])
+                        for i in range(len(fraction_starts))
+                    ]),
+                    'paths': list(edge_ids),
                 }
             )
 
