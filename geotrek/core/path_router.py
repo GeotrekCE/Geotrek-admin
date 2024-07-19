@@ -217,15 +217,16 @@ class PathRouter:
             to_step = self.steps_topo[i + 1]
             # Get the linestrings (segments of paths) between those two steps,
             # then merge them into one
-            line_strings, topology = self.get_two_steps_path(from_step, to_step)
-            # all_steps_topologies.append(topology)
-            # if line_strings == []:
-            #     return [], []
-            # one_step_geometry = self.merge_line_strings(line_strings)
-            # all_steps_geometries.append(one_step_geometry)
+            one_step_geometry, topology = self.get_two_steps_route(from_step, to_step)
+            all_steps_topologies.append(topology)
+            if one_step_geometry == None:
+                return [], []
+            print("one_step_geometry", one_step_geometry)
+            print("topology", topology)
+            all_steps_geometries.append(one_step_geometry)
         return all_steps_geometries, all_steps_topologies
 
-    # def compute_two_steps_path_old(self, from_step, to_step):
+    # def compute_two_steps_route_old(self, from_step, to_step):
     #     from_node_info, to_node_info = self.add_steps_to_graph(from_step, to_step)
     #     self.add_steps_to_matrix(from_node_info, to_node_info)
 
@@ -243,33 +244,37 @@ class PathRouter:
 
     #     return ls, topo
 
-    def get_two_steps_path(self, from_step, to_step):
+    def get_two_steps_route(self, from_step, to_step):
         """
         Parameters:
             from_step ({edge_id: int, fraction: float})
             to_step ({edge_id: int, fraction: float})
         """
-        if from_step.get('edge_id') == to_step.get('edge_id'):
+        from_edge_id = from_step.get('edge_id')
+        to_edge_id = to_step.get('edge_id')
+
+        if from_edge_id == to_edge_id:
+            from_fraction = from_step.get('fraction')
+            to_fraction = to_step.get('fraction')
             # If both points are on same edge, split it from the 1st to the 2nd
             path_substring = self.create_path_substring(
-                from_step.get('edge_id'),
-                from_step.get('fraction'),
-                to_step.get('fraction')
+                from_edge_id,
+                from_fraction,
+                to_fraction
             )
-            route_segment = [
-                {
-                    'geometry': path_substring,
-                    'id': from_step.get('edge_id'),
-                },
-            ]
+            line_strings = [path_substring]
+            topology = {
+                'positions': {'0': [from_fraction, to_fraction]},
+                'paths': [from_edge_id],
+            }
         else:
             # Compute the shortest path between the two points
-            route_segment = self.compute_two_steps_path(from_step, to_step)
-        # TODO: also return the serialized topology
-        print(route_segment)
-        return route_segment, None
+            line_strings, topology = self.compute_two_steps_route(from_step, to_step)
 
-    def compute_two_steps_path(self, from_step, to_step):
+        step_geometry = self.merge_line_strings(line_strings)
+        return step_geometry, topology
+
+    def compute_two_steps_route(self, from_step, to_step):
         query = """
                 WITH points as (
                     -- This is a virtual table of the points (start and end)
@@ -277,6 +282,8 @@ class PathRouter:
                     SELECT
                         points.pid,
                         points.edge_id,
+                        points.fraction_start,
+                        points.fraction_end,
                         ST_LineSubstring(
                             core_path.geom,
                             points.fraction_start,
@@ -301,12 +308,9 @@ class PathRouter:
                         pgr.node,
                         pgr.edge,
                         core_path.geom as edge_geom,
-                        (LEAD(pgr.node) OVER (ORDER BY path_seq))
-                            AS next_node,
-                        (LAG(core_path.geom) OVER (ORDER BY path_seq))
-                            AS prev_geom,
-                        (LEAD(core_path.geom) OVER (ORDER BY path_seq))
-                            AS next_geom
+                        (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
+                        (LAG(core_path.geom) OVER (ORDER BY path_seq)) AS prev_geom,
+                        (LEAD(core_path.geom) OVER (ORDER BY path_seq)) AS next_geom
                     FROM
                         pgr_withPoints(
                             'SELECT
@@ -350,39 +354,65 @@ class PathRouter:
                         ELSE
                             edge_geom -- Return the full edge's geometry
                         END AS final_geometry,
-                        edge
+                        edge,
+                        CASE
+                            WHEN node = -1 THEN
+                                (SELECT points.fraction_start
+                                FROM points
+                                WHERE points.pid = 1
+                                ORDER BY points.fraction_start DESC
+                                LIMIT 1)
+                            ELSE 0
+                        END AS fraction_start,
+                        CASE
+                            WHEN next_node = -2 THEN
+                                (SELECT points.fraction_end
+                                FROM points
+                                WHERE points.pid = 2
+                                ORDER BY points.fraction_end ASC
+                                LIMIT 1)
+                            ELSE 1
+                        END AS fraction_end
                     FROM pgr
                 )
 
                 SELECT
                     final_geometry as geometry,
-                    edge
+                    edge,
+                    fraction_start,
+                    fraction_end
                 FROM route_geometry
-                WHERE final_geometry IS NOT NULL;
+                WHERE final_geometry IS NOT NULL
                 """
 
         start_edge = from_step.get('edge_id')
         end_edge = to_step.get('edge_id')
-        start_fraction = from_step.get('fraction')
-        end_fraction = to_step.get('fraction')
+        fraction_start = from_step.get('fraction')
+        fraction_end = to_step.get('fraction')
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
-                start_edge, start_fraction,
-                start_edge, start_fraction,
-                end_edge, end_fraction,
-                end_edge, end_fraction,
-                start_edge, start_fraction,
-                end_edge, end_fraction
+                start_edge, fraction_start,
+                start_edge, fraction_start,
+                end_edge, fraction_end,
+                end_edge, fraction_end,
+                start_edge, fraction_start,
+                end_edge, fraction_end
             ])
-            return [
+
+            query_result = cursor.fetchall()
+            print(query_result)
+            geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
+            return (
+                [
+                    MultiLineString(*[GEOSGeometry(geometry)]).merged
+                    for geometry in geometries
+                ],
                 {
-                    # FIXME
-                    'geometry': MultiLineString(*[GEOSGeometry(geometry)]).merged,
-                    'id': id
+                    'positions': {},
+                    'paths': [],
                 }
-                for geometry, id in cursor.fetchall()
-            ]
+            )
 
     # def add_steps_to_graph(self, from_step, to_step):
 
