@@ -1,15 +1,8 @@
-# import math
-# from collections import defaultdict
 import json
 
 from django.db import connection
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, Point, LineString, MultiLineString, GeometryCollection
-# from django.core.cache import caches
-
-# import numpy as np
-# from scipy.sparse.csgraph import dijkstra
-# from scipy.sparse import lil_array
 
 from geotrek.common.utils import sqlfunction
 from .models import Path
