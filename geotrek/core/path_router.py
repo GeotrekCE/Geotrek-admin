@@ -171,7 +171,7 @@ class PathRouter:
                 ),
 
                 route_geometry AS (
-                    -- Reconstruct the geometry edge by edge.
+                    -- The geometries edge by edge.
                     -- At point 1 and 2, we get a portion of the edge.
                     SELECT
                         CASE
@@ -212,16 +212,33 @@ class PathRouter:
                                 ORDER BY points.fraction_end ASC
                                 LIMIT 1)
                             ELSE 1
-                        END AS fraction_end
+                        END AS fraction_end,
+                        node,
+                        next_node
                     FROM pgr
                 )
 
                 SELECT
-                    final_geometry as geometry,
+
+                    CASE  -- Reverse the geometries if needed
+                    WHEN core_path.source = route_geometry.next_node
+                         OR core_path.target = route_geometry.node THEN
+                        -- If the ending point of the geometry (next_node) is the starting
+                        -- point of the edge (path source), the geometry must be reversed
+                        -- (same for starting point of the geom and ending pt of the edge).
+                        -- pgr_createTopology has assigned the path's start point as core_path's source
+                        -- with ST_StartPoint and the path's end point as core_path's target with ST_EndPoint
+                        -- so we can use core_path.source as the starting pt of the geom.
+                        ST_Reverse(final_geometry)
+                    ELSE
+                        final_geometry
+                    END AS geometry,
+
                     edge,
                     fraction_start,
                     fraction_end
                 FROM route_geometry
+                JOIN core_path on core_path.id = route_geometry.edge
                 """
 
         start_edge = from_step.get('edge_id')
@@ -240,9 +257,11 @@ class PathRouter:
             ])
 
             query_result = cursor.fetchall()
+            print(query_result)
             geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
             return (
                 [
+                    # Convert each geometry to a LineString
                     MultiLineString(*[GEOSGeometry(geometry)]).merged
                     for geometry in geometries
                 ],
