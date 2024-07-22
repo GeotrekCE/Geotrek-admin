@@ -52,7 +52,7 @@ class PathRouter:
         point = Point(latlng.get('lng'), latlng.get('lat'), srid=settings.API_SRID)
         point.transform(settings.SRID)
         # Get the closest path
-        # TODO: use an SQL function to get the closest path?
+        # TODO: use an SQL function to get the closest path and the fraction?
         closest_path = Path.closest(point)
         # Get which fraction of the Path this point is on
         closest_path_geom = f"'{closest_path.geom}'"
@@ -183,11 +183,12 @@ class PathRouter:
                                 WHERE points.pid = -pgr.node
                                 ORDER BY ST_Distance(points.geom, pgr.next_geom) ASC
                                 LIMIT 1)
-                        WHEN next_node = -2 THEN  -- End point
+                        WHEN next_node is NULL THEN
+                            -- End point: the next row does not exist because next edge id is -1
                             (SELECT points.geom
                                 FROM points
                                 -- Get the edge portion that leads to the previous edge
-                                WHERE points.pid = -pgr.next_node
+                                WHERE points.pid = 2
                                 ORDER BY ST_Distance(points.geom, pgr.prev_geom) ASC
                                 LIMIT 1)
                         ELSE
@@ -204,10 +205,11 @@ class PathRouter:
                             ELSE 0
                         END AS fraction_start,
                         CASE
-                            WHEN next_node = -2 THEN
+                            WHEN next_node is NULL THEN
+                                -- The next row does not exist because next edge id is -1
                                 (SELECT points.fraction_end
                                 FROM points
-                                WHERE points.pid = -pgr.next_node
+                                WHERE points.pid = 2
                                 ORDER BY points.fraction_end ASC
                                 LIMIT 1)
                             ELSE 1
@@ -221,7 +223,6 @@ class PathRouter:
                     fraction_start,
                     fraction_end
                 FROM route_geometry
-                WHERE final_geometry IS NOT NULL
                 """
 
         start_edge = from_step.get('edge_id')
@@ -240,7 +241,6 @@ class PathRouter:
             ])
 
             query_result = cursor.fetchall()
-            print(query_result)
             geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
             return (
                 [
