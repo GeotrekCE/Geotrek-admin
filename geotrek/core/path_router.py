@@ -171,7 +171,7 @@ class PathRouter:
                 ),
 
                 route_geometry AS (
-                    -- The geometries edge by edge.
+                    -- Get the geometries edge by edge.
                     -- At point 1 and 2, we get a portion of the edge.
                     SELECT
                         CASE
@@ -293,15 +293,5 @@ class PathRouter:
         return line_substring
 
     def merge_line_strings(self, line_strings):
-        rounded_line_strings = [
-            self.round_line_string_coordinates(ls) for ls in line_strings
-        ]
-        multi_line_string = MultiLineString(rounded_line_strings, srid=settings.SRID)
+        multi_line_string = MultiLineString(line_strings, srid=settings.SRID)
         return multi_line_string.merged
-
-    # TODO: check if still needed
-    def round_line_string_coordinates(self, line_string):
-        coords = line_string.coords
-        new_coords = [[round(nb, 4) for nb in pt_coord] for pt_coord in coords]
-        new_line_string = LineString(new_coords, srid=line_string.srid)
-        return new_line_string
