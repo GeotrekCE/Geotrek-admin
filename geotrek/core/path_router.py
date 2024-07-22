@@ -235,8 +235,27 @@ class PathRouter:
                     END AS geometry,
 
                     edge,
-                    fraction_start,
-                    fraction_end
+
+                    CASE -- Set fraction_start to 0 or 1 depending on the path
+                         -- direction compared to the route (same logic as for geometry)
+                    WHEN core_path.target = route_geometry.node THEN
+                        -- fraction_start is set to 1 if the path is reversed
+                        -- except for the starting geom
+                        1
+                    ELSE
+                        fraction_start
+                    END AS fraction_start,
+
+                    CASE -- Set fraction_end to 0 or 1 depending on the path
+                         -- direction compared to the route
+                    WHEN core_path.source = route_geometry.next_node THEN
+                        -- fraction_end is set to 0 if the path is reversed
+                        -- except for the ending geom
+                        0
+                    ELSE
+                        fraction_end
+                    END AS fraction_end
+
                 FROM route_geometry
                 JOIN core_path on core_path.id = route_geometry.edge
                 """
