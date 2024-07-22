@@ -274,6 +274,8 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
 
     def get_thumbnail(self, obj):
         thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
+        if hasattr(obj, 'is_image') and not obj.is_image:
+            return ""
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
         except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
