@@ -122,8 +122,7 @@ class PathRouter:
                         points.edge_id,
                         points.fraction_start,
                         points.fraction_end,
-                        -- TODO: use ST_SmartLineSubstring?
-                        ST_LineSubstring(
+                        ST_SmartLineSubstring(
                             core_path.geom,
                             points.fraction_start,
                             points.fraction_end
