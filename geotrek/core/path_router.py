@@ -77,8 +77,6 @@ class PathRouter:
             all_steps_topologies.append(topology)
             if one_step_geometry is None:
                 return [], []
-            print("one_step_geometry", one_step_geometry)
-            print("topology", topology)
             all_steps_geometries.append(one_step_geometry)
         return all_steps_geometries, all_steps_topologies
 
@@ -276,7 +274,6 @@ class PathRouter:
             ])
 
             query_result = cursor.fetchall()
-            print(query_result)
             geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
             return (
                 [
