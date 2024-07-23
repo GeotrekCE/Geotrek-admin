@@ -106,6 +106,8 @@ class PathRouter:
         else:
             # Compute the shortest path between the two points
             line_strings, topology = self.compute_two_steps_route(from_step, to_step)
+            if line_strings == []:
+                return None, None
 
         step_geometry = self.merge_line_strings(line_strings)
         return step_geometry, topology
@@ -274,6 +276,9 @@ class PathRouter:
             ])
 
             query_result = cursor.fetchall()
+            if query_result == []:
+                return [], None
+
             geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
             return (
                 [
