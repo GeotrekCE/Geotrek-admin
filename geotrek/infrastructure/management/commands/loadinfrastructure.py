@@ -217,7 +217,6 @@ class Command(BaseCommand):
             fields_without_eid = {
                 'type': infra_type,
                 'name': name,
-                'condition': condition_type,
                 'structure': structure,
                 'description': description,
                 'implantation_year': year
@@ -227,6 +226,8 @@ class Command(BaseCommand):
                     eid=eid,
                     defaults=fields_without_eid
                 )
+                if condition_type:
+                    infra.conditions.add(condition_type)
                 if verbosity > 0 and not created:
                     self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:

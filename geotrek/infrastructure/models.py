@@ -174,9 +174,12 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
                                          on_delete=models.PROTECT,
                                          related_name='infrastructures_set')
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
-    condition = models.ForeignKey(InfrastructureCondition,
-                                  verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.PROTECT)
+    conditions = models.ManyToManyField(
+        InfrastructureCondition,
+        related_name='infrastructures',
+        verbose_name=_("Conditions"),
+        blank=True)
+
     geometry_types_allowed = ["LINESTRING", "POINT"]
 
     class Meta:
@@ -212,6 +215,15 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
     @classmethod
     def outdoor_infrastructures(cls, outdoor_obj, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @property
+    def conditions_display(self):
+        if hasattr(self, "conditions_list"):
+            # Use conditions prefetched
+            conditions_list = self.conditions_list
+        else:
+            conditions_list = self.conditions.select_related('structure').all()
+        return ", ".join([str(c) for c in conditions_list])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

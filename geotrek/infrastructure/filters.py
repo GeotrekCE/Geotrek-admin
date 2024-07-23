@@ -31,7 +31,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'category', 'type', 'condition', 'implantation_year',
+            'category', 'type', 'conditions', 'implantation_year',
             'intervention_year', 'published', 'provider', 'access'
         ]
 

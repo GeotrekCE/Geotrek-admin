@@ -5,6 +5,10 @@ CHANGELOG
 2.108.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Change infrastructure condition field to ManyToMany field (#3970)
+
 **Bug fixes**
 
 - Fix empty linetring in reorder_topology cmd (fixes #4092)
