@@ -19,12 +19,12 @@ class PathRouter:
                 SELECT
                     pgr_createTopology(
                         'core_path',
-                        0.00001,
+                        %s::float,
                         'geom',
                         'id'
                     )
                 """
-        cursor.execute(query)
+        cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
         return ('OK',) == cursor.fetchone()
 
     def get_route(self, steps):
