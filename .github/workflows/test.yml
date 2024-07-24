@@ -57,7 +57,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-2.6.3
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -252,7 +252,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-2.6.3
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -336,7 +336,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-2.6.3
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
