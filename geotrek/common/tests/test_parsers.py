@@ -355,6 +355,16 @@ class AttachmentParserTests(TestCase):
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch('requests.get')
+    @mock.patch('PIL.Image.open')
+    def test_catch_decompression_error(self, mocked_open, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = b''
+        mocked_open.side_effect = ValueError("Decompressed Data Too Large")
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism4.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
     def test_attachment_with_other_filetype_with_structure(self, mocked):
         """
         It will always take the one without structure first

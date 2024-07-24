@@ -802,6 +802,9 @@ class AttachmentParserMixin:
                         return False, updated
             except UnidentifiedImageError:
                 pass
+            except ValueError:
+                # We want to catch : https://github.com/python-pillow/Pillow/blob/22ef8df59abf461824e4672bba8c47137730ef57/src/PIL/PngImagePlugin.py#L143
+                return False, updated
             attachment.attachment_file.save(name, f, save=False)
             attachment.is_image = attachment.is_an_image()
         else:

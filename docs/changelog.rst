@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix empty linetring in reorder_topology cmd (fixes #4092)
+- Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
 
 
 2.108.0     (2024-07-12)
