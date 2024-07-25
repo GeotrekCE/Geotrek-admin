@@ -443,9 +443,6 @@ BEGIN
             END IF;
         END IF;
 
-        -- Set pgRouting network data to null, as the graph is now changed
-        UPDATE core_path SET source = NULL, target = NULL WHERE id = path.id;
-
 
     END LOOP;
 
