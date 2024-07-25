@@ -37,6 +37,7 @@ CHANGELOG
 **Documentation**
 
 - Improve PostgreSQL upgrade documentation
+- Integration of sensitivity module notices (import and public api usage)
 
 **Bug fixes**
 

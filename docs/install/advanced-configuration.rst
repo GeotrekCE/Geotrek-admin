@@ -806,6 +806,12 @@ After installing Outdoor module, you have to add permissions to your user groups
 Sensitive areas
 ~~~~~~~~~~~~~~~
 
+.. note::
+    The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas. 
+
+    The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
+
+
 .. envvar:: INSTALLED_APPS for Sensitive areas
 
     In order to enable sensitivity module, in the custom settings file, add the following code:
@@ -815,15 +821,13 @@ Sensitive areas
         INSTALLED_APPS += ('geotrek.sensitivity', )
 
 
-You can insert rules of sensitive area with these commands :
+    You can insert rules of sensitive area with these commands:
 
-::
+    .. code-block:: bash
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
+        sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+        cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
-Settings
-'''''''''
 
 The following settings are related to sensitive areas:
 
@@ -857,62 +861,7 @@ The following settings are related to sensitive areas:
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
-
-Import from https://biodiv-sports.fr
-''''''''''''''''''''''''''''''''''''''
-
-In user interface, in the top-right menu, clic on "Imports" and choose "Biodiv'Sports".
-
-On command line, run
-
-.. code-block:: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
-
-
-Import from shapefile
-'''''''''''''''''''''''
-
-In user interface, in the top-right menu, go to Imports and choose "Shapefile zone sensible espèce"
-or "Shapefile zone sensible réglementaire".
-
-.. note::
-  The file must be a zip containing all the shapefile extensions (.shp, .shx, .prj, .dbf, .cpg)
-
-.. figure:: ../images/advanced-configuration/import_shapefile.png
-   :alt: Import shapefile in user interface
-   :align: center
-
-   Import shapefile in user interface
-
-
-On command line, run:
-
-.. code-block:: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
-
-or:
-
-.. code-block:: bash
-
-    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
-
-Attributes for "zones espèces sensibles" are:
- 
-* ``espece`` : species name. Mandatory. A species with this name must have been previously created.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-
-Attributes for "zones sensibles réglementaires" are:
-
-* ``name``: zone name.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-* ``periode`` : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
-* ``pratiques`` : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
-* ``url`` : card url. Optional.
-
+see :ref:`import-sensitive-areas` to import data.
 
 Feedback reports settings
 -------------------------
