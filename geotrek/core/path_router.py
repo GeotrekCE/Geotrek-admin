@@ -21,7 +21,8 @@ class PathRouter:
                         'core_path',
                         %s::float,
                         'geom',
-                        'id'
+                        'id',
+                        rows_where:='draft=false'
                     )
                 """
         cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
@@ -158,6 +159,7 @@ class PathRouter:
                                 length as cost,
                                 length as reverse_cost
                             FROM core_path
+                            WHERE draft = false
                             ORDER by id',
                             'SELECT *
                             FROM (
