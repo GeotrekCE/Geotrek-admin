@@ -21,8 +21,7 @@ class PathRouter:
                         'core_path',
                         %s::float,
                         'geom',
-                        'id',
-                        rows_where:='draft=false'
+                        'id'
                     )
                 """
         cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
