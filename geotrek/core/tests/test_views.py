@@ -760,7 +760,7 @@ class PathViewsTest(CommonTest):
         serialized = response.data.get('serialized')
         self.assertEqual(len(serialized), 1)
         self.assertEqual(len(serialized[0].get('positions').items()), 1)
-        self.assertEqual(len(serialized[0].get('positions').get(0)), 2)
+        self.assertEqual(len(serialized[0].get('positions').get('0')), 2)
         self.assertListEqual(serialized[0].get('paths'), [path.pk])
 
     def test_route_geometry_not_fail_no_via_point_several_paths(self):
