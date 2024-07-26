@@ -322,7 +322,10 @@ class PathViewSet(GeotrekMapentityViewSet):
                 lat = step.get('lat')
                 lng = step.get('lng')
                 if (not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or lat < 0 or 90 < lat or lng < -180 or 180 < lng):
-                    raise Exception("Each step should contain valid latitude and longitude")
+                    raise Exception("Each step should contain a valid latitude and longitude")
+                path_id = step.get('path_id')
+                if not isinstance(path_id, int) or Path.objects.filter(pk=path_id).first() == None:
+                    raise Exception("Each step should contain a valid path id")
         except Exception as exc:
             return Response({'error': '%s' % exc, }, 400)
 
