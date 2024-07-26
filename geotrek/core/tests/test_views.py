@@ -665,34 +665,76 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_one_step(self):
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": 48.866667, "lng": 2.333333}]})
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": 2.333333}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_no_lat(self):
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lng": 2.333333}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lng": 2.333333}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_no_lng(self):
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": 48.866667}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_no_path_id(self):
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"lat": 40.5267991, "lng": 0.5305685}, {"lat": 40.5266465, "lng": 0.5765381}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_incorrect_lat(self):
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": 1000, "lng": 2.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 1000, "lng": 2.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": "abc", "lng": 2.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": "abc", "lng": 2.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_incorrect_lng(self):
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": 48.866667, "lng": 1000}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": 1000}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
-        response = self.get_route_geometry({"steps": [{"path_id": 0, "lat": 48.866667, "lng": "abc"}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": "abc"}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_incorrect_path_id(self):
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"path_id": 'abc', "lat": 48.866667, "lng": 1000}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
         response = self.get_route_geometry({"steps": [{"path_id": -999, "lat": 48.866667, "lng": "abc"}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
@@ -700,30 +742,19 @@ class PathViewsTest(CommonTest):
 
     @mock.patch('geotrek.core.path_router.PathRouter.get_route', get_route_exception_mock)
     def test_route_geometry_fail_error_500(self):
+        path_geom = LineString([
+            [1.3664246, 43.4569065],
+            [1.6108704, 43.4539158],
+        ], srid=settings.API_SRID)
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
         response = self.get_route_geometry({
             "steps": [
-                {"path_id": 0, "lat": 40.5267991, "lng": 0.5305685},
-                {"path_id": 0, "lat": 40.5266465, "lng": 0.5765381}
+                {"path_id": path.pk, "lat": 40.5267991, "lng": 0.5305685},
+                {"path_id": path.pk, "lat": 40.5266465, "lng": 0.5765381}
             ]
         })
         self.assertEqual(response.status_code, 500)
-
-    # TODO: remove permanently if no longer relevant
-    # def test_route_geometry_fail_steps_not_on_paths(self):
-    #     path_geom = LineString([
-    #         [1.3664246, 43.4569065],
-    #         [1.6108704, 43.4539158],
-    #     ], srid=settings.API_SRID)
-    #     path_geom.transform(settings.SRID)
-    #     PathFactory(geom=path_geom)
-
-    #     response = self.get_route_geometry({
-    #         "steps": [
-    #             {"lat": 40.5267991, "lng": 0.5305685},
-    #             {"lat": 40.5266465, "lng": 0.5765381}
-    #         ]
-    #     })
-    #     self.assertEqual(response.status_code, 400)
 
     def test_route_geometry_fail_paths_not_linked(self):
         pathGeom1 = LineString([
