@@ -160,7 +160,7 @@ class PathRouter:
                                 length as cost,
                                 length as reverse_cost
                             FROM core_path
-                            WHERE draft = false
+                            WHERE draft = false AND visible = true
                             ORDER by id',
                             'SELECT *
                             FROM (
