@@ -263,8 +263,8 @@ class PathRouter:
 
         start_edge = from_step.get('edge_id')
         end_edge = to_step.get('edge_id')
-        fraction_start = from_step.get('fraction')
-        fraction_end = to_step.get('fraction')
+        fraction_start = self._fix_fraction(from_step.get('fraction'))
+        fraction_end = self._fix_fraction(to_step.get('fraction'))
 
         with connection.cursor() as cursor:
             cursor.execute(query, [
@@ -295,6 +295,18 @@ class PathRouter:
                     'paths': list(edge_ids),
                 }
             )
+
+    def _fix_fraction(self, fraction):
+        """ This function is used to fix problem with pgrouting when point
+        position on the edge is 0.0 or 1.0, that create a routing topology
+        problem. See https://github.com/pgRouting/pgrouting/issues/760
+        So we create a fake fraction near the vertices of the edge.
+        """
+        if float(fraction) == 1.0:
+            return 0.99999
+        elif float(fraction) == 0.0:
+            return 0.00001
+        return fraction
 
     def create_path_substring(self, path_id, start_fraction, end_fraction):
         path = Path.objects.get(pk=path_id)
