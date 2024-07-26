@@ -173,5 +173,5 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER core_path_pgrouting_values_null_tgr
-AFTER UPDATE OF geom, geom_3d ON core_path
+AFTER UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE set_pgrouting_values_to_null();
