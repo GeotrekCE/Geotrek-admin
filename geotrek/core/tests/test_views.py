@@ -735,10 +735,11 @@ class PathViewsTest(CommonTest):
         ], srid=settings.API_SRID)
         path_geom.transform(settings.SRID)
         PathFactory(geom=path_geom)
-        response = self.get_route_geometry({"steps": [{"path_id": 'abc', "lat": 48.866667, "lng": 1000}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        response = self.get_route_geometry({"steps": [{"path_id": 'abc', "lat": 48.866667, "lng": 1.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
-        response = self.get_route_geometry({"steps": [{"path_id": -999, "lat": 48.866667, "lng": "abc"}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
+        response = self.get_route_geometry({"steps": [{"path_id": -999, "lat": 48.866667, "lng": 1.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid path id")
 
     @mock.patch('geotrek.core.path_router.PathRouter.get_route', get_route_exception_mock)
     def test_route_geometry_fail_error_500(self):
