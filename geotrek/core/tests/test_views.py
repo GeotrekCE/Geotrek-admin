@@ -97,8 +97,8 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
-def get_route_exception_mock(steps):
-    raise Exception
+def get_route_exception_mock(arg1, arg2):
+    raise Exception('This is an error message')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -659,10 +659,12 @@ class PathViewsTest(CommonTest):
     def test_route_geometry_fail_no_steps_array(self):
         response = self.get_route_geometry({})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Request parameters should contain a 'steps' array")
 
     def test_route_geometry_fail_empty_steps_array(self):
         response = self.get_route_geometry({"steps": []})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "There must be at least 2 steps")
 
     def test_route_geometry_fail_one_step(self):
         path_geom = LineString([
@@ -673,6 +675,7 @@ class PathViewsTest(CommonTest):
         path = PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": 2.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "There must be at least 2 steps")
 
     def test_route_geometry_fail_no_lat(self):
         path_geom = LineString([
@@ -683,6 +686,7 @@ class PathViewsTest(CommonTest):
         path = PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lng": 2.333333}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid latitude and longitude")
 
     def test_route_geometry_fail_no_lng(self):
         path_geom = LineString([
@@ -693,6 +697,7 @@ class PathViewsTest(CommonTest):
         path = PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667}, {"path_id": 1, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid latitude and longitude")
 
     def test_route_geometry_fail_no_path_id(self):
         path_geom = LineString([
@@ -703,6 +708,7 @@ class PathViewsTest(CommonTest):
         PathFactory(geom=path_geom)
         response = self.get_route_geometry({"steps": [{"lat": 40.5267991, "lng": 0.5305685}, {"lat": 40.5266465, "lng": 0.5765381}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid path id")
 
     def test_route_geometry_fail_incorrect_lat(self):
         path_geom = LineString([
@@ -715,6 +721,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 400)
         response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": "abc", "lng": 2.333333}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid latitude and longitude")
 
     def test_route_geometry_fail_incorrect_lng(self):
         path_geom = LineString([
@@ -727,6 +734,7 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 400)
         response = self.get_route_geometry({"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": "abc"}, {"path_id": 0, "lat": 47.866667, "lng": 1.333333}]})
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "Each step should contain a valid latitude and longitude")
 
     def test_route_geometry_fail_incorrect_path_id(self):
         path_geom = LineString([
@@ -756,6 +764,7 @@ class PathViewsTest(CommonTest):
             ]
         })
         self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.data.get('error'), "This is an error message")
 
     def test_route_geometry_fail_paths_not_linked(self):
         pathGeom1 = LineString([
@@ -779,6 +788,7 @@ class PathViewsTest(CommonTest):
             ]
         })
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get('error'), "No path between the given points")
 
     def test_route_geometry_not_fail_no_via_point_one_path(self):
         path_geom = LineString([
