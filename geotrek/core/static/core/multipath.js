@@ -448,6 +448,8 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
                 return
             }
+            if (this.steps.length > 1)
+                this.enableLoadingMode()
 
             pop.previousPosition = {ll: pop.ll, polyline: pop.polyline}
 
@@ -503,6 +505,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     // Remove an existing step by clicking on it
     removeViaStepFromRoute: function(pop) {
+        this.enableLoadingMode()
         var step_idx = this.getStepIdx(pop)
         this.removeViaStep(pop)
         this._previousStepsNb = this._currentStepsNb
@@ -575,10 +578,6 @@ L.Handler.MultiPath = L.Handler.extend({
         }
 
         if (canFetchRoute()) {
-            // Prevent from modifying steps while the route is fetched
-            this.spinner.spin(this._container);
-            this.disableMarkers()
-
             var sent_steps = []
             steps_to_route.forEach((step) => {
                 var sent_step = {
@@ -622,14 +621,24 @@ L.Handler.MultiPath = L.Handler.extend({
                 }
             )
             .catch(e => console.log("fetchRoute", e))
-            .finally(() => {
-                this.spinner.stop()
-                // If the route is invalid, don't reenable the markers: some have
-                // been disabled to guide the user through correcting the route.
-                if (this._routeIsValid)
-                    this.enableMarkers()
-            })
+            .finally(() => this.disableLoadingMode())
+        } else {
+            this.disableLoadingMode()
         }
+    },
+
+    enableLoadingMode: function () {
+        // Prevent from modifying steps while the route is fetched
+        this.spinner.spin(this._container);
+        this.disableMarkers()
+    },
+
+    disableLoadingMode: function () {
+        this.spinner.stop()
+        // If the route is invalid, don't reenable the markers: some have
+        // been disabled to guide the user through correcting the route.
+        if (this._routeIsValid)
+            this.enableMarkers()
     },
 
     restoreGeometry: function (serializedTopology) {
