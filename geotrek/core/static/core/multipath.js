@@ -566,65 +566,64 @@ L.Handler.MultiPath = L.Handler.extend({
         function canFetchRoute() {
             if (steps_to_route.length < 2)
                 return false;
-            if (new_steps_indexes.length < 2)
-                return false;
-
             for (var i = 0; i < steps_to_route.length; i++) {
                 if (!steps_to_route[i].isValid())
                     return false;
             }
-
             return true;
         }
 
-        if (canFetchRoute()) {
-            var sent_steps = []
-            steps_to_route.forEach((step) => {
-                var sent_step = {
-                    lat: step.ll.lat,
-                    lng: step.ll.lng,
-                }
-                sent_steps.push(sent_step)
-            })
-
-            fetch(window.SETTINGS.urls['route_geometry'], {
-                method: 'POST',
-                headers: {
-                    "X-CSRFToken": this.getCookie('csrftoken'),
-                    'Content-Type': 'application/json; charset=UTF-8',
-                },
-                body: JSON.stringify({
-                    steps: sent_steps,
-                })
-            })
-            .then(response => {
-                if (response.status == 200)
-                    return response.json()
-                return Promise.reject(response)
-            })
-            .then(
-                data => {  // Status code 200:
-                    if (data) {
-                        var route = {
-                            'geojson': data.geojson,
-                            'serialized': data.serialized,
-                            'old_steps_indexes': old_steps_indexes,
-                            'new_steps_indexes': new_steps_indexes,
-                        }
-                        this.fire('fetched_route', route);
-                    }
-                },
-                // If the promise was rejected:
-                response => {
-                    console.log("fetchRoute:", response)
-                    this.fire('invalid_route', pop)
-                }
-            )
-            .catch(e => console.log("fetchRoute", e))
-            .finally(() => this.disableLoadingMode())
-        } else {
+        if (!canFetchRoute()) {
             this.disableLoadingMode()
+            return
         }
+
+        var sent_steps = []
+        steps_to_route.forEach((step) => {
+            var sent_step = {
+                lat: step.ll.lat,
+                lng: step.ll.lng,
+            }
+            sent_steps.push(sent_step)
+        })
+
+        fetch(window.SETTINGS.urls['route_geometry'], {
+            method: 'POST',
+            headers: {
+                "X-CSRFToken": this.getCookie('csrftoken'),
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                steps: sent_steps,
+            })
+        })
+        .then(response => {
+            if (response.status == 200)
+                return response.json()
+            return Promise.reject(response)
+        })
+        .then(
+            data => {  // Status code 200:
+                if (data) {
+                    var route = {
+                        'geojson': data.geojson,
+                        'serialized': data.serialized,
+                        'old_steps_indexes': old_steps_indexes,
+                        'new_steps_indexes': new_steps_indexes,
+                    }
+                    this.fire('fetched_route', route);
+                }
+            },
+            // If the promise was rejected:
+            response => {
+                console.log("fetchRoute:", response)
+                this.fire('invalid_route', pop)
+            }
+        )
+        .catch(e => {
+            console.log("fetchRoute", e)
+            this.disableLoadingMode()
+        })
     },
 
     enableLoadingMode: function () {
@@ -926,6 +925,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.fire('computed_topology', {topology: this._routeTopology});
 
         this.setupNewRouteDragging(routeLayers)
+        this.disableLoadingMode()
     },
 
     setupNewRouteDragging: function(routeLayer) {
@@ -998,28 +998,28 @@ L.Handler.MultiPath = L.Handler.extend({
         // Display an alert message
         this._isolatedMarkerToast.show()
 
-        // If there are only two steps, both should be movable: enable them
         if (this.steps.length <= 2) {
+            // If there are only two steps, both should be movable: enable them
             this.enableMarkers()
-            return
+        } else {
+            // Highlight the invalid marker and enable it
+            L.DomUtil.removeClass(pop.marker._icon, 'marker-snapped');
+            L.DomUtil.addClass(pop.marker._icon, 'marker-highlighted');
+            pop.marker.activate()
+
+            // Set the other markers to grey and disable them
+            this.steps.forEach(step => {
+                if (step._leaflet_id != pop._leaflet_id) {
+                    L.DomUtil.removeClass(step.marker._icon, 'marker-snapped');
+                    L.DomUtil.addClass(step.marker._icon, 'marker-disabled');
+                    step.marker.deactivate();
+                }
+            })
+            // Prevent from creating new via-steps
+            this.map.off('mousemove', this.drawOnMouseMove);
+            this.map.removeLayer(this.draggable_marker);
         }
-
-        // Highlight the invalid marker and enable it
-        L.DomUtil.removeClass(pop.marker._icon, 'marker-snapped');
-        L.DomUtil.addClass(pop.marker._icon, 'marker-highlighted');
-        pop.marker.activate()
-
-        // Set the other markers to grey and disable them
-        this.steps.forEach(step => {
-            if (step._leaflet_id != pop._leaflet_id) {
-                L.DomUtil.removeClass(step.marker._icon, 'marker-snapped');
-                L.DomUtil.addClass(step.marker._icon, 'marker-disabled');
-                step.marker.deactivate();
-            }
-        })
-        // Prevent from creating new via-steps
-        this.map.off('mousemove', this.drawOnMouseMove);
-        this.map.removeLayer(this.draggable_marker);
+        this.disableLoadingMode()
     }
 
 });
