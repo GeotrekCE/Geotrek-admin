@@ -5,7 +5,7 @@ from geotrek.core.path_router import PathRouter
 
 class Command(BaseCommand):
     help = """
-    Generates the network topology needed by pgRouting by filling
+    Generates the paths graph (pgRouting network topology) by filling
     columns source and target of the core_path table.
     """
 
