@@ -52,8 +52,8 @@ Documentation
 Contribution
 ------------
 
-* `Contributing guide <https://geotrek.readthedocs.io/en/master/CONTRIBUTING.html>`_
-* `Development documentation <https://geotrek.readthedocs.io/en/master/contribute/development.html>`_
+* `Contributing guide <https://geotrek.readthedocs.io/en/latest/contribute/contributing.html>`_
+* `Development documentation <https://geotrek.readthedocs.io/en/latest/contribute/development.html>`_
 
 
 License
