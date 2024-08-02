@@ -1583,12 +1583,18 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
 
+    class LinePictogramSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+        class Meta:
+            model = signage_models.LinePictogram
+            fields = ('label', 'code', 'pictogram', 'description')
+
     class LineSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        pictogram = serializers.CharField(source='pictogram_name')
+        pictograms = LinePictogramSerializer(many=True)
 
         class Meta:
             model = signage_models.Line
-            fields = ('id', 'direction', 'text', 'pictogram', 'distance', 'time')
+            fields = ('id', 'direction', 'text', 'pictograms', 'distance', 'time')
 
     class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         lines = LineSerializer(many=True)
