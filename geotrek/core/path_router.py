@@ -13,7 +13,7 @@ class PathRouter:
         self.set_path_network_topology()
 
     def set_path_network_topology(self):
-        """ Builds or updates the network topology """
+        """ Builds or updates the paths graph (pgRouting network topology) """
         cursor = connection.cursor()
         query = """
                 SELECT
@@ -29,8 +29,9 @@ class PathRouter:
 
     def get_route(self, steps):
         """
-        Returns the whole route geojson and topology. Both of them is an array
-        with each element being a sub-route from one step to another.
+        Returns the whole route's geojson and topology. Both of them is an array
+        with each element being a sub-route from one step to another. The geojson
+        geometry's srid corresponds to the frontend's.
         """
         self.steps = steps
         self.steps_topo = [
@@ -67,6 +68,10 @@ class PathRouter:
         return fraction_of_distance
 
     def compute_all_steps_routes(self):
+        """
+        Returns the whole route's geometries and topology. Both of them is an array
+        with each element being a sub-route from one step to another.
+        """
         all_steps_geometries = []  # Each elem is a linestring from one step to another
         all_steps_topologies = []  # Each elem is the topology from one step to another
         # Compute the shortest path for each pair of adjacent steps
@@ -84,9 +89,10 @@ class PathRouter:
 
     def get_two_steps_route(self, from_step, to_step):
         """
+        Returns the geometry (as a LineString) and the topology of a subroute.
         Parameters:
-            from_step ({edge_id: int, fraction: float})
-            to_step ({edge_id: int, fraction: float})
+            from_step: {edge_id: int, fraction: float}
+            to_step: {edge_id: int, fraction: float}
         """
         from_edge_id = from_step.get('edge_id')
         to_edge_id = to_step.get('edge_id')
@@ -115,6 +121,13 @@ class PathRouter:
         return step_geometry, topology
 
     def compute_two_steps_route(self, from_step, to_step):
+        """
+        Computes the geometry (as an array of LineStrings) and the topology of
+        a subroute by using pgRouting.
+        Parameters:
+            from_step: {edge_id: int, fraction: float}
+            to_step: {edge_id: int, fraction: float}
+        """
         query = """
                 WITH points as (
                     -- This is a virtual table of the points (start and end)
@@ -299,9 +312,9 @@ class PathRouter:
             )
 
     def _fix_fraction(self, fraction):
-        """ This function is used to fix problem with pgrouting when point
-        position on the edge is 0.0 or 1.0, that create a routing topology
-        problem. See https://github.com/pgRouting/pgrouting/issues/760
+        """ This function is used to fix an issue with pgRouting where a point's
+        position on an edge being 0.0 or 1.0 create a routing topology problem.
+        See https://github.com/pgRouting/pgrouting/issues/760
         So we create a fake fraction near the vertices of the edge.
         """
         if float(fraction) == 1.0:
@@ -311,6 +324,10 @@ class PathRouter:
         return fraction
 
     def create_path_substring(self, path_id, start_fraction, end_fraction):
+        """
+        Returns a path's substring for which start_fraction can be bigger than
+        end_fraction.
+        """
         path = Path.objects.get(pk=path_id)
         sql = """
         SELECT ST_AsText(ST_SmartLineSubstring('{}'::geometry, {}, {}))
