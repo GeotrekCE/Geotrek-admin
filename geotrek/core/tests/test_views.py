@@ -1043,12 +1043,13 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_fail_with_draft_path(self):
         """
+        Going from path2 to path1: fail
+
                 _________ path1
                       |
                       | path3 (draft)
             path2_____|
 
-            Going from path2 to path1: fail
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1082,6 +1083,8 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_with_draft_path(self):
         """
+        Going from point1 to point2: go through path3
+
               point1
               __X_______________ path1
                       |     |
@@ -1092,7 +1095,6 @@ class PathViewsTest(CommonTest):
          path2 ___X___|_____|
                 point2
 
-            Going from point1 to point2: go through path3
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1159,12 +1161,13 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_fail_with_invisible_path(self):
         """
+        Going from path2 to path1: fail
+
                 _________ path1
                       |
                       | path3 (invisible)
             path2_____|
 
-            Going from path2 to path1: fail
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1198,6 +1201,8 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_with_invisible_path(self):
         """
+        Going from point1 to point2: go through paths 3 and 6
+
               point1
               __X____________________ path1
                            |     |
@@ -1208,7 +1213,6 @@ class PathViewsTest(CommonTest):
          path2 ___X________|_____|
                 point2      path6
 
-            Going from point1 to point2: go through paths 3 and 6
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1277,13 +1281,14 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_after_adding_path(self):
         """
+        Route once from path2 to path1 (no possible route), then add path3:
+        there is now a route going through path3
+
                 _________ path1
                       |
                       | path3 (added after 1st routing)
             path2_____|
 
-            Route once from path2 to path1 (no possible route), then add
-            path3: there is now a route going through path3
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1349,6 +1354,9 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_update_after_adding_path(self):
         """
+        Route once from pt1 to pt2 (goes through path3), then add path4: the
+        route should now go through path4
+
                  point1
                   __X________________ path1
                            |     |
@@ -1359,8 +1367,6 @@ class PathViewsTest(CommonTest):
          path2 ___X________|_____|
                 point2      path6
 
-            Route once from pt1 to pt2 (goes through path3), then add path4: the
-            route should now go through path4
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1433,13 +1439,14 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_fail_after_deleting_path(self):
         """
+        Route once from path2 to path1 (goes through path3), then delete
+        path3: there is now no possible route
+
                 _________ path1
                       |
                       | path3 (deleted after 1st routing)
             path2_____|
 
-            Route once from path2 to path1 (goes through path3), then delete
-            path3: there is now no possible route
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1479,6 +1486,9 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_after_deleting_path(self):
         """
+        Route once from pt 1 to pt 2 through path4, then delete path4: the
+        route should now go through path3
+
                  point1
                   __X________________ path1
                            |     |
@@ -1489,8 +1499,6 @@ class PathViewsTest(CommonTest):
          path2 ___X________|_____|
                 point2      path6
 
-            Route once from pt 1 to pt 2 through path4, then delete path4: the
-            route should now go through path3
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1566,13 +1574,14 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_not_fail_after_editing_path(self):
         """
+        Route once from path2 to path1 (no possible route), then edit path3
+        so it links path1 with path2: there is now a route going through path3
+
             path1________                           _________ path1
                             /                             |
                            /path3      ->                 | path3
             path2_____                          path2_____|
 
-            Route once from path2 to path1 (no possible route), then edit path3
-            so it links path1 with path2: there is now a route going through path3
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1646,13 +1655,14 @@ class PathViewsTest(CommonTest):
 
     def test_route_geometry_fail_after_editing_path(self):
         """
+        Route once from path2 to path1 (goes through path3), then edit path3
+        so it doesn't link path1 with path2 anymore: there is no possible route
+
                   ______ path1                   path1 ______
                       |                                         /
                       | path3         ->                       /path3
             path2_____|                          path2_____
 
-            Route once from path2 to path1 (goes through path3), then edit path3
-            so it doesn't link path1 with path2 anymore: there is no possible route
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
