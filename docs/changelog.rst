@@ -5,6 +5,10 @@ CHANGELOG
 2.108.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**New features**
+
+- Add Annotation Categories to improve annotations on HD Views(refs #4032)
+
 **Improvements**
 
 - Change infrastructure condition field to ManyToMany field (#3970)

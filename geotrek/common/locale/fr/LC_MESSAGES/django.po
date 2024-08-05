@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-28 12:55+0000\n"
+"POT-Creation-Date: 2024-08-06 08:26+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -334,7 +334,7 @@ msgid "Location"
 msgstr "Emplacement"
 
 msgid "Annotations"
-msgstr "Actions"
+msgstr "Annotations"
 
 msgid "Title for this view point"
 msgstr "Titre pour cette vue HD"
@@ -347,6 +347,12 @@ msgstr "Vue HD"
 
 msgid "HD Views"
 msgstr "Vues HD"
+
+msgid "Annotation category"
+msgstr "Catégories d'annotation"
+
+msgid "Annotation categories"
+msgstr "Catégorie d'annotation"
 
 msgid "Access mean"
 msgstr "Moyen d'accès"
@@ -572,8 +578,8 @@ msgstr "Point"
 msgid "Line"
 msgstr "Ligne"
 
-msgid "Created annotations"
-msgstr "Annotations créées"
+msgid "Categories"
+msgstr "Catégories"
 
 msgid "Properties"
 msgstr "Propriétés"

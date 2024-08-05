@@ -23,7 +23,7 @@ from modeltranslation.utils import build_localized_fieldname
 from geotrek.authent.models import (StructureOrNoneRelated, StructureRelated,
                                     default_structure)
 from geotrek.common.mixins.models import PublishableMixin
-from geotrek.common.models import AccessibilityAttachment, HDViewPoint
+from geotrek.common.models import AccessibilityAttachment, AnnotationCategory, HDViewPoint
 from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
@@ -472,6 +472,11 @@ class HDViewPointForm(MapEntityForm):
 
 class HDViewPointAnnotationForm(forms.ModelForm):
     annotations = forms.JSONField(label=False)
+    annotations_categories = forms.JSONField(label=False)
+    annotation_category = forms.ModelChoiceField(
+        required=False,
+        queryset=AnnotationCategory.objects.all()
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -480,6 +485,20 @@ class HDViewPointAnnotationForm(forms.ModelForm):
         self.fields['annotations'].widget = forms.Textarea(
             attrs={
                 'name': 'annotations',
+                'rows': '15',
+                'type': 'textarea',
+                'autocomplete': 'off',
+                'autocorrect': 'off',
+                'autocapitalize': 'off',
+                'spellcheck': 'false',
+                # Do not show GEOJson textarea to users
+                'style': 'display: none;'
+            }
+        )
+        self.fields['annotations_categories'].required = False
+        self.fields['annotations_categories'].widget = forms.Textarea(
+            attrs={
+                'name': 'annotations_categories',
                 'rows': '15',
                 'type': 'textarea',
                 'autocomplete': 'off',
@@ -502,6 +521,8 @@ class HDViewPointAnnotationForm(forms.ModelForm):
 
         leftpanel = Div(
             'annotations',
+            'annotations_categories',
+            'annotation_category',
             css_id="modelfields",
         )
         formactions = FormActions(
@@ -528,6 +549,18 @@ class HDViewPointAnnotationForm(forms.ModelForm):
             formactions,
         )
 
+    def clean_annotations_categories(self):
+        data = self.cleaned_data["annotations_categories"]
+        if data is None:
+            return {}
+        return data
+
+    def clean_annotations(self):
+        data = self.cleaned_data["annotations"]
+        if data is None:
+            return {}
+        return data
+
     class Meta:
         model = HDViewPoint
-        fields = ('annotations', )
+        fields = ('annotations', 'annotations_categories')

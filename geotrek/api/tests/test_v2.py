@@ -57,6 +57,9 @@ from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
+ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
+])
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -479,8 +482,47 @@ class BaseApiTest(TestCase):
         cls.site2.themes.add(cls.theme3)
         cls.label_3 = common_factory.LabelFactory()
         cls.site2.labels.add(cls.label_3)
+        cls.annotationcategory = common_factory.AnnotationCategoryFactory(label='A category')
+        annotations = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            259.26707830454814,
+                            148.1029483470403
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 1",
+                        "annotationId": 1234,
+                        "annotationType": "point",
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            540.4490176472651,
+                            161.10558138022952
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 2",
+                        "annotationId": 2,
+                        "annotationType": "point",
+                    }
+                }
+            ]
+        }
+        annotations_categories = {'1234': str(cls.annotationcategory.pk)}
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
-            content_object=cls.treks[0]
+            content_object=cls.treks[0],
+            annotations=annotations,
+            annotations_categories=annotations_categories
         )
         cls.hdviewpoint_poi = common_factory.HDViewPointFactory(
             content_object=cls.poi
@@ -828,6 +870,12 @@ class BaseApiTest(TestCase):
 
     def get_hdviewpoint_detail(self, id_hdviewpoint, params=None):
         return self.client.get(reverse('apiv2:hdviewpoint-detail', args=(id_hdviewpoint,)), params)
+
+    def get_annotationcategory_list(self, params=None):
+        return self.client.get(reverse('apiv2:annotation-category-list'), params)
+
+    def get_annotationcategory_detail(self, id_annotationcategory, params=None):
+        return self.client.get(reverse('apiv2:annotation-category-detail', args=(id_annotationcategory,)), params)
 
 
 class NoPaginationTestCase(BaseApiTest):
@@ -1500,6 +1548,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_number_elems_response(
             self.get_hdviewpoint_list(),
             common_models.HDViewPoint
+        )
+
+    def test_annotationcategory_detail(self):
+        self.check_structure_response(
+            self.get_annotationcategory_detail(self.annotationcategory.pk),
+            ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_annotationcategory_list(self):
+        self.check_number_elems_response(
+            self.get_annotationcategory_list(),
+            common_models.AnnotationCategory
         )
 
     def test_route_detail(self):
@@ -2466,7 +2526,46 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             json_response.get('picture_tiles_url'),
             f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/%7Bz%7D/%7Bx%7D/%7By%7D.png?source=vips"
         )
-        json.dumps(json_response.get('annotations'))
+        annotations = json_response.get('annotations')
+        serialized_annotations = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            259.26707830454814,
+                            148.1029483470403
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 1",
+                        "annotationId": 1234,
+                        "annotationType": "point",
+                        "category": self.annotationcategory.pk
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            540.4490176472651,
+                            161.10558138022952
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 2",
+                        "annotationId": 2,
+                        "annotationType": "point",
+                        "category": None
+                    }
+                }
+            ]
+        }
+        self.assertEqual(str(self.annotationcategory), 'A category')
+        self.assertJSONEqual(json.dumps(serialized_annotations), json.dumps(annotations))
         self.assertIsNone(json_response.get('site'))
         self.assertIsNone(json_response.get('poi'))
         self.assertEqual(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))

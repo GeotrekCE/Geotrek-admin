@@ -6,7 +6,7 @@ from mapentity.tests.factories import SuperUserFactory
 from paperclip.models import random_suffix_regexp
 
 from geotrek.common.models import Attachment, FileType, Theme
-from geotrek.common.tests.factories import (AttachmentFactory,
+from geotrek.common.tests.factories import (AnnotationCategoryFactory, AttachmentFactory,
                                             HDViewPointFactory, ThemeFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.models import POI, DifficultyLevel, Trek
@@ -176,7 +176,12 @@ class HDViewPointAdminTest(TestCase):
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
         cls.trek = TrekFactory()
-        cls.vp = HDViewPointFactory(content_object=cls.trek)
+        cls.category = AnnotationCategoryFactory()
+        cls.category_2 = AnnotationCategoryFactory()
+        cls.vp = HDViewPointFactory(
+            content_object=cls.trek,
+            annotations_categories={'1': f"{cls.category.pk}"}
+        )
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -187,3 +192,13 @@ class HDViewPointAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, f'<a data-pk="{self.trek.pk}" href="{self.trek.get_detail_url()}" >{str(self.trek)}</a>')
         self.assertContains(response, f'<a data-pk="{self.vp.pk}" href="{self.vp.full_url}" >{self.vp.title}</a>')
+
+    def test_nodelete_annotation_category(self):
+        delete_url = reverse('admin:common_annotationcategory_delete', args=(self.category.pk,))
+        response = self.client.get(delete_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_annotation_category(self):
+        delete_url = reverse('admin:common_annotationcategory_delete', args=(self.category_2.pk,))
+        response = self.client.get(delete_url)
+        self.assertEqual(response.status_code, 200)
