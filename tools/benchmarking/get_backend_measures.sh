@@ -22,8 +22,8 @@ launch_scenario() {
     do
         if ! $1; then
             # Empty the backend cache
-            curl 'http://geotrek.local:8000/admin/clearcache/' -X POST -H "Cookie: csrftoken=jJPzy1w4p7KNspD9QG1Y2xOqG8Oczf2l; sessionid=$SESSION_ID" --data-raw 'csrfmiddlewaretoken=VihAxtR8JyN10VzyXyyEAUSiwWIbVnPG4RWZVkd2YvnEia2xD4psshwy2UmdksHR&cache_name=fat'
-            # docker compose run --rm web ./manage.py dbshell -- -c "update core_path set source=null, target=null;"
+            # curl 'http://geotrek.local:8000/admin/clearcache/' -X POST -H "Cookie: csrftoken=jJPzy1w4p7KNspD9QG1Y2xOqG8Oczf2l; sessionid=$SESSION_ID" --data-raw 'csrfmiddlewaretoken=VihAxtR8JyN10VzyXyyEAUSiwWIbVnPG4RWZVkd2YvnEia2xD4psshwy2UmdksHR&cache_name=fat'
+            docker compose run --rm web ./manage.py dbshell -- -c "update core_path set source=null, target=null;"
         fi
 
         if [[ "$DATABASE" == "medium" ]]; then
