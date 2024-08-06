@@ -1,5 +1,5 @@
 from django.templatetags.static import static
-from tinymce.widgets import TinyMCE
+from tinymce.widgets import AdminTinyMCE
 
 FLATPAGE_TINYMCE_CONFIG = {
     "height": 500,
@@ -79,7 +79,8 @@ FLATPAGE_TINYMCE_CONFIG = {
 }
 
 
-class FlatPageTinyMCE(TinyMCE):
+class FlatPageTinyMCE(AdminTinyMCE):
+    template_name = 'flatpages/translations_js.html' 
 
     def __init__(self, *args, **kwargs):
         mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()
