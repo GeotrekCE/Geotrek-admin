@@ -26,7 +26,7 @@ FLATPAGE_TINYMCE_CONFIG = {
     'file_picker_types': "image media",
     'images_upload_url': "/flatpages/tinymce/upload/",
     "toolbar": 'undo redo | styleselect | blockquote | bold italic forecolor |'
-               'alignleft aligncenter alignright alignjustify | bullist numlist | link image media |'
+               'alignleft aligncenter alignright alignjustify | bullist numlist | link imagesGallery image media |'
                'button-link suggestions | removeformat visualblocks code | wordcount | help',
     "formats": {
         "informationFormat": {
@@ -89,3 +89,6 @@ class FlatPageTinyMCE(TinyMCE):
 
     class Media:
         js = ('flatpages/tinymce/js/additional_tinymce_plugins.js',)
+        css = {
+             'all': ('flatpages/tinymce/css/flatpagetinymce_widget.css', )
+        }
