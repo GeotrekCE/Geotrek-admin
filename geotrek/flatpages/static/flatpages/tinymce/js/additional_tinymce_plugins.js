@@ -8,35 +8,35 @@ document.addEventListener("DOMContentLoaded", function () {
     tinymce.PluginManager.add('button-link', function (editor, url) {
         var openDialogButtonLink = function (defaultValues, element) {
             return editor.windowManager.open({
-                title: 'Lien bouton',
+                title: i18n.tinymce_Button_Link,
                 body: {
                     type: 'panel',
                     items: [
                         {
                             type: 'input',
                             name: 'label',
-                            label: 'Intitulé',
+                            label: i18n.tinymce_Label,
                         },
                         {
                             type: 'input',
                             name: 'link',
-                            label: 'Lien',
+                            label: i18n.tinymce_Link,
                         },
                         {
                             type: 'checkbox',
                             name: 'target',
-                            label: 'Ouvrir dans un nouvel onglet'
+                            label: i18n.tinymce_Open_link_in_a_new_tab
                         }
                     ]
                 },
                 buttons: [
                     {
                         type: 'cancel',
-                        text: 'Close'
+                        text: i18n.tinymce_Cancel
                     },
                     {
                         type: 'submit',
-                        text: 'Save',
+                        text: i18n.tinymce_Submit,
                         primary: true
                     }
                 ],
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var openDialogSuggestion = function (defaultValues, element) {
             return editor.windowManager.open({
-                title: 'Suggestions',
+                title: i18n.tinymce_Suggestions,
                 body: {
                     type: 'panel',
                     items: [
@@ -80,32 +80,32 @@ document.addEventListener("DOMContentLoaded", function () {
                             name: 'type',
                             label: 'Type',
                             items: [
-                                {value: 'trek', text: 'Trek'},
-                                {value: 'touristicContent', text: 'Touristic content'},
-                                {value: 'touristicEvent', text: 'Touristic event'},
-                                {value: 'outdoorSite', text: 'Outdoor site'},
+                                {value: 'trek', text: gettext('Trek')},
+                                {value: 'touristicContent', text: gettext('Touristic content')},
+                                {value: 'touristicEvent', text: gettext('Touristic event')},
+                                {value: 'outdoorSite', text: gettext('Outdoor site')},
                             ]
                         },
                         {
                             type: 'input',
                             name: 'label',
-                            label: "Intitulé de l'encart",
+                            label: i18n.tinymce_Suggestions_title,
                         },
                         {
                             type: 'input',
                             name: 'ids',
-                            label: "Liste d'ID (séparés par des virgules)",
+                            label: i18n.tinymce_Suggestions_ID_list,
                         }
                     ]
                 },
                 buttons: [
                     {
                         type: 'cancel',
-                        text: 'Close'
+                        text: i18n.tinymce_Cancel
                     },
                     {
                         type: 'submit',
-                        text: 'Save',
+                        text: i18n.tinymce_Submit,
                         primary: true
                     }
                 ],
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                  imgDiv.className = 'image-preview';
                  imgDiv.innerHTML = `
                    <span>${image.outerHTML}</span>
-                   <button type="button" class="tox-button tox-button--secondary" data-index="${index}">${gettext('Remove')}</button>
+                   <button type="button" class="tox-button tox-button--secondary" data-index="${index}">${i18n.tinymce_Gallery_image_remove}</button>
                  `;
                  preview.appendChild(imgDiv);
                });
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
      
              // Ouvrir une fenêtre modale personnalisée pour la gestion des images
              editor.windowManager.open({
-               title: gettext('Manage the Image Gallery'),
+               title: i18n.tinymce_Gallery_title,
                width: "80%", 
                height: "80%",
                body: {
@@ -171,19 +171,19 @@ document.addEventListener("DOMContentLoaded", function () {
                    },
                    {
                      type: 'button',
-                     text: gettext('Add an image'),
+                     text: i18n.tinymce_Gallery_image_add,
                    }
                  ]
                },
                buttons: [
-                 {
-                   text: gettext('Submit'),
-                   type: 'submit',
-                   primary: true,
-                 },
-                 {
+                {
+                    text: i18n.tinymce_Submit,
+                    type: 'submit',
+                    primary: true,
+                },
+                {
                     type: 'cancel',
-                    text: gettext('Cancel'),
+                    text: i18n.tinymce_Cancel,
                     onClick: function (api) {
                         api.close();
                     }
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         /* Add a button that opens a window */
         editor.ui.registry.addButton('button-link', {
-            text: 'Lien bouton',
+            text: i18n.tinymce_Button_Link,
             onAction: function () {
                 /* Open window */
                 openDialogButtonLink();
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         /* Add a button that opens a window */
         editor.ui.registry.addButton('suggestions', {
-            text: 'Suggestions',
+            text: i18n.tinymce_Suggestions,
             onAction: function () {
                 /* Open window */
                 openDialogSuggestion();
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         editor.ui.registry.addButton('imagesGallery', {
-            text: gettext('Add gallery images'),
+            text: i18n.tinymce_Gallery_add,
             icon: 'image',
             onAction: function () {
                 openDialogGalleryImages();
