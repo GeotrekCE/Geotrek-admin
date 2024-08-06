@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         element.dataset.type = data.type;
                         element.dataset.ids = data.ids;
                     } else {
-                        editor.insertContent('<div class="suggestions" data-label="' + data.label + '" data-type="' + data.type + '" data-ids="' + data.ids + '" style="display: none" contenteditable="false"></div>');
+                        editor.insertContent('<div class="suggestions" data-label="' + data.label + '" data-type="' + data.type + '" data-ids="' + data.ids + '" style="display: none" contenteditable="false"></div><p></p>');
                     }
                     api.close();
                 }

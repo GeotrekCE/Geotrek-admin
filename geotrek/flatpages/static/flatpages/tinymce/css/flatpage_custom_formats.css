@@ -29,23 +29,26 @@ h1, h2, h3 {
 }
 
 .suggestions {
+    position: relative;
     clear: both;
     display: block !important;
     background: lightgreen;
     color: green;
-    padding: 2rem;
-    border-radius: 1rem;
+    padding: 2rem 0.5rem 0.5rem;
+    border: 1px dashed green;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    clear: both;
+    margin-bottom: 1rem;
 }
 
 .suggestions::before {
+    position: absolute;
     content: '' attr(data-type) ' suggestions : ' attr(data-label) '';
-    font-size: 1.2rem;
-    display: block;
-    margin-bottom: .3rem;
+    top: .5rem;
+    left: .5rem;
+    font-size: 0.8rem;
 }
 
 .suggestions::after {
     content: 'Identifiants : ' attr(data-ids) '';
 }
+
