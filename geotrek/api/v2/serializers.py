@@ -362,6 +362,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class HDViewPointSerializer(TimeStampedSerializer):
     geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
     picture_tiles_url = serializers.SerializerMethodField()
+    annotations = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
     metadata_url = serializers.SerializerMethodField()
     trek = serializers.SerializerMethodField()
@@ -398,6 +399,18 @@ class HDViewPointSerializer(TimeStampedSerializer):
         if isinstance(related_obj, trekking_models.POI):
             return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
+
+    def get_annotations(self, obj):
+        annotations = obj.annotations
+        annotations_categories = obj.annotations_categories
+        for feature in annotations["features"]:
+            feat_id = feature["properties"]["annotationId"]
+            feat_type = feature["geometry"]["type"]
+            if feat_type == "Point" and str(feat_id) in annotations_categories.keys():
+                feature["properties"]['category'] = int(annotations_categories[str(feat_id)])
+            else:
+                feature["properties"]['category'] = None
+        return annotations
 
     class Meta(TimeStampedSerializer.Meta):
         model = common_models.HDViewPoint
@@ -924,6 +937,16 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Theme
+            fields = ('id', 'label', 'pictogram')
+
+    class AnnotationCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField()
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = common_models.AnnotationCategory
             fields = ('id', 'label', 'pictogram')
 
     class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):

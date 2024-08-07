@@ -174,3 +174,11 @@ class AccessMeanFactory(factory.django.DjangoModelFactory):
         model = models.AccessMean
 
     label = factory.Sequence(lambda n: "Acces mean %s" % n)
+
+
+class AnnotationCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AnnotationCategory
+
+    label = factory.Sequence(lambda n: "Annotation Type %s" % n)
+    pictogram = factory.django.ImageField()
