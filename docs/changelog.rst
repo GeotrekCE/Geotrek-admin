@@ -62,6 +62,7 @@ CHANGELOG
 **Improvements**
 
 - Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
 
 **Bug fixes**
 
