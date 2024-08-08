@@ -20,6 +20,10 @@ CHANGELOG
 - Fix ZeroDivisionError raised on generating thumbnails in APIv2 (#4231)
 - Fix error on APIv2 for Signages with pictograms (#3839)
 
+**Maintenance**
+
+- Bump to django 4.2.15
+
 
 2.108.0     (2024-07-12)
 ------------------------
