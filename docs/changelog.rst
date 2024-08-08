@@ -15,6 +15,10 @@ CHANGELOG
 - Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
 - Fix ZeroDivisionError raised on generating thumbnails in APIv2 (#4231)
 
+**Maintenance**
+
+- Bump to django 4.2.15
+
 
 2.108.0     (2024-07-12)
 ------------------------
