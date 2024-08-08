@@ -24,9 +24,9 @@ copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 # built documents.
 #
 # The short X.Y version.
-version = '2.108'
+version = '2.109'
 # The full version, including alpha/beta/rc tags.
-release = '2.108.0+dev'
+release = '2.109.0'
 
 exclude_patterns = ['_build']
 
