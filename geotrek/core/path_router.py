@@ -210,15 +210,13 @@ class PathRouter:
                     SELECT
                         pgr.path_seq,
                         pgr.node,
+                        (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
+                        COALESCE(core_path.geom, temporary_edges_info.geom) as edge_geom,
                         CASE
                             WHEN pgr.edge > max_edge_id
                                 THEN temporary_edges_info.path_id
                                 ELSE pgr.edge
-                            END AS edge,
-                        COALESCE(core_path.geom, temporary_edges_info.geom) as edge_geom,
-                        (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
-                        (LAG(COALESCE(core_path.geom, temporary_edges_info.geom)) OVER (ORDER BY path_seq)) AS prev_geom,
-                        (LEAD(COALESCE(core_path.geom, temporary_edges_info.geom)) OVER (ORDER BY path_seq)) AS next_geom
+                            END AS edge
                     FROM
                         pgr_aStar(
                             'SELECT
@@ -246,8 +244,16 @@ class PathRouter:
                 SELECT
                     edge_geom,
                     edge,
-                    0 AS fraction_start,
-                    1 AS fraction_end
+                    CASE
+                        WHEN node = max_vertex_id + 1
+                            THEN '{}'::float
+                            ELSE 0
+                        END AS fraction_start,
+                    CASE
+                        WHEN next_node IS NULL
+                            THEN '{}'::float
+                            ELSE 1
+                        END fraction_end
                 FROM pgr;
 
             END $$;
@@ -257,7 +263,8 @@ class PathRouter:
             start_edge, fraction_start,
             start_edge, fraction_start,
             end_edge, fraction_end,
-            end_edge, fraction_end
+            end_edge, fraction_end,
+            fraction_start, fraction_end
         )
 
         # TODO: return json or array directly from sql?
@@ -266,7 +273,6 @@ class PathRouter:
             cursor.execute(query)
 
             query_result = cursor.fetchall()
-            print(query_result)
             if query_result == []:
                 return [], None
 
