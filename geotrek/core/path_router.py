@@ -211,6 +211,8 @@ class PathRouter:
                         pgr.path_seq,
                         pgr.node,
                         (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
+                        COALESCE(core_path.source, temporary_edges_info.source) as source,
+                        COALESCE(core_path.target, temporary_edges_info.target) as target,
                         COALESCE(core_path.geom, temporary_edges_info.geom) as edge_geom,
                         CASE
                             WHEN pgr.edge > max_edge_id
@@ -253,12 +255,34 @@ class PathRouter:
                         WHEN next_node IS NULL
                             THEN '{}'::float
                             ELSE 1
-                        END fraction_end
+                        END AS fraction_end,
+                    node,
+                    next_node,
+                    source,
+                    target
                 FROM pgr;
 
             END $$;
 
-            SELECT * FROM route
+            -- Reverse the geometries and topologies when needed
+            SELECT
+                CASE
+                    WHEN source = next_node
+                        THEN ST_Reverse(edge_geom)
+                        ELSE edge_geom
+                    END AS edge_geom,
+                edge,
+                CASE
+                    WHEN target = node
+                        THEN fraction_end
+                        ELSE fraction_start
+                    END AS fraction_start,
+                CASE
+                    WHEN source = next_node -- FIXME
+                        THEN fraction_start
+                        ELSE fraction_end
+                    END AS fraction_end
+            FROM route
         """.format(
             start_edge, fraction_start,
             start_edge, fraction_start,
