@@ -340,13 +340,7 @@ class PathRouter:
         rounded_line_strings = [
             self.round_line_string_coordinates(ls) for ls in line_strings
         ]
-        # for i, line in enumerate(rounded_line_strings):
-        #     print(line)
-        #     if i == 285:
-        #         print('--------------------------------------------')
         multi_line_string = MultiLineString(rounded_line_strings, srid=settings.SRID)
-        print(multi_line_string)
-        print(multi_line_string.merged)
         return multi_line_string.merged
 
     def round_line_string_coordinates(self, line_string):
