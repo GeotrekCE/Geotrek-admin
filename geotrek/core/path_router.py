@@ -149,6 +149,7 @@ class PathRouter:
                     SELECT target AS vid FROM core_path
                 ) AS vids INTO max_vertex_id;
 
+                DROP TABLE IF EXISTS temporary_edges_info;
                 CREATE TEMPORARY TABLE temporary_edges_info AS
                     -- This info will be added to the A* inner query edges_sql.
                     -- It represents the temporary edges created by adding the start
@@ -205,6 +206,7 @@ class PathRouter:
                         edge_geom as geom
                     FROM graph_temporary_edges;
 
+                DROP TABLE IF EXISTS route;
                 CREATE TEMPORARY TABLE route AS
                 WITH pgr AS (
                     SELECT
@@ -276,8 +278,6 @@ class PathRouter:
             end_edge, fraction_end,
             fraction_start, fraction_end
         )
-
-        # TODO: return json or array directly from sql?
 
         with connection.cursor() as cursor:
             cursor.execute(query)
