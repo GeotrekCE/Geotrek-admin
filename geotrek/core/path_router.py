@@ -244,44 +244,30 @@ class PathRouter:
                         WHERE edge != -1
                 )
                 SELECT
-                    edge_geom,
+                    CASE
+                        WHEN source = next_node THEN ST_Reverse(edge_geom)
+                        ELSE edge_geom
+                        END AS edge_geom,
                     edge,
                     CASE
-                        WHEN node = max_vertex_id + 1
-                            THEN '{}'::float
-                            ELSE 0
+                        WHEN node = max_vertex_id + 1 THEN '{}'::float
+                        WHEN node = source THEN 0
+                        ELSE 1  -- node = target
                         END AS fraction_start,
                     CASE
-                        WHEN next_node IS NULL
-                            THEN '{}'::float
-                            ELSE 1
-                        END AS fraction_end,
-                    node,
-                    next_node,
-                    source,
-                    target
+                        WHEN next_node IS NULL THEN '{}'::float
+                        WHEN next_node = source THEN 0
+                        ELSE 1  -- next_node = target
+                        END AS fraction_end
                 FROM pgr;
 
             END $$;
 
-            -- Reverse the geometries and topologies when needed
             SELECT
-                CASE
-                    WHEN source = next_node
-                        THEN ST_Reverse(edge_geom)
-                        ELSE edge_geom
-                    END AS edge_geom,
+                edge_geom,
                 edge,
-                CASE
-                    WHEN target = node
-                        THEN fraction_end
-                        ELSE fraction_start
-                    END AS fraction_start,
-                CASE
-                    WHEN source = next_node -- FIXME
-                        THEN fraction_start
-                        ELSE fraction_end
-                    END AS fraction_end
+                fraction_start,
+                fraction_end
             FROM route
         """.format(
             start_edge, fraction_start,
