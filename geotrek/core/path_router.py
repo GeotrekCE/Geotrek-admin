@@ -345,6 +345,6 @@ class PathRouter:
 
     def round_line_string_coordinates(self, line_string):
         coords = line_string.coords
-        new_coords = [[round(nb, 0) for nb in pt_coord] for pt_coord in coords]
+        new_coords = [[round(nb, 4) for nb in pt_coord] for pt_coord in coords]
         new_line_string = LineString(new_coords, srid=line_string.srid)
         return new_line_string
