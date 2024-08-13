@@ -5,13 +5,17 @@ CHANGELOG
 2.109.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Allow use of Annotation Categories on annotations other than Points (#4032)"
+
 
 2.109.0     (2024-08-08)
 ----------------------------
 
 **New features**
 
-- Add Annotation Categories to improve annotations on HD Views(refs #4032)
+- Add Annotation Categories to improve annotations on HD Views (#4032)
 
 **Improvements**
 

@@ -248,19 +248,18 @@ function initAnnotationsWidget(map) {
             entry.find('#label_input').on('blur', () => update_edited_label(entry));
             entry.find('#label_input').on('keydown', (key) => update_edited_label_on_enter(entry, key));
 
-            if (annotation.type() === 'point') {
-                var category_selector = $('#id_annotation_category').clone();
-                category_selector.attr('for-annotation', id);
-                category_selector.on("change", update_annotation_category_event)
-                entry.find('.entry-validate').before(category_selector);
-            }
+            var category_selector = $('#id_annotation_category').clone();
+            category_selector.attr('for-annotation', id);
+            category_selector.on("change", update_annotation_category_event)
+            entry.find('.entry-validate').before(category_selector);
             entry.find('.entry-name').text(annotation.name());
+
             if (query.editing == id) {
                 entry.find('.entry-adjust').hide();
                 entry.find('.entry-validate').show();
             }
             $('#annotationlist').append(entry);
-            if (annotation.type() === 'point' & $("#div_id_annotations_categories textarea").val() !== "") {
+            if ($("#div_id_annotations_categories textarea").val() !== "") {
                 var annotations_categories = JSON.parse($("#div_id_annotations_categories textarea").val());
                 previous_category = annotations_categories[id]
                 if (typeof previous_category !== 'undefined') {
