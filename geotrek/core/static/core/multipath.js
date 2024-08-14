@@ -269,7 +269,6 @@ L.Handler.MultiPath = L.Handler.extend({
         this.stepIndexToLayer = function(idx, layerArray) {
             if (!layerArray)
                 return null
-
             for (var i = 0; i < layerArray.length; i++) {
                 var layer = layerArray[i]
                 if (layer.step_idx == idx)
@@ -281,7 +280,7 @@ L.Handler.MultiPath = L.Handler.extend({
         this.layersOrderedByIdx = function() {
             if (!this._routeLayer)
                 return []
-            var layers = this._routeLayer.__layerArray
+            var layers = this._routeLayer.getLayers()
             var sortedLayers = layers.toSorted((first, second) => {
                 return first.step_idx - second.step_idx
             })
@@ -551,23 +550,23 @@ L.Handler.MultiPath = L.Handler.extend({
         return cookieValue;
     },
 
-    fetchRoute: function(old_steps_indexes, new_steps_indexes, pop) {
+    fetchRoute: function(oldStepsIndexes, newStepsIndexes, pop) {
         /*
-            old_steps_indexes: indexes of the steps for which to update the route
-            new_steps_indexes: indexes of these steps after the route is updated
+            oldStepsIndexes: indexes of the steps for which to update the route
+            newStepsIndexes: indexes of these steps after the route is updated
             pop (PointOnPolyline): step that is being added/modified/deleted
         */
 
-        var steps_to_route = []
-        new_steps_indexes.forEach(idx => {
-            steps_to_route.push(this.steps[idx])
+        var stepsToRoute = []
+        newStepsIndexes.forEach(idx => {
+            stepsToRoute.push(this.steps[idx])
         })
 
         function canFetchRoute() {
-            if (steps_to_route.length < 2)
+            if (stepsToRoute.length < 2)
                 return false;
-            for (var i = 0; i < steps_to_route.length; i++) {
-                if (!steps_to_route[i].isValid())
+            for (var i = 0; i < stepsToRoute.length; i++) {
+                if (!stepsToRoute[i].isValid())
                     return false;
             }
             return true;
@@ -578,13 +577,13 @@ L.Handler.MultiPath = L.Handler.extend({
             return
         }
 
-        var sent_steps = []
-        steps_to_route.forEach((step) => {
-            var sent_step = {
+        var sentSteps = []
+        stepsToRoute.forEach((step) => {
+            var sentStep = {
                 lat: step.ll.lat,
                 lng: step.ll.lng,
             }
-            sent_steps.push(sent_step)
+            sentSteps.push(sentStep)
         })
 
         fetch(window.SETTINGS.urls['route_geometry'], {
@@ -594,7 +593,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 'Content-Type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify({
-                steps: sent_steps,
+                steps: sentSteps,
             })
         })
         .then(response => {
@@ -608,8 +607,8 @@ L.Handler.MultiPath = L.Handler.extend({
                     var route = {
                         'geojson': data.geojson,
                         'serialized': data.serialized,
-                        'old_steps_indexes': old_steps_indexes,
-                        'new_steps_indexes': new_steps_indexes,
+                        'oldStepsIndexes': oldStepsIndexes,
+                        'newStepsIndexes': newStepsIndexes,
                     }
                     this.fire('fetched_route', route);
                 }
@@ -853,53 +852,59 @@ L.Handler.MultiPath = L.Handler.extend({
         this.map.on('mousemove', this.drawOnMouseMove);
     },
 
-    buildRouteLayers: function(data) {
-        geojson = data.geojson
-        old_steps_indexes = data.old_steps_indexes
-        new_steps_indexes = data.new_steps_indexes
+    updateRouteLayers: function(geometries, oldStepsIndexes, newStepsIndexes) {
+        var nbOldSteps = oldStepsIndexes.length
+        var nbNewSteps = newStepsIndexes.length
+        var previousRouteLayer = this._routeLayer.getLayers()
 
-        var newRouteLayer = L.featureGroup()
-        var newIndexOfPreviousLayer = -1
+        // If a NEW via marker was unreachable, this invalid part of the path
+        // was not displayed. So at this point, there is one more step, but
+        // there isn't one more layer.
+        var isNewMarkerBeingCorrected = this._routeIsValid == false && this._previousStepsNb > previousRouteLayer.length + 1
 
-        // The layers before the modified portion are added as-is
-        var oldLayers = this.layersOrderedByIdx()
+        // Remove out of date layers
+        oldStepsIndexes.slice(0, -1).forEach((index, i) => {
+            if (isNewMarkerBeingCorrected && i == nbOldSteps - 2)
+                return
+            var oldLayer = this.stepIndexToLayer(index, previousRouteLayer)
+            if (oldLayer)
+                this._routeLayer.removeLayer(oldLayer)
+        })
 
-        for (var i = 0; i < oldLayers.length && i < new_steps_indexes[0]; i++) {
-            newRouteLayer.addLayer(oldLayers[i])
-            newIndexOfPreviousLayer = oldLayers[i].step_idx
-        }
+        // Update the remaining layers' indexes
+        this._routeLayer.eachLayer(function(subRouteLayer) {
+            if (subRouteLayer.step_idx >= oldStepsIndexes.at(-1)) {
+                // Adding a step: increment the next layers' indexes
+                // Removing a step: decrement the next layers' indexes
+                // Moving a step: no changes except...
+                subRouteLayer.step_idx += (nbNewSteps - nbOldSteps)
+            } else if (subRouteLayer.step_idx >= oldStepsIndexes.at(-1) - (isNewMarkerBeingCorrected && nbOldSteps == nbNewSteps)) {
+                // ... if a new, unreachable marker is being moved and is now reachable, the
+                // nb of layers increases by 1 and the next layers' indexes must be incremented
+                subRouteLayer.step_idx += 1
+            }
+        })
 
-        // The new steps are added
-        for (var i = 0; i < new_steps_indexes.length - 1; i++) {
-            newLayer = L.geoJson(geojson.geometries[i])
-            newLayer.step_idx = ++newIndexOfPreviousLayer
-            newRouteLayer.addLayer(newLayer);
-        }
+        // Add the new layers
+        newStepsIndexes.slice(0, -1).forEach((index, i) => {
+            var newLayer = L.geoJson(geometries[i])
+            newLayer.step_idx = index
+            newLayer.setStyle({'color': 'yellow', 'weight': 5, 'opacity': 0.8});
+            newLayer.eachLayer(function (l) {
+                if (typeof l.setText == 'function') {
+                    l.setText('>  ', {repeat: true, attributes: {'fill': '#FF5E00'}});
+                }
+            });
+            this._routeLayer.addLayer(newLayer)
+        })
 
-        // The last element of old_steps_indexes is where we start reusing the
-        // previous layers again
-        var old_steps_last_index = old_steps_indexes.at(-1)
-        if (this._routeIsValid == false && this._previousStepsNb > this._routeLayer?.__layerArray.length + 1) {
-            // If a new via marker is isolated and is now being removed or modified,
-            // the invalid part of the path was not displayed. So at this point,
-            // there is one more step, but there isn't one more layer.
-            // Hence, all following layer indexes must be left-shifted by 1.
-            old_steps_last_index--
-        }
-        var layer = this.stepIndexToLayer(old_steps_last_index, oldLayers)
-        if (layer) {
-            layer.step_idx = ++newIndexOfPreviousLayer
-            newRouteLayer.addLayer(layer)
-        }
-
-        // Go through the remaining previous layers
-        for (var i = old_steps_last_index + 1; i < oldLayers.length; i++) {
-            newRouteLayer.addLayer(oldLayers[i])
-            oldLayers[i].step_idx = ++newIndexOfPreviousLayer
-        }
-
-        this._routeLayer = newRouteLayer
-        return newRouteLayer
+        this._routeLayer.eachLayer(function (l) {
+            if (typeof l.setText == 'function') {
+                l.eachLayer((layer) => {
+                    layer._path.setAttribute('data-test', 'route-step-' + l.step_idx);
+                })
+            }
+        });
     },
 
     onFetchedRoute: function(data) {
@@ -910,21 +915,27 @@ L.Handler.MultiPath = L.Handler.extend({
             L.DomUtil.addClass(step.marker._icon, 'marker-snapped');
             step.marker.activate();
         })
+        oldStepsIndexes = data.oldStepsIndexes
+        newStepsIndexes = data.newStepsIndexes
 
-        var routeLayers = this.buildRouteLayers(data);
-        this.showPathGeom(routeLayers);
+        if (!this._routeLayer) {
+            this._routeLayer = L.featureGroup()
+            this.map.addLayer(this._routeLayer);
+        }
+        this.updateRouteLayers(data.geojson.geometries, oldStepsIndexes, newStepsIndexes)
+
         this._routeIsValid = true
 
         // Store the new topology
         var nbSubToposToRemove = 0
-        if (old_steps_indexes.length > 0)
+        if (oldStepsIndexes.length > 0)
             // If it's not the first time displaying a layer
-            nbSubToposToRemove = old_steps_indexes.length - 1
-        var spliceArgs = [new_steps_indexes[0], nbSubToposToRemove].concat(data.serialized)
+            nbSubToposToRemove = oldStepsIndexes.length - 1
+        var spliceArgs = [newStepsIndexes[0], nbSubToposToRemove].concat(data.serialized)
         this._routeTopology.splice.apply(this._routeTopology, spliceArgs)
         this.fire('computed_topology', {topology: this._routeTopology});
 
-        this.setupNewRouteDragging(routeLayers)
+        this.setupNewRouteDragging(this._routeLayer)
         this.disableLoadingMode()
     },
 
