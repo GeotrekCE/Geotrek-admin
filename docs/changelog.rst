@@ -9,6 +9,9 @@ CHANGELOG
 
 - Allow use of Annotation Categories on annotations other than Points (#4032)"
 
+**Documentation**
+
+- Add authors, creators and last_author columns in displayed lists views and exports 
 
 2.109.0     (2024-08-08)
 ----------------------------
