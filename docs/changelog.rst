@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Allow use of Annotation Categories on annotations other than Points (#4032)
+- Allow using custom.py to make assigned_user field in Report Form available (#4085)
 
 **Bug fixes**
 

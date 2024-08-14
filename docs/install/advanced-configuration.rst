@@ -2732,6 +2732,9 @@ An exhaustive list of form fields hideable in each module.
     HIDDEN_FORM_FIELDS["circulationedge"] = [
         ]
 
+.. note::
+  ``assigned_user`` is hidden by default in ``HIDDEN_FORM_FIELDS["report"]``, it is possible to force it to appear using ``HIDDEN_FORM_FIELDS["report"] = []``.
+
 
 Configure form fields required or needed for review or publication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
