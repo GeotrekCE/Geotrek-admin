@@ -180,7 +180,7 @@ drf-yasg==1.21.5
     # via
     #   django-large-image
     #   geotrek (setup.py)
-easy-thumbnails==2.8.5
+easy-thumbnails==2.9
     # via
     #   geotrek (setup.py)
     #   mapentity
