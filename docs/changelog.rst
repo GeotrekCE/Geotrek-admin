@@ -20,6 +20,7 @@ CHANGELOG
 **Maintenance**
 
 - Replace deprecated `env_file` with `dotenv`
+- Optimize some backend queries for performances
 
 
 2.109.0     (2024-08-08)
