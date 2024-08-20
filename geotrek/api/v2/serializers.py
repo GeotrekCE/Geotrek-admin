@@ -403,7 +403,7 @@ class HDViewPointSerializer(TimeStampedSerializer):
     def get_annotations(self, obj):
         annotations = obj.annotations
         annotations_categories = obj.annotations_categories
-        for feature in annotations["features"]:
+        for feature in annotations.get("features", []):
             feat_id = feature["properties"]["annotationId"]
             feat_type = feature["geometry"]["type"]
             if feat_type == "Point" and str(feat_id) in annotations_categories.keys():

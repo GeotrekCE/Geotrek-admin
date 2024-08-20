@@ -7,7 +7,11 @@ CHANGELOG
 
 **Improvements**
 
-- Allow use of Annotation Categories on annotations other than Points (#4032)"
+- Allow use of Annotation Categories on annotations other than Points (#4032)
+
+**Bug fixes**
+
+-  Fix APIv2 exception on HD Views without Annotations (#4032)
 
 **Documentation**
 
