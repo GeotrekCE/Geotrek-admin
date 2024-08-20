@@ -11,7 +11,12 @@ CHANGELOG
 
 **Documentation**
 
-- Add authors, creators and last_author columns in displayed lists views and exports 
+- Add authors, creators and last_author columns in displayed lists views and exports
+
+**Maintenance**
+
+- Replace deprecated `env_file` with `dotenv`
+
 
 2.109.0     (2024-08-08)
 ----------------------------
