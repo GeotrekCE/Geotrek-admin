@@ -369,7 +369,7 @@ urllib3==2.2.2
     # via
     #   requests
     #   sentry-sdk
-values==2020.12.3
+values==66.0.3
     # via env-file
 vine==5.1.0
     # via
