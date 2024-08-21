@@ -121,7 +121,6 @@ class ReportForm(CommonForm):
                     self.fields["assigned_user"].widget = HiddenInput()
                     self.fields["uses_timers"].widget = HiddenInput()
         else:  # Do not use these fields outside of worflow
-            self.fields["assigned_user"].widget = HiddenInput()
             self.fields["uses_timers"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
