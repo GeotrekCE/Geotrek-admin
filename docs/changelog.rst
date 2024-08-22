@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
 
 **Minor fixes**
 
