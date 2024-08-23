@@ -5,6 +5,10 @@ CHANGELOG
 2.109.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Minor fixes**
+
+- Fix swapped plural and singular translations for Annotation Categories (#4032)
+
 
 2.109.1     (2024-08-22)
 ----------------------------
