@@ -349,10 +349,10 @@ msgid "HD Views"
 msgstr "Vues HD"
 
 msgid "Annotation category"
-msgstr "Catégories d'annotation"
+msgstr "Catégorie d'annotation"
 
 msgid "Annotation categories"
-msgstr "Catégorie d'annotation"
+msgstr "Catégories d'annotation"
 
 msgid "Access mean"
 msgstr "Moyen d'accès"
