@@ -80,7 +80,7 @@ FLATPAGE_TINYMCE_CONFIG = {
 
 
 class FlatPageTinyMCE(AdminTinyMCE):
-    template_name = 'flatpages/translations_js.html' 
+    template_name = 'flatpages/translations_js.html'
 
     def __init__(self, *args, **kwargs):
         mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()
@@ -91,5 +91,5 @@ class FlatPageTinyMCE(AdminTinyMCE):
     class Media:
         js = ('flatpages/tinymce/js/additional_tinymce_plugins.js',)
         css = {
-             'all': ('flatpages/tinymce/css/flatpagetinymce_widget.css', )
+            'all': ('flatpages/tinymce/css/flatpagetinymce_widget.css', )
         }
