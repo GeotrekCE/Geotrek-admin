@@ -917,6 +917,7 @@ L.Handler.MultiPath = L.Handler.extend({
         })
         oldStepsIndexes = data.oldStepsIndexes
         newStepsIndexes = data.newStepsIndexes
+        var previousRouteLayer = this._routeLayer.getLayers()
 
         if (!this._routeLayer) {
             this._routeLayer = L.featureGroup()
@@ -924,17 +925,21 @@ L.Handler.MultiPath = L.Handler.extend({
         }
         this.updateRouteLayers(data.geojson.geometries, oldStepsIndexes, newStepsIndexes)
 
-        this._routeIsValid = true
+        var isNewMarkerBeingCorrected = this._routeIsValid == false && this._previousStepsNb > previousRouteLayer.length + 1
 
         // Store the new topology
         var nbSubToposToRemove = 0
-        if (oldStepsIndexes.length > 0)
+        if (isNewMarkerBeingCorrected) {
+            nbSubToposToRemove = 1
+        } else if (oldStepsIndexes.length > 0) {
             // If it's not the first time displaying a layer
             nbSubToposToRemove = oldStepsIndexes.length - 1
+        }
         var spliceArgs = [newStepsIndexes[0], nbSubToposToRemove].concat(data.serialized)
         this._routeTopology.splice.apply(this._routeTopology, spliceArgs)
         this.fire('computed_topology', {topology: this._routeTopology});
 
+        this._routeIsValid = true
         this.setupNewRouteDragging(this._routeLayer)
         this.disableLoadingMode()
     },
