@@ -202,21 +202,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                },
                onSubmit: function (api) {
-                   let galleryHtml = '<ul class="gallery-container">';
-                   if (element) {
-                    element.remove();
+                    let galleryHtml = '<ul class="gallery-container" contenteditable="false">';
+                    if (element) {
+                        element.remove();
                     }
-                   if (images.length === 0) {
+                    if (images.length === 0) {
+                        api.close();
+                        return;
+                    }
+                    images.forEach(image => {
+                        galleryHtml += '<li>' + image.outerHTML + '</li>';
+                    });
+                    galleryHtml += '</ul><p><br /></p>';
+                    editor.insertContent(galleryHtml);
                     api.close();
-                    return;
-                   }
-                   images.forEach(image => {
-                     galleryHtml += '<li>' + image.outerHTML + '</li>';
-                   });
-                   galleryHtml += '</ul><p></p>';
-                   editor.insertContent(galleryHtml);
-                   api.close();
-                 }
+                }
              });
      
              updateImagePreview(); // Initialiser la vue des images
