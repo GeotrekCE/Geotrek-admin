@@ -917,12 +917,12 @@ L.Handler.MultiPath = L.Handler.extend({
         })
         oldStepsIndexes = data.oldStepsIndexes
         newStepsIndexes = data.newStepsIndexes
-        var previousRouteLayer = this._routeLayer.getLayers()
 
         if (!this._routeLayer) {
             this._routeLayer = L.featureGroup()
             this.map.addLayer(this._routeLayer);
         }
+        var previousRouteLayer = this._routeLayer.getLayers()
         this.updateRouteLayers(data.geojson.geometries, oldStepsIndexes, newStepsIndexes)
 
         var isNewMarkerBeingCorrected = this._routeIsValid == false && this._previousStepsNb > previousRouteLayer.length + 1
