@@ -10,6 +10,11 @@ CHANGELOG
 - Fix swapped plural and singular translations for Annotation Categories (#4032)
 - Filter out deleted services in API responses (#4284)
 
+**Bug fixes**
+
+- ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+
+
 2.109.1     (2024-08-22)
 ----------------------------
 

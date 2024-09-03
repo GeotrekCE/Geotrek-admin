@@ -1,3 +1,5 @@
+from pathlib import PurePath
+
 import io
 import json
 import re
@@ -647,7 +649,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plan = self._find_first_plan_with_supported_file_extension(val, supported_extensions)
         geom_file = self._fetch_geometry_file(plan)
 
-        ext = plan['traductionFichiers'][0]['extension']
+        ext = self._get_plan_extension(plan)
         if ext == 'gpx':
             return ApidaeTrekParser._get_geom_from_gpx(geom_file)
         elif ext == 'kml':
@@ -902,13 +904,25 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plans = [item for item in items if item['type'] == 'PLAN']
         if not plans:
             raise RowImportError('The trek from APIDAE has no attachment with the type "PLAN"')
-        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0]['extension'] in supported_extensions]
+        supported_plans = [plan for plan in plans if
+                           ApidaeTrekParser._get_plan_extension(plan) in supported_extensions]
         if not supported_plans:
             raise RowImportError(
                 "The trek from APIDAE has no attached \"PLAN\" in a supported format. "
                 f"Supported formats are : {', '.join(supported_extensions)}"
             )
         return supported_plans[0]
+
+    @staticmethod
+    def _get_plan_extension(plan):
+        info_fichier = plan['traductionFichiers'][0]
+        extension_prop = info_fichier.get('extension')
+        if extension_prop:
+            return extension_prop
+        url_suffix = PurePath(info_fichier['url']).suffix
+        if url_suffix:
+            return url_suffix.split('.')[1]
+        return None
 
     @staticmethod
     def _get_geom_from_gpx(data):
