@@ -1,5 +1,5 @@
 # Benchmarking of the route calculation systems
-This benchmarking system allows to measure execution times (cache generation, requests, etc) to compare performances of several versions of the routing system.
+This benchmarking system allows to measure execution times to compare performances of several versions of the routing system.
 
 It uses two different scripts. The main one, `benchmark.sh`, enables to measure execution times on the frontend-side as well as on the backend-side, for each individual action taken during the route plotting. The second one, `get_backend_measures.sh`, only allows to measure backend-side times, but is much quicker due to not interacting with the frontend and allows for more freedom in which requests to measure.
 
@@ -11,7 +11,7 @@ This script launches a Cypress spec file (a scenario) which plots a route using 
 
 Time measurements are taken during the plotting, and this scenario is run a number of times, resulting in several values for each measure which will then be averaged.
 
-This process of repeatedly running a scenario and getting the average measurements is executed twice: first emptying the backend cache before each run, and then keeping it. This way, one can obtain average execution times when plotting a route, with and without initial backend cache.
+This process of repeatedly running a scenario and getting the average measurements is executed twice: first emptying the pgRouting network topology before each run, and then keeping it. This way, one can obtain average execution times when plotting a route, with and without initial network topology.
 
 To compare several versions of the routing, this process has to be done with each version.
 
@@ -24,23 +24,21 @@ To compare two versions of the route calculation, follow these steps:
 5. Go to the the `tools/benchmarking/` directory
 6. Launch the script using this command:
     ```
-    ./benchmark.sh path_to_scenario session_id
+    ./benchmark.sh path_to_scenario
     ```
     `path_to_scenario`: path to the Cypress spec file containing the scenario for which to take the measurements
-
-    `session_id`: id of a valid session on the server (used by the script to clear the cache when needed)
 7. When script execution is completed, you can find the output in `time_measure/time_averages.txt`:
     ```
     Branch: backend_routing_benchmark
     Scenario: cypress/e2e/mediumDB100ViaPts.cy.js
-    Backend cache: false
+    pgr network topology: false
     Number of runs: 15
     Python: [2357.8577518463135, 291.6573842366536, 272.33864466349286]
     JavaScript: [2418.733333333349, 481.58000000001243, 323.77999999996973, 372.513333333274, 1605.0466666667373]
 
     Branch: backend_routing_benchmark
     Scenario: cypress/e2e/mediumDB100ViaPts.cy.js
-    Backend cache: true
+    pgr network topology: true
     Number of runs: 15
     Python: [426.1796474456787, 419.2177454630534, 288.23556900024414]
     JavaScript: [496.8599999999627, 480.46666666660457, 358.0933333334513, 415.24666666686534, 431.48666666677843]
@@ -49,7 +47,7 @@ To compare two versions of the route calculation, follow these steps:
 
     `Scenario`: path to the Cypress spec file containing the scenario that was run
 
-    `Backend cache`: whether or not the backend cache was kept before running the scenario
+    `pgr network topology`: whether or not the pgRouting network topology was kept before running the scenario
 
     `Number of runs`: how many times the scenario was run before averaging the time measurements
 
@@ -110,8 +108,8 @@ You can simply remove the `cy.write` call as well as any storing or computing of
 
 ### How it works
 This script works in the same manner as `benchmark.sh`, this time launching curl calls (instead of a Cypress spec file) repeatedly to allow the backend to record a number of time measurements for a request, and then computing the averages of these measures.
-Again, this process is executed twice, first emptying the backend cache before each curl call, and then keeping it.
-This allows to obtain average execution times for the route calculation with specific parameters, with and without initial backend cache.
+Again, this process is executed twice, first emptying the pgRouting network topology before each curl call, and then keeping it.
+This allows to obtain average execution times for the route calculation with specific parameters, with and without initial network topology.
 
 ### How to use it
 To compare two versions of the route calculation, follow these steps:
@@ -126,19 +124,19 @@ To compare two versions of the route calculation, follow these steps:
     ```
     `database`: (`"medium"` or `"big"`) which set of steps to use, corresponding to a medium or big database (see below: 'How to use a custom set of steps')
 
-    `session_id`: id of a valid session on the server (used by the script to clear the cache when needed)
+    `session_id`: id of a valid session on the server
 7. When script execution is completed, you can find the output in `time_measure/time_averages.txt`:
     ```
     Branch: backend_routing_benchmark
     Database: big
-    Backend cache: false
+    pgr network topology: false
     Number of runs: 15
     Python: [485806.6602389018]
     JavaScript: No data
 
     Branch: backend_routing_benchmark
     Database: big
-    Backend cache: true
+    pgr network topology: true
     Number of runs: 15
     Python: [21456.734053293865]
     JavaScript: No data
@@ -147,7 +145,7 @@ To compare two versions of the route calculation, follow these steps:
 
     `Database`: which set of steps was used, corresponding to a medium or big database
 
-    `Backend cache`: whether or not the backend cache was kept before sending the request
+    `pgr network topology`: whether or not the pgRouting network topology was kept before sending the request
 
     `Number of runs`: how many times the request was sent before averaging the time measurements
 

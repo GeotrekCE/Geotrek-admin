@@ -21,8 +21,7 @@ launch_scenario() {
     for i in $(seq 1 $NB_MEASURES)
     do
         if ! $1; then
-            # Empty the backend cache
-            # curl 'http://geotrek.local:8000/admin/clearcache/' -X POST -H "Cookie: csrftoken=jJPzy1w4p7KNspD9QG1Y2xOqG8Oczf2l; sessionid=$SESSION_ID" --data-raw 'csrfmiddlewaretoken=VihAxtR8JyN10VzyXyyEAUSiwWIbVnPG4RWZVkd2YvnEia2xD4psshwy2UmdksHR&cache_name=fat'
+            # Empty the pgRouting network topology
             docker compose run --rm web ./manage.py dbshell -- -c "update core_path set source=null, target=null;"
         fi
 
@@ -43,7 +42,7 @@ launch_scenario() {
     # Compute and display the average times
     echo "Branch:" $(git rev-parse --abbrev-ref HEAD) >> "$MEASURES_DIR"/time_averages.txt
     echo "Database:" $DATABASE >> "$MEASURES_DIR"/time_averages.txt
-    echo "Backend cache:" $1 >> "$MEASURES_DIR"/time_averages.txt
+    echo "pgr network topology:" $1 >> "$MEASURES_DIR"/time_averages.txt
     echo "Number of runs:" $NB_MEASURES >> "$MEASURES_DIR"/time_averages.txt
     python3 ./time_averages.py >> "$MEASURES_DIR"/time_averages.txt
     echo "" >> "$MEASURES_DIR"/time_averages.txt
