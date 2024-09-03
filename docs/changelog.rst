@@ -19,6 +19,7 @@ CHANGELOG
 - ApidaeTrekParser now fallbacks on trace filename extension if no extension property
 - ApidaeTrekParser now ignores when no linestring in GPX
 - ApidaeTrekParser duration import is fixed for multiple-days treks
+- Apidae tourism parser now handles missing contact properties
 
 2.109.1     (2024-08-22)
 ----------------------------
