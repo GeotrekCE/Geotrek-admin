@@ -170,7 +170,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
@@ -349,7 +349,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: debian-20-04
 
@@ -414,11 +414,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download 18.04 debian artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: debian-18-04
       - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: debian-20-04
       - name: Download docker image
