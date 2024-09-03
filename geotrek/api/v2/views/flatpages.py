@@ -12,6 +12,7 @@ from geotrek.api.v2.filters import GeotrekPublishedFilter
 from geotrek.api.v2 import utils as api_utils
 from geotrek.common.models import Attachment
 from geotrek.flatpages import models as flatpages_models
+from geotrek.flatpages.models import MenuItem
 
 
 class FlatPageViewSet(api_viewsets.GeotrekViewSet):
@@ -40,7 +41,11 @@ class MenuItemRetrieveView(RetrieveAPIView):
 class MenuItemTreeView(GenericAPIView):
     # from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest
     serializer_class = api_serializers.MenuItemSerializer
-    queryset = flatpages_models.MenuItem.objects.filter(depth=1)
+    queryset = (
+        flatpages_models.MenuItem.objects
+        .filter(depth=1)
+        .exclude(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+    )
     filter_backends = (
         GeotrekPublishedFilter,
         api_filters.MenuItemFilter,
@@ -69,6 +74,9 @@ class MenuItemTreeView(GenericAPIView):
 
     def _recursive_node_to_dict(self, node):
         result = self.get_serializer(instance=node).data
-        children = [self._recursive_node_to_dict(c) for c in self.filter_queryset(node.get_children()) if self._check_page_published(c)]
+        children_qs = self.filter_queryset(
+            node.get_children().exclude(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        )
+        children = [self._recursive_node_to_dict(c) for c in children_qs if self._check_page_published(c)]
         result["children"] = children
         return result
