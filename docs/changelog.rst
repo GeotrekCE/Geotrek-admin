@@ -20,6 +20,7 @@ CHANGELOG
 - ApidaeTrekParser now ignores when no linestring in GPX
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
+- ApidaeTrekParser now handles missing source website
 
 2.109.1     (2024-08-22)
 ----------------------------
