@@ -1067,6 +1067,30 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
 
     @mock.patch('requests.get')
+    def test_trek_plan_without_extension_property(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_with_plan_without_extension_prop.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.geom.srid, 2154)
+        self.assertEqual(len(trek.geom.coords), 61)
+
+    @mock.patch('requests.get')
+    def test_trek_plan_with_no_extension_at_all(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('trek_with_plan_with_no_extension_at_all.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('has no attached "PLAN" in a supported format', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
     def test_trek_not_imported_when_no_plan_attached(self, mocked_get):
         output_stdout = StringIO()
         mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
@@ -1467,6 +1491,39 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertEqual(geom.geom_type, 'LineString')
         self.assertEqual(len(geom.coords), 13)
 
+    def test_it_raises_an_error_when_no_linestring(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_feature.gpx')
+
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+    def test_it_handles_multiple_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features.gpx')
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_handles_multiple_continuous_features_with_one_empty(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features_and_one_empty.gpx')
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_raises_error_on_multiple_not_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_not_continuous_features.gpx')
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_gpx(gpx)
+
 
 class KmlToGeomTests(SimpleTestCase):
 
@@ -1543,11 +1600,14 @@ class MakeDurationTests(SimpleTestCase):
     def test_it_returns_correct_duration_from_duration_in_days(self):
         self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_days=3), 72.0)
 
-    def test_giving_both_duration_arguments_only_duration_in_minutes_is_considered(self):
-        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=0.5), 1.5)
+    def test_giving_both_duration_arguments_only_duration_in_days_is_considered(self):
+        self.assertAlmostEqual(ApidaeTrekParser._make_duration(duration_in_minutes=90, duration_in_days=2), 48.0)
 
     def test_it_rounds_output_to_two_decimal_places(self):
         self.assertEqual(ApidaeTrekParser._make_duration(duration_in_minutes=20), 0.33)
+
+    def test_it_returns_none_when_no_duration_is_provided(self):
+        self.assertEqual(ApidaeTrekParser._make_duration(duration_in_minutes=None, duration_in_days=None), None)
 
 
 class TestApidaePOIParser(ApidaePOIParser):

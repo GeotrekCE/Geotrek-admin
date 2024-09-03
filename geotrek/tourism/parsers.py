@@ -107,7 +107,7 @@ class ApidaeParser(AttachmentParserMixin, ApidaeBaseParser):
         """
         if not val:
             return None
-        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
+        vals = [subval['coordonnees']['fr'] for subval in val if subval.get('type', {}).get('id') == code]
         if multiple:
             return ' / '.join(vals)
         if vals:
