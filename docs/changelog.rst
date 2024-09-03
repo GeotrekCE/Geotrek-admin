@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+- ApidaeTrekParser now ignores when no linestring in GPX
 
 
 2.109.1     (2024-08-22)

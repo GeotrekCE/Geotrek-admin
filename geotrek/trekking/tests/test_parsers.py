@@ -1491,6 +1491,12 @@ class GpxToGeomTests(SimpleTestCase):
         self.assertEqual(geom.geom_type, 'LineString')
         self.assertEqual(len(geom.coords), 13)
 
+    def test_it_raises_an_error_when_no_linestring(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_feature.gpx')
+
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_gpx(gpx)
+
 
 class KmlToGeomTests(SimpleTestCase):
 
