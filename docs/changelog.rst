@@ -5,6 +5,10 @@ CHANGELOG
 2.109.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- ApidaeTrekParser now imports all features from GPX
+
 **Minor fixes**
 
 - Fix swapped plural and singular translations for Annotation Categories (#4032)

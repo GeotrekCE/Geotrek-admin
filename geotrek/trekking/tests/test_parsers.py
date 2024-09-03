@@ -1497,6 +1497,33 @@ class GpxToGeomTests(SimpleTestCase):
         with self.assertRaises(RowImportError):
             ApidaeTrekParser._get_geom_from_gpx(gpx)
 
+    def test_it_handles_multiple_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features.gpx')
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_handles_multiple_continuous_features_with_one_empty(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features_and_one_empty.gpx')
+        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_raises_error_on_multiple_not_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_not_continuous_features.gpx')
+        with self.assertRaises(RowImportError):
+            ApidaeTrekParser._get_geom_from_gpx(gpx)
+
 
 class KmlToGeomTests(SimpleTestCase):
 
