@@ -113,7 +113,7 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
        * When importing a Geopackage, the first layer is always used
        * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
 
-**Import command example :**
+**Import command examples :**
 
 * Docker
 
