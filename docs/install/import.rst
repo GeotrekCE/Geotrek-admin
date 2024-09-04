@@ -115,6 +115,20 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
 
 **Import command example :**
 
+* Docker
+
+.. code-block:: bash
+
+    docker compose run --rm web ./manage.py loadpaths \
+    ./var/conf/paths.geojson
+    --srid=2154 \
+    --encoding latin1 \
+    --structure "DEMO" \
+    --name-attribute id \
+    --comments-attribute commentaire
+
+* Debian
+
 .. code-block:: bash
 
     sudo geotrek loadpaths \
@@ -123,7 +137,7 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
     --encoding latin1 \
     --structure "DEMO" \
     --name-attribute id \
-    --comments-attribute commentaire 
+    --comments-attribute commentaire
 
 .. _import-data-from-touristic-data-systems-sit:
 
