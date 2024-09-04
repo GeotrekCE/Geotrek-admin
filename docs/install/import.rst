@@ -518,7 +518,7 @@ For example, some parsers are not available by default but you can use them addi
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
-Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, dives, paths.
+Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, paths.
 
 You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
 
