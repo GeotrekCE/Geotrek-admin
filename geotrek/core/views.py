@@ -17,6 +17,7 @@ from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -231,6 +232,11 @@ class PathViewSet(GeotrekMapentityViewSet):
     filterset_class = PathFilterSet
     mapentity_list_class = PathList
 
+    def get_permissions(self):
+        if self.action == 'route_geometry':
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
+
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
         language = self.request.LANGUAGE_CODE
@@ -309,7 +315,8 @@ class PathViewSet(GeotrekMapentityViewSet):
 
         return Response(response)
 
-    @action(methods=['POST'], detail=False, url_path="route-geometry", renderer_classes=[JSONRenderer])
+    @action(methods=['POST'], detail=False, url_path="route-geometry",
+            renderer_classes=[JSONRenderer])
     def route_geometry(self, request, *args, **kwargs):
         try:
             params = request.data
@@ -321,7 +328,7 @@ class PathViewSet(GeotrekMapentityViewSet):
             for step in steps:
                 lat = step.get('lat')
                 lng = step.get('lng')
-                if (not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or lat < 0 or 90 < lat or lng < -180 or 180 < lng):
+                if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or lat < 0 or 90 < lat or lng < -180 or 180 < lng:
                     raise Exception("Each step should contain a valid latitude and longitude")
                 path_id = step.get('path_id')
                 if not isinstance(path_id, int) or Path.objects.filter(pk=path_id).first() is None:

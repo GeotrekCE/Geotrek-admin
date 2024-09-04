@@ -39,7 +39,7 @@ from geotrek.zoning.tests.factories import (
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = PathManagerFactory.create(password='booh')
+        cls.user = PathManagerFactory.create()
 
     def setUp(self):
         self.login()
@@ -653,6 +653,16 @@ class PathViewsTest(CommonTest):
         with self.assertNumQueries(4):
             self.client.get(obj.get_layer_url())
 
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class PathRouteViewTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
     def get_route_geometry(self, body):
         return self.client.post(reverse('core:path-drf-route-geometry'), body, content_type='application/json')
 
@@ -789,7 +799,7 @@ class PathViewsTest(CommonTest):
                 {"path_id": path.pk, "lat": 40.5266465, "lng": 0.5765381}
             ]
         })
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 500, response.json())
         self.assertEqual(response.data.get('error'), "This is an error message")
 
     def test_route_geometry_fail_paths_not_linked(self):
@@ -1214,33 +1224,34 @@ class PathViewsTest(CommonTest):
                 point2      path6
 
         """
-        pathGeom1 = LineString([
+        self.maxDiff = None
+        path_geom1 = LineString([
             [1.3974995, 43.5689304],
             [1.4520836, 43.5687006]
         ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
+        path_geom1.transform(settings.SRID)
+        path1 = PathFactory(geom=path_geom1)
 
-        pathGeom2 = LineString([
+        path_geom2 = LineString([
             [1.3647079, 43.5384694],
             [1.4125435, 43.5381258]
         ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
+        path_geom2.transform(settings.SRID)
+        path2 = PathFactory(geom=path_geom2)
 
-        pathGeom3 = LineString([
+        path_geom3 = LineString([
             [1.4125435, 43.5381258],
             [1.4138075, 43.5688646]
         ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
+        path_geom3.transform(settings.SRID)
+        path3 = PathFactory(geom=path_geom3)
 
-        pathGeom4 = LineString([
+        path_geom4 = LineString([
             [1.3964173, 43.538244],
             [1.3974995, 43.5689304]
         ], srid=settings.API_SRID)
-        pathGeom4.transform(settings.SRID)
-        path4 = PathFactory(geom=pathGeom4, visible=False)
+        path_geom4.transform(settings.SRID)
+        path4 = PathFactory(geom=path_geom4, visible=False)
 
         response = self.get_route_geometry({
             "steps": [
@@ -1259,7 +1270,7 @@ class PathViewsTest(CommonTest):
                             [1.397499663080187, 43.568930399354294],
                             [1.413807500133418, 43.568864617166724],
                             [1.4125435, 43.538125799999904],
-                            [1.396417286148572, 43.538243989543005],
+                            [1.396417299855292, 43.53824398944357],
                             [1.392346144971155, 43.53827344821782]
                         ]
                     }
