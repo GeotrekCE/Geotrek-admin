@@ -27,11 +27,13 @@ To compare two versions of the route calculation, follow these steps:
     ./benchmark.sh path_to_scenario
     ```
     `path_to_scenario`: path to the Cypress spec file containing the scenario for which to take the measurements
+
 7. When script execution is completed, you can find the output in `time_measure/time_averages.txt`:
     ```
     Branch: backend_routing_benchmark
     Scenario: cypress/e2e/mediumDB100ViaPts.cy.js
     pgr network topology: false
+
     Number of runs: 15
     Python: [2357.8577518463135, 291.6573842366536, 272.33864466349286]
     JavaScript: [2418.733333333349, 481.58000000001243, 323.77999999996973, 372.513333333274, 1605.0466666667373]

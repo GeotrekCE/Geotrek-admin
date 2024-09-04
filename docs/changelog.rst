@@ -5,10 +5,23 @@ CHANGELOG
 2.109.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- ApidaeTrekParser now imports all features from GPX
+
 **Minor fixes**
 
 - Fix swapped plural and singular translations for Annotation Categories (#4032)
+- Filter out deleted services in API responses (#4284)
+- MenuItems with platform "Mobile" are now hidden on public API (#4127)
 
+**Bug fixes**
+
+- ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+- ApidaeTrekParser now ignores when no linestring in GPX
+- ApidaeTrekParser duration import is fixed for multiple-days treks
+- Apidae tourism parser now handles missing contact properties
+- ApidaeTrekParser now handles missing source website
 
 2.109.1     (2024-08-22)
 ----------------------------

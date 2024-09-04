@@ -3557,6 +3557,27 @@ class MenuItemTestCase(TestCase):
         parent_repr = data[0]
         self.assertEqual(len(parent_repr["children"]), 0)
 
+    def test_tree_menuitem_for_mobile_platform_not_exposed(self):
+        parent1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
+        child1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        self.add_child(parent1, child1)
+        child2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.WEB)
+        self.add_child(parent1, child2)
+        parent2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        child3 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
+        self.add_child(parent2, child3)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_items = response.data
+        self.assertEqual(len(menu_items), 1)
+        menu_item = menu_items[0]
+        self.assertEqual(menu_item["id"], parent1.id)
+        self.assertEqual(len(menu_item["children"]), 1)
+        child = menu_item["children"][0]
+        self.assertEqual(child["id"], child2.id)
+
     def test_detail(self):
         menu_item = self.published_menu_item_factory(title_en="Hello!", title_fr="Bonjour !")
 
