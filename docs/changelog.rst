@@ -23,6 +23,11 @@ CHANGELOG
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
 
+**Documentation**
+
+- Add command line examples and templates for importing data
+
+
 2.109.1     (2024-08-22)
 ----------------------------
 
