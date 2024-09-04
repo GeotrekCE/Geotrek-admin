@@ -59,6 +59,8 @@ routing following the import.
 
 To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
 
+    sudo geotrek generate_pgr_network_topology
+    OR
     docker compose run --rm web ./manage.py generate_pgr_network_topology
 
 .. _import-data-from-touristic-data-systems-sit:
