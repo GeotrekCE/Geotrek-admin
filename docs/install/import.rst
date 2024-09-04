@@ -113,21 +113,7 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
        * When importing a Geopackage, the first layer is always used
        * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    sudo geotrek loadpaths \
-    ./var/conf/paths.geojson
-    --srid=2154 \
-    --encoding latin1 \
-    --structure "DEMO" \
-    --name-attribute id \
-    --comments-attribute commentaire 
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -540,7 +526,6 @@ Here are the Geotrek commands available to import data from file:
 
 - ``loaddem``
 - ``loadpoi``
-- ``loaddive``
 - ``loadinfrastructure``
 - ``loadsignage``
 - ``loadcities``
@@ -597,18 +582,7 @@ Import DEM (altimetry)
   --force-color         Force colorization of the command output.
   --skip-checks         Skip system checks.
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker-compose run --rm web ./manage.py loaddem \
-    --replace \
-    --update-altimetry \
-    var/conf/dem.tif`
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -689,20 +663,7 @@ Import POIs
        * Imported POIs are unpublished by default
        * When importing a Geopackage, the first layer is always used
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loadpoi \
-    --encoding latin1 \
-    --name-field name --name-default "Point d'intérêt" \
-    --type-field type --type-default "Faune" \
-    --description-field description \ 
-    ./var/conf/poi.geojson
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -872,25 +833,7 @@ For InfrastructureCondition the check uses the `condition` argument.
     - label <- value of `cond` field
     - optionnally if `--use-structure`: structure <- the structure value (import field or default)
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loadinfrastructure \
-    ./var/conf/infrastructure.geojson \
-    --encoding latin1 \
-    --name-field name --name-default "Banc" \
-    --type-field type --type-default "Banc" \
-    --category-field categorie --category-default "E" \
-    --description-field descriptio --description-default "Banc confortable" \
-    --condition-field etat --condition-default "Bon état" \
-    --structure-field structure --structure-default "Ma structure" \
-    --year-field annee --year-default "2024" \
-    --eid-field id
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -905,54 +848,6 @@ For InfrastructureCondition the check uses the `condition` argument.
     --structure-field structure --structure-default "Ma structure" \
     --year-field annee --year-default "2024" \
     --eid-field id
-
-Import Dive
------------
-
-``sudo geotrek help loaddive``
-
-::
-
-    usage: manage.py loaddive [-h] [--encoding ENCODING] [--name-field NAME_FIELD]
-                          [--depth-field DEPTH_FIELD]
-                          [--practice-default PRACTICE_DEFAULT]
-                          [--structure-default STRUCTURE_DEFAULT]
-                          [--eid-field EID_FIELD] [--version] [-v {0,1,2,3}]
-                          [--settings SETTINGS] [--pythonpath PYTHONPATH]
-                          [--traceback] [--no-color] [--force-color]
-                          [--skip-checks]
-                          point_layer
-
-    Load a layer with point geometries in the Dive model
-
-    positional arguments:
-      point_layer
-
-    optional arguments:
-  -h, --help            show this help message and exit
-  --encoding ENCODING, -e ENCODING
-                        File encoding, default utf-8
-  --name-field NAME_FIELD, -n NAME_FIELD
-  --depth-field DEPTH_FIELD, -d DEPTH_FIELD
-  --practice-default PRACTICE_DEFAULT
-  --structure-default STRUCTURE_DEFAULT
-  --eid-field EID_FIELD
-                        External ID field
-  --version             Show program's version number and exit.
-  -v {0,1,2,3}, --verbosity {0,1,2,3}
-                        Verbosity level; 0=minimal output, 1=normal output,
-                        2=verbose output, 3=very verbose output
-  --settings SETTINGS   The Python path to a settings module, e.g.
-                        "myproject.settings.main". If this isn't provided, the
-                        DJANGO_SETTINGS_MODULE environment variable will be
-                        used.
-  --pythonpath PYTHONPATH
-                        A directory to add to the Python path, e.g.
-                        "/home/djangoprojects/myproject".
-  --traceback           Raise on CommandError exceptions.
-  --no-color            Don't colorize the command output.
-  --force-color         Force colorization of the command output.
-  --skip-checks         Skip system checks.
 
 .. _import-signage:
 
@@ -1077,27 +972,7 @@ Import Signage
        * Imported signage are unpublished by default
        * When importing a Geopackage, the first layer is always used
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loadsignage \
-    ./var/conf/signage.geojson \
-    --encoding latin1 \
-    --name-field name \
-    --type-field type --type-default "Directionnelle" \
-    --condition-field etat --condition-default "Bon état" \
-    --manager-field gestionnaire \
-    --sealing-field scellement --sealing-default "Planté" \
-    --structure-field structure \
-    --description-field description --description-default "Poteau planté" \
-    --year-field annee --year-default "2024" \
-    --code-field code --code-default "81150_PR2_P1" \
-    --eid-field id
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -1175,20 +1050,7 @@ Import Cities
        * Imported cities are unpublished by default
        * When importing a Geopackage, the first layer is always used
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loadcities \
-    ./var/conf/cities.geojson \
-    --srid=2154 \
-    --encoding latin1 \
-    --name-attribute nom \
-    --code-attribute insee_com
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -1275,19 +1137,7 @@ Import Districts
        * Imported districts are unpublished by default
        * When importing a Geopackage, the first layer is always used
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loaddistricts \
-    ./var/conf/districts.geojson \
-    --srid=2154 \
-    --encoding latin1 \
-    --name-attribute nom
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
@@ -1362,20 +1212,7 @@ Import Restricted areas
        * When importing a Geopackage, the first layer is always used
        * Only objects within the project bounding box can be imported
 
-**Import command examples :**
-
-* Docker
-
-.. code-block:: bash
-
-    docker compose run --rm web ./manage.py loadrestrictedareas \
-    ./var/conf/restrictedareas.geojson \
-    "Réserve naturelle"  \
-    --srid=2154 \
-    --encoding latin1 \
-    --name-attribute nom_site
-
-* Debian
+**Import command example :**
 
 .. code-block:: bash
 
