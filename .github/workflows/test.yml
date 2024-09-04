@@ -149,7 +149,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -170,7 +170,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
@@ -214,7 +214,7 @@ jobs:
             cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
         - name: Archive package artifact
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: debian-18-04
             path: |
@@ -236,7 +236,7 @@ jobs:
           cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
       - name: Archive package artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: debian-20-04
           path: |
@@ -318,7 +318,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-docker
           path: |
@@ -349,7 +349,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
           name: debian-20-04
 
@@ -400,7 +400,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-20.04
           path: |
@@ -414,11 +414,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Download 18.04 debian artifact
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4
         with:
           name: debian-18-04
       - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4
         with:
           name: debian-20-04
       - name: Download docker image
