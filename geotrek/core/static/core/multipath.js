@@ -580,6 +580,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var sentSteps = []
         stepsToRoute.forEach((step) => {
             var sentStep = {
+                path_id: step.polyline.properties.id,
                 lat: step.ll.lat,
                 lng: step.ll.lng,
             }
@@ -1051,8 +1052,6 @@ Geotrek.PointOnPolyline = function (marker) {
     // To reset the pop to its previous valid position when not dropped on a path:
     this.previousPosition = null;
 
-    this.path_length = null;
-    this.percent_distance = null;
     this._activated = false;
 
     this.events = L.Util.extend({}, L.Mixin.Events);
@@ -1065,8 +1064,6 @@ Geotrek.PointOnPolyline = function (marker) {
         'snap': function onSnap(e) {
             this.ll = e.latlng;
             this.polyline = e.layer;
-            this.path_length = L.GeometryUtil.length(this.polyline);
-            this.percent_distance = L.GeometryUtil.locateOnLine(this.polyline._map, this.polyline, this.ll);
             this.events.fire('valid');
         },
         'unsnap': function onUnsnap(e) {

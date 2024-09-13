@@ -139,6 +139,16 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
     --name-attribute id \
     --comments-attribute commentaire
 
+After importing a large quantity of paths, it is recommended to pre-generate the
+paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
+routing following the import.
+
+To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
+
+    sudo geotrek generate_pgr_network_topology
+    OR
+    docker compose run --rm web ./manage.py generate_pgr_network_topology
+
 .. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)
@@ -228,7 +238,7 @@ Don't forget the u character before strings if they contain non-ascii characters
 
 In this case categories and types in Geotrek database have to be the same as in Esprit parc database. Otherwise missing categories and types will be created in Geotrek database.
 
-Imported contents will be automatically published and approved. 
+Imported contents will be automatically published and approved.
 
 If you use an url that filters a unique category, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
 
@@ -257,7 +267,7 @@ When sensitive areas module is enabled, Geotrek provides 3 parsers to import dat
 
 * **Import sensitive areas from http://biodiv-sports.fr** (``geotrek.sensitivity.parsers.BiodivParser``). By default this
   parser imports all sensitive areas in configured spatial extent.
-* **Import species sensitive areas from a zipped shapefile**. 
+* **Import species sensitive areas from a zipped shapefile**.
   Imported field names are: ``espece`` (required), ``contact`` and ``descriptio``. Species with corresponding names have to be created manually before import.
 * **Import regulatory sensitive areas from a zipped shapefile**. Imported field names are: ``nom`` (required), ``contact``, ``descriptio``, ``periode`` (month numbers separated with comas), ``pratiques`` (separated with comas), and ``url``. Practices with corresponding names have to be created manually before import.
 
@@ -312,7 +322,7 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
 
 
 .. danger::
-    It is recommended to use ``provider`` from the first import - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
+    It is recommended to use ``provider`` from the first import - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser.
 
 
 .. danger::
@@ -534,7 +544,7 @@ You can also use some of Geotrek commands to import data from a vector file hand
 
 Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, paths.
 
-You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
+You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually.
 
 Here are the Geotrek commands available to import data from file:
 
@@ -553,7 +563,7 @@ To get help about a command:
 ::
 
     sudo geotrek help <subcommand>
-    
+
 .. _import-dem-altimetry:
 
 
@@ -1265,10 +1275,10 @@ Merge segmented paths
 A path network is most optimized when there is only one path between intersections.
 If the path database includes many fragmented paths, they could be merged to improve performances.
 
-You can run ``sudo geotrek merge_segmented_paths``. 
+You can run ``sudo geotrek merge_segmented_paths``.
 
 .. danger::
-    This command can take several hours to run. During the process, every topology on a path will be set on the path it is merged with, but it would still be more efficient (and safer) to run it before creating topologies. 
+    This command can take several hours to run. During the process, every topology on a path will be set on the path it is merged with, but it would still be more efficient (and safer) to run it before creating topologies.
 
 Before :
 ::
