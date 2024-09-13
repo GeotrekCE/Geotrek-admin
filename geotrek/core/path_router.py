@@ -128,7 +128,6 @@ class PathRouter:
             from_step: {edge_id: int, fraction: float}
             to_step: {edge_id: int, fraction: float}
         """
-
         start_edge = from_step.get('edge_id')
         end_edge = to_step.get('edge_id')
         fraction_start = self._fix_fraction(from_step.get('fraction'))
@@ -337,14 +336,5 @@ class PathRouter:
         return line_substring
 
     def merge_line_strings(self, line_strings):
-        rounded_line_strings = [
-            self.round_line_string_coordinates(ls) for ls in line_strings
-        ]
-        multi_line_string = MultiLineString(rounded_line_strings, srid=settings.SRID)
+        multi_line_string = MultiLineString(line_strings, srid=settings.SRID)
         return multi_line_string.merged
-
-    def round_line_string_coordinates(self, line_string):
-        coords = line_string.coords
-        new_coords = [[round(nb, 4) for nb in pt_coord] for pt_coord in coords]
-        new_line_string = LineString(new_coords, srid=line_string.srid)
-        return new_line_string
