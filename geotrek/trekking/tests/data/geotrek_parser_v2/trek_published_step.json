@@ -1,0 +1,209 @@
+{
+  "id": 10439,
+  "access": {
+    "fr": "Bonnac Irazein",
+    "en": "",
+    "it": ""
+  },
+  "accessibilities": [],
+  "accessibility_advice": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "accessibility_covering": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "accessibility_exposure": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "accessibility_level": null,
+  "accessibility_signage": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "accessibility_slope": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "accessibility_width": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "advice": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "advised_parking": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "altimetric_profile": "https://foo.fr/api/v2/trek/10439/profile/",
+  "ambiance": {
+    "fr": "Je suis une bonne ambiance.",
+    "en": "",
+    "it": ""
+  },
+  "arrival": {
+    "fr": "Ourjout",
+    "en": "",
+    "it": ""
+  },
+  "ascent": 203,
+  "attachments": [
+    {
+      "backend": "",
+      "type": "image",
+      "author": "Borvan53, CC-By-SA 4.0",
+      "license": null,
+      "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10439/bocard_deylie_2013_01.JPG.400x0_q85.jpg",
+      "legend": "Vue du site du bocard d'Eylie",
+      "title": "",
+      "url": "https://foo.fr/media/paperclip/trekking_trek/10439/bocard_deylie_2013_01.JPG",
+      "uuid": "2ed7ebc0-39ed-482c-bae3-0b1182f27d3d"
+    },
+    {
+      "backend": "",
+      "type": "image",
+      "author": "",
+      "license": null,
+      "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/10439/eeaio.jpeg.400x0_q85.jpg",
+      "legend": "",
+      "title": "éèàïô",
+      "url": "https://foo.fr/media/paperclip/trekking_trek/10439/eeaio.jpeg",
+      "uuid": "05c0c4ad-69bd-4b86-a8dc-3cbc74ecc4b6"
+    }
+  ],
+  "attachments_accessibility": [],
+  "children": [],
+  "cities": [
+    "09290",
+    "09059",
+    "09317",
+    "09062"
+  ],
+  "create_datetime": "2019-07-23T09:09:53.090318Z",
+  "departure": {
+    "fr": "Eylé",
+    "en": "",
+    "es": "",
+    "it": ""
+  },
+  "departure_city": "09290",
+  "departure_geom": [
+    0.9377712652787816,
+    42.83789927043632
+  ],
+  "descent": -564,
+  "description": {
+    "fr": "Dede est au bar.",
+    "en": "",
+    "it": ""
+  },
+  "description_teaser": {
+    "fr": "Chapeau a fleur.",
+    "en": "",
+    "it": ""
+  },
+  "difficulty": 2,
+  "disabled_infrastructure": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "duration": 6.0,
+  "elevation_area_url": "https://foo.fr/api/v2/trek/10439/dem/",
+  "elevation_svg_url": "https://foo.fr/api/v2/trek/10439/profile/?language=fr&format=svg",
+  "external_id": null,
+  "gear": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        0.9377713,
+        42.8378993,
+        912.0
+      ],
+      [
+        0.9377673,
+        42.8379281,
+        913.0
+      ]
+    ]
+  },
+  "gpx": "https://foo.fr/api/fr/treks/10439/deyle-a-ourjout.gpx",
+  "information_desks": [],
+  "kml": "https://foo.fr/api/fr/treks/10439/deyle-a-ourjout.kml",
+  "labels": [],
+  "length_2d": 12856.3,
+  "length_3d": 12904.9,
+  "max_elevation": 927,
+  "min_elevation": 551,
+  "name": {
+    "fr": "Foo",
+    "en": "Bar",
+    "it": ""
+  },
+  "networks": [],
+  "next": {
+    "2": null,
+    "10445": 10441
+  },
+  "parents": [
+    2,
+    10445
+  ],
+  "parking_location": null,
+  "pdf": {
+    "fr": "https://foo.fr/api/fr/treks/10439/deyle-a-ourjout.pdf",
+    "en": "https://foo.fr/api/en/treks/10439/deyle-a-ourjout.pdf",
+    "it": "https://foo.fr/api/it/treks/10439/deyle-a-ourjout.pdf"
+  },
+  "points_reference": null,
+  "portal": [],
+  "practice": 4,
+  "ratings": [],
+  "ratings_description": {
+    "fr": "",
+    "en": null,
+    "it": null
+  },
+  "previous": {
+    "2": null,
+    "10445": null
+  },
+  "public_transport": {
+    "fr": "",
+    "en": "",
+    "it": ""
+  },
+  "published": {
+    "fr": true,
+    "en": false,
+    "it": false
+  },
+  "reservation_system": null,
+  "reservation_id": "",
+  "route": 3,
+  "second_external_id": null,
+  "source": [],
+  "structure": 3,
+  "themes": [],
+  "update_datetime": "2021-05-17T13:54:07.091500Z",
+  "url": "https://foo.fr/api/v2/trek/10439/",
+  "uuid": "c9567576-2934-43ab-979e-e13d02c671a9",
+  "web_links": []
+}

@@ -23,6 +23,7 @@ CHANGELOG
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
 
 **Documentation**
 
