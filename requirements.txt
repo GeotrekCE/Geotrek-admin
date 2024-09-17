@@ -240,7 +240,6 @@ numpy==1.23.4
     # via
     #   large-image
     #   large-image-source-vips
-    #   scipy
     #   shapely
 packaging==24.0
     # via
