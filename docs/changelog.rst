@@ -25,6 +25,8 @@ CHANGELOG
 - ApidaeTrekParser now handles missing source website
 - Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
 - Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
 
 **Documentation**
 
