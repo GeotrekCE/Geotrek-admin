@@ -80,7 +80,6 @@ FLATPAGE_TINYMCE_CONFIG = {
 
 
 class FlatPageTinyMCE(AdminTinyMCE):
-    template_name = 'flatpages/translations_js.html'
 
     def __init__(self, *args, **kwargs):
         mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()

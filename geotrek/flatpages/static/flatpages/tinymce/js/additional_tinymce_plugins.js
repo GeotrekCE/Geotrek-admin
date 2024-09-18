@@ -80,10 +80,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             name: 'type',
                             label: 'Type',
                             items: [
-                                {value: 'trek', text: gettext('Trek')},
-                                {value: 'touristicContent', text: gettext('Touristic content')},
-                                {value: 'touristicEvent', text: gettext('Touristic event')},
-                                {value: 'outdoorSite', text: gettext('Outdoor site')},
+                                {value: 'trek', text: i18n.tinymce_Suggestions_Trek },
+                                {value: 'touristicContent', text: i18n.tinymce_Suggestions_Touristic_Content    },
+                                {value: 'touristicEvent', text: i18n.tinymce_Suggestions_Touristic_Event    },
+                                {value: 'outdoorSite', text: i18n.tinymce_Suggestions_Outdoor_Site  },
                             ]
                         },
                         {
@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         element.dataset.type = data.type;
                         element.dataset.ids = data.ids;
                     } else {
+                        // The <p> tag at the end allows the user to add content after the suggestion block
                         editor.insertContent('<div class="suggestions" data-label="' + data.label + '" data-type="' + data.type + '" data-ids="' + data.ids + '" style="display: none" contenteditable="false"></div><p></p>');
                     }
                     api.close();
@@ -213,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     images.forEach(image => {
                         galleryHtml += '<li>' + image.outerHTML + '</li>';
                     });
+                    // The <p> tag at the end allows the user to add content after the gallery block
                     galleryHtml += '</ul><p><br /></p>';
                     editor.insertContent(galleryHtml);
                     api.close();
