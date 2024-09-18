@@ -24,6 +24,7 @@ CHANGELOG
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
 - Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
 
 **Documentation**
 
