@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2024-08-07 07:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,4 +82,40 @@ msgid "Menu item"
 msgstr ""
 
 msgid "Menu items"
+msgstr ""
+
+msgid "Button Link"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Open in a new tab"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Suggestions"
+msgstr ""
+
+msgid "Suggestions title"
+msgstr ""
+
+msgid "ID list (separated by comma)"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Manage the Image Gallery"
+msgstr ""
+
+msgid "Add gallery images"
+msgstr ""
+
+msgid "Add an image"
+msgstr ""
+
+msgid "Remove"
 msgstr ""

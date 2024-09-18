@@ -23,6 +23,7 @@ else:  # pragma: no cover
 
 
 class FlatPageAdmin(BaseAdmin):
+    change_form_template = 'flatpages/translations_js.html'
     list_display = ('title', 'published', 'publication_date', 'portals_for_display', )
     list_filter = (
         'published',
