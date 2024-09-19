@@ -2,8 +2,12 @@
 CHANGELOG
 =========
 
-2.109.1+dev     (XXXX-XX-XX)
+2.109.2     (2024-09-19)
 ----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
 
 **Improvements**
 
@@ -26,7 +30,6 @@ CHANGELOG
 - Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
 - Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
 - Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
-
 
 **Documentation**
 
