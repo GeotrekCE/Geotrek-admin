@@ -922,6 +922,7 @@ L.Handler.MultiPath = L.Handler.extend({
         if (!this._routeLayer) {
             this._routeLayer = L.featureGroup()
             this.map.addLayer(this._routeLayer);
+            this.showPathGeom(this._routeLayer)
         }
         var previousRouteLayer = this._routeLayer.getLayers()
         this.updateRouteLayers(data.geojson.geometries, oldStepsIndexes, newStepsIndexes)
