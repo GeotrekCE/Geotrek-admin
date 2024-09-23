@@ -306,7 +306,7 @@ rcssmin==1.1.1
     # via django-compressor
 redis==5.0.7
     # via geotrek (setup.py)
-reportlab==4.1.0
+reportlab==4.2.2
     # via
     #   easy-thumbnails
     #   svglib
