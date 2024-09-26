@@ -1,8 +1,11 @@
+import requests
+import xml.etree.ElementTree as ET
+
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import AttachmentParserMixin, XmlParser
+from geotrek.common.parsers import AttachmentParserMixin, XmlParser, GlobalImportError
 from geotrek.tourism.models import TouristicContent, TouristicContentType1
 from geotrek.trekking.models import Trek
 from geotrek.trekking.parsers import ApidaeTrekParser
@@ -18,6 +21,27 @@ class CirkwiParser(AttachmentParserMixin, XmlParser):
     constant_fields = {
         'published': True,
     }
+    rows = 10
+
+    def next_row(self):
+        skip = self.rows
+        while True:
+            params = {
+                'first': 0,
+                'rows': self.rows,
+            }
+            response = requests.get(self.url, params=params, auth=self.auth)
+            if response.status_code != 200:
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
+                    url=self.url, status_code=response.status_code))
+            self.root = ET.fromstring(response.content)
+            entries = self.root.findall(self.results_path, self.ns)
+            self.nb = int(self.root.find("listing_ids", {}).attrib['nb_objects'])
+            for row in entries:
+                yield row
+            skip += self.rows
+            if skip > self.nb:
+                return
 
     def get_part(self, dst, src, val):
         # Recursively extract XML attributes
@@ -68,7 +92,7 @@ class CirkwiTrekParser(CirkwiParser):
         "description": ("informations/information[@langue='<LANG>']/description",
                         "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/titre",
                         "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/description"),
-        "geom": "sens_circuit/fichier_trace@@url",
+        "geom": "fichier_trace@@url",
     }
     constant_fields = {
         'practice': "Pédestre"
