@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
+from geotrek.tourism.models import TouristicContent, TouristicContentType, TouristicEventOrganizer
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
@@ -133,6 +133,10 @@ class TourismRelations(TestCase):
         self.assertNotIn(self.event, self.trek.touristic_events.all())
 
     def test_spatial_link_default_ordering(self):
+        print(self.content2)
+        print(self.content)
+        print(self.trek.touristic_contents.all())
+        print(TouristicContent.objects.count(), 2)
         self.assertEqual(self.trek.touristic_contents.all()[0], self.content)
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content2)
 

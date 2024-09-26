@@ -5,6 +5,10 @@ CHANGELOG
 2.109.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Features**
+
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947) 
+
 
 2.109.2     (2024-09-19)
 ----------------------------
