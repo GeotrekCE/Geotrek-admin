@@ -31,7 +31,7 @@ setup(
     scripts=['manage.py'],
     install_requires=[
         'Django==4.2.*',
-        'mapentity',
+        'mapentity@git+https://github.com/makinacorpus/django-mapentity.git@use_new_crispy_form',
         'chardet',
         'cairosvg',
         'cairocffi',

@@ -286,6 +286,7 @@ PROJECT_APPS += (
     'django.contrib.admindocs',
     'django.contrib.gis',
     'crispy_forms',
+    'crispy_bootstrap4',
     'compressor',
     'django_filters',
     'tinymce',
