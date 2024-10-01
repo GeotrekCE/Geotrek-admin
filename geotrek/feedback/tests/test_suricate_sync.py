@@ -189,7 +189,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek-Admin] New reports from Suricate")
         self.assertIn("New reports have been imported from Suricate", sent_mail.body)
         self.assertIn("Please consult your reports in Geotrek", sent_mail.body)
         for report in Report.objects.all():
@@ -282,7 +282,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek-Admin] New reports from Suricate")
         # Test update report does not send email and saves
         r = Report.objects.all()[0]
         r.category = None
