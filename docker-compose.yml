@@ -1,5 +1,3 @@
-version: "3"
-
 x-images:
   django: &django
     image: geotrek
