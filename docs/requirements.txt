@@ -10,11 +10,11 @@ babel==2.15.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2023.7.22
+certifi==2024.8.30
     # via
     #   -c docs/../requirements.txt
     #   requests
-charset-normalizer==3.2.0
+charset-normalizer==3.3.2
     # via
     #   -c docs/../requirements.txt
     #   requests
@@ -59,7 +59,7 @@ pytz==2023.3.post1
     # via
     #   -c docs/../requirements.txt
     #   babel
-requests==2.32.0
+requests==2.32.3
     # via
     #   -c docs/../requirements.txt
     #   sphinx
@@ -98,11 +98,11 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 tornado==6.4
     # via livereload
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   -c docs/../requirements.txt
     #   requests
-zipp==3.17.0
+zipp==3.20.2
     # via
     #   -c docs/../requirements.txt
     #   importlib-metadata

@@ -806,6 +806,12 @@ After installing Outdoor module, you have to add permissions to your user groups
 Sensitive areas
 ~~~~~~~~~~~~~~~
 
+.. note::
+    The sensitivity module was developed as part of the Biodiv'Sports project to provide a central platform for sensitive areas. 
+
+    The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
+
+
 .. envvar:: INSTALLED_APPS for Sensitive areas
 
     In order to enable sensitivity module, in the custom settings file, add the following code:
@@ -815,15 +821,13 @@ Sensitive areas
         INSTALLED_APPS += ('geotrek.sensitivity', )
 
 
-You can insert rules of sensitive area with these commands :
+    You can insert rules of sensitive area with these commands:
 
-::
+    .. code-block:: bash
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
+        sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+        cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
-Settings
-'''''''''
 
 The following settings are related to sensitive areas:
 
@@ -857,62 +861,7 @@ The following settings are related to sensitive areas:
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
-
-Import from https://biodiv-sports.fr
-''''''''''''''''''''''''''''''''''''''
-
-In user interface, in the top-right menu, clic on "Imports" and choose "Biodiv'Sports".
-
-On command line, run
-
-.. code-block:: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
-
-
-Import from shapefile
-'''''''''''''''''''''''
-
-In user interface, in the top-right menu, go to Imports and choose "Shapefile zone sensible espèce"
-or "Shapefile zone sensible réglementaire".
-
-.. note::
-  The file must be a zip containing all the shapefile extensions (.shp, .shx, .prj, .dbf, .cpg)
-
-.. figure:: ../images/advanced-configuration/import_shapefile.png
-   :alt: Import shapefile in user interface
-   :align: center
-
-   Import shapefile in user interface
-
-
-On command line, run:
-
-.. code-block:: bash
-
-    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
-
-or:
-
-.. code-block:: bash
-
-    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
-
-Attributes for "zones espèces sensibles" are:
- 
-* ``espece`` : species name. Mandatory. A species with this name must have been previously created.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-
-Attributes for "zones sensibles réglementaires" are:
-
-* ``name``: zone name.
-* ``contact`` : contact (text or HTML format). Optional.
-* ``descriptio`` : description (text or HTML format). Optional.
-* ``periode`` : month numbers of zone occupation, separated by comas, without spaces (ex. « 6,7,8 » for june, july and august)
-* ``pratiques`` : sport practices names, separated by comas, without spaces (ex. « Terrestre,Aérien »). A sport practice with this name must have been previously created.
-* ``url`` : card url. Optional.
-
+see :ref:`import-sensitive-areas` to import data.
 
 Feedback reports settings
 -------------------------
@@ -1369,6 +1318,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "draft",
         "trails",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["trail_view"] = [
         "departure",
@@ -1383,6 +1335,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_insert",
         "comments",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["landedge_view"] = [
         "eid",
@@ -1394,6 +1349,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "owner",
         "agreement",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["circulationedge_view"] = [
         "eid",
@@ -1403,6 +1361,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "length_2d",
         "date_insert",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["physicaledge_view"] = [
         "eid",
@@ -1413,6 +1374,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["competenceedge_view"] = [
         "eid",
@@ -1423,6 +1387,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["signagemanagementedge_export"] = [
         "eid",
@@ -1433,7 +1400,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["workmanagementedge_export"] = [
         "eid",
@@ -1444,6 +1414,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["infrastructure_view"] = [
         "condition",
@@ -1461,7 +1434,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
         "eid",
         "provider",
-        "access"
+        "access",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["signage_view"] = [
         "code",
@@ -1479,6 +1455,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "manager",
         "published",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["intervention_view"] = [
         "begin_date",
@@ -1500,6 +1479,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "description",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["project_view"] = [
         "structure",
@@ -1516,6 +1498,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "founders",
         "date_insert",
         "comments",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["trek_view"] = [
         "structure",
@@ -1558,7 +1543,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
         "eid",
         "eid2",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["poi_view"] = [
         "structure",
@@ -1568,6 +1556,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["service_view"] = [
         "structure",
@@ -1577,6 +1568,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_update",
         "date_insert",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["dive_view"] = [
         "structure",
@@ -1596,6 +1590,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "portal",
         "date_update",
         "date_insert",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["touristic_content_view"] = [
         "structure",
@@ -1618,6 +1615,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "uuid",
         "eid",
         "provider"
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["touristic_event_view"] = [
         "structure",
@@ -1654,7 +1654,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "place",
         'preparation_duration',
         'intervention_duration',
-        'price'
+        'price',
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["feedback_view"] = [
         "email",
@@ -1675,7 +1678,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "last_updated_in_suricate",
         "assigned_user",
         "uses_timers",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["sensitivity_view"] = [
         "structure",
@@ -1689,6 +1695,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "description",
         "date_update",
         "date_insert",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["outdoor_site_view"] = [
         "structure",
@@ -1727,6 +1736,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_insert",
         "date_update",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["outdoor_course_view"] = [
         "structure",
@@ -1745,6 +1757,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "type",
         "points_reference",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["path_export"] = [
         "structure",
@@ -1769,6 +1784,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["trail_export"] = [
         "structure",
@@ -1790,6 +1808,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["landedge_export"] = [
         "eid",
@@ -1809,6 +1830,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["circulationedge_export"] = [
         "eid",
@@ -1827,6 +1851,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["physicaledge_export"] = [
         "eid",
@@ -1844,6 +1871,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["competenceedge_export"] = [
         "eid",
@@ -1861,6 +1891,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["signagemanagementedge_export"] = [
         "eid",
@@ -1878,6 +1911,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["workmanagementedge_export"] = [
         "eid",
@@ -1895,6 +1931,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["infrastructure_export"] = [
         "name",
@@ -1921,7 +1960,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "maintenance_difficulty"
         "uuid",
         "eid",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["signage_export"] = [
         "structure",
@@ -1950,7 +1992,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "uuid",
         "eid",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["intervention_export"] = [
         "name",
@@ -1986,6 +2031,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "min_elevation",
         "max_elevation",
         "slope",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["project_export"] = [
         "structure",
@@ -2007,6 +2055,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "cities",
         "districts",
         "areas",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["trek_export"] = [
         "eid",
@@ -2067,7 +2118,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["poi_export"] = [
         "structure",
@@ -2092,6 +2146,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["service_export"] = [
         "eid",
@@ -2103,6 +2160,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "max_elevation",
         "slope",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["dive_export"] = [
         "eid",
@@ -2126,6 +2186,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "portal",
         "review",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["touristic_content_export"] = [
         "structure",
@@ -2155,7 +2218,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "areas",
         "approved",
         "uuid",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["touristic_event_export"] = [
         "structure",
@@ -2200,7 +2266,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "place",
         'preparation_duration',
         'intervention_duration',
-        'price'
+        'price',
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["feedback_export"] = [
         "comment",
@@ -2220,7 +2289,10 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "last_updated_in_suricate",
         "assigned_user",
         "uses_timers",
-        "provider"
+        "provider",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["sensitivity_export"] = [
         "species",
@@ -2229,6 +2301,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "contact",
         "pretty_period",
         "pretty_practices",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["outdoor_site_export"] = [
         "structure",
@@ -2267,6 +2342,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "date_insert",
         "date_update",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
     COLUMNS_LISTS["outdoor_course_export"] = [
         "structure",
@@ -2285,6 +2363,9 @@ A (nearly?) exhaustive list of attributes available for display and export as co
         "type",
         "points_reference",
         "uuid",
+        "last_author",
+        "creator",
+        "authors",
     ]
 
 
@@ -2599,6 +2680,9 @@ An exhaustive list of form fields hideable in each module.
         ],
     HIDDEN_FORM_FIELDS["circulationedge"] = [
         ]
+
+.. note::
+  ``assigned_user`` is hidden by default in ``HIDDEN_FORM_FIELDS["report"]``, it is possible to force it to appear using ``HIDDEN_FORM_FIELDS["report"] = []``.
 
 
 Configure form fields required or needed for review or publication
@@ -3213,9 +3297,9 @@ Settings for Geotrek-mobile
         ENABLED_MOBILE_FILTERS = [
         'practice',
         'difficulty',
-        'durations',
+        'duration',
         'ascent',
-        'lengths',
+        'length',
         'themes',
         'route',
         'districts',

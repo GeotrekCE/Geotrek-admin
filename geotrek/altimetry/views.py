@@ -26,7 +26,7 @@ class HttpSVGResponse(HttpResponse):
 class ElevationChart(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context, **response_kwargs):
-        svg_cache = caches['default']
+        svg_cache = caches['fat']
         lang = self.kwargs['lang']
         obj = self.get_object()
         date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),

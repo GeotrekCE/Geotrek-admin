@@ -15,6 +15,8 @@ router.register('reservationsystem', api_views.ReservationSystemViewSet, basenam
 router.register('label', api_views.LabelViewSet, basename='label')
 router.register('organism', api_views.OrganismViewSet, basename='organism')
 router.register('file_type', api_views.FileTypeViewSet, basename='filetype')
+router.register('hdviewpoint', api_views.HDViewPointViewSet, basename='hdviewpoint')
+router.register('annotation_category', api_views.AnnotationCategoryViewSet, basename='annotation-category')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
@@ -82,7 +84,6 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     router.register('signage_color', api_views.ColorViewSet, basename='signage-color')
     router.register('signage_direction', api_views.DirectionViewSet, basename='signage-direction')
     router.register('signage_condition', api_views.SignageConditionViewSet, basename='signage-condition')
-    router.register('hdviewpoint', api_views.HDViewPointViewSet, basename='hdviewpoint')
 
 
 app_name = 'apiv2'

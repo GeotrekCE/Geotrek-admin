@@ -42,12 +42,12 @@ class Command(BaseCommand):
             geom_lines = self.get_geom_lines(topology)
 
             new_order = self.get_new_order(geom_lines)
-            if new_order == []:
+            if new_order == [] or (len(geom_lines) >= 2 and geom_lines[1][1] == 'LINESTRING EMPTY'):
                 for field in topology._meta.get_fields():
                     if isinstance(field, OneToOneRel) and hasattr(topology, field.name):
                         failed_topologies.append(str(f'{getattr(topology, field.name).kind} id: {topology.pk}'))
 
-            if len(new_order) <= 2:
+            if len(new_order) <= 2 or (len(geom_lines) >= 2 and geom_lines[1][1] == 'LINESTRING EMPTY'):
                 continue
             order_maked_lines = new_order[1:]
             orders = [result - 1 for result in order_maked_lines]

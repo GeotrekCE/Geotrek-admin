@@ -105,6 +105,10 @@ class ProjectIntersectionFilterDistrict(PolygonProjectFilterMixin, RightFilter):
 class ProjectIntersectionFilterRestrictedArea(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedArea
 
+    def get_queryset(self, request=None):
+        qs = super().get_queryset(request)
+        return qs.select_related('area_type')
+
 
 class ProjectIntersectionFilterRestrictedAreaType(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedAreaType

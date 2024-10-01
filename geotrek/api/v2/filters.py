@@ -870,6 +870,24 @@ class GeotrekRatingsFilter(BaseFilterBackend):
         )
 
 
+class GeotrekNetworksFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        networks = request.GET.get('networks')
+        if networks:
+            queryset = queryset.filter(networks__in=networks.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='networks', required=False, location='query', schema=coreschema.String(
+                    title=_("Networks"),
+                    description=_('Filter by one or more networks id, comma-separated.')
+                )
+            ),
+        )
+
+
 class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         root_sites_only = request.GET.get('root_sites_only')

@@ -39,7 +39,7 @@ class TimestampedChoicesMixin:
         first_year = qs.order_by(fieldname).values_list(f'{fieldname}__year', flat=True).first()
         current_year = timezone_today().year
         if first_year:
-            return tuple((year, year) for year in range(first_year, current_year + 1))
+            return tuple((year, year) for year in range(current_year, first_year - 1, -1))
         return (('', '---------'),)  # No data
 
     def year_insert_choices(self):

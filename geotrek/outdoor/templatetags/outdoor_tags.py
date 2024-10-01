@@ -25,7 +25,7 @@ def site_practices():
                 for scale in practice.rating_scales.all()
             },
         }
-        for practice in Practice.objects.all()
+        for practice in Practice.objects.prefetch_related('site_types', 'rating_scales').all()
     }
     return json.dumps(practices)
 
@@ -44,7 +44,7 @@ def course_sites():
                 for scale in site.practice.rating_scales.all()
             },
         } if not (site.practice is None) else {'practice': None, 'types': {}, 'scales': {}}
-        for site in Site.objects.all()
+        for site in Site.objects.select_related('practice').prefetch_related('practice__course_types', 'practice__rating_scales').all()
     }
     return json.dumps(sites)
 

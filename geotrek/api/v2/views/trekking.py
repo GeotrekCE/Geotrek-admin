@@ -26,7 +26,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekTrekQueryParamsFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.GeotrekRatingsFilter
+        api_filters.GeotrekRatingsFilter,
+        api_filters.GeotrekNetworksFilter
     )
     serializer_class = api_serializers.TrekSerializer
 
@@ -223,7 +224,7 @@ class ServiceTypeViewSet(api_viewsets.GeotrekViewSet):
 class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.NearbyContentFilter, api_filters.UpdateOrCreateDateFilter, api_filters.GeotrekServiceFilter)
     serializer_class = api_serializers.ServiceSerializer
-    queryset = trekking_models.Service.objects.all() \
+    queryset = trekking_models.Service.objects.existing() \
         .select_related('topo_object', 'type', ) \
         .prefetch_related('topo_object__aggregations',
                           Prefetch('attachments',

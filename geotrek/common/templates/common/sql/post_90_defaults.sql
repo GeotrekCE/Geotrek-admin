@@ -100,6 +100,7 @@ ALTER TABLE common_hdviewpoint ALTER COLUMN legend SET DEFAULT '';
 ALTER TABLE common_hdviewpoint ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_hdviewpoint ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 ALTER TABLE common_hdviewpoint ALTER COLUMN annotations SET DEFAULT '{}'::jsonb;
+ALTER TABLE common_hdviewpoint ALTER COLUMN annotations_categories SET DEFAULT '{}'::jsonb;
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_update SET DEFAULT now();
 

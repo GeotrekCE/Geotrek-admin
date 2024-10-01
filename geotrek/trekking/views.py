@@ -96,7 +96,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
 
 class TrekDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Trek.objects.existing().select_related('topo_object').prefetch_related(
+    queryset = Trek.objects.existing().select_related('topo_object', 'structure').prefetch_related(
         Prefetch('view_points',
                  queryset=HDViewPoint.objects.select_related('content_type', 'license'))
     )
@@ -292,7 +292,7 @@ class POIDetail(CompletenessMixin, MapEntityDetail):
     queryset = POI.objects.existing().prefetch_related(
         Prefetch('view_points',
                  queryset=HDViewPoint.objects.select_related('content_type', 'license'))
-    )
+    ).select_related('type')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

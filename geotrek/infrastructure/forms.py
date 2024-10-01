@@ -43,7 +43,7 @@ class InfrastructureForm(BaseInfrastructureForm):
             'description',
             'accessibility',
             'type',
-            'condition',
+            'conditions',
             'access',
             'implantation_year',
             'usage_difficulty',
@@ -54,4 +54,4 @@ class InfrastructureForm(BaseInfrastructureForm):
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
-        fields = BaseInfrastructureForm.Meta.fields + ['accessibility', 'maintenance_difficulty', 'usage_difficulty', 'condition']
+        fields = BaseInfrastructureForm.Meta.fields + ['accessibility', 'maintenance_difficulty', 'usage_difficulty', 'conditions']

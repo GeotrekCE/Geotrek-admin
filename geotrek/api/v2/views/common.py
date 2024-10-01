@@ -122,3 +122,9 @@ class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
             .prefetch_related('content_object') \
             .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('title')  # Required for reliable pagination
+
+
+class AnnotationCategoryViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.AnnotationCategorySerializer
+    queryset = common_models.AnnotationCategory.objects.all()

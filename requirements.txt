@@ -8,11 +8,11 @@ amqp==5.2.0
     # via kombu
 appy==1.0.15
     # via django-appypod
-asgiref==3.7.2
+asgiref==3.8.1
     # via django
 async-timeout==4.0.3
     # via redis
-attrs==23.1.0
+attrs==24.2.0
     # via fiona
 backports-zoneinfo==0.2.1
     # via
@@ -26,7 +26,7 @@ billiard==4.2.0
     # via celery
 btrees==6.0
     # via zodb
-cachetools==5.3.1
+cachetools==5.4.0
     # via large-image
 cairocffi==0.9.0
     # via
@@ -42,7 +42,7 @@ celery==5.4.0
     # via
     #   django-celery-results
     #   geotrek (setup.py)
-certifi==2023.7.22
+certifi==2024.8.30
     # via
     #   fiona
     #   requests
@@ -57,7 +57,7 @@ chardet==5.2.0
     # via
     #   geotrek (setup.py)
     #   reportlab
-charset-normalizer==3.2.0
+charset-normalizer==3.3.2
     # via requests
 click==8.1.3
     # via
@@ -67,7 +67,7 @@ click==8.1.3
     #   click-repl
     #   cligj
     #   fiona
-click-didyoumean==0.3.0
+click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1
     # via
@@ -91,11 +91,11 @@ cssselect2==0.7.0
     #   cairosvg
     #   svglib
     #   weasyprint
-datetime==5.2
+datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.13
+django==4.2.15
     # via
     #   django-appconf
     #   django-appypod
@@ -136,7 +136,7 @@ django-embed-video==1.4.10
     #   paperclip
 django-extended-choices==1.3.3
     # via geotrek (setup.py)
-django-filter==24.2
+django-filter==24.3
     # via mapentity
 django-js-asset==2.0.0
     # via django-mptt
@@ -158,7 +158,7 @@ django-weasyprint==1.1.0.post2
     # via
     #   geotrek (setup.py)
     #   mapentity
-djangorestframework==3.15.1
+djangorestframework==3.15.2
     # via
     #   django-large-image
     #   djangorestframework-datatables
@@ -185,19 +185,17 @@ easy-thumbnails==2.8.5
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-env-file==2020.12.3
-    # via geotrek (setup.py)
-filelock==3.8.0
+filelock==3.15.4
     # via django-large-image
-fiona==1.9.4.post1
+fiona==1.9.6
     # via
     #   geotrek (setup.py)
     #   mapentity
-geojson==2.5.0
+geojson==3.1.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gpxpy==1.5.0
+gpxpy==1.6.2
     # via mapentity
 gunicorn==22.0.0
     # via geotrek (setup.py)
@@ -209,6 +207,7 @@ importlib-metadata==6.8.0
     # via
     #   fiona
     #   markdown
+    #   pygal
 inflection==0.5.1
     # via drf-yasg
 itypes==1.2.0
@@ -229,9 +228,9 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.9.0
+mapentity==8.9.2
     # via geotrek (setup.py)
-markdown==3.4.4
+markdown==3.7
     # via geotrek (setup.py)
 markupsafe==2.1.5
     # via jinja2
@@ -261,7 +260,7 @@ persistent==6.0
     # via
     #   btrees
     #   zodb
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   cairosvg
     #   django-colorfield
@@ -271,7 +270,7 @@ pillow==10.3.0
     #   paperclip
     #   reportlab
     #   weasyprint
-prompt-toolkit==3.0.39
+prompt-toolkit==3.0.47
     # via click-repl
 psutil==5.9.8
     # via large-image
@@ -279,7 +278,7 @@ psycopg2==2.9.7
     # via geotrek (setup.py)
 pycparser==2.22
     # via cffi
-pygal==3.0.0
+pygal==3.0.4
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
@@ -289,8 +288,10 @@ pypdf2==1.27.5
     # via pdfimpose
 pyphen==0.11.0
     # via weasyprint
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via celery
+python-dotenv==1.0.0
+    # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
 pytz==2023.3.post1
@@ -303,13 +304,13 @@ pyvips==2.2.3
     # via large-image-source-vips
 rcssmin==1.1.1
     # via django-compressor
-redis==4.5.4
+redis==5.0.7
     # via geotrek (setup.py)
 reportlab==4.1.0
     # via
     #   easy-thumbnails
     #   svglib
-requests==2.32.0
+requests==2.32.3
     # via
     #   coreapi
     #   django-embed-video
@@ -321,7 +322,7 @@ ruamel-yaml==0.18.6
     # via drf-yasg
 ruamel-yaml-clib==0.2.7
     # via ruamel-yaml
-sentry-sdk==1.30.0
+sentry-sdk==2.14.0
     # via geotrek (setup.py)
 shapely==2.0.4
     # via pyopenair
@@ -336,13 +337,13 @@ six==1.16.0
     #   zodb
 soupsieve==2.5
     # via beautifulsoup4
-sqlparse==0.5.0
+sqlparse==0.5.1
     # via django
 svglib==1.5.1
     # via easy-thumbnails
 tif2geojson==0.1.3
     # via geotrek (setup.py)
-tinycss2==1.2.1
+tinycss2==1.3.0
     # via
     #   cairosvg
     #   cssselect2
@@ -350,12 +351,12 @@ tinycss2==1.2.1
     #   weasyprint
 transaction==3.1.0
     # via zodb
-typing-extensions==4.8.0
+typing-extensions==4.12.2
     # via
     #   asgiref
     #   django-modeltranslation
     #   kombu
-tzdata==2023.3
+tzdata==2024.1
     # via
     #   backports-zoneinfo
     #   celery
@@ -364,12 +365,10 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-yasg
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   requests
     #   sentry-sdk
-values==2020.12.3
-    # via env-file
 vine==5.1.0
     # via
     #   amqp
@@ -393,13 +392,13 @@ xmltodict==0.13.0
     # via tif2geojson
 zc-lockfile==3.0.post1
     # via zodb
-zconfig==4.0
+zconfig==4.1
     # via zodb
-zipp==3.17.0
+zipp==3.20.2
     # via importlib-metadata
 zodb==5.8.1
     # via appy
-zodbpickle==3.0.1
+zodbpickle==4.0
     # via zodb
 zope-deferredimport==5.0
     # via persistent

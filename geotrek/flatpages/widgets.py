@@ -1,5 +1,5 @@
 from django.templatetags.static import static
-from tinymce.widgets import TinyMCE
+from tinymce.widgets import AdminTinyMCE
 
 FLATPAGE_TINYMCE_CONFIG = {
     "height": 500,
@@ -26,7 +26,7 @@ FLATPAGE_TINYMCE_CONFIG = {
     'file_picker_types': "image media",
     'images_upload_url': "/flatpages/tinymce/upload/",
     "toolbar": 'undo redo | styleselect | blockquote | bold italic forecolor |'
-               'alignleft aligncenter alignright alignjustify | bullist numlist | link image media |'
+               'alignleft aligncenter alignright alignjustify | bullist numlist | link imagesGallery image media |'
                'button-link suggestions | removeformat visualblocks code | wordcount | help',
     "formats": {
         "informationFormat": {
@@ -79,7 +79,7 @@ FLATPAGE_TINYMCE_CONFIG = {
 }
 
 
-class FlatPageTinyMCE(TinyMCE):
+class FlatPageTinyMCE(AdminTinyMCE):
 
     def __init__(self, *args, **kwargs):
         mce_attrs = FLATPAGE_TINYMCE_CONFIG.copy()
@@ -89,3 +89,6 @@ class FlatPageTinyMCE(TinyMCE):
 
     class Media:
         js = ('flatpages/tinymce/js/additional_tinymce_plugins.js',)
+        css = {
+            'all': ('flatpages/tinymce/css/flatpagetinymce_widget.css', )
+        }

@@ -112,8 +112,7 @@ Restore files on the new server:
 PostgreSQL
 ~~~~~~~~~~
 
-Geotrek-admin support PostgreSQL 10+ and PostGIS 2.5+ for now.
-In next release, Django 4.2 will drop PostgreSQL < 12 support.
+Geotrek-admin support PostgreSQL 12+ and PostGIS 2.5+ for now.
 We recommend to upgrade to PostgreSQL 16 and PostGIS 3.4.
 
 You can check your PostgreSQL version with the following command:
@@ -217,7 +216,7 @@ Recreate user and database:
     ::
 
         sudo cp /etc/postgresql/10/main/pg_hba.conf /etc/postgresql/14/main/pg_hba.conf
-        sudo systemctl restart PostgreSQL
+        sudo systemctl restart postgresql
 
 
 You can now restore your database dump.
@@ -230,14 +229,14 @@ You can now restore your database dump.
 .. note::
 
     Note you have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
-    Some errors can occurs, around extensions creation or spatial_ref_sys table content.
+    Some errors can occurs, around extensions creation or ``spatial_ref_sys`` table content.
     This is normal. We already create these extensions on previous steps.
 
 
 .. warning::
 
     Any special configuration or tune setting in your ``postgresql.conf`` will not be reported,
-    you should report configuration yourself in ``/etc/postgresql/14/postgresql.conf``.
+    you should report configuration yourself in ``/etc/postgresql/14/main/postgresql.conf``.
     Then restart your PostgreSQL
 
     ::
@@ -261,7 +260,7 @@ You can now upgrade your Geotrek-admin, and check that the right database is use
 
 .. note::
 
-    If you want to use default 5432 port, you should change it in ``postgresql.conf``,
+    If you want to use default 5432 port, you should change it in ``/etc/postgresql/14/main/postgresql.conf``,
     restart PostgreSQL service, and change it by reconfiguring Geotrek-admin.
 
 ::

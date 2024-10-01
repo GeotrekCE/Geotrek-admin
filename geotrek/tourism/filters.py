@@ -25,8 +25,8 @@ class TypeFilter(ModelMultipleChoiceFilter):
 
 
 class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
-    type1 = TypeFilter(queryset=TouristicContentType1.objects.all())
-    type2 = TypeFilter(queryset=TouristicContentType2.objects.all())
+    type1 = TypeFilter(queryset=TouristicContentType1.objects.select_related('category').all())
+    type2 = TypeFilter(queryset=TouristicContentType2.objects.select_related('category').all())
     provider = ChoiceFilter(
         field_name='provider',
         empty_label=_("Provider"),

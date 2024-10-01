@@ -4,7 +4,7 @@
 #
 #    pip-compile --strip-extras dev-requirements.in
 #
-asgiref==3.7.2
+asgiref==3.8.1
     # via
     #   -c requirements.txt
     #   django
@@ -18,9 +18,9 @@ click==8.1.3
     # via
     #   -c requirements.txt
     #   pip-tools
-coverage==7.3.1
+coverage==7.6.1
     # via -r dev-requirements.in
-django==4.2.13
+django==4.2.15
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -33,7 +33,7 @@ factory-boy==3.3.0
     # via -r dev-requirements.in
 faker==19.3.1
     # via factory-boy
-flake8==7.0.0
+flake8==7.1.0
     # via -r dev-requirements.in
 freezegun==1.2.2
     # via -r dev-requirements.in
@@ -51,15 +51,17 @@ packaging==24.0
     # via
     #   -c requirements.txt
     #   build
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r dev-requirements.in
-pycodestyle==2.11.0
+pycodestyle==2.12.0
     # via flake8
 pyflakes==3.2.0
     # via flake8
 pyproject-hooks==1.0.0
-    # via build
-python-dateutil==2.8.2
+    # via
+    #   build
+    #   pip-tools
+python-dateutil==2.9.0.post0
     # via
     #   -c requirements.txt
     #   faker
@@ -68,7 +70,7 @@ six==1.16.0
     # via
     #   -c requirements.txt
     #   python-dateutil
-sqlparse==0.5.0
+sqlparse==0.5.1
     # via
     #   -c requirements.txt
     #   django
@@ -80,14 +82,14 @@ tomli==2.0.1
     #   build
     #   pip-tools
     #   pyproject-hooks
-typing-extensions==4.8.0
+typing-extensions==4.12.2
     # via
     #   -c requirements.txt
     #   asgiref
     #   faker
 wheel==0.41.2
     # via pip-tools
-zipp==3.17.0
+zipp==3.20.2
     # via
     #   -c requirements.txt
     #   importlib-metadata

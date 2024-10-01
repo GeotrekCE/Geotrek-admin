@@ -18,15 +18,15 @@ def touristic_content_categories():
             'type2_label': category.type2_label,
             'type1_values': {
                 str(type.pk): type.label
-                for type in category.types.filter(in_list=1)
+                for type in category.types.all() if type.in_list == 1
             },
             'type2_values': {
                 str(type.pk): type.label
-                for type in category.types.filter(in_list=2)
+                for type in category.types.all() if type.in_list == 2
             },
             'geometry_type': category.geometry_type
         }
-        for category in TouristicContentCategory.objects.all()
+        for category in TouristicContentCategory.objects.prefetch_related('types').all()
     }
     return json.dumps(categories)
 

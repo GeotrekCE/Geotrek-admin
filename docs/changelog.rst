@@ -2,7 +2,125 @@
 CHANGELOG
 =========
 
-2.106.0+dev (XXXX-XX-XX)
+2.109.2+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.109.2     (2024-09-19)
+----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
+
+**Improvements**
+
+- ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
+
+**Minor fixes**
+
+- Fix swapped plural and singular translations for Annotation Categories (#4032)
+- Filter out deleted services in API responses (#4284)
+- MenuItems with platform "Mobile" are now hidden on public API (#4127)
+
+**Bug fixes**
+
+- ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+- ApidaeTrekParser now ignores when no linestring in GPX
+- ApidaeTrekParser duration import is fixed for multiple-days treks
+- Apidae tourism parser now handles missing contact properties
+- ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
+**Documentation**
+
+- Add command line examples and templates for importing data
+
+
+2.109.1     (2024-08-22)
+----------------------------
+
+**Improvements**
+
+- Allow use of Annotation Categories on annotations other than Points (#4032)
+- Allow using custom.py to make assigned_user field in Report Form available (#4085)
+
+**Bug fixes**
+
+-  Fix APIv2 exception on HD Views without Annotations (#4032)
+
+**Documentation**
+
+- Add authors, creators and last_author columns in displayed lists views and exports
+
+**Maintenance**
+
+- Replace deprecated `env_file` with `dotenv`
+- Optimize some backend queries for performances
+
+
+2.109.0     (2024-08-08)
+----------------------------
+
+**New features**
+
+- Add Annotation Categories to improve annotations on HD Views (#4032)
+
+**Improvements**
+
+- Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
+
+**Bug fixes**
+
+- Fix empty linetring in reorder_topology cmd (fixes #4092)
+- Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
+- Fix ZeroDivisionError raised on generating thumbnails in APIv2 (#4231)
+- Fix error on APIv2 for Signages with pictograms (#3839)
+
+**Maintenance**
+
+- Bump to django 4.2.15
+
+
+2.108.0     (2024-07-12)
+------------------------
+
+**Improvements**
+
+- Add trek filter by network in API v2 (#4216)
+
+
+2.107.1     (2024-07-02)
+------------------------
+
+**Improvements**
+
+- Allows user to edit flatpage WYSIWYG button-link and suggestion block
+- Display years in Report filter in descending order (#4085)
+- Change CSS overflow in filters popup, to display full select dropdowns (with mapentity update)
+- Add trek filter by network in API v2 (#4216)
+
+**Documentation**
+
+- Improve PostgreSQL upgrade documentation
+- Integration of sensitivity module notices (import and public api usage)
+
+**Bug fixes**
+
+- Fix: 'length' filter can now be displayed on mobile apps
+- Fix: make 'duration' mobile filter consistent in doc
+- Fix: Label annotation becoming empty when double-clicked (refs #3927)
+- Fix: Too long linestring can't store elevation chart in default cache
+- Fix: missing default values in SQL template for Report model (#4085)
+- Fix: users cannot add attachment to Report model (#4085)
+- Fix: remove legacy default value for `external_uuid` in database for Report model (#4085)
+
+
+2.107.0 (2024-06-07)
 ------------------------
 
 **Breaking changes**

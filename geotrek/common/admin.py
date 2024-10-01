@@ -84,6 +84,20 @@ class ThemeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     merge_field = 'label'
 
 
+class AnnotationCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
+    list_display = ('label', 'pictogram_img')
+    search_fields = ('label',)
+    merge_field = 'label'
+
+    def has_delete_permission(self, request, obj=None):
+        if obj:
+            # Do not allow deleting a category that is used on an annotation
+            annotations_categories = common_models.HDViewPoint.objects.values_list('annotations_categories', flat=True)
+            used_annotations_categories = set(val for dic in annotations_categories for val in dic.values())
+            return request.user.has_perm("common.delete_annotationcategory") and str(obj.pk) not in used_annotations_categories
+        return request.user.has_perm("common.delete_annotationcategory")
+
+
 class RecordSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'pictogram_img')
     search_fields = ('name', )
@@ -152,6 +166,7 @@ admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
 admin.site.register(common_models.Theme, ThemeAdmin)
+admin.site.register(common_models.AnnotationCategory, AnnotationCategoryAdmin)
 admin.site.register(common_models.RecordSource, RecordSourceAdmin)
 admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
 admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
