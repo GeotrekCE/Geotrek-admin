@@ -9,9 +9,6 @@ on:
       - 'requirements-dev.txt'  # if requirements-dev.txt change
       - 'ruff.toml'   # if lint tools configuration change
 
-env:
-  DEBIAN_FRONTEND: noninteractive
-
 jobs:
   migrations:
     name: Checking SRID in migrations files
@@ -56,7 +53,7 @@ jobs:
           requirements: requirements.txt
       - name: Install dependencies
         run: |
-          sudo apt install gettext
+          sudo apt-get install -y gettext
           pip3 install -r dev-requirements.txt
           mkdir -p /opt/geotrek-admin/var/log
           touch /opt/geotrek-admin/var/log/geotrek.log
