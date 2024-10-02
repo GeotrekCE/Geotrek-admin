@@ -86,6 +86,8 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
     #   geotrek (setup.py)
+crispy-bootstrap4==2024.1
+    # via mapentity
 cssselect2==0.7.0
     # via
     #   cairosvg
@@ -97,10 +99,12 @@ defusedxml==0.7.1
     # via cairosvg
 django==4.2.15
     # via
+    #   crispy-bootstrap4
     #   django-appconf
     #   django-appypod
     #   django-celery-results
     #   django-clearcache
+    #   django-crispy-forms
     #   django-embed-video
     #   django-filter
     #   django-js-asset
@@ -128,8 +132,10 @@ django-colorfield==0.10.1
     # via geotrek (setup.py)
 django-compressor==4.4
     # via mapentity
-django-crispy-forms==1.13.0
-    # via mapentity
+django-crispy-forms==2.3
+    # via
+    #   crispy-bootstrap4
+    #   mapentity
 django-embed-video==1.4.10
     # via
     #   mapentity
@@ -228,7 +234,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.9.2
+mapentity==8.10.0
     # via geotrek (setup.py)
 markdown==3.7
     # via geotrek (setup.py)
