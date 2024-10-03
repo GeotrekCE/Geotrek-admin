@@ -26,6 +26,8 @@ fi
 # Activate venv
 . /opt/venv/bin/activate
 
+export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
+
 # Defaults SECRET_KEY to a random value
 SECRET_KEY_FILE=/opt/geotrek-admin/var/conf/secret_key
 if [ -z $SECRET_KEY ]; then
