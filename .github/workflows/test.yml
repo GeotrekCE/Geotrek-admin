@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['focal-3.8', jammy-3.10']
+        os: ['focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -159,7 +159,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.8', jammy-3.10']
+        os: ['focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
