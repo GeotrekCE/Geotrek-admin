@@ -45,8 +45,8 @@ jobs:
 
     strategy:
       matrix:
-        os: ['bionic-3.8', 'focal-3.8']
-        python-version: ['3.8']
+        os: ['jammy-3.10']
+        python-version: ['3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -115,7 +115,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        python3.8 -m venv ./venv
+        python3.10 -m venv ./venv
         ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
@@ -161,8 +161,8 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.8']
-        python-version: ['3.8']
+        os: ['jammy-3.10']
+        python-version: ['3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -240,6 +240,28 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: debian-20-04
+          path: |
+            /home/runner/work/Geotrek-admin/*.deb
+
+  build_deb_22_04:
+    name: Build 22.04 package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare debian 22.04 versioning
+        run: |
+          sed -i 's/+dev/.ubuntu22.04~dev'$GITHUB_RUN_ID'/' debian/changelog
+          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu22.04\2) focal;/' debian/changelog
+
+      - name: Building package debian 22.04
+        run: |
+          DISTRO=ubuntu:jammy make build_deb
+          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
+
+      - name: Archive package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-22-04
           path: |
             /home/runner/work/Geotrek-admin/*.deb
 
