@@ -45,8 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['jammy-3.10']
-        python-version: ['3.10']
+        os: ['focal-3.8', jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -79,10 +78,10 @@ jobs:
         path: |
           ./venv
 
-        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-          pip-${{ matrix.python-version }}-${{ matrix.os }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          pip-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -115,7 +114,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        python3.10 -m venv ./venv
+        python3 -m venv ./venv
         ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
@@ -150,7 +149,6 @@ jobs:
 
     - name: Save coverage
       uses: actions/upload-artifact@v4
-      if: ${{ matrix.os != 'bionic-3.8' }}
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -161,8 +159,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['jammy-3.10']
-        python-version: ['3.10']
+        os: ['focal-3.8', jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -170,7 +167,7 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
