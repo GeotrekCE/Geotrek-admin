@@ -29,6 +29,9 @@ RUN env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -
 COPY . ./
 WORKDIR /dpkg-build
 
+RUN if test "$(lsb_release -cs)" = 'jammy' ; then \
+      sed -i 's/python3.8/python3.10/g' debian/rules; fi
+
 RUN sed -i -re "1s/..UNRELEASED/.ubuntu$(lsb_release -rs)) $(lsb_release -cs)/" debian/changelog \
     && chmod a-x debian/geotrek.* \
     && dpkg-buildpackage -us -uc -b && mkdir -p /dpkg && cp -pl /geotrek[-_]* /dpkg \
