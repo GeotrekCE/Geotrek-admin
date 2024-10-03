@@ -1,20 +1,18 @@
-FROM ubuntu:focal as base
+FROM ubuntu:jammy AS base
 
-ENV PYTHONBUFFERED 1
-ENV DEBIAN_FRONTEND noninteractive
-ENV ENV prod
-ENV SERVER_NAME "localhost"
-# If POSTGRES_HOST is empty, entrypoint will set it to the IP of the docker host in the container
-ENV POSTGRES_HOST ""
-ENV POSTGRES_PORT "5432"
-ENV POSTGRES_USER "geotrek"
-ENV POSTGRES_PASSWORD "geotrek"
-ENV POSTGRES_DB "geotrekdb"
-ENV REDIS_HOST "redis"
-ENV CONVERSION_HOST "convertit"
-ENV CAPTURE_HOST "screamshotter"
-ENV CUSTOM_SETTINGS_FILE "/opt/geotrek-admin/var/conf/custom.py"
-ENV TZ UTC
+ENV PYTHONBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ENV=prod
+ENV SERVER_NAME="localhost"
+ENV POSTGRES_HOST="host.docker.internal"
+ENV POSTGRES_PORT="5432"
+ENV POSTGRES_USER="geotrek"
+ENV POSTGRES_DB="geotrekdb"
+ENV REDIS_HOST="redis"
+ENV CONVERSION_HOST="convertit"
+ENV CAPTURE_HOST="screamshotter"
+ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
+ENV TZ=UTC
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
@@ -22,7 +20,7 @@ RUN adduser geotrek --disabled-password && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
-    python3.8 \
+    python3.10 \
     ca-certificates \
     gettext \
     postgresql-client \
@@ -33,7 +31,6 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libproj-dev \
     unzip \
     less \
-    iproute2 \
     nano \
     curl \
     software-properties-common \
@@ -58,26 +55,27 @@ COPY --chown=geotrek:geotrek docker/scripts/* /usr/local/bin/
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000
 
-FROM base as build
+FROM base AS build
 
 USER root
 
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
-    python3.8-dev \
-    python3.8-venv \
+    python3.10-dev \
+    python3.10-venv \
     build-essential \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN python3.8 -m venv /opt/venv
+RUN python3.10 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
-FROM build as dev
+FROM build AS dev
 
+ENV ENV=dev
 COPY dev-requirements.txt dev-requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt
 COPY ./docs/requirements.txt doc-requirements.txt
@@ -85,9 +83,7 @@ RUN /opt/venv/bin/pip install --no-cache-dir -r doc-requirements.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
-FROM base as prod
-
-ENV ENV prod
+FROM base AS prod
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
