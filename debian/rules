@@ -8,7 +8,6 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt
 override_dh_virtualenv:
 	dh_virtualenv \
 	--python /usr/bin/python3.8 \
-	--upgrade-pip \
 	--preinstall wheel \
 	--preinstall setuptools==69.2.0 \
 	--builtin-venv \

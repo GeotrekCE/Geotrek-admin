@@ -196,71 +196,45 @@ jobs:
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-      name: Build 18.04 package
-      runs-on: ubuntu-latest
+  build_deb:
+      name: Build debian package
+      runs-on: ubuntu-lastest
+      matrix:
+          strategy:
+              os: ['ubuntu:bionic', 'ubuntu:focal', 'ubuntu:jammy', 'ubuntu:noble']
+          include:
+              - os: 'bionic'
+                code: '18.04'
+              - os: 'focal'
+                code: '20.04'
+              - os: 'jammy'
+                code: '22.04'
+              - os: 'noble'
+                code: '24.04'
+      env:
+          OS: ${{ matrix.os }}
+          CODE: ${{ matrix.code }}
+          DISTRO: ubuntu:${{ matrix.os }}
+
       steps:
-        - uses: actions/checkout@v3
-        - name: Prepare debian 18.04 versioning
-          run: |
-            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+          - uses: actions/checkout@v4
+          - name: Prepare versioning
+            run: |
+                grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu$CODE~dev'$GITHUB_RUN_ID'/' debian/changelog
+                sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu$CODE\2) $OS;/' debian/changelog
 
-        - name: Building package debian 18.04
-          run: |
-            DISTRO=ubuntu:bionic make build_deb
-            cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
+          - name: Building package
+            run: |
+              make build_deb
+              cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
-        - name: Archive package artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: debian-18-04
-            path: |
-              /home/runner/work/Geotrek-admin/*.deb
+          - name: Archive package artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: $DISTRO
+              path: |
+                /home/runner/work/Geotrek-admin/*.deb
 
-  build_deb_20_04:
-    name: Build 20.04 package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare debian 20.04 versioning
-        run: |
-          sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu20.04\2) focal;/' debian/changelog
-
-      - name: Building package debian 18.04
-        run: |
-          DISTRO=ubuntu:focal make build_deb
-          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
-
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: debian-20-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
-
-  build_deb_22_04:
-    name: Build 22.04 package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare debian 22.04 versioning
-        run: |
-          sed -i 's/+dev/.ubuntu22.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu22.04\2) focal;/' debian/changelog
-
-      - name: Building package debian 22.04
-        run: |
-          DISTRO=ubuntu:jammy make build_deb
-          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
-
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: debian-22-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
 
   e2e_docker_image:
     name: Tests E2E docker
@@ -348,7 +322,7 @@ jobs:
   e2e_deb_20_04:
     name: Tests E2E 20.04
     runs-on: ubuntu-20.04
-    needs: [ build_deb_20_04 ]
+    needs: [ build_deb ]
 
     env:
       CYPRESS_BASE_URL: http://geotrek.local
@@ -371,7 +345,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4
         with:
-          name: debian-20-04
+          name: 'ubuntu:focal'
 
       - name: Simulate install.sh procedure
         run: |

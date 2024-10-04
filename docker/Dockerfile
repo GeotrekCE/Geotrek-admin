@@ -1,4 +1,6 @@
-FROM ubuntu:jammy AS base
+ARG BASE_IMAGE=noble
+
+FROM ubuntu:${BASE_IMAGE} AS base
 
 ENV PYTHONBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
@@ -20,7 +22,7 @@ RUN adduser geotrek --disabled-password && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
-    python3.10 \
+    python3 \
     ca-certificates \
     gettext \
     postgresql-client \
@@ -63,14 +65,14 @@ USER root
 
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
-    python3.10-dev \
-    python3.10-venv \
+    python3-dev \
+    python3-venv \
     build-essential \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN python3.10 -m venv /opt/venv
+RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
