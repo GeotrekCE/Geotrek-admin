@@ -18,7 +18,7 @@ ENV TZ=UTC
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
-RUN adduser geotrek --disabled-password && chown geotrek:geotrek -R /opt
+RUN useradd -M -s /bin/false geotrek && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
