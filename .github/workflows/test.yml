@@ -198,9 +198,9 @@ jobs:
 
   build_deb:
       name: Build debian package
-      runs-on: ubuntu-lastest
-      matrix:
-          strategy:
+      runs-on: ubuntu-latest
+      strategy:
+          matrix:
               os: ['ubuntu:bionic', 'ubuntu:focal', 'ubuntu:jammy', 'ubuntu:noble']
           include:
               - os: 'bionic'
