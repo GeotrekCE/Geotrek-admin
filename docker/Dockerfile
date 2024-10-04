@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=noble
+ARG BASE_IMAGE=jammy
 
 FROM ubuntu:${BASE_IMAGE} AS base
 
