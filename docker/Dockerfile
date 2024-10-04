@@ -27,7 +27,6 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     gettext \
     postgresql-client \
     tzdata \
-    netcat \
     gdal-bin \
     binutils \
     libproj-dev \
@@ -44,8 +43,6 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     libfreetype6-dev \
     libxml2-dev \
     libxslt-dev \
-    libcairo2 \
-    libpango1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
     libffi-dev \
