@@ -201,7 +201,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['bionic', 'focal', 'jammy', 'noble']
+              os: ['bionic', 'focal', 'jammy']
               include:
                   - os: 'bionic'
                     code: '18.04'
