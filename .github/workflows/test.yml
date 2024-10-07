@@ -230,7 +230,7 @@ jobs:
           - name: Archive package artifact
             uses: actions/upload-artifact@v4
             with:
-              name: $DISTRO
+              name: ${{ matrix.os }}
               path: |
                 /home/runner/work/Geotrek-admin/*.deb
 
@@ -343,7 +343,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/download-artifact@v4
         with:
-          name: 'ubuntu:focal'
+          name: 'focal'
 
       - name: Simulate install.sh procedure
         run: |
@@ -398,6 +398,7 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
@@ -408,7 +409,7 @@ jobs:
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v4
         with:
-          name: ubuntu:bionic
+          name: bionic
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
         with:
@@ -416,7 +417,7 @@ jobs:
       - name: Download docker image
         uses: ishworkh/docker-image-artifact-download@v1
         with:
-          image: ubuntu:focal
+          image: focal
       - name: Attach debian packages as release binaries
         uses: skx/github-action-publish-binaries@master
         env:
