@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['focal-3.8', 'jammy-3.10']
+        os: ['bionic-3.8', 'focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -114,7 +114,11 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        python3 -m venv ./venv
+        if [[ ${{ matrix.os }} == 'bionic-3.8' ]]; then
+          python3.8 -m venv ./venv;
+        else
+          python3 -m venv ./venv;
+        fi
         ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip3 install -r requirements.txt -U
         ./venv/bin/pip3 install -r dev-requirements.txt -U
