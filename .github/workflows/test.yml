@@ -156,6 +156,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
+      if: ${{ matrix.os != 'bionic-3.8'}}
       uses: actions/upload-artifact@v4
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
