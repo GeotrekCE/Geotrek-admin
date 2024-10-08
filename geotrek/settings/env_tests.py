@@ -64,8 +64,8 @@ TMP_DIR = os.path.join(TMP_DIR, 'tests')
 if os.path.exists(TMP_DIR):
     shutil.rmtree(TMP_DIR)
 os.makedirs(TMP_DIR)
-SESSIONS_DIR = os.path.join(TMP_DIR, 'sessions')
-os.makedirs(SESSIONS_DIR)
+SESSION_FILE_PATH = TemporaryDirectory(dir=TMP_DIR).name
+os.makedirs(SESSION_FILE_PATH)
 
 LOGGING['loggers']['']['handlers'] = ('log_file', )
 LOGGING['handlers']['log_file']['level'] = 'INFO'
@@ -75,7 +75,6 @@ SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
 MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
 DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image
 REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"  # celery broker url
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]

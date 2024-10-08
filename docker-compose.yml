@@ -5,6 +5,8 @@ x-images:
       context: .
       dockerfile: ./docker/Dockerfile
       target: dev
+      args:
+          BASE_IMAGE: focal
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
