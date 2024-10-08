@@ -114,7 +114,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        if [[ ${{ matrix.os }} == bionic-3.8 ]]; then
+        if [[ ${{ matrix.os }} == bionic* ]]; then
           echo "this is bionic !!!";
           python3.8 -m venv ./venv;
         else
