@@ -114,13 +114,12 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        if [[ "${{ matrix.os }}" == bionic* ]]; then
-          echo "this is bionic !!!";
-          python3.8 -m venv ./venv;
+        if [[ ${{ matrix.os }} == 'bionic-3.8' ]]; then
+          python3.8 -m venv ./venv
         else
-          echo "this is not bionic !!!";
-          python3 -m venv ./venv;
+          python3 -m venv ./venv
         fi
+
         ./venv/bin/pip3 install --upgrade pip wheel setuptools pip-tools -c requirements.txt -c dev-requirements.txt
         ./venv/bin/pip-sync requirements.txt dev-requirements.txt
 
