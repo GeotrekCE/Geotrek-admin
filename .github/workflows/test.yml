@@ -114,6 +114,11 @@ jobs:
 
     - name: Install python dependencies
       run: |
+        if [[ "${{ matrix.os }}" == "bionic-3.8" ]]; then
+            echo "This is Bionic with Python 3.8"
+          else
+            echo "This is another OS version"
+          fi
         if [[ '${{ matrix.os }}' == 'bionic*' ]]; then
           python3.8 -m venv ./venv
         else
