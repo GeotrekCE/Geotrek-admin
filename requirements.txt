@@ -12,13 +12,14 @@ asgiref==3.8.1
     # via django
 async-timeout==4.0.3
     # via redis
-attrs==23.1.0
+attrs==24.2.0
     # via fiona
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1 ; python_version < "3.10"
     # via
     #   celery
     #   django
     #   djangorestframework
+    #   geotrek (setup.py)
     #   kombu
 beautifulsoup4==4.12.3
     # via mapentity
@@ -42,7 +43,7 @@ celery==5.4.0
     # via
     #   django-celery-results
     #   geotrek (setup.py)
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   fiona
     #   requests
@@ -86,6 +87,8 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
     #   geotrek (setup.py)
+crispy-bootstrap4==2024.1
+    # via mapentity
 cssselect2==0.7.0
     # via
     #   cairosvg
@@ -97,10 +100,12 @@ defusedxml==0.7.1
     # via cairosvg
 django==4.2.15
     # via
+    #   crispy-bootstrap4
     #   django-appconf
     #   django-appypod
     #   django-celery-results
     #   django-clearcache
+    #   django-crispy-forms
     #   django-embed-video
     #   django-filter
     #   django-js-asset
@@ -128,15 +133,17 @@ django-colorfield==0.10.1
     # via geotrek (setup.py)
 django-compressor==4.4
     # via mapentity
-django-crispy-forms==1.13.0
-    # via mapentity
+django-crispy-forms==2.3
+    # via
+    #   crispy-bootstrap4
+    #   mapentity
 django-embed-video==1.4.10
     # via
     #   mapentity
     #   paperclip
 django-extended-choices==1.3.3
     # via geotrek (setup.py)
-django-filter==24.2
+django-filter==24.3
     # via mapentity
 django-js-asset==2.0.0
     # via django-mptt
@@ -228,15 +235,15 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.9.2
+mapentity==8.10.0
     # via geotrek (setup.py)
-markdown==3.4.4
+markdown==3.7
     # via geotrek (setup.py)
 markupsafe==2.1.5
     # via jinja2
 mbutil==0.3.0
     # via landez
-numpy==1.23.4
+numpy==1.24.4
     # via
     #   large-image
     #   large-image-source-vips
@@ -320,9 +327,9 @@ rjsmin==1.2.1
     # via django-compressor
 ruamel-yaml==0.18.6
     # via drf-yasg
-ruamel-yaml-clib==0.2.7
+ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
-sentry-sdk==2.8.0
+sentry-sdk==2.14.0
     # via geotrek (setup.py)
 shapely==2.0.4
     # via pyopenair
@@ -394,7 +401,7 @@ zc-lockfile==3.0.post1
     # via zodb
 zconfig==4.1
     # via zodb
-zipp==3.17.0
+zipp==3.20.2
     # via importlib-metadata
 zodb==5.8.1
     # via appy

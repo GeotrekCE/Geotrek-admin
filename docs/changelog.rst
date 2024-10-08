@@ -2,12 +2,27 @@
 CHANGELOG
 =========
 
-2.109.1+dev     (XXXX-XX-XX)
+2.109.2+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Maintenance**
+
+- Docker image use now fully tested Ubuntu Jammy and python3.10
+- Use new crispy form
+- Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
+
+
+2.109.2     (2024-09-19)
+----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
 
 **Improvements**
 
 - ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
 
 **Minor fixes**
 
@@ -22,6 +37,14 @@ CHANGELOG
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
+**Documentation**
+
+- Add command line examples and templates for importing data
+
 
 2.109.1     (2024-08-22)
 ----------------------------
@@ -55,6 +78,7 @@ CHANGELOG
 **Improvements**
 
 - Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
 
 **Bug fixes**
 

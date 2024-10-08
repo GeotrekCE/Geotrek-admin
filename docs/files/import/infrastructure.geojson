@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "infrastructure",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": "1", "name": "Passerelle", "type": "Passerelle fixe", "etat": "Bon état", "descriptio": "Passerelle avec grille en fer et garde corpsCode (identifiant) : 81219_PR5_Pa1Date de la visite : 26/06/2023", "annee": "2023", "structure": "DEMO", "categorie": "E" }, "geometry": { "type": "Point", "coordinates": [ 2.003289163058072, 43.599854757986186 ] } },
+{ "type": "Feature", "properties": { "id": "2", "name": "Attache vélo", "type": "Arceau", "etat": "Bon état", "descriptio": "ID : CCTA_AT_033; Adresse : Piscine O Pastel; Attache_Nombre : 12; Attache_Place : 24; Attache_Modèle : ; Attache_Longueur : 6m; Attache_Largeur : 1m; Attache_Fixation : Beton; Gestionnaire : Intercommunal; Remarques : 2 x 6 arceaux;", "annee": "2024", "structure": "DEMO", "categorie": "E" }, "geometry": { "type": "Point", "coordinates": [ 1.820261534303427, 43.687596197751915 ] } },
+{ "type": "Feature", "properties": { "id": "3", "name": "Parking", "type": "Aire de stationnement", "etat": "Bon état", "descriptio": "Parking de départCode (identifiant) : 81219_PR5_Par1Date de la visite : 26/06/2023", "annee": "2024", "structure": "DEMO", "categorie": "A" }, "geometry": { "type": "Point", "coordinates": [ 2.014001905863552, 43.572322924187603 ] } },
+{ "type": "Feature", "properties": { "id": "4", "name": "Autre", "type": "Chicane", "etat": "Bon état", "descriptio": "Chicane bois autoclaveCode: 81165_PR2_Aut1Remarques: Chicane 4 poteaux 12*200+6 planches 3*10*150+plaquette vissée", "annee": "2024", "structure": "DEMO", "categorie": "E" }, "geometry": { "type": "Point", "coordinates": [ 1.850683316588401, 44.104811827662644 ] } }
+]
+}

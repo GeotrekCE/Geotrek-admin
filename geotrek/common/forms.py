@@ -528,7 +528,7 @@ class HDViewPointAnnotationForm(forms.ModelForm):
         formactions = FormActions(
             *actions,
             css_class="form-actions",
-            template='mapentity/crispy_forms/bootstrap4/layout/formactions.html'
+            template='mapentity/crispy_bootstrap4/bootstrap4/layout/formactions.html'
         )
 
         # # Main form layout
@@ -541,7 +541,6 @@ class HDViewPointAnnotationForm(forms.ModelForm):
             Div(
                 Div(
                     leftpanel,
-                    # *rightpanel,
                     css_class="row"
                 ),
                 css_class="container-fluid"

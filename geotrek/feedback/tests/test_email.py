@@ -67,7 +67,7 @@ class EmailSendingTest(SuricateTests):
         self.assertEqual(PendingEmail.objects.count(), 1)
         pending_mail = PendingEmail.objects.first()
         self.assertEqual(pending_mail.recipient, WorkflowManager.objects.first().user.email)
-        self.assertEqual(pending_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(pending_mail.subject, "[Geotrek-Admin] New reports from Suricate")
         self.assertEqual(pending_mail.error_message, "('Fake problem',)")
 
     def test_email_format_and_content(self):
@@ -75,7 +75,7 @@ class EmailSendingTest(SuricateTests):
                              comment="This is a 'comment'")
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Feedback from john.doe@nowhere.com')
+                         '[Geotrek-Admin] Feedback from john.doe@nowhere.com')
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
 

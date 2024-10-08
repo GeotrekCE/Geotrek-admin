@@ -197,18 +197,17 @@ class GeotrekTrekParser(GeotrekParser):
 
     def end(self):
         """Add children after all treks imported are created in database."""
-        super().end()
         self.next_url = f"{self.url}/api/v2/tour"
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'steps,uuid'
+                'fields': 'steps,id'
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
             final_children = {}
             for result in results:
-                final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
+                final_children[result['uuid']] = [step['id'] for step in result['steps']]
 
             for key, value in final_children.items():
                 if value:
@@ -217,18 +216,18 @@ class GeotrekTrekParser(GeotrekParser):
                         self.add_warning(_(f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"))
                         return
                     order = 0
-                    for child in value:
-                        try:
-                            trek_child_instance = Trek.objects.get(eid=child)
-                        except Trek.DoesNotExist:
-                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
-                            continue
+                    for child_id in value:
+                        response = self.request_or_retry(f"{self.url}/api/v2/trek/{child_id}")
+                        child_trek = response.json()
+                        self.parse_row(child_trek)
+                        trek_child_instance = self.obj
                         OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
                                                                   child=trek_child_instance,
                                                                   defaults={'order': order})
                         order += 1
         except Exception as e:
             self.add_warning(_(f"An error occured in children generation : {getattr(e, 'message', repr(e))}"))
+        super().end()
 
 
 class GeotrekServiceParser(GeotrekParser):

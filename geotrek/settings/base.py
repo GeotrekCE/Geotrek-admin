@@ -39,7 +39,7 @@ ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
-TITLE = _("Geotrek")
+TITLE = "Geotrek-Admin"
 
 DEBUG = False
 TEST = 'test' in sys.argv
@@ -286,6 +286,7 @@ PROJECT_APPS += (
     'django.contrib.admindocs',
     'django.contrib.gis',
     'crispy_forms',
+    'crispy_bootstrap4',
     'compressor',
     'django_filters',
     'tinymce',

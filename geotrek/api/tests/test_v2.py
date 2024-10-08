@@ -515,10 +515,34 @@ class BaseApiTest(TestCase):
                         "annotationId": 2,
                         "annotationType": "point",
                     }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                    }
                 }
             ]
         }
-        annotations_categories = {'1234': str(cls.annotationcategory.pk)}
+        annotations_categories = {
+            '1234': str(cls.annotationcategory.pk),
+            '12345': str(cls.annotationcategory.pk)
+        }
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
             content_object=cls.treks[0],
             annotations=annotations,
@@ -2560,6 +2584,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                         "annotationId": 2,
                         "annotationType": "point",
                         "category": None
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                        "category": self.annotationcategory.pk
                     }
                 }
             ]

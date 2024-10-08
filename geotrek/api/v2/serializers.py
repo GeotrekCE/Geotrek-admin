@@ -405,8 +405,7 @@ class HDViewPointSerializer(TimeStampedSerializer):
         annotations_categories = obj.annotations_categories
         for feature in annotations.get("features", []):
             feat_id = feature["properties"]["annotationId"]
-            feat_type = feature["geometry"]["type"]
-            if feat_type == "Point" and str(feat_id) in annotations_categories.keys():
+            if str(feat_id) in annotations_categories.keys():
                 feature["properties"]['category'] = int(annotations_categories[str(feat_id)])
             else:
                 feature["properties"]['category'] = None
