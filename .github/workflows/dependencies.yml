@@ -16,6 +16,12 @@ jobs:
   quality:
     name: Checking dependency graph
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     strategy:
       matrix:
         os: ['ubuntu-latest']
@@ -23,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
 
       - name: Set up Python
         uses: ./.github/actions/python-cache-requirements
@@ -54,4 +63,9 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        name: "Commiting dependencies files"
+        with:
+          token: ${{ secrets.PAT }}
