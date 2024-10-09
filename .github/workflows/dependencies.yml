@@ -67,5 +67,3 @@ jobs:
       - name: "Commiting dependencies files"
         uses: stefanzweifel/git-auto-commit-action@v5
         if: steps.verify-changed-files.outputs.files_changed == 'true'
-        with:
-          token: ${{ secrets.GHA_PAT }}
