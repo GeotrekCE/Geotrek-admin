@@ -256,7 +256,7 @@ jobs:
 
   e2e_docker_image:
     name: Tests E2E docker
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [build_docker_image]
     env:
       CYPRESS_BASE_URL: http://geotrek.local
