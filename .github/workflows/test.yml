@@ -72,8 +72,8 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
         path: |
           ./venv
@@ -199,15 +199,9 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v6
-        with:
-            push: false
-            builder: ${{ steps.buildx.outputs.name }}
-            tags: "geotrek:latest"
-            load: true
-            file: ./docker/Dockerfile
+      - name: Build Docker image
+        run: |
+          docker build -f ./docker/Dockerfile -t geotrek:latest .
 
       - name: Upload image
         uses: ishworkh/container-image-artifact-upload@v2.0.0
@@ -426,7 +420,7 @@ jobs:
     needs: [ test, e2e_docker_image, build_deb, e2e_deb_20_04 ]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v4
         with:
