@@ -78,9 +78,11 @@ jobs:
         path: |
           ./venv
 
-        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
           pip-${{ matrix.os }}
 
     - name: Prepare test env
@@ -283,11 +285,12 @@ jobs:
 
       - name: Launch service
         run: |
-          docker tag geotrek:latest geotrekce/admin:latest
+          docker tag geotrek:latest geotrekce/admin:dev
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
+          sudo sed -i 's/latest/dev/' .env
           sudo sed -i 's/localhost/geotrek.local/' .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
