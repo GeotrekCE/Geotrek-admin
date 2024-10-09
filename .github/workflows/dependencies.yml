@@ -15,7 +15,7 @@ env:
 jobs:
   quality:
     name: Checking dependency graph
-    runs-on: ${{ matrix.os }}
+    runs-on: 'ubuntu-latest'
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
