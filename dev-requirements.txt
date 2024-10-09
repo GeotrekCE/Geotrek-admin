@@ -6,6 +6,7 @@
 #
 asgiref==3.8.1
     # via
+    #   -c requirements.txt
     #   django
 build==1.0.0
     # via pip-tools
