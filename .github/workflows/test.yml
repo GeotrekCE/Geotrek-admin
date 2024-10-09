@@ -206,6 +206,7 @@ jobs:
             push: false
             builder: ${{ steps.buildx.outputs.name }}
             tags: "geotrek:latest"
+            load: true
             file: ./docker/Dockerfile
 
       - name: Upload image
