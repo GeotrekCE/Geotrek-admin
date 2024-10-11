@@ -179,7 +179,7 @@ and to install it on other distributions than Ubuntu Linux 18.04.
 3. Unzip the tarball
 4. Copy docker/install folder where you want
 5. Edit ``docker-compose.yml`` to feed your needs if necessary
-6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary
+6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary. Leave the ``GUNICORN_CMD_ARGS`` variable only if you're not using any other scaling system.
 7. Create user and database, enable PostGIS extension
 8. Run ``docker compose run --rm web update.sh``
 9. Run ``docker compose up``
