@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+**Bug fixes**
+
+- Fix 'loadinfrastructure' condition when adding to infra without 'eid-field' option (#4328)"
+
+
 2.109.2+dev     (XXXX-XX-XX)
 ----------------------------
 
