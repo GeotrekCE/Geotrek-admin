@@ -5,9 +5,7 @@
       "en": "",
       "it": ""
     },
-    "accessibilities": [
-      1
-    ],
+    "accessibilities": [],
     "accessibility_advice": {
       "fr": "",
       "en": "",
@@ -219,7 +217,7 @@
       ]
     },
     "portal": [],
-    "practice": 3,
+    "practice": 5,
     "ratings": [],
     "ratings_description": {
       "fr": "",
@@ -233,8 +231,8 @@
       "it": ""
     },
     "published": {
-      "fr": true,
-      "en": true,
+      "fr": false,
+      "en": false,
       "it": false
     },
     "reservation_system": null,
@@ -244,10 +242,10 @@
     "source": [
       2
     ],
-    "structure": 1,
+    "structure": 5,
     "themes": [
-      8,
-      4
+      1,
+      2
     ],
     "update_datetime": "2022-05-16T12:10:59.927409Z",
     "url": "https://foo.fr/api/v2/trek/2/",

@@ -8,7 +8,7 @@
       "pictogram": "https://foo.fr/media/upload/route-loop.svg",
       "route": {
         "fr": "Boucle",
-        "en": null,
+        "en": "Loop",
         "es": null,
         "it": null
       }
@@ -18,7 +18,7 @@
       "pictogram": "https://foo.fr/media/upload/route-return.svg",
       "route": {
         "fr": "Aller-retour",
-        "en": null,
+        "en": "Return trip",
         "es": null,
         "it": null
       }
@@ -28,7 +28,7 @@
       "pictogram": "https://foo.fr/media/upload/route-cross.svg",
       "route": {
         "fr": "Traversée",
-        "en": null,
+        "en": "Crossing",
         "es": null,
         "it": null
       }
