@@ -11,6 +11,10 @@ CHANGELOG
 - Use new crispy form
 - Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
 
+**Documentation**
+
+- Improve development quickstart documentation
+
 
 2.109.2     (2024-09-19)
 ----------------------------

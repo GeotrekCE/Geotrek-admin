@@ -10,6 +10,8 @@ Development
 Quickstart
 ==========
 
+Download or git clone the source code of Geotrek-admin.
+
 ::
 
     cp .env.dist .env
@@ -20,11 +22,11 @@ Quickstart
     docker compose run --rm web ./manage.py createsuperuser
     docker compose up
 
-Edit `/etc/hosts` file to add `geotrek.local` alias to `127.0.0.1`
+Edit ``/etc/hosts`` file to add ``geotrek.local`` alias to ``127.0.0.1``
 
 Go to ``http://geotrek.local:8000`` in your browser
 
-PDF generation might not work unless you use this domain and is correctly set to SERVER_NAME variable in your .env file.
+PDF generation might not work unless you use this domain and is correctly set to ``SERVER_NAME`` variable in your ``.env`` file.
 
 
 Install git hooks
