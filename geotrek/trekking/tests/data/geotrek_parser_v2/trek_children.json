@@ -7,10 +7,20 @@
       "uuid": "9e70b294-1134-4c50-9c56-d722720cacf1",
       "steps": [
         {
-          "id": 10439
+          "id": 10439,
+          "published": {
+            "fr": true,
+            "en": false,
+            "it": false
+          }
         },
         {
-          "id": 10442
+          "id": 10442,
+          "published": {
+            "fr": false,
+            "en": false,
+            "it": false
+          }
         }
       ]
     },
