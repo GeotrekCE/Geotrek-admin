@@ -16,6 +16,7 @@ from django.core.management.base import CommandError
 from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
+from geotrek.common.parsers import DownloadImportError
 from geotrek.common.utils import testdata
 from geotrek.common.utils.file_infos import get_encoding_file
 from geotrek.common.models import Theme, FileType, Attachment, Label
@@ -265,7 +266,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
-                                ('trekking', 'trek_unpublished_step.json')]
+                                ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -291,6 +293,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertAlmostEqual(trek.geom[0][1], 6190964.893167565, places=5)
         self.assertEqual(trek.children.first().name, "Foo")
         self.assertEqual(trek.children.last().name, "Etape non publiée")
+        self.assertEqual(trek.children.last().practice.name, "Pratique non publiée")
         self.assertEqual(trek.labels.count(), 3)
         self.assertEqual(trek.source.first().name, "Une source numero 2")
         self.assertEqual(trek.source.first().website, "https://www.ecrins-parcnational.fr")
@@ -317,9 +320,11 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                ('trekking', 'trek_children.json'),
                                ('trekking', 'trek_published_step.json'),
                                ('trekking', 'trek_unpublished_step.json'),
+                               ('trekking', 'trek_unpublished_practice.json'),
                                ('trekking', 'trek_children.json'),
                                ('trekking', 'trek_published_step.json'),
-                               ('trekking', 'trek_unpublished_step.json')]
+                               ('trekking', 'trek_unpublished_step.json'),
+                               ('trekking', 'trek_unpublished_practice.json')]
             mock_time = 0
             total_mock_response = 1
 
@@ -381,7 +386,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
-                                ('trekking', 'trek_unpublished_step.json')]
+                                ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -412,7 +418,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                ('trekking', 'trek.json'),
                                ('trekking', 'trek_children.json'),
                                ('trekking', 'trek_published_step.json'),
-                               ('trekking', 'trek_unpublished_step.json')]
+                               ('trekking', 'trek_unpublished_step.json'),
+                               ('trekking', 'trek_unpublished_practice.json')]
             mock_time = 0
             a = 0
 
@@ -471,6 +478,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
                                 ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json'),
                                 ('trekking', 'structure.json'),
                                 ('trekking', 'trek_difficulty.json'),
                                 ('trekking', 'trek_route.json'),
@@ -562,6 +570,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
                                 ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json'),
                                 ('trekking', 'structure.json'),
                                 ('trekking', 'trek_difficulty.json'),
                                 ('trekking', 'trek_route.json'),
@@ -652,7 +661,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek.json'),
                                 ('trekking', 'trek_children_do_not_exist.json'),
                                 ('trekking', 'trek_published_step.json'),
-                                ('trekking', 'trek_unpublished_step.json')]
+                                ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -667,6 +677,17 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     def test_wrong_children_error(self, mocked_head, mocked_get):
+
+        def mock_json_with_404():
+            filename = os.path.join('geotrek', self.mock_json_order[self.mock_time][0], 'tests', 'data',
+                                    'geotrek_parser_v2',
+                                    self.mock_json_order[self.mock_time][1])
+            self.mock_time += 1
+            if "trek_not_found" in filename:
+                raise DownloadImportError("404 Trek does not exist")
+            with open(filename, 'r') as f:
+                return json.load(f)
+
         self.mock_time = 0
         self.mock_json_order = [('trekking', 'structure.json'),
                                 ('trekking', 'trek_difficulty.json'),
@@ -685,14 +706,14 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
         # Mock GET
         mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.json = mock_json_with_404
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
         output = StringIO()
 
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
-        self.assertIn("An error occured in children generation : ValueImportError", output.getvalue())
+        self.assertIn("An error occured in children generation : DownloadImportError", output.getvalue())
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
@@ -714,6 +735,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
                                 ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json'),
                                 ('trekking', 'structure.json'),
                                 ('trekking', 'trek_difficulty.json'),
                                 ('trekking', 'trek_route.json'),
@@ -728,7 +750,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_2.json'),
                                 ('trekking', 'trek_children.json'),
                                 ('trekking', 'trek_published_step.json'),
-                                ('trekking', 'trek_unpublished_step.json')]
+                                ('trekking', 'trek_unpublished_step.json'),
+                                ('trekking', 'trek_unpublished_practice.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
