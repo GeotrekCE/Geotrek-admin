@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+**Improvements**
+
+- Vocabulary adjustment for the 'add image gallery' button for flatpages
+- Improve translations for flatpages
+
 **Bug fixes**
 
 - Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
