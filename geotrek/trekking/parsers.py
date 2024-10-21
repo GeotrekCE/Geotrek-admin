@@ -22,7 +22,7 @@ from geotrek.common.utils.file_infos import get_encoding_file
 from geotrek.common.models import Label, Theme
 from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin,
                                     GeotrekParser, GlobalImportError, Parser,
-                                    RowImportError, ShapeParser)
+                                    RowImportError, ShapeParser, DownloadImportError)
 from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import (POI, Accessibility, DifficultyLevel,
                                      OrderedTrekChild, Service, Trek,
@@ -195,19 +195,53 @@ class GeotrekTrekParser(GeotrekParser):
             geom = GEOSGeometry(json.dumps(val))
             return geom.transform(settings.SRID, clone=True)
 
+    def fetch_missing_categories_for_tour_steps(self, step):
+        # For all categories, search missing values in mapping
+        for category, route in self.url_categories.items():
+            category_mapping = self.field_options.get(category, {}).get('mapping', {})
+            category_values = step.get(category)
+            if not isinstance(category_values, list):
+                category_values = [category_values]
+            for value in category_values:
+                # If category PK is not found in mapping, fetch it from provider
+                if value is not None and value not in list(category_mapping.keys()):
+                    if self.categories_keys_api_v2.get(category):
+                        try:
+                            result = self.request_or_retry(f"{self.url}/api/v2/{route}/{int(value)}").json()
+                        except DownloadImportError:
+                            self.add_warning(f"Could not download {category} with id {value} from {self.provider}"
+                                             f" for Tour step {step.get('uuid')}")
+                            continue
+                        # Update mapping like we usually do
+                        label = result[self.categories_keys_api_v2[category]]
+                        if isinstance(result[self.categories_keys_api_v2[category]], dict):
+                            if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                                self.field_options[category]["mapping"][value] = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], route)
+                        else:
+                            if label:
+                                self.field_options[category]["mapping"][value] = self.replace_mapping(label, category)
+
     def end(self):
         """Add children after all treks imported are created in database."""
         self.next_url = f"{self.url}/api/v2/tour"
+        portals = self.portals_filter
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'steps,id'
+                'fields': 'steps,id,uuid,published',
+                'portals': ','.join(portals) if portals else ''
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
+            steps_to_download = 0
             final_children = {}
             for result in results:
-                final_children[result['uuid']] = [step['id'] for step in result['steps']]
+                final_children[result['uuid']] = []
+                for step in result['steps']:
+                    final_children[result['uuid']].append(step['id'])
+                    if not any(step['published'].values()):
+                        steps_to_download += 1
+            self.nb = steps_to_download
 
             for key, value in final_children.items():
                 if value:
@@ -219,6 +253,9 @@ class GeotrekTrekParser(GeotrekParser):
                     for child_id in value:
                         response = self.request_or_retry(f"{self.url}/api/v2/trek/{child_id}")
                         child_trek = response.json()
+                        # The Tour step might be linked to categories that are not published,
+                        # we have to retrieve the missing ones first
+                        self.fetch_missing_categories_for_tour_steps(child_trek)
                         self.parse_row(child_trek)
                         trek_child_instance = self.obj
                         OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],

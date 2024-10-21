@@ -20,6 +20,10 @@ CHANGELOG
 
 - Improve development quickstart documentation
 
+**Bug fixes**
+
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
+
 
 2.109.2     (2024-09-19)
 ----------------------------
@@ -46,8 +50,8 @@ CHANGELOG
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
-- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
-- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)
 - Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
 
 **Documentation**
