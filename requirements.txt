@@ -27,7 +27,7 @@ billiard==4.2.0
     # via celery
 btrees==6.0
     # via zodb
-cachetools==5.4.0
+cachetools==5.5.0
     # via large-image
 cairocffi==0.9.0
     # via
