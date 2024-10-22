@@ -388,7 +388,7 @@ class TrekViewsLiveTests(CommonLiveTest):
         obj = self.modelfactory.create(geom='POINT(0 0)')
 
         for lang in ('en', 'fr'):
-            with translation.activate(lang):
+            with translation.override(lang):
                 # Initially, map image does not exists
                 image_path = obj.get_map_image_path(lang)
                 if default_storage.exists(image_path):
