@@ -10,6 +10,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
+- Fix intervention creation when target is not a report (suricate workflow)
 
 
 2.109.2+dev     (XXXX-XX-XX)
