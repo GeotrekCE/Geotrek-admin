@@ -22,8 +22,7 @@ class APILocaleMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        language = get_language_from_path(request.path_info)
-        if language:
-            translation.activate(language)
-            request.LANGUAGE_CODE = translation.get_language()
-        return self.get_response(request)
+        language = get_language_from_path(request.path_info) or translation.get_language()
+        with translation.override(language):
+            request.LANGUAGE_CODE = language
+            return self.get_response(request)

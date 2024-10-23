@@ -109,7 +109,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
     def test_type_label_shown_in_detail_page(self):
         url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
         response = self.client.get(url)
-        self.assertContains(response, 'Michelin')
+        self.assertContains(response, 'Michelin', response.content)
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
