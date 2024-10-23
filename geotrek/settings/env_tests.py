@@ -60,9 +60,9 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # recreate TMP_DIR for tests, and it as base dir for all files
-TMP_DIR = TemporaryDirectory(dir=TMP_DIR).name
+TMP_DIR = TemporaryDirectory().name
 os.makedirs(TMP_DIR)
-SESSION_FILE_PATH = TemporaryDirectory(dir=TMP_DIR).name
+SESSION_FILE_PATH = os.path.join(TMP_DIR, 'sessions')
 os.makedirs(SESSION_FILE_PATH)
 
 LOGGING['loggers']['']['handlers'] = ('log_file', )

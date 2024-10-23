@@ -113,11 +113,10 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
         }
 
     def dispatch(self, *args, **kwargs):
-        lang = self.request.GET.get('lang')
-        if lang:
-            translation.activate(lang)
+        lang = self.request.GET.get('lang', translation.get_language())
+        with translation.override(lang):
             self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -131,11 +130,10 @@ class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
 
     def dispatch(self, *args, **kwargs):
-        lang = kwargs.pop('lang')
-        if lang:
-            translation.activate(lang)
+        lang = self.request.GET.get('lang', translation.get_language())
+        with translation.override(lang):
             self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
 
 class TrekDocument(MapEntityDocument):

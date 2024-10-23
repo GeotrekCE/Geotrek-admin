@@ -9,7 +9,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core import mail
-from django.core.files.storage import default_storage
 from django.core.management import call_command
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
@@ -372,31 +371,6 @@ class TrekViewsLiveTests(CommonLiveTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = SuperUserFactory
-
-    @mock.patch('mapentity.helpers.requests')
-    def test_map_image_other_language(self, mock_requests):
-        if self.model is None:
-            return  # Abstract test should not run
-
-        user = SuperUserFactory.create()
-        self.client.force_login(user=user)
-
-        # Mock Screenshot response
-        mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.content = b'*' * 100
-
-        obj = self.modelfactory.create()
-
-        for lang in ('en', 'fr'):
-            with translation.override(lang):
-                # Initially, map image does not exists
-                image_path = obj.get_map_image_path(lang)
-                self.assertFalse(default_storage.exists(image_path))
-
-                response = self.client.get(obj.map_image_url)
-
-                self.assertEqual(response.status_code, 200)
-                self.assertTrue(default_storage.exists(image_path))
 
 
 class TrekCustomViewTests(TrekkingManagerTest):

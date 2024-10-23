@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.utils import translation
+from django.utils.translation import get_language
 from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -40,11 +41,10 @@ class DiveDetail(CompletenessMixin, MapEntityDetail):
     queryset = Dive.objects.existing()
 
     def dispatch(self, *args, **kwargs):
-        lang = self.request.GET.get('lang')
-        if lang:
-            translation.activate(lang)
+        lang = self.request.GET.get('lang', get_language())
+        with translation.override(lang):
             self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -56,11 +56,10 @@ class DiveMapImage(MapEntityMapImage):
     queryset = Dive.objects.existing()
 
     def dispatch(self, *args, **kwargs):
-        lang = kwargs.pop('lang')
-        if lang:
-            translation.activate(lang)
+        lang = self.request.GET.get('lang', get_language())
+        with translation.override(lang):
             self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
 
 class DiveDocument(MapEntityDocument):

@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.urls import reverse
 from django.test.testcases import TestCase
-from django.utils import translation
 
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
@@ -347,6 +346,3 @@ class FlatPageTest(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()["external_url"], "https://test.localhost/")
         self.assertEqual(resp.json()["content"], "")
-
-    def tearDown(self):
-        translation.deactivate()
