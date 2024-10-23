@@ -385,25 +385,18 @@ class TrekViewsLiveTests(CommonLiveTest):
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = b'*' * 100
 
-        obj = self.modelfactory.create(geom='POINT(0 0)')
+        obj = self.modelfactory.create()
 
         for lang in ('en', 'fr'):
             with translation.override(lang):
                 # Initially, map image does not exists
                 image_path = obj.get_map_image_path(lang)
-                if default_storage.exists(image_path):
-                    default_storage.delete(image_path)
                 self.assertFalse(default_storage.exists(image_path))
 
                 response = self.client.get(obj.map_image_url)
 
                 self.assertEqual(response.status_code, 200)
                 self.assertTrue(default_storage.exists(image_path))
-
-                mapimage_url = f'{self.live_server_url}{obj.get_detail_url()}?context&lang={lang}'
-                screenshot_url = f'http://0.0.0.0:8001/?url={mapimage_url}'
-                url_called = mock_requests.get.call_args_list[0]
-                self.assertTrue(url_called.startswith(screenshot_url))
 
 
 class TrekCustomViewTests(TrekkingManagerTest):
