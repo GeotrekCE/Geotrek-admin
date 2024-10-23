@@ -59,10 +59,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# recreate TMP_DIR for tests, and it as base dir forl all files
-TMP_DIR = os.path.join(TMP_DIR, 'tests')
-if os.path.exists(TMP_DIR):
-    shutil.rmtree(TMP_DIR)
+# recreate TMP_DIR for tests, and it as base dir for all files
+TMP_DIR = TemporaryDirectory(dir=TMP_DIR).name
 os.makedirs(TMP_DIR)
 SESSION_FILE_PATH = TemporaryDirectory(dir=TMP_DIR).name
 os.makedirs(SESSION_FILE_PATH)
