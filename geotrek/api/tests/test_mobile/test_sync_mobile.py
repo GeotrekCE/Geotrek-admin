@@ -54,7 +54,8 @@ class VarTmpTestCase(TestCase):
     sync_directory = None
 
     def setUp(self):
-        self.sync_directory = TemporaryDirectory(dir=settings.TMP_DIR).name
+        test_dir = TemporaryDirectory(dir=settings.TMP_DIR).name
+        self.sync_directory = TemporaryDirectory(dir=test_dir).name
         os.mkdir(self.sync_directory)
 
 
