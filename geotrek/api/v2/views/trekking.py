@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F, Prefetch, Q
 from django.db.models.aggregates import Count
-from django.utils.translation import activate
+from django.utils import translation
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -32,21 +32,21 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TrekSerializer
 
     def get_queryset(self):
-        activate(self.request.GET.get('language'))
-        return trekking_models.Trek.objects.existing() \
-            .select_related('topo_object') \
-            .prefetch_related('topo_object__aggregations', 'accessibilities',
-                              Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
-                              Prefetch('attachments_accessibility',
-                                       queryset=AccessibilityAttachment.objects.select_related('license')),
-                              Prefetch('web_links',
-                                       queryset=trekking_models.WebLink.objects.select_related('category')),
-                              Prefetch('view_points',
-                                       queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
-            .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
-                      length_3d_m=Length3D('geom_3d')) \
-            .order_by("name")  # Required for reliable pagination
+        with translation.override(self.request.GET.get('language'), deactivate=True):
+            return trekking_models.Trek.objects.existing() \
+                .select_related('topo_object') \
+                .prefetch_related('topo_object__aggregations', 'accessibilities',
+                                  Prefetch('attachments',
+                                           queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure')),
+                                  Prefetch('attachments_accessibility',
+                                           queryset=AccessibilityAttachment.objects.select_related('license')),
+                                  Prefetch('web_links',
+                                           queryset=trekking_models.WebLink.objects.select_related('category')),
+                                  Prefetch('view_points',
+                                           queryset=HDViewPoint.objects.select_related('content_type', 'license').annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)))) \
+                .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
+                          length_3d_m=Length3D('geom_3d')) \
+                .order_by("name")  # Required for reliable pagination
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
