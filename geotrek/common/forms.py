@@ -459,9 +459,7 @@ class HDViewPointForm(MapEntityForm):
     def __init__(self, *args, content_type=None, object_id=None, **kwargs):
         super().__init__(*args, **kwargs)
         if content_type and object_id:
-            ct = ContentType.objects.get_for_id(content_type)
-            self.instance.content_type = ct
-            self.instance.content_object = ct.get_object_for_this_type(id=object_id)
+            self.instance.content_type_id = content_type
             self.instance.object_id = object_id
             self.helper.form_action += f"?object_id={object_id}&content_type={content_type}"
 
