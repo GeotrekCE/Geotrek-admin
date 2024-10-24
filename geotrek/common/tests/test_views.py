@@ -287,6 +287,9 @@ class ViewsImportTest(TestCase):
 
 
 class HDViewPointViewTest(TestCase):
+    def setup(self):
+        ContentType.objects.clear_cache()
+
     @classmethod
     def setUpTestData(cls):
         # Create objects

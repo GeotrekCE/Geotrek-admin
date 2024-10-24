@@ -205,7 +205,7 @@ class MultilangFilterThemeParser(MultilangThemeParser):
         return 'filtered {}'.format(val)
 
 
-@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
 class MultilangParserTests(TestCase):
     """Test for translated fields
 - case 1 : flow has only one data
@@ -703,7 +703,7 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider, "Provider1")
-        self.assertEqual(t.description_teaser, "Chapeau")
+        self.assertEqual(t.description_teaser, "Header")
         self.assertEqual(t.description_teaser_fr, "Chapeau")
         self.assertEqual(t.description_teaser_en, "Header")
         TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
