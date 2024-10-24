@@ -837,7 +837,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
         self.mock_time = 0
         # First every categories (inside __init__)

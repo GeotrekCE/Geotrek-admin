@@ -239,7 +239,7 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
     }
 
 
-@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
@@ -464,7 +464,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_create_multiple_fr(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('trekking', 'structure.json'),
@@ -714,7 +714,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_updated(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('trekking', 'structure.json'),
@@ -832,7 +832,7 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('trekking', 'structure.json'),

@@ -6,6 +6,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Layout, Submit
 from django import forms
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.checks.messages import Error
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.files.images import get_image_dimensions
@@ -458,8 +459,9 @@ class HDViewPointForm(MapEntityForm):
     def __init__(self, *args, content_type=None, object_id=None, **kwargs):
         super().__init__(*args, **kwargs)
         if content_type and object_id:
-            self.instance.content_type_id = content_type
-            self.instance.object_id = object_id
+            ct = ContentType.objects.get_for_id(content_type)
+            self.instance.content_type = ct
+            self.instance.content_object = ct.get_object_for_this_type(id=object_id)
             self.helper.form_action += f"?object_id={object_id}&content_type={content_type}"
 
     class Meta:
