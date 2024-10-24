@@ -31,7 +31,7 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('signage', 'structure.json'),

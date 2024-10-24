@@ -64,16 +64,14 @@ class CirkwiPOISerializer:
                 self.xml.startElement('categories', {})
                 self.serialize_field('categorie', str(poi.type.cirkwi.eid), {'nom': poi.type.cirkwi.name})
                 self.xml.endElement('categories')
-            orig_lang = translation.get_language()
             self.xml.startElement('informations', {})
             for lang in poi.published_langs:
-                translation.activate(lang)
-                self.xml.startElement('information', {'langue': lang})
-                self.serialize_field('titre', poi.name)
-                self.serialize_field('description', plain_text(poi.description))
-                self.serialize_medias(self.request, poi.serializable_pictures)
-                self.xml.endElement('information')
-            translation.activate(orig_lang)
+                with translation.override(lang):
+                    self.xml.startElement('information', {'langue': lang})
+                    self.serialize_field('titre', poi.name)
+                    self.serialize_field('description', plain_text(poi.description))
+                    self.serialize_medias(self.request, poi.serializable_pictures)
+                    self.xml.endElement('information')
             self.xml.endElement('informations')
             self.xml.startElement('adresse', {})
             self.xml.startElement('position', {})
@@ -181,23 +179,21 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 'date_modification': timestamp(trek.date_update),
                 'id_circuit': str(trek.pk),
             })
-            orig_lang = translation.get_language()
             self.xml.startElement('informations', {})
             for lang in trek.published_langs:
-                translation.activate(lang)
-                self.xml.startElement('information', {'langue': lang})
-                self.serialize_field('titre', trek.name)
-                self.serialize_description(trek)
-                self.serialize_medias(self.request, trek.serializable_pictures)
-                if any([getattr(trek, name) for name in self.ADDITIONNAL_INFO]):
-                    self.xml.startElement('informations_complementaires', {})
-                    for name in self.ADDITIONNAL_INFO:
-                        self.serialize_additionnal_info(trek, name)
-                    self.serialize_labels(trek)
-                    self.xml.endElement('informations_complementaires')
-                self.serialize_tags(trek)
-                self.xml.endElement('information')
-            translation.activate(orig_lang)
+                with translation.override(lang):
+                    self.xml.startElement('information', {'langue': lang})
+                    self.serialize_field('titre', trek.name)
+                    self.serialize_description(trek)
+                    self.serialize_medias(self.request, trek.serializable_pictures)
+                    if any([getattr(trek, name) for name in self.ADDITIONNAL_INFO]):
+                        self.xml.startElement('informations_complementaires', {})
+                        for name in self.ADDITIONNAL_INFO:
+                            self.serialize_additionnal_info(trek, name)
+                        self.serialize_labels(trek)
+                        self.xml.endElement('informations_complementaires')
+                    self.serialize_tags(trek)
+                    self.xml.endElement('information')
             self.xml.endElement('informations')
             self.serialize_field('distance', int(trek.length))
             self.serialize_locomotions(trek)

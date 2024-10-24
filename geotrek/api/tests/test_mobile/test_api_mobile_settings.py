@@ -276,7 +276,7 @@ class SettingsMobileTest(TestCase):
         district_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'districts'), None)
         self.assertEqual(len(district_item), District.objects.count())
-        self.assertEqual(district_item[0].get('name'), district.name)
+        self.assertEqual(district_item[0].get('name'), district.name, json_response)
 
     def test_settings_poi_type(self):
         poi_type = trekking_factories.POITypeFactory.create()

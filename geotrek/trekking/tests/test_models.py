@@ -171,7 +171,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek = TrekFactory()
         AttachmentImageFactory.create_batch(5, content_object=trek)
         self.assertEqual(trek.pictures.count(), 5)
-        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5, os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path)))
         self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
     def test_pictures_print_thumbnail_wrong_picture(self):

@@ -4,7 +4,6 @@ from unittest import SkipTest, skipIf
 
 from django.db import connection
 from django.contrib.gis.geos import MultiLineString, LineString, Point
-from django.utils import translation
 
 from geotrek.core.models import Path, Topology
 from geotrek.core.tests.factories import TopologyFactory
@@ -127,8 +126,7 @@ class ElevationProfileTest(TestCase):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
                           srid=settings.SRID)
         profile = AltimetryHelper.elevation_profile(geom)
-        language = translation.get_language()
-        svg = AltimetryHelper.profile_svg(profile, language)
+        svg = AltimetryHelper.profile_svg(profile, 'en')
         self.assertIn('Generated with pygal'.encode(), svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND.encode(), svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR.encode(), svg)

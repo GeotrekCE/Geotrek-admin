@@ -899,7 +899,6 @@ class TestGeotrekTouristicContentCreateCategoriesParser(GeotrekTouristicContentP
 
 class TestGeotrekTouristicEventParser(GeotrekTouristicEventParser):
     url = "https://test.fr"
-
     field_options = {
         'source': {'create': True},
         'type': {'create': True, },
@@ -926,7 +925,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('tourism', 'structure.json'),
@@ -943,7 +942,6 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
-
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentCreateCategoriesParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 2)
         touristic_content = TouristicContent.objects.all().first()
@@ -958,7 +956,7 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_create_create_categories(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('tourism', 'structure.json'),
@@ -975,7 +973,6 @@ class TouristicContentGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         mocked_get.return_value.json = self.mock_json
         mocked_get.return_value.content = b''
         mocked_head.return_value.status_code = 200
-
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestGeotrekTouristicContentParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 2)
         touristic_content = TouristicContent.objects.all().first()
@@ -995,7 +992,7 @@ class TouristicEventGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('tourism', 'structure.json'),
@@ -1031,7 +1028,7 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachment')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_create(self, mocked_download_attachment, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('tourism', 'informationdesk_ids.json'),

@@ -490,7 +490,7 @@ class Command(BaseCommand):
 
     def rename_root(self):
         if os.path.exists(self.dst_root):
-            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
+            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), f'{os.path.basename(self.dst_root)}_deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
             if os.path.exists(tmp_root2):
                 shutil.rmtree(tmp_root2)

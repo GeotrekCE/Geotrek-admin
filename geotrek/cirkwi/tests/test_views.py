@@ -26,10 +26,10 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         cls.trek.date_insert = cls.creation
         cls.trek.save()
         TrekFactory.create(published=False, paths=[cls.path])
-        cls.portal_1 = TargetPortalFactory()
-        cls.portal_2 = TargetPortalFactory()
-        cls.source_1 = RecordSourceFactory()
-        cls.source_2 = RecordSourceFactory()
+        cls.portal_1 = TargetPortalFactory(name="PORTAL_1")
+        cls.portal_2 = TargetPortalFactory(name="PORTAL_2")
+        cls.source_1 = RecordSourceFactory(name="SOURCE_1")
+        cls.source_2 = RecordSourceFactory(name="SOURCE_2")
         cls.trek.portal.set([cls.portal_1, cls.portal_2])
         cls.trek.source.set([cls.source_1, cls.source_2])
         POIFactory.create(published=False, paths=[cls.path])
@@ -43,6 +43,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.poi.save()
 
     def test_export_circuits(self):
+        self.maxDiff = None
         response = self.client.get('/api/cirkwi/circuits.xml')
         self.assertEqual(response.status_code, 200)
         attrs = {
@@ -155,6 +156,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         )
 
     def test_export_circuits_with_attachments(self):
+        self.maxDiff = None
         attachment = AttachmentFactory.create(content_object=self.trek, attachment_file=get_dummy_uploaded_image())
         self.poi.delete()
         response = self.client.get('/api/cirkwi/circuits.xml')
