@@ -551,7 +551,9 @@ class Parser:
                 except (ValueImportError, RowImportError) as e:
                     self.add_warning(str(e))
                 except Exception as e:
-                    raise
+                    if settings.DEBUG:
+                        raise
+                    self.add_warning(str(e))
             self.end()
 
     def request_or_retry(self, url, verb='get', **kwargs):

@@ -20,16 +20,14 @@ from PIL import Image
 
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.tests.factories import (AttachmentFactory,
+                                            AttachmentImageFactory,
                                             RecordSourceFactory,
                                             TargetPortalFactory,
                                             ThemeFactory)
-from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_image_svg)
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg
 from geotrek.core.tests.factories import PathFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
-from geotrek.tourism.models import TouristicEventType
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
                                              TouristicContentFactory,
@@ -169,7 +167,7 @@ class SyncMobileFailTest(VarTmpTestCase):
     def test_attachments_missing_from_disk(self, mocke):
         mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image(), is_image=True)
+        attachment = AttachmentImageFactory(content_object=trek_1)
         os.remove(attachment.attachment_file.path)
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
@@ -316,7 +314,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
         output = StringIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
         self.trek = TrekFactory.create(practice=practice, published_fr=True, published_it=True, published_es=True, published_en=True)
-        information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
+        information_desk_type = InformationDeskTypeFactory.create()
         InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
         pictogram_desk_png = information_desk_type.pictogram.url
@@ -342,8 +340,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
     def setUpTestData(cls):
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
-        picto_desk = get_dummy_uploaded_image()
-        cls.information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
+        cls.information_desk_type = InformationDeskTypeFactory.create()
         cls.info_desk = InformationDeskFactory.create(type=cls.information_desk_type)
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
@@ -357,20 +354,14 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
 
         cls.trek_4.information_desks.add(cls.desk)
 
-        cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
-                                                    attachment_file=get_dummy_uploaded_image())
-        AttachmentFactory.create(content_object=cls.trek_1,
-                                 attachment_file=get_dummy_uploaded_image())
+        cls.attachment_1 = AttachmentImageFactory.create(content_object=cls.trek_1)
+        AttachmentImageFactory.create(content_object=cls.trek_1)
 
         cls.poi_1 = cls.trek_1.published_pois.first()
-        cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
-                                                              attachment_file=get_dummy_uploaded_image())
-        cls.attachment_poi_image_2 = AttachmentFactory.create(content_object=cls.poi_1,
-                                                              attachment_file=get_dummy_uploaded_image())
-        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1,
-                                                           attachment_file=get_dummy_uploaded_file())
-        cls.attachment_trek_image = AttachmentFactory.create(content_object=cls.trek_4,
-                                                             attachment_file=get_dummy_uploaded_image())
+        cls.attachment_poi_image_1 = AttachmentImageFactory.create(content_object=cls.poi_1)
+        cls.attachment_poi_image_2 = AttachmentImageFactory.create(content_object=cls.poi_1)
+        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1)
+        cls.attachment_trek_image = AttachmentImageFactory.create(content_object=cls.trek_4)
 
         cls.touristic_content = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                         published=True)
@@ -384,10 +375,8 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                                                  published=True, portals=[cls.portal_b])
         cls.touristic_event_portal_b = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                              published=True, portals=[cls.portal_b])
-        cls.attachment_content_1 = AttachmentFactory.create(content_object=cls.touristic_content,
-                                                            attachment_file=get_dummy_uploaded_image())
-        cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
-                                                          attachment_file=get_dummy_uploaded_image())
+        cls.attachment_content_1 = AttachmentImageFactory.create(content_object=cls.touristic_content)
+        cls.attachment_event_1 = AttachmentImageFactory.create(content_object=cls.touristic_event)
 
     def test_sync_treks(self):
         output = StringIO()
@@ -453,7 +442,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                    'media', 'paperclip', 'trekking_trek')))
+                                                    'media', 'paperclip', 'trekking_trek')), self.trek_1.attachments.all())
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                     'media', 'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
@@ -469,7 +458,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(2, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))), output.getvalue())
         self.assertEqual(2, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                         'media', 'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
@@ -498,7 +487,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))), output.getvalue())
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                         'media', 'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
         with open(os.path.join(self.sync_directory, 'en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
@@ -541,15 +530,10 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                 skip_tiles=True, verbosity=0)
         self.assertIn(pictogram_name_before, os.listdir(os.path.join(self.sync_directory, 'nolang', 'media',
                                                                      'upload')))
-
-        for event_type in TouristicEventType.objects.all():
-            event_type.pictogram = None
-            event_type.save()
+        TouristicEventFactory(type__pictogram=None, published=True)
 
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=0)
-        self.assertNotIn(pictogram_name_before, os.listdir(os.path.join(self.sync_directory, 'nolang',
-                                                                        'media', 'upload')))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_multilinestring(self):

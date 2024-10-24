@@ -69,6 +69,8 @@ LOGGING['loggers']['']['handlers'] = ('log_file', )
 LOGGING['handlers']['log_file']['level'] = 'INFO'
 LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
 MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
+MAP_PATH = os.path.join(MEDIA_ROOT, 'maps')  # map files
+os.makedirs(MAP_PATH)
 SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
 MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
 DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image

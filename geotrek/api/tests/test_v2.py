@@ -464,7 +464,7 @@ class BaseApiTest(TestCase):
         cls.color = signage_factory.BladeColorFactory()
         cls.sealing = signage_factory.SealingFactory()
         cls.direction = signage_factory.BladeDirectionFactory()
-        cls.bladetype = signage_factory.BladeFactory(
+        cls.blade = signage_factory.BladeFactory(
             color=cls.color,
             type=cls.bladetype,
             direction=cls.direction
@@ -4530,14 +4530,14 @@ class NearOutdoorFilterTestCase(BaseApiTest):
     def test_outdoorcourse_near_outdoorsite(self):
         response = self.get_course_list({'near_outdoorsite': self.site.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.course.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.course1.pk)
+        courses = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(courses, [self.course.pk, self.course1.pk])
 
     def test_outdoorsite_near_outdoorcourse(self):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
+        sites = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(sites, [self.site.pk, self.site1.pk])
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})
