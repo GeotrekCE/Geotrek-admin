@@ -6,7 +6,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Layout, Submit
 from django import forms
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core.checks.messages import Error
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.core.files.images import get_image_dimensions

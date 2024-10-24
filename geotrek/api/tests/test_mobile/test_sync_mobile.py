@@ -339,8 +339,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
 
 class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()
