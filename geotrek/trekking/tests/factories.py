@@ -46,8 +46,8 @@ class AccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Accessibility
 
-    name = "Accessibility"
-    pictogram = get_dummy_uploaded_image('accessibility.png')
+    name = factory.Faker('word')
+    pictogram = factory.django.ImageField()
 
 
 class AccessibilityLevelFactory(factory.django.DjangoModelFactory):

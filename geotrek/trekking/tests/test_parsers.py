@@ -557,7 +557,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en", LANGUAGE_CODE="en")
     def test_create_multiple_en(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [('trekking', 'structure.json'),

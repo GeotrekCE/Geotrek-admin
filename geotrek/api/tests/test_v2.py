@@ -4537,7 +4537,7 @@ class NearOutdoorFilterTestCase(BaseApiTest):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
         self.assertEqual(response.json()["count"], 2)
         sites = [x['id'] for x in response.json()["results"]]
-        self.assertListEqual(sites, [self.site.pk, self.site1.pk])
+        self.assertListEqual(sorted(sites), sorted([self.site.pk, self.site1.pk]))
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})

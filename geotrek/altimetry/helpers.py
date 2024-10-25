@@ -92,13 +92,13 @@ class AltimetryHelper:
         line_chart = pygal.XY(fill=True, style=style, **config)
         with translation.override(lang):
             line_chart.x_title = _("Distance (m)")
-            line_chart.y_title = _("Altitude (m)")
+            line_chart.y_title = _("Elevation (m)")
             line_chart.show_minor_x_labels = False
             line_chart.x_labels_major_count = 5
             line_chart.show_minor_y_labels = False
             line_chart.truncate_label = 50
             line_chart.range = [floor_elevation, ceil_elevation]
-            line_chart.no_data_text = _("Altimetry data not available")
+            line_chart.no_data_text = _("Elevation data not available")
             line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
             return line_chart.render()
 

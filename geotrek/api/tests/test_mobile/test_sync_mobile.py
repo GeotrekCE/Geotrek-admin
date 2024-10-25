@@ -167,8 +167,7 @@ class SyncMobileFailTest(VarTmpTestCase):
     def test_attachments_missing_from_disk(self, mocke):
         mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        attachment = AttachmentImageFactory(content_object=trek_1)
-        os.remove(attachment.attachment_file.path)
+        AttachmentImageFactory(content_object=trek_1, attachment_file=None)
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
         self.assertFalse(os.path.exists(os.path.join(self.sync_directory, 'nolang', 'media', 'trekking_trek')))
@@ -442,7 +441,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                    'media', 'paperclip', 'trekking_trek')), self.trek_1.attachments.all())
+                                                    'media', 'paperclip', 'trekking_trek')))
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                     'media', 'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),

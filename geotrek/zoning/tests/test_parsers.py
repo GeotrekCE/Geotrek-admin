@@ -1,8 +1,8 @@
+import io
 import os
 
 from django.contrib.gis.geos import Polygon, MultiPolygon, WKTWriter
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 
 from geotrek.zoning.models import City
@@ -25,10 +25,11 @@ class CityParserTest(TestCase):
         self.assertEqual(WKTWriter(precision=4).write(city.geom), WKT)
 
     def test_wrong_geom(self):
+        output = io.StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
-        with self.assertRaisesRegex(CommandError, r"Invalid geometry type for field 'GEOM'. "
-                                                  r"Should be \(Multi\)Polygon, not LineString"):
-            call_command('import', 'geotrek.zoning.parsers.CityParser', filename, verbosity=2)
+        call_command('import', 'geotrek.zoning.parsers.CityParser', filename, verbosity=2, stdout=output)
+
+        self.assertIn("Invalid geometry type for field 'GEOM'. Should be (Multi)Polygon, not LineString", output.getvalue())
         self.assertEqual(City.objects.count(), 0)
 
 

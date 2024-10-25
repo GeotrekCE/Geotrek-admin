@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
     def sync_pictograms(self, model, directory='', zipfile=None, size=None):
         for obj in model.objects.all():
-            if not obj.pictogram:
+            if not obj.pictogram or not os.path.exists(obj.pictogram.path):
                 continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == '.svg':
@@ -205,8 +205,8 @@ class Command(BaseCommand):
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                        directory=directory, url=obj.pictogram.url, name=name))
+                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                        directory=directory, url=obj.pictogram.url))
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
@@ -325,6 +325,11 @@ class Command(BaseCommand):
         if not self.skip_tiles:
             self.sync_trek_tiles(trek, trekid_zipfile)
 
+        if trek.resized_pictures:
+            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
+
         for poi in trek.published_pois.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if poi.resized_pictures:
                 for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
@@ -340,10 +345,7 @@ class Command(BaseCommand):
                 for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                     self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                          zipfile=trekid_zipfile)
-        if trek.resized_pictures:
-            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
-                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+
         for desk in trek.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
