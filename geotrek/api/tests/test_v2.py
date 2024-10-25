@@ -26,7 +26,7 @@ from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common import models as common_models
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.tests import factories as common_factory, TranslationResetMixin
+from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image, get_dummy_uploaded_image_svg)
@@ -5639,7 +5639,7 @@ class CreateReportsAPITest(TestCase):
 
 
 @freeze_time("2020-01-01")
-class SensitivityAPIv2Test(TranslationResetMixin, TrekkingManagerTest):
+class SensitivityAPIv2Test(TrekkingManagerTest):
     def setUp(self):
         super().setUp()
         self.structure = authent_models.default_structure()

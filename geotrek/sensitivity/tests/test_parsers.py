@@ -9,7 +9,6 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 from geotrek.sensitivity.tests.factories import SpeciesFactory, SportPracticeFactory
@@ -132,7 +131,7 @@ class BiodivWithPracticeParser(BiodivParser):
     size = 1
 
 
-class BiodivParserTests(TranslationResetMixin, TestCase):
+class BiodivParserTests(TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
         self.page = 1

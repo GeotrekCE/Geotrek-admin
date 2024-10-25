@@ -6,7 +6,6 @@ from django.test.utils import override_settings
 from django.utils.timezone import make_aware
 
 from geotrek.common.tests.factories import AttachmentFactory, LabelFactory, RecordSourceFactory, TargetPortalFactory
-from geotrek.common.tests import TranslationResetMixin
 
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -17,7 +16,7 @@ from geotrek.cirkwi.serializers import timestamp
 from geotrek.trekking import urls  # NOQA
 
 
-class CirkwiTests(TranslationResetMixin, TestCase):
+class CirkwiTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.path = PathFactory.create()

@@ -14,7 +14,6 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
@@ -58,9 +57,9 @@ def mocked_image(file_name):
         return bytearray(f.read())
 
 
-@override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
-@override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
-class SuricateTests(TranslationResetMixin, TestCase):
+@override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS,
+                   SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+class SuricateTests(TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False):

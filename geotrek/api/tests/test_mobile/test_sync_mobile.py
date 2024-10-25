@@ -18,7 +18,6 @@ from landez.sources import DownloadError
 from modeltranslation.utils import build_localized_fieldname
 from PIL import Image
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.tests.factories import (AttachmentFactory,
                                             AttachmentImageFactory,
                                             RecordSourceFactory,
@@ -194,7 +193,7 @@ class SyncMobileFailTest(VarTmpTestCase):
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
 
-class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileSpecificOptionsTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -218,7 +217,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
             self.assertEqual(len(flatpages), 1)
 
 
-class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileFlatpageTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -292,7 +291,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
         self.assertIn('en/flatpages.json', output.getvalue())
 
 
-class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileSettingsTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -334,7 +333,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
         self.assertIn('en/settings.json', output.getvalue())
 
 
-class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileTreksTest(VarTmpTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.portal_a = TargetPortalFactory()

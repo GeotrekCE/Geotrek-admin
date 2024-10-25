@@ -12,7 +12,6 @@ from django.core.management.base import CommandError
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.tests.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
                                              TouristicContentType2Factory, TouristicEventTypeFactory,
                                              InformationDeskTypeFactory)
@@ -187,7 +186,7 @@ class EventALEIParser(LEITouristicEventParser):
     type = "Type event A"
 
 
-class ParserNoStructureTests(TranslationResetMixin, TestCase):
+class ParserNoStructureTests(TestCase):
 
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_filetype_structure_none(self, mocked):
@@ -209,7 +208,7 @@ class ParserNoStructureTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
 
 
-class ParserTests(TranslationResetMixin, TestCase):
+class ParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         FileType.objects.create(type="Photographie")
@@ -764,7 +763,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(information_desk_2.website, None)
 
 
-class LEIParserTest(TranslationResetMixin, TestCase):
+class LEIParserTest(TestCase):
     def setUp(self):
         super().setUp()
         FileType.objects.create(type="Photographie")

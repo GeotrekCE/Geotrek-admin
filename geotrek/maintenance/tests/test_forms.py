@@ -3,14 +3,13 @@ from unittest import skipIf
 from django.conf import settings
 from django.test import TestCase, override_settings
 from geotrek.authent.tests.factories import UserFactory
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory, InterventionStatusFactory
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.core.tests.factories import TopologyFactory, PathFactory
 from geotrek.maintenance.forms import InterventionForm, ManDayForm, ProjectForm
 
 
-class ManDayFormTest(TranslationResetMixin, TestCase):
+class ManDayFormTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -86,7 +85,7 @@ class InterventionFormTest(TestCase):
         self.assertTrue(form.is_valid())
 
 
-class ProjectDateFormTest(TranslationResetMixin, TestCase):
+class ProjectDateFormTest(TestCase):
 
     def test_begin_end_date(self):
         user = UserFactory()
