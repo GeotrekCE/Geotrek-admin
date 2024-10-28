@@ -301,7 +301,7 @@ python-dotenv==1.0.0
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
-pytz==2023.3.post1
+pytz==2024.2
     # via
     #   datetime
     #   django-modelcluster
