@@ -2,6 +2,9 @@
 CHANGELOG
 =========
 
+2.109.3     (2024-10-29)
+----------------------------
+
 **Improvements**
 
 - Vocabulary adjustment for the 'add image gallery' button for flatpages
@@ -9,12 +12,9 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
 - Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
 - Fix intervention creation when target is not a report (suricate workflow)
-
-
-2.109.2+dev     (XXXX-XX-XX)
-----------------------------
 
 **Maintenance**
 
@@ -25,10 +25,6 @@ CHANGELOG
 **Documentation**
 
 - Improve development quickstart documentation
-
-**Bug fixes**
-
-- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
 
 
 2.109.2     (2024-09-19)
