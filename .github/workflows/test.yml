@@ -241,6 +241,7 @@ jobs:
             run: |
                 grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
                 sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu'$CODE'\2) $OS;/' debian/changelog
+                cat debian/changelog
 
           - name: Building package
             run: |
