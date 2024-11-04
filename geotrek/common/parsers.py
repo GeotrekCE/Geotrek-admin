@@ -545,13 +545,13 @@ class Parser:
                 try:
                     self.parse_row(row)
                 except DatabaseError as e:
-                    if settings.DEBUG:
+                    if settings.DEBUG:  # pragma: no cover
                         raise
                     self.add_warning(str(e))
                 except (ValueImportError, RowImportError) as e:
                     self.add_warning(str(e))
                 except Exception as e:
-                    if settings.DEBUG:
+                    if settings.DEBUG:  # pragma: no cover
                         raise
                     self.add_warning(str(e))
             self.end()
