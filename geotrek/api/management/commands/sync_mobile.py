@@ -10,6 +10,7 @@ from time import sleep
 from zipfile import ZipFile
 
 import cairosvg
+from PIL import Image
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
@@ -19,7 +20,6 @@ from django.test.client import RequestFactory
 from django.utils import translation
 from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
-from PIL import Image
 
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
 from geotrek.api.mobile.views.trekking import TrekViewSet
@@ -538,7 +538,7 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': settings.MOBILE_TILES_PATH,
         }
-        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
+        sync_mobile_tmp_dir = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
         if options['empty_tmp_folder']:
             for dir in os.listdir(sync_mobile_tmp_dir):
                 shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))
