@@ -550,7 +550,7 @@ class XMLParserTests(TestCase):
                 super().__init__()
 
         parser = TestXmlParser()
-        parser.parse()
+        parser.parse(limit=1)
         self.assertEqual(Organism.objects.count(), 1)
         self.assertEqual(Organism.objects.get().organism, 'Organism a')
 
