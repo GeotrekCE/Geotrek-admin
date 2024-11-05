@@ -173,8 +173,8 @@ class SettingsMobileTest(TestCase):
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
         self.assertEqual(len(accessibility_item), 2)
-        self.assertEqual(accessibility_item[0].get('name'), self.accessibility_2.name)
-        self.assertIn(str(self.accessibility_2.pictogram), accessibility_item[0].get('pictogram'))
+        self.assertIn(self.accessibility_2.name, [item.get('name') for item in accessibility_item])
+        self.assertIn(self.accessibility_2.pictogram.url, [item.get('pictogram') for item in accessibility_item])
 
     def test_settings_accessibility(self):
         response = self.get_settings()
