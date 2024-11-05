@@ -544,16 +544,10 @@ class Parser:
                     break
                 try:
                     self.parse_row(row)
-                except DatabaseError as e:
-                    if settings.DEBUG:  # pragma: no cover
-                        raise
-                    self.add_warning(str(e))
-                except (ValueImportError, RowImportError) as e:
+                except (DatabaseError, RowImportError, ValueImportError) as e:
                     self.add_warning(str(e))
                 except Exception as e:
-                    if settings.DEBUG:  # pragma: no cover
-                        raise
-                    self.add_warning(str(e))
+                    raise e
             self.end()
 
     def request_or_retry(self, url, verb='get', **kwargs):
