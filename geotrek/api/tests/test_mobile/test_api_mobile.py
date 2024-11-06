@@ -168,7 +168,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(len(json_response['properties']['districts']), 1)
         self.assertEqual(len(json_response['properties']['cities']), 1)
         self.assertEqual(json_response['properties']['departure_city'], self.city.code)
-        self.assertEqual(json_response['properties']['arrival_city'], self.city.code)
+        self.assertEqual(json_response['properties']['arrival_city'], self.city.code, json_response)
 
     def test_trek_detail_no_parking_location(self):
         trek_no_parking = trek_factory.TrekFactory(name_fr='no_parking', parking_location=None, published_fr=True)

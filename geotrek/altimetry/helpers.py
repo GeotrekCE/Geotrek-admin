@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils import translation
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, get_language
 from django.contrib.gis.geos import LineString
 from django.conf import settings
 from django.db import connection
@@ -70,6 +70,7 @@ class AltimetryHelper:
         Most of the job done here is dedicated to preparing
         nice labels scales.
         """
+        lang = language or get_language()
         ceil_elevation, floor_elevation = cls.altimetry_limits(profile)
         config = dict(show_legend=False,
                       print_values=False,
@@ -89,19 +90,17 @@ class AltimetryHelper:
         style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
         style.font_family = settings.ALTIMETRIC_PROFILE_FONT
         line_chart = pygal.XY(fill=True, style=style, **config)
-        if language:
-            translation.activate(language)
-        line_chart.x_title = _("Distance (m)")
-        line_chart.y_title = _("Altitude (m)")
-        line_chart.show_minor_x_labels = False
-        line_chart.x_labels_major_count = 5
-        line_chart.show_minor_y_labels = False
-        line_chart.truncate_label = 50
-        line_chart.range = [floor_elevation, ceil_elevation]
-        line_chart.no_data_text = _("Altimetry data not available")
-        translation.deactivate()
-        line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
-        return line_chart.render()
+        with translation.override(lang):
+            line_chart.x_title = _("Distance (m)")
+            line_chart.y_title = _("Elevation (m)")
+            line_chart.show_minor_x_labels = False
+            line_chart.x_labels_major_count = 5
+            line_chart.show_minor_y_labels = False
+            line_chart.truncate_label = 50
+            line_chart.range = [floor_elevation, ceil_elevation]
+            line_chart.no_data_text = _("Elevation data not available")
+            line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
+            return line_chart.render()
 
     @classmethod
     def _nice_extent(cls, geom):

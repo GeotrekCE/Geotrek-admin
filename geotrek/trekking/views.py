@@ -112,13 +112,6 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
             'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
         }
 
-    def dispatch(self, *args, **kwargs):
-        lang = self.request.GET.get('lang')
-        if lang:
-            translation.activate(lang)
-            self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
@@ -129,13 +122,6 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
 
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
-
-    def dispatch(self, *args, **kwargs):
-        lang = kwargs.pop('lang')
-        if lang:
-            translation.activate(lang)
-            self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
 
 
 class TrekDocument(MapEntityDocument):

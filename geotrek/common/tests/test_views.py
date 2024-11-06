@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from mapentity.tests import SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
 
@@ -141,18 +142,18 @@ class ViewsTest(TestCase):
 class ViewsImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create()
-
-    def setUp(self):
-        self.client.force_login(user=self.user)
+        cls.user = UserFactory()
+        cls.super_user = SuperUserFactory()
 
     def test_import_form_access(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_dataset')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Cities')
 
     def test_import_form_access_other_language(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_dataset')
         response = self.client.get(url, headers={"accept-language": 'fr'})
         self.assertEqual(response.status_code, 200)
@@ -160,13 +161,13 @@ class ViewsImportTest(TestCase):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Topology is enabled")
     def test_import_update_access(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_update_json')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_import_from_file_good_zip_file(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
             url = reverse('common:import_dataset')
@@ -187,8 +188,7 @@ class ViewsImportTest(TestCase):
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_import_from_file_good_geojson_file(self, mocked_stdout, mocked, mocked_current_task):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
         FileType.objects.create(type="Photographie")
         mocked.side_effect = import_datas
         mocked_current_task.request.id = '1'
@@ -212,8 +212,7 @@ class ViewsImportTest(TestCase):
 
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     def test_import_from_file_bad_file(self, mocked):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         Parser.label = "Test"
 
@@ -236,8 +235,7 @@ class ViewsImportTest(TestCase):
         Parser.label = None
 
     def test_import_form_no_parser_no_superuser(self):
-        self.user.is_superuser = False
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         real_archive = open('geotrek/common/tests/data/test.zip', 'rb+')
         url = reverse('common:import_dataset')
@@ -254,8 +252,7 @@ class ViewsImportTest(TestCase):
         self.assertNotContains(response_real, '<form  method="post"')
 
     def test_import_from_web_bad_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         url = reverse('common:import_dataset')
 
@@ -270,8 +267,7 @@ class ViewsImportTest(TestCase):
         # There is no parser available for user not superuser
 
     def test_import_from_web_good_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         url = reverse('common:import_dataset')
         real_key = self.client.get(url).context['form_without_file'].fields['parser'].choices[0][0]
@@ -287,6 +283,9 @@ class ViewsImportTest(TestCase):
 
 
 class HDViewPointViewTest(TestCase):
+    def setUp(self):
+        ContentType.objects.clear_cache()
+
     @classmethod
     def setUpTestData(cls):
         # Create objects

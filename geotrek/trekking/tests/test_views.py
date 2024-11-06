@@ -22,7 +22,7 @@ from rest_framework.reverse import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
-from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, CommonLiveTest
 from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
@@ -795,7 +795,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.assertEqual(response.status_code, 200)
 
 
-class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
+class POIViewsSameStructureTests(AuthentFixturesTest):
     @classmethod
     def setUpTestData(cls):
         cls.content1 = POIFactory.create()
@@ -833,7 +833,7 @@ class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
         self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
 
 
-class TrekWorkflowTest(TranslationResetMixin, TestCase):
+class TrekWorkflowTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         call_command('update_geotrek_permissions', verbosity=0)
