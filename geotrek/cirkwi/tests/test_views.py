@@ -42,7 +42,6 @@ class CirkwiTests(TestCase):
         self.poi.save()
 
     def test_export_circuits(self):
-        self.maxDiff = None
         response = self.client.get('/api/cirkwi/circuits.xml')
         self.assertEqual(response.status_code, 200)
         attrs = {
@@ -155,7 +154,6 @@ class CirkwiTests(TestCase):
         )
 
     def test_export_circuits_with_attachments(self):
-        self.maxDiff = None
         attachment = AttachmentFactory.create(content_object=self.trek, attachment_file=get_dummy_uploaded_image())
         self.poi.delete()
         response = self.client.get('/api/cirkwi/circuits.xml')
