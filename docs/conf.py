@@ -61,10 +61,10 @@ html_theme_options = {
         {
             "media": "(prefers-color-scheme: light)",
             "scheme": "default",
-            "primary": "light-green",
-            "accent": "light-blue",
+            "primary": "green",
+            "accent": "light green",
             "toggle": {
-                "icon": "material/lightbulb-outline",
+                "icon": "material/weather-night",
                 "name": "Switch to dark mode",
             },
         },
@@ -74,26 +74,13 @@ html_theme_options = {
             "primary": "deep-orange",
             "accent": "lime",
             "toggle": {
-                "icon": "material/lightbulb",
+                "icon": "material/weather-sunny",
                 "name": "Switch to light mode",
             },
         },
     ],
     # END: version_dropdown
     "toc_title_is_page_title": True,
-    # BEGIN: social icons
-    "social": [
-        {
-            "icon": "fontawesome/brands/github",
-            "link": "https://github.com/jbms/sphinx-immaterial",
-            "name": "Source on github.com",
-        },
-        {
-            "icon": "fontawesome/brands/python",
-            "link": "https://pypi.org/project/sphinx-immaterial/",
-        },
-    ],
-    # END: social icons
 }
 
 html_favicon = "_static/favicon.png"
