@@ -22,7 +22,6 @@ master_doc = 'index'
 project = 'Geotrek-admin'
 copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 
-release = open(os.path.join(root, "geotrek", "VERSION")).read()
 
 exclude_patterns = ['_build']
 
