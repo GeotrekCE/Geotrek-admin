@@ -14,7 +14,7 @@ def get_language_from_path(path):
 
 
 def get_language_from_request(request):
-    request.GET.get('lang')
+    return request.GET.get('lang')
 
 
 def get_language_from_url(request):
