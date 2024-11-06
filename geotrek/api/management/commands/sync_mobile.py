@@ -408,8 +408,7 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek, zipfile):
-        """ Add tiles to zipfile for the specified Trek object.
-        """
+        """ Add tiles to zipfile for the specified Trek object."""
 
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
