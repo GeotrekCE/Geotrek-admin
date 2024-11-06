@@ -1,8 +1,8 @@
 import json
 import os
-import urllib
 from io import StringIO
 from unittest import mock, skipIf
+from urllib.parse import urlparse
 
 import requests
 from django.conf import settings
@@ -481,7 +481,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_download_fail(self, mocked_urlparse, mocked_get):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         mocked_get.side_effect = DownloadImportError("DownloadImportError")
-        mocked_urlparse.return_value = urllib.parse.urlparse('ftp://test.url.com/organism.xls')
+        mocked_urlparse.return_value = urlparse('ftp://test.url.com/organism.xls')
         output = StringIO()
         call_command('import', 'geotrek.common.tests.test_parsers.WarnAttachmentParser', filename, verbosity=2,
                      stdout=output)
@@ -536,23 +536,29 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
 
 
+class TestXmlParser(XmlParser):
+    results_path = 'Result/el'
+    model = Organism
+
+    fields = {'organism': 'ORGANISM'}
+
+    def __init__(self):
+        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
+        self.filetype = FileType.objects.create(type="Photographie")
+        super().__init__()
+
+
 class XMLParserTests(TestCase):
-    def test_xml(self):
-        class TestXmlParser(XmlParser):
-            results_path = 'Result/el'
-            model = Organism
-
-            fields = {'organism': 'ORGANISM'}
-
-            def __init__(self):
-                self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
-                self.filetype = FileType.objects.create(type="Photographie")
-                super().__init__()
-
+    def test_xml_parser(self):
         parser = TestXmlParser()
-        parser.parse(limit=1)
+        parser.parse()
         self.assertEqual(Organism.objects.count(), 1)
         self.assertEqual(Organism.objects.get().organism, 'Organism a')
+
+    def test_parser_limit(self):
+        parser = TestXmlParser()
+        parser.parse(limit=-1)
+        self.assertEqual(Organism.objects.count(), 0)
 
 
 class TourInSoftParserTests(TestCase):
@@ -710,9 +716,9 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
         t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
-        self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
+        self.assertEqual({t.pk, t2.pk, t3.pk}, set(Trek.objects.values_list('pk', flat=True)))
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
-        self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
+        self.assertEqual({t.pk, t2.pk, t3.pk}, set(Trek.objects.values_list('pk', flat=True)))
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
