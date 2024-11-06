@@ -1,6 +1,6 @@
 -c ../dev-requirements.in
 
-sphinx-rtd-theme>=1.0.0
+sphinx_immaterial
 sphinx>=4.0.0
 sphinx-autobuild
 sphinx-intl

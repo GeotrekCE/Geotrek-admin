@@ -1,11 +1,14 @@
-import sphinx_rtd_theme # noqa
 import datetime
+import os
+
+root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 extensions = [
     'sphinx.ext.todo',
-    'sphinx_rtd_theme',
+    "sphinx_immaterial"
 ]
 
+html_theme = 'sphinx_immaterial'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -16,29 +19,83 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Geotrek'
+project = 'Geotrek-admin'
 copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
 
-# The version info for the project you're documenting, acts as replacement for
-# |version| and |release|, also used in various other places throughout the
-# built documents.
-#
-# The short X.Y version.
-version = '2.109'
-# The full version, including alpha/beta/rc tags.
-release = '2.109.3+dev'
+release = open(os.path.join(root, "geotrek", "VERSION")).read()
 
 exclude_patterns = ['_build']
 
 pygments_style = 'sphinx'
 
-html_theme = 'sphinx_rtd_theme'
-
 html_logo = "_static/logo.svg"
+
+# Material theme options (see theme.conf for more information)
 html_theme_options = {
-    "logo_only": True,
-    'style_external_links': True,
+    "icon": {
+        "repo": "fontawesome/brands/github",
+        "edit": "material/file-edit-outline",
+    },
+    "site_url": "https://geotrek.fr/",
+    "repo_url": "https://github.com/GeotrekCE/Geotrek-admin/",
+    "repo_name": "Geotrek-admin",
+    "edit_uri": "blob/main/docs",
+    "globaltoc_collapse": True,
+    "features": [
+        "navigation.expand",
+        # "navigation.tabs",
+        # "toc.integrate",
+        "navigation.sections",
+        # "navigation.instant",
+        # "header.autohide",
+        "navigation.top",
+        # "navigation.tracking",
+        # "search.highlight",
+        "search.share",
+        "toc.follow",
+        "toc.sticky",
+        "content.tabs.link",
+        "announce.dismiss",
+    ],
+    "palette": [
+        {
+            "media": "(prefers-color-scheme: light)",
+            "scheme": "default",
+            "primary": "light-green",
+            "accent": "light-blue",
+            "toggle": {
+                "icon": "material/lightbulb-outline",
+                "name": "Switch to dark mode",
+            },
+        },
+        {
+            "media": "(prefers-color-scheme: dark)",
+            "scheme": "slate",
+            "primary": "deep-orange",
+            "accent": "lime",
+            "toggle": {
+                "icon": "material/lightbulb",
+                "name": "Switch to light mode",
+            },
+        },
+    ],
+    # END: version_dropdown
+    "toc_title_is_page_title": True,
+    # BEGIN: social icons
+    "social": [
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/jbms/sphinx-immaterial",
+            "name": "Source on github.com",
+        },
+        {
+            "icon": "fontawesome/brands/python",
+            "link": "https://pypi.org/project/sphinx-immaterial/",
+        },
+    ],
+    # END: social icons
 }
+
 html_favicon = "_static/favicon.png"
 
 html_static_path = ['_static']
@@ -55,7 +112,9 @@ man_pages = [
     ('index', 'geotrek', 'Geotrek Documentation',
      ['Makina Corpus'], 1)
 ]
-
+html_sidebars = {
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+}
 texinfo_documents = [
     ('index', 'Geotrek', 'Geotrek Documentation',
      'Makina Corpus', 'Geotrek', 'One line description of project.',
