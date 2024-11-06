@@ -71,15 +71,24 @@ html_theme_options = {
         {
             "media": "(prefers-color-scheme: dark)",
             "scheme": "slate",
-            "primary": "deep-orange",
-            "accent": "lime",
+            "primary": "green",
+            "accent": "light green",
             "toggle": {
                 "icon": "material/weather-sunny",
                 "name": "Switch to light mode",
             },
         },
     ],
-    # END: version_dropdown
+    "social": [
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/GeotrekCE/Geotrek-admin"
+        },
+        {
+            "icon": "fontawesome/brands/linkedin",
+            "link": "https://www.linkedin.com/company/geotrek-application",
+        },
+    ],
     "toc_title_is_page_title": True,
 }
 
@@ -91,19 +100,19 @@ html_static_path = ['_static']
 htmlhelp_basename = 'Geotrekdoc'
 
 latex_documents = [
-    ('index', 'Geotrek.tex', 'Geotrek Documentation',
+    ('index', 'Geotrek.tex', 'Geotrek-admin Documentation',
      'Makina Corpus', 'manual'),
 ]
 
 man_pages = [
-    ('index', 'geotrek', 'Geotrek Documentation',
+    ('index', 'geotrek', 'Geotrek-admin Documentation',
      ['Makina Corpus'], 1)
 ]
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }
 texinfo_documents = [
-    ('index', 'Geotrek', 'Geotrek Documentation',
-     'Makina Corpus', 'Geotrek', 'One line description of project.',
+    ('index', 'Geotrek', 'Geotrek-admin Documentation',
+     'Makina Corpus', 'Geotrek-admin', 'One line description of project.',
      'Miscellaneous'),
 ]
