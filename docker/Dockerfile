@@ -70,7 +70,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
 
 USER geotrek
 RUN python3 -m venv /opt/venv
-RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
+RUN /opt/venv/bin/pip install --no-cache-dir -U "pip<24.3" setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
