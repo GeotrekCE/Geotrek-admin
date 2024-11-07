@@ -62,3 +62,4 @@ docs/_build/
 /dpkg/
 /coverage.lcov
 /htmlcov/
+/.cache/
