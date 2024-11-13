@@ -5,6 +5,10 @@ CHANGELOG
 2.109.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
+
 
 2.109.3     (2024-10-29)
 ----------------------------
