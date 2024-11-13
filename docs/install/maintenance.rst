@@ -34,11 +34,9 @@ Application restore
 If you restore Geotrek-admin on a new server, you will have to install PostgreSQL and PostGIS and create a database user first.
 Otherwise go directly to the database creation step.
 
-Example for Ubuntu 18:
-
 .. code-block:: bash
 
-    sudo apt install postgresql-10 postgresql-10-postgis-2.5
+    sudo apt install postgresql-14 postgresql-14-postgis-3
     sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 
