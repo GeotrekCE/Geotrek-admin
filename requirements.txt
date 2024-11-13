@@ -281,7 +281,7 @@ prompt-toolkit==3.0.47
     # via click-repl
 psutil==5.9.8
     # via large-image
-psycopg2==2.9.7
+psycopg2==2.9.10
     # via geotrek (setup.py)
 pycparser==2.22
     # via cffi
