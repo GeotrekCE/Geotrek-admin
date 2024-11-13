@@ -6,7 +6,7 @@ StartLimitIntervalSec=30
 StartLimitBurst=2
 
 [Service]
-ExecStart=/opt/geotrek-admin/bin/gunicorn --config=/opt/geotrek-admin/var/conf/gunicorn-geotrek_api.conf.py geotrek.wsgi
+ExecStart=/opt/geotrek-admin/bin/gunicorn --config=/opt/geotrek-admin/var/conf/gunicorn-geotrek_api.conf.py geotrek.asgi -k uvicorn.workers.UvicornWorker
 Restart=on-failure
 User=geotrek
 Group=geotrek

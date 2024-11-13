@@ -101,4 +101,4 @@ RUN apt-get update -qq && apt-get -yqq full-upgrade && \
 
 USER geotrek
 
-CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]
+CMD ["sh", "-c", "gunicorn geotrek.asgi:application --bind=0.0.0.0:8000 -k uvicorn.workers.UvicornWorker --workers ${GUNICORN_WORKERS:-1}"]

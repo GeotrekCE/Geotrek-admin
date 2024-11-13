@@ -5,6 +5,10 @@ CHANGELOG
 2.109.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Performances**
+
+- change deployment from standard WSGI to ASGI mode (asynchronous)
+
 
 2.109.3     (2024-10-29)
 ----------------------------

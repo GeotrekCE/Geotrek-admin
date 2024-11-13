@@ -68,6 +68,7 @@ click==8.1.3
     #   click-repl
     #   cligj
     #   fiona
+    #   uvicorn
 click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1
@@ -206,6 +207,8 @@ gpxpy==1.6.2
     # via mapentity
 gunicorn==22.0.0
     # via geotrek (setup.py)
+h11==0.14.0
+    # via uvicorn
 html5lib==1.1
     # via weasyprint
 idna==3.7
@@ -362,6 +365,7 @@ typing-extensions==4.12.2
     #   asgiref
     #   django-modeltranslation
     #   kombu
+    #   uvicorn
 tzdata==2024.2
     # via
     #   backports-zoneinfo
@@ -375,6 +379,8 @@ urllib3==2.2.2
     # via
     #   requests
     #   sentry-sdk
+uvicorn==0.32.0
+    # via geotrek (setup.py)
 vine==5.1.0
     # via
     #   amqp

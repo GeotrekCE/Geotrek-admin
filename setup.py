@@ -73,6 +73,7 @@ setup(
         "django-treebeard",
         # prod,
         'gunicorn',
+        'uvicorn',
         'sentry-sdk',
         'easy-thumbnails[svg]',
     ],
