@@ -5,6 +5,9 @@ CHANGELOG
 2.110.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
 
 
 2.110.0     (2024-11-13)
