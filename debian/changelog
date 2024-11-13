@@ -1,8 +1,8 @@
-geotrek-admin (2.109.3+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.110.0) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Célia Prat <celia.prat@makina-corpus.com>  Mon, 04 Nov 2024 14:01:07 +0100
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 13 Nov 2024 10:46:20 +0100
 
 geotrek-admin (2.109.3) RELEASED; urgency=medium
 
