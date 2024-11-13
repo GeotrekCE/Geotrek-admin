@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../about/geotrek.rst:3
 msgid "Geotrek"
@@ -132,6 +132,10 @@ msgid ""
 "nouveau composant web permettant de valoriser une offre de contenus "
 "touristiques et de randonnées auprès des usagers du territoire, en "
 "l'intégrant dans un site internet existant"
+msgstr ""
+
+#: ../../about/geotrek.rst:40
+msgid "Note"
 msgstr ""
 
 #: ../../about/geotrek.rst:41

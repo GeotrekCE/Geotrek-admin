@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/tutorials.rst:3
 msgid "Tutoriels"
@@ -75,11 +75,11 @@ msgstr ""
 msgid "Visualiser les données dans QGIS"
 msgstr ""
 
-#: ../../usage/tutorials.rst:53
+#: ../../usage/tutorials.rst:52
 msgid "Création de vues SQL pour afficher des couches dans QGIS"
 msgstr ""
 
-#: ../../usage/tutorials.rst:55
+#: ../../usage/tutorials.rst:54
 msgid ""
 "Des vues SQL ont été créées dans la base de données PostgreSQL de "
 "Geotrek-admin dans le but de les afficher dans QGIS ou autre (https"
@@ -88,171 +88,171 @@ msgid ""
 "retrouve dans Geotrek-admin au niveau de chaque module."
 msgstr ""
 
-#: ../../usage/tutorials.rst:57
+#: ../../usage/tutorials.rst:56
 msgid ""
 "Ces vues sont consultables en lecture seule dans QGIS sous forme de "
 "couche SIG."
 msgstr ""
 
-#: ../../usage/tutorials.rst:59
+#: ../../usage/tutorials.rst:58
 msgid ""
 "Les modifications se font directement dans Geotrek-admin pour chaque "
 "projet, et elles sont répercutées instantanément dans les vues SQL."
 msgstr ""
 
-#: ../../usage/tutorials.rst:62
+#: ../../usage/tutorials.rst:61
 msgid "Créer une connexion à la base de données PostgreSQL du projet"
 msgstr ""
 
-#: ../../usage/tutorials.rst:64
+#: ../../usage/tutorials.rst:63
 msgid "Ouvrir le logiciel QGIS"
 msgstr ""
 
-#: ../../usage/tutorials.rst:65
+#: ../../usage/tutorials.rst:64
 msgid "Créer une nouvelle connexion de base de données PostgreSQL"
 msgstr ""
 
-#: ../../usage/tutorials.rst:67
+#: ../../usage/tutorials.rst:66
 msgid "Dans l'Explorateur > PostgreSQL > Nouvelle connexion"
 msgstr ""
 
-#: ../../usage/tutorials.rst:68
+#: ../../usage/tutorials.rst:67
 msgid "Renseigner les informations suivantes :"
 msgstr ""
 
-#: ../../usage/tutorials.rst:70
+#: ../../usage/tutorials.rst:69
 msgid "Nom de la connexion"
 msgstr ""
 
-#: ../../usage/tutorials.rst:71
+#: ../../usage/tutorials.rst:70
 msgid "Hôte"
 msgstr ""
 
-#: ../../usage/tutorials.rst:72
+#: ../../usage/tutorials.rst:71
 msgid "Port"
 msgstr ""
 
-#: ../../usage/tutorials.rst:73
+#: ../../usage/tutorials.rst:72
 msgid "Base de données"
 msgstr ""
 
-#: ../../usage/tutorials.rst:74
+#: ../../usage/tutorials.rst:73
 msgid "SSL mode : permet"
 msgstr ""
 
-#: ../../usage/tutorials.rst:75
+#: ../../usage/tutorials.rst:74
 msgid "Nom d’utilisateur"
 msgstr ""
 
-#: ../../usage/tutorials.rst:76
+#: ../../usage/tutorials.rst:75
 msgid "Mot de passe"
 msgstr ""
 
-#: ../../usage/tutorials.rst:78
+#: ../../usage/tutorials.rst:77
 msgid "Cliquer sur « Tester la connexion »"
 msgstr ""
 
-#: ../../usage/tutorials.rst:79
+#: ../../usage/tutorials.rst:78
 msgid "Si la connexion est réussi, cliquer sur OK pour enregistrer la connexion"
 msgstr ""
 
-#: ../../usage/tutorials.rst:84
+#: ../../usage/tutorials.rst:83
 msgid "Créer un projet QGIS à partir des vues SQL"
 msgstr ""
 
-#: ../../usage/tutorials.rst:87
+#: ../../usage/tutorials.rst:86
 msgid "Afficher une vue SQL sous forme de couche"
 msgstr ""
 
-#: ../../usage/tutorials.rst:89
+#: ../../usage/tutorials.rst:88
 msgid ""
 "Dans l'Explorateur > PostgreSQL > Ouvrir la connexion précédemment créé >"
 " Schéma public"
 msgstr ""
 
-#: ../../usage/tutorials.rst:90
+#: ../../usage/tutorials.rst:89
 msgid "Ajouter les vues : Clic droit sur l'objet > Ajouter la couche au projet"
 msgstr ""
 
-#: ../../usage/tutorials.rst:103
+#: ../../usage/tutorials.rst:102
 msgid "Correspondance couches <> vues"
 msgstr ""
 
-#: ../../usage/tutorials.rst:92
+#: ../../usage/tutorials.rst:91
 msgid "Sentiers <> `v_trails`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:93
+#: ../../usage/tutorials.rst:92
 msgid "Aménagements <> `v_infrastructures`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:94
+#: ../../usage/tutorials.rst:93
 msgid "Signalétiques <> `v_signages`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:95
+#: ../../usage/tutorials.rst:94
 msgid "Interventions <> `v_interventions`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:96
+#: ../../usage/tutorials.rst:95
 msgid "Chantiers <> `v_projects`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:97
+#: ../../usage/tutorials.rst:96
 msgid "Itinéraires <> `v_treks`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:98
+#: ../../usage/tutorials.rst:97
 msgid "POI's <> `v_pois`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:99
+#: ../../usage/tutorials.rst:98
 msgid "Contenus touristiques <> `v_touristiccontents`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:100
+#: ../../usage/tutorials.rst:99
 msgid "Évènements touristiques <> `v_touristicevents`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:101
+#: ../../usage/tutorials.rst:100
 msgid "Signalement <> `v_reports`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:102
+#: ../../usage/tutorials.rst:101
 msgid "Zones sensibles <> `v_sensitivearea_qgis`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:103
+#: ../../usage/tutorials.rst:102
 msgid "Zones <> `v_districts`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:104
+#: ../../usage/tutorials.rst:103
 msgid "Communes <> `v_cities`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:105
+#: ../../usage/tutorials.rst:104
 msgid ""
 "Couches supplémentaires (dépend des projets) * Sites outdoor <> "
 "`v_outdoor_sites` * Parcours outdoor <> `v_outdoor_courses`"
 msgstr ""
 
-#: ../../usage/tutorials.rst:110
+#: ../../usage/tutorials.rst:109
 msgid "Afficher un fond de plan OpenStreetMap"
 msgstr ""
 
-#: ../../usage/tutorials.rst:112
+#: ../../usage/tutorials.rst:111
 msgid "Dans l'Explorateur > XYZ Tiles > OpenStreetMap"
 msgstr ""
 
-#: ../../usage/tutorials.rst:115
+#: ../../usage/tutorials.rst:114
 msgid "Créer des groupes de couches"
 msgstr ""
 
-#: ../../usage/tutorials.rst:117
+#: ../../usage/tutorials.rst:116
 msgid "Dans le panneau des couches > clic droit > Ajouter un groupe"
 msgstr ""
 
-#: ../../usage/tutorials.rst:119
+#: ../../usage/tutorials.rst:118
 msgid ""
 "Il peut être utile de créer des groupes de couches dans le cas où "
 "certaines couches sont disponibles dans plusieurs types géométriques : "
@@ -260,45 +260,49 @@ msgid ""
 "points"
 msgstr ""
 
-#: ../../usage/tutorials.rst:124
+#: ../../usage/tutorials.rst:123
 msgid "Changer le style d'une couche"
 msgstr ""
 
-#: ../../usage/tutorials.rst:126
+#: ../../usage/tutorials.rst:125
 msgid "Clic droit sur la couche > Propriétés > Symbologie"
 msgstr ""
 
-#: ../../usage/tutorials.rst:128
+#: ../../usage/tutorials.rst:127
 msgid ""
 "Selon le type géométrique de la couche (point, ligne, polygone), il est "
 "possible de changer à volonté la couleur de remplissage, la couleur de "
 "contour, la taille ou l'épaisseur."
 msgstr ""
 
-#: ../../usage/tutorials.rst:131
+#: ../../usage/tutorials.rst:130
 msgid "Dimensionner les colonnes de la table attributaire"
 msgstr ""
 
-#: ../../usage/tutorials.rst:133
+#: ../../usage/tutorials.rst:132
 msgid ""
 "Le fait de dimensionner la taille des colonnes dans la table attributaire"
 " permet une permet lisibilité des noms de champs et des informations "
 "contenues à l'intérieur :"
 msgstr ""
 
-#: ../../usage/tutorials.rst:135
+#: ../../usage/tutorials.rst:134
 msgid ""
 "Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur "
 "une colonne > Taille autom pour toutes les colonnes"
 msgstr ""
 
-#: ../../usage/tutorials.rst:137
+#: ../../usage/tutorials.rst:136
 msgid ""
 "Certains champs texte peuvent être très larges (exemple _Description_ "
 "dans la couche **Zones sensibles**). Dans ce cas il est possible "
-"d'adapter manuellement la taille de la colonne : * Clic droit sur la "
-"couche > Ouvrir la Table d'Attributs > clic droit sur la colonne > "
-"Largeur > Entrer une largeur de colonne (exemple : 200)"
+"d'adapter manuellement la taille de la colonne :"
+msgstr ""
+
+#: ../../usage/tutorials.rst:138
+msgid ""
+"Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur "
+"la colonne > Largeur > Entrer une largeur de colonne (exemple : 200)"
 msgstr ""
 
 #: ../../usage/tutorials.rst:141
@@ -316,4 +320,17 @@ msgstr ""
 #: ../../usage/tutorials.rst:148
 msgid "Clic droit sur la couche > Zoomer sur la(les) couche(s)"
 msgstr ""
+
+#~ msgid ""
+#~ "Certains champs texte peuvent être très"
+#~ " larges (exemple _Description_ dans la "
+#~ "couche **Zones sensibles**). Dans ce cas"
+#~ " il est possible d'adapter manuellement "
+#~ "la taille de la colonne : * "
+#~ "Clic droit sur la couche > Ouvrir"
+#~ " la Table d'Attributs > clic droit"
+#~ " sur la colonne > Largeur > "
+#~ "Entrer une largeur de colonne (exemple"
+#~ " : 200)"
+#~ msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/interfaces.rst:3
 msgid "Interface, navigation et saisie"
@@ -80,33 +80,41 @@ msgstr ""
 msgid "Vue liste avec la carte"
 msgstr ""
 
-#: ../../usage/interfaces.rst:35
+#: ../../usage/interfaces.rst:34 ../../usage/interfaces.rst:63
+msgid "Note"
+msgstr ""
+
+#: ../../usage/interfaces.rst:36
 msgid ""
 "Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur "
 "la carte."
 msgstr ""
 
-#: ../../usage/interfaces.rst:36
+#: ../../usage/interfaces.rst:37
 msgid "Il est possible d'ajouter de nouveaux objets depuis chaque module."
 msgstr ""
 
-#: ../../usage/interfaces.rst:37
+#: ../../usage/interfaces.rst:38
 msgid ""
 "Un clic sur un objet dans la liste ou la carte permet d'accéder à la "
 "fiche détaillée de celui-ci."
 msgstr ""
 
 #: ../../usage/interfaces.rst:40
+msgid "Warning"
+msgstr ""
+
+#: ../../usage/interfaces.rst:42
 msgid ""
 "La liste des résultats est filtrée en fonction de l'étendue de la carte "
 "affichée."
 msgstr ""
 
-#: ../../usage/interfaces.rst:43
+#: ../../usage/interfaces.rst:45
 msgid "Vue détail"
 msgstr ""
 
-#: ../../usage/interfaces.rst:45
+#: ../../usage/interfaces.rst:47
 msgid ""
 "A partir de chaque module, il est possible d'afficher la fiche détail "
 "d'un objet en cliquant sur celui-ci dans la liste ou la carte du module. "
@@ -116,49 +124,49 @@ msgid ""
 "sont attachés et l'historique des modifications de l'objet."
 msgstr ""
 
-#: ../../usage/interfaces.rst:47
+#: ../../usage/interfaces.rst:49
 msgid "Voici les possibilités de la fiche détail :"
 msgstr ""
 
-#: ../../usage/interfaces.rst:49
+#: ../../usage/interfaces.rst:51
 msgid "le récapitulatif des attributs (saisis et calculés)"
 msgstr ""
 
-#: ../../usage/interfaces.rst:50
+#: ../../usage/interfaces.rst:52
 msgid ""
 "récupérer automatiquement des informations liées (communes, secteurs, "
 "POI…)"
 msgstr ""
 
-#: ../../usage/interfaces.rst:51
+#: ../../usage/interfaces.rst:53
 msgid "ajouter des fichiers (redimensionnement automatique pour les photos)"
 msgstr ""
 
-#: ../../usage/interfaces.rst:52
+#: ../../usage/interfaces.rst:54
 msgid "l'accès à la vue d’édition selon les droits de l’utilisateur connecté"
 msgstr ""
 
-#: ../../usage/interfaces.rst:53
+#: ../../usage/interfaces.rst:55
 msgid "l'export GPX, KML, OpenDocument, Word, PDF"
 msgstr ""
 
-#: ../../usage/interfaces.rst:59
+#: ../../usage/interfaces.rst:61
 msgid "Fiche détail d'un itinéraire"
 msgstr ""
 
-#: ../../usage/interfaces.rst:62
+#: ../../usage/interfaces.rst:65
 msgid ""
 "Lorsque le statut de publication d'un objet est activé, celui-ci ainsi "
 "que tous ses attributs associés, sont mis en ligne."
 msgstr ""
 
-#: ../../usage/interfaces.rst:63
+#: ../../usage/interfaces.rst:66
 msgid ""
 "À tout moment et ce sur chaque module, les informations peuvent être soit"
 " mises en ligne, soit désactivées, voire supprimées."
 msgstr ""
 
-#: ../../usage/interfaces.rst:64
+#: ../../usage/interfaces.rst:67
 msgid ""
 "Ne sont mises en ligne que les informations choisies et disponibles. Les "
 "catégories non encore alimentées ne seront pas visibles pour le grand "
@@ -167,62 +175,62 @@ msgid ""
 "itinéraire de raquettes."
 msgstr ""
 
-#: ../../usage/interfaces.rst:68
+#: ../../usage/interfaces.rst:71
 msgid "Vue édition"
 msgstr ""
 
-#: ../../usage/interfaces.rst:70
+#: ../../usage/interfaces.rst:73
 msgid "Saisie des champs multilingues"
 msgstr ""
 
-#: ../../usage/interfaces.rst:71
+#: ../../usage/interfaces.rst:74
 msgid "Saisie des tracés"
 msgstr ""
 
-#: ../../usage/interfaces.rst:72
+#: ../../usage/interfaces.rst:75
 msgid ""
 "Possibilité de forcer des points de passage (détours, boucles, aller-"
 "retours)"
 msgstr ""
 
-#: ../../usage/interfaces.rst:73
+#: ../../usage/interfaces.rst:76
 msgid "Édition WYSIWYG des champs texte"
 msgstr ""
 
-#: ../../usage/interfaces.rst:74
+#: ../../usage/interfaces.rst:77
 msgid ""
 "Ajout de couches locales en superposition à partir de fichiers GPX ou KML"
 " (aide à la saisie)"
 msgstr ""
 
-#: ../../usage/interfaces.rst:75
+#: ../../usage/interfaces.rst:78
 msgid "Outils de mesure"
 msgstr ""
 
-#: ../../usage/interfaces.rst:81
+#: ../../usage/interfaces.rst:84
 msgid "Fiche détail d'un itinéraire en édition"
 msgstr ""
 
-#: ../../usage/interfaces.rst:84
+#: ../../usage/interfaces.rst:87
 msgid "Paramètres de configuration"
 msgstr ""
 
-#: ../../usage/interfaces.rst:86
+#: ../../usage/interfaces.rst:89
 msgid ""
 "Toutes les listes de choix (thématiques, pratiques, parcours…) sont "
 "administrables depuis le module de configuration, selon les droits dont "
 "dispose l’utilisateur connecté."
 msgstr ""
 
-#: ../../usage/interfaces.rst:92
+#: ../../usage/interfaces.rst:95
 msgid "Interface complète du module de configuration"
 msgstr ""
 
-#: ../../usage/interfaces.rst:98
+#: ../../usage/interfaces.rst:101
 msgid "Exemple d’édition des pratiques et de leur pictogramme"
 msgstr ""
 
-#: ../../usage/interfaces.rst:100
+#: ../../usage/interfaces.rst:103
 msgid "Voir la section :ref:`Paramétrage des modules <parametrages-des-modules>`"
 msgstr ""
 

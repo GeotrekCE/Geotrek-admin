@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/editing-objects.rst:3
 msgid "Edition d'un objet"
@@ -105,6 +105,11 @@ msgid ""
 "sont associés."
 msgstr ""
 
+#: ../../usage/editing-objects.rst:43 ../../usage/editing-objects.rst:71
+#: ../../usage/editing-objects.rst:140
+msgid "Note"
+msgstr ""
+
 #: ../../usage/editing-objects.rst:45
 msgid ""
 "Il n'existe actuellement aucun moyen de contrôler manuellement "
@@ -185,6 +190,12 @@ msgid ""
 "<visualiser-les-donnees-dans-qgis>`). Il ne faut néanmoins pas modifier "
 "directement ces géométries, elles sont calculées automatiquement quand on"
 " modifie l'évènement d'un objet."
+msgstr ""
+
+#: ../../usage/editing-objects.rst:73
+msgid ""
+"Des vues SQL sont disponibles pour accéder aux objets de manière plus "
+"lisible et simplifiée (``v_interventions`` par exemple)."
 msgstr ""
 
 #: ../../usage/editing-objects.rst:76
@@ -319,6 +330,12 @@ msgstr ""
 msgid ""
 "La vue HD est également associée à une localisation correspondant à "
 "l'emplacement de ce que l'on voit sur l'image."
+msgstr ""
+
+#: ../../usage/editing-objects.rst:142
+msgid ""
+"Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et"
+" Outdoor."
 msgstr ""
 
 #: ../../usage/editing-objects.rst:145

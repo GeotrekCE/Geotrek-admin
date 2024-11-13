@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../contribute/documentation.rst:2
 msgid "Documentation"
@@ -29,8 +29,9 @@ msgstr ""
 
 #: ../../contribute/documentation.rst:9
 msgid ""
-"A container based on sphinx image is created using docker-compose-"
-"dev.yml, documentation is built in watch mode thanks to sphinx-autobuild."
+"A container based on sphinx image is created using ``docker-compose-"
+"dev.yml``, documentation is built in watch mode thanks to sphinx-"
+"autobuild."
 msgstr ""
 
 #: ../../contribute/documentation.rst:12
@@ -46,10 +47,23 @@ msgid "Translate documentation"
 msgstr ""
 
 #: ../../contribute/documentation.rst:25
-msgid "Generate .pot if needed"
+msgid "Generate ``.pot`` files if needed"
 msgstr ""
 
 #: ../../contribute/documentation.rst:31
-msgid "Generate .po files"
+msgid "Generate ``.po`` files"
 msgstr ""
+
+#~ msgid ""
+#~ "A container based on sphinx image "
+#~ "is created using docker-compose-dev.yml,"
+#~ " documentation is built in watch mode"
+#~ " thanks to sphinx-autobuild."
+#~ msgstr ""
+
+#~ msgid "Generate .pot if needed"
+#~ msgstr ""
+
+#~ msgid "Generate .po files"
+#~ msgstr ""
 

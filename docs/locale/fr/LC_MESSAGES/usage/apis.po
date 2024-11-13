@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/apis.rst:3
 msgid "APIs"
@@ -190,7 +190,7 @@ msgid ""
 "dans-cirkwi/."
 msgstr ""
 
-#: ../../usage/apis.rst
+#: ../../usage/apis.rst:75 ../../usage/apis.rst:113 ../../usage/apis.rst:243
 msgid "Note"
 msgstr ""
 
@@ -280,5 +280,283 @@ msgid ""
 "Pour plus d'information, se référer à la documentation en ligne de "
 "`Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-"
 "api>`_."
+msgstr ""
+
+#: ../../usage/apis.rst:111
+msgid "Sensitivity module (or Biodiv'Sports)"
+msgstr ""
+
+#: ../../usage/apis.rst:115
+msgid ""
+"You can play with API using Biodiv'Sports widget tool: https"
+"://biodivsports-widget.lpo-aura.org/"
+msgstr ""
+
+#: ../../usage/apis.rst:117
+msgid ""
+"The Geotrek API provides a set of parameters that can be used to filter "
+"and sort data. There is a Swagger documentation (see :ref:`advanced-"
+"configuration-section` to enable it on your instance if needed) existing "
+"to test and browse those parameters that can be found at this address: "
+"``/api/v2/``."
+msgstr ""
+
+#: ../../usage/apis.rst:119
+msgid ""
+"This section focuses on some common parameters useful to work with "
+"sensitivity information and gives details about some endpoints."
+msgstr ""
+
+#: ../../usage/apis.rst:125
+msgid ""
+"If ``language`` parameter is provided, API returns directly translated "
+"fields, else, a dictionnary of traductions is returned"
+msgstr ""
+
+#: ../../usage/apis.rst:127
+msgid "e.g. ``/api/v2/sensitivearea_practice/1/?``"
+msgstr ""
+
+#: ../../usage/apis.rst:142
+msgid "e.g. ``/api/v2/sensitivearea_practice/1/?language=en``"
+msgstr ""
+
+#: ../../usage/apis.rst:155
+msgid "List of sport practices"
+msgstr ""
+
+#: ../../usage/apis.rst:157
+msgid "``/api/v2/sensitivearea_practice/``"
+msgstr ""
+
+#: ../../usage/apis.rst:159
+msgid "e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/"
+msgstr ""
+
+#: ../../usage/apis.rst:164
+msgid "List of sensitive areas"
+msgstr ""
+
+#: ../../usage/apis.rst:166
+msgid "``/api/v2/sensitivearea/``"
+msgstr ""
+
+#: ../../usage/apis.rst:168
+msgid ""
+"The default output format is ``json``. To obtain output in ``geojson`` "
+"format, simply add the ``format=geojson`` parameter."
+msgstr ""
+
+#: ../../usage/apis.rst:170
+msgid "``/api/v2/sensitivearea/?format=geojson``"
+msgstr ""
+
+#: ../../usage/apis.rst:172
+msgid "e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson"
+msgstr ""
+
+#: ../../usage/apis.rst:174
+msgid "**Filtering data**"
+msgstr ""
+
+#: ../../usage/apis.rst:176
+msgid "Data can be filtered through these parameters:"
+msgstr ""
+
+#: ../../usage/apis.rst:178
+msgid "``language`` : API language (see :envvar:`Commons parameters`)"
+msgstr ""
+
+#: ../../usage/apis.rst:180
+msgid "Expected values: ``fr``, ``en``, ``es`` or ``it``"
+msgstr ""
+
+#: ../../usage/apis.rst:181
+msgid "e.g. ``/api/v2/sensitivearea/?language=fr``"
+msgstr ""
+
+#: ../../usage/apis.rst:183
+msgid "``period`` : Sensitivy period (months list)"
+msgstr ""
+
+#: ../../usage/apis.rst:185
+msgid "Expected values: List of month numbers (from 1 to 12), comma separated"
+msgstr ""
+
+#: ../../usage/apis.rst:186
+msgid "e.g. ``/api/v2/sensitivearea/?period=4,5,6,7``"
+msgstr ""
+
+#: ../../usage/apis.rst:188
+msgid "``practices`` : Sport practices"
+msgstr ""
+
+#: ../../usage/apis.rst:190
+msgid "Expected values: List of practices ids (see :envvar:`Sport practices`)"
+msgstr ""
+
+#: ../../usage/apis.rst:191
+msgid "e.g. ``/api/v2/sensitivearea/?practices=1,2``"
+msgstr ""
+
+#: ../../usage/apis.rst:193
+msgid "``structure`` : Organization that declared the sensitive area."
+msgstr ""
+
+#: ../../usage/apis.rst:195
+msgid "Expected values: List of structures ids"
+msgstr ""
+
+#: ../../usage/apis.rst:196
+msgid "e.g. ``/api/v2/sensitivearea/?structures=1,2``"
+msgstr ""
+
+#: ../../usage/apis.rst:198
+msgid "``in_bbox``"
+msgstr ""
+
+#: ../../usage/apis.rst:200
+msgid ""
+"Expected values: List of bbox coordinates (respectively longitude and "
+"latitude South-West then North-East corner), comma separated."
+msgstr ""
+
+#: ../../usage/apis.rst:201
+msgid "e.g. ``/api/v2/sensitivearea/?in_bbox=5.0,45.0,6.0,46.0``"
+msgstr ""
+
+#: ../../usage/apis.rst:203
+msgid ""
+"Full example https://biodiv-"
+"sports.fr/api/v2/sensitivearea/?format=geojson&language=fr&practices=1,2&period=4,5,6,7&in_bbox=5.0,45.0,6.0,46.0"
+msgstr ""
+
+#: ../../usage/apis.rst:205
+msgid "**Filtering fields**"
+msgstr ""
+
+#: ../../usage/apis.rst:207
+msgid ""
+"``fields``: List of expected fields (see :ref:`Field Descriptions "
+"<FielDesc>`)"
+msgstr ""
+
+#: ../../usage/apis.rst:209 ../../usage/apis.rst:214
+msgid "Expected values: List of field names, comma separated"
+msgstr ""
+
+#: ../../usage/apis.rst:210
+msgid "e.g. ``/api/v2/sensitivearea/?fields=name,geometry``"
+msgstr ""
+
+#: ../../usage/apis.rst:212
+msgid ""
+"``omit``: List of excluded fields (see :ref:`Field Descriptions "
+"<FielDesc>`)"
+msgstr ""
+
+#: ../../usage/apis.rst:215
+msgid "e.g. ``/api/v2/sensitivearea/?omit=name,geometry``"
+msgstr ""
+
+#: ../../usage/apis.rst:217
+msgid "Warning"
+msgstr ""
+
+#: ../../usage/apis.rst:218
+msgid "**GeoJSON** format expect at least `id` and `geometry` fields."
+msgstr ""
+
+#: ../../usage/apis.rst:222
+msgid "**Field descriptions**"
+msgstr ""
+
+#: ../../usage/apis.rst:225
+msgid "``id`` : local unique identifier of the sensitive area (integer)."
+msgstr ""
+
+#: ../../usage/apis.rst:226
+msgid "``name`` : Area name (string)."
+msgstr ""
+
+#: ../../usage/apis.rst:227
+msgid "``description`` : Area description (string in HTML format)."
+msgstr ""
+
+#: ../../usage/apis.rst:228
+msgid ""
+"``period`` : Area occupancy for each of the 12 months of the year "
+"(ordered array of 12 Booleans)."
+msgstr ""
+
+#: ../../usage/apis.rst:229
+msgid ""
+"``contact`` : Contact for further information about the sensitive area "
+"(string in HTML format)."
+msgstr ""
+
+#: ../../usage/apis.rst:230
+msgid ""
+"``practices``: sports practices concerned by the hotspot (array of "
+"identifiers)."
+msgstr ""
+
+#: ../../usage/apis.rst:231
+msgid "``info_url`` : URL containing further information about the area (URL)."
+msgstr ""
+
+#: ../../usage/apis.rst:232
+msgid ""
+"``structure`` : Structure or acronyme that provided information on the "
+"area (string)."
+msgstr ""
+
+#: ../../usage/apis.rst:233
+msgid ""
+"``elevation`` : Elevation used to define area sensitivity volume "
+"(globally elevation, buffer radius for areas declared as Point)."
+msgstr ""
+
+#: ../../usage/apis.rst:234
+msgid "``geometry`` : Area GeoJSON geometry. Type is always \"Polygon\"."
+msgstr ""
+
+#: ../../usage/apis.rst:235
+msgid "``species_id``: species identifier or null for regulatory areas."
+msgstr ""
+
+#: ../../usage/apis.rst:236
+msgid ""
+"``kml_url`` : URL of the downloadable KML file representing this "
+"regulatory zone."
+msgstr ""
+
+#: ../../usage/apis.rst:237
+msgid ""
+"``openair_url`` : URL of the downloadable OpenAir file representing the "
+"regulatory zone (available only for aerial activities)."
+msgstr ""
+
+#: ../../usage/apis.rst:238
+msgid "``attachment`` : List of area attachment files."
+msgstr ""
+
+#: ../../usage/apis.rst:239
+msgid "``rules`` : List of regulatory rules."
+msgstr ""
+
+#: ../../usage/apis.rst:240
+msgid "``update_datetime``: last update timestamp."
+msgstr ""
+
+#: ../../usage/apis.rst:241
+msgid "``create_datetime``: create timestamp."
+msgstr ""
+
+#: ../../usage/apis.rst:244
+msgid ""
+"Species informations are commons for each species areas sharing the same "
+"``species_id`` value, also share the same values for the ``name``, "
+"``period``, ``practices`` and ``info_url`` fields."
 msgstr ""
 

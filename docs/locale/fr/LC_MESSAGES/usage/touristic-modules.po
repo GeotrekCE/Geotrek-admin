@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/touristic-modules.rst:3
 msgid "Modules de valorisation"
@@ -868,11 +868,36 @@ msgstr ""
 
 #: ../../usage/touristic-modules.rst:406
 msgid ""
+"Dans le cas d'un Geotrek-admin avec segmentation dynamique, chaque POI "
+"est automatiquement rattaché au tronçon le plus proche, même si ce "
+"dernier se trouve à des kilomètres de distance."
+msgstr ""
+
+#: ../../usage/touristic-modules.rst:408
+msgid ""
+"Afin qu'un POI rattaché à un tronçon remonte bien sur la fiche d'un "
+"itinéraire, il faut que ce dernier parcourt le tronçon sur une longueur "
+"suffisante pour pouvoir être associé par segmentation dynamique."
+msgstr ""
+
+#: ../../usage/touristic-modules.rst:410
+msgid ""
+"Pour en savoir plus sur la segmentation dynamique/référencement linéaire,"
+" `consulter l'article <https://makina-corpus.com/sig-cartographie/la-"
+"segmentation-dynamique>`_"
+msgstr ""
+
+#: ../../usage/touristic-modules.rst:412
+msgid ""
 "Pour importer automatiquement des éléments de POIs, se référer à la "
 "section :ref:`Import POIs <import-pois>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:410
+#: ../../usage/touristic-modules.rst:414
+msgid "Note"
+msgstr ""
+
+#: ../../usage/touristic-modules.rst:416
 msgid ""
 "Lorsque Geotrek est installé en mode \"sans segmentation dynamique\", les"
 " POI sont rattachés aux itinéraires par zone tampon (buffer). Dans ce cas"
@@ -881,50 +906,50 @@ msgid ""
 "paramétrable dans le custom.py."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:415
+#: ../../usage/touristic-modules.rst:421
 msgid "Services"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:420
+#: ../../usage/touristic-modules.rst:426
 msgid "Contenus touristiques"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:423
+#: ../../usage/touristic-modules.rst:429
 msgid "Zone tampon pour contenus à proximité"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:425
+#: ../../usage/touristic-modules.rst:431
 msgid ""
 "La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour "
 "remonter les informations des contenus/évènements touristiques et "
 "services."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:427
+#: ../../usage/touristic-modules.rst:433
 msgid ""
 "Pour modifier la distance de la zone tampon (buffer), se référer à la "
 "section :ref:`Distances <distances>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:432
+#: ../../usage/touristic-modules.rst:438
 msgid "Évènements touristiques"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:437
+#: ../../usage/touristic-modules.rst:443
 msgid "Signalements"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:439
+#: ../../usage/touristic-modules.rst:445
 msgid ""
 "Pour configurer Suricate, se référer à cette section :ref:`Suricate "
 "support <suricate-support>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:444
+#: ../../usage/touristic-modules.rst:450
 msgid "Zones sensibles"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:446
+#: ../../usage/touristic-modules.rst:452
 msgid ""
 "Ce module permet d’inventorier, de localiser des zonages réglementaires "
 "(de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope"
@@ -932,47 +957,47 @@ msgid ""
 " à la présence d’une ou plusieurs espèces protégées ou patrimoniales."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:448
+#: ../../usage/touristic-modules.rst:454
 msgid ""
 "La saisie peut se faire sous forme de polygone ou de cercle pour les "
 "zones de sensibilité. Le diamètre du cercle est généré automatiquement "
 "selon la zone ou l’espèce, avec une valeur définie préalablement."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:450
+#: ../../usage/touristic-modules.rst:456
 msgid ""
 "Si une randonnée ou un site outdoor intersecte une ou plusieurs zones "
 "zones de sensibilité, alors celles-ci sont affichées à la suite des "
 "recommandations dans Geotrek-Rando."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:452
+#: ../../usage/touristic-modules.rst:458
 msgid ""
 "Il est également possible d’importer directement les zonages depuis un "
 "format Shapefile (SHP)."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:454
+#: ../../usage/touristic-modules.rst:460
 msgid ""
 "Pour activer le module Zones sensibles, se référer à cette section "
 ":ref:`Sensitive areas <sensitive-areas>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:459
+#: ../../usage/touristic-modules.rst:465
 msgid "Activités outdoor"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:461
+#: ../../usage/touristic-modules.rst:467
 msgid ""
 "Par défaut, ce module est désactivé dans Geotrek. Pour activer le module "
 "Outdoor, se référer à cette section :ref:`Outdoor <outdoor>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:464
+#: ../../usage/touristic-modules.rst:470
 msgid "Sites et parcours"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:466
+#: ../../usage/touristic-modules.rst:472
 msgid ""
 "Geotrek-admin dédie deux modules aux activités outdoor : les sites et les"
 " parcours. Un site correspond à une zone ou à un réseau hydrographique à "
@@ -980,31 +1005,31 @@ msgid ""
 "zone de vol libre…"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:468
+#: ../../usage/touristic-modules.rst:474
 msgid ""
 "Les sites peuvent être subdivisés en sous-sites (dits enfants), qui "
 "peuvent eux-mêmes être subdivisés en sous-sites : secteurs d'escalade "
 "(groupe de blocs ou falaise), aires de décollage ou d'atterrissage…"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:471
+#: ../../usage/touristic-modules.rst:477
 msgid ""
 "Chaque site (ou sous-site) peut contenir différents parcours : voie "
 "d'escalade, parcours d'eau vive…"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:473
+#: ../../usage/touristic-modules.rst:479
 msgid ""
 "Il est possible de regrouper un enchaînement de parcours sous forme d'un "
 "parcours particulier appelé itinérance : grande voie d'escalade, "
 "enchainement entre différentes pratiques…"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:476
+#: ../../usage/touristic-modules.rst:482
 msgid "Les deux modules outdoor permettent de :"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:478
+#: ../../usage/touristic-modules.rst:484
 msgid ""
 "**Lister, filtrer, créer, modifier et exporter des sites et des parcours "
 "outdoor** de manière générique pour gérer tout type de pratiques "
@@ -1012,14 +1037,14 @@ msgid ""
 "plongée...)"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:479
+#: ../../usage/touristic-modules.rst:485
 msgid ""
 "**Ajouter les pratiques** que l'on souhaite de manière générique, et de "
 "définir leurs propres types et leurs propres niveaux et valeurs de "
 "cotation"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:480
+#: ../../usage/touristic-modules.rst:486
 msgid ""
 "**Lier des sites entre eux** de manière hiérarchisée, pour avoir des "
 "sites, des sous-sites, des sous-sous-sites... Par exemple pour un site "
@@ -1027,137 +1052,137 @@ msgid ""
 "secteurs, des sous-secteurs..."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:481
+#: ../../usage/touristic-modules.rst:487
 msgid ""
 "**Agréger des informations au niveau d'un site**, en fonction des sous-"
 "sites qui lui sont rattachés. Par exemple les pratiques d'un grand site "
 "outdoor sont l'agrégation des pratiques des sous-sites qui le composent"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:482
+#: ../../usage/touristic-modules.rst:488
 msgid ""
 "**Lier des parcours à des sites** et leur appliquer une cotation en "
 "fonction de la pratique du site auquel ils sont rattachés"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:483
+#: ../../usage/touristic-modules.rst:489
 msgid ""
 "**Lier des parcours entre eux pour faire de l'itinérance** avec une fiche"
 " mère et des fiches enfants (étapes), comme c'est déjà la cas pour les "
 "itinéraires"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:484
+#: ../../usage/touristic-modules.rst:490
 msgid ""
 "**Associer des aménagements aux sites** (parking, toilettes, banc...) "
 "automatiquement par intersection géographique"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:485
+#: ../../usage/touristic-modules.rst:491
 msgid ""
 "**Associer des interventions à des sites ou parcours**, automatiquement "
 "par intersection géographique, ou explicitement en passant par le site ou"
 " le parcours sur lequel l'intervention a été réalisée"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:486
+#: ../../usage/touristic-modules.rst:492
 msgid ""
 "**Associer des POI à un site ou parcours**, automatiquement par "
 "intersection géographique"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:487
+#: ../../usage/touristic-modules.rst:493
 msgid ""
 "**Associer des accès au site**, automatiquement par intersection "
 "géographique des itinéraires à proximité"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:489
+#: ../../usage/touristic-modules.rst:495
 msgid ""
 "Pour activer le module Outdoor, se référer à la section :ref:`Outdoor "
 "<outdoor>`"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:492
+#: ../../usage/touristic-modules.rst:498
 msgid "Arborescence"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:494
+#: ../../usage/touristic-modules.rst:500
 msgid ""
 "Les fiches détail des sites et des parcours présentent les liens entre "
 "eux sous forme d'une arborescence. Pour ne pas surcharger, tous les "
 "éléments ne sont pas repris, mais uniquement :"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:497
+#: ../../usage/touristic-modules.rst:503
 msgid "le site/parcours courant,"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:498
+#: ../../usage/touristic-modules.rst:504
 msgid ""
 "le site auquel il appartient (parent), ainsi que le grand-parent, etc. "
 "jusqu'à remonter au plus haut niveau,"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:499
+#: ../../usage/touristic-modules.rst:505
 msgid "Les sites et parcours \"frères\", ayant le même site parent."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:500
+#: ../../usage/touristic-modules.rst:506
 msgid "les différents sous-sites et/ou parcours enfants."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:502
+#: ../../usage/touristic-modules.rst:508
 msgid ""
 "Des liens permettent d'ajouter des sites ou parcours en les positionnant "
 "directement dans l'arborescence."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:505
+#: ../../usage/touristic-modules.rst:511
 msgid "Nomenclatures"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:507
+#: ../../usage/touristic-modules.rst:513
 msgid ""
 "Via l'interface de configuration de Geotrek-Admin, il est possible de "
 "modifier les nomenclatures."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:509
+#: ../../usage/touristic-modules.rst:515
 msgid ""
 "**Filières** : elles servent à regrouper les pratiques pour pouvoir "
 "filtrer rapidement les sites ou parcours. Par exemple la filière « eau "
 "vive » peut regrouper « kayak » et « canyoning »."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:511
+#: ../../usage/touristic-modules.rst:517
 msgid ""
 "**Pratiques** : les pratiques sportives. Vous pouvez préciser à quelle "
 "filière elle appartient."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:512
+#: ../../usage/touristic-modules.rst:518
 msgid ""
 "**Types de sites** : ces catégories permettent d'étiqueter et de filtrer "
 "les sites. Elles sont spécifiques à chaque pratique. Par exemple « Site "
 "école » pour l'escalade."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:514
+#: ../../usage/touristic-modules.rst:520
 msgid ""
 "**Échelle de cotation** : permet de regrouper les cotations faisant "
 "partie de la même échelle. Elles sont spécifiques à chaque pratique."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:517
+#: ../../usage/touristic-modules.rst:523
 msgid "Filières"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:520
+#: ../../usage/touristic-modules.rst:526
 msgid "Escalade"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:522
+#: ../../usage/touristic-modules.rst:528
 msgid ""
 "La notion de site est naturelle. Elle peut être définie géographiquement "
 "par un polygone. Il est possible (mais pas obligatoire) de créer des "
@@ -1165,7 +1190,7 @@ msgid ""
 "mêmes divisées en sous-sous sites pour les différents secteurs."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:526
+#: ../../usage/touristic-modules.rst:532
 msgid ""
 "Chaque voie correspond à un parcours. La voie étant verticale et la carte"
 " horizontale, le plus pertinent est de définir géographiquement la voie "
@@ -1178,11 +1203,11 @@ msgid ""
 " 2 », etc."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:534
+#: ../../usage/touristic-modules.rst:540
 msgid "Vol libre"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:536
+#: ../../usage/touristic-modules.rst:542
 msgid ""
 "La zone de vol n'est pas définie géographiquement de manière précise mais"
 " fait quand même l'objet d'un site avec un nom (ex: « massif de … ») et "
@@ -1192,7 +1217,7 @@ msgid ""
 "différents sites."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:540
+#: ../../usage/touristic-modules.rst:546
 msgid ""
 "Pour chaque zone de vol, les différentes aires de décollage et "
 "d'atterrissage sont définies à l'aide de sous-sites. Afin de les "
@@ -1203,18 +1228,18 @@ msgid ""
 "d'en définir pour donner des exemples de trajectoires."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:547
+#: ../../usage/touristic-modules.rst:553
 msgid "Eau vive"
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:549
+#: ../../usage/touristic-modules.rst:555
 msgid ""
 "Le site est généralement constitué par une rivière ou une portion de "
 "rivière. Il est possible d'y adjoindre des affluents. La géométrie du "
 "site est donc un linéaire correspondant à un réseau hydrographique."
 msgstr ""
 
-#: ../../usage/touristic-modules.rst:552
+#: ../../usage/touristic-modules.rst:558
 msgid ""
 "Les aires d'embarquement/débarquement sont définies par des sous-sites. "
 "Leur géométrie peut être définie sous forme d'un point ou d'un polygone. "

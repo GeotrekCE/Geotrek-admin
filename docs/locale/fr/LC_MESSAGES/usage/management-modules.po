@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../usage/management-modules.rst:3
 msgid "Modules de gestion"
@@ -111,42 +111,42 @@ msgid ""
 "données."
 msgstr ""
 
-#: ../../usage/management-modules.rst:35
+#: ../../usage/management-modules.rst:34
 msgid ""
-"l'outil Qgis en suivant ce `tutoriel <https://makina-corpus.com/sig-"
+"l'outil QGIS en suivant ce `tutoriel <https://makina-corpus.com/sig-"
 "webmapping/importer-une-couche-de-troncons-dans-geotrek>`_ pour charger "
 "des tronçons dans la base de données PostGIS Geotrek à partir d'un réseau"
 " de sentiers. Il faut s'assurer en amont que les lignes à insérer sont "
 "topologiquement propres."
 msgstr ""
 
-#: ../../usage/management-modules.rst:38
+#: ../../usage/management-modules.rst:36
 msgid ""
 "Si ils sont numérisés directement dans Geotrek-admin, il est possible "
 "d'afficher sur la carte un fichier GPX ou GeoJSON pour faciliter leur "
 "localisation."
 msgstr ""
 
-#: ../../usage/management-modules.rst:40
+#: ../../usage/management-modules.rst:38
 msgid ""
 "Quand un nouveau tronçon intersecte un tronçon existant, ce dernier est "
 "découpé automatiquement à la nouvelle intersection."
 msgstr ""
 
-#: ../../usage/management-modules.rst:42
+#: ../../usage/management-modules.rst:40
 msgid ""
 "En plus de leur géométrie, quelques informations peuvent être associées à"
 " chaque tronçon (nom, départ, arrivée, confort, source, enjeu "
 "d'entretien, usage et réseaux)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:44
+#: ../../usage/management-modules.rst:42
 msgid ""
 "Comme pour les autres objets, les informations altimétriques sont "
 "calculées automatiquement grace au MNT présent dans la base de données."
 msgstr ""
 
-#: ../../usage/management-modules.rst:46
+#: ../../usage/management-modules.rst:44
 msgid ""
 "Idem pour les intersections automatiques avec les zonages (communes, "
 "secteurs, zonages réglementaires) et les objets des autres modules qui "
@@ -154,37 +154,37 @@ msgid ""
 "objet."
 msgstr ""
 
-#: ../../usage/management-modules.rst:48
+#: ../../usage/management-modules.rst:46
 msgid ""
 "Comme pour tous les modules, il est possible d'exporter la liste des "
 "tronçons affichés (CSV, SHP ou GPX) ou bien la fiche complète d'un "
 "tronçon (ODT, DOC ou PDF)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:50
+#: ../../usage/management-modules.rst:48
 msgid ""
 "Comme pour tous les modules, il est aussi possible d'attacher des "
 "documents à chaque tronçon depuis sa fiche détail (images, PDF, tableurs,"
 " ZIP...)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:52
+#: ../../usage/management-modules.rst:50
 msgid ""
 "Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en"
 " afficher l'historique des modifications."
 msgstr ""
 
-#: ../../usage/management-modules.rst:57
+#: ../../usage/management-modules.rst:55
 msgid "Les sentiers"
 msgstr ""
 
-#: ../../usage/management-modules.rst:59
+#: ../../usage/management-modules.rst:57
 msgid ""
 "Il s'agit d'un ensemble linéaire composés d'un ou plusieurs tronçons "
 "(entiers ou partiels) grâce à la segmentation dynamique."
 msgstr ""
 
-#: ../../usage/management-modules.rst:61
+#: ../../usage/management-modules.rst:59
 msgid ""
 "Les sentiers permettent d'avoir une vision de gestionnaire sur un "
 "linéaire plus complet que les tronçons (qui sont découpés à chaque "
@@ -194,23 +194,23 @@ msgid ""
 "directement depuis la fiche détail d'un sentier."
 msgstr ""
 
-#: ../../usage/management-modules.rst:63
+#: ../../usage/management-modules.rst:61
 msgid ""
 "Ils permettent également de préciser une ou plusieurs certifications "
 "ainsi que leur statut."
 msgstr ""
 
-#: ../../usage/management-modules.rst:65
+#: ../../usage/management-modules.rst:63
 msgid ""
 "A ne pas confondre avec le module Itinéraires qui permet de créer des "
 "randonnées publiées sur un portail Geotrek-rando."
 msgstr ""
 
-#: ../../usage/management-modules.rst:70
+#: ../../usage/management-modules.rst:68
 msgid "Les statuts"
 msgstr ""
 
-#: ../../usage/management-modules.rst:72
+#: ../../usage/management-modules.rst:70
 msgid ""
 "Ils permettent de renseigner des informations sur le linéaire (type "
 "physique, statut foncier, organismes ayant la compétence sentiers, "
@@ -219,11 +219,11 @@ msgid ""
 "localiser le départ et l'arrivée sur un ou plusieurs tronçons."
 msgstr ""
 
-#: ../../usage/management-modules.rst:77
+#: ../../usage/management-modules.rst:75
 msgid "Les aménagements"
 msgstr ""
 
-#: ../../usage/management-modules.rst:79
+#: ../../usage/management-modules.rst:77
 msgid ""
 "Ils permettent d'inventorier les aménagements sur les sentiers "
 "(passerelles, mains courantes, cunettes, soutènements, bancs, "
@@ -231,20 +231,20 @@ msgid ""
 "leur état et leur année d'implantation."
 msgstr ""
 
-#: ../../usage/management-modules.rst:81
+#: ../../usage/management-modules.rst:79
 msgid ""
 "Les types d'aménagement sont découpés en 2 catégories (Ouvrages et "
 "Équipements). Ce découpage n'est utilisé que pour filtrer les "
 "aménagements."
 msgstr ""
 
-#: ../../usage/management-modules.rst:83
+#: ../../usage/management-modules.rst:81
 msgid ""
 "Il est possible de créer une intervention directement depuis la fiche "
 "détail d'un aménagement."
 msgstr ""
 
-#: ../../usage/management-modules.rst:85
+#: ../../usage/management-modules.rst:83
 msgid ""
 "Comme pour les autres modules, il sont intersectés avec les autres "
 "modules pour en connaitre l'altimétrie, les zonages (communes, "
@@ -252,24 +252,24 @@ msgid ""
 "interventions, les itinéraires..."
 msgstr ""
 
-#: ../../usage/management-modules.rst:87
+#: ../../usage/management-modules.rst:85
 msgid ""
 "Il est aussi possible de les exporter, de leur attacher des fichiers "
 "(images, PDF, tableurs, ZIP...) et d'en consulter l'historique des "
 "modifications."
 msgstr ""
 
-#: ../../usage/management-modules.rst:89
+#: ../../usage/management-modules.rst:87
 msgid ""
 "Pour importer automatiquement des éléments d'aménagements, se référer à "
 "la section :ref:`Import Infrastructure <import-infrastructure>`"
 msgstr ""
 
-#: ../../usage/management-modules.rst:94
+#: ../../usage/management-modules.rst:92
 msgid "La signalétique"
 msgstr ""
 
-#: ../../usage/management-modules.rst:96
+#: ../../usage/management-modules.rst:94
 msgid ""
 "Centralise les informations sur la signalétique d'accueil, d'information "
 "et d'orientation des randonneurs. Permet de localiser, décrire "
@@ -277,31 +277,31 @@ msgid ""
 "maquettes, photos, etc.)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:98
+#: ../../usage/management-modules.rst:96
 msgid ""
 "Pour une signalétique, il est possible de définir chaque lame et chaque "
 "ligne de lame. L'image ci-dessous montre un exemple de correspondance "
 "entre une signalétique terrain et sa saisie dans Geotrek."
 msgstr ""
 
-#: ../../usage/management-modules.rst:102
+#: ../../usage/management-modules.rst:100
 msgid ""
 "Pour importer automatiquement des éléments de signalétiques, se référer à"
 " la section :ref:`Import Signage <import-signage>`"
 msgstr ""
 
-#: ../../usage/management-modules.rst:107
+#: ../../usage/management-modules.rst:105
 msgid "Les interventions"
 msgstr ""
 
-#: ../../usage/management-modules.rst:109
+#: ../../usage/management-modules.rst:107
 msgid ""
 "Les interventions permettent d'inventorier et suivre les travaux réalisés"
 " sur les sentiers. Chaque intervention correspond à une action sur un "
 "tronçon, sentier, aménagement ou signalétique."
 msgstr ""
 
-#: ../../usage/management-modules.rst:111
+#: ../../usage/management-modules.rst:109
 msgid ""
 "Les interventions peuvent être localisées directement sur le linéaire de "
 "tronçon en les positionnant grâce à la segmentation dynamique. Ou bien "
@@ -309,20 +309,20 @@ msgid ""
 " en les créant depuis leur fiche détail."
 msgstr ""
 
-#: ../../usage/management-modules.rst:113
+#: ../../usage/management-modules.rst:111
 msgid ""
 "Une intervention peut être souhaitée (demandée par un agent), planifiée "
 "(validée mais à réaliser) ou réalisée."
 msgstr ""
 
-#: ../../usage/management-modules.rst:115
+#: ../../usage/management-modules.rst:113
 msgid ""
 "Un enjeu peut être renseigné pour chaque intervention. Il est calculé "
 "automatiquement si un enjeu a été renseigné au niveau du tronçon auquel "
 "l'intervention se raccroche."
 msgstr ""
 
-#: ../../usage/management-modules.rst:117
+#: ../../usage/management-modules.rst:115
 msgid ""
 "Chaque intervention correspond à un type. On peut aussi renseigner si "
 "celle-ci est sous-traitée, les désordres qui en sont la cause, la largeur"
@@ -331,25 +331,25 @@ msgid ""
 "intervention ponctuelle."
 msgstr ""
 
-#: ../../usage/management-modules.rst:119
+#: ../../usage/management-modules.rst:117
 msgid ""
 "Plusieurs interventions peuvent être rattachées à un même chantier pour "
 "avoir une vision globale de plusieurs interventions correspondant à une "
 "opération commune."
 msgstr ""
 
-#: ../../usage/management-modules.rst:121
+#: ../../usage/management-modules.rst:119
 msgid ""
 "L'onglet `Avancé` du formulaire permet de renseigner des informations "
 "financières sur chaque intervention (coût direct et indirect lié au "
 "nombre de jours/agents dissocié par fonction)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:126
+#: ../../usage/management-modules.rst:124
 msgid "Les chantiers"
 msgstr ""
 
-#: ../../usage/management-modules.rst:128
+#: ../../usage/management-modules.rst:126
 msgid ""
 "Les chantiers permettent de grouper plusieurs interventions pour en avoir"
 " une vision globale et d'y renseigner globalement des informations "
@@ -358,9 +358,21 @@ msgid ""
 "(cahier des charges, recette, plans...)."
 msgstr ""
 
-#: ../../usage/management-modules.rst:130
+#: ../../usage/management-modules.rst:128
 msgid ""
 "Leur géométrie est la somme des géométries des interventions qui les "
 "composent."
 msgstr ""
+
+#~ msgid ""
+#~ "l'outil Qgis en suivant ce `tutoriel "
+#~ "<https://makina-corpus.com/sig-webmapping/importer-"
+#~ "une-couche-de-troncons-dans-geotrek>`_ "
+#~ "pour charger des tronçons dans la "
+#~ "base de données PostGIS Geotrek à "
+#~ "partir d'un réseau de sentiers. Il "
+#~ "faut s'assurer en amont que les "
+#~ "lignes à insérer sont topologiquement "
+#~ "propres."
+#~ msgstr ""
 

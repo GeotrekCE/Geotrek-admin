@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.14.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../others/troubleshooting.rst:3
 msgid "Troubleshooting"
@@ -49,14 +49,14 @@ msgstr ""
 
 #: ../../others/troubleshooting.rst:32
 msgid ""
-"Error 500 with `django.db.utils.IntegrityError … NOT NULL for column "
-"\"language\"`"
+"Error 500 with ``django.db.utils.IntegrityError … NOT NULL for column "
+"\"language\"``"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:34
 msgid ""
-"`django.db.utils.IntegrityError: ERREUR:  une valeur NULL viole la "
-"contrainte NOT NULL de la colonne « language »`"
+"``django.db.utils.IntegrityError: ERREUR:  une valeur NULL viole la "
+"contrainte NOT NULL de la colonne « language »``"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:36
@@ -79,7 +79,7 @@ msgid ""
 msgstr ""
 
 #: ../../others/troubleshooting.rst:53
-msgid "ex: https://mon-geotrek-admin.fr/trek/1/"
+msgid "ex: ``https://mon-geotrek-admin.fr/trek/1/``"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:55
@@ -92,9 +92,9 @@ msgstr ""
 
 #: ../../others/troubleshooting.rst:58
 msgid ""
-"l'URL utilisée depuis le navigateur (https://mon-geotrek-"
-"admin.fr/trek/1/) doit être accessible depuis l'hôte de l'application "
-"geotrek-admin."
+"l'URL utilisée depuis le navigateur (``https://mon-geotrek-"
+"admin.fr/trek/1/``) doit être accessible depuis l'hôte de l'application "
+"Geotrek-admin."
 msgstr ""
 
 #: ../../others/troubleshooting.rst:61
@@ -103,9 +103,13 @@ msgstr ""
 
 #: ../../others/troubleshooting.rst:61
 msgid ""
-"l'URL utilisée depuis le navigateur (https://mon-geotrek-"
-"admin.fr/trek/1/) doit être accessible depuis le container de "
+"l'URL utilisée depuis le navigateur (``https://mon-geotrek-"
+"admin.fr/trek/1/``) doit être accessible depuis le container de "
 "l'application screamshotter (et convertit)."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:63
+msgid "Warning"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:64
@@ -140,10 +144,10 @@ msgstr ""
 msgid ""
 "le Proxy qui gère les certificats SSL ne transmet pas les bons en-têtes à"
 " geotrek-admin. De ce fait, geotrek-admin pense tourner en http et génère"
-" des url en http:// à screamshotter (ex: prend une capture de http://mon-"
-"geotrek-admin.fr/trek/1/ au lieu de https://mon-geotrek-"
-"admin.fr/trek/1/). Il faut penser à bien transmettre l'en-tête **X"
-"-Forwarded-Proto https** ."
+" des url en http:// à screamshotter (ex: prend une capture de ``http"
+"://mon-geotrek-admin.fr/trek/1/`` au lieu de ``https://mon-geotrek-"
+"admin.fr/trek/1/``). Il faut penser à bien transmettre l'en-tête ``X"
+"-Forwarded-Proto https``."
 msgstr ""
 
 #: ../../others/troubleshooting.rst:74
@@ -175,7 +179,7 @@ msgid "Depuis docker :"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:110
-msgid "la réponse devrait ressembler à une page HTML de connexion."
+msgid "La réponse devrait ressembler à une page HTML de connexion."
 msgstr ""
 
 #: ../../others/troubleshooting.rst:112
@@ -211,17 +215,17 @@ msgid ""
 msgstr ""
 
 #: ../../others/troubleshooting.rst:131
-msgid "Signature check for debian packages"
+msgid "Signature check for Debian packages"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:133
 msgid ""
 "When you try to upgrade your Geotrek-admin, you can have problems with "
-"signature check :"
+"signature check:"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:141
-msgid "You have to update the signature key to get the last update :"
+msgid "You have to update the signature key to get the last update:"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:149
@@ -231,7 +235,7 @@ msgstr ""
 #: ../../others/troubleshooting.rst:151
 msgid ""
 "To debug or to report a bug, you can check or provide in issue the main "
-"versions of Geotrek-admin and its dependencies :"
+"versions of Geotrek-admin and its dependencies:"
 msgstr ""
 
 #: ../../others/troubleshooting.rst:158
@@ -245,4 +249,68 @@ msgstr ""
 #: ../../others/troubleshooting.rst:173
 msgid "Check command help for more options:"
 msgstr ""
+
+#~ msgid ""
+#~ "Error 500 with `django.db.utils.IntegrityError "
+#~ "… NOT NULL for column \"language\"`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "`django.db.utils.IntegrityError: ERREUR:  une valeur"
+#~ " NULL viole la contrainte NOT NULL"
+#~ " de la colonne « language »`"
+#~ msgstr ""
+
+#~ msgid "ex: https://mon-geotrek-admin.fr/trek/1/"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "l'URL utilisée depuis le navigateur "
+#~ "(https://mon-geotrek-admin.fr/trek/1/) doit "
+#~ "être accessible depuis l'hôte de "
+#~ "l'application geotrek-admin."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "l'URL utilisée depuis le navigateur "
+#~ "(https://mon-geotrek-admin.fr/trek/1/) doit "
+#~ "être accessible depuis le container de"
+#~ " l'application screamshotter (et convertit)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "le Proxy qui gère les certificats "
+#~ "SSL ne transmet pas les bons "
+#~ "en-têtes à geotrek-admin. De ce "
+#~ "fait, geotrek-admin pense tourner en "
+#~ "http et génère des url en http://"
+#~ " à screamshotter (ex: prend une "
+#~ "capture de http://mon-geotrek-admin.fr/trek/1/"
+#~ " au lieu de https://mon-geotrek-"
+#~ "admin.fr/trek/1/). Il faut penser à bien"
+#~ " transmettre l'en-tête **X-Forwarded-Proto"
+#~ " https** ."
+#~ msgstr ""
+
+#~ msgid "la réponse devrait ressembler à une page HTML de connexion."
+#~ msgstr ""
+
+#~ msgid "Signature check for debian packages"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "When you try to upgrade your "
+#~ "Geotrek-admin, you can have problems "
+#~ "with signature check :"
+#~ msgstr ""
+
+#~ msgid "You have to update the signature key to get the last update :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To debug or to report a bug, "
+#~ "you can check or provide in issue"
+#~ " the main versions of Geotrek-admin"
+#~ " and its dependencies :"
+#~ msgstr ""
 

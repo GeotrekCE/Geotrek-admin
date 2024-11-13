@@ -6,40 +6,45 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek\n"
+"Project-Id-Version:  Geotrek\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-14 11:31+0100\n"
+"POT-Creation-Date: 2024-11-13 11:25+0000\n"
 "PO-Revision-Date: 2024-03-14 11:33+0100\n"
 "Last-Translator: Jean-Etienne Castagnede <jecastagnede@vivaldi.net>\n"
-"Language-Team: fr <LL@li.org>\n"
 "Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Generated-By: Babel 2.14.0\n"
-"X-Generator: Poedit 3.4.2\n"
+"Generated-By: Babel 2.16.0\n"
 
-#: ../../index.rst:4
+#: ../../index.rst:6
 msgid "💡 About"
 msgstr "💡 À propos"
 
-#: ../../index.rst:10
+#: ../../index.rst:12
 msgid "🚀 User manual"
 msgstr "🚀 Manuel utilisateur"
 
-#: ../../index.rst:24
+#: ../../index.rst:26
 msgid "🔧 Installation & configuration"
 msgstr "🔧 Installation & configuration"
 
-#: ../../index.rst:37
+#: ../../index.rst:39
 msgid "✨ Contribute"
 msgstr "✨ Contribuer"
 
-#: ../../index.rst:47
+#: ../../index.rst:49
 msgid "📝 Others"
 msgstr "📝 Autres"
 
 #: ../../index.rst:2
-msgid "Welcome to Geotrek-admin documentation!"
-msgstr "Bienvenue sur la documentation de Geotrek-admin !"
+msgid "Geotrek-admin's documentation"
+msgstr "Documentation de Geotrek-admin"
+
+#: ../../index.rst:4
+msgid ""
+"Geotrek-admin is backend management data for Geotrek-rando, Geotrek-"
+"mobile and Geotrek-widget."
+msgstr ""
