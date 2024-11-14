@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing Dockerfile path on make build scripts
+- Fix SchemaRandonneeParser url update when description is null or was not updated (#4022)
 
 **Documentation**
 

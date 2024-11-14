@@ -2030,8 +2030,34 @@ class SchemaRandonneeParserTests(TestCase):
         self.assertIsNone(trek.parking_location)
         self.assertIn("Bad value for parking geometry: should be a Point", output.getvalue())
 
-    def test_no_url(self):
-        self.call_import_command_with_file('no_url.geojson')
+    def test_description_and_url(self):
+        self.call_import_command_with_file('description_and_url.geojson')
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.get()
+        self.assertEqual(trek.description, 'Instructions 1\n\n<a href=https://test.com>https://test.com</a>')
+
+    def test_description_no_url(self):
+        self.call_import_command_with_file('description_no_url.geojson')
         self.assertEqual(Trek.objects.count(), 1)
         trek = Trek.objects.get()
         self.assertEqual(trek.description, 'Instructions 1')
+
+    def test_url_no_description(self):
+        self.call_import_command_with_file('url_no_description.geojson')
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.get()
+        self.assertEqual(trek.description, '<a href=https://test.com>https://test.com</a>')
+
+    def test_no_description_no_url(self):
+        self.call_import_command_with_file('no_description_no_url.geojson')
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.get()
+        self.assertEqual(trek.description, '')
+
+    def test_update_url(self):
+        self.call_import_command_with_file('update_url_before.geojson')
+        self.call_import_command_with_file('update_url_after.geojson')
+        trek1 = Trek.objects.get(eid="1")
+        self.assertEqual(trek1.description, "<a href=https://test.com>https://test.com</a>")
+        trek2 = Trek.objects.get(eid="2")
+        self.assertEqual(trek2.description, "Instructions 2\n\n<a href=https://test2.com>https://test2.com</a>")
