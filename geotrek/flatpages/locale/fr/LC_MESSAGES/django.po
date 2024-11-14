@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-07 07:56+0000\n"
+"POT-Creation-Date: 2024-10-17 14:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,7 @@ msgid "Open in a new tab"
 msgstr "Ouvrir le lien dans un nouvel onglet"
 
 msgid "Cancel"
-msgstr "AnnulerFlatpage"
+msgstr "Annuler"
 
 msgid "Suggestions"
 msgstr "Suggestions"
@@ -104,14 +104,26 @@ msgstr "Intitulé de l'encart"
 msgid "ID list (separated by comma)"
 msgstr "Liste d'ID (séparés par des virgules)"
 
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "Touristic content"
+msgstr "Contenu touristique"
+
+msgid "Touristic event"
+msgstr "Evènement touristique"
+
+msgid "Outdoor Site"
+msgstr "Site Outdoor"
+
 msgid "Submit"
 msgstr "Enregistrer"
 
 msgid "Manage the Image Gallery"
-msgstr "Gérer la galerie d'image"
+msgstr "Gérer la galerie d'images"
 
-msgid "Add gallery images"
-msgstr "Ajouter une galerie d'image"
+msgid "Image gallery"
+msgstr "Galerie d'images"
 
 msgid "Add an image"
 msgstr "Ajouter une image"

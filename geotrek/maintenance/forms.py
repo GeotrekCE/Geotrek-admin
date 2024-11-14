@@ -167,12 +167,11 @@ class InterventionForm(CommonForm):
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
             target = self.instance.target
             intervention_is_updated = self.instance.pk
-            target_is_a_report = target and isinstance(target, Report)
-            report_is_programmed_or_late = target.status and target.status.identifier in ["programmed", "late_resolution"]
-            intervention_is_being_resolved_without_end_date = status == InterventionStatus.objects.get(order=30) and end_date is None
-            if intervention_is_updated and target_is_a_report and report_is_programmed_or_late and \
-               intervention_is_being_resolved_without_end_date:
-                self.add_error('end_date', _('End date is required.'))
+            if target and isinstance(target, Report):
+                report_is_programmed_or_late = target.status and target.status.identifier in ["programmed", "late_resolution"]
+                intervention_is_being_resolved_without_end_date = status == InterventionStatus.objects.get(order=30) and end_date is None
+                if intervention_is_updated and report_is_programmed_or_late and intervention_is_being_resolved_without_end_date:
+                    self.add_error('end_date', _('End date is required.'))
         return clean_data
 
     def save(self, *args, **kwargs):

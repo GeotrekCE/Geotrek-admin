@@ -15,7 +15,6 @@ from easy_thumbnails.files import ThumbnailFile
 
 from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
                                      Trek)
@@ -29,7 +28,7 @@ from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
-class TrekTest(TranslationResetMixin, TestCase):
+class TrekTest(TestCase):
     def test_is_public_if_parent_published(self):
         t = TrekFactory.create(published=False)
         parent = TrekFactory.create(published=True)
@@ -171,7 +170,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek = TrekFactory()
         AttachmentImageFactory.create_batch(5, content_object=trek)
         self.assertEqual(trek.pictures.count(), 5)
-        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5, os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path)))
         self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
     def test_pictures_print_thumbnail_wrong_picture(self):
@@ -193,7 +192,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertIn(trek.thumbnail.name, trek.thumbnail_display)
 
 
-class TrekPublicationDateTest(TranslationResetMixin, TestCase):
+class TrekPublicationDateTest(TestCase):
     def setUp(self):
         self.trek = TrekFactory.create(published=False)
 
@@ -219,7 +218,7 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertEqual(self.trek.publication_date, old_date)
 
 
-class RelatedObjectsTest(TranslationResetMixin, TestCase):
+class RelatedObjectsTest(TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
 

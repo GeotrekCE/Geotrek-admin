@@ -15,10 +15,10 @@ COLOR_DEBUG = \033[36m
 COLOR_RESET = \033[0m
 
 build:
-	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
+	docker build -t geotrek -f docker/Dockerfile . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
-build-no-cache:
-	docker build -t geotrek --no-cache .
+build_no_cache:
+	docker build -t geotrek -f docker/Dockerfile --no-cache .
 
 build_deb:
 	docker pull $(DISTRO)
@@ -65,10 +65,10 @@ coverage:
 	rm ./var/.coverage*
 
 test:
-	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --noinput --parallel
+	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --shuffle --noinput --parallel
 
 test_nds:
-	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --noinput --parallel
+	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --shuffle --noinput --parallel
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js

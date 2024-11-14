@@ -7,7 +7,6 @@ from django.contrib.auth.models import Permission, User
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
-from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.conf import settings
@@ -24,13 +23,7 @@ from geotrek.common.models import Attachment, AccessibilityAttachment, FileType 
 from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 
-class TranslationResetMixin:
-    def setUp(self):
-        translation.deactivate()
-        super().setUp()
-
-
-class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
+class CommonTest(AuthentFixturesTest, MapEntityTest):
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             return {'topology': 'doh!'}, _('Topology is not valid.')
@@ -298,7 +291,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
                              self.expected_column_formatlist_extra)
 
 
-class CommonLiveTest(TranslationResetMixin, MapEntityLiveTest):
+class CommonLiveTest(MapEntityLiveTest):
     @mock.patch('mapentity.helpers.requests')
     def test_map_image_other_language(self, mock_requests):
         if self.model is None:
@@ -427,6 +420,3 @@ class CommonLiveTest(TranslationResetMixin, MapEntityLiveTest):
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
-
-    def tearDown(self):
-        translation.deactivate()

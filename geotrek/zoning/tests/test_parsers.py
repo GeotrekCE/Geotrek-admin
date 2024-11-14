@@ -1,8 +1,7 @@
 import os
 
 from django.contrib.gis.geos import Polygon, MultiPolygon, WKTWriter
-from django.core.management import call_command
-from django.core.management.base import CommandError
+from django.core.management import call_command, CommandError
 from django.test import TestCase
 
 from geotrek.zoning.models import City

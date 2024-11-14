@@ -2,14 +2,45 @@
 CHANGELOG
 =========
 
-2.109.2+dev     (XXXX-XX-XX)
+2.110.0+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
+
+
+2.110.0     (2024-11-13)
+----------------------------
+
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
+
+
+2.109.3     (2024-10-29)
+----------------------------
+
+**Improvements**
+
+- Vocabulary adjustment for the 'add image gallery' button for flatpages
+- Improve translations for flatpages
+
+**Bug fixes**
+
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
+- Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
+- Fix intervention creation when target is not a report (suricate workflow)
 
 **Maintenance**
 
 - Docker image use now fully tested Ubuntu Jammy and python3.10
 - Use new crispy form
 - Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
+
+**Documentation**
+
+- Improve development quickstart documentation
 
 
 2.109.2     (2024-09-19)
@@ -37,8 +68,8 @@ CHANGELOG
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
-- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)"
-- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)"
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)
 - Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
 
 **Documentation**

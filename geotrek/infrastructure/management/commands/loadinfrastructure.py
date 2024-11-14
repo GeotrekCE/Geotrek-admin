@@ -232,6 +232,8 @@ class Command(BaseCommand):
                     self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
+                if condition_type:
+                    infra.conditions.add(condition_type)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
                 geometry.coord_dim = 2

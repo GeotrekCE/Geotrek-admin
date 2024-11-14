@@ -22,7 +22,6 @@ from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
 from geotrek.common.tests.factories import OrganismFactory, AccessMeanFactory
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
@@ -629,7 +628,7 @@ class ProjectViewsTest(CommonTest):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class ExportTest(TranslationResetMixin, TestCase):
+class ExportTest(TestCase):
 
     def test_shape_mixed(self):
         """

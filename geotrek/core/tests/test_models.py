@@ -16,7 +16,6 @@ from django.test.utils import override_settings
 
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils import dbnow
 from geotrek.core.models import (CertificationTrail, Path, PathAggregation,
                                  Trail)
@@ -47,7 +46,7 @@ class StakeTest(TestCase):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class PathTest(TranslationResetMixin, TestCase):
+class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
         p1 = PathFactory()
@@ -219,7 +218,7 @@ class SnapTest(TestCase):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class TrailTest(TranslationResetMixin, TestCase):
+class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
         self.assertEqual(p1.trails_csv_display, 'None')
