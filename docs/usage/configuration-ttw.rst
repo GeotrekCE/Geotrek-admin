@@ -205,7 +205,7 @@ Chaque type de donnée est au moins associée à ces quatres actions de base (*a
 
 Voici la signification des actions autorisées dans les permissions :
 
-* *view* : voir les données dans le module de configuration (pour ledonnées dans « category », comme les types de POI, ou les niveaux de difficulté)
+* *view* : voir les données dans le module de configuration (pour les données dans « category », comme les types de POI, ou les niveaux de difficulté)
 * *read* : voir les données dans Geotrek-admin (détail et liste)
 * *add* : ajouter une nouvelle donnée (itinéraire, thème…)
 * *change* : modifier une donnée
@@ -218,7 +218,7 @@ Groupes
 
 Les groupes facilitent la gestion des utilisateurs et des permissions.Chaque groupe est configuré avec un certain nombre de permissions.
 
-Dans la vue de modification d’un utilisateur, il est possible d’associer un utilisateur à un ou plusieurs groupes pour bénéficier des permissioncorrespondantes.
+Dans la vue de modification d’un utilisateur, il est possible d’associer un utilisateur à un ou plusieurs groupes pour bénéficier des permissions correspondantes.
 
 Par défaut, six groupes sont disponibles :
 
@@ -241,7 +241,7 @@ Les éditeurs et les administrateurs peuvent travailler en simultané sur des fi
 Structures
 ----------
 
-Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l’installation, Geotrek crée une structure par défaut à laquellles premiers utilisateurs seront rattachés.Il est possible d’ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront amenés à travailler à vos côtés sur Geotrek.
+Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l’installation, Geotrek crée une structure par défaut à laquelle les utilisateurs seront rattachés. Il est possible d’ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront amenés à travailler à vos côtés sur Geotrek.
 
 Les utilisateurs d’une structure ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n’auront pas le droit de les modifier.
 
@@ -287,7 +287,7 @@ Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geo
 
 Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
 
-Pour configurer un ou pluseurs portails, il faut se rendre dans le module de configuration sur la section "Portails cibles".
+Pour configurer un ou plusieurs portails, il faut se rendre dans le module de configuration sur la section "Portails cibles".
 
 .. figure:: ../images/admin/portals.png
    :alt: Configuration des portails
