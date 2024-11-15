@@ -9,6 +9,10 @@ CHANGELOG
 
 - Fix missing Dockerfile path on make build scripts
 
+**Documentation**
+
+- Update documentation for release and update obsolete example
+
 
 2.110.0     (2024-11-13)
 ----------------------------
