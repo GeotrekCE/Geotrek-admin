@@ -184,7 +184,7 @@ jobs:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
 
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
             files: ./coverage.xml
             env_vars: OS,ENV
