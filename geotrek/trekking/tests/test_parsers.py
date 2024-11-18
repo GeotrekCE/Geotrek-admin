@@ -1801,7 +1801,7 @@ class SchemaRandonneeParserWithLicenseCreation(SchemaRandonneeParser):
 class SchemaRandonneeParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        FileType.objects.create(type="image")
+        FileType.objects.create(type="Photographie")
         Practice.objects.create(name="Pédestre")
         RecordSource.objects.create(name="Producer 1")
         License.objects.create(label="License 1")

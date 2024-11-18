@@ -5,6 +5,10 @@ CHANGELOG
 2.110.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+
 **Bug fixes**
 
 - Fix missing Dockerfile path on make build scripts
