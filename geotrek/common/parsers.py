@@ -72,9 +72,14 @@ class DownloadImportError(ImportError):
 
 class Parser:
     """
-    provider: Allow to differentiate multiple Parser for the same model
-    default_language: Allow to define which language this parser will populate by default
-    headers: Allow to configure headers on parser requests
+    provider: Allows to differentiate multiple Parser for the same model
+    default_language: Allows to define which language this parser will populate by default
+    headers: Allows to configure headers on parser requests
+    default_language: Allows to define which language this parser will populate by default
+    eid: Field to use as external id
+    provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
+    delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
+    update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
     """
     label = None
     model = None
