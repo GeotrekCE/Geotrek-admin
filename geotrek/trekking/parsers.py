@@ -1327,7 +1327,6 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
     eid = 'eid'
     separator = ','
     srid = 4326
-    filetype_name = 'image'
 
     fields = {
         'eid': ('uuid', 'id_local'),
