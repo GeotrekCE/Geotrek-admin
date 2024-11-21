@@ -5,12 +5,12 @@ from django.conf import settings
 from django.contrib.gis.geos import Point, MultiPoint, GEOSGeometry
 from django.utils.translation import gettext as _
 
+from geotrek.common.utils.parsers import get_geom_from_gpx
 from geotrek.trekking.models import DifficultyLevel
 from geotrek.cirkwi.models import CirkwiLocomotion
 from geotrek.common.parsers import AttachmentParserMixin, GlobalImportError, Parser, RowImportError
 from geotrek.tourism.models import TouristicContent, TouristicContentType1
 from geotrek.trekking.models import Trek, Practice
-from geotrek.trekking.parsers import ApidaeTrekParser
 
 
 class CirkwiParser(AttachmentParserMixin, Parser):
@@ -154,7 +154,7 @@ class CirkwiTrekParser(CirkwiParser):
 
     def filter_geom(self, src, val):
         response = self.request_or_retry(url=val)
-        return ApidaeTrekParser._get_geom_from_gpx(response.content)
+        return get_geom_from_gpx(response.content)
 
     def filter_practice(self, src, val):
         """

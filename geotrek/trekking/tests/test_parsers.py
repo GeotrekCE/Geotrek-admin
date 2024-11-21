@@ -7,7 +7,6 @@ from unittest import mock
 from unittest import skipIf
 from unittest.mock import Mock
 from urllib.parse import urlparse
-from shutil import copy as copyfile
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
@@ -17,7 +16,6 @@ from django.test import TestCase, SimpleTestCase
 from django.test.utils import override_settings
 
 from geotrek.common.utils import testdata
-from geotrek.common.utils.file_infos import get_encoding_file
 from geotrek.common.models import Theme, FileType, Attachment, Label, RecordSource, License
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.parsers import DownloadImportError
@@ -1146,6 +1144,17 @@ class ApidaeTrekParserTests(TestCase):
         self.assertIn('no attachment with the type "PLAN"', output_stdout.getvalue())
 
     @mock.patch('requests.get')
+    def test_trek_not_imported_when_bad_geometry(self, mocked_get):
+        output_stdout = StringIO()
+        mocked_get.side_effect = self.make_dummy_get('a_trek_with_bad_geom.json')
+
+        call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=2,
+                     stdout=output_stdout)
+
+        self.assertEqual(Trek.objects.count(), 0)
+        self.assertIn('Geometries from various features cannot be converted to a single continuous LineString feature,', output_stdout.getvalue())
+
+    @mock.patch('requests.get')
     def test_trek_not_imported_when_no_plan(self, mocked_get):
         output_stdout = StringIO()
         mocked_get.side_effect = self.make_dummy_get('trek_no_plan_error.json')
@@ -1250,38 +1259,6 @@ class ApidaeTrekParserTests(TestCase):
         mocked_get.side_effect = self.make_dummy_get('trek_with_not_complete_illustration.json')
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestApidaeTrekParser', verbosity=0)
         self.assertEqual(Attachment.objects.count(), 0)
-
-
-class TestApidaeTrekParserConvertEncodingFiles(TestCase):
-    data_dir = "geotrek/trekking/tests/data"
-
-    def setUp(self):
-        if not os.path.exists(settings.TMP_DIR):
-            os.mkdir(settings.TMP_DIR)
-
-    def test_fix_encoding_to_utf8(self):
-        file_name = f'{settings.TMP_DIR}/file_bad_encoding_tmp.kml'
-        copyfile(f'{self.data_dir}/file_bad_encoding.kml', file_name)
-
-        encoding = get_encoding_file(file_name)
-        self.assertNotEqual(encoding, "utf-8")
-
-        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
-
-        encoding = get_encoding_file(new_file_name)
-        self.assertEqual(encoding, "utf-8")
-
-    def test_not_fix_encoding_to_utf8(self):
-        file_name = f'{settings.TMP_DIR}/file_good_encoding_tmp.kml'
-        copyfile(f'{self.data_dir}/file_good_encoding.kml', file_name)
-
-        encoding = get_encoding_file(file_name)
-        self.assertEqual(encoding, "utf-8")
-
-        new_file_name = ApidaeTrekParser._maybe_fix_encoding_to_utf8(file_name)
-
-        encoding = get_encoding_file(new_file_name)
-        self.assertEqual(encoding, "utf-8")
 
 
 class TestApidaeTrekThemeParser(ApidaeTrekThemeParser):
@@ -1485,115 +1462,6 @@ class MakeMarkingDescriptionTests(SimpleTestCase):
         }
         description = ApidaeTrekParser._make_marking_description(itineraire)
         self.assertDictEqual(description, ApidaeTrekParser.default_trek_marking_description)
-
-
-class GpxToGeomTests(SimpleTestCase):
-
-    @staticmethod
-    def _get_gpx_from(filename):
-        with open(filename, 'r') as f:
-            gpx = f.read()
-        return bytes(gpx, 'utf-8')
-
-    def test_gpx_with_waypoint_can_be_converted(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/apidae_test_trek.gpx')
-
-        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 13)
-        first_point = geom.coords[0]
-        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
-        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
-
-    def test_gpx_with_route_points_can_be_converted(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_route_points.gpx')
-
-        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 13)
-        first_point = geom.coords[0]
-        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
-        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
-
-    def test_it_raises_an_error_on_not_continuous_segments(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_not_continuous_segments.gpx')
-
-        with self.assertRaises(RowImportError):
-            ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-    def test_it_handles_segment_with_single_point(self):
-        gpx = self._get_gpx_from(
-            'geotrek/trekking/tests/data/apidae_trek_parser/trace_with_single_point_segment.gpx'
-        )
-        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 13)
-
-    def test_it_raises_an_error_when_no_linestring(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_feature.gpx')
-
-        with self.assertRaises(RowImportError):
-            ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-    def test_it_handles_multiple_continuous_features(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features.gpx')
-        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 12)
-        first_point = geom.coords[0]
-        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
-        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
-
-    def test_it_handles_multiple_continuous_features_with_one_empty(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features_and_one_empty.gpx')
-        geom = ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 12)
-        first_point = geom.coords[0]
-        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
-        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
-
-    def test_it_raises_error_on_multiple_not_continuous_features(self):
-        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_not_continuous_features.gpx')
-        with self.assertRaises(RowImportError):
-            ApidaeTrekParser._get_geom_from_gpx(gpx)
-
-
-class KmlToGeomTests(SimpleTestCase):
-
-    @staticmethod
-    def _get_kml_from(filename):
-        with open(filename, 'r') as f:
-            kml = f.read()
-        return bytes(kml, 'utf-8')
-
-    def test_kml_can_be_converted(self):
-        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace.kml')
-
-        geom = ApidaeTrekParser._get_geom_from_kml(kml)
-
-        self.assertEqual(geom.srid, 2154)
-        self.assertEqual(geom.geom_type, 'LineString')
-        self.assertEqual(len(geom.coords), 61)
-        first_point = geom.coords[0]
-        self.assertAlmostEqual(first_point[0], 973160.8, delta=0.1)
-        self.assertAlmostEqual(first_point[1], 6529320.1, delta=0.1)
-
-    def test_it_raises_exception_when_no_linear_data(self):
-        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
-
-        with self.assertRaises(RowImportError):
-            ApidaeTrekParser._get_geom_from_kml(kml)
 
 
 class GetPracticeNameFromActivities(SimpleTestCase):
