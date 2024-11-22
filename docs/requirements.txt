@@ -60,16 +60,16 @@ snowballstemmer==2.2.0
     # via sphinx
 sphinx==7.1.2
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   sphinx-autobuild
     #   sphinx-immaterial
     #   sphinx-intl
 sphinx-autobuild==2021.3.14
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinx-immaterial==0.11.14
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinx-intl==2.2.0
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinxcontrib-applehelp==1.0.4
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
@@ -82,7 +82,7 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-tornado==6.4.1
+tornado==6.4.2
     # via livereload
 typing-extensions==4.12.2
     # via
