@@ -94,6 +94,16 @@ class CirkwiParser(AttachmentParserMixin, Parser):
                 first += self.rows
 
     def get_part(self, dst, src, val):
+        """
+        The CirkwiParser class handles some XML-related specificities for the fields mapping:
+
+        - `src` values should follow an XML path syntax so the separator is '/' instead of '.'
+        - `src` value "locomotions/locomotion" gets the text value of the first <locomotion> XML element encountered (inside a <locomotions> element at the row's root level)
+        - "informations/information[@langue='fr']/titre" means we get the text value of the first <titre> element having a parent <information> with attribute `langue` equals "fr"
+        - the "<LANG>" marker is replaced with the `default_language` of the parser
+        - a '@@' sequence at the end followed by a attribute name indicates the fetched value should be the value of the attribute (for instance "locomotions/locomotion@@type" will get the value of the 'type' attribute of the <locomotion> element)
+        - finally the '/*' sequence at the end of a `src` value indicates a list of all XML elements matching the path should be returned (so "locomotions/locomotion/*" has the same meaning than "locomotions.*.locomotion" from the base Parser class)
+        """
         # Recursively extract XML attributes
         if '@@' in src and src[:2] != '@@':
             part, attrib = src.split('@@', 1)

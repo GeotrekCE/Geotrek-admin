@@ -26,7 +26,7 @@ from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin,
                                     GeotrekParser, GlobalImportError, Parser,
                                     RowImportError, ShapeParser, DownloadImportError,
                                     ValueImportError)
-from geotrek.common.utils.parsers import get_geom_from_gpx, get_geom_from_kml
+from geotrek.common.utils.parsers import get_geom_from_gpx, get_geom_from_kml, GeomValueError
 from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import (POI, Accessibility, DifficultyLevel,
                                      OrderedTrekChild, Service, Trek,
@@ -698,7 +698,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             elif ext == 'kmz':
                 kml_file = zipfile.ZipFile(io.BytesIO(geom_file)).read('doc.kml')
                 return get_geom_from_kml(kml_file)
-        except ValueError as e:
+        except GeomValueError as e:
             raise RowImportError(str(e))
 
     def filter_labels(self, src, val):

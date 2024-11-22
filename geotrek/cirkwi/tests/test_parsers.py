@@ -141,7 +141,7 @@ class CirkwiParserTests(TestCase):
 
         # Test update
         mocked_get.side_effect = self.make_dummy_get('circuits_updated.xml')
-        call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrUpdateOnly', verbosity=2)
+        call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrUpdateOnly', verbosity=0)
         self.assertEqual(Trek.objects.count(), 2)
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët à VTT")
         self.assertEqual(t.eid, '10926')

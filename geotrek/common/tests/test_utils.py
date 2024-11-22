@@ -12,7 +12,7 @@ from ..utils import (format_coordinates, simplify_coords, spatial_reference,
 from ..utils.file_infos import get_encoding_file
 from ..utils.import_celery import create_tmp_destination, subclasses
 from ..utils.parsers import (add_http_prefix, get_geom_from_gpx,
-                             get_geom_from_kml, maybe_fix_encoding_to_utf8)
+                             get_geom_from_kml, maybe_fix_encoding_to_utf8, GeomValueError)
 
 
 class UtilsTest(TestCase):
@@ -142,7 +142,7 @@ class GpxToGeomTests(SimpleTestCase):
     def test_it_raises_an_error_on_not_continuous_segments(self):
         gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_not_continuous_segments.gpx')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(GeomValueError):
             get_geom_from_gpx(gpx)
 
     def test_it_handles_segment_with_single_point(self):
@@ -158,7 +158,7 @@ class GpxToGeomTests(SimpleTestCase):
     def test_it_raises_an_error_when_no_linestring(self):
         gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_feature.gpx')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(GeomValueError):
             get_geom_from_gpx(gpx)
 
     def test_it_handles_multiple_continuous_features(self):
@@ -185,7 +185,7 @@ class GpxToGeomTests(SimpleTestCase):
 
     def test_it_raises_error_on_multiple_not_continuous_features(self):
         gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_not_continuous_features.gpx')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(GeomValueError):
             get_geom_from_gpx(gpx)
 
 
@@ -212,7 +212,7 @@ class KmlToGeomTests(SimpleTestCase):
     def test_it_raises_exception_when_no_linear_data(self):
         kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(GeomValueError):
             get_geom_from_kml(kml)
 
 

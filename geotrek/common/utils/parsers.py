@@ -11,6 +11,10 @@ from django.utils.translation import gettext as _
 from geotrek.common.utils.file_infos import get_encoding_file
 
 
+class GeomValueError(Exception):
+    pass
+
+
 def add_http_prefix(url):
     if url.startswith('http'):
         return url
@@ -64,7 +68,7 @@ def get_geom_from_gpx(data):
             if geos.geom_type == 'MultiLineString':
                 geos = geos.merged  # If possible we merge the MultiLineString into a LineString
                 if geos.geom_type == 'MultiLineString':
-                    raise ValueError(
+                    raise GeomValueError(
                         _("Feature geometry cannot be converted to a single continuous LineString feature"))
             geoms.append(geos)
 
@@ -72,7 +76,7 @@ def get_geom_from_gpx(data):
         full_geom.srid = geoms[0].srid
         full_geom = full_geom.merged  # If possible we merge the MultiLineString into a LineString
         if full_geom.geom_type == 'MultiLineString':
-            raise ValueError(
+            raise GeomValueError(
                 _("Geometries from various features cannot be converted to a single continuous LineString feature"))
 
         return full_geom
@@ -91,7 +95,7 @@ def get_geom_from_gpx(data):
             if geos:
                 break
         else:
-            raise ValueError("No LineString feature found in GPX layers tracks or routes")
+            raise GeomValueError("No LineString feature found in GPX layers tracks or routes")
         geos.transform(settings.SRID)
         return geos
 
@@ -113,7 +117,7 @@ def get_geom_from_kml(data):
             for t in types:
                 if g.geom_type.name.startswith(t):
                     return g
-        raise ValueError('The attached KML geometry does not have any LineString or MultiLineString data')
+        raise GeomValueError('The attached KML geometry does not have any LineString or MultiLineString data')
 
     with NamedTemporaryFile(mode='w+b', dir=settings.TMP_DIR) as ntf:
         ntf.write(data)
