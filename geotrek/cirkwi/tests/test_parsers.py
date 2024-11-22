@@ -32,8 +32,7 @@ class TestCirkwiTrekParserFrNoCreate(CirkwiTrekParser):
 
 
 class TestCirkwiTrekParserFrUpdateOnly(CirkwiTrekParser):
-    # Also tests using filename instead of url
-    filename = "geotrek/cirkwi/tests/data/circuits_updated.xml"
+    url = 'https://example.net/'
     create = False
     update_only = True
     default_language = 'fr'
@@ -52,6 +51,8 @@ class TestCirkwiTouristicContentParserFr(CirkwiTouristicContentParser):
 
 
 class TestCirkwiTouristicContentDoNotCreateParserEn(CirkwiTouristicContentParser):
+    # Also tests using filename instead of url
+    filename = "geotrek/cirkwi/tests/data/poi.xml"
     url = 'https://example.net/'
     default_language = 'en'
     # English parser must not delete attachments created by French parser
@@ -102,11 +103,14 @@ class CirkwiParserTests(TestCase):
 
     @mock.patch('requests.get')
     def test_create_treks(self, mocked_get):
+
         mocked_get.side_effect = self.make_dummy_get('circuits.xml')
         output = io.StringIO()
         call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFr', verbosity=2, stdout=output)
         call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserEn', verbosity=0)
         self.assertEqual(Trek.objects.count(), 2)
+
+        # Test values for french parsing
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët")
         self.assertEqual(t.eid, '10925')
         self.assertEqual(t.name_en, "Title en")
@@ -124,14 +128,19 @@ class CirkwiParserTests(TestCase):
         self.assertEqual(attachement.author, 'Manon')
         self.assertEqual(attachement.attachment_file.size, len(testdata.IMG_FILE))
         self.assertEqual(t.duration, 2.0)
+
+        # Test values for english parsing
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët à vélo")
         self.assertEqual(t.eid, '10926')
         self.assertEqual(t.practice.name, "Vélo")
-        # Assert created Ciwki Locomotion and mapped it to Practice
+        # Assert created Cirkwi Locomotion and mapped it to Practice
         self.assertEqual(t.practice.cirkwi.name, "Vélo")
         self.assertEqual(t.practice.cirkwi.eid, 3)
         self.assertEqual(t.description_teaser_fr, 'Laissez-vous guider par ce chemin')
         self.assertIn("Cirkwi Locomotion 'Vélo' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement,", output.getvalue())
+
+        # Test update
+        mocked_get.side_effect = self.make_dummy_get('circuits_updated.xml')
         call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrUpdateOnly', verbosity=2)
         self.assertEqual(Trek.objects.count(), 2)
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët à VTT")
@@ -149,9 +158,9 @@ class CirkwiParserTests(TestCase):
                       output.getvalue())
 
     @mock.patch('requests.get')
-    def test_create_trek_with_missing_locomotion(self, mocked_get):
+    def test_create_trek_with_missing_locomotion_and_difficulty(self, mocked_get):
         output = io.StringIO()
-        mocked_get.side_effect = self.make_dummy_get('circuits_wrong_locomotion.xml')
+        mocked_get.side_effect = self.make_dummy_get('circuits_wrong_locomotion_and_difficulty.xml')
         # Test Locomotion does not exist
         call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrNoCreate', verbosity=2, stdout=output)
         self.assertIn("Cirkwi Locomotion '['Aviron', '8']' n'existe pas dans Geotrek-Admin. Merci de l'ajouter,",
@@ -161,6 +170,8 @@ class CirkwiParserTests(TestCase):
         call_command('import', 'geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrNoCreate', verbosity=2,
                      stdout=output)
         self.assertIn("Aucune Pratique ne correspond à la Locomotion Cirkwi 'Aviron' (id: '8'). Merci de l'ajouter,",
+                      output.getvalue())
+        self.assertIn("Niveau de Difficulté ayant le niveau Cirkwi '3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter,",
                       output.getvalue())
 
     @mock.patch('requests.get')

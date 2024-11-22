@@ -1,4 +1,3 @@
-import requests
 import xml.etree.ElementTree as ET
 
 from django.conf import settings
@@ -8,7 +7,7 @@ from django.utils.translation import gettext as _
 from geotrek.common.utils.parsers import get_geom_from_gpx
 from geotrek.trekking.models import DifficultyLevel
 from geotrek.cirkwi.models import CirkwiLocomotion
-from geotrek.common.parsers import AttachmentParserMixin, GlobalImportError, Parser, RowImportError
+from geotrek.common.parsers import AttachmentParserMixin, Parser, RowImportError
 from geotrek.tourism.models import TouristicContent, TouristicContentType1
 from geotrek.trekking.models import Trek, Practice
 
@@ -77,10 +76,7 @@ class CirkwiParser(AttachmentParserMixin, Parser):
             }
             if self.updated_after:
                 params['end-time'] = self.updated_after
-            response = requests.get(self.url, params=params, auth=self.auth)
-            if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
-                    url=self.url, status_code=response.status_code))
+            response = self.request_or_retry(self.url, params=params, auth=self.auth)
             # Save objects count
             self.nb = int(ET.fromstring(response.content).find("listing_ids", {}).attrib['nb_objects'])
 
@@ -89,10 +85,7 @@ class CirkwiParser(AttachmentParserMixin, Parser):
             while first <= self.nb:
                 params['first'] = first
                 params['rows'] = self.rows
-                response = requests.get(self.url, params=params, auth=self.auth)
-                if response.status_code != 200:
-                    raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(
-                        url=self.url, status_code=response.status_code))
+                response = self.request_or_retry(self.url, params=params, auth=self.auth)
                 xml_root = ET.fromstring(response.content)
                 # Yield objects given XML path in 'results_path'
                 entries = xml_root.findall(self.results_path)
@@ -236,7 +229,6 @@ class CirkwiTrekParser(CirkwiParser):
 
 class CirkwiTouristicContentParser(CirkwiParser):
     model = TouristicContent
-    default_language = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
     results_path = 'poi'
     fields = {
         "eid": "@@id_poi",

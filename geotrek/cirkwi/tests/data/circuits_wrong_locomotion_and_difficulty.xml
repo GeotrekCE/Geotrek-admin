@@ -1,6 +1,7 @@
 <circuits version="2">
-    <listing_ids nb_objects="2" first="0" rows="100">
+    <listing_ids nb_objects="3" first="0" rows="100">
         <id>10925</id>
+        <id>10926</id>
         <id>10926</id>
     </listing_ids>
     <circuit date_creation="1295825772" date_modification="1295828456" id_circuit="10925"
@@ -260,6 +261,21 @@
         </informations>
         <locomotions>
             <locomotion type="Vélo" id_locomotion="3" difficulte="5" duree="0"/>
+        </locomotions>
+        <fichier_trace
+             url="https://demo-admin.geotrek.fr/static/boucle-du-pic-des-trois-seigneurs.gpx"
+             info_parcours="false" />
+    </circuit>
+        <circuit date_creation="1295825772" date_modification="1295828456" id_circuit="10927"
+        id_utilisateur="1">
+        <informations>
+            <information langue="fr">
+                <titre>Le patrimoine de Plancoët à vélo, difficulté inconnue</titre>
+                <description>Laissez-vous guider par ce chemin</description>
+            </information>
+        </informations>
+        <locomotions>
+            <locomotion type="Marche" id_locomotion="2" difficulte="3" duree="0"/>
         </locomotions>
         <fichier_trace
              url="https://demo-admin.geotrek.fr/static/boucle-du-pic-des-trois-seigneurs.gpx"
