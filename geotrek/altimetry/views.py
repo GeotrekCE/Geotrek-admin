@@ -26,7 +26,7 @@ class HttpSVGResponse(HttpResponse):
 class ElevationChart(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context, **response_kwargs):
-        svg_cache = caches['default']
+        svg_cache = caches['fat']
         lang = self.kwargs['lang']
         obj = self.get_object()
         date_update = obj.get_date_update().strftime('%y%m%d%H%M%S%f'),
@@ -91,7 +91,7 @@ def serve_elevation_chart(request, model_name, pk, from_command=False):
         if not request.user.has_perm('%s.read_%s' % (model._meta.app_label, model_name)):
             raise PermissionDenied
     language = request.LANGUAGE_CODE
-    obj.prepare_elevation_chart(language, request.build_absolute_uri('/'))
+    obj.prepare_elevation_chart(language)
     path = obj.get_elevation_chart_path(language).replace(settings.MEDIA_ROOT, '').lstrip('/')
 
     if settings.DEBUG or from_command:

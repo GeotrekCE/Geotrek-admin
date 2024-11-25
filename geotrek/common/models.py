@@ -280,6 +280,8 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    published = models.BooleanField(verbose_name=_("Published"), default=False,
+                                    help_text=_("Visible on Geotrek-rando"))
     filter = models.BooleanField(verbose_name=_("Filter"), default=False,
                                  help_text=_("Show this label as a filter in public portal"))
 
@@ -326,6 +328,7 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     content_object = GenericForeignKey('content_type', 'object_id')
     annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
+    annotations_categories = models.JSONField(blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
@@ -378,3 +381,27 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
 
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
+
+
+class AnnotationCategory(TimeStampedModelMixin, PictogramMixin):
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Annotation category")
+        verbose_name_plural = _("Annotation categories")
+        ordering = ['label']
+
+    def __str__(self):
+        return self.label
+
+
+class AccessMean(TimeStampedModelMixin):
+    label = models.CharField(max_length=128)
+
+    class Meta:
+        verbose_name = _("Access mean")
+        verbose_name_plural = _("Access means")
+        ordering = ('label',)
+
+    def __str__(self):
+        return self.label

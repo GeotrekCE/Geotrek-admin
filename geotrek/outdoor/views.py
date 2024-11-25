@@ -1,22 +1,19 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Q, Prefetch
+from django.db.models import Prefetch
 from geotrek.common.models import HDViewPoint
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from .filters import SiteFilterSet, CourseFilterSet
 from .forms import SiteForm, CourseForm
 from .models import Site, Course
-from .serializers import SiteSerializer, CourseSerializer, CourseAPISerializer, \
-    CourseAPIGeojsonSerializer, SiteAPISerializer, SiteAPIGeojsonSerializer, SiteGeojsonSerializer, \
-    CourseGeojsonSerializer
+from .serializers import SiteSerializer, CourseSerializer, SiteGeojsonSerializer, CourseGeojsonSerializer
 
 
 class SiteList(CustomColumnsMixin, MapEntityList):
@@ -59,11 +56,16 @@ class SiteUpdate(MapEntityUpdate):
 
 
 class SiteDelete(MapEntityDelete):
+    template_name = "outdoor/site_confirm_delete.html"
     model = Site
 
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    # Add support for browsers which only accept GET and POST for now.
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
 
 class SiteDocumentPublicMixin:
@@ -124,20 +126,6 @@ class SiteViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name')
         return qs
-
-
-class SiteAPIViewSet(APIViewSet):
-    model = Site
-    serializer_class = SiteAPISerializer
-    geojson_serializer_class = SiteAPIGeojsonSerializer
-
-    def get_queryset(self):
-        qs = Site.objects.filter(published=True)
-        if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
-        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):
@@ -242,17 +230,3 @@ class CourseViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.prefetch_related('parent_sites')
         return qs
-
-
-class CourseAPIViewSet(APIViewSet):
-    model = Course
-    serializer_class = CourseAPISerializer
-    geojson_serializer_class = CourseAPIGeojsonSerializer
-
-    def get_queryset(self):
-        qs = Course.objects.filter(published=True)
-        if 'source' in self.request.GET:
-            qs = qs.filter(parent_sites__source__name__in=self.request.GET['source'].split(','))
-        if 'portal' in self.request.GET:
-            qs = qs.filter(Q(parent_sites__portal__name=self.request.GET['portal']) | Q(parent_sites__portal=None))
-        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))

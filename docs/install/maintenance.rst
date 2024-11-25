@@ -2,6 +2,10 @@
 Maintenance
 ===========
 
+.. contents::
+   :local:
+   :depth: 2
+
 Application backup
 ------------------
 
@@ -30,11 +34,9 @@ Application restore
 If you restore Geotrek-admin on a new server, you will have to install PostgreSQL and PostGIS and create a database user first.
 Otherwise go directly to the database creation step.
 
-Example for Ubuntu 18:
-
 .. code-block:: bash
 
-    sudo apt install postgresql-10 postgresql-10-postgis-2.5
+    sudo apt install postgresql-14 postgresql-14-postgis-3
     sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 
@@ -42,7 +44,7 @@ Create an empty database (``geotrekdb`` in this example):
 
 .. code-block:: bash
 
-    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek ENCODING 'UTF8' TEMPLATE template0;"
+    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
@@ -52,11 +54,9 @@ Restore backup:
 
 .. code-block:: bash
 
-    sudo -u postgres pg_restore -d geotrekdb 20200510-geotrekdb.backup
+    pg_restore -U geotrek -h localhost --clean --no-acl --no-owner -d geotrekdb 20200510-geotrekdb.backup
 
-If errors occurs on restore, try to add ``--clean`` option.
-
-If errors persists, rename your database and recreate a fresh one, then restore.
+If errors persist, rename your database and recreate a fresh one, then restore.
 
 Extract media and configuration files:
 
@@ -83,6 +83,16 @@ Access your database securely on your local machine (QGIS)
 
 Instead of opening your database to the world (by opening the 5432 port for
 example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
+
+
+Manage Cache
+------------
+
+* You can purge application cache with command or in admin interface
+
+.. code-block:: bash
+
+    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori
 
 
 Major evolutions from version 2.33

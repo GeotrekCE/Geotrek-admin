@@ -38,7 +38,7 @@
       "name": "Table pic-nique",
       "implantation_year": null,
       "maintenance_difficulty": null,
-      "structure": "MC",
+      "structure": 1,
       "type": 81,
       "usage_difficulty": null,
       "uuid": "93747e51-757e-4b39-9c3b-41bb228a7455"
@@ -66,7 +66,7 @@
       "name": "Cabane d'Aula",
       "implantation_year": null,
       "maintenance_difficulty": null,
-      "structure": "DEMO",
+      "structure": 3,
       "type": 45,
       "usage_difficulty": null,
       "uuid": "f7d10e86-5bf0-47a5-934e-63dcca8bf9c5"

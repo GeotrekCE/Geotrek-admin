@@ -18,19 +18,28 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS WITH v_signage_tmp AS
             t.code,
             t.printed_elevation,
             t.manager_id,
-            t.condition_id,
+            p.labels AS "Conditions",
             t.sealing_id,
             t.access_id,
             t.structure_id,
             t.type_id,
             CONCAT (e.min_elevation, 'm') AS elevation,
             e.geom
-     FROM signage_signage t,
-          signage_signagetype b,
-          core_topology e
-     WHERE t.topo_object_id = e.id
-         AND t.type_id = b.id
-         AND e.deleted = FALSE )
+        FROM signage_signage t
+            left join core_topology e on t.topo_object_id = e.id
+            left join signage_signagetype b on t.type_id = b.id
+        LEFT JOIN ( WITH signage_condition AS (
+                    SELECT a_1.signagecondition_id,
+                    b_2.label AS labels,
+                    a_1.signage_id
+                    FROM signage_signagecondition b_2
+                        JOIN signage_signage_conditions a_1 ON a_1.signagecondition_id = b_2.id
+                )
+            SELECT array_to_string(array_agg(signage_condition.labels), ', '::text, '_'::text)::character varying AS labels,
+            signage_condition.signage_id
+            FROM signage_condition
+            GROUP BY signage_condition.signage_id) p ON t.topo_object_id = p.signage_id
+        WHERE e.deleted = FALSE )
 SELECT a.id,
        e.name AS "Structure",
        f.zoning_city AS "City",
@@ -40,7 +49,7 @@ SELECT a.id,
        {% endfor %}
        a.code AS "Code",
        b.label AS "Type",
-       c.label AS "State",
+       c.labels AS "States",
        {% for lang in MODELTRANSLATION_LANGUAGES %}
         a.description_{{ lang }} AS "Description {{ lang }}",
        {% endfor %}
@@ -63,41 +72,35 @@ SELECT a.id,
        a.geom
 FROM v_signage_tmp a
 LEFT JOIN signage_signagetype b ON a.type_id = b.id
-LEFT JOIN infrastructure_infrastructurecondition c ON a.condition_id = c.id
+LEFT JOIN ( WITH signage_condition AS (
+            SELECT a_1.signagecondition_id,
+            b_1.label AS labels,
+            a_1.signage_id
+            FROM signage_signagecondition b_1
+                JOIN signage_signage_conditions a_1 ON a_1.signagecondition_id = b_1.id
+        )
+    SELECT array_to_string(array_agg(signage_condition.labels), ', '::text, '_'::text)::character varying AS labels,
+    signage_condition.signage_id
+    FROM signage_condition
+    GROUP BY signage_condition.signage_id) c ON a.id = c.signage_id
 LEFT JOIN signage_sealing d ON a.sealing_id = d.id
 LEFT JOIN authent_structure e ON a.structure_id = e.id
-LEFT JOIN infrastructure_infrastructureaccessmean i ON a.access_id = i.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_city,
-            a.id
-     FROM
-         (SELECT e.id,
-                 e.geom
-          FROM signage_signage t,
-               signage_signagetype b,
-               core_topology e
-          WHERE t.topo_object_id = e.id
-              AND t.type_id = b.id
-              AND e.deleted = FALSE ) a
-     JOIN zoning_city b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) f ON a.id = f.id
-LEFT JOIN
-    (SELECT array_to_string(ARRAY_AGG (b.name ORDER BY b.name), ', ', '_') zoning_district,
-            a.id
-     FROM
-         (SELECT e.id,
-                 e.geom
-          FROM signage_signage t,
-               signage_signagetype b,
-               core_topology e
-          WHERE t.topo_object_id = e.id
-              AND t.type_id = b.id
-              AND e.deleted = FALSE ) a
-     JOIN zoning_district b ON ST_INTERSECTS (a.geom, b.geom)
-     GROUP BY a.id) g ON a.id = g.id
+LEFT JOIN common_accessmean i ON a.access_id = i.id
+LEFT JOIN LATERAL (
+     SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_city
+           FROM   zoning_city b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) f ON true
+LEFT JOIN LATERAL (
+        SELECT array_to_string(array_agg(b_1.name ORDER BY b_1.name), ', '::text, '_'::text) AS zoning_district
+           FROM  zoning_district b_1
+            WHERE st_intersects(a.geom, b_1.geom)
+          GROUP BY a.id
+    ) g ON true
 LEFT JOIN
     (SELECT organism,
             b.topo_object_id
      FROM common_organism a
-     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id 
+     JOIN signage_signage b ON a.id = b.manager_id) h ON a.topo_object_id = h.topo_object_id
 ;

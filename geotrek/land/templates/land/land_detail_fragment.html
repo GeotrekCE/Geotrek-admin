@@ -80,6 +80,21 @@
         </td>
     </tr>
     {% endif %}
+
+    {% if modelname != "circulationedge" %}
+    <tr>
+        <th>{% trans "Circulation edges" %}</th>
+        <td>
+            {% if perms.land.add_circulationedge %}
+            <p class="autohide"><a href="{% url 'land:circulationedge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new circulation edge" %}</a>
+            </p>
+            {% endif %}
+
+            {% valuelist object.circulation_edges field='circulation_type' %}
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endif %}

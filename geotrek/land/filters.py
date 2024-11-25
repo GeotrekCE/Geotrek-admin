@@ -13,7 +13,8 @@ from geotrek.zoning.filters import *  # NOQA
 
 from .models import (
     CompetenceEdge, LandEdge, LandType, PhysicalEdge, PhysicalType,
-    SignageManagementEdge, WorkManagementEdge,
+    SignageManagementEdge, WorkManagementEdge, CirculationEdge, CirculationType,
+    AuthorizationType
 )
 
 
@@ -21,6 +22,12 @@ class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
         fields = ['physical_type']
+
+
+class CirculationEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
+    class Meta(MapEntityFilterSet.Meta):
+        model = CirculationEdge
+        fields = ['circulation_type', 'authorization_type']
 
 
 class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
@@ -56,14 +63,34 @@ class SignageManagementEdgeFilterSet(OrganismFilterSet):
 """
 
 
-class TopologyFilterPhysicalType(TopologyFilter):
+class PrefetchStructureMixin:
+    def get_queryset(self, request=None):
+        qs = super().get_queryset(request)
+        return qs.select_related('structure')
+
+
+class TopologyFilterPhysicalType(PrefetchStructureMixin, TopologyFilter):
     model = PhysicalType
 
     def values_to_edges(self, values):
         return PhysicalEdge.objects.filter(physical_type__in=values)
 
 
-class TopologyFilterLandType(TopologyFilter):
+class TopologyFilterCirculationType(PrefetchStructureMixin, TopologyFilter):
+    model = CirculationType
+
+    def values_to_edges(self, values):
+        return CirculationEdge.objects.filter(circulation_type__in=values)
+
+
+class TopologyFilterAuthorizationType(PrefetchStructureMixin, TopologyFilter):
+    model = AuthorizationType
+
+    def values_to_edges(self, values):
+        return CirculationEdge.objects.filter(authorization_type__in=values)
+
+
+class TopologyFilterLandType(PrefetchStructureMixin, TopologyFilter):
     model = LandType
 
     def values_to_edges(self, values):
@@ -95,6 +122,8 @@ def add_edge_filters(filter_set):
     filter_set.add_filters({
         'land_type': TopologyFilterLandType(label=_('Land edge'), required=False),
         'physical_type': TopologyFilterPhysicalType(label=_('Physical edge'), required=False),
+        'circulation_type': TopologyFilterCirculationType(label=_('Circulation edge'), required=False),
+        'authorization_type': TopologyFilterAuthorizationType(label=_('Circulation edge'), required=False),
         'competence': TopologyFilterCompetenceEdge(label=_('Competence edge'), required=False),
         'signage': TopologyFilterSignageManagementEdge(label=_('Signage management edge'), required=False),
         'work': TopologyFilterWorkManagementEdge(label=_('Work management edge'), required=False),

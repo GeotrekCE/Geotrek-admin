@@ -29,8 +29,15 @@
         </tr>
         {% endif %}
         <tr>
-            <th>{{ object|verbose:"condition" }}</th>
-            <td>{% if object.condition %}{{ object.condition }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object|verbose:"conditions" }}</th>
+            <td>{% for condition in object.conditions.all %}
+                {% if not forloop.last %}
+                    <span>{{ condition.label }},<span>
+                {% else %}
+                    <span>{{ condition.label }}<span>
+                {% endif %}
+            {% endfor %}
+        </td>
         </tr>
         <tr>
             <th>{{ object|verbose:"color" }}</th>
@@ -61,7 +68,14 @@
                     <td>{{ line }}</td>
                     {% if is_direction_on_lines_enabled %}<td>{{ line.direction }}</td>{% endif %}
                     <td>{{ line.text }}</td>
-                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                    <td>
+                        {% for pictogram in line.pictograms.all %}
+                            {{ pictogram.code|default_if_none:"" }} -
+                            {{ pictogram.label|default_if_none:"" }} -
+                            {{ pictogram.description|default_if_none:"" }}
+                            <br>
+                        {% endfor %}
+                    </td>
                     <td>{{ line.distance_pretty }}</td>
                     <td>{{ line.time_pretty }}</td>
                 </tr>

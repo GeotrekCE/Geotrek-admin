@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
-from django.utils.translation import activate
+from django.utils import translation
 
 from rest_framework.response import Response
 
@@ -43,15 +43,15 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
-        activate(self.request.GET.get('language'))
-        return tourism_models.TouristicContent.objects.existing()\
-            .select_related('category', 'reservation_system', 'label_accessibility') \
-            .prefetch_related('source', 'themes', 'type1', 'type2',
-                              Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype__structure').order_by('starred', '-date_insert'))
-                              ) \
-            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('name')  # Required for reliable pagination
+        with translation.override(self.request.GET.get('language'), deactivate=True):
+            return tourism_models.TouristicContent.objects.existing()\
+                .select_related('category', 'reservation_system', 'label_accessibility') \
+                .prefetch_related('source', 'themes', 'type1', 'type2',
+                                  Prefetch('attachments',
+                                           queryset=Attachment.objects.select_related('license', 'filetype__structure').order_by('starred', '-date_insert'))
+                                  ) \
+                .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+                .order_by('name')  # Required for reliable pagination
 
 
 class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
@@ -65,8 +65,8 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.InformationDeskSerializer
 
     def get_queryset(self):
-        activate(self.request.GET.get('language'))
-        return tourism_models.InformationDesk.objects.select_related('label_accessibility', 'type').order_by('name')
+        with translation.override(self.request.GET.get('language'), deactivate=True):
+            return tourism_models.InformationDesk.objects.select_related('label_accessibility', 'type').order_by('name')
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -92,15 +92,15 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TouristicEventSerializer
 
     def get_queryset(self):
-        activate(self.request.GET.get('language'))
-        return tourism_models.TouristicEvent.objects.existing()\
-            .select_related('type') \
-            .prefetch_related('themes', 'source', 'portal',
-                              Prefetch('attachments',
-                                       queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
-                              ) \
-            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('name')  # Required for reliable pagination
+        with translation.override(self.request.GET.get('language'), deactivate=True):
+            return tourism_models.TouristicEvent.objects.existing()\
+                .select_related('type') \
+                .prefetch_related('themes', 'source', 'portal', 'organizers',
+                                  Prefetch('attachments',
+                                           queryset=Attachment.objects.select_related('license', 'filetype', 'filetype__structure'))
+                                  ) \
+                .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+                .order_by('begin_date')  # Required for reliable pagination
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -114,3 +114,12 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
         return tourism_models.TouristicEventPlace.objects.prefetch_related('touristicevents').annotate(
             geom_transformed=Transform('geom', settings.API_SRID)
         ).order_by('name')
+
+
+class TouristicEventOrganizerViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.TouristicEventRelatedPortalFilter
+    )
+    serializer_class = api_serializers.TouristicEventOrganizerSerializer
+    queryset = tourism_models.TouristicEventOrganizer.objects.order_by('label')

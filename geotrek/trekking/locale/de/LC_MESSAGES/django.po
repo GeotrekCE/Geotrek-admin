@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-31 11:17+0100\n"
+"POT-Creation-Date: 2024-11-08 16:23+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -59,9 +59,6 @@ msgstr "Fortgeschritten"
 
 msgid "Accessibility"
 msgstr "Zugänglichkeit"
-
-msgid "Related treks"
-msgstr "Anschlusswege"
 
 msgid "Insert service:"
 msgstr "Fügen Sie einen Service ein:"
@@ -288,9 +285,6 @@ msgstr "Weblinks"
 msgid "External resources"
 msgstr "Externe Ressourcen"
 
-msgid "Connections between treks"
-msgstr "Connexions entre les routes"
-
 msgid "Information desks"
 msgstr "Information Standorte"
 
@@ -336,10 +330,6 @@ msgstr "Eine Route hinzufügen"
 msgid "Cannot use itself as child trek."
 msgstr "Es ist nicht möglich, eine Route als eigenes Kind zu benutzen."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "route"
-
 msgid "Sensitive area"
 msgstr "Empfindlicher Bereich"
 
@@ -357,27 +347,6 @@ msgstr ""
 
 msgid "Published treks"
 msgstr "Publizierte Routen"
-
-msgid "Common departure"
-msgstr "Gemeinsame Abreise"
-
-msgid "Common edge"
-msgstr "Gemeinsame Strecken"
-
-msgid "Circuit step"
-msgstr "Schaltungsschritt"
-
-msgid "Trek relationship"
-msgstr "Netzwerke Wanderungen"
-
-msgid "Trek relationships"
-msgstr "Verbindungen zwischen den Routen"
-
-msgid "Path"
-msgstr "Strecken"
-
-msgid "Circuit"
-msgstr "Schaltkreise"
 
 msgid "Trek network"
 msgstr "Routen Netzwerk"
@@ -448,6 +417,9 @@ msgstr "Art des POI"
 msgid "POI types"
 msgstr "Arten von POIs"
 
+msgid "Public name (Change carefully)"
+msgstr ""
+
 msgid "Service type"
 msgstr "Art der Dienstleistung"
 
@@ -459,9 +431,6 @@ msgstr "Dienstleistung"
 
 msgid "Published"
 msgstr "Publiziert"
-
-msgid "Waiting for publication"
-msgstr "Warten auf die Publikation"
 
 msgid "Published Services"
 msgstr "Dienstleistungen Publiziert"
@@ -507,12 +476,6 @@ msgid ""
 "{key}"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"One trek has not be generated for {trek_parent_instance[0].name} : could not "
-"find trek with UUID {child}"
-msgstr ""
-
 msgid ""
 "An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
@@ -522,18 +485,33 @@ msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
 msgid ""
-"The geometry cannot be converted to a single continuous LineString feature"
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "Roaming"
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
+msgstr ""
 
-msgid "Itinerancy"
-msgstr "Roaming"
+msgid "Trek geometry is None"
+msgstr ""
 
-msgid "Hike"
-msgstr "Wander"
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'. Should contain coordinates"
+msgstr ""
+
+msgid "Bad value for parking geometry: should be a Point"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
+msgstr ""
 
 msgid "Attached files"
 msgstr ""
@@ -584,11 +562,8 @@ msgstr ""
 msgid "Photos accessibility"
 msgstr ""
 
-msgid "yes"
-msgstr "ja"
-
-msgid "no"
-msgstr ""
+msgid "Itinerancy"
+msgstr "Roaming"
 
 msgid "Child of:"
 msgstr "Kind von:"
@@ -720,9 +695,6 @@ msgstr "Hinzufügen eine POI"
 
 msgid "Add a new service"
 msgstr "Einen Dienst hinzufügen"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Weblink hinzufügen"

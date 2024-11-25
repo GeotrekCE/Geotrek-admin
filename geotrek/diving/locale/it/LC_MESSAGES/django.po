@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,10 +130,6 @@ msgstr ""
 msgid "Dives"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "dive"
-msgstr ""
-
 msgid "Add a new dive"
 msgstr ""
 
@@ -168,18 +164,6 @@ msgid "Touristic events"
 msgstr ""
 
 msgid "Published touristic events"
-msgstr ""
-
-msgid "Public print"
-msgstr ""
-
-msgid "Print"
-msgstr ""
-
-msgid "Public print booklet"
-msgstr ""
-
-msgid "Print booklet"
 msgstr ""
 
 msgid "Attributes"

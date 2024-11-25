@@ -69,6 +69,12 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if report.provider %}{{ report.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>
@@ -125,7 +131,7 @@
             <td colspan="3">
             {% if perms.maintenance.add_intervention %}
                 <h3>{% trans "Intervention" %}</h3>
-                    {% with columns="name,status,stake,total_cost,date" %}
+                    {% with columns="name,status,stake,total_cost,begin_date,end_date" %}
                             {% valuetable report.interventions.all columns=columns %}
                     {% endwith %}
                     {% if not suricate_workflow_enabled %}

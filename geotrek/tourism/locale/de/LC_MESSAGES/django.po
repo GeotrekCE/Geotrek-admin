@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -97,7 +97,7 @@ msgid "Phone"
 msgstr "Telefon-Nummer"
 
 msgid "Email"
-msgstr "Email"
+msgstr "Courriel"
 
 msgid "Website"
 msgstr "Site Web"
@@ -250,11 +250,14 @@ msgstr "Touristische Inhalte"
 msgid "Touristic contents"
 msgstr "Touristische Inhalte"
 
-msgid "touristic-content"
-msgstr "touristische Inhalte"
-
 msgid "Published touristic contents"
 msgstr "Veröffentlichte touristische Inhalte"
+
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
 
 msgid "Touristic event type"
 msgstr "Art der touristischen Veranstaltung"
@@ -273,6 +276,12 @@ msgstr ""
 
 msgid "Event places"
 msgstr ""
+
+msgid "Organizer"
+msgstr "Organisator"
+
+msgid "Organizers"
+msgstr "Organisatoren"
 
 msgid "Begin date"
 msgstr "Startdatum"
@@ -300,9 +309,6 @@ msgstr "11:00, 23:30"
 
 msgid "End time"
 msgstr ""
-
-msgid "Organizer"
-msgstr "Organisator"
 
 msgid "Speaker"
 msgstr "Lautsprecher"
@@ -337,6 +343,12 @@ msgstr ""
 msgid "Intervention duration"
 msgstr ""
 
+msgid "Price"
+msgstr ""
+
+msgid "0 means free"
+msgstr ""
+
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
@@ -356,9 +368,6 @@ msgstr "von der {begin}"
 #, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "von {begin} bis {end}"
-
-msgid "touristic-event"
-msgstr "touristische Veranstaltung"
 
 msgid "Display order"
 msgstr ""
@@ -450,8 +459,8 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
+msgid "Add Organizer"
+msgstr ""
+
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"
-
-#~ msgid "up to {end}"
-#~ msgstr "bis {end}"

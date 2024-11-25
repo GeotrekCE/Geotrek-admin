@@ -15,6 +15,10 @@ Cypress.Commands.add('loginByCSRF', (username, password) => {
             password,
             "csrfmiddlewaretoken": $html.find('input[name=csrfmiddlewaretoken]').val(), // insert this as part of form body
          }
-        })
-      })
-    })
+        });
+      });
+    });
+
+Cypress.Commands.add('mockTiles', (username, password) => {
+    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"}).as("tiles");
+});

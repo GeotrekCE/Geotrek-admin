@@ -13,7 +13,6 @@ from django.db.models import ProtectedError
 from django.template.loader import get_template
 from django.test import TestCase
 from django.test.utils import override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
@@ -56,8 +55,8 @@ class PathTest(TestCase):
         self.assertEqual(user.profile.structure, p1.structure)
         self.assertNotEqual(user.profile.structure, p2.structure)
 
-        self.assertEqual(len(Structure.objects.all()), 2)
-        self.assertEqual(len(Path.objects.all()), 2)
+        self.assertEqual(Structure.objects.all().count(), 2)
+        self.assertEqual(Path.objects.all().count(), 2)
 
         self.assertTrue(p1 in Path.objects.filter(structure=user.profile.structure))
         self.assertFalse(p2 in Path.objects.filter(structure=user.profile.structure))
@@ -250,7 +249,6 @@ class TrailTestDisplay(TestCase):
         t1 = TrailFactory.create()
         certif = CertificationTrailFactory.create(trail=t1)
         self.assertEqual(t1.certifications_display, f'{certif}')
-        clear_internal_user_cache()
         certif_pk = certif.pk
         trail_pk = t1.pk
         obj_repr = str(t1)
@@ -272,7 +270,7 @@ class PathVisibilityTest(TestCase):
         self.assertTrue(self.path.visible)
 
     def test_invisible_paths_do_not_appear_in_queryset(self):
-        self.assertEqual(len(Path.objects.all()), 1)
+        self.assertEqual(Path.objects.count(), 1)
 
     def test_latest_updated_bypass_invisible(self):
         self.assertEqual(Path.latest_updated(), self.path.date_update)
@@ -280,7 +278,7 @@ class PathVisibilityTest(TestCase):
     def test_splitted_paths_do_not_become_visible(self):
         PathFactory(geom=LineString((10, 0), (12, 0)), visible=False)
         PathFactory(geom=LineString((11, 1), (11, -1)))
-        self.assertEqual(len(Path.objects.all()), 3)
+        self.assertEqual(Path.objects.count(), 3)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -332,7 +330,7 @@ class PathGeometryTest(TestCase):
         """
         # Snap end
         path_snapped = PathFactory.create(geom=LineString((10, 10), (5, -1)))  # math.sin(5) == -0.96..
-        self.assertEqual(len(Path.objects.all()), 3)
+        self.assertEqual(Path.objects.all().count(), 3)
         self.assertEqual(path_snapped.geom.coords, ((10, 10), coords[5]))
 
         # Snap start

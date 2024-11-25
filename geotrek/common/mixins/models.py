@@ -6,9 +6,10 @@ import uuid
 
 from PIL.Image import DecompressionBombError
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db import models
-from django.db.models import Q, Max, Count
+from django.db.models import Max, Count
 
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -16,14 +17,15 @@ from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
+from easy_thumbnails.engine import NoSourceGenerator
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
 
 from mapentity.models import MapEntityMixin
+from modeltranslation.utils import build_localized_fieldname
 
 
 class CheckBoxActionMixin:
@@ -107,10 +109,6 @@ class PicturesMixin:
             return self._pictures
         return self.attachments.filter(is_image=True).exclude(title='mapimage').order_by('-starred', 'attachment_file')
 
-    @pictures.setter
-    def pictures(self, values):
-        self._pictures = values
-
     @property
     def serializable_pictures(self):
         serialized = []
@@ -153,18 +151,17 @@ class PicturesMixin:
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
+            except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
+                logger.warning(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
             else:
                 resized.append((picture, thdetail))
         return resized
 
-    @property
-    def picture_print(self):
+    def get_thumbnail(self, alias):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
                 logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
                 continue
@@ -174,18 +171,12 @@ class PicturesMixin:
         return None
 
     @property
+    def picture_print(self):
+        return self.get_thumbnail('print')
+
+    @property
     def thumbnail(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
-                continue
-            thumbnail.author = picture.author
-            thumbnail.legend = picture.legend
-            return thumbnail
-        return None
+        return self.get_thumbnail('small-square')
 
     def resized_picture_mobile(self, root_pk):
         pictures = self.serializable_pictures_mobile(root_pk)
@@ -203,57 +194,6 @@ class PicturesMixin:
         if thumbnail is None:
             return _("None")
         return '<img height="20" width="20" src="%s"/>' % os.path.join(settings.MEDIA_URL, thumbnail.name)
-
-    @property
-    def thumbnail_csv_display(self):
-        return '' if self.thumbnail is None else os.path.join(settings.MEDIA_URL, self.thumbnail.name)
-
-    @property
-    def serializable_thumbnail(self):
-        th = self.thumbnail
-        if not th:
-            return None
-        return os.path.join(settings.MEDIA_URL, th.name)
-
-    @property
-    def videos(self):
-        all_attachments = self.attachments.all().order_by('-starred')
-        return all_attachments.exclude(attachment_video='')
-
-    @property
-    def serializable_videos(self):
-        serialized = []
-        for att in self.videos:
-            video = detect_backend(att.attachment_video)
-            video.is_secure = True
-            try:
-                serialized.append({
-                    'author': att.author,
-                    'title': att.title,
-                    'legend': att.legend,
-                    'backend': type(video).__name__.replace('Backend', ''),
-                    'url': video.get_url(),
-                    'code': video.code,
-                })
-            except VideoDoesntExistException:
-                pass
-        return serialized
-
-    @property
-    def files(self):
-        return self.attachments.exclude(Q(is_image=True) | Q(attachment_file='')).order_by('-starred')
-
-    @property
-    def serializable_files(self):
-        serialized = []
-        for att in self.files:
-            serialized.append({
-                'author': att.author,
-                'title': att.title,
-                'legend': att.legend,
-                'url': att.attachment_file.url,
-            })
-        return serialized
 
     @property
     def sorted_attachments(self):
@@ -287,7 +227,7 @@ class BasePublishableMixin(models.Model):
             return self.published
 
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if getattr(self, 'published_%s' % language[0], False):
+            if getattr(self, build_localized_fieldname('published', language[0]), False):
                 return True
         return False
 
@@ -297,7 +237,7 @@ class BasePublishableMixin(models.Model):
         status = []
         for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % language[0], None) or False
+                published = getattr(self, build_localized_fieldname('published', language[0]), None) or False
             else:
                 published = self.published
             status.append({
@@ -312,7 +252,7 @@ class BasePublishableMixin(models.Model):
         """ Returns languages in which the object is published. """
         langs = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
-            return [language for language in langs if getattr(self, 'published_%s' % language, None)]
+            return [language for language in langs if getattr(self, build_localized_fieldname('published', language), None)]
         elif self.published:
             return langs
         else:
@@ -396,9 +336,9 @@ class PublishableMixin(BasePublishableMixin):
         picture = self.attachments.filter(is_image=True, title='mapimage').first()
         if picture:
             attached = picture.attachment_file
-            src = os.path.join(settings.MEDIA_ROOT, attached.name)
+            src = attached.path
             dst = self.get_map_image_path()
-            shutil.copyfile(src, dst)
+            shutil.copyfile(src, default_storage.path(dst))
         else:
             super().prepare_map_image(rooturl)
 
@@ -445,7 +385,7 @@ def get_uuid_duplication(uid_field):
 class GeotrekMapEntityMixin(MapEntityMixin):
     elements_duplication = {
         "attachments": {"uuid": get_uuid_duplication},
-        "avoid_fields": ["aggregations"],
+        "avoid_fields": ["aggregations", "children"],
         "uuid": get_uuid_duplication,
     }
 

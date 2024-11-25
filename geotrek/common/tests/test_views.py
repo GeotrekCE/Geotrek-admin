@@ -3,10 +3,10 @@ import shutil
 import tempfile
 from copy import deepcopy
 from io import StringIO
-from unittest import mock
+from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core.files import File
@@ -14,8 +14,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from geotrek.common.views import HDViewPointAPIViewSet
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+from mapentity.tests import SuperUserFactory
+from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
 
 import geotrek.trekking.parsers  # noqa
@@ -23,7 +23,7 @@ from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.models import FileType, HDViewPoint
 from geotrek.common.parsers import Parser
-from geotrek.common.tasks import import_datas, launch_sync_rando
+from geotrek.common.tasks import import_datas
 from geotrek.common.tests.factories import (HDViewPointFactory, LicenseFactory,
                                             TargetPortalFactory)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -107,7 +107,7 @@ class DocumentPublicPortalTest(TestCase):
 class ViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create(username='homer', password='dooh')
+        cls.user = UserFactory.create()
 
     def setUp(self):
         self.client.force_login(user=self.user)
@@ -142,31 +142,32 @@ class ViewsTest(TestCase):
 class ViewsImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory.create(username='homer', password='dooh')
-
-    def setUp(self):
-        self.client.force_login(user=self.user)
+        cls.user = UserFactory()
+        cls.super_user = SuperUserFactory()
 
     def test_import_form_access(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_dataset')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Cities')
 
     def test_import_form_access_other_language(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_dataset')
-        response = self.client.get(url, HTTP_ACCEPT_LANGUAGE='fr')
+        response = self.client.get(url, headers={"accept-language": 'fr'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Communes')
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Topology is enabled")
     def test_import_update_access(self):
+        self.client.force_login(user=self.user)
         url = reverse('common:import_update_json')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_import_from_file_good_zip_file(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
             url = reverse('common:import_dataset')
@@ -187,8 +188,7 @@ class ViewsImportTest(TestCase):
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_import_from_file_good_geojson_file(self, mocked_stdout, mocked, mocked_current_task):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
         FileType.objects.create(type="Photographie")
         mocked.side_effect = import_datas
         mocked_current_task.request.id = '1'
@@ -212,8 +212,7 @@ class ViewsImportTest(TestCase):
 
     @mock.patch('geotrek.common.tasks.import_datas.delay')
     def test_import_from_file_bad_file(self, mocked):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         Parser.label = "Test"
 
@@ -236,8 +235,7 @@ class ViewsImportTest(TestCase):
         Parser.label = None
 
     def test_import_form_no_parser_no_superuser(self):
-        self.user.is_superuser = False
-        self.user.save()
+        self.client.force_login(user=self.user)
 
         real_archive = open('geotrek/common/tests/data/test.zip', 'rb+')
         url = reverse('common:import_dataset')
@@ -254,8 +252,7 @@ class ViewsImportTest(TestCase):
         self.assertNotContains(response_real, '<form  method="post"')
 
     def test_import_from_web_bad_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         url = reverse('common:import_dataset')
 
@@ -270,8 +267,7 @@ class ViewsImportTest(TestCase):
         # There is no parser available for user not superuser
 
     def test_import_from_web_good_parser(self):
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(user=self.super_user)
 
         url = reverse('common:import_dataset')
         real_key = self.client.get(url).context['form_without_file'].fields['parser'].choices[0][0]
@@ -286,125 +282,10 @@ class ViewsImportTest(TestCase):
                                               "is not one of the available choices.".format(real_key=real_key))
 
 
-class SyncRandoViewTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.super_user = SuperUserFactory.create(username='admin', password='super')
-        cls.simple_user = User.objects.create_user(username='homer', password='doooh')
-
-    def setUp(self):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-
-    def test_get_sync_superuser(self):
-        self.client.login(username='admin', password='super')
-        response = self.client.get(reverse('common:sync_randos_view'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_sync_superuser(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.client.login(username='admin', password='super')
-        response = self.client.post(reverse('common:sync_randos'), data={})
-        self.assertRedirects(response, '/commands/syncview')
-
-    def test_get_sync_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
-        response = self.client.get(reverse('common:sync_randos_view'))
-        self.assertRedirects(response, '/login/?next=/commands/syncview')
-
-    def test_post_sync_simpleuser(self):
-        """
-        test if sync can be launched by simple user post
-        """
-        self.client.login(username='homer', password='doooh')
-        response = self.client.post(reverse('common:sync_randos'), data={})
-        self.assertRedirects(response, '/login/?next=/commands/sync')
-
-    def test_get_sync_states_superuser(self):
-        self.client.login(username='admin', password='super')
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, b'[]')
-
-    def test_get_sync_states_simpleuser(self):
-        self.client.login(username='homer', password='doooh')
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertRedirects(response, '/login/?next=/commands/statesync/')
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                           'skip_tiles': True, 'skip_pdf': True,
-                                           'skip_dem': True, 'skip_profile_png': True})
-    def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-        self.client.login(username='admin', password='super')
-        launch_sync_rando.apply()
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"infos": "Sync ended"', response.content)
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                           'skip_tiles': True, 'skip_pdf': True,
-                                           'skip_dem': True, 'skip_profile_png': True})
-    def test_get_sync_rando_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
-        self.client.login(username='admin', password='super')
-        launch_sync_rando.apply()
-        response = self.client.post(reverse('common:sync_randos_state'), data={})
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"exc_message": "This is a test"', response.content)
-
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
-    @override_settings(SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'),
-                       SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': False,
-                                           'skip_pdf': False,
-                                           'skip_dem': False, 'skip_profile_png': False})
-    def test_launch_sync_rando(self, mock_tile, mock_map_image, mocked_stdout):
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertIn("Done", log)
-        self.assertEqual(task.status, "SUCCESS")
-
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando_fail(self, mocked_stdout, command):
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertNotIn("Done", log)
-        self.assertNotIn('Sync ended', log)
-        self.assertEqual(task.status, "FAILURE")
-
-    @mock.patch('geotrek.common.management.commands.sync_rando.Command.handle', return_value=None,
-                side_effect=Exception('This is a test'))
-    @override_settings(SYNC_RANDO_ROOT=os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-    @mock.patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando', 'tmp_sync'))
-        task = launch_sync_rando.apply()
-        log = mocked_stdout.getvalue()
-        self.assertNotIn("Done", log)
-        self.assertNotIn('Sync rando ended', log)
-        self.assertEqual(task.status, "FAILURE")
-
-    def tearDown(self):
-        if os.path.exists(os.path.join(settings.TMP_DIR, 'sync_rando')):
-            shutil.rmtree(os.path.join(settings.TMP_DIR, 'sync_rando'))
-
-
 class HDViewPointViewTest(TestCase):
+    def setUp(self):
+        ContentType.objects.clear_cache()
+
     @classmethod
     def setUpTestData(cls):
         # Create objects
@@ -527,14 +408,6 @@ class HDViewPointViewTest(TestCase):
         response = self.client.get(vp.get_annotate_url())
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], HDViewPointAnnotationForm)
-
-    def test_API_viewset(self):
-        vp = HDViewPointFactory(content_object=self.trek)
-        qs = HDViewPointAPIViewSet().get_queryset()
-        transformed_geom = vp.geom.transform(settings.API_SRID, clone=True)
-        api_geom = qs.first().api_geom
-        self.assertAlmostEqual(api_geom.x, transformed_geom.x)
-        self.assertAlmostEqual(api_geom.y, transformed_geom.y)
 
     def test_viewset(self):
         self.client.force_login(user=self.user_perm)

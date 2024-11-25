@@ -8,7 +8,6 @@
       "name": {
         "fr": "Fauteuil roulant",
         "en": null,
-        "es": null,
         "it": null
       },
       "pictogram": "https://foo.fr/media/upload/accessibility-wheelchair.png"
@@ -18,7 +17,6 @@
       "name": {
         "fr": "Poussette",
         "en": null,
-        "es": null,
         "it": null
       },
       "pictogram": "https://foo.fr/media/upload/accessibility-troller.png"
@@ -28,7 +26,6 @@
       "name": {
         "fr": "Joelette",
         "en": null,
-        "es": null,
         "it": null
       },
       "pictogram": "https://foo.fr/media/upload/accessibility-joelette.png"

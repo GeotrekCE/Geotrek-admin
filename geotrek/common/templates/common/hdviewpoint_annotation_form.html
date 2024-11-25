@@ -6,17 +6,18 @@
         <div>
             <div id="controls">
                <div class="form-group annotationtype" title="Select the type of annotation to add.">
-                  <button class="lastused" id="rectangle" next="square">{% trans "Rectangle" %}</button><button id="square" next="ellipse">{% trans "Square" %}</button><button id="ellipse" next="circle">{% trans "Ellipse" %}</button><button id="circle" next="polygon">{% trans "Circle" %}</button><button id="polygon" next="point">{% trans "Polygon" %}</button><button id="point" next="line">{% trans "Point" %}</button><button id="line" next="rectangle">{% trans "Line" %}</button>
+                  <button class="lastused" id="rectangle" next="square">{% trans "Rectangle" %}</button><button id="square" next="circle">{% trans "Square" %}</button><button id="circle" next="polygon">{% trans "Circle" %}</button><button id="polygon" next="point">{% trans "Polygon" %}</button><button id="point" next="line">{% trans "Point" %}</button><button id="line" next="rectangle">{% trans "Line" %}</button>
                </div>
                {% comment %} <div class="form-group" title="If disabled, hide all annotation labels."><label for="showLabels">Show annotation labels</label><input id="showLabels" param-name="labels" type="checkbox" placeholder="true"/></div>  {% endcomment %}
                <div class="form-group" id="annotationheader">
-                  <div class="shortlabel">{% trans "Created annotations" %}</div>
+                  <div class="shortlabel">{% trans "Annotations" %}</div>
+                  <div class="shortlabel" style="padding-left: 12rem">{% trans "Categories" %}</div>
                   <a class="entry-remove-all" action="remove-all" title="Delete all annotations">&#x2716;</a>
                </div>
                <div class="form-group">
                   <div id="annotationlist">
                      <div class="entry" id="sample">
-                        <span class="entry-name">Sample</span>
+                        <input id="label_input" class="entry-name" value="Sample"/>
                         <a id="tinybuttons">
                         <span class="entry-validate" style="display: none;" action="validate" title="Validate geometry">&#10003;</span>
                         <span class="entry-adjust" action="adjust" title="Modify geometry">&#x270E;</span>
@@ -34,14 +35,10 @@
     {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
     {{object.annotations|json_script:"geojson_annotations"}}
     <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
+    <script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
     <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
-    <script type="text/javascript" src="https://opengeoscience.github.io/geojs/built/geo.min.js"></script>
+    <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
     <script>
         initializeViewer("{{base_tile_url}}", edit_annotations=true);
     </script>
 {% endblock mainpanel %}
-
-{% block extrabody %}
-  {{ block.super}}
-<script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
-{% endblock extrabody %}

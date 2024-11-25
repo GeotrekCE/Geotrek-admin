@@ -81,14 +81,10 @@ class TraductionTestCase(TestCase):
         # Test language translation for DifficultyLevel.difficulty works
         # Given the language set, it returns the appropriate version (fr, it, en)
 
-        orig_language = translation.get_language_from_request(response._request)
-
         difficulty_trad = self.get_dummy_data_trad()
         intervention_difficulty = iss[0]
 
         for language in ('fr', 'it', 'en'):
-            translation.activate(language)
-            translated_difficulty = difficulty_trad['difficulty_%s' % language]
-            self.assertEqual(intervention_difficulty.difficulty, translated_difficulty)
-
-        translation.activate(orig_language)
+            with translation.override(language):
+                translated_difficulty = difficulty_trad['difficulty_%s' % language]
+                self.assertEqual(intervention_difficulty.difficulty, translated_difficulty)

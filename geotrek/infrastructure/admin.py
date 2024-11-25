@@ -1,7 +1,8 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from geotrek.infrastructure.models import InfrastructureAccessMean, InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
+from geotrek.infrastructure.models import InfrastructureMaintenanceDifficultyLevel, InfrastructureType, InfrastructureCondition, InfrastructureUsageDifficultyLevel
 
 
 @admin.register(InfrastructureType)
@@ -15,7 +16,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
-            qs = qs.filter(structure=request.user.profile.structure)
+            qs = qs.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
         return qs
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -41,6 +42,7 @@ class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         return ('type', 'structure')
 
 
+@admin.register(InfrastructureCondition, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel)
 class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure__name')
     merge_field = "label"
@@ -51,7 +53,7 @@ class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
         """
         qs = super().get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
-            qs = qs.filter(structure=request.user.profile.structure)
+            qs = qs.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
         return qs
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -75,14 +77,3 @@ class InfrastructureSimpleFieldAdmin(MergeActionMixin, admin.ModelAdmin):
         if not request.user.has_perm('authent.can_bypass_structure'):
             return ()
         return ('structure',)
-
-
-class InfrastructureAccessMeanAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ('label',)
-    merge_field = 'label'
-
-
-admin.site.register(InfrastructureAccessMean, InfrastructureAccessMeanAdmin)
-admin.site.register(InfrastructureCondition, InfrastructureSimpleFieldAdmin)
-admin.site.register(InfrastructureMaintenanceDifficultyLevel, InfrastructureSimpleFieldAdmin)
-admin.site.register(InfrastructureUsageDifficultyLevel, InfrastructureSimpleFieldAdmin)

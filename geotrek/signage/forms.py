@@ -23,7 +23,7 @@ class LineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        fields_for_layout = ['id', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time']
+        fields_for_layout = ['id', 'number', 'direction', 'text', 'distance', 'time', 'pictograms']
 
         if not settings.DIRECTION_ON_LINES_ENABLED:
             del self.fields['direction']
@@ -34,7 +34,7 @@ class LineForm(forms.ModelForm):
         self.helper.layout = Layout(*fields_for_layout)
 
     class Meta:
-        fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'pictogram_name', 'time')
+        fields = ('id', 'blade', 'number', 'direction', 'text', 'distance', 'time', 'pictograms')
 
 
 LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
@@ -48,7 +48,7 @@ class BaseBladeForm(CommonForm):
             'number',
             'direction',
             'type',
-            'condition',
+            'conditions',
             'color',
             Fieldset(_('Lines')),
         )
@@ -57,7 +57,7 @@ class BaseBladeForm(CommonForm):
             'number',
             'direction',
             'type',
-            'condition',
+            'conditions',
             'color',
         )
     ]
@@ -107,7 +107,7 @@ class BaseBladeForm(CommonForm):
 
     class Meta:
         model = Blade
-        fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
+        fields = ['id', 'number', 'direction', 'type', 'conditions', 'color']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -168,7 +168,7 @@ class SignageForm(BaseSignageForm):
             'name',
             'description',
             'type',
-            'condition',
+            'conditions',
             'implantation_year',
             'published',
             'code',
@@ -181,4 +181,4 @@ class SignageForm(BaseSignageForm):
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
-        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing', 'access']
+        fields = BaseInfrastructureForm.Meta.fields + ['code', 'conditions', 'printed_elevation', 'manager', 'sealing', 'access']

@@ -62,6 +62,8 @@ class ReportForm(CommonForm):
         # Store current status
         if self.instance.pk:
             self.old_status = self.instance.status
+        if not self.instance.pk and settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+            self.fields["email"].help_text = _("Leave this field empty not to forward Report to Suricate")
         if settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
             if self.instance.pk:  # On updates
                 # Hide fields that are handled automatically in these modes
@@ -118,6 +120,8 @@ class ReportForm(CommonForm):
                     self.old_supervisor = None
                     self.fields["assigned_user"].widget = HiddenInput()
                     self.fields["uses_timers"].widget = HiddenInput()
+        else:  # Do not use these fields outside of worflow
+            self.fields["uses_timers"].widget = HiddenInput()
 
     def save(self, *args, **kwargs):
         creation = not self.instance.pk
@@ -160,5 +164,7 @@ class ReportForm(CommonForm):
                 report.change_position_in_suricate(force=force_gps)
         elif report.status and report.uses_timers and (creation or self.old_status != report.status):  # Outside of workflow, create timer if report is new or if its status changed
             TimerEvent.objects.create(step=report.status, report=report)
-
+        elif creation and not settings.SURICATE_WORKFLOW_ENABLED:
+            report.provider = "Geotrek-admin"
+            report.save()
         return report

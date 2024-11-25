@@ -1,24 +1,27 @@
 $(window).on('entity:map', function (e, data) {
-
+    var modelname = 'dive';
+    var layername = `${modelname}_layer`;
+	var url = window.SETTINGS.urls[layername];
+    var loaded_dive = false;
     var map = data.map;
+    var style = L.Util.extend({ clickable: false },
+        window.SETTINGS.map.styles[modelname] || {});
+    // Show dive layer in application maps
+	var layer = new L.ObjectsLayer(null, {
+		modelname: modelname,
+		style: style,
+	});
 
-    var diveLayer = {url: window.SETTINGS.urls.dive_layer, name: tr('Diving')};
-    diveLayer.isActive = false;
+    if (data.modelname != modelname){
+	    map.layerscontrol.addOverlay(layer, tr('Diving'), tr('Diving'));
+    };
 
-    var style = L.Util.extend({clickable: false},
-                              window.SETTINGS.map.styles['diving'] || {});
-    var layer = new L.ObjectsLayer(null, {
-        modelname: diveLayer.name,
-        style: style
-    });
-    map.layerscontrol.addOverlay(layer, 'Diving', tr('Diving'));
-    map.on('layeradd', function(e){
-        var options = e.layer.options || {'modelname': 'None'};
-
-        if (! diveLayer.isActive){
-            if (options.modelname == diveLayer.name){
-                e.layer.load(diveLayer.url);
-                diveLayer.isActive = true;
+    map.on('layeradd', function (e) {
+        var options = e.layer.options || { 'modelname': 'None' };
+        if (! loaded_dive) {
+            if (options.modelname == modelname && options.modelname != data.modelname) {
+                e.layer.load(url);
+                loaded_dive = true;
             }
         }
     });

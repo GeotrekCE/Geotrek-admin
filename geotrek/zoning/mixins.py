@@ -59,7 +59,7 @@ class ZoningPropertiesMixin:
         last_update_iso_format = last_update_and_count['last_update'].isoformat() if last_update_and_count[
             'last_update'] else 'no-data'
         count = last_update_and_count['count']
-        cache_string = f"areas:{self.pk}:{self.date_update.isoformat()}:{last_update_iso_format}:{count}"
+        cache_string = f"cities:{self.pk}:{self.date_update.isoformat()}:{last_update_iso_format}:{count}"
         cache_key = hashlib.md5(cache_string.encode("utf-8")).hexdigest()
         data = cache.get(cache_key)
         if data:

@@ -12,6 +12,7 @@ __pycache__/
 /.vscode/
 geotrek/settings/custom.py
 geotrek/cypress/node_modules
+Makefile.perso.mk
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
@@ -42,7 +43,6 @@ docs/_build/
 /env/
 /pyvenv.cfg
 /.env
-/docker-compose.yml
 /build/
 
 /cypress/videos/
@@ -60,3 +60,6 @@ docs/_build/
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
 /dpkg/
+/coverage.lcov
+/htmlcov/
+/.cache/

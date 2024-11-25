@@ -7,7 +7,7 @@
       "id": 2,
       "label": {
         "fr": "PR",
-        "en": null,
+        "en": "PR",
         "es": null,
         "it": null
       },
@@ -17,7 +17,7 @@
       "id": 4,
       "label": {
         "fr": "VTT",
-        "en": null,
+        "en": "Bike",
         "es": null,
         "it": null
       },
