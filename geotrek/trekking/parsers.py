@@ -1338,7 +1338,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         'arrival': 'arrivee',
         'duration': 'duree',
         'difficulty': 'difficulte',
-        'description': 'instructions',
+        'description': ('instructions', 'url'),
         'ambiance': 'presentation',
         'description_teaser': 'presentation_courte',
         'advice': 'recommandations',
@@ -1391,14 +1391,12 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         'attachments': 'medias',
         'id_local': 'id_local',
         'itineraire_parent': 'itineraire_parent',
-        'url': 'url',
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.related_treks_mapping = defaultdict(list)
         self.id_local_to_pk_mapping = {}
-        self.trek_urls = {}
         if self.url:
             response = self.request_or_retry(self.url)
             self.root = response.json()
@@ -1452,6 +1450,19 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
             return point
         except ValueError:
             self.add_warning(_("Bad value for parking geometry: should be a Point"))
+
+    def filter_description(self, src, val):
+        instructions, url = val
+        if not instructions and not url:
+            return None
+        description = ""
+        if instructions:
+            description += instructions
+        if instructions and url:
+            description += "\n\n"
+        if url:
+            description += f'<a href={url}>{url}</a>'
+        return description
 
     def filter_attachments(self, src, val):
         """Handles images only"""
@@ -1548,10 +1559,6 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                     self.add_warning(_("License '{val}' does not exist in Geotrek-Admin. Please add it").format(val=license_label))
         return license
 
-    def save_url(self, src, val):
-        if val:
-            self.trek_urls[self.obj.pk] = val
-
     def save_id_local(self, src, val):
         if val:
             self.id_local_to_pk_mapping[val] = self.obj.pk
@@ -1562,14 +1569,8 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
 
     def end(self):
         """
-        After all treks have been created:
-            - concatenate the `url` field into the description
-            - add children
+        After all treks have been created, add parent/children relationships
         """
-        for trek_pk, trek_url in self.trek_urls.items():
-            trek = Trek.objects.get(pk=trek_pk)
-            trek.description = f'{trek.description}\n\n<a href={trek_url}>{trek_url}</a>'
-            trek.save()
         for parent_id_local, child_pks in self.related_treks_mapping.items():
             parent_pk = self.id_local_to_pk_mapping.get(parent_id_local)
             try:
