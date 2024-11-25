@@ -1,5 +1,7 @@
-Welcome to Geotrek's documentation!
-===================================
+Geotrek-admin's documentation
+=============================
+
+Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and Geotrek-widget.
 
 .. toctree::
     :caption: 💡 About

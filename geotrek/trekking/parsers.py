@@ -4,25 +4,29 @@ import io
 import json
 import re
 import zipfile
+import textwrap
 from collections import defaultdict
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 from tempfile import NamedTemporaryFile
 import codecs
 import os
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point
+from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point, LineString
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
+from paperclip.models import attachment_upload, random_suffix_regexp
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.utils.file_infos import get_encoding_file
-from geotrek.common.models import Label, Theme
+from geotrek.common.models import Label, Theme, License, Attachment
 from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin,
                                     GeotrekParser, GlobalImportError, Parser,
-                                    RowImportError, ShapeParser, DownloadImportError)
+                                    RowImportError, ShapeParser, DownloadImportError,
+                                    ValueImportError)
 from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import (POI, Accessibility, DifficultyLevel,
                                      OrderedTrekChild, Service, Trek,
@@ -1315,3 +1319,272 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 _prepare_attachment_from_apidae_illustration(illustration, translation_src)
             )
         return rv
+
+
+class SchemaRandonneeParser(AttachmentParserMixin, Parser):
+    """Parser for v1.1.0 of schema_randonnee: https://github.com/PnX-SI/schema_randonnee/tree/v1.1.0"""
+    model = Trek
+    eid = 'eid'
+    separator = ','
+    srid = 4326
+
+    fields = {
+        'eid': ('uuid', 'id_local'),
+        'name': 'nom_itineraire',
+        'geom': 'geometry',
+        'practice': 'pratique',
+        'route': 'type_itineraire',
+        'departure': 'depart',
+        'arrival': 'arrivee',
+        'duration': 'duree',
+        'difficulty': 'difficulte',
+        'description': ('instructions', 'url'),
+        'ambiance': 'presentation',
+        'description_teaser': 'presentation_courte',
+        'advice': 'recommandations',
+        'accessibility_advice': 'accessibilite',
+        'accessibility_covering': 'type_sol',
+        'access': 'acces_routier',
+        'public_transport': 'transports_commun',
+        'advised_parking': 'parking_info',
+        'parking_location': 'parking_geometrie',
+    }
+    m2m_fields = {
+        'source': 'producteur',
+        'themes': 'themes',
+        'networks': 'balisage',
+    }
+    natural_keys = {
+        'source': 'name',
+        'practice': 'name',
+        'route': 'route',
+        'difficulty': 'difficulty',
+        'themes': 'label',
+        'networks': 'network',
+    }
+    field_options = {
+        'practice': {
+            "mapping": {
+                "pédestre": "Pédestre",
+                "autre": "Pédestre",
+                "trail": "Trail",
+                "gravel": "Vélo",
+                "VTT": "Vélo",
+                "cyclo": "Vélo",
+                "équestre": "Equestre",
+                "ski de fond": "Ski de fond",
+                "ski de rando": "Ski de rando",
+                "raquettes": "Raquettes",
+            },
+        },
+        'route': {
+            "mapping": {
+                "aller-retour": "Aller-retour",
+                "boucle": "Boucle",
+                "aller simple": "Aller simple",
+                "itinérance": "Itinérance",
+                "étape": "Etape",
+            },
+        },
+    }
+    non_fields = {
+        'attachments': 'medias',
+        'id_local': 'id_local',
+        'itineraire_parent': 'itineraire_parent',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.related_treks_mapping = defaultdict(list)
+        self.id_local_to_pk_mapping = {}
+        if self.url:
+            response = self.request_or_retry(self.url)
+            self.root = response.json()
+            self.items = self.root['features']
+            self.nb = len(self.items)
+
+    def parse(self, filename=None, limit=None):
+        if filename:
+            self.filename = filename
+            with open(self.filename, mode='r') as f:
+                self.root = json.load(f)
+                self.items = self.root['features']
+                self.nb = len(self.items)
+        super().parse(filename=filename, limit=limit)
+
+    def normalize_field_name(self, name):
+        return name
+
+    def next_row(self):
+        for row in self.items:
+            properties = row['properties']
+            properties['geometry'] = row.get('geometry')
+            yield properties
+
+    def filter_eid(self, src, val):
+        uuid, id_local = val
+        if uuid:
+            return uuid
+        return id_local
+
+    def filter_geom(self, src, val):
+        if val is None:
+            raise RowImportError(_('Trek geometry is None'))
+        if val.get('type') != 'LineString':
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.get('type')))
+        try:
+            geom = LineString(val['coordinates'], srid=self.srid)
+        except KeyError:
+            raise RowImportError(_("Invalid geometry for field '{src}'. Should contain coordinates").format(src=src))
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_parking_location(self, src, val):
+        if val is None:
+            return None
+        try:
+            point = GEOSGeometry(val, srid=self.srid)
+            if not isinstance(point, Point):
+                raise ValueError
+            point.transform(settings.SRID)
+            return point
+        except ValueError:
+            self.add_warning(_("Bad value for parking geometry: should be a Point"))
+
+    def filter_description(self, src, val):
+        instructions, url = val
+        if not instructions and not url:
+            return None
+        description = ""
+        if instructions:
+            description += instructions
+        if instructions and url:
+            description += "\n\n"
+        if url:
+            description += f'<a href={url}>{url}</a>'
+        return description
+
+    def filter_attachments(self, src, val):
+        """Handles images only"""
+        if val is None:
+            return []
+        attachments = []
+        for media in val:
+            if media.get('url') is None or media.get('type_media') != 'image':
+                continue
+            attachments.append((
+                media.get('url'),
+                media.get('titre'),
+                media.get('auteur'),
+                media.get('titre'),
+                media.get('licence'),
+            ))
+        return attachments
+
+    def generate_attachments(self, src, val, attachments_to_delete, updated):
+        attachments = []
+        for url, legend, author, title, license_label in self.filter_attachments(src, val):
+            url = self.base_url + url
+            legend = legend or ""
+            author = author or ""
+            title = title or ""
+            license = self.get_or_create_license(license_label)
+            basename, ext = os.path.splitext(os.path.basename(url))
+            name = '%s%s' % (basename[:128], ext)
+            found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
+                                                           legend=legend, author=author, title=title, license_label=license_label)
+            if found:
+                continue
+
+            parsed_url = urlparse(url)
+            attachment = self.generate_attachment(author=author, legend=legend, title=title, license=license)
+            try:
+                save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
+                if not save:
+                    continue
+            except ValueImportError as warning:
+                self.add_warning(str(warning))
+                continue
+            attachments.append(attachment)
+            updated = True
+        return updated, attachments
+
+    def generate_attachment(self, **kwargs):
+        attachment = Attachment()
+        attachment.content_object = self.obj
+        attachment.filetype = self.filetype
+        attachment.creator = self.creator
+        attachment.author = kwargs.get('author')
+        attachment.legend = textwrap.shorten(kwargs.get('legend', ''), width=127)
+        attachment.license = kwargs.get('license')
+        attachment.title = textwrap.shorten(kwargs.get('title', ''), width=127)
+        return attachment
+
+    def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
+        found = False
+        for attachment in attachments_to_delete:
+            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name')))
+            existing_name = attachment.attachment_file.name
+            regexp = f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
+            if re.search(r"^{regexp}$".format(regexp=regexp), existing_name) and not self.has_size_changed(kwargs.get('url'), attachment):
+                found = True
+                attachments_to_delete.remove(attachment)
+                if (
+                        kwargs.get('author') != attachment.author
+                        or kwargs.get('legend') != attachment.legend
+                        or kwargs.get('title') != attachment.title
+                        or (kwargs.get('license_label') and not attachment.license)
+                        or (attachment.license and kwargs.get('license_label') != attachment.license.label)
+                ):
+                    attachment.author = kwargs.get('author')
+                    attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+                    attachment.title = textwrap.shorten(kwargs.get('title'), width=127)
+                    attachment.license = self.get_or_create_license(kwargs.get('license_label'))
+                    attachment.save(**{'skip_file_save': True})
+                    updated = True
+                break
+        return found, updated
+
+    def get_or_create_license(self, license_label):
+        license = None
+        if license_label is not None:
+            try:
+                license = License.objects.get(label=license_label)
+            except License.DoesNotExist:
+                attachment_options = self.field_options.get('attachments')
+                if attachment_options and attachment_options.get('create_license'):
+                    license = License.objects.create(label=license_label)
+                    self.add_warning(_("License '{val}' did not exist in Geotrek-Admin and was automatically created").format(val=license_label))
+                else:
+                    self.add_warning(_("License '{val}' does not exist in Geotrek-Admin. Please add it").format(val=license_label))
+        return license
+
+    def save_id_local(self, src, val):
+        if val:
+            self.id_local_to_pk_mapping[val] = self.obj.pk
+
+    def save_itineraire_parent(self, src, val):
+        if val:
+            self.related_treks_mapping[val].append(self.obj.pk)
+
+    def end(self):
+        """
+        After all treks have been created, add parent/children relationships
+        """
+        for parent_id_local, child_pks in self.related_treks_mapping.items():
+            parent_pk = self.id_local_to_pk_mapping.get(parent_id_local)
+            try:
+                parent_trek = Trek.objects.get(pk=parent_pk)
+            except Trek.DoesNotExist:
+                continue
+            order = 0
+            for child_pk in child_pks:
+                child_trek = Trek.objects.get(pk=child_pk)
+                otc, _ = OrderedTrekChild.objects.get_or_create(
+                    parent=parent_trek,
+                    child=child_trek
+                )
+                otc.order = order
+                otc.save()
+                order += 1
+        super().end()

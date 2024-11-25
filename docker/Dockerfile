@@ -18,7 +18,7 @@ ENV TZ=UTC
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
-RUN useradd -M -s /bin/false geotrek && chown geotrek:geotrek -R /opt
+RUN useradd -m -d /opt/geotrek-admin -s /bin/false geotrek && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
@@ -70,7 +70,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
 
 USER geotrek
 RUN python3 -m venv /opt/venv
-RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
+RUN /opt/venv/bin/pip install --no-cache-dir -U "pip<24.3" setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 

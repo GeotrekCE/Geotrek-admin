@@ -2,8 +2,30 @@
 CHANGELOG
 =========
 
-2.109.3+dev     (XXXX-XX-XX)
+2.110.0+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Improvements**
+
+- Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
+- Fix SchemaRandonneeParser url update when description is null or was not updated (#4022)
+
+**Documentation**
+
+- Update documentation for release and update obsolete example
+- Add note about certbot ssl configuration in nginx
+
+
+2.110.0     (2024-11-13)
+----------------------------
+
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
 
 
 2.109.3     (2024-10-29)

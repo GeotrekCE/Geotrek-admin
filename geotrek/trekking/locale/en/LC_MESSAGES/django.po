@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-03 15:01+0000\n"
+"POT-Creation-Date: 2024-11-08 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -461,12 +461,6 @@ msgid ""
 "{key}"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"One trek has not be generated for {trek_parent_instance[0].name} : could not "
-"find trek with UUID {child}"
-msgstr ""
-
 msgid ""
 "An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
@@ -483,6 +477,25 @@ msgstr ""
 msgid ""
 "Geometries from various features cannot be converted to a single continuous "
 "LineString feature"
+msgstr ""
+
+msgid "Trek geometry is None"
+msgstr ""
+
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'. Should contain coordinates"
+msgstr ""
+
+msgid "Bad value for parking geometry: should be a Point"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
 msgstr ""
 
 msgid "Attached files"
