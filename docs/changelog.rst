@@ -16,6 +16,7 @@ CHANGELOG
 **Documentation**
 
 - Update documentation for release and update obsolete example
+- Add note about certbot ssl configuration in nginx
 
 
 2.110.0     (2024-11-13)
