@@ -10,7 +10,7 @@ on:
   push:
     branches:
       - master
-      - improve_docker_image
+      - improve_docker_image_2
     paths-ignore:
       - 'docs/**'
   release:
