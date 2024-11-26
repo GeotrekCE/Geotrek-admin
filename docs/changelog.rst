@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+- Improve sync mobile and import views with current bootstrap style.
 - Docker image is now mirrored on github registry
 
 **Bug fixes**
@@ -936,7 +937,6 @@ In preparation for HD Views developments (PR #3298)
 
 - Show direction on lines with setting ``DIRECTION_ON_LINES_ENABLED`` in signage detail
 - Add mobile nginx configuration directly on Geotrek-admin
-- Improve sync rando, sync mobile and import views.
 
 **Bug fixes**
 
