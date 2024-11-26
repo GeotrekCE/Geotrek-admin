@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+- Docker image is now mirrored on github registry
 
 **Bug fixes**
 
