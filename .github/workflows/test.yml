@@ -456,9 +456,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: 
-            - geotrekce/admin
-            - ghcr.io/geotrek-admin
+          images:  |
+            geotrekce/admin
+            ghcr.io/geotrek-admin
 
       - name: Build and push image
         uses: docker/build-push-action@v6
