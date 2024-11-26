@@ -1,5 +1,3 @@
-version: "3"
-
 x-images:
   django: &django
     image: geotrek
@@ -7,6 +5,8 @@ x-images:
       context: .
       dockerfile: ./docker/Dockerfile
       target: dev
+      args:
+          BASE_IMAGE: focal
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
@@ -15,7 +15,7 @@ x-images:
 
 services:
   postgres:
-    image: postgis/postgis:11-2.5
+    image: postgis/postgis:12-2.5
     env_file:
       - .env
     ports:

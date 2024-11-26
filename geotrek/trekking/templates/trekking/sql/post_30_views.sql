@@ -170,11 +170,12 @@ LEFT JOIN
          GROUP BY topo_object_id) h_{{lang}} ON a.topo_object_id = h_{{lang}}.topo_object_id
 {% endfor %}
 LEFT JOIN
-    (SELECT a.name,
+    (SELECT  array_to_string(ARRAY_AGG (a.name ORDER BY a.id), ',', '_') as name,
             topo_object_id
      FROM common_recordsource a
      JOIN trekking_trek_source b ON a.id = b.recordsource_id
-     JOIN trekking_trek c ON b.trek_id = c.topo_object_id) i ON a.topo_object_id = i.topo_object_id
+     JOIN trekking_trek c ON b.trek_id = c.topo_object_id
+         GROUP BY topo_object_id) i ON a.topo_object_id = i.topo_object_id
 LEFT JOIN
     (SELECT array_to_string(ARRAY_AGG (a.url ORDER BY a.id), ',', '_') url,
             d.topo_object_id

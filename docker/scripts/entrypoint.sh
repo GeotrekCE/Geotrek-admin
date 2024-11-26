@@ -5,7 +5,6 @@ set -e
 mkdir -p /opt/geotrek-admin/var/static \
          /opt/geotrek-admin/var/conf/extra_static \
          /opt/geotrek-admin/var/media/upload \
-         /opt/geotrek-admin/var/data \
          /opt/geotrek-admin/var/cache/sessions \
          /opt/geotrek-admin/var/cache/api_v2 \
          /opt/geotrek-admin/var/cache/fat \
@@ -27,7 +26,6 @@ fi
 # Activate venv
 . /opt/venv/bin/activate
 
-# Defaults POSTGRES_HOST to Docker host IP
 export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
 
 # Defaults SECRET_KEY to a random value

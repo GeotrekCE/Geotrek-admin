@@ -1,3 +1,5 @@
+import datetime
+import os
 from unittest import skipIf
 
 from bs4 import BeautifulSoup
@@ -9,10 +11,10 @@ from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
-from geotrek.common.tests.factories import LabelFactory
-from mapentity.middleware import clear_internal_user_cache
+from easy_thumbnails.files import ThumbnailFile
 
-from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
+
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
                                      Trek)
@@ -26,7 +28,13 @@ from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
-class TrekTest(TranslationResetMixin, TestCase):
+class TrekTest(TestCase):
+    def test_is_public_if_parent_published(self):
+        t = TrekFactory.create(published=False)
+        parent = TrekFactory.create(published=True)
+        OrderedTrekChild.objects.create(parent=parent, child=t)
+        self.assertTrue(t.is_public())
+
     def test_is_publishable(self):
         t = TrekFactory.create()
         t.geom = LineString((0, 0), (1, 1))
@@ -97,7 +105,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml, 'lxml')
+        parsed = BeautifulSoup(kml, features='xml')
         for placemark in parsed.findAll('placemark'):
             coordinates = placemark.find('coordinates')
             tuples = [s.split(',') for s in coordinates.string.split(' ')]
@@ -158,8 +166,33 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
+    def test_pictures_print_thumbnail_correct_picture(self):
+        trek = TrekFactory()
+        AttachmentImageFactory.create_batch(5, content_object=trek)
+        self.assertEqual(trek.pictures.count(), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5, os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path)))
+        self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
-class TrekPublicationDateTest(TranslationResetMixin, TestCase):
+    def test_pictures_print_thumbnail_wrong_picture(self):
+        trek = TrekFactory()
+        error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
+        os.unlink(error_image_attachment.attachment_file.path)
+        self.assertIsNone(trek.picture_print)
+
+    def test_pictures_print_thumbnail_no_picture(self):
+        trek = TrekFactory()
+        self.assertEqual(trek.pictures.count(), 0)
+        self.assertIsNone(trek.picture_print, ThumbnailFile)
+
+    def test_thumbnail(self):
+        trek = TrekFactory()
+        AttachmentImageFactory(content_object=trek)
+        self.assertTrue(isinstance(trek.thumbnail, ThumbnailFile))
+        self.assertIsNotNone(trek.thumbnail)
+        self.assertIn(trek.thumbnail.name, trek.thumbnail_display)
+
+
+class TrekPublicationDateTest(TestCase):
     def setUp(self):
         self.trek = TrekFactory.create(published=False)
 
@@ -178,7 +211,6 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertIsNone(self.trek.publication_date)
 
     def test_date_is_not_updated_when_saved_again(self):
-        import datetime
         self.test_takes_current_date_when_published_becomes_true()
         old_date = datetime.date(2003, 8, 6)
         self.trek.publication_date = old_date
@@ -186,7 +218,7 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertEqual(self.trek.publication_date, old_date)
 
 
-class RelatedObjectsTest(TranslationResetMixin, TestCase):
+class RelatedObjectsTest(TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
 
@@ -488,7 +520,6 @@ class RatingTest(TestCase):
 class CascadedDeletionLoggingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        clear_internal_user_cache()
         cls.practice = PracticeFactory(name="Pratice A")
         cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
         cls.rating = RatingFactory(scale=cls.scale)
@@ -496,7 +527,6 @@ class CascadedDeletionLoggingTest(TestCase):
         cls.weblink = WebLinkFactory(category=cls.categ)
 
     def test_cascading_from_practice(self):
-        clear_internal_user_cache()
         practice_pk = self.practice.pk
         self.practice.delete()
         rating_model_num = ContentType.objects.get_for_model(Rating).pk
@@ -510,7 +540,6 @@ class CascadedDeletionLoggingTest(TestCase):
 
 
 class TrekLabelsTestCase(TestCase):
-
     def setUp(self):
         self.trek = TrekFactory()
         self.published_label = LabelFactory(published=True)

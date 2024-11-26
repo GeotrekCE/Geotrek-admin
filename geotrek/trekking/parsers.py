@@ -1,26 +1,32 @@
+from pathlib import PurePath
+
 import io
 import json
 import re
 import zipfile
+import textwrap
 from collections import defaultdict
 from datetime import date, timedelta, datetime
 from decimal import Decimal
 from tempfile import NamedTemporaryFile
 import codecs
 import os
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point
+from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point, LineString
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
+from paperclip.models import attachment_upload, random_suffix_regexp
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.utils.file_infos import get_encoding_file
-from geotrek.common.models import Label, Theme
+from geotrek.common.models import Label, Theme, License, Attachment
 from geotrek.common.parsers import (ApidaeBaseParser, AttachmentParserMixin,
                                     GeotrekParser, GlobalImportError, Parser,
-                                    RowImportError, ShapeParser)
+                                    RowImportError, ShapeParser, DownloadImportError,
+                                    ValueImportError)
 from geotrek.core.models import Path, Topology
 from geotrek.trekking.models import (POI, Accessibility, DifficultyLevel,
                                      OrderedTrekChild, Service, Trek,
@@ -147,6 +153,7 @@ class GeotrekTrekParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         "difficulty": "trek_difficulty",
         "route": "trek_route",
         "themes": "theme",
@@ -157,6 +164,7 @@ class GeotrekTrekParser(GeotrekParser):
         'source': 'source'
     }
     categories_keys_api_v2 = {
+        'structure': 'name',
         'difficulty': 'label',
         'route': 'route',
         'themes': 'label',
@@ -167,6 +175,7 @@ class GeotrekTrekParser(GeotrekParser):
         'source': 'name'
     }
     natural_keys = {
+        'structure': 'name',
         'difficulty': 'difficulty',
         'route': 'route',
         'themes': 'label',
@@ -190,20 +199,53 @@ class GeotrekTrekParser(GeotrekParser):
             geom = GEOSGeometry(json.dumps(val))
             return geom.transform(settings.SRID, clone=True)
 
+    def fetch_missing_categories_for_tour_steps(self, step):
+        # For all categories, search missing values in mapping
+        for category, route in self.url_categories.items():
+            category_mapping = self.field_options.get(category, {}).get('mapping', {})
+            category_values = step.get(category)
+            if not isinstance(category_values, list):
+                category_values = [category_values]
+            for value in category_values:
+                # If category PK is not found in mapping, fetch it from provider
+                if value is not None and value not in list(category_mapping.keys()):
+                    if self.categories_keys_api_v2.get(category):
+                        try:
+                            result = self.request_or_retry(f"{self.url}/api/v2/{route}/{int(value)}").json()
+                        except DownloadImportError:
+                            self.add_warning(f"Could not download {category} with id {value} from {self.provider}"
+                                             f" for Tour step {step.get('uuid')}")
+                            continue
+                        # Update mapping like we usually do
+                        label = result[self.categories_keys_api_v2[category]]
+                        if isinstance(result[self.categories_keys_api_v2[category]], dict):
+                            if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                                self.field_options[category]["mapping"][value] = self.replace_mapping(label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE], route)
+                        else:
+                            if label:
+                                self.field_options[category]["mapping"][value] = self.replace_mapping(label, category)
+
     def end(self):
         """Add children after all treks imported are created in database."""
-        super().end()
         self.next_url = f"{self.url}/api/v2/tour"
+        portals = self.portals_filter
         try:
             params = {
                 'in_bbox': ','.join([str(coord) for coord in self.bbox.extent]),
-                'fields': 'steps,uuid'
+                'fields': 'steps,id,uuid,published',
+                'portals': ','.join(portals) if portals else ''
             }
             response = self.request_or_retry(f"{self.next_url}", params=params)
             results = response.json()['results']
+            steps_to_download = 0
             final_children = {}
             for result in results:
-                final_children[result['uuid']] = [step['uuid'] for step in result['steps']]
+                final_children[result['uuid']] = []
+                for step in result['steps']:
+                    final_children[result['uuid']].append(step['id'])
+                    if not any(step['published'].values()):
+                        steps_to_download += 1
+            self.nb = steps_to_download
 
             for key, value in final_children.items():
                 if value:
@@ -212,18 +254,21 @@ class GeotrekTrekParser(GeotrekParser):
                         self.add_warning(_(f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"))
                         return
                     order = 0
-                    for child in value:
-                        try:
-                            trek_child_instance = Trek.objects.get(eid=child)
-                        except Trek.DoesNotExist:
-                            self.add_warning(_(f"One trek has not be generated for {trek_parent_instance[0].name} : could not find trek with UUID {child}"))
-                            continue
+                    for child_id in value:
+                        response = self.request_or_retry(f"{self.url}/api/v2/trek/{child_id}")
+                        child_trek = response.json()
+                        # The Tour step might be linked to categories that are not published,
+                        # we have to retrieve the missing ones first
+                        self.fetch_missing_categories_for_tour_steps(child_trek)
+                        self.parse_row(child_trek)
+                        trek_child_instance = self.obj
                         OrderedTrekChild.objects.update_or_create(parent=trek_parent_instance[0],
                                                                   child=trek_child_instance,
                                                                   defaults={'order': order})
                         order += 1
         except Exception as e:
             self.add_warning(_(f"An error occured in children generation : {getattr(e, 'message', repr(e))}"))
+        super().end()
 
 
 class GeotrekServiceParser(GeotrekParser):
@@ -239,12 +284,15 @@ class GeotrekServiceParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         "type": "service_type",
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         'type': 'name',
     }
     natural_keys = {
+        "structure": "name",
         'type': 'name'
     }
 
@@ -266,12 +314,15 @@ class GeotrekPOIParser(GeotrekParser):
         "geom": "geometry"
     }
     url_categories = {
+        "structure": "structure",
         "type": "poi_type",
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         'type': 'label',
     }
     natural_keys = {
+        "structure": "name",
         'type': 'label',
     }
 
@@ -426,6 +477,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             'informationsEquipement.itineraire.referencesCartographiques',
             'informationsEquipement.itineraire.referencesTopoguides',
         ),
+        'structure': 'gestion.membreProprietaire.nom',
     }
     m2m_fields = {
         'source': 'gestion.membreProprietaire',
@@ -439,11 +491,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         'themes': 'label',
         'labels': 'name',
         'difficulty': 'difficulty',
-        'related_treks': 'eid',
         'practice': 'name',
         'networks': 'network',
         'route': 'route',
         'accessibilities': 'name',
+        'structure': 'name',
     }
     field_options = {
         'source': {'create': True},
@@ -468,6 +520,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         },
         'accessibilities': {'create': True},
         'geom': {'required': True},
+        'structure': {'create': True},
     }
     non_fields = {
         'attachments': 'illustrations',
@@ -636,7 +689,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plan = self._find_first_plan_with_supported_file_extension(val, supported_extensions)
         geom_file = self._fetch_geometry_file(plan)
 
-        ext = plan['traductionFichiers'][0]['extension']
+        ext = self._get_plan_extension(plan)
         if ext == 'gpx':
             return ApidaeTrekParser._get_geom_from_gpx(geom_file)
         elif ext == 'kml':
@@ -683,7 +736,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             val=[manager['nom']]
         )
         source = sources[0]
-        source.website = manager['siteWeb']
+        source.website = manager.get('siteWeb')
         source.save()
         return sources
 
@@ -891,13 +944,25 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         plans = [item for item in items if item['type'] == 'PLAN']
         if not plans:
             raise RowImportError('The trek from APIDAE has no attachment with the type "PLAN"')
-        supported_plans = [plan for plan in plans if plan['traductionFichiers'][0]['extension'] in supported_extensions]
+        supported_plans = [plan for plan in plans if
+                           ApidaeTrekParser._get_plan_extension(plan) in supported_extensions]
         if not supported_plans:
             raise RowImportError(
                 "The trek from APIDAE has no attached \"PLAN\" in a supported format. "
                 f"Supported formats are : {', '.join(supported_extensions)}"
             )
         return supported_plans[0]
+
+    @staticmethod
+    def _get_plan_extension(plan):
+        info_fichier = plan['traductionFichiers'][0]
+        extension_prop = info_fichier.get('extension')
+        if extension_prop:
+            return extension_prop
+        url_suffix = PurePath(info_fichier['url']).suffix
+        if url_suffix:
+            return url_suffix.split('.')[1]
+        return None
 
     @staticmethod
     def _get_geom_from_gpx(data):
@@ -914,6 +979,8 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 geos = ApidaeTrekParser._maybe_get_linestring_from_layer(layer)
                 if geos:
                     break
+            else:
+                raise RowImportError("No LineString feature found in GPX layers tracks or routes")
             geos.transform(settings.SRID)
             return geos
 
@@ -987,13 +1054,24 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     def _maybe_get_linestring_from_layer(layer):
         if layer.num_feat == 0:
             return None
-        first_feature = layer[0]
-        geos = ApidaeTrekParser._convert_to_geos(first_feature.geom)
-        if geos.geom_type == 'MultiLineString':
-            geos = geos.merged
+        geoms = []
+        for feat in layer:
+            if feat.geom.num_coords == 0:
+                continue
+            geos = ApidaeTrekParser._convert_to_geos(feat.geom)
             if geos.geom_type == 'MultiLineString':
-                raise RowImportError(_("The geometry cannot be converted to a single continuous LineString feature"))
-        return geos
+                geos = geos.merged  # If possible we merge the MultiLineString into a LineString
+                if geos.geom_type == 'MultiLineString':
+                    raise RowImportError(_("Feature geometry cannot be converted to a single continuous LineString feature"))
+            geoms.append(geos)
+
+        full_geom = MultiLineString(geoms)
+        full_geom.srid = geoms[0].srid
+        full_geom = full_geom.merged  # If possible we merge the MultiLineString into a LineString
+        if full_geom.geom_type == 'MultiLineString':
+            raise RowImportError(_("Geometries from various features cannot be converted to a single continuous LineString feature"))
+
+        return full_geom
 
     @staticmethod
     def _find_matching_practice_in_mapping(activities_ids, mapping):
@@ -1084,12 +1162,19 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     @staticmethod
     def _make_duration(duration_in_minutes=None, duration_in_days=None):
-        """Returns the duration in hours. The method expects one argument or the other, not both. If both arguments have
-         non-zero values the method only considers `duration_in_minutes` and discards `duration_in_days`."""
-        if duration_in_minutes:
-            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
-        elif duration_in_days:
+        """Returns the duration in hours. There are 2 use cases:
+
+        1. the parsed trek is a one-day trip: only the duration in minutes is provided from Apiade.
+        2. the parsed trek is a multiple-day trip: the duration_in_days is provided. The duration_in_minutes may be provided
+          as a crude indication of how long each step is. That second value does not fit in Geotrek model.
+
+        So the duration_in_days is used if provided (and duration_in_minutes discarded), it means we are in the use case 2.
+        Otherwise the duration_in_minutes is used, it means use case 1.
+        """
+        if duration_in_days:
             return float(duration_in_days * 24)
+        elif duration_in_minutes:
+            return float((Decimal(duration_in_minutes) / Decimal(60)).quantize(Decimal('.01')))
         else:
             return None
 
@@ -1234,3 +1319,272 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 _prepare_attachment_from_apidae_illustration(illustration, translation_src)
             )
         return rv
+
+
+class SchemaRandonneeParser(AttachmentParserMixin, Parser):
+    """Parser for v1.1.0 of schema_randonnee: https://github.com/PnX-SI/schema_randonnee/tree/v1.1.0"""
+    model = Trek
+    eid = 'eid'
+    separator = ','
+    srid = 4326
+
+    fields = {
+        'eid': ('uuid', 'id_local'),
+        'name': 'nom_itineraire',
+        'geom': 'geometry',
+        'practice': 'pratique',
+        'route': 'type_itineraire',
+        'departure': 'depart',
+        'arrival': 'arrivee',
+        'duration': 'duree',
+        'difficulty': 'difficulte',
+        'description': ('instructions', 'url'),
+        'ambiance': 'presentation',
+        'description_teaser': 'presentation_courte',
+        'advice': 'recommandations',
+        'accessibility_advice': 'accessibilite',
+        'accessibility_covering': 'type_sol',
+        'access': 'acces_routier',
+        'public_transport': 'transports_commun',
+        'advised_parking': 'parking_info',
+        'parking_location': 'parking_geometrie',
+    }
+    m2m_fields = {
+        'source': 'producteur',
+        'themes': 'themes',
+        'networks': 'balisage',
+    }
+    natural_keys = {
+        'source': 'name',
+        'practice': 'name',
+        'route': 'route',
+        'difficulty': 'difficulty',
+        'themes': 'label',
+        'networks': 'network',
+    }
+    field_options = {
+        'practice': {
+            "mapping": {
+                "pédestre": "Pédestre",
+                "autre": "Pédestre",
+                "trail": "Trail",
+                "gravel": "Vélo",
+                "VTT": "Vélo",
+                "cyclo": "Vélo",
+                "équestre": "Equestre",
+                "ski de fond": "Ski de fond",
+                "ski de rando": "Ski de rando",
+                "raquettes": "Raquettes",
+            },
+        },
+        'route': {
+            "mapping": {
+                "aller-retour": "Aller-retour",
+                "boucle": "Boucle",
+                "aller simple": "Aller simple",
+                "itinérance": "Itinérance",
+                "étape": "Etape",
+            },
+        },
+    }
+    non_fields = {
+        'attachments': 'medias',
+        'id_local': 'id_local',
+        'itineraire_parent': 'itineraire_parent',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.related_treks_mapping = defaultdict(list)
+        self.id_local_to_pk_mapping = {}
+        if self.url:
+            response = self.request_or_retry(self.url)
+            self.root = response.json()
+            self.items = self.root['features']
+            self.nb = len(self.items)
+
+    def parse(self, filename=None, limit=None):
+        if filename:
+            self.filename = filename
+            with open(self.filename, mode='r') as f:
+                self.root = json.load(f)
+                self.items = self.root['features']
+                self.nb = len(self.items)
+        super().parse(filename=filename, limit=limit)
+
+    def normalize_field_name(self, name):
+        return name
+
+    def next_row(self):
+        for row in self.items:
+            properties = row['properties']
+            properties['geometry'] = row.get('geometry')
+            yield properties
+
+    def filter_eid(self, src, val):
+        uuid, id_local = val
+        if uuid:
+            return uuid
+        return id_local
+
+    def filter_geom(self, src, val):
+        if val is None:
+            raise RowImportError(_('Trek geometry is None'))
+        if val.get('type') != 'LineString':
+            raise RowImportError(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.get('type')))
+        try:
+            geom = LineString(val['coordinates'], srid=self.srid)
+        except KeyError:
+            raise RowImportError(_("Invalid geometry for field '{src}'. Should contain coordinates").format(src=src))
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_parking_location(self, src, val):
+        if val is None:
+            return None
+        try:
+            point = GEOSGeometry(val, srid=self.srid)
+            if not isinstance(point, Point):
+                raise ValueError
+            point.transform(settings.SRID)
+            return point
+        except ValueError:
+            self.add_warning(_("Bad value for parking geometry: should be a Point"))
+
+    def filter_description(self, src, val):
+        instructions, url = val
+        if not instructions and not url:
+            return None
+        description = ""
+        if instructions:
+            description += instructions
+        if instructions and url:
+            description += "\n\n"
+        if url:
+            description += f'<a href={url}>{url}</a>'
+        return description
+
+    def filter_attachments(self, src, val):
+        """Handles images only"""
+        if val is None:
+            return []
+        attachments = []
+        for media in val:
+            if media.get('url') is None or media.get('type_media') != 'image':
+                continue
+            attachments.append((
+                media.get('url'),
+                media.get('titre'),
+                media.get('auteur'),
+                media.get('titre'),
+                media.get('licence'),
+            ))
+        return attachments
+
+    def generate_attachments(self, src, val, attachments_to_delete, updated):
+        attachments = []
+        for url, legend, author, title, license_label in self.filter_attachments(src, val):
+            url = self.base_url + url
+            legend = legend or ""
+            author = author or ""
+            title = title or ""
+            license = self.get_or_create_license(license_label)
+            basename, ext = os.path.splitext(os.path.basename(url))
+            name = '%s%s' % (basename[:128], ext)
+            found, updated = self.check_attachment_updated(attachments_to_delete, updated, name=name, url=url,
+                                                           legend=legend, author=author, title=title, license_label=license_label)
+            if found:
+                continue
+
+            parsed_url = urlparse(url)
+            attachment = self.generate_attachment(author=author, legend=legend, title=title, license=license)
+            try:
+                save, updated = self.generate_content_attachment(attachment, parsed_url, url, updated, name)
+                if not save:
+                    continue
+            except ValueImportError as warning:
+                self.add_warning(str(warning))
+                continue
+            attachments.append(attachment)
+            updated = True
+        return updated, attachments
+
+    def generate_attachment(self, **kwargs):
+        attachment = Attachment()
+        attachment.content_object = self.obj
+        attachment.filetype = self.filetype
+        attachment.creator = self.creator
+        attachment.author = kwargs.get('author')
+        attachment.legend = textwrap.shorten(kwargs.get('legend', ''), width=127)
+        attachment.license = kwargs.get('license')
+        attachment.title = textwrap.shorten(kwargs.get('title', ''), width=127)
+        return attachment
+
+    def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
+        found = False
+        for attachment in attachments_to_delete:
+            upload_name, ext = os.path.splitext(attachment_upload(attachment, kwargs.get('name')))
+            existing_name = attachment.attachment_file.name
+            regexp = f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
+            if re.search(r"^{regexp}$".format(regexp=regexp), existing_name) and not self.has_size_changed(kwargs.get('url'), attachment):
+                found = True
+                attachments_to_delete.remove(attachment)
+                if (
+                        kwargs.get('author') != attachment.author
+                        or kwargs.get('legend') != attachment.legend
+                        or kwargs.get('title') != attachment.title
+                        or (kwargs.get('license_label') and not attachment.license)
+                        or (attachment.license and kwargs.get('license_label') != attachment.license.label)
+                ):
+                    attachment.author = kwargs.get('author')
+                    attachment.legend = textwrap.shorten(kwargs.get('legend'), width=127)
+                    attachment.title = textwrap.shorten(kwargs.get('title'), width=127)
+                    attachment.license = self.get_or_create_license(kwargs.get('license_label'))
+                    attachment.save(**{'skip_file_save': True})
+                    updated = True
+                break
+        return found, updated
+
+    def get_or_create_license(self, license_label):
+        license = None
+        if license_label is not None:
+            try:
+                license = License.objects.get(label=license_label)
+            except License.DoesNotExist:
+                attachment_options = self.field_options.get('attachments')
+                if attachment_options and attachment_options.get('create_license'):
+                    license = License.objects.create(label=license_label)
+                    self.add_warning(_("License '{val}' did not exist in Geotrek-Admin and was automatically created").format(val=license_label))
+                else:
+                    self.add_warning(_("License '{val}' does not exist in Geotrek-Admin. Please add it").format(val=license_label))
+        return license
+
+    def save_id_local(self, src, val):
+        if val:
+            self.id_local_to_pk_mapping[val] = self.obj.pk
+
+    def save_itineraire_parent(self, src, val):
+        if val:
+            self.related_treks_mapping[val].append(self.obj.pk)
+
+    def end(self):
+        """
+        After all treks have been created, add parent/children relationships
+        """
+        for parent_id_local, child_pks in self.related_treks_mapping.items():
+            parent_pk = self.id_local_to_pk_mapping.get(parent_id_local)
+            try:
+                parent_trek = Trek.objects.get(pk=parent_pk)
+            except Trek.DoesNotExist:
+                continue
+            order = 0
+            for child_pk in child_pks:
+                child_trek = Trek.objects.get(pk=child_pk)
+                otc, _ = OrderedTrekChild.objects.get_or_create(
+                    parent=parent_trek,
+                    child=child_trek
+                )
+                otc.order = order
+                otc.save()
+                order += 1
+        super().end()

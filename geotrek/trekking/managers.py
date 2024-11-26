@@ -18,16 +18,6 @@ class TrekManager(TopologyManager, ProviderChoicesMixin):
     pass
 
 
-class TrekRelationshipManager(models.Manager):
-    use_for_related_fields = True
-
-    def get_queryset(self):
-        # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('trek_a', 'trek_b')
-        # Exclude deleted treks
-        return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
-
-
 class WebLinkManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().select_related('category')

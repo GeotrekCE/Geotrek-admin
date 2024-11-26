@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -249,9 +249,6 @@ msgstr ""
 msgid "Touristic contents"
 msgstr ""
 
-msgid "touristic-content"
-msgstr ""
-
 msgid "Published touristic contents"
 msgstr ""
 
@@ -348,7 +345,7 @@ msgstr ""
 msgid "Price"
 msgstr ""
 
-msgid "0 mean free"
+msgid "0 means free"
 msgstr ""
 
 msgid "Select a place in the list or locate the event directly on the map"
@@ -369,9 +366,6 @@ msgstr ""
 
 #, python-brace-format
 msgid "from {begin} to {end}"
-msgstr ""
-
-msgid "touristic-event"
 msgstr ""
 
 msgid "Display order"

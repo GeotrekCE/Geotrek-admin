@@ -80,11 +80,11 @@ class PhysicalEdge(GeotrekMapEntityMixin, Topology):
 
     @classmethod
     def path_physicals(cls, path):
-        return cls.objects.existing().select_related('physical_type').filter(aggregations__path=path).distinct('pk')
+        return cls.objects.existing().select_related('physical_type', 'physical_type__structure').filter(aggregations__path=path).distinct('pk')
 
     @classmethod
     def topology_physicals(cls, topology):
-        return cls.overlapping(topology).select_related('physical_type')
+        return cls.overlapping(topology).select_related('physical_type', 'physical_type__structure')
 
 
 @receiver(pre_delete, sender=Topology)

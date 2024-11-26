@@ -137,7 +137,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.all().order_by(collate_c('number'))
+        return self.blade_set.existing().order_by(collate_c('number'))
 
     @property
     def coordinates(self):

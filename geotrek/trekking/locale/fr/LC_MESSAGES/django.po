@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-11-08 16:23+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -59,9 +59,6 @@ msgstr "Avancé"
 
 msgid "Accessibility"
 msgstr "Accessibilité"
-
-msgid "Related treks"
-msgstr "Itinéraires liés"
 
 msgid "Insert service:"
 msgstr "Insérer un service :"
@@ -303,9 +300,6 @@ msgstr "Liens web"
 msgid "External resources"
 msgstr "Ressources externes"
 
-msgid "Connections between treks"
-msgstr "Liens entre les itinéraires"
-
 msgid "Information desks"
 msgstr "Lieux de renseignement"
 
@@ -351,10 +345,6 @@ msgstr "Ajouter un itinéraire"
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itineraire"
-
 msgid "Sensitive area"
 msgstr "Zone de sensibilité"
 
@@ -372,27 +362,6 @@ msgstr "Aménagements"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
-
-msgid "Common departure"
-msgstr "Départ en commun"
-
-msgid "Common edge"
-msgstr "Tronçon commun"
-
-msgid "Circuit step"
-msgstr "Étape de circuit"
-
-msgid "Trek relationship"
-msgstr "Réseaux randonnée"
-
-msgid "Trek relationships"
-msgstr "Liens entre itinéraires"
-
-msgid "Path"
-msgstr "Tronçons"
-
-msgid "Circuit"
-msgstr "Circuit"
 
 msgid "Trek network"
 msgstr "Réseau d'itinéraire"
@@ -522,12 +491,6 @@ msgid ""
 "{key}"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"One trek has not be generated for {trek_parent_instance[0].name} : could not "
-"find trek with UUID {child}"
-msgstr ""
-
 msgid ""
 "An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
@@ -537,23 +500,45 @@ msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
 
 msgid ""
-"The geometry cannot be converted to a single continuous LineString feature"
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
 msgstr ""
-"La géométrie ne peut pas être convertie en une unique feature continue de "
-"type LineString"
+"La géométrie de la feature ne peut pas être convertie en une unique "
+"LineString continue"
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itinerance"
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
+msgstr ""
+"Les géométries de plusieurs features ne peuvent pas être converties en une "
+"unique LineString continue"
 
-msgid "Itinerancy"
-msgstr "Itinérance"
+msgid "Trek geometry is None"
+msgstr "La valeur de la géométrie de l'itinéraire est None"
 
-msgid "Hike"
-msgstr "Randonnée"
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'. Should contain coordinates"
+msgstr ""
+"La géométrie du champ '{src}' est invalide. Elle devrait contenir des "
+"coordonnées"
+
+msgid "Bad value for parking geometry: should be a Point"
+msgstr ""
+"Valeur incorrecte pour la géométrie du parking: elle devrait être un Point"
+
+#, python-brace-format
+msgid ""
+"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+"La licence '{val}' n'existait pas dans Geotrek-Admin. Elle a été créée "
+"automatiquement"
+
+#, python-brace-format
+msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
+msgstr "La license '{val} n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
 msgid "Attached files"
-msgstr ""
+msgstr "Fichiers liés"
 
 msgid "Attributes"
 msgstr "Informations"
@@ -600,6 +585,9 @@ msgstr "Impr. livret"
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
+
+msgid "Itinerancy"
+msgstr "Itinérance"
 
 msgid "Child of:"
 msgstr "Enfant de:"
@@ -731,9 +719,6 @@ msgstr "Ajouter un POI"
 
 msgid "Add a new service"
 msgstr "Ajouter un service"
-
-msgid "Sync"
-msgstr "Sync"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"

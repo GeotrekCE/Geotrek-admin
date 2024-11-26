@@ -23,7 +23,7 @@ from modeltranslation.utils import build_localized_fieldname
 from geotrek.authent.models import (StructureOrNoneRelated, StructureRelated,
                                     default_structure)
 from geotrek.common.mixins.models import PublishableMixin
-from geotrek.common.models import AccessibilityAttachment, HDViewPoint
+from geotrek.common.models import AccessibilityAttachment, AnnotationCategory, HDViewPoint
 from geotrek.common.utils.translation import get_translated_fields
 
 from .mixins.models import NoDeleteMixin
@@ -365,27 +365,6 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         )
 
 
-class SyncRandoForm(forms.Form):
-    """
-    Sync Rando View Form
-    """
-
-    @property
-    def helper(self):
-        helper = FormHelper()
-        helper.form_id = 'form-sync'
-        helper.form_action = reverse('common:sync_randos')
-        helper.form_class = 'search'
-        # submit button with boostrap attributes, disabled by default
-        helper.add_input(Button('sync-web', _("Launch Sync"),
-                                css_class="btn-primary",
-                                **{'data-toggle': "modal",
-                                   'data-target': "#confirm-submit",
-                                   'disabled': 'disabled'}))
-
-        return helper
-
-
 class AttachmentAccessibilityForm(forms.ModelForm):
     next = forms.CharField(widget=forms.HiddenInput())
 
@@ -481,9 +460,7 @@ class HDViewPointForm(MapEntityForm):
         super().__init__(*args, **kwargs)
         if content_type and object_id:
             ct = ContentType.objects.get_for_id(content_type)
-            self.instance.content_type = ct
             self.instance.content_object = ct.get_object_for_this_type(id=object_id)
-            self.instance.object_id = object_id
             self.helper.form_action += f"?object_id={object_id}&content_type={content_type}"
 
     class Meta:
@@ -493,6 +470,11 @@ class HDViewPointForm(MapEntityForm):
 
 class HDViewPointAnnotationForm(forms.ModelForm):
     annotations = forms.JSONField(label=False)
+    annotations_categories = forms.JSONField(label=False)
+    annotation_category = forms.ModelChoiceField(
+        required=False,
+        queryset=AnnotationCategory.objects.all()
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -501,6 +483,20 @@ class HDViewPointAnnotationForm(forms.ModelForm):
         self.fields['annotations'].widget = forms.Textarea(
             attrs={
                 'name': 'annotations',
+                'rows': '15',
+                'type': 'textarea',
+                'autocomplete': 'off',
+                'autocorrect': 'off',
+                'autocapitalize': 'off',
+                'spellcheck': 'false',
+                # Do not show GEOJson textarea to users
+                'style': 'display: none;'
+            }
+        )
+        self.fields['annotations_categories'].required = False
+        self.fields['annotations_categories'].widget = forms.Textarea(
+            attrs={
+                'name': 'annotations_categories',
                 'rows': '15',
                 'type': 'textarea',
                 'autocomplete': 'off',
@@ -523,12 +519,14 @@ class HDViewPointAnnotationForm(forms.ModelForm):
 
         leftpanel = Div(
             'annotations',
+            'annotations_categories',
+            'annotation_category',
             css_id="modelfields",
         )
         formactions = FormActions(
             *actions,
             css_class="form-actions",
-            template='mapentity/crispy_forms/bootstrap4/layout/formactions.html'
+            template='mapentity/crispy_bootstrap4/bootstrap4/layout/formactions.html'
         )
 
         # # Main form layout
@@ -541,7 +539,6 @@ class HDViewPointAnnotationForm(forms.ModelForm):
             Div(
                 Div(
                     leftpanel,
-                    # *rightpanel,
                     css_class="row"
                 ),
                 css_class="container-fluid"
@@ -549,6 +546,18 @@ class HDViewPointAnnotationForm(forms.ModelForm):
             formactions,
         )
 
+    def clean_annotations_categories(self):
+        data = self.cleaned_data["annotations_categories"]
+        if data is None:
+            return {}
+        return data
+
+    def clean_annotations(self):
+        data = self.cleaned_data["annotations"]
+        if data is None:
+            return {}
+        return data
+
     class Meta:
         model = HDViewPoint
-        fields = ('annotations', )
+        fields = ('annotations', 'annotations_categories')

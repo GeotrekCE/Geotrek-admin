@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-11-08 16:23+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -58,9 +58,6 @@ msgstr "Avanzate"
 
 msgid "Accessibility"
 msgstr "Accessibilità"
-
-msgid "Related treks"
-msgstr "Itinerari correlati"
 
 msgid "Insert service:"
 msgstr "Inserisci servizio:"
@@ -286,9 +283,6 @@ msgstr "Link web"
 msgid "External resources"
 msgstr "Risorse esterne"
 
-msgid "Connections between treks"
-msgstr "Collegamenti tra i itinerario"
-
 msgid "Information desks"
 msgstr "Luoghi di informazione"
 
@@ -334,10 +328,6 @@ msgstr "Aggiungere un itinerario"
 msgid "Cannot use itself as child trek."
 msgstr "Impossibile utilizzare un percorso come bambinio proprio."
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itinerario"
-
 msgid "Sensitive area"
 msgstr "Area di sensibilità"
 
@@ -355,27 +345,6 @@ msgstr "Infrastrutture"
 
 msgid "Published treks"
 msgstr "Itinerari pubblicati"
-
-msgid "Common departure"
-msgstr "Partenza in comune"
-
-msgid "Common edge"
-msgstr "Sezione comune"
-
-msgid "Circuit step"
-msgstr "Tappa del circuito"
-
-msgid "Trek relationship"
-msgstr "Reti escursionistiche"
-
-msgid "Trek relationships"
-msgstr "Collegamenti tra itinerari"
-
-msgid "Path"
-msgstr "Sezione"
-
-msgid "Circuit"
-msgstr "Circuito"
 
 msgid "Trek network"
 msgstr "Reti da Itineraro"
@@ -504,12 +473,6 @@ msgid ""
 "{key}"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"One trek has not be generated for {trek_parent_instance[0].name} : could not "
-"find trek with UUID {child}"
-msgstr ""
-
 msgid ""
 "An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
@@ -519,18 +482,33 @@ msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
 msgid ""
-"The geometry cannot be converted to a single continuous LineString feature"
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr "itineranza"
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
+msgstr ""
 
-msgid "Itinerancy"
-msgstr "itinerari a tappe"
+msgid "Trek geometry is None"
+msgstr ""
 
-msgid "Hike"
-msgstr "Escursione"
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'. Should contain coordinates"
+msgstr ""
+
+msgid "Bad value for parking geometry: should be a Point"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
+msgstr ""
 
 msgid "Attached files"
 msgstr ""
@@ -580,6 +558,9 @@ msgstr "Stampa opuscolo"
 
 msgid "Photos accessibility"
 msgstr ""
+
+msgid "Itinerancy"
+msgstr "itinerari a tappe"
 
 msgid "Child of:"
 msgstr "Bambino di:"
@@ -710,9 +691,6 @@ msgstr "Aggiungere un nuovo pdi"
 
 msgid "Add a new service"
 msgstr "Aggiungere un nuovo servizio"
-
-msgid "Sync"
-msgstr "Sincro"
 
 msgid "Add Web link"
 msgstr "Aggiungi link Web"

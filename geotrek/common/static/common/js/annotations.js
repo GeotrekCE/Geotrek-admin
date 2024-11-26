@@ -203,6 +203,12 @@ function initAnnotationsWidget(map) {
         }
     }
 
+    function update_edited_label_on_enter(entry, key) {
+        if (key.keyCode === 13) {
+            update_edited_label(entry)
+        }
+    }
+
     /**
      * When an annotation is created or removed, update our list of annotations.
      *
@@ -238,13 +244,28 @@ function initAnnotationsWidget(map) {
             }
             var entry = $('#annotationlist .entry#sample').clone();
             entry.attr({ id: '', 'annotation-id': id });
-            entry.on('click', () => edit_label(entry));
+            entry.find('#label_input').val(annotation.name())
+            entry.find('#label_input').on('blur', () => update_edited_label(entry));
+            entry.find('#label_input').on('keydown', (key) => update_edited_label_on_enter(entry, key));
+
+            var category_selector = $('#id_annotation_category').clone();
+            category_selector.attr('for-annotation', id);
+            category_selector.on("change", update_annotation_category_event)
+            entry.find('.entry-validate').before(category_selector);
             entry.find('.entry-name').text(annotation.name());
+
             if (query.editing == id) {
                 entry.find('.entry-adjust').hide();
                 entry.find('.entry-validate').show();
             }
             $('#annotationlist').append(entry);
+            if ($("#div_id_annotations_categories textarea").val() !== "") {
+                var annotations_categories = JSON.parse($("#div_id_annotations_categories textarea").val());
+                previous_category = annotations_categories[id]
+                if (typeof previous_category !== 'undefined') {
+                    $('#id_annotation_category[for-annotation="' + id + '"]').val(parseInt(previous_category))
+                }
+            }
         });
         $('#annotationheader').css(
             'display', $('#annotationlist .entry').length <= 1 ? 'none' : 'block');
@@ -258,28 +279,29 @@ function initAnnotationsWidget(map) {
         }
     }
 
-    function edit_label(entry) {
-        // When clicking annotation name, display text input allowing to change it
-        span = entry.find('.entry-name')
-        text_input = `<input id="label_input" value='${span.text()}' />`;
-        $(span).html(text_input);
-        $('#label_input').focus();
-        $('#label_input').on('blur', () => update_edited_label(entry));
-        $('#label_input').on('keydown', (key) => update_edited_label_on_enter(entry, key));
+    function update_annotation_category(annotation_id, category_id) {
+        if ($("#div_id_annotations_categories textarea").val() != "") {
+            var annotations_categories = JSON.parse($("#div_id_annotations_categories textarea").val())
+        } else {
+            var annotations_categories = {}
+        }
+        if (category_id == "") {
+            delete annotations_categories[annotation_id]
+        } else {
+            annotations_categories[annotation_id] = category_id
+        }
+        $("#div_id_annotations_categories textarea").val(JSON.stringify(annotations_categories))
     }
 
-    function update_edited_label_on_enter(entry, key) {
-        if (key.keyCode === 13) {
-            update_edited_label(entry)
-        }
+    function update_annotation_category_event(e) {
+        category_id = e.target.value
+        annotation_id = e.target.getAttribute('for-annotation')
+        update_annotation_category(annotation_id, category_id)
     }
 
     function update_edited_label(entry) {
         // After changing annotation name in input, update it in geojson and layer
-        new_label = $('#label_input').val()
-        // Replace input with span again
-        span = entry.find('.entry-name')
-        span.text(new_label);
+        new_label = entry.find('#label_input').val()
         // Replace name in GEOJson form
         annotation_id = entry[0].getAttribute('annotation-id');
         current_data = JSON.parse($('#id_annotations[type=textarea]').val())
@@ -323,6 +345,7 @@ function initAnnotationsWidget(map) {
                 handleAnnotationChange(evt);
                 break;
             case 'remove':
+                update_annotation_category(id, "")
                 layer.removeAnnotation(annotation);
                 break;
             case 'remove-all':
@@ -331,6 +354,7 @@ function initAnnotationsWidget(map) {
                 layer.mode(null);
                 layer.removeAllAnnotations();
                 layer.mode(mode);
+                $("#div_id_annotations_categories textarea").val("")
                 fromButtonSelect = false;
                 break;
         }

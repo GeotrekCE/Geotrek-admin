@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-08-06 08:26+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,22 +24,20 @@ msgstr ""
 msgid "Linked content"
 msgstr ""
 
-msgid "Related to"
+msgid "Title"
 msgstr ""
 
-msgid "Title"
+msgid "Related to"
 msgstr ""
 
 msgid "Common"
 msgstr ""
 
-#, python-format
-msgid "min %s"
-msgstr "min %s"
+msgid "min"
+msgstr ""
 
-#, python-format
-msgid "max %s"
-msgstr "max %s"
+msgid "max"
+msgstr ""
 
 msgid "This field is required to publish object."
 msgstr ""
@@ -75,9 +73,6 @@ msgstr ""
 msgid "Data to import from local file"
 msgstr ""
 
-msgid "Launch Sync"
-msgstr ""
-
 msgid "Overview of the tricky passage"
 msgstr ""
 
@@ -100,21 +95,6 @@ msgid "The uploaded file is not tall enough"
 msgstr ""
 
 msgid "Save changes"
-msgstr ""
-
-msgid "Global tiles syncing ..."
-msgstr ""
-
-msgid "Trek tiles syncing ..."
-msgstr ""
-
-msgid "Tiles synced ..."
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "Sync ended"
 msgstr ""
 
 msgid "Geotrek Rando"
@@ -360,6 +340,12 @@ msgstr ""
 msgid "HD Views"
 msgstr ""
 
+msgid "Annotation category"
+msgstr ""
+
+msgid "Annotation categories"
+msgstr ""
+
 msgid "Access mean"
 msgstr ""
 
@@ -482,10 +468,12 @@ msgstr ""
 msgid "Geotrek-admin"
 msgstr ""
 
-msgid "Import from web."
+#, python-brace-format
+msgid ""
+"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
 msgstr ""
 
-msgid "Init sync ..."
+msgid "Import from web."
 msgstr ""
 
 msgid "Photos to illustrate information related to the accessibility of treks."
@@ -563,7 +551,7 @@ msgstr ""
 msgid "Line"
 msgstr ""
 
-msgid "Created annotations"
+msgid "Categories"
 msgstr ""
 
 msgid "Properties"
@@ -663,27 +651,6 @@ msgstr ""
 
 #, python-format
 msgid "%(obj)s has changed state, it needs a review to be published. "
-msgstr ""
-
-msgid "Sync verifications"
-msgstr ""
-
-msgid "Sync in progress"
-msgstr ""
-
-msgid "An error occured"
-msgstr ""
-
-msgid "Public web site sync"
-msgstr ""
-
-msgid "Confirmation"
-msgstr ""
-
-msgid "Are you sure you want to sync ?"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 #, python-format

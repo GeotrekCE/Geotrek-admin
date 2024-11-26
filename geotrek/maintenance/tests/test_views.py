@@ -22,7 +22,6 @@ from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
 from geotrek.common.tests.factories import OrganismFactory, AccessMeanFactory
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
@@ -387,6 +386,7 @@ class InterventionViewsTest(CommonTest):
         data['implantation_year'] = target_year
         data['accessibility'] = ''
         data['access'] = ''
+        data['conditions'] = list(form.instance.conditions.values_list('pk', flat=True))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
@@ -628,7 +628,7 @@ class ProjectViewsTest(CommonTest):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class ExportTest(TranslationResetMixin, TestCase):
+class ExportTest(TestCase):
 
     def test_shape_mixed(self):
         """
@@ -772,17 +772,6 @@ class TestDetailedJobCostsExports(TestCase):
         self.manday1.delete()
         reader_csv = self.get_csv_reader_names('/intervention/list/export/')
         self.assertNotIn(self.job1_column_name, reader_csv.fieldnames)
-
-        # Test column translations don't mess it up
-        self.client.post("/i18n/setlang/", {"language": "fr"})
-        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
-        field_to_test = f"Coût_{self.job2}"
-        self.assertIn(field_to_test, reader_csv.fieldnames)
-        for elem in reader_csv:
-            # Decimal work only with '.' before decimal numbers, here we have "," because we are in french
-            english_field_format_num = elem[field_to_test].replace(",", ".")
-            self.assertEqual(Decimal(english_field_format_num), self.job2.cost * self.manday2.nb_days)
-        self.client.post("/i18n/setlang/", {"language": "fr"})
 
     def test_shp_detailed_cost_content(self):
         '''Test SHP job costs exports contain accurate total price'''

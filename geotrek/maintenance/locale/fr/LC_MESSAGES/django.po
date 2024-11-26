@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-05-28 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,13 +32,11 @@ msgstr ""
 msgid "slope"
 msgstr ""
 
-#, python-format
-msgid "min %s"
-msgstr ""
+msgid "min"
+msgstr "min"
 
-#, python-format
-msgid "max %s"
-msgstr ""
+msgid "max"
+msgstr "max"
 
 msgid "Infrastructure"
 msgstr "Aménagement"
@@ -63,6 +61,9 @@ msgstr "Service"
 
 msgid "Trail"
 msgstr "Sentier"
+
+msgid "Report"
+msgstr ""
 
 msgid "Outdoor Course"
 msgstr "Parcours Outdoor"
@@ -103,8 +104,8 @@ msgstr ""
 msgid "Year of activity"
 msgstr "Année d'activité"
 
-msgid "Intervention contractors"
-msgstr "Prestataires des interventions"
+msgid "Contractors"
+msgstr "Prestataires"
 
 msgid "Days"
 msgstr "Jours"
@@ -114,6 +115,9 @@ msgstr "Longueur"
 
 msgid "Project"
 msgstr "Chantier"
+
+msgid "End date"
+msgstr "Date de fin"
 
 msgid "Mandays"
 msgstr "Jours-Hommes"
@@ -126,6 +130,9 @@ msgstr "Sur {}"
 
 msgid "Begin date is after end date"
 msgstr "La date de début est après la date de fin"
+
+msgid "End date is required."
+msgstr "La date de fin est obligatoire."
 
 msgid "Fundings"
 msgstr "Financements"
@@ -141,9 +148,6 @@ msgstr "Bref résumé"
 
 msgid "Begin date"
 msgstr "Date de début"
-
-msgid "End date"
-msgstr "Date de fin"
 
 msgid "Subcontracting"
 msgstr "Sous-traitance"
@@ -165,9 +169,6 @@ msgstr "Coût héliportage"
 
 msgid "Contractor cost"
 msgstr "Coût prestataire"
-
-msgid "Contractors"
-msgstr "Prestataires"
 
 msgid "3D Length"
 msgstr "Longueur 3D"
@@ -291,6 +292,9 @@ msgstr "Financeurs"
 
 msgid "Projects"
 msgstr "Chantiers"
+
+msgid "Intervention contractors"
+msgstr "Prestataires des interventions"
 
 msgid "Period"
 msgstr "Période"

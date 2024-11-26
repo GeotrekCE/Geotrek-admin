@@ -1,11 +1,12 @@
 from datetime import date, datetime
 from distutils.util import strtobool
+from typing import Optional, Type
 
 import coreschema
 from coreapi.document import Field
 from django.conf import settings
 from django.contrib.gis.db.models import Collect
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Model
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
@@ -13,6 +14,8 @@ from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
+
+from geotrek.flatpages.models import MenuItem, FlatPage
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.tourism.models import TouristicEventOrganizer, TouristicContent, TouristicContentType, TouristicEvent, \
@@ -22,6 +25,32 @@ from geotrek.zoning.models import City, District
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
+
+
+def get_published_filter_expression(model: Type[Model], language: Optional[str] = None):
+    """Given a model with a `published` field and a language string
+    this function returns a query expression to filter on.
+
+    `language` parameter is expected to be one of the modeltranslation's defined language or "all".
+    """
+    associated_published_fields = [f.name for f in model._meta.get_fields() if f.name.startswith('published')]
+    if len(associated_published_fields) == 1:
+        # The model's published field is not translated
+        return Q(published=True)
+    elif len(associated_published_fields) > 1:
+        # The published field is translated
+        if not language or language == 'all':
+            # no language specified. Check for all.
+            q = Q()
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field_name = build_localized_fieldname('published', lang)
+                if field_name in associated_published_fields:
+                    q |= Q(**{field_name: True})
+            return q
+        else:
+            # one language is specified
+            field_name = build_localized_fieldname('published', language)
+            return Q(**{field_name: True})
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -131,26 +160,9 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         language = request.GET.get('language', 'all')
-        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
-
-        # if the model of the queryset published field is not translated
-        if len(associated_published_fields) == 1:
-            qs = qs.filter(published=True)
-        elif len(associated_published_fields) > 1:
-            # the published field of the queryset model is translated
-            if language == 'all':
-                # no language specified. Check for all.
-                q = Q()
-                for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    field_name = build_localized_fieldname('published', lang)
-                    if field_name in associated_published_fields:
-                        q |= Q(**{field_name: True})
-                qs = qs.filter(q)
-            else:
-                # one language is specified
-                field_name = build_localized_fieldname('published', language)
-                qs = qs.filter(**{field_name: True})
-
+        expr = get_published_filter_expression(qs.model, language)
+        if expr:
+            qs = qs.filter(expr)
         return qs
 
 
@@ -614,20 +626,16 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
         qs = queryset
         updated_before = request.GET.get('updated_before')
         if updated_before:
-            updated_before = datetime.strptime(updated_before, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_update__lte=updated_before))
+            qs = qs.filter(date_update__date__lte=updated_before)
         updated_after = request.GET.get('updated_after')
         if updated_after:
-            updated_after = datetime.strptime(updated_after, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_update__gte=updated_after))
+            qs = qs.filter(date_update__date__gte=updated_after)
         created_before = request.GET.get('created_before')
         if created_before:
-            created_before = datetime.strptime(created_before, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_insert__lte=created_before))
+            qs = qs.filter(date_insert__date__lte=created_before)
         created_after = request.GET.get('created_after')
         if created_after:
-            created_after = datetime.strptime(created_after, "%Y-%m-%d").date()
-            qs = qs.filter(Q(date_insert__gte=created_after))
+            qs = qs.filter(date_insert__date__gte=created_after)
         return qs
 
     def get_schema_fields(self, view):
@@ -857,6 +865,24 @@ class GeotrekRatingsFilter(BaseFilterBackend):
                 name='ratings', required=False, location='query', schema=coreschema.Integer(
                     title=_("Ratings"),
                     description=_('Filter by one or more ratings id, comma-separated.')
+                )
+            ),
+        )
+
+
+class GeotrekNetworksFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        networks = request.GET.get('networks')
+        if networks:
+            queryset = queryset.filter(networks__in=networks.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='networks', required=False, location='query', schema=coreschema.String(
+                    title=_("Networks"),
+                    description=_('Filter by one or more networks id, comma-separated.')
                 )
             ),
         )
@@ -1131,6 +1157,43 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(RelatedObjectsPublishedNot
         return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
+class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+
+        # Prepare language query
+        lang_query = Q()
+        language = request.GET.get('language')
+        if language:
+            # one language is specified
+            lang_query = Q(**{build_localized_fieldname('published', language): True})
+        else:
+            # no language specified. Check for all.
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                lang_query |= Q(**{build_localized_fieldname('published', lang): True})
+
+        # Prepare portal queries
+        portals = request.GET.get('portals')
+        if portals:
+            portals_query = Q(**{'portals__in': portals.split(',')})
+            portal_query = Q(**{'portal__in': portals.split(',')})
+        else:
+            portal_query = Q()
+            portals_query = Q()
+
+        # Extract distinct sources
+        flatpages_sources = list(FlatPage.objects.filter(lang_query, portals_query).prefetch_related('portals, source').values_list('source__pk', flat=True))
+        treks_sources = list(Trek.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        touristiccontent_sources = list(TouristicContent.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        touristicevent_sources = list(TouristicEvent.objects.filter(lang_query, portal_query, deleted=False).prefetch_related('portal, source').values_list('source__pk', flat=True))
+        all_sources_pks = flatpages_sources + treks_sources + touristiccontent_sources + touristicevent_sources
+        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+            sites_sources = list(Site.objects.filter(lang_query, portal_query).prefetch_related('portal, source').values_list('source__pk', flat=True))
+            all_sources_pks += sites_sources
+
+        # Return distinct sources
+        return qs.filter(pk__in=set(all_sources_pks))
+
+
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'treks')
@@ -1219,17 +1282,51 @@ class GeotrekRatingFilter(BaseFilterBackend):
         )
 
 
+class MenuItemFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        portals = request.GET.get('portals')
+        if portals:
+            queryset = queryset.filter(portals__in=portals.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='portals', required=False, location='query',
+                schema=coreschema.Integer(
+                    title=_("Portals"),
+                    description=_('Filter by one or more portal id, comma-separated.'),
+                )
+            ),
+        )
+
+
 class FlatPageFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
-        targets = request.GET.get('targets')
-        if targets:
-            queryset = queryset.filter(target__in=targets.split(','))
+        parent_id = request.GET.get('parent')
+        if parent_id:
+            try:
+                parent_page = FlatPage.objects.get(pk=parent_id)
+            except FlatPage.DoesNotExist:
+                return queryset.none()
+            queryset = parent_page.get_children()
         sources = request.GET.get('sources')
         if sources:
             queryset = queryset.filter(source__in=sources.split(','))
         portals = request.GET.get('portals')
         if portals:
-            queryset = queryset.filter(portal__in=portals.split(','))
+            language = request.GET.get('language', 'all')
+            published_menu_items = (
+                MenuItem.objects
+                .filter(get_published_filter_expression(MenuItem, language))
+                .filter(portals__in=portals.split(','))
+                .values_list("id", flat=True))
+            # Filter on Flat Pages associated to one of the portals
+            # OR targeted by a published Menu Item associated to one of the portals.
+            queryset = queryset.filter(
+                Q(portals__in=portals.split(','))
+                | Q(menu_items__id__in=published_menu_items)
+            ).distinct()
         q = request.GET.get('q')
         if q:
             queryset = queryset.filter(
@@ -1240,9 +1337,9 @@ class FlatPageFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
-                name='targets', required=False, location='query', schema=coreschema.String(
-                    title=_("Targets"),
-                    description=_('Filter by one or more target (all, mobile, hidden or web), comma-separated.')
+                name='parent', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Parent"),
+                    description=_('Filter by the parent page ID')
                 )
             ), Field(
                 name='sources', required=False, location='query', schema=coreschema.Integer(

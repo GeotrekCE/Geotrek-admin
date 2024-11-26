@@ -68,8 +68,8 @@ class GeotrekOutdoorParser(GeotrekParser):
                 return dest_id
         return None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def start(self):
+        super().start()
         self.init_outdoor_category('sector', Sector)
         self.init_outdoor_category('practice', Practice, join_field='sector')
         self.init_outdoor_category('scale', RatingScale, join_field='practice')
@@ -108,12 +108,14 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         "type": "outdoor_sitetype",
     }
     url_categories = {
+        "structure": "structure",
         "themes": "theme",
         'labels': 'label',
         'source': 'source',
         'managers': 'organism',
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         "practice": "name",
         "sector": "name",
         "rating": "name",
@@ -126,6 +128,7 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
         'managers': 'name',
     }
     natural_keys = {
+        "structure": "name",
         "practice": "name",
         "themes": "label",
         "type": "name",
@@ -146,9 +149,9 @@ class GeotrekSiteParser(GeotrekOutdoorParser):
                 return SiteType.objects.get(pk=type_id)
         return None
 
-    def parse(self, filename=None, limit=None):
+    def start(self):
+        super().start()
         self.init_outdoor_category('type', SiteType, join_field='practice')
-        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)
@@ -191,12 +194,14 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         "type": "outdoor_coursetype",
     }
     url_categories = {
+        "structure": "structure",
         "themes": "theme",
         'labels': 'label',
         'source': 'source',
         'managers': 'organism',
     }
     categories_keys_api_v2 = {
+        "structure": "name",
         "themes": "label",
         "type": "name",
         'labels': 'name',
@@ -204,6 +209,7 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
         'managers': 'name',
     }
     natural_keys = {
+        "structure": "name",
         "themes": "label",
         "type": "name",
         'labels': 'name',
@@ -229,9 +235,9 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
             return str(val)
         return None
 
-    def parse(self, filename=None, limit=None):
+    def start(self):
+        super().start()
         self.init_outdoor_category('type', CourseType, join_field='practice')
-        super().parse(filename, limit)
 
     def parse_row(self, row):
         super().parse_row(row)

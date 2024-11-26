@@ -5,8 +5,6 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
-from django.utils import translation
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests.factories import (PathFactory, StakeFactory,
                                           TopologyFactory, TrailFactory)
@@ -61,7 +59,6 @@ class InterventionTest(TestCase):
         md = ManDayFactory.create(intervention=i, nb_days=5)
         ManDayFactory.create(intervention=i, nb_days=8)
         self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
-        clear_internal_user_cache()
         manday_pk = md.pk
         interv_pk = i.pk
         obj_repr = str(i)
@@ -101,23 +98,23 @@ class InterventionTest(TestCase):
         TrailFactory.create(paths=[p], name='trail_2')
         infra = InfrastructureFactory.create(paths=[p])
         intervention = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
+        self.assertQuerySetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
 
     def test_paths_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
         infra = InfrastructureFactory.create(paths=[p_infra])
         intervention_infra = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
 
         p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
         signage = SignageFactory.create(paths=[p_signage])
         blade = BladeFactory.create(signage=signage)
         intervention_blade = InterventionFactory.create(target=blade)
-        self.assertQuerysetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
 
         course = CourseFactory.create()
         intervention_course = InterventionFactory.create(target=course)
-        self.assertQuerysetEqual(intervention_course.paths, [], transform=str)
+        self.assertQuerySetEqual(intervention_course.paths, [], transform=str)
 
     def test_helpers(self):
         """
@@ -159,7 +156,6 @@ class InterventionTest(TestCase):
         self.assertTrue(interv.in_project)
         interv.save()
         funding = FundingFactory(project=proj, amount=6)
-        clear_internal_user_cache()
         project_pk = proj.pk
         funding_pk = funding.pk
         obj_repr = str(proj)
@@ -250,7 +246,6 @@ class InterventionTest(TestCase):
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):
-        translation.activate('en')
         on_path = InterventionFactory.create()
         self.assertIn('Path', on_path.target_display)
         self.assertIn('path-16.png', on_path.target_display)
@@ -339,7 +334,7 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
 
     def test_trails_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
@@ -360,7 +355,7 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
 
     def test_intervention_contractors(self):
         project = ProjectFactory.create()

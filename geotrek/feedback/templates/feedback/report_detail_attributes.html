@@ -69,6 +69,12 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if report.provider %}{{ report.provider|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
         {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>

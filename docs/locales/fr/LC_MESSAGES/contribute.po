@@ -195,7 +195,7 @@ msgid "Quickstart"
 msgstr ""
 
 #: ../../contribute/development.rst:21
-msgid "Go to http://geotrek.localhost:8000"
+msgid "Go to http://geotrek.local:8000"
 msgstr ""
 
 #: ../../contribute/development.rst:23
@@ -473,7 +473,7 @@ msgid ""
 msgstr ""
 
 #: ../../contribute/development.rst:208
-msgid "For instance with SERVER_NAME=geotrek.localhost (default value)"
+msgid "For instance with SERVER_NAME=geotrek.local (default value)"
 msgstr ""
 
 #: ../../contribute/development.rst:217
@@ -484,7 +484,7 @@ msgstr ""
 msgid ""
 "Use the domain defined in SERVER_NAME in your .env to reach your local "
 "geotrek admin web instance. By default the address is "
-"`http://geotrek.localhost:8000`."
+"`http://geotrek.local:8000`."
 msgstr ""
 
 #: ../../contribute/development.rst:223

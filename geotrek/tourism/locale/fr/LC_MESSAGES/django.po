@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-04-03 15:39+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -253,9 +253,6 @@ msgstr "Contenu touristique"
 msgid "Touristic contents"
 msgstr "Contenus touristiques"
 
-msgid "touristic-content"
-msgstr "contenu-touristique"
-
 msgid "Published touristic contents"
 msgstr "Contenus touristiques publiés"
 
@@ -350,10 +347,10 @@ msgid "Intervention duration"
 msgstr "Temps d'intervention"
 
 msgid "Price"
-msgstr ""
+msgstr "Prix"
 
-msgid "0 mean free"
-msgstr ""
+msgid "0 means free"
+msgstr "0 vaut gratuit"
 
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
@@ -376,9 +373,6 @@ msgstr "à partir du {begin}"
 #, python-brace-format
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
-
-msgid "touristic-event"
-msgstr "evenement-touristique"
 
 msgid "Display order"
 msgstr "Ordre d'affichage"

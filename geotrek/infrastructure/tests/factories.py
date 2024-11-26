@@ -1,7 +1,7 @@
 import factory
 
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
+from geotrek.core.tests.factories import PointTopologyFactory, TopologyFactory
 
 from .. import models
 
@@ -44,30 +44,37 @@ class InfrastructureMaintenanceDifficultyLevelFactory(factory.django.DjangoModel
     label = factory.Sequence(lambda n: "Maintenance level %s" % n)
 
 
-class InfrastructureFactory(TopologyFactory):
+class InfrastructureFactoryMixin():
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                obj.conditions.set(extracted)
+            else:
+                obj.conditions.add(InfrastructureConditionFactory.create())
+
+
+class InfrastructureFactory(TopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
     name = factory.Sequence(lambda n: "Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
     usage_difficulty = factory.SubFactory(InfrastructureUsageDifficultyLevelFactory)
     maintenance_difficulty = factory.SubFactory(InfrastructureMaintenanceDifficultyLevelFactory)
 
 
-class PointInfrastructureFactory(PointTopologyFactory):
+class PointInfrastructureFactory(PointTopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
     name = factory.Sequence(lambda n: "Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
 
 
-class InfrastructureNoPictogramFactory(TopologyFactory):
+class InfrastructureNoPictogramFactory(TopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
     name = factory.Sequence(lambda n: "Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeNoPictogramFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True

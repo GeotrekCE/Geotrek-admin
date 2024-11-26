@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 import requests
 from unittest import mock
@@ -8,7 +9,6 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 from geotrek.sensitivity.tests.factories import SpeciesFactory, SportPracticeFactory
@@ -131,7 +131,7 @@ class BiodivWithPracticeParser(BiodivParser):
     size = 1
 
 
-class BiodivParserTests(TranslationResetMixin, TestCase):
+class BiodivParserTests(TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
         self.page = 1
@@ -161,13 +161,13 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertTrue(species.period01)
         self.assertFalse(species.period06)
         self.assertEqual(species.eid, '7')
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
+        self.assertQuerySetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area_1.species, species)
         self.assertEqual(area_1.description, "Blahblah")
         self.assertEqual(area_1.description_fr, "Blabla")
         self.assertEqual(area_1.eid, '1')
         area_2 = SensitiveArea.objects.last()
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
+        self.assertQuerySetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area_2.species, species)
         self.assertEqual(area_2.description, "Blahblah2")
         self.assertEqual(area_2.description_fr, "Blabla2")
@@ -231,10 +231,10 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                 response.json = lambda: json_test_sport_practice
             else:
                 if self.page == 1:
-                    json_test_species_without_id = json_test_species.copy()
+                    json_test_species_without_id = deepcopy(json_test_species)
                     self.page += 1
                 else:
-                    json_test_species_without_id = json_test_species_page_2.copy()
+                    json_test_species_without_id = deepcopy(json_test_species_page_2)
                 json_test_species_without_id['results'][0]['species_id'] = None
                 response.json = lambda: json_test_species_without_id
             return response
@@ -248,7 +248,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(species.name, "Black grouse")
         self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertEqual(species.eid, None)
-        self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
+        self.assertQuerySetEqual(species.practices.all(), ['<SportPractice: Land>'], transform=repr)
         self.assertEqual(area.eid, '1')
 
     @mock.patch('requests.get')

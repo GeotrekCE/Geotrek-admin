@@ -1,11 +1,10 @@
-import env_file
 import os
 import sys
 
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
-from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
-
+from dotenv import load_dotenv
 from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
@@ -33,14 +32,14 @@ TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
 if os.path.exists(DOT_ENV_FILE):
-    env_file.load(path=DOT_ENV_FILE)
+    load_dotenv(DOT_ENV_FILE)
 
 ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
 ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
-TITLE = _("Geotrek")
+TITLE = "Geotrek-Admin"
 
 DEBUG = False
 TEST = 'test' in sys.argv
@@ -143,7 +142,6 @@ USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
-USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -185,7 +183,14 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
@@ -281,6 +286,7 @@ PROJECT_APPS += (
     'django.contrib.admindocs',
     'django.contrib.gis',
     'crispy_forms',
+    'crispy_bootstrap4',
     'compressor',
     'django_filters',
     'tinymce',
@@ -295,6 +301,7 @@ PROJECT_APPS += (
     'django_large_image',
     'colorfield',
     'mptt',
+    'treebeard',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -632,7 +639,7 @@ SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
-TOURISTIC_CONTENTS_API_ORDER = ()
+TOURISTIC_CONTENTS_API_ORDER = ('name', )
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3', 'bootstrap4')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -641,6 +648,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MOBILE_TILES_URL = [
     'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 ]
+MOBILE_TILES_PATH = os.path.join(VAR_DIR, 'tiles')
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
@@ -679,9 +687,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "paste_as_text": True
 }
 
-SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
-SYNC_RANDO_OPTIONS = {}
 SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 '''
@@ -789,7 +795,7 @@ ENABLED_MOBILE_FILTERS = [
     'difficulty',
     'duration',
     'ascent',
-    'lengths',
+    'length',
     'themes',
     'route',
     'districts',
@@ -836,7 +842,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
-HIDDEN_FORM_FIELDS = {}
+HIDDEN_FORM_FIELDS = {'report': ['assigned_user']}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
@@ -885,6 +891,17 @@ PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
 }
 PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
 
+REDIS_URL = os.getenv('REDIS_URL',
+                      f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/{os.getenv('REDIS_DB', '0')}")
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'api_v2',
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
@@ -909,10 +926,5 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
-REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'api_v2',
-    'DEFAULT_CACHE_ERRORS': False
-}
-
-SESSION_ENGINE = "django.contrib.sessions.backends.file"
-SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
+if SURICATE_WORKFLOW_ENABLED and 'report' in HIDDEN_FORM_FIELDS.keys() and "assigned_user" in HIDDEN_FORM_FIELDS['report']:
+    HIDDEN_FORM_FIELDS['report'].remove("assigned_user")

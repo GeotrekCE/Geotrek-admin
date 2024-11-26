@@ -120,21 +120,21 @@ class BaseApiTest(TestCase):
         cls.city2 = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)), published=False)
 
     def get_treks_list(self, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-list'), params, headers={"accept-language": lang})
 
     def get_treks_detail(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, headers={"accept-language": lang})
 
     def get_poi_list(self, id_trek, lang, params=None):
-        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE=lang)
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, headers={"accept-language": lang})
 
     def get_touristic_content_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
     def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE=lang)
+                               headers={"accept-language": lang})
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -168,7 +168,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(len(json_response['properties']['districts']), 1)
         self.assertEqual(len(json_response['properties']['cities']), 1)
         self.assertEqual(json_response['properties']['departure_city'], self.city.code)
-        self.assertEqual(json_response['properties']['arrival_city'], self.city.code)
+        self.assertEqual(json_response['properties']['arrival_city'], self.city.code, json_response)
 
     def test_trek_detail_no_parking_location(self):
         trek_no_parking = trek_factory.TrekFactory(name_fr='no_parking', parking_location=None, published_fr=True)

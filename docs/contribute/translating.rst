@@ -23,7 +23,7 @@ Create an account
 
 -  Fill the register form
 
-   .. figure:: /images/translating/weblate-create-account.png
+   .. figure:: ../images/translating/weblate-create-account.png
       :alt: image
 
 -  Validate your email
@@ -40,7 +40,7 @@ Browse by project
 
 -  Go to “Project > Browse all projects”
 
-   .. figure:: /images/translating/weblate-project-menu.png
+   .. figure:: ../images/translating/weblate-project-menu.png
       :alt: image
 
 -  Select Geotrek-admin project
@@ -49,7 +49,7 @@ Browse by project
 
 -  Choose the language to translate
 
-   .. figure:: /images/translating/weblate-list-of-languages.png
+   .. figure:: ../images/translating/weblate-list-of-languages.png
       :alt: image
 
 
@@ -63,7 +63,7 @@ You could also choose language first
 -  Select the project to translate
 
 
-Select a coponent to translate
+Select a component to translate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Select a component (a module or a piece of documentation)
@@ -82,17 +82,17 @@ Errors and left to translate can be displayed easily.
 
 Weblate can identify problematic translations as chains between projects, punctuation inconsistancy.
 
-.. figure:: /images/translating/weblate-check.png
+.. figure:: ../images/translating/weblate-check.png
    :alt: image
 
 Other occurrences in all components allows to check consistency.
 
-.. figure:: /images/translating/weblate-check-list-occurrences.png
+.. figure:: ../images/translating/weblate-check-list-occurrences.png
    :alt: image
 
 Each translation generate a permalink (picto |image|).
 
-.. |image| image:: /images/translating/link.png
+.. |image| image:: ../images/translating/link.png
 
 Weblate has a "Zen mode" showing only chains to translate.
 
@@ -116,7 +116,7 @@ Add translations to next release
 
 1. In **Github**, merge `translations` branch into `master`, and update changelog.
 
-2. After releasing, in **Weblate**, rebase the branche :
+2. After releasing, in **Weblate**, rebase the branch:
 
     - In the component, click "Manage > Repository maintenance"
     - Click "Rebase" to rebase `translations` branch onto `master`

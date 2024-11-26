@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-10-17 14:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,59 +20,35 @@ msgstr ""
 msgid "Portals"
 msgstr "Portails"
 
+msgid "Page"
+msgstr ""
+
+msgid "Link"
+msgstr "Lien"
+
 msgid "Flatpages"
 msgstr "Pages statiques"
 
-msgid "Content"
-msgstr "Contenu"
-
 msgid "Cover image"
-msgstr ""
+msgstr "Image de couverture"
 
 msgid "Cover image author"
-msgstr ""
+msgstr "Auteur image couverture"
 
-msgid "Choose between external URL and HTML content"
-msgstr "Choisir entre lien externe et contenu HTML"
-
-msgid "All"
-msgstr "Tout"
-
-msgid "Mobile"
-msgstr "Mobile"
-
-msgid "Hidden"
-msgstr "Cachée"
-
-msgid "Web"
-msgstr "Web"
+msgid "Thumbnail"
+msgstr "Vignette"
 
 msgid "Title"
 msgstr "Titre"
 
-msgid "External URL"
-msgstr "Lien externe"
-
-msgid "Link to external website instead of HTML content"
-msgstr "Lien vers site externe à la place du contenu HTML"
+msgid "Content"
+msgstr "Contenu"
 
 msgid "HTML content"
 msgstr "Contenu HTML"
 
-msgid "Target"
-msgstr "Cible"
-
 msgid "Source"
 msgstr "Source"
-
-msgid "Portal"
-msgstr "Portail"
-
-msgid "ID order if blank"
-msgstr "Ordonné par ID si nul ou équivalent"
-
-msgid "Order"
-msgstr "Ordre"
 
 msgid "Flat page"
 msgstr "Page statique"
@@ -80,17 +56,77 @@ msgstr "Page statique"
 msgid "Flat pages"
 msgstr "Pages statiques"
 
-msgid "creation"
-msgstr ""
+msgid "All"
+msgstr "Tout"
 
-msgid "Template 1"
-msgstr "Gabarit 1"
+msgid "Mobile"
+msgstr "Mobile"
 
-msgid "Template 2"
-msgstr "Gabarit 2"
+msgid "Web"
+msgstr "Web"
 
-msgid "Insert Text Here."
-msgstr "Ajoutez du texte ici."
+msgid "Target type"
+msgstr "Type de cible"
 
-msgid "Legend, ©, firstname and author name."
-msgstr "Légende, ©, prénom et nom de l\\'auteur."
+msgid "Link URL"
+msgstr "URL du lien"
+
+msgid "Platform"
+msgstr "Plateforme"
+
+msgid "Open the link in a new tab"
+msgstr "Ouvrir le lien dans un nouvel onglet"
+
+msgid "Menu item"
+msgstr "Élément menu"
+
+msgid "Menu items"
+msgstr "Éléments menu"
+
+msgid "Button Link"
+msgstr "Lien bouton"
+
+msgid "Label"
+msgstr "Intitulé"
+
+msgid "Open in a new tab"
+msgstr "Ouvrir le lien dans un nouvel onglet"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Suggestions"
+msgstr "Suggestions"
+
+msgid "Suggestions title"
+msgstr "Intitulé de l'encart"
+
+msgid "ID list (separated by comma)"
+msgstr "Liste d'ID (séparés par des virgules)"
+
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "Touristic content"
+msgstr "Contenu touristique"
+
+msgid "Touristic event"
+msgstr "Evènement touristique"
+
+msgid "Outdoor Site"
+msgstr "Site Outdoor"
+
+msgid "Submit"
+msgstr "Enregistrer"
+
+msgid "Manage the Image Gallery"
+msgstr "Gérer la galerie d'images"
+
+msgid "Image gallery"
+msgstr "Galerie d'images"
+
+msgid "Add an image"
+msgstr "Ajouter une image"
+
+msgid "Remove"
+msgstr "Supprimer"

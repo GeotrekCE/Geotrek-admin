@@ -10,7 +10,7 @@ override_dh_virtualenv:
 	--python /usr/bin/python3.8 \
 	--upgrade-pip \
 	--preinstall wheel \
-	--preinstall setuptools \
+	--preinstall setuptools==69.2.0 \
 	--builtin-venv \
 	--extra-pip-arg --no-cache-dir \
 	--extra-pip-arg --quiet

@@ -15,6 +15,7 @@ class TestGeotrekInfrastructureParser(GeotrekInfrastructureParser):
 
     field_options = {
         'condition': {'create': True, },
+        'structure': {'create': True, },
         'type': {'create': True},
         'geom': {'required': True},
     }
@@ -29,10 +30,11 @@ class InfrastructureGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('infrastructure', 'infrastructure_condition.json'),
+        self.mock_json_order = [('infrastructure', 'structure.json'),
+                                ('infrastructure', 'infrastructure_condition.json'),
                                 ('infrastructure', 'infrastructure_type.json'),
                                 ('infrastructure', 'infrastructure_ids.json'),
                                 ('infrastructure', 'infrastructure.json')]
@@ -48,5 +50,6 @@ class InfrastructureGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         infrastructure = Infrastructure.objects.all().first()
         self.assertEqual(str(infrastructure.name), 'Table pic-nique')
         self.assertEqual(str(infrastructure.type), 'Table')
+        self.assertEqual(str(infrastructure.structure), 'Struct1')
         self.assertAlmostEqual(infrastructure.geom.x, 565008.6693905985, places=5)
         self.assertAlmostEqual(infrastructure.geom.y, 6188246.533542466, places=5)

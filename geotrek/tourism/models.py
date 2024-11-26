@@ -30,12 +30,6 @@ from geotrek.tourism.managers import TouristicContentTypeFilteringManager, Touri
     TouristicContentType2Manager, TouristicContentManager, TouristicEventManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
-from mapentity.serializers import plain_text
-
-if 'modeltranslation' in settings.INSTALLED_APPS:
-    pass
-else:
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +152,6 @@ GEOMETRY_TYPES = Choices(
 
 
 class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
-
     label = models.CharField(verbose_name=_("Label"), max_length=128)
     geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
     type1_label = models.CharField(verbose_name=_("First list label"), max_length=128,
@@ -179,10 +172,6 @@ class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return self.label
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class TouristicContentType(OptionalPictogramMixin):
@@ -236,8 +225,7 @@ class TouristicContentType2(TouristicContentType):
 
 class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, GeotrekMapEntityMixin,
                        StructureRelated, TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
-    """ A generic touristic content (accomodation, museum, etc.) in the park
-    """
+    """ A generic touristic content (accommodation, museum, etc.) in the park """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -289,6 +277,7 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     class Meta:
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -305,10 +294,6 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     def type2_label(self):
         return self.category.type2_label
 
-    @property
-    def prefixed_category_id(self):
-        return self.category.prefixed_id
-
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
@@ -320,15 +305,6 @@ class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin
     @property
     def extent(self):
         return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
-
-    @property
-    def rando_url(self):
-        category_slug = _('touristic-content')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.description_teaser or self.description)[:500]
 
     @classmethod
     def topology_touristic_contents(cls, topology, queryset=None):
@@ -470,7 +446,7 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         max_digits=8,
         decimal_places=2,
         verbose_name=_("Price"),
-        help_text=_("0 mean free"),
+        help_text=_("0 means free"),
         validators=[MinValueValidator(0)]
     )
     objects = TouristicEventManager()
@@ -502,10 +478,6 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
         return self.name
 
     @property
-    def type1(self):
-        return [self.type] if self.type else []
-
-    @property
     def districts_display(self):
         return ', '.join([str(d) for d in self.districts])
 
@@ -521,21 +493,8 @@ class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, 
                 begin=date_format(self.begin_date, 'SHORT_DATE_FORMAT'),
                 end=date_format(self.end_date, 'SHORT_DATE_FORMAT'))
 
-    @property
-    def prefixed_category_id(self):
-        return self.id_prefix
-
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
-
-    @property
-    def rando_url(self):
-        category_slug = _('touristic-event')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.description_teaser or self.description)[:500]
 
     @classmethod
     def topology_touristic_events(cls, topology, queryset=None):

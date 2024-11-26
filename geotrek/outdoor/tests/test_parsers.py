@@ -26,27 +26,31 @@ class MappingOutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_geotrek_aggregator_parser_mapping(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('outdoor', 'theme.json'),
-                                ('outdoor', 'label.json'),
-                                ('outdoor', 'source.json'),
-                                ('outdoor', 'organism.json'),
-                                ('outdoor', 'outdoor_sector.json'),
-                                ('outdoor', 'outdoor_practice.json'),
-                                ('outdoor', 'outdoor_ratingscale.json'),
-                                ('outdoor', 'outdoor_rating.json'),
+        self.mock_json_order = [('outdoor', 'structure.json'),
                                 ('outdoor', 'theme.json'),
                                 ('outdoor', 'label.json'),
                                 ('outdoor', 'source.json'),
                                 ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_sector.json'),
                                 ('outdoor', 'outdoor_practice.json'),
                                 ('outdoor', 'outdoor_ratingscale.json'),
                                 ('outdoor', 'outdoor_rating.json'),
                                 ('outdoor', 'outdoor_sitetype.json'),
-                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_site.json'),
-                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course_ids.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course.json')]
 
         # Mock GET
@@ -83,27 +87,31 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create_sites_and_courses(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('outdoor', 'theme.json'),
-                                ('outdoor', 'label.json'),
-                                ('outdoor', 'source.json'),
-                                ('outdoor', 'organism.json'),
-                                ('outdoor', 'outdoor_sector.json'),
-                                ('outdoor', 'outdoor_practice.json'),
-                                ('outdoor', 'outdoor_ratingscale.json'),
-                                ('outdoor', 'outdoor_rating.json'),
+        self.mock_json_order = [('outdoor', 'structure.json'),
                                 ('outdoor', 'theme.json'),
                                 ('outdoor', 'label.json'),
                                 ('outdoor', 'source.json'),
                                 ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_sector.json'),
                                 ('outdoor', 'outdoor_practice.json'),
                                 ('outdoor', 'outdoor_ratingscale.json'),
                                 ('outdoor', 'outdoor_rating.json'),
                                 ('outdoor', 'outdoor_sitetype.json'),
-                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_site.json'),
-                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course_ids.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course.json')]
 
         # Mock GET
@@ -148,7 +156,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(site.source.first()), "Source")
         self.assertEqual(str(site.themes.first()), "Test thème en")
         self.assertEqual(str(site.managers.first()), "Organisme")
-        self.assertEqual(str(site.structure), settings.DEFAULT_STRUCTURE_NAME)
+        self.assertEqual(str(site.structure), "Struct1")
         self.assertEqual(site.description_teaser, "Test en")
         self.assertEqual(site.description_teaser_fr, "Test fr")
         self.assertEqual(site.description, "Test descr en")
@@ -160,7 +168,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(site.ambiance, "Test ambiance en")
         self.assertEqual(site.ambiance_fr, "Test ambiance fr")
         self.assertEqual(site.wind, ['N', 'E'])
-        self.assertEqual(str(site.structure), settings.DEFAULT_STRUCTURE_NAME)
+        self.assertEqual(str(site.structure), "Struct1")
         # TODO ; self.assertEqual(site.information_desks.count(), 1)
         # TODO : self.assertEqual(site.weblink.count(), 1)
         # TODO : self.assertEqual(site.excluded_pois.count(), 1)
@@ -190,7 +198,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(course.ratings.first().scale), 'Class (Climbing)')
         self.assertAlmostEqual(course.geom.coords[0][0], 994912.1442530667, places=5)
         self.assertAlmostEqual(course.geom.coords[0][1], 6347387.846494712, places=5)
-        self.assertEqual(str(course.structure), settings.DEFAULT_STRUCTURE_NAME)
+        self.assertEqual(str(course.structure), "Struct1")
         self.assertEqual(course.description, "Test descr en")
         self.assertEqual(course.description_fr, "Test descr fr")
         self.assertEqual(course.ratings_description, "Test descr en")
@@ -203,7 +211,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(course.duration, 100)
         self.assertEqual(course.height, 100)
         self.assertEqual(course.accessibility, "Test access en")
-        self.assertEqual(str(course.structure), settings.DEFAULT_STRUCTURE_NAME)
+        self.assertEqual(str(course.structure), "Struct1")
         # TODO : self.assertEqual(course.excluded_pois.count(), 1)
         self.assertEqual(course.eid, "840f4cf7-dbe0-4aa1-835f-c1219c45dd7a")
         self.assertEqual(Attachment.objects.filter(object_id=course.pk).count(), 1)
@@ -234,27 +242,31 @@ class OutdoorGeotrekParserWrongChildrenTests(GeotrekParserTestMixin, TestCase):
     @mock.patch('requests.head')
     def test_create_sites_and_courses_with_wrong_children(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('outdoor', 'theme.json'),
-                                ('outdoor', 'label.json'),
-                                ('outdoor', 'source.json'),
-                                ('outdoor', 'organism.json'),
-                                ('outdoor', 'outdoor_sector.json'),
-                                ('outdoor', 'outdoor_practice.json'),
-                                ('outdoor', 'outdoor_ratingscale.json'),
-                                ('outdoor', 'outdoor_rating.json'),
+        self.mock_json_order = [('outdoor', 'structure.json'),
                                 ('outdoor', 'theme.json'),
                                 ('outdoor', 'label.json'),
                                 ('outdoor', 'source.json'),
                                 ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'structure.json'),
+                                ('outdoor', 'theme.json'),
+                                ('outdoor', 'label.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'organism.json'),
+                                ('outdoor', 'source.json'),
+                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_sector.json'),
                                 ('outdoor', 'outdoor_practice.json'),
                                 ('outdoor', 'outdoor_ratingscale.json'),
                                 ('outdoor', 'outdoor_rating.json'),
                                 ('outdoor', 'outdoor_sitetype.json'),
-                                ('outdoor', 'outdoor_site_ids.json'),
                                 ('outdoor', 'outdoor_site_wrong_children.json'),
-                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course_ids.json'),
+                                ('outdoor', 'outdoor_sector.json'),
+                                ('outdoor', 'outdoor_practice.json'),
+                                ('outdoor', 'outdoor_ratingscale.json'),
+                                ('outdoor', 'outdoor_rating.json'),
+                                ('outdoor', 'outdoor_coursetype.json'),
                                 ('outdoor', 'outdoor_course_wrong_children.json')]
 
         # Mock GET

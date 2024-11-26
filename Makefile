@@ -15,10 +15,10 @@ COLOR_DEBUG = \033[36m
 COLOR_RESET = \033[0m
 
 build:
-	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
+	docker build -t geotrek -f docker/Dockerfile . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
-build-no-cache:
-	docker build -t geotrek --no-cache .
+build_no_cache:
+	docker build -t geotrek -f docker/Dockerfile --no-cache .
 
 build_deb:
 	docker pull $(DISTRO)
@@ -28,11 +28,18 @@ build_deb:
 	docker stop geotrek_deb_run
 	docker rm geotrek_deb_run
 
+release:
+	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
+	docker stop geotrek_release
+	docker rm geotrek_release
+
+
 serve:
 	$(docker_compose) up
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q && pip-compile -q dev-requirements.in && pip-compile -q docs/requirements.in"
+	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
 
 flake8:
 	$(docker_compose) run --rm web flake8 geotrek
@@ -40,22 +47,28 @@ flake8:
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
 
+compilemessages:
+	$(docker_compose) run --rm web ./manage.py compilemessages
+
 ###########################
 #        coverage         #
 ###########################
 verbose_level ?= 1
+report ?= report -m
 .PHONY: coverage
 coverage:
+	rm ./var/.coverage* || true
 	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
-	$(docker_compose) run -e ENV=tests web coverage run ./manage.py test $(test_name) -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests_nds web coverage run -a ./manage.py test $(test_name) -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests web coverage lcov
+	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
+	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
+	rm ./var/.coverage*
 
 test:
-	$(docker_compose) run -e ENV=tests --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests --rm web ./manage.py test --shuffle --noinput --parallel
 
 test_nds:
-	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test
+	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --shuffle --noinput --parallel
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
@@ -69,7 +82,7 @@ node_modules:
 test_js: node_modules
 	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
-tests: test test_js test_nav
+tests: test test_nds test_js test_nav
 
 update:
 	$(docker_compose) run web update.sh

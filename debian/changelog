@@ -1,8 +1,104 @@
-geotrek-admin (2.103.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.110.0+dev) UNRELEASED; urgency=medium
 
-  * 
+  *
 
- -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 14 Mar 2024 11:14:42 +0100
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 13 Nov 2024 11:09:31 +0100
+
+geotrek-admin (2.110.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 13 Nov 2024 10:46:20 +0100
+
+geotrek-admin (2.109.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 29 Oct 2024 16:11:24 +0100
+
+geotrek-admin (2.109.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 19 Sep 2024 12:18:51 +0200
+
+geotrek-admin (2.109.1) RELEASED; urgency=medium
+
+  * new package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 22 Aug 2024 14:49:32 +0200
+
+geotrek-admin (2.109.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 08 Aug 2024 15:52:30 +0200
+
+geotrek-admin (2.108.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 12 Jul 2024 15:30:54 +0200
+
+geotrek-admin (2.107.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede@makina-corpus.com>  Tue, 02 Jul 2024 14:47:59 +0000
+
+geotrek-admin (2.107.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 07 Jun 2024 11:04:44 +0200
+
+geotrek-admin (2.106.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 May 2024 16:06:15 +0200
+
+geotrek-admin (2.105.1) RELEASED; urgency=medium
+
+  *  New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 19:42:46 +0200
+
+geotrek-admin (2.105.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 14:29:19 +0200
+
+geotrek-admin (2.104.2) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Thu, 04 Apr 2024 18:21:22 +0200
+
+geotrek-admin (2.104.1) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Wed, 03 Apr 2024 17:40:00 +0200
+
+geotrek-admin (2.104.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Wed, 03 Apr 2024 13:34:03 +0200
+
+geotrek-admin (2.103.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 22 Mar 2024 16:03:23 +0100
+
+geotrek-admin (2.103.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 15 Mar 2024 16:21:41 +0100
 
 geotrek-admin (2.103.0) RELEASED; urgency=medium
 

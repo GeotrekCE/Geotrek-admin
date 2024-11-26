@@ -2,8 +2,347 @@
 CHANGELOG
 =========
 
-2.103.0+dev (XXXX-XX-XX)
+2.110.0+dev     (XXXX-XX-XX)
+----------------------------
+
+**Improvements**
+
+- Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
+- Fix SchemaRandonneeParser url update when description is null or was not updated (#4022)
+
+**Documentation**
+
+- Update documentation for release and update obsolete example
+- Add note about certbot ssl configuration in nginx
+
+
+2.110.0     (2024-11-13)
+----------------------------
+
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
+
+
+2.109.3     (2024-10-29)
+----------------------------
+
+**Improvements**
+
+- Vocabulary adjustment for the 'add image gallery' button for flatpages
+- Improve translations for flatpages
+
+**Bug fixes**
+
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
+- Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
+- Fix intervention creation when target is not a report (suricate workflow)
+
+**Maintenance**
+
+- Docker image use now fully tested Ubuntu Jammy and python3.10
+- Use new crispy form
+- Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
+
+**Documentation**
+
+- Improve development quickstart documentation
+
+
+2.109.2     (2024-09-19)
+----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
+
+**Improvements**
+
+- ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
+
+**Minor fixes**
+
+- Fix swapped plural and singular translations for Annotation Categories (#4032)
+- Filter out deleted services in API responses (#4284)
+- MenuItems with platform "Mobile" are now hidden on public API (#4127)
+
+**Bug fixes**
+
+- ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+- ApidaeTrekParser now ignores when no linestring in GPX
+- ApidaeTrekParser duration import is fixed for multiple-days treks
+- Apidae tourism parser now handles missing contact properties
+- ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
+**Documentation**
+
+- Add command line examples and templates for importing data
+
+
+2.109.1     (2024-08-22)
+----------------------------
+
+**Improvements**
+
+- Allow use of Annotation Categories on annotations other than Points (#4032)
+- Allow using custom.py to make assigned_user field in Report Form available (#4085)
+
+**Bug fixes**
+
+-  Fix APIv2 exception on HD Views without Annotations (#4032)
+
+**Documentation**
+
+- Add authors, creators and last_author columns in displayed lists views and exports
+
+**Maintenance**
+
+- Replace deprecated `env_file` with `dotenv`
+- Optimize some backend queries for performances
+
+
+2.109.0     (2024-08-08)
+----------------------------
+
+**New features**
+
+- Add Annotation Categories to improve annotations on HD Views (#4032)
+
+**Improvements**
+
+- Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
+
+**Bug fixes**
+
+- Fix empty linetring in reorder_topology cmd (fixes #4092)
+- Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
+- Fix ZeroDivisionError raised on generating thumbnails in APIv2 (#4231)
+- Fix error on APIv2 for Signages with pictograms (#3839)
+
+**Maintenance**
+
+- Bump to django 4.2.15
+
+
+2.108.0     (2024-07-12)
 ------------------------
+
+**Improvements**
+
+- Add trek filter by network in API v2 (#4216)
+
+
+2.107.1     (2024-07-02)
+------------------------
+
+**Improvements**
+
+- Allows user to edit flatpage WYSIWYG button-link and suggestion block
+- Display years in Report filter in descending order (#4085)
+- Change CSS overflow in filters popup, to display full select dropdowns (with mapentity update)
+- Add trek filter by network in API v2 (#4216)
+
+**Documentation**
+
+- Improve PostgreSQL upgrade documentation
+- Integration of sensitivity module notices (import and public api usage)
+
+**Bug fixes**
+
+- Fix: 'length' filter can now be displayed on mobile apps
+- Fix: make 'duration' mobile filter consistent in doc
+- Fix: Label annotation becoming empty when double-clicked (refs #3927)
+- Fix: Too long linestring can't store elevation chart in default cache
+- Fix: missing default values in SQL template for Report model (#4085)
+- Fix: users cannot add attachment to Report model (#4085)
+- Fix: remove legacy default value for `external_uuid` in database for Report model (#4085)
+
+
+2.107.0 (2024-06-07)
+------------------------
+
+**Breaking changes**
+
+- This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+
+**New features**
+
+- Add filter by creation year and update year to Report list (#4085)
+- Add provider field and filter to Report (refs #4085)
+
+**Improvements**
+
+- ApidaeTrekParser now imports field `membreProprietaire` as the structure
+- Exclude deleted areas from OpenAir export (fixes #4140)
+- Make email address optional in `Report` form (#4085)
+- Add more information to email received by managers on new `Report` (#4085)
+
+**Documentation**
+
+- Improve information about upgrading geotrek-admin version with debian
+- Add details about dynamic segmentation for POIs
+
+**Bug fixes**
+
+- Fix view `v_treks` (fixes #4099)
+- Prevent trek map screenshot error if type of associated information desk have not pictogram
+- Fix map screenshot and default log in ODT files (with mapentity update)
+- Fix DOC and PDF converted downloaded file names (with mapentity update)
+
+**Maintenance**
+
+- Bump to django 4.2
+- Bump mapentity to 8.9.0
+
+
+2.106.0 (2024-05-15)
+--------------------
+
+**Improvements**
+
+- Add sources websites and pictograms to Aggregator (#3569)
+
+**Hotfix**
+
+- Improve performance on retrieving Sources in APIv2 (fixes #4079)
+
+
+2.105.1 (2024-05-07)
+--------------------
+
+**Hotfix**
+
+- Bump to mapentity 8.8.1 to get a fix
+
+
+2.105.0 (2024-05-07)
+--------------------
+
+**Breaking changes**
+
+- This version removes the concept of "Related treks". If you have any information left in your database associated with this concept it'll be deleted (refs #3750 and #550)
+
+**Bug fixes**
+
+- Fix OptionalRangeFilter and CustomDateFromToRangeFilter labels translation (fixes #3852)
+- Fix crash on migrate when db username or dbname contains dash
+- Fix Intervention end date should only be mandatory in last step of Suricate Workflow (refs #3825)"
+- Change label filter intervention contractors and filter null value on project contractors detail view (#3820)
+- Sort attachements in API V2 for OutdoorSites and TouristicContent objects (fixes #4071)
+- Expose missing Sources in APIv2 (fixes #4079)
+- MenuItem `open_in_new_tab` is now set to False when no target (#4093)
+- Fix MenuItem title max length in flatpages migration 0010 (#4095)
+
+**Documentation**
+
+- Improve static pages documentation (#4050)
+- Add usage of update script to docker documentation
+
+**Improvements**
+
+- Remove unused `postgres` volume in docker compose file for production
+- Add `report` model on Intervention filters in module list (#3972)
+- Homogenize `structure` field in APIv2 to always return ids instead of names (#3007)
+- Add structures to Aggregator (#3569)
+- Allow to filter flatpages by portal on admin list page
+
+
+2.104.2 (2024-04-04)
+--------------------
+
+**Bug fixes**
+
+- New menu items targeting static page now open it in the same tab
+- Ensure migration steps for menu items can be run separately
+- Blockquote style in flat page content is now persistent on saving
+
+**Documentation**
+
+- Fix RST syntax (#4047)
+
+2.104.1 (2024-04-03)
+--------------------
+
+**Bug fixes**
+
+- Set MenuItem `open_in_new_tab` to False during migration when the target is a flat page
+
+
+2.104.0 (2024-04-03)
+--------------------
+
+**WARNING!**
+
+This version breaks the flat pages API. Upgrade first to Geotrek-rando 3.19.0 (simultaneously released on April 2024) or more, for a smooth transition.
+
+**Features**
+
+- Add new menu headers and flat pages with tree hierarchies (#3918, #3936, #4027, #4028, #4029)
+- Clean and improve flat pages (#3884, #3074, #3075, #2208)
+- Add styling and embedding tools for FlatPages content (refs #3921, #3922, #4019)
+- Add local image upload into content of flat pages (ref #3552)
+
+**Bug fixes**
+
+- Fix API crash when using an SVG file for information desks (fixes #3860)
+- Fix mobile sync crash when a theme has no pictogram (fixes #3814)
+
+**Breaking changes**
+
+- This version brings a lot of changes to flat pages and the corresponding API endpoints. In order not to break your Geotrek-rando website it is mandatory to update first Geotrek-rando to 3.19.0 (or more) before upgrading your Geotrek-admin to this version. Note that Geotrek-rando handles the upgrade smoothly and can handle both old and new flat pages.
+- Geotrek-rando v2 support is deprecated, `sync_rando` command and Sync rando menu view are removed (#3752)
+
+**Hot fix**
+
+- Add git to Dockerfile build staging
+
+**Maintenance**
+
+- Bump mapentity from 8.7.2 to 8.7.3
+
+**Documentation**
+
+- Add documentation about new ``MAX_CHARACTERS_BY_FIELD`` setting, replacing deprecated ``MAX_CHARACTERS`` (#3844)
+
+
+2.103.2 (2024-03-22)
+--------------------
+
+**Bug fixes**
+
+- Fix bug deleted blades still displayed on detail view of signages (fix #4003)
+- Fix interferences on `practice` mapping in Aggregator by changing calls order in GeotrekOutdoorParser (refs #3569)
+
+**Maintenance**
+
+- Bump mapentity from 8.7.1 to 8.7.2
+
+**Development**
+
+- Add git to Dockerfile build staging
+
+
+2.103.1 (2024-03-15)
+--------------------
+
+**Maintenance**
+
+- Bump mapentity from 8.7.0 to 8.7.1
+
+**Hot fix**
+
+- Fix fonts in public PDF (docker image only)
 
 
 2.103.0 (2024-03-14)

@@ -5,7 +5,8 @@ from django.test import TestCase
 
 from geotrek.authent.tests.factories import UserFactory, StructureFactory
 from geotrek.signage.models import Blade
-from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, LinePictogramFactory, SealingFactory, SignageFactory, SignageConditionFactory, BladeConditionFactory
+from geotrek.signage.tests.factories import BladeFactory, BladeTypeFactory, LinePictogramFactory, SealingFactory, \
+    SignageFactory, SignageConditionFactory, BladeConditionFactory, SignageTypeNoPictogramFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 
 
@@ -88,3 +89,10 @@ class LinePictogramModelTest(TestCase):
     def test_str_linepictogram(self):
         linepictogram = LinePictogramFactory(label="fresnais")
         self.assertEqual(str(linepictogram), "fresnais")
+
+
+class SignageTypeTestCase(TestCase):
+    def test_pictogram_url_default(self):
+        """Return signage type default pictogram if not defined"""
+        signage_type = SignageTypeNoPictogramFactory()
+        self.assertEqual(signage_type.get_pictogram_url(), '/static/signage/picto-signage.png')

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-04 16:25+0100\n"
+"POT-Creation-Date: 2024-11-08 16:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,9 +57,6 @@ msgid "Advanced"
 msgstr ""
 
 msgid "Accessibility"
-msgstr ""
-
-msgid "Related treks"
 msgstr ""
 
 msgid "Insert service:"
@@ -281,9 +278,6 @@ msgstr ""
 msgid "External resources"
 msgstr ""
 
-msgid "Connections between treks"
-msgstr ""
-
 msgid "Information desks"
 msgstr ""
 
@@ -329,10 +323,6 @@ msgstr ""
 msgid "Cannot use itself as child trek."
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr ""
-
 msgid "Sensitive area"
 msgstr ""
 
@@ -349,27 +339,6 @@ msgid "Infrastructures"
 msgstr ""
 
 msgid "Published treks"
-msgstr ""
-
-msgid "Common departure"
-msgstr ""
-
-msgid "Common edge"
-msgstr ""
-
-msgid "Circuit step"
-msgstr ""
-
-msgid "Trek relationship"
-msgstr ""
-
-msgid "Trek relationships"
-msgstr ""
-
-msgid "Path"
-msgstr ""
-
-msgid "Circuit"
 msgstr ""
 
 msgid "Trek network"
@@ -492,12 +461,6 @@ msgid ""
 "{key}"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"One trek has not be generated for {trek_parent_instance[0].name} : could not "
-"find trek with UUID {child}"
-msgstr ""
-
 msgid ""
 "An error occured in children generation : {getattr(e, 'message', repr(e))}"
 msgstr ""
@@ -507,17 +470,32 @@ msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
 msgid ""
-"The geometry cannot be converted to a single continuous LineString feature"
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
 msgstr ""
 
-msgid "Itinerancy"
+msgid "Trek geometry is None"
 msgstr ""
 
-msgid "Hike"
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'. Should contain coordinates"
+msgstr ""
+
+msgid "Bad value for parking geometry: should be a Point"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
 msgstr ""
 
 msgid "Attached files"
@@ -565,6 +543,9 @@ msgid "Print booklet"
 msgstr ""
 
 msgid "Photos accessibility"
+msgstr ""
+
+msgid "Itinerancy"
 msgstr ""
 
 msgid "Child of:"
@@ -690,9 +671,6 @@ msgid "Add a new poi"
 msgstr ""
 
 msgid "Add a new service"
-msgstr ""
-
-msgid "Sync"
 msgstr ""
 
 msgid "Add Web link"

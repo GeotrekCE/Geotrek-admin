@@ -12,7 +12,7 @@ Basic configuration update
 
 To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo dpkg-reconfigure geotrek-admin
 
@@ -30,17 +30,17 @@ The list of all overridable setting and default values can be found
 
 After any change in ``custom.py``, run:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo service geotrek restart
 
 Sometimes you also have to run:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo dpkg-reconfigure -u geotrek-admin
 
-.. note ::
+.. note::
 
     Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
 
@@ -52,7 +52,7 @@ NGINX configuration is controlled by Geotrek-admin and will be erased at each up
 Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or ``/etc/nginx/sites-enable/geotrek.conf``.
 Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then run:
 
-.. code-block :: bash
+.. code-block:: bash
 
     sudo dpkg-reconfigure geotrek-admin
 
@@ -62,7 +62,7 @@ Activate SSL / HTTPS
 
 To activate https, you need firstly to change ``custom.py`` and add:
 
-.. code-block :: python
+.. code-block:: python
 
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -71,11 +71,13 @@ After this, edit ``nginx.conf.in`` to add your certificate.
 
 If you generate it with letsencrypt :
 You can use certbot to add the certificate in your configuration.
-But you will have to move the configuration automatically added into ``nginx.conf``, to the file ``nginx.conf.in``
-in ``/opt/geotrek-admin/var/conf/`` directory
+But you will have to move the configuration automatically added into ``nginx.conf``, to the file ``nginx.conf.in`` in ``/opt/geotrek-admin/var/conf/`` directory.
 
-You have to move the configuration to the file ``nginx.conf.in`` because ``nginx.conf`` is automatically
-changed during command ``dpkg-reconfigure geotrek-admin``.
+You have to move the configuration to the file ``nginx.conf.in`` because ``nginx.conf`` is automatically changed during command ``dpkg-reconfigure geotrek-admin``.
+
+.. note::
+
+    You need to replace the ``$`` from Certbot with ``${DOLLAR}`` everywhere in the ``nginx.conf.in`` file, then run the command ``sudo dpkg-reconfigure geotrek-admin`` to regenerate the file.
 
 
 Mandatory settings
@@ -84,7 +86,7 @@ Mandatory settings
 Spatial reference identifier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block :: python
+.. code-block:: python
 
     SRID = 2154
 
@@ -99,7 +101,7 @@ Spatial reference identifier of your database. Default 2154 is RGF93 / Lambert-9
 Default Structure
 ~~~~~~~~~~~~~~~~~
 
-.. code-block :: python
+.. code-block:: python
 
     DEFAULT_STRUCTURE_NAME = "GEOTEAM"
 
@@ -116,7 +118,7 @@ Name for your default structure.
 Dynamic segmentation
 ~~~~~~~~~~~~~~~~~~~~
 
-.. code-block :: python
+.. code-block:: python
 
     TREKKING_TOPOLOGY_ENABLED = True
 
@@ -136,13 +138,13 @@ Do not change it again to true after setting it to false.
 Translations
 ~~~~~~~~~~~~
 
-.. code-block :: python
+.. code-block:: python
 
     LANGUAGE_CODE = 'fr'
 
 Language of your interface.
 
-.. code-block :: python
+.. code-block:: python
 
    MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
 
@@ -174,7 +176,7 @@ Default values::
 In order to check your configuration of spatial extents, a small tool
 is available at ``http://<server_url>/tools/extents/``.
 
-.. note ::
+.. note::
 
     Administrator privileges are required.
 

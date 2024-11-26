@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import format_lazy
 from django_filters import ChoiceFilter, MultipleChoiceFilter, DateFromToRangeFilter, ModelMultipleChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
@@ -104,6 +105,10 @@ class ProjectIntersectionFilterDistrict(PolygonProjectFilterMixin, RightFilter):
 class ProjectIntersectionFilterRestrictedArea(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedArea
 
+    def get_queryset(self, request=None):
+        qs = super().get_queryset(request)
+        return qs.select_related('area_type')
+
 
 class ProjectIntersectionFilterRestrictedAreaType(PolygonProjectFilterMixin, RightFilter):
     model = RestrictedAreaType
@@ -125,14 +130,14 @@ class AltimetryInterventionFilterSet(AltimetryPointFilterSet):
 class CustomDateFromToRangeFilter(DateFromToRangeFilter):
     def __init__(self, *args, **kwargs):
         super(DateFromToRangeFilter, self).__init__(*args, **kwargs)
-        self.field.fields[0].label = _('min %s') % self.field.label
-        self.field.fields[1].label = _('max %s') % self.field.label
+        self.field.fields[0].label = format_lazy('{min} {label}', min=_('min'), label=self.field.label)
+        self.field.fields[1].label = format_lazy('{max} {label}', max=_('max'), label=self.field.label)
 
 
 class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
-                  ('trail', _("Trail")))
+                  ('trail', _("Trail")), ('report', _("Report")))
 
     if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         ON_CHOICES += (('course', _("Outdoor Course")), ('site', _("Outdoor Site")),)
@@ -156,6 +161,11 @@ class InterventionFilterSet(AltimetryInterventionFilterSet, ZoningFilterSet, Str
             'status', 'type', 'stake', 'subcontracting', 'project', 'contractors', 'on',
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Sorted 'ON_CHOICES' here to sort with user language.
+        self.form.fields["on"].choices = sorted(self.ON_CHOICES, key=lambda modelname: modelname[1])
+
     def filter_year(self, qs, name, values):
         conditions = Q()
         for value in values:
@@ -176,7 +186,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     district = ProjectIntersectionFilterDistrict(label=_('District'), lookup_expr='intersects', required=False)
     area_type = ProjectIntersectionFilterRestrictedAreaType(label=_('Restricted area type'), lookup_expr='intersects', required=False)
     area = ProjectIntersectionFilterRestrictedArea(label=_('Restricted area'), lookup_expr='intersects', required=False)
-    contractors = ModelMultipleChoiceFilter(label=_("Intervention contractors"), queryset=Contractor.objects.all(), method='filter_contractors')
+    contractors = ModelMultipleChoiceFilter(label=_("Contractors"), queryset=Contractor.objects.all(), method='filter_contractors')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project

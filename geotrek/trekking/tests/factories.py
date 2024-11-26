@@ -46,8 +46,8 @@ class AccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Accessibility
 
-    name = "Accessibility"
-    pictogram = get_dummy_uploaded_image('accessibility.png')
+    name = factory.Faker('word')
+    pictogram = factory.django.ImageField()
 
 
 class AccessibilityLevelFactory(factory.django.DjangoModelFactory):
@@ -223,18 +223,6 @@ class TrekWithServicesFactory(TrekFactory):
             service1.type.practices.add(obj.practice)
             service2 = ServiceFactory.create(geom='SRID=2154;POINT (700050 6600050)')
             service2.type.practices.add(obj.practice)
-
-
-class TrekRelationshipFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.TrekRelationship
-
-    has_common_departure = False
-    has_common_edge = False
-    is_circuit_step = False
-
-    trek_a = factory.SubFactory(TrekFactory)
-    trek_b = factory.SubFactory(TrekFactory)
 
 
 class POITypeFactory(factory.django.DjangoModelFactory):

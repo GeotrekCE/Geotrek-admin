@@ -13,7 +13,7 @@ import textwrap
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
-from collections import Iterable
+from collections.abc import Iterable
 from time import sleep
 from PIL import Image, UnidentifiedImageError
 
@@ -39,7 +39,7 @@ from paperclip.models import attachment_upload, random_suffix_regexp
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import FileType, Attachment, License
+from geotrek.common.models import FileType, Attachment, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
@@ -124,11 +124,6 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
-
-        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
-            translation.activate(self.default_language)
-        else:
-            translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     def normalize_field_name(self, name):
         return name.upper()
@@ -537,24 +532,23 @@ class Parser:
             raise GlobalImportError(_("Filename or url is required"))
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_("File does not exists at: {filename}").format(filename=self.filename))
-        self.start()
-        for i, row in enumerate(self.next_row()):
-            if limit and i >= limit:
-                break
-            try:
-                self.parse_row(row)
-            except DatabaseError as e:
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-            except (ValueImportError, RowImportError) as e:
-                self.add_warning(str(e))
-            except Exception as e:
-                raise
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-        self.end()
+
+        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
+            lang = self.default_language
+        else:
+            lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        with translation.override(lang, deactivate=True):
+            self.start()
+            for i, row in enumerate(self.next_row()):
+                if limit and i >= limit:
+                    break
+                try:
+                    self.parse_row(row)
+                except (DatabaseError, RowImportError, ValueImportError) as e:
+                    self.add_warning(str(e))
+                except Exception as e:
+                    raise e
+            self.end()
 
     def request_or_retry(self, url, verb='get', **kwargs):
         try_get = settings.PARSER_NUMBER_OF_TRIES
@@ -802,6 +796,9 @@ class AttachmentParserMixin:
                         return False, updated
             except UnidentifiedImageError:
                 pass
+            except ValueError:
+                # We want to catch : https://github.com/python-pillow/Pillow/blob/22ef8df59abf461824e4672bba8c47137730ef57/src/PIL/PngImagePlugin.py#L143
+                return False, updated
             attachment.attachment_file.save(name, f, save=False)
             attachment.is_image = attachment.is_an_image()
         else:
@@ -1350,6 +1347,10 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 raise ImproperlyConfigured(f"{category} is not configured in categories_keys_api_v2")
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
+        # Update sources if applicable
+        if "source" in self.url_categories.keys():
+            self.get_sources_extra_fields()
+
     def replace_mapping(self, label, route):
         for key, list_map in self.mapping.get(route, {}).items():
             if label in list_map:
@@ -1476,6 +1477,34 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 yield row
 
             self.next_url = self.root['next']
+
+    def get_sources_extra_fields(self):
+        response = self.request_or_retry(f"{self.url}/api/v2/source/")
+        create = self.field_options['source'].get("create", False)
+        if create:
+            for result in response.json()['results']:
+                name = result['name']
+                pictogram_url = result['pictogram']
+                website = result['website']
+                source, created = RecordSource.objects.update_or_create(**{'name': name}, defaults={'website': website})
+                if created:
+                    self.add_warning(_(f"Source '{name}' did not exist in Geotrek-Admin and was automatically created"))
+                if not pictogram_url and source.pictogram:
+                    source.pictogram.delete()
+                elif pictogram_url:
+                    pictogram_filename = os.path.basename(pictogram_url)
+                    if not source.pictogram or pictogram_filename != source.pictogram.file.name:
+                        try:
+                            response = self.request_or_retry(pictogram_url)
+                        except (DownloadImportError, requests.exceptions.ConnectionError):
+                            self.add_warning(_("Failed to download '{url}'").format(url=pictogram_url))
+                            return
+                        if response.status_code != requests.codes.ok:
+                            self.add_warning(_("Failed to download '{url}'").format(url=pictogram_url))
+                            return
+                        if response.content:
+                            pictogram_file = ContentFile(response.content)
+                            source.pictogram.save(pictogram_filename, pictogram_file)
 
 
 class ApidaeBaseParser(Parser):

@@ -781,7 +781,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
     @property
     def aggregations_optimized(self):
-        return self.aggregations.all().select_related('path', 'topo_object')
+        return self.aggregations.all().select_related('path')
 
 
 class PathAggregation(models.Model):

@@ -1,6 +1,11 @@
-from django.test import TestCase
+from unittest import skipIf
+
+from django.conf import settings
+from django.test import TestCase, override_settings
 from geotrek.authent.tests.factories import UserFactory
-from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory
+from geotrek.maintenance.tests.factories import InterventionJobFactory, LightInterventionFactory, ManDayFactory, InterventionStatusFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.core.tests.factories import TopologyFactory, PathFactory
 from geotrek.maintenance.forms import InterventionForm, ManDayForm, ProjectForm
 
 
@@ -49,6 +54,11 @@ class InterventionFormTest(TestCase):
     def setUpTestData(cls):
         cls.interv = LightInterventionFactory()
         cls.user = UserFactory()
+        topo = TopologyFactory()
+        path = PathFactory()
+        cls.topology = '[{"pk": %d, "paths": [%d], "positions": {"0": [0.674882030756843, 0.110030805790642]}}]' % (topo.pk, path.pk)
+        cls.target = SignageFactory(),
+        cls.interv_status = InterventionStatusFactory(order=30)
 
     def test_end_date_after_start_date(self):
         form = InterventionForm(
@@ -58,6 +68,21 @@ class InterventionFormTest(TestCase):
         )
         self.assertFalse(form.is_valid())
         self.assertIn("Begin date is after end date", str(form.errors))
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    def test_create_intervention_if_target_is_not_report(self):
+        form = InterventionForm(
+            data={
+                "name": "abc",
+                "topology": self.topology,
+                "target": self.target,
+                "begin_date": "10/02/2024",
+                "status": self.interv_status
+            },
+            user=self.user,
+        )
+        self.assertTrue(form.is_valid())
 
 
 class ProjectDateFormTest(TestCase):

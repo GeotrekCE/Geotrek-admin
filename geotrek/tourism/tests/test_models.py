@@ -6,7 +6,6 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.test.utils import override_settings
-from mapentity.middleware import clear_internal_user_cache
 
 from geotrek.core.tests import factories as core_factories
 from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
@@ -51,7 +50,6 @@ class InformationDeskTest(TestCase):
     def test_cascading_deletions(self):
         categ = TouristicContentCategoryFactory()
         contenttype = TouristicContentType1Factory(category=categ)
-        clear_internal_user_cache()
         contenttype_pk = contenttype.pk
         caregory_pk = categ.pk
         category_repr = str(categ)
