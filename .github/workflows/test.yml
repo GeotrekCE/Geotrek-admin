@@ -45,7 +45,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['bionic-3.8', 'focal-3.8', 'jammy-3.10']
+        os: ['focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -72,7 +72,7 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/cache@v3
       with:
         path: |
@@ -114,13 +114,7 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv for bionic
-      if: ${{ matrix.os == 'bionic-3.8'}}
-      run: |
-          python3.8 -m venv ./venv
-
     - name: Install python venv
-      if: ${{ matrix.os != 'bionic-3.8'}}
       run: |
           python3 -m venv ./venv
 
@@ -158,7 +152,6 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      if: ${{ matrix.os != 'bionic-3.8'}}
       uses: actions/upload-artifact@v4
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
