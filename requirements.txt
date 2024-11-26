@@ -114,6 +114,7 @@ django==4.2.16
     #   django-leaflet
     #   django-modelcluster
     #   django-modeltranslation
+    #   django-tinymce
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
