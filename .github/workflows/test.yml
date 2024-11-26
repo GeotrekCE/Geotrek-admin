@@ -419,16 +419,18 @@ jobs:
     name: Publish (on release only)
     runs-on: ubuntu-latest
     needs: [ test, e2e_docker_image, build_deb, e2e_deb_20_04 ]
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: bionic
 
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: focal
 
@@ -443,25 +445,35 @@ jobs:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Publish Docker image (v2 and latest)
-        run: |
-          if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            export DOCKER_TAG=dev
-          else
-            docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-            docker push geotrekce/admin:$(cat VERSION)
-            export DOCKER_TAG=latest
-          fi
-          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
-          docker push geotrekce/admin:$DOCKER_TAG
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: geotrekce/admin
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          provenance: mode=max
+          sbom: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          file: ./docker/Dockerfile
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Publish debian packages
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DEB_COMPONENT=dev
@@ -479,11 +491,13 @@ jobs:
           fi
 
       - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: actions/download-artifact@v4
         with:
           name: jammy
 
       - name: Attach debian packages as release binaries
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

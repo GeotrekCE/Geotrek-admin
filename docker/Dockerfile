@@ -2,6 +2,17 @@ ARG BASE_IMAGE=jammy
 
 FROM ubuntu:${BASE_IMAGE} AS base
 
+# add labels
+LABEL org.opencontainers.image.authors="Makina Corpus"
+LABEL org.opencontainers.image.source="https://github.com/GeotrekCE/Geotrek-admin/"
+LABEL org.opencontainers.image.documentation="https://geotrek.readthedocs.io/"
+LABEL org.opencontainers.image.vendor="Makina Corpus"
+LABEL org.opencontainers.image.licenses="BSD-2-Clause"
+LABEL org.opencontainers.image.url="https://geotrek.fr"
+LABEL org.opencontainers.image.title="Geotrek-admin"
+LABEL org.opencontainers.image.description="Manage and promote your trails and tourist content and activities."
+
+
 ENV PYTHONBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ENV=prod
