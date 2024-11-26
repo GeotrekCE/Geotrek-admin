@@ -425,11 +425,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: bionic
 
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: focal
 
@@ -462,9 +464,12 @@ jobs:
           sbom: true
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.meta.outputs.tags }}
+          load: true
+          file: ./docker/Dockerfile
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
@@ -488,6 +493,7 @@ jobs:
           fi
 
       - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: actions/download-artifact@v4
         with:
           name: jammy
