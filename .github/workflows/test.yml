@@ -446,10 +446,6 @@ jobs:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -462,9 +458,7 @@ jobs:
           push: true
           provenance: mode=max
           sbom: true
-          builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.meta.outputs.tags }}
-          load: true
           file: ./docker/Dockerfile
 
       - name: Install SSH key
