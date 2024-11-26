@@ -466,7 +466,7 @@ jobs:
         with:
           images:  |
             geotrekce/admin
-            ghcr.io/geotrek-admin
+            ghcr.io/geotrekce/geotrek-admin
 
       - name: Build and push image
         uses: docker/build-push-action@v6
