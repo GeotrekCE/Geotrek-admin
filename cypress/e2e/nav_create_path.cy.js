@@ -4,7 +4,6 @@ describe('Create path', () => {
         const password = 'admin';
         cy.loginByCSRF(username, password);
         cy.mockTiles();
-        cy.visit('/path/list');
     });
 
     it('Create path', () => {
@@ -76,5 +75,4 @@ describe('Create path', () => {
         cy.url().should('include', '/path/list/');
         cy.get("table#objects-list tbody tr").should('have.length', 1);
     });
-    // One last path
 });
