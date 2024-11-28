@@ -90,7 +90,7 @@ Make sure to run the following command **BEFORE** upgrading:
 
 
 From Geotrek-admin <= 2.110.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **WARNING!**
 
