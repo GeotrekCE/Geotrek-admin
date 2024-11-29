@@ -26,7 +26,6 @@ Cypress.Commands.add('loginByCSRF', (username, password) => {
       validate() {
         cy.request('/').its('status').should('eq', 200);
       },
-      cacheAcrossSpecs: true
     }
   );
 });
