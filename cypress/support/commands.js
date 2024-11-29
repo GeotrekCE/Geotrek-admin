@@ -35,3 +35,4 @@ Cypress.Commands.add('getTinyMceContent', (tinyMceId, content) => {
     const editor = win.tinymce.get(tinyMceId);
     return editor.getContent();
   });
+});
