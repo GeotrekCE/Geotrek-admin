@@ -50,10 +50,14 @@ class Command(BaseCommand):
                 cursor.execute("SELECT PostGIS_version()")
                 return cursor.fetchone()[0].split(' ')[0]
 
-    def get_pgrouting_version(self):
+    def get_pgrouting_version(self, full=False):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT pgr_version()")
-            return cursor.fetchone()[0].split(' ')[0].strip('()').split(',')[0]
+            if full:
+                cursor.execute("SELECT pgr_full_version()")
+                return cursor.fetchone()[0]
+            else:
+                cursor.execute("SELECT pgr_version()")
+                return cursor.fetchone()[0].split(' ')[0]
 
     def handle(self, *args, **options):
         full = options['full']
@@ -79,7 +83,7 @@ class Command(BaseCommand):
             return
 
         if options['pgrouting']:
-            self.stdout.write(self.get_pgrouting_version())
+            self.stdout.write(self.get_pgrouting_version(full))
             return
 
         self.stdout.write(f"Geotrek version    : {self.style.SUCCESS(self.get_geotrek_version())}")
@@ -87,5 +91,5 @@ class Command(BaseCommand):
         self.stdout.write(f"Django version     : {self.style.SUCCESS(self.get_django_version())}")
         self.stdout.write(f"PostgreSQL version : {self.style.SUCCESS(self.get_postgresql_version(full))}")
         self.stdout.write(f"PostGIS version    : {self.style.SUCCESS(self.get_postgis_version(full))}")
-        self.stdout.write(f"pgRouting version  : {self.style.SUCCESS(self.get_pgrouting_version())}")
+        self.stdout.write(f"pgRouting version  : {self.style.SUCCESS(self.get_pgrouting_version(full))}")
         return
