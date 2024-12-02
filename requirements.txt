@@ -150,7 +150,7 @@ django-js-asset==2.0.0
     # via django-mptt
 django-large-image==0.8.1
     # via geotrek (setup.py)
-django-leaflet==0.19.post11
+django-leaflet==0.31.0
     # via mapentity
 django-modelcluster==6.3
     # via geotrek (setup.py)
