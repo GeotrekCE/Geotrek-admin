@@ -342,7 +342,7 @@ six==1.16.0
     #   html5lib
     #   python-dateutil
     #   zodb
-soupsieve==2.5
+soupsieve==2.6
     # via beautifulsoup4
 sqlparse==0.5.1
     # via django
