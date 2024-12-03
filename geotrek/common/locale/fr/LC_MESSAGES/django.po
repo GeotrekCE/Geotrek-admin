@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2024-08-06 08:26+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -25,22 +25,20 @@ msgstr "type d'objet"
 msgid "Linked content"
 msgstr "Contenu lié"
 
-msgid "Related to"
-msgstr "Associé à"
-
 msgid "Title"
 msgstr "Titre"
+
+msgid "Related to"
+msgstr "Associé à"
 
 msgid "Common"
 msgstr "Commun"
 
-#, python-format
-msgid "min %s"
-msgstr "min %s"
+msgid "min"
+msgstr ""
 
-#, python-format
-msgid "max %s"
-msgstr "max %s"
+msgid "max"
+msgstr ""
 
 msgid "This field is required to publish object."
 msgstr "Ce champs est obligatoire pour publier l'objet."
@@ -80,9 +78,6 @@ msgstr "Encodage"
 msgid "Data to import from local file"
 msgstr "Données à importer depuis un fichier local"
 
-msgid "Launch Sync"
-msgstr "Lancer la synchro"
-
 msgid "Overview of the tricky passage"
 msgstr "Aperçu du passage délicat"
 
@@ -107,21 +102,6 @@ msgstr "L'image sélectionnée n'est pas assez haute"
 msgid "Save changes"
 msgstr "Sauvegarder"
 
-msgid "Global tiles syncing ..."
-msgstr "Synchro des tuiles globales..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Synchro des tuiles de randonnées..."
-
-msgid "Tiles synced ..."
-msgstr "Tuiles synchronisées..."
-
-msgid "Language"
-msgstr "Langue"
-
-msgid "Sync ended"
-msgstr "Synchro terminée"
-
 msgid "Geotrek Rando"
 msgstr "Geotrek Rando"
 
@@ -141,6 +121,9 @@ msgstr ""
 
 msgid "Merge"
 msgstr "Fusionner"
+
+msgid "Action"
+msgstr "Action"
 
 msgid "Insertion date"
 msgstr "Date d'insertion"
@@ -351,7 +334,7 @@ msgid "Location"
 msgstr "Emplacement"
 
 msgid "Annotations"
-msgstr "Actions"
+msgstr "Annotations"
 
 msgid "Title for this view point"
 msgstr "Titre pour cette vue HD"
@@ -365,8 +348,17 @@ msgstr "Vue HD"
 msgid "HD Views"
 msgstr "Vues HD"
 
-msgid "Add a new HD view"
-msgstr "Ajouter une nouvelle vue HD"
+msgid "Annotation category"
+msgstr "Catégorie d'annotation"
+
+msgid "Annotation categories"
+msgstr "Catégories d'annotation"
+
+msgid "Access mean"
+msgstr "Moyen d'accès"
+
+msgid "Access means"
+msgstr "Moyens d'accès"
 
 #, python-brace-format
 msgid "Line {line}"
@@ -420,11 +412,11 @@ msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
-#, fuzzy, python-brace-format
-#| msgid "Bad value '{val}' for field {src}. Should be {values}"
+#, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
-"Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être {values}"
+"Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise "
+"parmi {values}"
 
 #, python-brace-format
 msgid ""
@@ -437,10 +429,8 @@ msgstr ""
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
 msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
-#, fuzzy
-#| msgid "Filename is required"
 msgid "Filename or url is required"
-msgstr "un nom de fichier est requis"
+msgstr "Un nom de fichier ou une url est requis"
 
 #, python-brace-format
 msgid "File does not exists at: {filename}"
@@ -485,19 +475,29 @@ msgid ""
 msgstr ""
 
 #, python-brace-format
+msgid ""
+"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj."
+"pk}: "
+msgstr ""
+"Fichier attaché invalide {url} pour {self.obj.__class__.__name__} #{self.obj."
+"pk}: "
+
+#, python-brace-format
 msgid "Model {model}"
 msgstr ""
 
-#, fuzzy
-#| msgid "Geotrek Rando"
 msgid "Geotrek-admin"
-msgstr "Geotrek Admin"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+"Source '{name}' n'existait pas dans Geotrek-Admin. Elle a été créée "
+"automatiquement"
 
 msgid "Import from web."
 msgstr "Importer du web."
-
-msgid "Init sync ..."
-msgstr "Début de synchro"
 
 msgid "Photos to illustrate information related to the accessibility of treks."
 msgstr ""
@@ -566,9 +566,6 @@ msgstr "Rectangle"
 msgid "Square"
 msgstr "Carré"
 
-msgid "Ellipse"
-msgstr "Ellipse"
-
 msgid "Circle"
 msgstr "Cercle"
 
@@ -581,8 +578,8 @@ msgstr "Point"
 msgid "Line"
 msgstr "Ligne"
 
-msgid "Created annotations"
-msgstr "Annotations créées"
+msgid "Categories"
+msgstr "Catégories"
 
 msgid "Properties"
 msgstr "Propriétés"
@@ -602,9 +599,6 @@ msgstr "Date"
 msgid "User"
 msgstr "Utilisateur"
 
-msgid "Action"
-msgstr "Action"
-
 msgid "Full history"
 msgstr "Historique complet"
 
@@ -615,6 +609,12 @@ msgstr ""
 "Ajouter des images de très haute résolution qui seront tuilées "
 "automatiquement et ajouter des annotations sur celles-ci (points, lignes, "
 "polygones et texte)"
+
+msgid "Add a new HD view"
+msgstr "Ajouter une nouvelle vue HD"
+
+msgid "Details"
+msgstr "Détails"
 
 msgid "You are not allowed to see HD views."
 msgstr "Vous n'êtes pas autorisé à voir les vues HD."
@@ -681,31 +681,9 @@ msgstr "ces champs doivent être renseignés :"
 msgid "has invalid geometry;"
 msgstr "a une géométrie invalide ;"
 
-#, fuzzy, python-format
-#| msgid "%(obj)s has changed  state, it needs a review to be published. "
+#, python-format
 msgid "%(obj)s has changed state, it needs a review to be published. "
-msgstr "%(obj)s a changé d'état, et a besoin d'être review pour être publié."
-
-msgid "Sync verifications"
-msgstr "Vérification des synchros"
-
-msgid "Sync in progress"
-msgstr "Synchronisation en cours"
-
-msgid "An error occured"
-msgstr "Une erreur est survenue"
-
-msgid "Public web site sync"
-msgstr "Synchro du site web public"
-
-msgid "Confirmation"
-msgstr "Confirmation"
-
-msgid "Are you sure you want to sync ?"
-msgstr "Etes-vous certain de vouloir lancer la synchro ?"
-
-msgid "Sync"
-msgstr "Sync"
+msgstr "%(obj)s a changé d'état, et a besoin d'être validé pour être publié."
 
 #, python-format
 msgid "%s days"

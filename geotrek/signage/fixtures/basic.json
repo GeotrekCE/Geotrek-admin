@@ -108,15 +108,6 @@
         }
     },
     {
-        "pk": 3,
-        "model": "signage.bladetype",
-        "fields": {
-            "label": "Directionnel",
-            "date_update": "2014-02-12T11:21:48.961Z",
-            "date_insert": "2014-02-12T11:21:48.961Z"
-        }
-    },
-        {
         "pk": 1,
         "model": "signage.color",
         "fields": {

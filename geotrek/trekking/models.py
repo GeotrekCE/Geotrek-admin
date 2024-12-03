@@ -1,39 +1,43 @@
-import os
 import logging
+import os
 
+import simplekml
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Transform, LineLocatePoint
+from django.contrib.gis.db.models.functions import LineLocatePoint, Transform
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
-
-import simplekml
-
-from mapentity.serializers import plain_text
+from django.utils.translation import get_language, gettext
+from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
+from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology, simplify_coords
-from geotrek.common.models import AccessibilityAttachment
-from geotrek.common.utils import intersecting, classproperty
-from geotrek.common.mixins.models import PicturesMixin, PublishableMixin, PictogramMixin, OptionalPictogramMixin, \
-    TimeStampedModelMixin, GeotrekMapEntityMixin, get_uuid_duplication
-from geotrek.common.models import Theme, ReservationSystem, RatingMixin, RatingScaleMixin
+from geotrek.common.mixins.models import (BasePublishableMixin,
+                                          GeotrekMapEntityMixin,
+                                          OptionalPictogramMixin,
+                                          PictogramMixin, PicturesMixin,
+                                          PublishableMixin,
+                                          TimeStampedModelMixin,
+                                          get_uuid_duplication)
+from geotrek.common.models import (AccessibilityAttachment, RatingMixin,
+                                   RatingScaleMixin, ReservationSystem, Theme)
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.templatetags import geotrek_tags
-
+from geotrek.common.utils import (classproperty, intersecting,
+                                  queryset_or_all_objects, queryset_or_model)
+from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
-
-
-from colorfield.fields import ColorField
-
-from geotrek.trekking.managers import TrekOrderedChildManager, TrekManager, TrekRelationshipManager, WebLinkManager, \
-    POIManager, ServiceManager
+from geotrek.trekking.managers import (POIManager, ServiceManager, TrekManager,
+                                       TrekOrderedChildManager, WebLinkManager)
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +64,7 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
                                    help_text=_("Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.SET_NULL)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
     color = ColorField(verbose_name=_("Color"), default='#444444',
@@ -80,13 +84,9 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
     def slug(self):
         return slugify(self.name) or str(self.pk)
 
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
 
 class RatingScale(RatingScaleMixin):
-    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.CASCADE,
                                  verbose_name=_("Practice"))
 
     class Meta:
@@ -95,14 +95,26 @@ class RatingScale(RatingScaleMixin):
         ordering = ('practice', 'order', 'name')
 
 
+@receiver(pre_delete, sender=Practice)
+def log_cascade_deletion_from_practice(sender, instance, using, **kwargs):
+    # RatingScale are deleted when Practices are deleted
+    log_cascade_deletion(sender, instance, RatingScale, 'practice')
+
+
 class Rating(RatingMixin):
-    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.CASCADE,
                               verbose_name=_("Scale"))
 
     class Meta:
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
         ordering = ('order', 'name')
+
+
+@receiver(pre_delete, sender=RatingScale)
+def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
+    # Ratings are deleted when RatingScales are deleted
+    log_cascade_deletion(sender, instance, Rating, 'scale')
 
 
 class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin):
@@ -138,7 +150,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
                                       help_text=_("Hiking networks"))
-    practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
+    practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.PROTECT,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility type"))
@@ -171,16 +183,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
                                                                    "minimum width for wheelchairs (Trail>0.90 m, "
                                                                    "Joëlette, Narrow trail requiring strong driving "
                                                                    "technique)"))
-    route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
+    route = models.ForeignKey('Route', related_name='treks', on_delete=models.PROTECT,
                               blank=True, null=True, verbose_name=_("Route"))
-    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
+    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.PROTECT,
                                    blank=True, null=True, verbose_name=_("Difficulty"))
     web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
-    related_treks = models.ManyToManyField('self', through='TrekRelationship',
-                                           verbose_name=_("Related treks"), symmetrical=False,
-                                           help_text=_("Connections between treks"),
-                                           related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                blank=True, verbose_name=_("Information desks"),
                                                help_text=_("Where to obtain information"))
@@ -201,7 +209,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
-                                           on_delete=models.CASCADE, blank=True, null=True)
+                                           on_delete=models.SET_NULL, blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
                                       blank=True)
     attachments_accessibility = GenericRelation('common.AccessibilityAttachment')
@@ -223,11 +231,9 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
     def get_map_image_url(self):
         return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
-    def get_map_image_path(self):
-        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
-        if not os.path.exists(basefolder):
-            os.makedirs(basefolder)
-        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
+    def get_map_image_path(self, language=None):
+        lang = language or get_language()
+        return os.path.join('maps', '%s-%s-%s.png' % (self._meta.model_name, self.pk, lang))
 
     def get_map_image_extent(self, srid=settings.API_SRID):
         extent = list(super().get_map_image_extent(srid))
@@ -251,23 +257,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
             extent[2] = max(extent[2], poi.geom.x)
             extent[3] = max(extent[3], poi.geom.y)
         return extent
-
-    @property
-    def related(self):
-        return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
-
-    @classproperty
-    def related_verbose_name(cls):
-        return _("Related treks")
-
-    @property
-    def relationships(self):
-        # Does not matter if a or b
-        return TrekRelationship.objects.filter(trek_a=self)
-
-    @property
-    def published_relationships(self):
-        return self.relationships.filter(trek_b__published=True)
 
     @property
     def poi_types(self):
@@ -353,22 +342,31 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return treks.order_by('topo_object').distinct('topo_object')
 
     @classmethod
-    def topology_treks(cls, topology):
+    def topology_treks(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
+
+        # This prevents auto-intersection for treks
+        if cls is topology.__class__:
+            qs = qs.exclude(pk=topology.pk)
+
         return qs
 
     @classmethod
     def published_topology_treks(cls, topology):
         return cls.topology_treks(topology).filter(published=True)
 
-    # Rando v1 compat
-    @property
-    def usages(self):
-        return [self.practice] if self.practice else []
+    @classmethod
+    def outdoor_treks(cls, outdoor_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_object)
+
+    @classmethod
+    def tourism_treks(cls, tourism_object, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
     @classmethod
     def get_create_label(cls):
@@ -429,17 +427,8 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         """
         Custom model validation
         """
-        if self.pk in self.trek_children.values_list('child__id', flat=True):
+        if self.pk and self.pk in self.trek_children.values_list('child__id', flat=True):
             raise ValidationError(_("Cannot use itself as child trek."))
-
-    @property
-    def prefixed_category_id(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
-            return 'I'
-        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            return self.practice.prefixed_id
-        else:
-            return Practice.id_prefix
 
     def distance(self, to_cls):
         if self.practice and self.practice.distance is not None:
@@ -492,20 +481,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return ','.join([str(source) for source in self.source.all()])
 
     @property
+    def published_labels(self):
+        return [label for label in self.labels.all() if label.published]
+
+    @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
-
-    @property
-    def rando_url(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            category_slug = self.practice.slug
-        else:
-            category_slug = _('trek')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
-    def meta_description(self):
-        return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
         maplayers = [
@@ -524,6 +505,12 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekM
         return {"maplayers": maplayers}
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_trek_topology(sender, instance, using, **kwargs):
+    # Treks are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Trek, 'topo_object')
+
+
 Path.add_property('treks', Trek.path_treks, _("Treks"))
 Topology.add_property('treks', Trek.topology_treks, _("Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
@@ -532,49 +519,13 @@ else:
     Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 Intervention.add_property('treks', lambda self: self.target.treks if self.target else [], _("Treks"))
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _("Treks"))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicContent.add_property('treks', Trek.tourism_treks, _("Treks"))
 tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicEvent.add_property('treks', Trek.tourism_treks, _("Treks"))
 tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('treks', lambda self: self.signage.treks, _("Treks"))
     Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
-
-
-class TrekRelationship(models.Model):
-    """
-    Relationships between treks : symmetrical aspect is managed by a trigger that
-    duplicates all couples (trek_a, trek_b)
-    """
-    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), default=False)
-    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), default=False)
-    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), default=False)
-
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", on_delete=models.CASCADE)
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"), on_delete=models.CASCADE)
-
-    objects = TrekRelationshipManager()
-
-    class Meta:
-        verbose_name = _("Trek relationship")
-        verbose_name_plural = _("Trek relationships")
-        unique_together = ('trek_a', 'trek_b')
-
-    def __str__(self):
-        return "%s <--> %s" % (self.trek_a, self.trek_b)
-
-    @property
-    def relation(self):
-        return "%s %s%s%s" % (
-            self.trek_b.name_display,
-            _("Departure") if self.has_common_departure else '',
-            _("Path") if self.has_common_edge else '',
-            _("Circuit") if self.is_circuit_step else ''
-        )
-
-    @property
-    def relation_display(self):
-        return self.relation
 
 
 class TrekNetwork(TimeStampedModelMixin, PictogramMixin):
@@ -591,7 +542,7 @@ class TrekNetwork(TimeStampedModelMixin, PictogramMixin):
 
 class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     id_prefix = 'A'
 
@@ -602,10 +553,6 @@ class Accessibility(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
     @property
     def slug(self):
@@ -646,7 +593,7 @@ class DifficultyLevel(TimeStampedModelMixin, OptionalPictogramMixin):
     difficulty = models.CharField(verbose_name=_("Difficulty level"), max_length=128)
     cirkwi_level = models.IntegerField(verbose_name=_("Cirkwi level"), blank=True, null=True,
                                        help_text=_("Between 1 and 8"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("Difficulty level")
@@ -672,7 +619,7 @@ class WebLink(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     url = models.URLField(verbose_name=_("URL"), max_length=2048)
     category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
-                                 related_name='links', null=True, blank=True, on_delete=models.CASCADE)
+                                 related_name='links', null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = WebLinkManager()
 
@@ -705,7 +652,7 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
     view_points = GenericRelation('common.HDViewPoint', related_query_name='poi')
@@ -743,23 +690,24 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def topology_pois(cls, topology):
-        return cls.exclude_pois(cls.topology_all_pois(topology), topology)
+    def topology_pois(cls, topology, queryset=None):
+        return cls.exclude_pois(cls.topology_all_pois(topology, queryset), topology)
 
     @classmethod
-    def topology_all_pois(cls, topology):
+    def topology_all_pois(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=object_geom)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=object_geom)
             if topology.geom.geom_type == 'LineString':
                 qs = qs.annotate(locate=LineLocatePoint(Transform(topology.geom,
                                                                   settings.SRID),
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')
 
-        return qs
+        return qs.select_related("type")
 
     @classmethod
     def outdoor_all_pois(cls, obj):
@@ -767,6 +715,10 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         qs = cls.objects.existing().filter(geom__intersects=object_geom)
         qs = qs.order_by('pk')
         return qs
+
+    @classmethod
+    def tourism_pois(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
 
     @classmethod
     def published_topology_pois(cls, topology):
@@ -787,15 +739,21 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
 
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_poi_topology(sender, instance, using, **kwargs):
+    # POIs are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, POI, 'topo_object')
+
+
 Path.add_property('pois', POI.path_pois, _("POIs"))
 Topology.add_property('pois', POI.topology_pois, _("POIs"))
 Topology.add_property('all_pois', POI.topology_all_pois, _("POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _("Published POIs"))
 Intervention.add_property('pois', lambda self: self.target.pois if self.target else [], _("POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _("POIs"))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicContent.add_property('pois', POI.tourism_pois, _("POIs"))
 tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicEvent.add_property('pois', POI.tourism_pois, _("POIs"))
 tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('pois', lambda self: self.signage.pois, _("POIs"))
@@ -804,7 +762,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class POIType(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("POI type")
@@ -815,7 +773,9 @@ class POIType(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
+class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128,
+                            help_text=_("Public name (Change carefully)"))
     practices = models.ManyToManyField('Practice', related_name="services",
                                        blank=True,
                                        verbose_name=_("Practices"))
@@ -832,7 +792,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, PublishableMixin):
 class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        on_delete=models.CASCADE)
-    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.PROTECT)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
 
@@ -857,8 +817,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
                                                              self.name)
         if self.type.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
-        elif self.type.review:
-            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @classproperty
@@ -874,12 +832,13 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
         return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
 
     @classmethod
-    def topology_services(cls, topology):
+    def topology_services(cls, topology, queryset=None):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
+            qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = queryset_or_all_objects(queryset, cls)
+            qs = qs.filter(geom__intersects=area)
         if isinstance(topology, Trek):
             qs = qs.filter(type__practices=topology.practice)
         return qs
@@ -891,15 +850,29 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+    @classmethod
+    def outdoor_services(cls, outdoor_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=outdoor_obj)
+
+    @classmethod
+    def tourism_services(cls, tourism_obj, queryset=None):
+        return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_obj)
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_service_topology(sender, instance, using, **kwargs):
+    # Services are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Service, 'topo_object')
+
 
 Path.add_property('services', Service.path_services, _("Services"))
 Topology.add_property('services', Service.topology_services, _("Services"))
 Topology.add_property('published_services', Service.published_topology_services, _("Published Services"))
 Intervention.add_property('services', lambda self: self.target.services if self.target else [], _("Services"))
 Project.add_property('services', lambda self: self.edges_by_attr('services'), _("Services"))
-tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicContent.add_property('services', Service.tourism_services, _("Services"))
 tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
-tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicEvent.add_property('services', Service.tourism_services, _("Services"))
 tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('services', lambda self: self.signage.services, _("Services"))

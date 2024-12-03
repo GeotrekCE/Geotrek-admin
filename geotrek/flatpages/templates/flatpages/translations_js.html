@@ -1,0 +1,27 @@
+{% extends 'admin/change_form.html' %}
+{% load i18n %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+    window.i18n = {
+      tinymce_Button_Link: "{% trans "Button Link" %}",
+      tinymce_Label: "{% trans "Label" %}",
+      tinymce_Link: "{% trans "Link" %}",
+      tinymce_Open_link_in_a_new_tab: "{% trans "Open in a new tab" %}",
+      tinymce_Cancel: "{% trans "Cancel" %}",
+      tinymce_Suggestions: "{% trans "Suggestions" %}",
+      tinymce_Suggestions_title: "{% trans "Suggestions title" %}",
+      tinymce_Suggestions_ID_list: "{% trans "ID list (separated by comma)" %}",
+      tinymce_Suggestions_Trek: "{% trans "Trek" %}",
+      tinymce_Suggestions_Touristic_Content: "{% trans "Touristic content" %}",
+      tinymce_Suggestions_Touristic_Event: "{% trans "Touristic event" %}",
+      tinymce_Suggestions_Outdoor_Site: "{% trans "Outdoor Site" %}",
+      tinymce_Submit: "{% trans "Submit" %}",
+      tinymce_Gallery_title: "{% trans "Manage the Image Gallery" %}",
+      tinymce_Gallery_add: "{% trans "Image gallery" %}",
+      tinymce_Gallery_image_add: "{% trans "Add an image" %}",
+      tinymce_Gallery_image_remove: "{% trans "Remove" %}",
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,72 @@
+x-images:
+  django: &django
+    image: geotrek
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: dev
+      args:
+          BASE_IMAGE: focal
+    user: ${UID:-1000}:${GID:-1000}
+    env_file:
+      - .env
+    volumes:
+      - .:/opt/geotrek-admin
+
+services:
+  postgres:
+    image: postgis/postgis:12-2.5
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_LOCAL_PORT:-5432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:5.0-alpine
+    volumes:
+      - redis:/data
+
+  convertit:
+    image: makinacorpus/convertit:latest
+
+  screamshotter:
+    image: makinacorpus/screamshotter:v2
+
+  celery:
+    <<: [ *django ]
+    depends_on:
+      - postgres
+      - redis
+    command: celery -A geotrek worker -c 1
+
+  web:
+    <<: [ *django ]
+
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - convertit
+      - celery
+
+    networks:
+      default:
+        aliases:
+          - ${SERVER_NAME}
+
+  sphinx:
+    <<: [ *django ]
+    working_dir: /opt/geotrek-admin/docs
+    ports:
+      - "${SPHINX_PORT:-8800}:8800"
+
+    command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
+
+volumes:
+  postgres:
+  redis:

@@ -56,8 +56,9 @@ class RegulatorySensitiveAreaForm(CommonForm):
         widgets = {'geom': PolygonMapWidget()}
 
     def __init__(self, *args, **kwargs):
-        if kwargs['instance']:
-            species = kwargs['instance'].species
+        instance = kwargs.get('instance')
+        if instance:
+            species = instance.species
             kwargs['initial'] = {
                 # 'name': species.name,
                 'elevation': species.radius,
@@ -68,10 +69,11 @@ class RegulatorySensitiveAreaForm(CommonForm):
             for p in range(1, 13):
                 name = 'period{:02}'.format(p)
                 kwargs['initial'][name] = getattr(species, name)
-        super().__init__(*args, **kwargs)
-        self.helper.form_action += '?category=2'
 
-    def save(self):
+        super().__init__(*args, **kwargs)
+        self.helper.form_action += f'?category={Species.REGULATORY}'
+
+    def save(self, **kwargs):
         if not self.instance.pk:
             species = Species()
         else:

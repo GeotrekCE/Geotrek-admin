@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.test import TestCase
 
 from django.db import connections
@@ -29,11 +30,6 @@ def query_db(sqlquery):
     connection = connections[settings.AUTHENT_DATABASE or 'default']
     with connection.cursor() as cursor:
         cursor.execute(sqlquery)
-
-
-def password2md5(password):
-    import hashlib
-    return hashlib.md5(password.encode()).hexdigest()
 
 
 @override_settings(AUTHENT_DATABASE='default',
@@ -68,32 +64,32 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_invalid(self):
         self.assertEqual(None, self.backend.authenticate(username='toto', password='totopwd'))
-        query_db("INSERT INTO %s (username, password) VALUES ('toto', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('totopwd')))
+        query_db("INSERT INTO %s (username, password) VALUES ('toto', '%s')" % (settings.AUTHENT_TABLENAME, make_password('totopwd')))
         # Valid returns a user
         self.assertNotEqual(None, self.backend.authenticate(username='toto', password='totopwd'))
         # SQL injection safe ?
         self.assertEqual(None, self.backend.authenticate(username='toto', password="' OR '' = '"))
 
     def test_login(self):
-        query_db("INSERT INTO %s (username, password) VALUES ('harold', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('kumar')))
+        query_db("INSERT INTO %s (username, password) VALUES ('harold', '%s')" % (settings.AUTHENT_TABLENAME, make_password('kumar')))
         success = self.client.login(username="harold", password="kumar")
         self.assertTrue(success)
         response = self.client.get(reverse('core:path_list'))
         self.assertEqual(response.status_code, 200)
 
     def test_update(self):
-        query_db("INSERT INTO %s (username, password) VALUES ('marc', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('maronnier')))
+        query_db("INSERT INTO %s (username, password) VALUES ('marc', '%s')" % (settings.AUTHENT_TABLENAME, make_password('maronnier')))
         success = self.client.login(username="marc", password="maronnier")
         self.assertTrue(success)
         self.client.logout()
-        query_db("UPDATE %s SET password = '%s' WHERE username = 'marc'" % (settings.AUTHENT_TABLENAME, password2md5('maronier')))
+        query_db("UPDATE %s SET password = '%s' WHERE username = 'marc'" % (settings.AUTHENT_TABLENAME, make_password('maronier')))
         success = self.client.login(username="marc", password="maronnier")
         self.assertFalse(success)
         success = self.client.login(username="marc", password="maronier")
         self.assertTrue(success)
 
     def test_userprofile(self):
-        query_db("INSERT INTO %s (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '%s', 'Ala', 'Deen', 'Walydia', 'ar')" % (settings.AUTHENT_TABLENAME, password2md5('aladeen')))
+        query_db("INSERT INTO %s (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '%s', 'Ala', 'Deen', 'Walydia', 'ar')" % (settings.AUTHENT_TABLENAME, make_password('aladeen')))
         user = self.backend.authenticate(username='aladeen', password='aladeen')
         self.assertEqual(user.first_name, 'Ala')
         self.assertEqual(user.last_name, 'Deen')
@@ -101,7 +97,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         self.assertEqual(str(user.profile), 'Profile for aladeen')
 
     def test_usergroups(self):
-        query_db("INSERT INTO %s (username, password) VALUES ('a', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('a')))
+        query_db("INSERT INTO %s (username, password) VALUES ('a', '%s')" % (settings.AUTHENT_TABLENAME, make_password('a')))
         user = self.backend.authenticate(username='a', password='a')
         self.assertFalse(user.is_superuser)
 

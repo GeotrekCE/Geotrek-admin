@@ -12,12 +12,15 @@ from django.contrib.gis.db import models
 from django.core.mail import mail_managers, send_mail
 from django.db.models import F
 from django.db.models.query_utils import Q
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import AddPropertyMixin, NoDeleteMixin, PicturesMixin, TimeStampedModelMixin, GeotrekMapEntityMixin
+from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
 from geotrek.trekking.models import POI, Service, Trek
@@ -25,7 +28,7 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
-from .managers import SelectableUserManager
+from .managers import ReportManager, SelectableUserManager
 
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     from geotrek.maintenance.models import Intervention
@@ -90,6 +93,12 @@ class PendingSuricateAPIRequest(models.Model):
     def remove_sync_error_flag_on_report(self, external_uuid):
         report = Report.objects.filter(external_uuid=external_uuid)
         report.update(sync_errors=F('sync_errors') - 1)
+        report = report.first()
+        if self.endpoint == "wsUpdateStatus" and json.loads(self.params).get('statut', '') == 'waiting' and report.status.identifier == 'filed':
+            # "waiting" status from suricate API does not override internal statuses on sync_suricate
+            # therefore, we need to manually set report status to waiting here if this is the call that failed
+            report.status = ReportStatus.objects.get(identifier='waiting')
+            report.save(update_fields=['status'])
 
     def save(self, *args, **kwargs):
         # Set sync_errors flag on report
@@ -108,19 +117,18 @@ class PendingSuricateAPIRequest(models.Model):
 
 class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, ZoningPropertiesMixin):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
-
-    email = models.EmailField(verbose_name=_("Email"))
+    email = models.EmailField(blank=True, default="", verbose_name=_("Email"))
     comment = models.TextField(blank=True, default="", verbose_name=_("Comment"))
     activity = models.ForeignKey(
         "ReportActivity",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Activity"),
     )
     category = models.ForeignKey(
         "ReportCategory",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Category"),
@@ -129,12 +137,12 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         "ReportProblemMagnitude",
         null=True,
         blank=True,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name=_("Problem magnitude"),
     )
     status = models.ForeignKey(
         "ReportStatus",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         default=status_default,
@@ -151,7 +159,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         Trek,
         null=True,
         blank=True,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         verbose_name=_("Related trek"),
     )
     created_in_suricate = models.DateTimeField(
@@ -182,6 +190,9 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
     uses_timers = models.BooleanField(verbose_name=_("Use timers"), default=False, help_text=_("Launch timers to alert supervisor if report is not being treated on time"))
     sync_errors = models.IntegerField(verbose_name=_("Synchronisation error"), default=0, help_text=_("Synchronisation with Suricate is currently pending due to connection problems"))
     mail_errors = models.IntegerField(verbose_name=_("Mail error"), default=0, help_text=_("A notification email could not be sent. Please contact an administrator"))
+    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+
+    objects = ReportManager()
 
     class Meta:
         verbose_name = _("Report")
@@ -189,7 +200,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         ordering = ["-date_insert"]
 
     def __str__(self):
-        if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) and self.eid:
+        if settings.SURICATE_WORKFLOW_ENABLED and self.eid:
             return f"{_('Report')} {self.eid}"
         else:
             return f"{_('Report')} {self.pk}"
@@ -227,7 +238,10 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         return html.unescape(self.comment)
 
     def send_report_to_managers(self, template_name="feedback/report_email.txt"):
-        subject = _("Feedback from {email}").format(email=self.email)
+        if self.email:
+            subject = _("Feedback from %(email)s") % {"email": self.email}
+        else:
+            subject = _("New feedback")
         message = render_to_string(template_name, {"report": self})
         mail_managers(subject, message, fail_silently=False)
 
@@ -240,26 +254,19 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     def save_no_suricate(self, *args, **kwargs):
         """Save method for No Suricate mode"""
-        if not self.pk:  # New report should alert
+        just_created = not self.pk  # New report should alert managers
+        super().save(*args, **kwargs)
+        if just_created:
             self.try_send_report_to_managers()
-        super().save(*args, **kwargs)  # Report updates should do nothing more
 
     def save_suricate_report_mode(self, *args, **kwargs):
         """Save method for Suricate Report mode"""
-        if not self.pk:  # New report should alert managers AND be sent to Suricate
-            self.try_send_report_to_managers()
+        just_created = not self.pk  # New report should alert managers AND be sent to Suricate
+        if just_created and self.email:  # New reports are not forwarded if there is no email (internal usage only)
             self.get_suricate_messenger().post_report(self)
-        super().save(*args, **kwargs)  # Report updates should do nothing more
-
-    def save_suricate_management_mode(self, *args, **kwargs):
-        """Save method for Suricate Management mode"""
-        if not self.pk:  # This is a new report
-            if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
-                self.get_suricate_messenger().post_report(self)
-            else:  # This new report comes from Suricate : save
-                super().save(*args, **kwargs)
-        else:  # Report updates should do nothing more
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+        if just_created:
+            self.try_send_report_to_managers()
 
     def save_suricate_workflow_mode(self, *args, **kwargs):
         """Save method for Suricate Management mode"""
@@ -267,7 +274,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
             if self.external_uuid is None:  # This new report comes from Rando or Admin : let Suricate handle it first, don't even save it
                 self.get_suricate_messenger().post_report(self)
             else:  # This new report comes from Suricate : assign workflow manager if needed and save
-                if self.status.identifier in ['filed']:
+                if self.status.identifier in ['filed'] and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
                     self.assigned_user = WorkflowManager.objects.first().user
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
@@ -275,7 +282,8 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     def attach_email(self, message, to):
         date = timezone.now()
-        author = f"{settings.DEFAULT_FROM_EMAIL} {_('to')} {to}"
+        trad = _('to')
+        author = f"{settings.DEFAULT_FROM_EMAIL} {trad} {to}"
         content = message
         type = _("Follow-up message generated by Geotrek")
         # Create message object
@@ -319,12 +327,14 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
         return formatted_external_uuid
 
     def notify_assigned_user(self, message):
-        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New report to process')}"
+        trad = _('New report to process')
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string("feedback/affectation_email.txt", {"report": self, "message": message})
         self.try_send_email(subject, message)
 
     def notify_late_report(self, status_id):
-        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('Late report processing')}"
+        trad = _('Late report processing')
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         if settings.SURICATE_WORKFLOW_ENABLED:
             message = render_to_string(f"feedback/late_{status_id}_email.txt", {"report": self})
         else:
@@ -354,12 +364,10 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
                 self.get_suricate_messenger().message_sentinel(self.formatted_external_uuid, message_sentinel)
 
     def save(self, *args, **kwargs):
-        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+        if not settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_no_suricate(*args, **kwargs)  # No Suricate Mode
-        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
+        elif settings.SURICATE_REPORT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_report_mode(*args, **kwargs)  # Suricate Report Mode
-        elif settings.SURICATE_MANAGEMENT_ENABLED and not settings.SURICATE_WORKFLOW_ENABLED:
-            self.save_suricate_management_mode(*args, **kwargs)  # Suricate Management Mode
         elif settings.SURICATE_WORKFLOW_ENABLED:
             self.save_suricate_workflow_mode(*args, **kwargs)  # Suricate Workflow Mode
 
@@ -384,7 +392,7 @@ class Report(GeotrekMapEntityMixin, PicturesMixin, TimeStampedModelMixin, NoDele
 
     @property
     def eid_verbose_name(self):
-        return _("Tag") if (settings.SURICATE_WORKFLOW_ENABLED or settings.SURICATE_MANAGEMENT_ENABLED) else _("Label")
+        return _("Tag") if settings.SURICATE_WORKFLOW_ENABLED else _("Label")
 
     def distance(self, to_cls):
         """Distance to associate this report to another class"""
@@ -545,8 +553,20 @@ class TimerEvent(models.Model):
         return obsolete_notified or obsolete_unused or timer_disabled
 
 
+@receiver(pre_delete, sender=Report)
+def log_cascade_deletion_from_timer_report(sender, instance, using, **kwargs):
+    # Timers are deleted when Reports are deleted
+    log_cascade_deletion(sender, instance, TimerEvent, 'report')
+
+
+@receiver(pre_delete, sender=ReportStatus)
+def log_cascade_deletion_from_timer_status(sender, instance, using, **kwargs):
+    # Timers are deleted when ReportStatus are deleted
+    log_cascade_deletion(sender, instance, TimerEvent, 'step')
+
+
 class PendingEmail(models.Model):
-    recipient = models.EmailField(verbose_name=_("Email"), max_length=256, blank=True, null=True)
+    recipient = models.EmailField(verbose_name=_("Recipient"), max_length=256, blank=True, null=True)
     subject = models.CharField(max_length=200, null=False, blank=False)
     message = models.TextField(verbose_name=_("Message"), blank=False, null=False)
     error_message = models.TextField(null=False, blank=False)
@@ -581,6 +601,12 @@ class PendingEmail(models.Model):
             report.mail_errors = F('mail_errors') - 1
             report.save()
         super().delete(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Report)
+def log_cascade_deletion_from_mail_report(sender, instance, using, **kwargs):
+    # Pending mails are deleted when Reports are deleted
+    log_cascade_deletion(sender, instance, PendingEmail, 'report')
 
 
 class WorkflowManager(models.Model):
@@ -630,7 +656,8 @@ class WorkflowManager(models.Model):
                 self.attach_email_to_report(report, message, self.user.email)
 
     def notify_report_to_solve(self, report):
-        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('A report must be solved')}"
+        trad = _('A report must be solved')
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string("feedback/cloture_email.txt", {"report": report})
         self.try_send_email(subject, message, report)
 
@@ -638,7 +665,8 @@ class WorkflowManager(models.Model):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
             reports_urls.append(f"https://{report.full_url}")
-        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{_('New reports from Suricate')}"
+        trad = _('New reports from Suricate')
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string("feedback/reports_email.txt", {"reports_urls": reports_urls})
         self.try_send_email(subject, message)
 

@@ -105,7 +105,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
         def get_arrival_city(self, obj):
-            qs = City.objects.all()
+            qs = City.objects.filter(published=True)
             if obj.end_point:
                 city = qs.filter(geom__covers=(obj.end_point, 0)).first()
                 if city:

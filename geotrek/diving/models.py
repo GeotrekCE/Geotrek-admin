@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import get_language, gettext_lazy as _
 
@@ -34,14 +33,6 @@ class Practice(TimeStampedModelMixin, PictogramMixin):
 
     def __str__(self):
         return self.name
-
-    @property
-    def prefixed_id(self):
-        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
-
-    @property
-    def slug(self):
-        return slugify(self.name) or str(self.pk)
 
 
 class Difficulty(OptionalPictogramMixin):
@@ -106,12 +97,12 @@ class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMi
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     owner = models.CharField(verbose_name=_("Owner"), max_length=256, blank=True)
-    practice = models.ForeignKey(Practice, related_name="dives", on_delete=models.CASCADE,
+    practice = models.ForeignKey(Practice, related_name="dives", on_delete=models.PROTECT,
                                  blank=True, null=True, verbose_name=_("Practice"))
     departure = models.CharField(verbose_name=_("Departure area"), max_length=128, blank=True)
     disabled_sport = models.TextField(verbose_name=_("Disabled sport accessibility"), blank=True)
     facilities = models.TextField(verbose_name=_("Facilities"), blank=True)
-    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True, on_delete=models.CASCADE,
+    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True, on_delete=models.PROTECT,
                                    null=True, verbose_name=_("Difficulty level"))
     levels = models.ManyToManyField(Level, related_name='dives', blank=True,
                                     verbose_name=_("Technical levels"))
@@ -136,26 +127,11 @@ class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMi
         return self.name
 
     @property
-    def rando_url(self):
-        if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
-            category_slug = self.practice.slug
-        else:
-            category_slug = _('dive')
-        return '{}/{}/'.format(category_slug, self.slug)
-
-    @property
     def display_geom(self):
         return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     def distance(self, to_cls):
         return settings.DIVING_INTERSECTION_MARGIN
-
-    @property
-    def prefixed_category_id(self):
-        if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
-            return self.practice.prefixed_id
-        else:
-            return Practice.id_prefix
 
     def get_map_image_url(self):
         return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])

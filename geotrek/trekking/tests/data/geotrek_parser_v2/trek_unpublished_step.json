@@ -1,0 +1,306 @@
+  {
+    "id": 10442,
+    "access": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibilities": [],
+    "accessibility_advice": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibility_covering": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibility_exposure": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibility_level": null,
+    "accessibility_signage": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibility_slope": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "accessibility_width": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "advice": {
+      "fr": "<p>Attention en cas d'orage. Fortement d&eacute;conseill&eacute; par mauvais temps!</p>",
+      "en": "",
+      "it": ""
+    },
+    "advised_parking": {
+      "fr": "Avant le Port de Lers",
+      "en": "",
+      "it": ""
+    },
+    "altimetric_profile": "https://foo.fr/api/v2/trek/2/profile/",
+    "ambiance": {
+      "fr": "<p>Le nom de ce pic est issu de la l&eacute;gende selon laquelle les trois seigneurs des vall&eacute;es de Massat, Vicdessos et Rabat-les-Trois-Seigneurs, se rencontraient sur la dalle plate en son sommet afin de d&eacute;battre des droits des diff&eacute;rentes vall&eacute;es qu'ils administraient.</p>\r\n<p></p>\r\n<p>&Agrave; partir du xviie si&egrave;cle, de grandes caravanes d'&acirc;nes et de mulets transportaient le charbon de bois entre les for&ecirc;ts du Couserans et les forges &agrave; la catalane de la vall&eacute;e de Rabat via le col de la Pourtanelle sur l'&eacute;paulement nord du pic.</p>\r\n<p></p>\r\n<p>Au xixe si&egrave;cle, des porteurs de glace venaient y chercher leur butin sur le flanc nord du pic au glacier d'Ambans pour le transporter ensuite vers Toulouse. Ce glacier a totalement disparu au d&eacute;but du xxie si&egrave;cle.</p>\r\n<p></p>\r\n<p></p>\r\n<p>Source Wikipedia</p>\r\n<p></p>",
+      "en": "Ambiance en",
+      "it": ""
+    },
+    "arrival": {
+      "fr": "Sur la route",
+      "en": "",
+      "it": ""
+    },
+    "ascent": 666,
+    "attachments": [
+      {
+        "backend": "",
+        "type": "image",
+        "author": "Grégory Tonon",
+        "license": "License",
+        "thumbnail": "https://foo.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg.400x0_q85.jpg",
+        "legend": "Vue sur la chaîne des Pyrénées, depuis le pics des 3 Seigneurs",
+        "title": "1024px-Les_Pyrénées_depuis_le_pic_des_3_Seigneurs",
+        "url": "https://foo.fr/media/paperclip/trekking_trek/2/1024px-les_pyrenees_depuis_le_pic_des_3_seigneurs.jpg",
+        "uuid": "8c62ae5f-9533-4de6-a863-3e33cd42d16c"
+      },
+      {
+        "backend": "Attachment",
+        "type": "video",
+        "author": "Ariège Pyrénées",
+        "license": null,
+        "thumbnail": "",
+        "legend": "Grands site Occitanie - collection Ariège",
+        "title": "",
+        "url": "https://www.youtube.com/watch?v=O5fwnNceuks",
+        "uuid": "aeffbba4-821a-4f7b-af74-e47ed628679c"
+      },
+      {
+        "backend": "",
+        "type": "file",
+        "author": "",
+        "license": null,
+        "thumbnail": "",
+        "legend": "",
+        "title": "file_example_MP3_700KB",
+        "url": "https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3",
+        "uuid": "529e754b-e5a8-4fe7-944d-161b4900a62e"
+      }
+    ],
+    "attachments_accessibility": [],
+    "children": [],
+    "cities": [
+      "09231",
+      "09302"
+    ],
+    "create_datetime": "2013-12-12T16:20:01.405056Z",
+    "departure": {
+      "fr": "Port de Lers",
+      "en": "Lers bridge",
+      "it": ""
+    },
+    "departure_city": "09231",
+    "departure_geom": [
+      1.411681003952174,
+      42.80641572814877
+    ],
+    "descent": -777,
+    "description": {
+      "fr": "<a href=\"https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3\">https://foo.fr/media/paperclip/trekking_trek/2/file_example_mp3_700kb.mp3</a>",
+      "en": "",
+      "it": ""
+    },
+    "description_teaser": {
+      "fr": "<p>Un tr&egrave;s joli point de vue, en retrait de la cha&icirc;ne des Pyr&eacute;n&eacute;es.</p>",
+      "en": "",
+      "it": ""
+    },
+    "difficulty": 1,
+    "disabled_infrastructure": {
+      "fr": "Accessibilit&eacute; am&eacute;nagement",
+      "en": "",
+      "it": ""
+    },
+    "duration": 24.0,
+    "elevation_area_url": "https://foo.fr/api/v2/trek/2/dem/",
+    "elevation_svg_url": "https://foo.fr/api/v2/trek/2/profile/?language=fr&format=svg",
+    "external_id": null,
+    "gear": {
+      "fr": "Il faut de la corde",
+      "en": "",
+      "it": ""
+    },
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          1.411681,
+          42.8064157,
+          1516.0
+        ],
+        [
+          1.4117038,
+          42.8065905,
+          1516.0
+        ]
+      ]
+    },
+    "gpx": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.gpx",
+    "information_desks": [
+      2,
+      1,
+      3
+    ],
+    "kml": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.kml",
+    "labels": [
+      1,
+      2,
+      3
+    ],
+    "length_2d": 7606.3,
+    "length_3d": 7811.9,
+    "max_elevation": 2042,
+    "min_elevation": 1358,
+    "name": {
+      "fr": "Etape non publiée",
+      "en": "Unpublished step",
+      "it": ""
+    },
+    "networks": [
+      2
+    ],
+    "next": {},
+    "parents": [],
+    "parking_location": [
+      1.412816,
+      42.8063269
+    ],
+    "pdf": {
+      "fr": "https://foo.fr/api/fr/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
+      "en": "https://foo.fr/api/en/treks/2/boucle-du-pic-des-trois-seigneurs.pdf",
+      "it": "https://foo.fr/api/it/treks/2/boucle-du-pic-des-trois-seigneurs.pdf"
+    },
+    "points_reference": {
+      "type": "MultiPoint",
+      "coordinates": [
+        [
+          1.411417008494028,
+          42.81070319713575
+        ],
+        [
+          1.415279389475474,
+          42.81693648180148
+        ],
+        [
+          1.403348923777236,
+          42.825246550724195
+        ],
+        [
+          1.428325654123916,
+          42.8286458024494
+        ],
+        [
+          1.437852860544806,
+          42.81611800550653
+        ],
+        [
+          1.423759460449225,
+          42.807239989743145
+        ]
+      ]
+    },
+    "portal": [],
+    "practice": 5,
+    "ratings": [],
+    "ratings_description": {
+      "fr": "",
+      "en": "",
+      "it": ""
+    },
+    "previous": {},
+    "public_transport": {
+      "fr": "<a title=\"geotrek.fr\" rel=\"noopener\" href=\"http://geotrek.fr/\" target=\"_blank\">Test</a>",
+      "en": "",
+      "it": ""
+    },
+    "published": {
+      "fr": false,
+      "en": false,
+      "it": false
+    },
+    "reservation_system": null,
+    "reservation_id": "",
+    "route": 1,
+    "second_external_id": null,
+    "source": [
+      2
+    ],
+    "structure": 5,
+    "themes": [
+      1,
+      2
+    ],
+    "update_datetime": "2022-05-16T12:10:59.927409Z",
+    "url": "https://foo.fr/api/v2/trek/2/",
+    "uuid": "9e70b294-1134-4c50-9c56-d722720cace6",
+    "web_links": [
+      {
+        "name": {
+          "fr": "Camping",
+          "en": "Camping",
+          "it": null
+        },
+        "url": "http://camping.com/",
+        "category": {
+          "label": {
+            "fr": "A lire",
+            "en": null,
+            "it": null
+          },
+          "id": 4,
+          "pictogram": "https://foo.fr/media/upload/weblink-book.png"
+        }
+      },
+      {
+        "name": {
+          "fr": "Makina Corpus",
+          "en": "Makina Corpus",
+          "it": null
+        },
+        "url": "http://makina-corpus.com/",
+        "category": {
+          "label": {
+            "fr": "A lire",
+            "en": null,
+            "it": null
+          },
+          "id": 4,
+          "pictogram": "https://foo.fr/media/upload/weblink-book.png"
+        }
+      },
+      {
+        "name": {
+          "fr": "Test",
+          "en": "",
+          "it": ""
+        },
+        "url": "http://toto.com",
+        "category": {
+          "label": {
+            "fr": "A lire",
+            "en": null,
+            "it": null
+          },
+          "id": 4,
+          "pictogram": "https://foo.fr/media/upload/weblink-book.png"
+        }
+      }
+    ]
+  }

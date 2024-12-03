@@ -1,7 +1,7 @@
-from collections import OrderedDict
 import csv
-from io import StringIO
 import json
+from collections import OrderedDict
+from io import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
@@ -9,16 +9,22 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.translation import gettext
 
-from geotrek.common.tests import CommonTest, GeotrekAPITestCase
-from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.signage.models import Signage, Blade
+from geotrek.common.tests import CommonTest
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.tests.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
-                                             SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                             InfrastructureConditionFactory, LineFactory, LineDirectionFactory)
-from geotrek.signage.filters import SignageFilterSet
-from geotrek.infrastructure.tests.test_filters import InfraFilterTestMixin
+from geotrek.signage.models import Blade, Signage
+from geotrek.signage.tests.factories import (
+    BladeColorFactory,
+    BladeConditionFactory,
+    BladeDirectionFactory,
+    BladeFactory,
+    BladeTypeFactory,
+    LineDirectionFactory,
+    LineFactory,
+    SignageConditionFactory,
+    SignageFactory,
+    SignageTypeFactory,
+)
 
 
 class SignageTest(TestCase):
@@ -69,7 +75,7 @@ class SignageTemplatesTest(TestCase):
         self.assertContains(response, "A direction on the line 2")
 
 
-class BladeViewsTest(GeotrekAPITestCase, CommonTest):
+class BladeViewsTest(CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
@@ -84,20 +90,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'color': self.obj.color.pk,
-            'condition': self.obj.condition.pk,
-            'direction': self.obj.direction.pk,
-            'number': '1',
-            'order_lines': [self.obj.lines.get().pk],
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'type': {
-                'label': 'Blade type'
-            }
+            'number': self.obj.number,
         }
 
     def get_expected_datatables_attrs(self):
@@ -121,7 +114,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         good_data = {
             'number': '2',
             'type': BladeTypeFactory.create().pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': BladeConditionFactory.create().pk,
             'direction': BladeDirectionFactory.create().pk,
             'color': BladeColorFactory.create().pk,
             'lines-TOTAL_FORMS': '2',
@@ -217,9 +210,9 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
                                                              b"Direction,Condition,"
                                                              b"Coordinates (WGS 84 / Pseudo-Mercator),"
                                                              b"Number 1,Text 1,"
-                                                             b"Distance 1,Time 1,Pictogram 1,"
+                                                             b"Distance 1,Time 1,Pictograms 1,"
                                                              b"Number 2,Text 2,"
-                                                             b"Distance 2,Time 2,Pictogram 2")
+                                                             b"Distance 2,Time 2,Pictograms 2")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
@@ -256,7 +249,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         blade_repr = data['data'][0]
         self.assertNotIn('direction', blade_repr)
 
-    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'condition']})
+    @override_settings(DIRECTION_ON_LINES_ENABLED=True, COLUMNS_LISTS={'blade_view': ['direction', 'conditions']})
     def test_direction_custom_field_is_hidden_on_blade_list_when_direction_on_lines_enabled(self):
         BladeFactory.create()
 
@@ -265,7 +258,7 @@ class BladeViewsTest(GeotrekAPITestCase, CommonTest):
         data = json.loads(response.content)
         blade_repr = data['data'][0]
         self.assertNotIn('direction', blade_repr)
-        self.assertIn('condition', blade_repr)
+        self.assertIn('conditions', blade_repr)
 
     def test_direction_field_visibility_on_blade_csv_format(self):
         BladeFactory.create()
@@ -331,7 +324,7 @@ class BladeTemplatesTest(TestCase):
         self.assertContains(response, "A direction on the line")
 
 
-class SignageViewsTest(GeotrekAPITestCase, CommonTest):
+class SignageViewsTest(CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
@@ -346,37 +339,14 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
     def get_expected_geojson_attrs(self):
         return {
             'id': self.obj.pk,
-            'name': self.obj.name
-        }
-
-    def get_expected_json_attrs(self):
-        return {
-            'code': '',
-            'condition': self.obj.condition.pk,
-            'manager': None,
-            'name': 'Signage',
-            'printed_elevation': 4807,
-            'publication_date': '2020-03-17',
+            'name': self.obj.name,
             'published': True,
-            'published_status': [
-                {'lang': 'en', 'language': 'English', 'status': True},
-                {'lang': 'es', 'language': 'Spanish', 'status': False},
-                {'lang': 'fr', 'language': 'French', 'status': False},
-                {'lang': 'it', 'language': 'Italian', 'status': False}
-            ],
-            'sealing': self.obj.sealing.pk,
-            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
-            'type': {
-                'id': self.obj.type.pk,
-                'label': 'Signage type',
-                'pictogram': '/media/upload/signage_type.png',
-            },
         }
 
     def get_expected_datatables_attrs(self):
         return {
             'code': self.obj.code,
-            'condition': self.obj.condition.label,
+            'conditions': ", ".join(list(self.obj.conditions.values_list("label", flat=True))),
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'type': self.obj.type.label
@@ -389,7 +359,7 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
             'description_fr': 'oh',
             'publication_date': '2020-03-17',
             'type': SignageTypeFactory.create().pk,
-            'condition': InfrastructureConditionFactory.create().pk,
+            'conditions': SignageConditionFactory.create().pk,
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
@@ -412,52 +382,3 @@ class SignageViewsTest(GeotrekAPITestCase, CommonTest):
         form = response.context['form']
         type = form.fields['type']
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
-
-    def test_no_pictogram(self):
-        self.obj = SignageNoPictogramFactory.create(publication_date='2020-03-17')
-        response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
-        self.assertEqual(response.status_code, 200)
-        expected_json_attrs = {'id': self.obj.pk, **self.get_expected_json_attrs()}
-        expected_json_attrs['type']['pictogram'] = '/static/signage/picto-signage.png'
-        self.assertJSONEqual(response.content, expected_json_attrs)
-
-
-class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
-    factory = SignageFactory
-    filterset = SignageFilterSet
-
-    def test_none_implantation_year_filter(self):
-
-        self.login()
-        model = self.factory._meta.model
-        SignageFactory.create()
-        response = self.client.get(model.get_list_url())
-        self.assertNotContains(response, 'option value="" selected>None</option')
-
-    def test_implantation_year_filter(self):
-        self.login()
-        model = self.factory._meta.model
-        i = SignageFactory.create(implantation_year=2015)
-        i2 = SignageFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
-
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
-
-        filter = SignageFilterSet(data={'implantation_year': [2015]})
-        self.assertTrue(i in filter.qs)
-        self.assertFalse(i2 in filter.qs)
-
-    def test_implantation_year_filter_with_str(self):
-        filter = SignageFilterSet(data={'implantation_year': 'toto'})
-        self.login()
-        model = self.factory._meta.model
-        i = SignageFactory.create(implantation_year=2015)
-        i2 = SignageFactory.create(implantation_year=2016)
-        response = self.client.get(model.get_list_url())
-
-        self.assertContains(response, '<option value="2015">2015</option>')
-        self.assertContains(response, '<option value="2016">2016</option>')
-
-        self.assertIn(i, filter.qs)
-        self.assertIn(i2, filter.qs)

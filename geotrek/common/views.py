@@ -1,5 +1,6 @@
 import ast
 import json
+import logging
 import mimetypes
 import os
 import re
@@ -11,103 +12,77 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.models import CHANGE, LogEntry
-from django.contrib.auth.decorators import (login_required,
-                                            permission_required,
-                                            user_passes_test)
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+    user_passes_test,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.gis.db.models import Extent, GeometryField
-from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
 from django.db.models.functions import Cast
-from django.http import (Http404, HttpResponse, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone, translation
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
-from django.views.generic import RedirectView, TemplateView, UpdateView, View
+from django.views.defaults import page_not_found
+from django.views.generic import TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
-from geotrek.common.filters import HDViewPointFilterSet
+from geotrek import __version__
+from geotrek.altimetry.models import Dem
+from geotrek.celery import app as celery_app
+from geotrek.core.models import Path
+from geotrek.feedback.parsers import SuricateParser
+from large_image import config
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from mapentity.views import MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
-from rest_framework import mixins
-from rest_framework import permissions as rest_permissions
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 
-from geotrek import __version__
-from geotrek.celery import app as celery_app
-from geotrek.common.mixins.api import APIViewSet
-from geotrek.common.viewsets import GeotrekMapentityViewSet
-from geotrek.feedback.parsers import SuricateParser
-
-from ..altimetry.models import Dem
-from ..core.models import Path
-from .forms import (AttachmentAccessibilityForm, HDViewPointAnnotationForm,
-                    HDViewPointForm, ImportDatasetForm,
-                    ImportDatasetFormWithFile, ImportSuricateForm,
-                    SyncRandoForm)
-from .mixins.views import (BookletMixin, CompletenessMixin,
-                           DocumentPortalMixin, DocumentPublicMixin, MetaMixin)
-from .models import AccessibilityAttachment, HDViewPoint, TargetPortal, Theme
+from .filters import HDViewPointFilterSet
+from .forms import (
+    AttachmentAccessibilityForm,
+    HDViewPointAnnotationForm,
+    HDViewPointForm,
+    ImportDatasetForm,
+    ImportDatasetFormWithFile,
+    ImportSuricateForm,
+)
+from .mixins.views import (
+    BookletMixin,
+    CompletenessMixin,
+    DocumentPortalMixin,
+    DocumentPublicMixin,
+)
+from .models import AccessibilityAttachment, HDViewPoint
 from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
-from .serializers import (HDViewPointAPIGeoJSONSerializer,
-                          HDViewPointAPISerializer,
-                          HDViewPointGeoJSONSerializer, HDViewPointSerializer,
-                          ThemeSerializer)
-from .tasks import import_datas, import_datas_from_web, launch_sync_rando
+from .serializers import (
+    HDViewPointAPISerializer,
+    HDViewPointGeoJSONSerializer,
+    HDViewPointSerializer,
+)
+from .tasks import import_datas, import_datas_from_web
 from .utils import leaflet_bounds
-from .utils.import_celery import (create_tmp_destination,
-                                  discover_available_parsers)
+from .utils.import_celery import create_tmp_destination, discover_available_parsers
+from .viewsets import GeotrekMapentityViewSet
+
+logger = logging.getLogger(__name__)
 
 
-class Meta(MetaMixin, TemplateView):
-    template_name = 'common/meta.html'
-
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET.get('lang')
-        portal = self.request.GET.get('portal')
-        context = super().get_context_data(**kwargs)
-        translation.activate(lang)
-        context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
-        translation.deactivate()
-        if portal:
-            try:
-                target_portal = TargetPortal.objects.get(name=portal)
-                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
-            except TargetPortal.DoesNotExist:
-                pass
-
-        if 'geotrek.trekking' in settings.INSTALLED_APPS:
-            from geotrek.trekking.models import Trek
-            context['treks'] = Trek.objects.existing().order_by('pk').filter(
-                Q(**{'published_{lang}'.format(lang=lang): True})
-                | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                       'trek_parents__parent__deleted': False})
-            )
-        if 'geotrek.tourism' in settings.INSTALLED_APPS:
-            from geotrek.tourism.models import TouristicContent, TouristicEvent
-            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-        if 'geotrek.diving' in settings.INSTALLED_APPS:
-            from geotrek.diving.models import Dive
-            context['dives'] = Dive.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-        return context
+def handler404(request, exception, template_name="404.html"):
+    if "api/v2" in request.get_full_path():
+        logger.warning(f'{request.get_full_path()} has been tried')
+        return JsonResponse({"page": 'does not exist'}, status=404)
+    return page_not_found(request, exception, template_name="404.html")
 
 
 class DocumentPublic(DocumentPortalMixin, PublicOrReadPermMixin, DocumentPublicMixin,
@@ -255,7 +230,7 @@ def import_view(request):
 
         if 'import-suricate' in request.POST:
             form_suricate = ImportSuricateForm(choices_suricate, request.POST)
-            if form_suricate.is_valid() and (settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED):
+            if form_suricate.is_valid() and settings.SURICATE_WORKFLOW_ENABLED:
                 parser = SuricateParser()
                 parser.get_statuses()
                 parser.get_activities()
@@ -266,7 +241,7 @@ def import_view(request):
         render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
-    if settings.SURICATE_MANAGEMENT_ENABLED or settings.SURICATE_WORKFLOW_ENABLED:
+    if settings.SURICATE_WORKFLOW_ENABLED:
         render_dict['form_suricate'] = form_suricate
 
     return render(request, 'common/import_dataset.html', render_dict)
@@ -315,24 +290,6 @@ def import_update_json(request):
     return HttpResponse(json.dumps(results), content_type="application/json")
 
 
-class ThemeViewSet(viewsets.ModelViewSet):
-    model = Theme
-    queryset = Theme.objects.all()
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-    serializer_class = ThemeSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().order_by('id')
-
-
-class ParametersView(View):
-    def get(request, *args, **kwargs):
-        response = {
-            'geotrek_admin_version': settings.VERSION,
-        }
-        return JsonResponse(response)
-
-
 class HDViewPointList(MapEntityList):
     queryset = HDViewPoint.objects.all()
     filterform = HDViewPointFilterSet
@@ -350,15 +307,6 @@ class HDViewPointViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'title')
         return qs
-
-
-class HDViewPointAPIViewSet(APIViewSet):
-    model = HDViewPoint
-    serializer_class = HDViewPointAPISerializer
-    geojson_serializer_class = HDViewPointAPIGeoJSONSerializer
-
-    def get_queryset(self):
-        return HDViewPoint.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class HDViewPointDetail(CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin):
@@ -401,6 +349,12 @@ class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
 
 
 class TiledHDViewPointViewSet(mixins.ListModelMixin, viewsets.GenericViewSet, LargeImageFileDetailMixin):
+
+    def __init__(self, **kwargs):
+        # Initial value is r'(^[^.]*|\.(yml|yaml|json|png|svs))$ which prevents from processing PNGs
+        config.setConfig('source_vips_ignored_names', r'(^[^.]*|\.(yml|yaml|json|svs))$')
+        super().__init__(**kwargs)
+
     queryset = HDViewPoint.objects.all()
     serializer_class = HDViewPointAPISerializer
     permission_classes = [RelatedPublishedPermission]
@@ -418,78 +372,6 @@ def last_list(request):
         if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
             return redirect(entity.url_list)
     return redirect('trekking:trek_list')
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_view(request):
-    """
-    Custom views to view / track / launch a sync rando
-    """
-
-    return render(request,
-                  'common/sync_rando.html',
-                  {'form': SyncRandoForm(), },
-                  )
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_update_json(request):
-    """
-    get info from sync_rando celery_task
-    """
-    results = []
-    threshold = timezone.now() - timedelta(seconds=60)
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-    i = celery_app.control.inspect(['celery@geotrek'])
-    try:
-        reserved = i.reserved()
-    except redis.exceptions.ConnectionError:
-        reserved = None
-    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
-    for task in tasks:
-        if task['name'].startswith('geotrek.trekking'):
-            results.append(
-                {
-                    'id': task['id'],
-                    'result': {'current': 0, 'total': 0},
-                    'status': 'PENDING',
-                }
-            )
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-
-    return HttpResponse(json.dumps(results),
-                        content_type="application/json")
-
-
-class SyncRandoRedirect(RedirectView):
-    http_method_names = ['post']
-    pattern_name = 'common:sync_randos_view'
-
-    @method_decorator(login_required)
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def post(self, request, *args, **kwargs):
-        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
-                                         host=self.request.get_host())
-        self.job = launch_sync_rando.delay(url=url)
-        return super().post(request, *args, **kwargs)
 
 
 class ServeAttachmentAccessibility(View):
@@ -533,51 +415,58 @@ class ServeAttachmentAccessibility(View):
 
 @require_POST
 @permission_required(settings_paperclip.get_attachment_permission('add_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def add_attachment_accessibility(request, app_label, model_name, pk,
                                  attachment_form=AttachmentAccessibilityForm,
                                  extra_context=None):
     model = apps.get_model(app_label, model_name)
     obj = get_object_or_404(model, pk=pk)
-
-    form = attachment_form(request, request.POST, request.FILES, object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Add attachment %s'),
-                                   _('Your attachment was uploaded.'),
-                                   extra_context)
+    if obj.same_structure(request.user):
+        form = attachment_form(request, request.POST, request.FILES, object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Add attachment %s'),
+                                       _('Your attachment was uploaded.'),
+                                       extra_context)
+    else:
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @require_http_methods(["GET", "POST"])
 @permission_required(settings_paperclip.get_attachment_permission('change_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def update_attachment_accessibility(request, attachment_pk,
                                     attachment_form=AttachmentAccessibilityForm,
                                     extra_context=None):
     attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = attachment.content_object
-    if request.method == 'POST':
-        form = attachment_form(
-            request, request.POST, request.FILES,
-            instance=attachment,
-            object=obj)
+    if obj.same_structure(request.user):
+        if request.method == 'POST':
+            form = attachment_form(
+                request, request.POST, request.FILES,
+                instance=attachment,
+                object=obj)
+        else:
+            form = attachment_form(
+                request,
+                instance=attachment,
+                object=obj)
+        return _handle_attachment_form(request, obj, form,
+                                       _('Update attachment %s'),
+                                       _('Your attachment was updated.'),
+                                       extra_context)
     else:
-        form = attachment_form(
-            request,
-            instance=attachment,
-            object=obj)
-    return _handle_attachment_form(request, obj, form,
-                                   _('Update attachment %s'),
-                                   _('Your attachment was updated.'),
-                                   extra_context)
+        error_msg = _('You are not allowed to modify attachments on this object, this object is not from the same structure.')
+        messages.error(request, error_msg)
+    return HttpResponseRedirect(f"{obj.get_detail_url()}")
 
 
 @permission_required(settings_paperclip.get_attachment_permission('delete_attachment'), raise_exception=True)
-@permission_required('authent.can_bypass_structure')
 def delete_attachment_accessibility(request, attachment_pk):
     g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
-    can_delete = (request.user.has_perm(
+    can_delete = ((request.user.has_perm(
         settings_paperclip.get_attachment_permission('delete_attachment_others')) or request.user == g.creator)
+        and obj.same_structure(request.user))
     if can_delete:
         g.delete()
         if settings_paperclip.PAPERCLIP_ACTION_HISTORY_ENABLED:

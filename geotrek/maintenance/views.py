@@ -13,6 +13,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.feedback.models import Report
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
@@ -35,8 +36,9 @@ class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['date', 'type', 'target', 'status', 'stake']
+    default_extra_columns = ['begin_date', 'end_date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
+    unorderable_columns = ['target']
 
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
@@ -48,7 +50,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
 
-        queryset = Intervention.objects.existing()
+        queryset = super().get_queryset()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
 
@@ -96,11 +98,11 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return mandatory_columns
 
     default_extra_columns = [
-        'name', 'date', 'type', 'target', 'status', 'stake',
-        'disorders', 'total_manday', 'project', 'subcontracting',
+        'name', 'begin_date', 'end_date', 'type', 'target', 'status', 'stake',
+        'disorders', 'total_manday', 'project', 'contractors', 'subcontracting',
         'width', 'height', 'area', 'structure',
         'description', 'date_insert', 'date_update',
-        'material_cost', 'heliport_cost', 'subcontract_cost',
+        'material_cost', 'heliport_cost', 'contractor_cost',
         'total_cost_mandays', 'total_cost',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
@@ -151,12 +153,14 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
         if kwargs['can_delete']:
             intervention = self.get_object()
             # Disallow deletion if this intervention is part of Suricate Workflow at the moment
-            not_workflow = not settings.SURICATE_WORKFLOW_ENABLED
-            is_report = intervention.target and intervention.target.__class__.__name__ == "Report"
-            report_is_closed = False
-            if is_report:
-                report_is_closed = (intervention.target.status.identifier == 'solved')
-            kwargs["can_delete"] = not_workflow or (not is_report) or report_is_closed
+            if not settings.SURICATE_WORKFLOW_ENABLED:
+                kwargs["can_delete"] = True
+            else:
+                is_report = intervention.target and isinstance(intervention.target, Report)
+                report_is_closed = False
+                if is_report:
+                    report_is_closed = (intervention.target.status.identifier == 'solved')
+                kwargs["can_delete"] = (not is_report) or report_is_closed
         return kwargs
 
 
@@ -180,7 +184,7 @@ class InterventionViewSet(GeotrekMapentityViewSet):
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'name')
         else:
-            qs = qs.select_related("stake", "status", "type")
+            qs = qs.select_related("stake", "status", "type", "target_type").prefetch_related('target')
         return qs
 
 
@@ -197,7 +201,7 @@ class ProjectFormatList(MapEntityFormat, ProjectList):
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-        'interventions', 'interventions_total_cost', 'comments', 'contractors',
+        'interventions', 'interventions_total_cost', 'comments', 'contractors', 'intervention_contractors',
         'project_owner', 'project_manager', 'founders',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',

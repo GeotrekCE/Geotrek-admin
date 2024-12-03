@@ -1,11 +1,10 @@
-import env_file
 import os
 import sys
 
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
-from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
-
+from dotenv import load_dotenv
 from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
@@ -33,14 +32,14 @@ TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
 if os.path.exists(DOT_ENV_FILE):
-    env_file.load(path=DOT_ENV_FILE)
+    load_dotenv(DOT_ENV_FILE)
 
 ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
 ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
-TITLE = _("Geotrek")
+TITLE = "Geotrek-Admin"
 
 DEBUG = False
 TEST = 'test' in sys.argv
@@ -143,7 +142,6 @@ USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
-USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -185,7 +183,14 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
@@ -281,6 +286,7 @@ PROJECT_APPS += (
     'django.contrib.admindocs',
     'django.contrib.gis',
     'crispy_forms',
+    'crispy_bootstrap4',
     'compressor',
     'django_filters',
     'tinymce',
@@ -295,6 +301,7 @@ PROJECT_APPS += (
     'django_large_image',
     'colorfield',
     'mptt',
+    'treebeard',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -400,6 +407,7 @@ MAPENTITY_CONFIG = {
         'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
         'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
         'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
         'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
@@ -446,10 +454,24 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-         {'attribution': 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)',
-          'maxZoom': 17}),
-        ('OSM', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© Contributeurs OpenStreetMap'),
+        (
+            'OpenTopoMap',
+            'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            {
+                'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                'maxNativeZoom': 17,
+                'maxZoom': 22
+            }
+        ),
+        (
+            'OpenStreetMap',
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
+                'maxNativeZoom': 19,
+                'maxZoom': 22
+            }
+        )
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
@@ -476,6 +498,7 @@ FORCED_LAYERS = []
 """
 COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+               'circulation': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
                'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
                'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
@@ -592,6 +615,7 @@ SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'physical': 0,
+                           'circulation': 15,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
@@ -615,7 +639,7 @@ SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
-TOURISTIC_CONTENTS_API_ORDER = ()
+TOURISTIC_CONTENTS_API_ORDER = ('name', )
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3', 'bootstrap4')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -624,6 +648,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MOBILE_TILES_URL = [
     'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 ]
+MOBILE_TILES_PATH = os.path.join(VAR_DIR, 'tiles')
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
@@ -662,9 +687,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "paste_as_text": True
 }
 
-SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
-SYNC_RANDO_OPTIONS = {}
 SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 '''
@@ -684,6 +707,8 @@ API_IS_PUBLIC = True
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
+SENSITIVITY_OPENAIR_SPORT_PRACTICES = ['Aerien', ]  # List of Sport practices name used to filter data to export in OpenAir
+
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
@@ -695,8 +720,6 @@ FACEBOOK_APP_ID = ''
 FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
-
-CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -772,7 +795,7 @@ ENABLED_MOBILE_FILTERS = [
     'difficulty',
     'duration',
     'ascent',
-    'lengths',
+    'length',
     'themes',
     'route',
     'districts',
@@ -789,8 +812,6 @@ SEND_REPORT_ACK = True
 ENABLE_REPORT_COLORS_PER_STATUS = True
 
 SURICATE_REPORT_ENABLED = False
-
-SURICATE_MANAGEMENT_ENABLED = False
 
 SURICATE_WORKFLOW_ENABLED = False
 
@@ -809,7 +830,8 @@ SURICATE_MANAGEMENT_SETTINGS = {
 }
 
 SURICATE_WORKFLOW_SETTINGS = {
-    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département"
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": False
 }
 
 REPORT_FILETYPE = "Report"
@@ -820,7 +842,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
-HIDDEN_FORM_FIELDS = {}
+HIDDEN_FORM_FIELDS = {'report': ['assigned_user']}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
@@ -835,6 +857,50 @@ REST_FRAMEWORK = {
 ALLOW_PATH_DELETION_TOPOLOGY = True
 
 ENABLE_HD_VIEWS = True
+
+PAPERCLIP_ALLOWED_EXTENSIONS = [
+    'jpeg',
+    'jpg',
+    'mp3',
+    'mp4',
+    'odt',
+    'pdf',
+    'png',
+    'svg',
+    'txt',
+    'gif',
+    'tiff',
+    'tif',
+    'docx',
+    'webp',
+    'bmp',
+    'flac',
+    'mpeg',
+    'doc',
+    'ods',
+    'gpx',
+    'xls',
+    'xlsx',
+    'odg',
+]
+PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
+    'bmp': ['image/bmp'],
+    'gpx': ['text/xml'],
+    'webp': ['image/webp'],
+    'svg': ['image/svg']
+}
+PAPERCLIP_RANDOM_SUFFIX_SIZE = 12
+
+REDIS_URL = os.getenv('REDIS_URL',
+                      f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/{os.getenv('REDIS_DB', '0')}")
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_USE_CACHE': 'api_v2',
+    'DEFAULT_CACHE_ERRORS': False
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
@@ -860,10 +926,5 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
-REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_USE_CACHE': 'api_v2',
-    'DEFAULT_CACHE_ERRORS': False
-}
-
-SESSION_ENGINE = "django.contrib.sessions.backends.file"
-SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
+if SURICATE_WORKFLOW_ENABLED and 'report' in HIDDEN_FORM_FIELDS.keys() and "assigned_user" in HIDDEN_FORM_FIELDS['report']:
+    HIDDEN_FORM_FIELDS['report'].remove("assigned_user")

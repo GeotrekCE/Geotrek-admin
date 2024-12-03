@@ -1,15 +1,31 @@
 {% load i18n l10n %}
 {% autoescape off %}
-{% blocktrans with email=report.email %}{{email}} has sent a feedback.{% endblocktrans %}
 
-{% trans "Activity" %} : {{report.activity}}
-{% if report.comment %}{% blocktrans with comment=report.comment_text|striptags %}Comment : {{comment}}{% endblocktrans %}{% endif %}
-{% trans "Category" %} : {{report.category}}
-{% trans "Problem magnitude" %} : {{report.problem_magnitude}}
+{% if report.email %}
+{% blocktrans with email=report.email %}{{ email }} has sent a feedback.{% endblocktrans %}
+{% else %}
+{% trans "A new feedback has been sent." %}
+{% endif %}
+
+{% if report.activity %}{% trans "Activity" %} : {{ report.activity }}{% endif %}
+
+{% if report.comment %}
+{% blocktrans with comment=report.comment_text|striptags %}Comment : {{ comment }}{% endblocktrans %}
+{% endif %}
+
+{% if report.category %}{% trans "Category" %} : {{ report.category }}{% endif %}
+
+{% if report.problem_magnitude %}{% trans "Problem magnitude" %} : {{ report.problem_magnitude }}{% endif %}
+
+{% if report.related_trek %}{% trans "Trek" %} : {{ report.related_trek }}{% endif %}
+
+{% trans "Report" %} {% if report.eid|length %}{{ report.eid }}{% else %}{{ report.id }}{% endif %} : https://{{report.full_url}}
+
+{% if report.provider %}{% trans "Report origin" %} : {{ report.provider }}{% endif %}
 
 {% if report.geom %}{% blocktrans with lat=report.geom_wgs84.y|stringformat:".6f" lng=report.geom_wgs84.x|stringformat:".6f" %}
-Lat : {{lat}} / Lon : {{lng}}
-http://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}
+Lat : {{ lat }} / Lon : {{ lng }}
+https://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}
 {% endblocktrans %}{% endif %}
 
 {% endautoescape %}

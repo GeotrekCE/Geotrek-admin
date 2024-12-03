@@ -8,7 +8,7 @@ def forward(apps, schema_editor):
     with schema_editor.connection.cursor() as cursor:
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             cursor.execute(
-                f"UPDATE infrastructure_infrastructure SET published_{lang} = False WHERE published = False;  "
+                f"UPDATE infrastructure_infrastructure SET published_{lang.replace('-', '_')} = False WHERE published = False;  "
             )
 
 

@@ -1,23 +1,40 @@
-from django.test import TestCase
-from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
-                                     MultiLineString, MultiPoint, Point)
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from django.test.utils import override_settings
-
+import datetime
+import os
 from unittest import skipIf
+
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
+                                     MultiPolygon, Point, Polygon)
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+from django.test.utils import override_settings
+from easy_thumbnails.files import ThumbnailFile
 
-from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
+
 from geotrek.core.tests.factories import PathFactory
-from geotrek.zoning.tests.factories import DistrictFactory, CityFactory
-from geotrek.trekking.tests.factories import (POIFactory, TrekFactory,
-                                              TrekWithPOIsFactory, ServiceFactory,
-                                              RatingFactory, RatingScaleFactory)
-from geotrek.trekking.models import Trek, OrderedTrekChild
+from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
+                                     Trek)
+from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
+                                              RatingFactory,
+                                              RatingScaleFactory,
+                                              ServiceFactory, TrekFactory,
+                                              TrekWithPOIsFactory,
+                                              WebLinkCategoryFactory,
+                                              WebLinkFactory)
+from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
-class TrekTest(TranslationResetMixin, TestCase):
+class TrekTest(TestCase):
+    def test_is_public_if_parent_published(self):
+        t = TrekFactory.create(published=False)
+        parent = TrekFactory.create(published=True)
+        OrderedTrekChild.objects.create(parent=parent, child=t)
+        self.assertTrue(t.is_public())
+
     def test_is_publishable(self):
         t = TrekFactory.create()
         t.geom = LineString((0, 0), (1, 1))
@@ -88,7 +105,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml, 'lxml')
+        parsed = BeautifulSoup(kml, features='xml')
         for placemark in parsed.findAll('placemark'):
             coordinates = placemark.find('coordinates')
             tuples = [s.split(',') for s in coordinates.string.split(' ')]
@@ -136,9 +153,8 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='Ca')
         TrekFactory.create(name='A')
         TrekFactory.create(name='B')
-        self.assertQuerysetEqual(Trek.objects.all(),
-                                 ['<Trek: A>', '<Trek: B>', '<Trek: Ca>', '<Trek: Cb>'],
-                                 ordered=False)
+        self.assertListEqual(list(Trek.objects.all().values_list('name', flat=True)),
+                             ['A', 'B', 'Ca', 'Cb'])
 
     def test_trek_itself_as_parent(self):
         """
@@ -150,8 +166,33 @@ class TrekTest(TranslationResetMixin, TestCase):
                                  "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
+    def test_pictures_print_thumbnail_correct_picture(self):
+        trek = TrekFactory()
+        AttachmentImageFactory.create_batch(5, content_object=trek)
+        self.assertEqual(trek.pictures.count(), 5)
+        self.assertEqual(len(os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path))), 5, os.listdir(os.path.dirname(trek.attachments.first().attachment_file.path)))
+        self.assertTrue(isinstance(trek.picture_print, ThumbnailFile))
 
-class TrekPublicationDateTest(TranslationResetMixin, TestCase):
+    def test_pictures_print_thumbnail_wrong_picture(self):
+        trek = TrekFactory()
+        error_image_attachment = AttachmentPictoSVGFactory(content_object=trek)
+        os.unlink(error_image_attachment.attachment_file.path)
+        self.assertIsNone(trek.picture_print)
+
+    def test_pictures_print_thumbnail_no_picture(self):
+        trek = TrekFactory()
+        self.assertEqual(trek.pictures.count(), 0)
+        self.assertIsNone(trek.picture_print, ThumbnailFile)
+
+    def test_thumbnail(self):
+        trek = TrekFactory()
+        AttachmentImageFactory(content_object=trek)
+        self.assertTrue(isinstance(trek.thumbnail, ThumbnailFile))
+        self.assertIsNotNone(trek.thumbnail)
+        self.assertIn(trek.thumbnail.name, trek.thumbnail_display)
+
+
+class TrekPublicationDateTest(TestCase):
     def setUp(self):
         self.trek = TrekFactory.create(published=False)
 
@@ -170,7 +211,6 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertIsNone(self.trek.publication_date)
 
     def test_date_is_not_updated_when_saved_again(self):
-        import datetime
         self.test_takes_current_date_when_published_becomes_true()
         old_date = datetime.date(2003, 8, 6)
         self.trek.publication_date = old_date
@@ -178,7 +218,7 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
         self.assertEqual(self.trek.publication_date, old_date)
 
 
-class RelatedObjectsTest(TranslationResetMixin, TestCase):
+class RelatedObjectsTest(TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
 
@@ -406,9 +446,9 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekA, child=trekB, order=1).save()
         OrderedTrekChild(parent=trekA, child=trekC, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertQuerysetEqual(trekA.children, ['<Trek: B>', '<Trek: C>'])
-        self.assertQuerysetEqual(trekB.parents, ['<Trek: A>'])
-        self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['B', 'C'])
+        self.assertListEqual(list(trekB.parents.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
         self.assertEqual(list(trekA.children_id), [trekB.id, trekC.id])
         self.assertEqual(trekB.parents_id, [trekA.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
@@ -418,8 +458,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekC.next_id, {trekA.id: None})
         self.assertEqual(trekC.previous_id, {trekA.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertQuerysetEqual(trekA.children, ['<Trek: C>'])
-        self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['C'])
+        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
         self.assertEqual(list(trekA.children_id), [trekC.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
 
@@ -430,9 +470,9 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertQuerysetEqual(trekA.parents, ['<Trek: B>', '<Trek: C>'], ordered=False)
-        self.assertQuerysetEqual(trekB.children, ['<Trek: A>'])
-        self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['B', 'C'])
+        self.assertListEqual(list(trekB.children.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
         self.assertEqual(trekA.parents_id, [trekB.id, trekC.id])
         self.assertEqual(list(trekB.children_id), [trekA.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
@@ -442,8 +482,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekA.next_id, {trekC.id: None})
         self.assertEqual(trekA.previous_id, {trekC.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertQuerysetEqual(trekA.parents, ['<Trek: C>'])
-        self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
+        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['C'])
+        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
         self.assertEqual(trekA.parents_id, [trekC.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
 
@@ -475,3 +515,37 @@ class RatingTest(TestCase):
     def test_rating_str(self):
         scale = RatingFactory.create(name='Bar')
         self.assertEqual(str(scale), 'RatingScale : Bar')
+
+
+class CascadedDeletionLoggingTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice = PracticeFactory(name="Pratice A")
+        cls.scale = RatingScaleFactory(practice=cls.practice, name="Scale A")
+        cls.rating = RatingFactory(scale=cls.scale)
+        cls.categ = WebLinkCategoryFactory()
+        cls.weblink = WebLinkFactory(category=cls.categ)
+
+    def test_cascading_from_practice(self):
+        practice_pk = self.practice.pk
+        self.practice.delete()
+        rating_model_num = ContentType.objects.get_for_model(Rating).pk
+        scale_model_num = ContentType.objects.get_for_model(RatingScale).pk
+        scale_entry = LogEntry.objects.get(content_type=scale_model_num, object_id=self.scale.pk)
+        rating_entry = LogEntry.objects.get(content_type=rating_model_num, object_id=self.rating.pk)
+        self.assertEqual(scale_entry.change_message, f"Deleted by cascade from Practice {practice_pk} - Pratice A")
+        self.assertEqual(scale_entry.action_flag, DELETION)
+        self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
+        self.assertEqual(rating_entry.action_flag, DELETION)
+
+
+class TrekLabelsTestCase(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory()
+        self.published_label = LabelFactory(published=True)
+        self.unpublished_label = LabelFactory(published=False)
+
+        self.trek.labels.set([self.published_label, self.unpublished_label])
+
+    def test_published_label_property(self):
+        self.assertEqual(self.trek.published_labels, [self.published_label])

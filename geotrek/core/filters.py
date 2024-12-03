@@ -103,7 +103,7 @@ class PathFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureR
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Path.objects.provider_choices()
+        choices=lambda: Path.objects.provider_choices()
     )
     networks = ModelMultipleChoiceFilter(queryset=Network.objects.all().select_related("structure"))
     usages = ModelMultipleChoiceFilter(queryset=Usage.objects.all().select_related("structure"))
@@ -130,7 +130,7 @@ class TrailFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilterSet, Zo
         field_name='provider',
         empty_label=_("Provider"),
         label=_("Provider"),
-        choices=Trail.objects.provider_choices()
+        choices=lambda: Trail.objects.provider_choices()
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

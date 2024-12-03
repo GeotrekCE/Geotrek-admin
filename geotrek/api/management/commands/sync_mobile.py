@@ -1,16 +1,16 @@
 import argparse
-import logging
 import filecmp
+import logging
 import os
-import stat
-from PIL import Image
 import re
 import shutil
+import stat
 import tempfile
 from time import sleep
 from zipfile import ZipFile
-import cairosvg
 
+import cairosvg
+from PIL import Image
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
@@ -19,18 +19,20 @@ from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation
 from django.utils.translation import gettext as _
-from geotrek.common.models import FileType  # NOQA
-from geotrek.common import models as common_models
-from geotrek.flatpages.models import FlatPage
-from geotrek.tourism import models as tourism_models
-from geotrek.trekking import models as trekking_models
-from geotrek.api.mobile.views.trekking import TrekViewSet
-from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
-from geotrek.common.helpers_sync import ZipTilesBuilder
-# Register mapentity models
-from geotrek.trekking import urls  # NOQA
-from geotrek.tourism import urls  # NOQA
+from modeltranslation.utils import build_localized_fieldname
 
+from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
+from geotrek.api.mobile.views.trekking import TrekViewSet
+from geotrek.common import models as common_models
+from geotrek.common.functions import GeometryType
+from geotrek.common.helpers_sync import ZipTilesBuilder
+from geotrek.common.models import FileType  # NOQA
+from geotrek.flatpages.models import MenuItem
+from geotrek.tourism import models as tourism_models
+from geotrek.tourism import urls  # NOQA
+# Register mapentity models
+from geotrek.trekking import models as trekking_models
+from geotrek.trekking import urls  # NOQA
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +132,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync POIs of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'pois', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -142,7 +144,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'touristic_contents.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync contents of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'touristic_contents', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -154,7 +156,7 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'touristic_events.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
         # Sync events of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             name = os.path.join(lang, str(trek.pk), 'touristic_events', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -179,7 +181,7 @@ class Command(BaseCommand):
 
     def sync_pictograms(self, model, directory='', zipfile=None, size=None):
         for obj in model.objects.all():
-            if not obj.pictogram:
+            if not obj.pictogram or not os.path.exists(obj.pictogram.path):
                 continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == '.svg':
@@ -196,15 +198,15 @@ class Command(BaseCommand):
                 image = Image.open(obj.pictogram.path)
             # Resize
             if size:
-                image = image.resize((size, size), Image.ANTIALIAS)
+                image = image.resize((size, size), Image.Resampling.LANCZOS)
             # Save
             image.save(dst, optimize=True, quality=95)
             if name not in zipfile.namelist():
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                        directory=directory, url=obj.pictogram.url, name=name))
+                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                        directory=directory, url=obj.pictogram.url))
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
@@ -235,20 +237,49 @@ class Command(BaseCommand):
                 self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
-        flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
-            **{'published_{lang}'.format(lang=lang): True})
+        """Save FlatPages data for the mobile app as JSON. The original FlatPages format is saved but under the hood
+        MenuItems are queried and converted.
+
+        - call list view of FlatPageViewSet and save results to JSON,
+        - prepare a queryset of MenuItems with relevant mobile-data filtering,
+        - optionally filter by portal,
+        - foreach MenuItem call retrieve view of FlatPageViewSet and save results to JSON.
+
+        Note: the migration to MenuItem is invisible but the IDs change. For instance there is no guaranty that
+        a call to `GET /api/mobile/flatpages/123/` will return the same FlatPage data after the migration. This should
+        not be an issue because mobile apps do not keep a cache or an history based on FlatPage IDs.
+        """
+
+        # FIXME: duplicates filter logic from the FlatPageViewSet
+        # MenuItems are filtered twice, here and in FlatPageViewSet. It would be nice to reuse the IDs from the list
+        # computed in the first `sync_json` for the `sync_json` calls on FlatPage details (so we can remove the need
+        # for the `menu_item_qs` queryset).
+        menu_item_qs = (
+            MenuItem.objects
+            .filter(
+                depth=1,
+                platform__in=['mobile', 'all'],
+            )
+            .filter(
+                **{build_localized_fieldname('published', lang): True},
+            )
+            .filter(
+                Q(page__published=True) | Q(page=None)
+            )
+            .order_by("path")
+        )
         if self.portal:
-            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            menu_item_qs = menu_item_qs.filter(Q(portals__name__in=self.portal) | Q(portals=None))
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
-        for flatpage in flatpages:
-            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}'.format(pk=flatpage.pk), pk=flatpage.pk,
+        for menu_item in menu_item_qs:
+            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}'.format(pk=menu_item.pk), pk=menu_item.pk,
                            as_view_args=[{'get': 'retrieve'}])
 
     def sync_trekking(self, lang):
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
-        treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
+        treks = trekking_models.Trek.objects.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING").existing().order_by('pk')
+        treks = treks.filter(**{build_localized_fieldname('published', lang): True})
 
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
@@ -260,7 +291,7 @@ class Command(BaseCommand):
             self.sync_trek_touristic_contents(lang, trek)
             self.sync_trek_touristic_events(lang, trek)
             # Sync detail of children too
-            for child in trek.children:
+            for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
                 self.sync_geojson(
                     lang, TrekViewSet,
                     '{pk}/treks/{child_pk}.geojson'.format(pk=trek.pk, child_pk=child.pk),
@@ -294,42 +325,44 @@ class Command(BaseCommand):
         if not self.skip_tiles:
             self.sync_trek_tiles(trek, trekid_zipfile)
 
-        for poi in trek.published_pois:
-            if poi.resized_pictures:
-                for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
-                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
-                                         zipfile=trekid_zipfile)
-        for touristic_content in trek.published_touristic_contents:
-            if touristic_content.resized_pictures:
-                for picture, thdetail in touristic_content.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
-                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
-                                         zipfile=trekid_zipfile)
-        for touristic_event in trek.published_touristic_events:
-            if touristic_event.resized_pictures:
-                for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
-                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
-                                         zipfile=trekid_zipfile)
         if trek.resized_pictures:
             for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                 self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
-        for desk in trek.information_desks.all():
+
+        for poi in trek.published_pois.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
+            if poi.resized_pictures:
+                for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
+        for touristic_content in trek.published_touristic_contents.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
+            if touristic_content.resized_pictures:
+                for picture, thdetail in touristic_content.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
+        for touristic_event in trek.published_touristic_events.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
+            if touristic_event.resized_pictures:
+                for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                    self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                         zipfile=trekid_zipfile)
+
+        for desk in trek.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for lang in self.languages:
-            trek.prepare_elevation_chart(lang, self.referer)
+            trek.prepare_elevation_chart(lang)
             url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
             self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                            url_media, directory=url_trek, zipfile=trekid_zipfile)
         # Sync media of children too
-        for child in trek.children:
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
             for picture, resized in child.resized_pictures:
                 self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
-            for desk in child.information_desks.all():
+            for desk in child.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
             for lang in self.languages:
-                child.prepare_elevation_chart(lang, self.referer)
+                child.prepare_elevation_chart(lang)
                 url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
                 self.sync_file(child.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                                url_media, directory=url_trek, zipfile=trekid_zipfile)
@@ -337,7 +370,7 @@ class Command(BaseCommand):
         self.close_zip(trekid_zipfile, zipname_trekid)
 
     def sync_treks_media(self):
-        treks = trekking_models.Trek.objects.existing().filter(published=True).order_by('pk')
+        treks = trekking_models.Trek.objects.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING").existing().filter(published=True).order_by('pk')
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
@@ -375,8 +408,7 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek, zipfile):
-        """ Add tiles to zipfile for the specified Trek object.
-        """
+        """ Add tiles to zipfile for the specified Trek object."""
 
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
@@ -443,12 +475,11 @@ class Command(BaseCommand):
                 )
                 current_value = current_value + step_value
 
-            translation.activate(lang)
-            self.sync_settings_json(lang)
-            if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-                self.sync_flatpage(lang)
-            self.sync_trekking(lang)
-            translation.deactivate()
+            with translation.override(lang):
+                self.sync_settings_json(lang)
+                if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+                    self.sync_flatpage(lang)
+                self.sync_trekking(lang)
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
@@ -460,9 +491,10 @@ class Command(BaseCommand):
 
     def rename_root(self):
         if os.path.exists(self.dst_root):
-            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
+            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), f'{os.path.basename(self.dst_root)}_deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
-            shutil.rmtree(tmp_root2)
+            if os.path.exists(tmp_root2):
+                shutil.rmtree(tmp_root2)
         os.rename(self.tmp_root, self.dst_root)
         os.chmod(self.dst_root, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
         os.mkdir(self.tmp_root)  # Recreate otherwise python3.6 will complain it does not find the tmp dir at cleanup.
@@ -481,7 +513,7 @@ class Command(BaseCommand):
             for language in options['languages'].split(','):
                 if language not in settings.MODELTRANSLATION_LANGUAGES:
                     raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".
-                                       format(lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
+                                       format(lang_n=language, langs=tuple(settings.MODELTRANSLATION_LANGUAGES)))
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
@@ -503,9 +535,9 @@ class Command(BaseCommand):
             'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
+            'tiles_dir': settings.MOBILE_TILES_PATH,
         }
-        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
+        sync_mobile_tmp_dir = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
         if options['empty_tmp_folder']:
             for dir in os.listdir(sync_mobile_tmp_dir):
                 shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))

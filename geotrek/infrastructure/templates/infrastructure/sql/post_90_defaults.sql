@@ -37,6 +37,7 @@ ALTER TABLE infrastructure_infrastructureusagedifficultylevel ALTER COLUMN date_
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN accessibility SET DEFAULT '';
 -- topo_object
 -- name
+-- access
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '';
 -- condition
 -- implantation_year

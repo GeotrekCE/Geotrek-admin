@@ -1,21 +1,23 @@
-from django.contrib.gis.geos import LineString, Point
-from django.test import TestCase
-from django.utils import translation
-from django.conf import settings
 from unittest import skipIf
 
+from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.gis.geos import LineString, Point
+from django.test import TestCase
+
+from geotrek.core.tests.factories import (PathFactory, StakeFactory,
+                                          TopologyFactory, TrailFactory)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import BladeFactory, SignageFactory
-from geotrek.maintenance.models import Intervention
-from geotrek.maintenance.tests.factories import (InterventionFactory,
-                                                 InfrastructureInterventionFactory,
-                                                 InfrastructurePointInterventionFactory,
-                                                 SignageInterventionFactory,
-                                                 ProjectFactory, ManDayFactory, InterventionJobFactory,
-                                                 InterventionDisorderFactory)
+from geotrek.maintenance.models import Funding, Intervention, ManDay
+from geotrek.maintenance.tests.factories import (
+    FundingFactory, InfrastructureInterventionFactory,
+    InfrastructurePointInterventionFactory, InterventionDisorderFactory,
+    InterventionFactory, InterventionJobFactory, ManDayFactory, ProjectFactory,
+    SignageInterventionFactory, ContractorFactory)
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
-from geotrek.core.tests.factories import PathFactory, TopologyFactory, StakeFactory, TrailFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -54,9 +56,17 @@ class InterventionTest(TestCase):
 
     def test_mandays(self):
         i = InterventionFactory.create()
-        ManDayFactory.create(intervention=i, nb_days=5)
+        md = ManDayFactory.create(intervention=i, nb_days=5)
         ManDayFactory.create(intervention=i, nb_days=8)
         self.assertEqual(i.total_manday, 14)  # intervention haz a default manday
+        manday_pk = md.pk
+        interv_pk = i.pk
+        obj_repr = str(i)
+        i.delete(force=True)
+        model_num = ContentType.objects.get_for_model(ManDay).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=manday_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Intervention {interv_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_path_helpers(self):
         p = PathFactory.create()
@@ -88,23 +98,23 @@ class InterventionTest(TestCase):
         TrailFactory.create(paths=[p], name='trail_2')
         infra = InfrastructureFactory.create(paths=[p])
         intervention = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
+        self.assertQuerySetEqual(intervention.trails, ['trail_1', 'trail_2'], ordered=False, transform=str)
 
     def test_paths_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
         infra = InfrastructureFactory.create(paths=[p_infra])
         intervention_infra = InterventionFactory.create(target=infra)
-        self.assertQuerysetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_infra.paths, [p_infra.name, ], transform=str)
 
         p_signage = PathFactory.create(geom=LineString((10, 10), (20, 10)))
         signage = SignageFactory.create(paths=[p_signage])
         blade = BladeFactory.create(signage=signage)
         intervention_blade = InterventionFactory.create(target=blade)
-        self.assertQuerysetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
+        self.assertQuerySetEqual(intervention_blade.paths, [p_signage.name, ], transform=str)
 
         course = CourseFactory.create()
         intervention_course = InterventionFactory.create(target=course)
-        self.assertQuerysetEqual(intervention_course.paths, [], transform=str)
+        self.assertQuerySetEqual(intervention_course.paths, [], transform=str)
 
     def test_helpers(self):
         """
@@ -144,6 +154,16 @@ class InterventionTest(TestCase):
         self.assertFalse(interv.in_project)
         interv.project = proj
         self.assertTrue(interv.in_project)
+        interv.save()
+        funding = FundingFactory(project=proj, amount=6)
+        project_pk = proj.pk
+        funding_pk = funding.pk
+        obj_repr = str(proj)
+        proj.delete(force=True)
+        model_num = ContentType.objects.get_for_model(Funding).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=funding_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Project {project_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()
@@ -226,7 +246,6 @@ class InterventionTest(TestCase):
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):
-        translation.activate('en')
         on_path = InterventionFactory.create()
         self.assertIn('Path', on_path.target_display)
         self.assertIn('path-16.png', on_path.target_display)
@@ -270,7 +289,7 @@ class InterventionTest(TestCase):
         interv = InfrastructureInterventionFactory.create(
             material_cost=1,
             heliport_cost=2,
-            subcontract_cost=4
+            contractor_cost=4,
             # implicit 1 manday x 500 €
         )
         self.assertEqual(interv.total_cost, 507)
@@ -315,7 +334,7 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.paths), [p_infra.name, p_signage.name], ordered=False, transform=str)
 
     def test_trails_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
@@ -336,4 +355,12 @@ class ProjectModelTest(TestCase):
         project.interventions.add(intervention_infra)
         project.interventions.add(intervention_blade)
         project.interventions.add(intervention_course)
-        self.assertQuerysetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
+        self.assertQuerySetEqual(list(project.trails), ['trail_1', 'trail_2', 'trail_signage'], ordered=False, transform=str)
+
+    def test_intervention_contractors(self):
+        project = ProjectFactory.create()
+        contractor1 = ContractorFactory.create(contractor="contractor1")
+        contractor2 = ContractorFactory.create(contractor="contractor2")
+        intervention = InterventionFactory.create(project=project)
+        intervention.contractors.set([contractor1, contractor2])
+        self.assertEqual(project.intervention_contractors, ["contractor1", "contractor2"])

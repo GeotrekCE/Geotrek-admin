@@ -4,38 +4,26 @@ from unittest import mock
 
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
-from django.utils import translation
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.conf import settings
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
-
-# Workaround https://code.djangoproject.com/ticket/22865
-from freezegun import freeze_time
-
-from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
-from geotrek.common.tests.factories import AttachmentFactory, AttachmentAccessibilityFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 from mapentity.registry import app_settings
 from mapentity.tests import MapEntityTest, MapEntityLiveTest
 
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
+
+from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 
-class TranslationResetMixin:
-    def setUp(self):
-        translation.deactivate()
-        super().setUp()
-
-
-class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
-
+class CommonTest(AuthentFixturesTest, MapEntityTest):
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             return {'topology': 'doh!'}, _('Topology is not valid.')
@@ -47,7 +35,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable')
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
@@ -57,6 +46,25 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         response = self.client.get(
             reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
                     kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_document_markup(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
+        except NoReverseMatch:
+            return  # No document markup
+
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(f"{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html",
+                    kwargs={'pk': obj.pk, 'slug': obj.slug, 'lang': 'en'}))
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('mapentity.helpers.requests')
@@ -92,14 +100,12 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj_1 = self.modelfactory.create(structure=structure)
         obj_1.refresh_from_db()
 
-        AttachmentFactory.create(content_object=obj_1,
-                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentImageFactory.create(content_object=obj_1)
 
         attachments_accessibility = 'attachments_accessibility' in fields_name
 
         if attachments_accessibility:
-            AttachmentAccessibilityFactory.create(content_object=obj_1,
-                                                  attachment_accessibility_file=get_dummy_uploaded_image())
+            AttachmentAccessibilityFactory.create(content_object=obj_1)
         response = self.client.post(
             reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
                     kwargs={"pk": obj_1.pk})
@@ -130,7 +136,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable')
+            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
+                    kwargs={'lang': 'en', 'pk': 0, 'slug': 'test'})
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
@@ -150,8 +157,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
 
-    @override_settings(FORCED_LAYERS=[('OSM', [(42, 100000), (43.87017822557581, 7.506408691406249),
-                                               (43.90185050527358, 7.555847167968749), (42, 100000)])])
+    @override_settings(FORCED_LAYERS=[('OpenStreetMap', [(42, 100000), (43.87017822557581, 7.506408691406249),
+                                                         (43.90185050527358, 7.555847167968749), (42, 100000)])])
     def test_forced_layers(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -284,117 +291,22 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
                              self.expected_column_formatlist_extra)
 
 
-class GeotrekAPITestCase:
-    api_prefix = '/api/en/'
-
-    def get_expected_json_attrs(self):
-        return {}
-
-    @freeze_time("2020-03-17")
-    def test_api_list_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        list_url = '{api_prefix}{modelname}s.json'.format(api_prefix=self.api_prefix,
-                                                          modelname=self.model._meta.model_name)
-        response = self.client.get(list_url)
-        self.assertEqual(response.status_code, 200, f"{list_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json[0].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
-
-    @freeze_time("2020-03-17")
-    def test_api_geojson_list_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        list_url = '{api_prefix}{modelname}s.geojson'.format(api_prefix=self.api_prefix,
-                                                             modelname=self.model._meta.model_name)
-        response = self.client.get(list_url)
-        self.assertEqual(response.status_code, 200, f"{list_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json['features'][0]['properties'].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {
-            'type': 'FeatureCollection',
-            'features': [{
-                'id': self.obj.pk,
-                'type': 'Feature',
-                'geometry': self.expected_json_geom,
-                'properties': self.get_expected_json_attrs(),
-            }],
-        })
-
-    @freeze_time("2020-03-17")
-    def test_api_detail_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        detail_url = '{api_prefix}{modelname}s/{id}'.format(api_prefix=self.api_prefix,
-                                                            modelname=self.model._meta.model_name,
-                                                            id=self.obj.pk)
-        response = self.client.get(detail_url)
-        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
-
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json.pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {'id': self.obj.pk, **self.get_expected_json_attrs()})
-
-    @freeze_time("2020-03-17")
-    def test_api_geojson_detail_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        detail_url = '{api_prefix}{modelname}s/{id}.geojson'.format(api_prefix=self.api_prefix,
-                                                                    modelname=self.model._meta.model_name,
-                                                                    id=self.obj.pk)
-        response = self.client.get(detail_url)
-        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json['properties'].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {
-            'id': self.obj.pk,
-            'type': 'Feature',
-            'geometry': self.expected_json_geom,
-            'properties': self.get_expected_json_attrs(),
-        })
-
-
 class CommonLiveTest(MapEntityLiveTest):
     @mock.patch('mapentity.helpers.requests')
     def test_map_image_other_language(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        user = SuperUserFactory.create()
         self.client.force_login(user=user)
 
         obj = self.modelfactory.create(geom='POINT(0 0)')
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -402,9 +314,14 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
         mapimage_url = '%s%s?context&lang=fr' % (self.live_server_url, obj.get_detail_url())
+        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        url_called = mock_requests.get.call_args_list[0]
+        self.assertTrue(url_called.startswith(screenshot_url))
+
+        mapimage_url = '%s%s?context&lang=en' % (self.live_server_url, obj.get_detail_url())
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
@@ -421,9 +338,9 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -431,7 +348,7 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
         mapimage_url = '%s%s?context' % (self.live_server_url, obj.get_detail_url())
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
@@ -492,9 +409,9 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
@@ -502,4 +419,4 @@ class CommonLiveTest(MapEntityLiveTest):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))

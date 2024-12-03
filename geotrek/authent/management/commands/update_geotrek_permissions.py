@@ -9,7 +9,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from mapentity.registry import registry
-from mapentity.middleware import clear_internal_user_cache
 from mapentity.registry import create_mapentity_model_permissions
 
 from geotrek.common.mixins.models import BasePublishableMixin
@@ -33,9 +32,6 @@ class Command(BaseCommand):
 
         # Make sure apps are registered at this point
         import_module(settings.ROOT_URLCONF)
-
-        # Tests reset DB so we have to reset this cache too
-        clear_internal_user_cache()
 
         # For all models registered, add missing bits
         for model in registry.registry.keys():

@@ -13,7 +13,6 @@ from django.contrib.gis.geos import Point, LineString, GeometryCollection
 from django.contrib.gis import gdal
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils.translation import activate, deactivate_all
 
 from geotrek.common.tests import CommonTest
 from mapentity.tests.factories import SuperUserFactory
@@ -22,10 +21,9 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.core.tests.factories import StakeFactory
 from geotrek.core.models import PathAggregation
-from geotrek.common.tests.factories import OrganismFactory
-from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.tests.factories import OrganismFactory, AccessMeanFactory
 from geotrek.maintenance.models import Funding, Intervention, InterventionStatus, ManDay, Project
-from geotrek.maintenance.views import InterventionFormatList, ProjectFormatList
+from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -33,7 +31,8 @@ from geotrek.land.tests.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                           CompetenceEdgeFactory, WorkManagementEdgeFactory,
                                           SignageManagementEdgeFactory)
 from geotrek.outdoor.tests.factories import CourseFactory
-from geotrek.signage.tests.factories import BladeFactory, SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, SignageFactory, SignageTypeFactory
+from geotrek.signage.forms import SignageForm
 from geotrek.signage.models import Signage
 from geotrek.maintenance.tests.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                                  InterventionDisorderFactory, InterventionStatusFactory, ManDayFactory,
@@ -46,9 +45,9 @@ class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
-    extra_column_list = ['heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
-    expected_column_formatlist_extra = ['id', 'heliport_cost', 'subcontract_cost', 'disorders', 'jobs']
+    extra_column_list = ['heliport_cost', 'contractor_cost', 'disorders', 'jobs']
+    expected_column_list_extra = ['id', 'name', 'heliport_cost', 'contractor_cost', 'disorders', 'jobs']
+    expected_column_formatlist_extra = ['id', 'heliport_cost', 'contractor_cost', 'disorders', 'jobs']
     expected_json_geom = {'coordinates': [[3.0, 46.5],
                                           [3.001304, 46.5009004]],
                           'type': 'LineString'}
@@ -74,15 +73,17 @@ class InterventionViewsTest(CommonTest):
         InterventionStatusFactory.create()
         good_data = {
             'name': 'test',
-            'date': '2012-08-23',
+            'begin_date': '2012-08-23',
+            'end_date': "",
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
             'area': 0,
-            'subcontract_cost': 0.0,
+            'contractor_cost': 0.0,
             'stake': StakeFactory.create().pk,
             'height': 0.0,
             'project': '',
+            'contractors': [],
             'width': 0.0,
             'length': 0.0,
             'status': InterventionStatus.objects.all()[0].pk,
@@ -112,7 +113,8 @@ class InterventionViewsTest(CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            'date': '30/03/2022',
+            'begin_date': '30/03/2022',
+            'end_date': None,
             'id': self.obj.pk,
             'name': self.obj.name_display,
             'stake': self.obj.stake.stake,
@@ -254,13 +256,17 @@ class InterventionViewsTest(CommonTest):
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
+        access_mean = AccessMeanFactory()
+        data['access'] = access_mean.pk
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get_for_model(Signage).pk)
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
     def test_update_signage(self):
+        """Test updating signage also updates intervention"""
         target_year = 2017
         if settings.TREKKING_TOPOLOGY_ENABLED:
             intervention = SignageInterventionFactory.create()
@@ -268,21 +274,28 @@ class InterventionViewsTest(CommonTest):
             intervention = SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signa = intervention.target
         # Save infrastructure form
-        response = self.client.get(signa.get_update_url())
-        form = response.context['form']
-        data = form.initial
-        data['name_en'] = 'modified'
-        data['implantation_year'] = target_year
+        access_mean = AccessMeanFactory()
+        data = {
+            'name_en': "modified",
+            'implantation_year': target_year,
+            'type': SignageTypeFactory.create(),
+            "structure": StructureFactory.create(),
+            'access': access_mean.pk,
+            'manager': OrganismFactory.create().pk
+        }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
             data['geom'] = 'SRID=4326;POINT (2.0 6.6)'
-        data['manager'] = OrganismFactory.create().pk
-        response = self.client.post(signa.get_update_url(), data)
-        self.assertEqual(response.status_code, 302)
+        self.super_user = SuperUserFactory.create()
+        form = SignageForm(instance=signa, data=data, user=self.super_user)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        intervention.refresh_from_db()
+
         # Check that intervention was not deleted (bug #783)
-        intervention = Intervention.objects.first()
         self.assertFalse(intervention.deleted)
+        self.assertEqual(str(intervention.target.access), access_mean.label)
         self.assertEqual(intervention.target.name, 'modified')
         self.assertEqual(intervention.target.implantation_year, target_year)
 
@@ -335,12 +348,15 @@ class InterventionViewsTest(CommonTest):
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
+        if data["access"] is None:
+            data["access"] = ""
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
+            'end_date': ''
         })
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
@@ -369,6 +385,8 @@ class InterventionViewsTest(CommonTest):
         data['name_en'] = 'modified'
         data['implantation_year'] = target_year
         data['accessibility'] = ''
+        data['access'] = ''
+        data['conditions'] = list(form.instance.conditions.values_list('pk', flat=True))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         else:
@@ -510,6 +528,7 @@ class ProjectViewsTest(CommonTest):
             'global_cost': '12',
             'comments': '',
             'contractors': ContractorFactory.create().pk,
+            'intervention_contractors': [],
             'project_owner': OrganismFactory.create().pk,
             'project_manager': OrganismFactory.create().pk,
 
@@ -609,7 +628,7 @@ class ProjectViewsTest(CommonTest):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-class ExportTest(TranslationResetMixin, TestCase):
+class ExportTest(TestCase):
 
     def test_shape_mixed(self):
         """
@@ -710,71 +729,49 @@ class TestDetailedJobCostsExports(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
+    def get_csv_reader_names(self, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+        return csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+
     def test_detailed_mandays_export(self):
         '''Test detailed intervention job costs are exported properly, and follow data changes'''
 
         # Assert each job used in intervention has a column in export view
-        columns = InterventionFormatList().columns
-        self.assertIn(self.job1_column_name, columns)
-        self.assertIn(self.job2_column_name, columns)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+
+        self.assertIn(self.job1_column_name, reader_csv.fieldnames)
+        self.assertIn(self.job2_column_name, reader_csv.fieldnames)
 
         # Assert no duplicate in column exports
-        self.assertEqual(len(columns), len(set(columns)))
+        self.assertEqual(len(reader_csv.fieldnames), len(set(reader_csv.fieldnames)))
 
         # Assert job not used in intervention is not exported
-        self.assertNotIn(self.job3_column_name, columns)
+        self.assertNotIn(self.job3_column_name, reader_csv.fieldnames)
 
-        # Assert queryset contains right amount for each cost
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
+        # Assert intervention export contains right amount for each cost
 
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
-
-        cost2_in_query_set = getattr(interv_in_query_set, self.job2_column_name)
-        self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
+            self.assertEqual(Decimal(elem[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
 
         # Assert cost is calculated properly when we add and remove mandays on the same job
         # Add manday and refresh
         manday1bis = ManDayFactory(nb_days=1, job=self.job1, intervention=self.interv)
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * (self.manday1.nb_days + manday1bis.nb_days))
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * (self.manday1.nb_days + manday1bis.nb_days))
         # Remove manday and refresh
         manday1bis.delete()
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost1_in_query_set = getattr(interv_in_query_set, self.job1_column_name)
-        self.assertEqual(cost1_in_query_set, self.job1.cost * self.manday1.nb_days)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        for elem in reader_csv:
+            self.assertEqual(Decimal(elem[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
 
         # Assert deleted manday does not create an entry
         self.manday1.delete()
-        columns = InterventionFormatList().columns
-        self.assertNotIn(self.job1_column_name, columns)
-
-        # Test column translations don't mess it up
-        activate('fr')
-        columns = InterventionFormatList().columns
-        self.assertIn(f"Coût_{self.job2}", columns)
-        qs = InterventionFormatList().get_queryset()
-        interv_in_query_set = qs.get(id=self.interv.id)
-        cost2_in_query_set = getattr(interv_in_query_set, f"Coût_{self.job2}")
-        self.assertEqual(cost2_in_query_set, self.job2.cost * self.manday2.nb_days)
-        deactivate_all()
-
-    def test_csv_detailed_cost_content(self):
-        '''Test CSV job costs exports contain accurate total price'''
-
-        response = self.client.get('/intervention/list/export/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Type'), 'text/csv')
-
-        # Assert right costs in CSV
-        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
-        for row in reader:
-            self.assertEqual(Decimal(row[self.job1_column_name]), self.job1.cost * self.manday1.nb_days)
-            self.assertEqual(Decimal(row[self.job2_column_name]), self.job2.cost * self.manday2.nb_days)
+        reader_csv = self.get_csv_reader_names('/intervention/list/export/')
+        self.assertNotIn(self.job1_column_name, reader_csv.fieldnames)
 
     def test_shp_detailed_cost_content(self):
         '''Test SHP job costs exports contain accurate total price'''

@@ -66,7 +66,7 @@ class HDViewPointTestCase(TestCase):
 
     def test_thumbnail_url(self):
         self.assertEqual(
-            self.vp.thumbnail_url, f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/data/thumbnail.png"
+            self.vp.thumbnail_url, f"/api/hdviewpoint/drf/hdviewpoints/{self.vp.pk}/data/thumbnail.png?source=vips"
         )
 
     def test_tiles_url(self):

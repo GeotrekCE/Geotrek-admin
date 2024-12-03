@@ -1,0 +1,11 @@
+  {
+    "id": 5,
+    "name": {
+      "fr": "Pratique non publiée",
+      "en": "Unpublished practice",
+      "es": null,
+      "it": null
+    },
+    "order": 3,
+    "pictogram": "https://foo.fr/media/upload/practice-mountainbike.svg"
+  }

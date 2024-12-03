@@ -8,11 +8,6 @@ register = template.Library()
 
 
 @register.simple_tag
-def suricate_management_enabled():
-    return settings.SURICATE_MANAGEMENT_ENABLED
-
-
-@register.simple_tag
 def app_title():
     return settings.TITLE
 
@@ -68,7 +63,7 @@ def resolved_intervention_info(report):
                     username = user.username
 
             resolved_intervention_info = {
-                "date": report.interventions.first().date.strftime("%d/%m/%Y") if report.interventions else None,
+                "end_date": report.interventions.first().end_date.strftime("%d/%m/%Y") if report.interventions else None,
                 "username": username
             }
             return json.dumps(resolved_intervention_info)

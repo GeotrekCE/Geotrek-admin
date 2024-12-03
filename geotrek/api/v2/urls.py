@@ -15,6 +15,8 @@ router.register('reservationsystem', api_views.ReservationSystemViewSet, basenam
 router.register('label', api_views.LabelViewSet, basename='label')
 router.register('organism', api_views.OrganismViewSet, basename='organism')
 router.register('file_type', api_views.FileTypeViewSet, basename='filetype')
+router.register('hdviewpoint', api_views.HDViewPointViewSet, basename='hdviewpoint')
+router.register('annotation_category', api_views.AnnotationCategoryViewSet, basename='annotation-category')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
@@ -24,6 +26,7 @@ if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     router.register('infrastructure_usage_difficulty_level', api_views.InfrastructureUsageDifficultyLevelViewSet, basename='infrastructure-usage-difficulty')
     router.register('infrastructure_maintenance_difficulty_level', api_views.InfrastructureMaintenanceDifficultyLevelViewSet, basename='infrastructure-maintenance-difficulty')
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
+    router.register('feedback_report', api_views.ReportViewSet, basename='feedback-report')
     router.register('feedback_status', api_views.ReportStatusViewSet, basename='feedback-status')
     router.register('feedback_category', api_views.ReportCategoryViewSet, basename='feedback-category')
     router.register('feedback_activity', api_views.ReportActivityViewSet, basename='feedback-activity')
@@ -51,6 +54,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristicevent', api_views.TouristicEventViewSet, basename='touristicevent')
     router.register('touristicevent_type', api_views.TouristicEventTypeViewSet, basename='touristiceventtype')
     router.register('touristicevent_place', api_views.TouristicEventPlaceViewSet, basename='touristiceventplace')
+    router.register('touristicevent_organizer', api_views.TouristicEventOrganizerViewSet, basename='touristiceventorganizer')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
     router.register('informationdesk_type', api_views.InformationDeskTypeViewSet, basename='informationdesktype')
     router.register('label_accessibility', api_views.LabelAccessibilityViewSet, basename='labelaccessibility')
@@ -79,7 +83,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     router.register('signage_sealing', api_views.SealingViewSet, basename='signage-sealing')
     router.register('signage_color', api_views.ColorViewSet, basename='signage-color')
     router.register('signage_direction', api_views.DirectionViewSet, basename='signage-direction')
-    router.register('hdviewpoint', api_views.HDViewPointViewSet, basename='hdviewpoint')
+    router.register('signage_condition', api_views.SignageConditionViewSet, basename='signage-condition')
 
 
 app_name = 'apiv2'
@@ -93,4 +97,9 @@ _urlpatterns += [
     path('version', api_views.GeotrekVersionAPIView.as_view()),
     path('', include(router.urls)),
 ]
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    _urlpatterns += [
+        path('menu_item/<int:pk>/', api_views.MenuItemRetrieveView.as_view(), name='menu-item-detail'),
+        path('menu_item/', api_views.MenuItemTreeView.as_view(), name='menu-item-tree'),
+    ]
 urlpatterns = [path('api/v2/', include(_urlpatterns))]

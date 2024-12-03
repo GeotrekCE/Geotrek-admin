@@ -5,24 +5,41 @@ from hashlib import md5
 from unittest import mock
 
 from django.conf import settings
+from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.admin.sites import AdminSite
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core import management
 from django.test.testcases import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun.api import freeze_time
+from mapentity.tests.factories import SuperUserFactory, UserFactory
+
 from geotrek import __version__
 from geotrek.authent.tests.factories import UserProfileFactory
-from geotrek.feedback.admin import PredefinedEmailAdmin, WorkflowDistrictAdmin, WorkflowManagerAdmin
+from geotrek.feedback.admin import (PredefinedEmailAdmin,
+                                    WorkflowDistrictAdmin,
+                                    WorkflowManagerAdmin)
 from geotrek.feedback.helpers import SuricateMessenger
-from geotrek.feedback.models import (PendingSuricateAPIRequest, PredefinedEmail, Report, SelectableUser,
-                                     TimerEvent, WorkflowDistrict, WorkflowManager)
-from geotrek.feedback.tests.factories import ReportFactory, ReportStatusFactory
+from geotrek.feedback.models import (PendingSuricateAPIRequest,
+                                     PredefinedEmail, Report, SelectableUser,
+                                     TimerEvent, WorkflowDistrict,
+                                     WorkflowManager)
+from geotrek.feedback.tests.factories import (ReportFactory,
+                                              ReportStatusFactory,
+                                              TimerEventFactory,
+                                              WorkflowDistrictFactory,
+                                              WorkflowManagerFactory)
 from geotrek.feedback.tests.test_suricate_sync import (
-    SURICATE_MANAGEMENT_SETTINGS, SURICATE_WORKFLOW_SETTINGS, SuricateTests, SuricateWorkflowTests, test_for_management_mode, test_for_workflow_mode)
+    SURICATE_MANAGEMENT_SETTINGS, SuricateTests, SuricateWorkflowTests,
+    test_for_report_and_basic_modes, test_for_workflow_mode)
 from geotrek.zoning.tests.factories import DistrictFactory
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+
+SURICATE_WORKFLOW_SETTINGS = {
+    "SURICATE_RELOCATED_REPORT_MESSAGE": "Le Signalement ne concerne pas le Département du Gard - Relocalisé hors du Département",
+    "SKIP_MANAGER_MODERATION": False
+}
 
 
 class TestFeedbackModel(TestCase):
@@ -34,7 +51,7 @@ class TestFeedbackModel(TestCase):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.pk}\">Report {self.report.pk}</a>'
         self.assertEqual(self.report.name_display, s)
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_get_display_name_suricate(self):
         s = f'<a data-pk=\"{self.report.pk}\" href=\"{self.report.get_detail_url()}\" title=\"Report {self.report.eid}\">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
@@ -63,12 +80,19 @@ class TestTimerEventClass(SuricateWorkflowTests):
     def test_notification_dates_waiting(self):
         event = TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.deadline, event.date_event + timedelta(days=6))
+        self.assertEqual(event.deadline, event.date_event + timedelta(days=6))
 
     def test_notification_dates_programmed(self):
         event = TimerEvent.objects.create(step=self.programmed_status, report=self.programmed_report)
         self.assertEqual(event.date_event.date(), timezone.now().date())
-        self.assertEquals(event.deadline, event.date_event + timedelta(days=7))
+        self.assertEqual(event.deadline, event.date_event + timedelta(days=7))
+        obj_repr = str(self.programmed_report)
+        report_pk = self.programmed_report.pk
+        self.programmed_report.delete(force=True)
+        model_num = ContentType.objects.get_for_model(TimerEvent).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=event.pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from Report {report_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     def test_no_timers_when_disabled_on_reports(self):
         TimerEvent.objects.create(step=self.waiting_status, report=self.waiting_report_no_timers)
@@ -85,6 +109,20 @@ class TestTimerEventClass(SuricateWorkflowTests):
         self.assertTrue(self.event1.notification_sent)
         # Assert report status changed to late
         self.assertEqual(self.waiting_report.status, self.late_intervention_status)
+
+    def test_cascading_deletion(self):
+        ContentType.objects.clear_cache()
+        status = ReportStatusFactory(timer_days=3)
+        report = ReportFactory(uses_timers=True)
+        event = TimerEventFactory(step=status, report=report)
+        status_pk = status.pk
+        event_pk = event.pk
+        obj_repr = str(status)
+        status.delete()
+        model_num = ContentType.objects.get_for_model(TimerEvent).pk
+        entry = LogEntry.objects.get(content_type=model_num, object_id=event_pk)
+        self.assertEqual(entry.change_message, f"Deleted by cascade from ReportStatus {status_pk} - {obj_repr}")
+        self.assertEqual(entry.action_flag, DELETION)
 
     @freeze_time("2099-07-04")
     def test_command_clears_obsolete_events(self):
@@ -144,23 +182,28 @@ class TestWorkflowUserModels(TestCase):
         # We can create emails
         self.assertIs(admin.has_add_permission(request), True)
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_cannot_create_several_managers(self):
         ma = WorkflowManagerAdmin(WorkflowManager, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
         # We can create a manager when there is none
+        self.assertIs(ma.has_add_permission(request), True)
+        # We cannot create a manager when there is one
+        WorkflowManagerFactory(user=UserFactory())
         self.assertIs(ma.has_add_permission(request), False)
 
-    @test_for_management_mode
+    @test_for_workflow_mode
     def test_cannot_create_several_workflow_districts(self):
         admin = WorkflowDistrictAdmin(WorkflowDistrict, AdminSite())
         request = MockRequest()
         request.user = SuperUserFactory()
         # We cannot create a district
+        self.assertIs(admin.has_add_permission(request), True)
+        WorkflowDistrictFactory(district=DistrictFactory())
         self.assertIs(admin.has_add_permission(request), False)
 
-    @test_for_management_mode
+    @test_for_report_and_basic_modes
     def test_cannot_create_predefined_emails(self):
         admin = PredefinedEmailAdmin(PredefinedEmail, AdminSite())
         request = MockRequest()
@@ -199,10 +242,11 @@ class TestPendingAPIRequests(SuricateTests):
 
     @classmethod
     def setUpTestData(cls):
-        cls.status = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
+        cls.status = ReportStatusFactory(identifier='filed', label="En cours", color="#888888")
+        cls.status_waiting = ReportStatusFactory(identifier='waiting', label="En cours", color="#888888")
         super().setUpTestData()
 
-    @override_settings(SURICATE_MANAGEMENT_ENABLED=True)
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")
     def test_failed_get_on_management_api(self, mocked):
         uid = uuid.uuid4()
@@ -213,24 +257,24 @@ class TestPendingAPIRequests(SuricateTests):
         # Report lock fails the first time
         self.build_timeout_request_patch(mocked)
         self.assertRaises(Exception, report.lock_in_suricate())
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_lock_report = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_lock_report.request_type, "GET")
-        self.assertEquals(pending_lock_report.api, "MAN")
-        self.assertEquals(pending_lock_report.endpoint, "wsLockAlert")
-        self.assertEquals(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_external_uuid)}))
-        self.assertEquals(pending_lock_report.retries, 0)
-        self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_lock_report.request_type, "GET")
+        self.assertEqual(pending_lock_report.api, "MAN")
+        self.assertEqual(pending_lock_report.endpoint, "wsLockAlert")
+        self.assertEqual(pending_lock_report.params, json.dumps({"uid_alerte": str(report.formatted_external_uuid)}))
+        self.assertEqual(pending_lock_report.retries, 0)
+        self.assertEqual(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report lock fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_lock_report.refresh_from_db()
-        self.assertEquals(pending_lock_report.retries, 1)
-        self.assertEquals(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_lock_report.retries, 1)
+        self.assertEqual(pending_lock_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Lock succeeds at second retry
         self.build_get_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -245,11 +289,11 @@ class TestPendingAPIRequests(SuricateTests):
                 assigned_user=self.user
             )
         )
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post_report = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_post_report.request_type, "POST")
-        self.assertEquals(pending_post_report.api, "STA")
-        self.assertEquals(pending_post_report.endpoint, "wsSendReport")
+        self.assertEqual(pending_post_report.request_type, "POST")
+        self.assertEqual(pending_post_report.api, "STA")
+        self.assertEqual(pending_post_report.endpoint, "wsSendReport")
         check = md5(
             (SuricateMessenger().standard_manager.PRIVATE_KEY_CLIENT_SERVER + 'john.doe@nowhere.com').encode()
         ).hexdigest()
@@ -268,18 +312,18 @@ class TestPendingAPIRequests(SuricateTests):
             'os': 'linux',
             'version': f"{__version__}"
         })
-        self.assertEquals(pending_post_report.params, params)
-        self.assertEquals(pending_post_report.retries, 0)
-        self.assertEquals(pending_post_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_post_report.params, params)
+        self.assertEqual(pending_post_report.retries, 0)
+        self.assertEqual(pending_post_report.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report sent fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post_report.refresh_from_db()
-        self.assertEquals(pending_post_report.retries, 1)
+        self.assertEqual(pending_post_report.retries, 1)
         # Report sent succeeds at second retry
         self.build_post_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.post")
@@ -293,15 +337,15 @@ class TestPendingAPIRequests(SuricateTests):
         messenger = SuricateMessenger(PendingSuricateAPIRequest)
         self.assertRaises(
             Exception,
-            messenger.update_status(uid, self.status.identifier, "a nice and polite message", "a brief message")
+            messenger.update_status(uid, self.status_waiting.identifier, "a nice and polite message", "a brief message")
         )
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         report.refresh_from_db()
-        self.assertEquals(1, report.sync_errors)
+        self.assertEqual(1, report.sync_errors)
         pending_post = PendingSuricateAPIRequest.objects.first()
-        self.assertEquals(pending_post.request_type, "POST")
-        self.assertEquals(pending_post.api, "MAN")
-        self.assertEquals(pending_post.endpoint, "wsUpdateStatus")
+        self.assertEqual(pending_post.request_type, "POST")
+        self.assertEqual(pending_post.api, "MAN")
+        self.assertEqual(pending_post.endpoint, "wsUpdateStatus")
         check = md5(
             (messenger.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + messenger.gestion_manager.ID_ORIGIN + str(uid)).encode()
         ).hexdigest()
@@ -314,18 +358,22 @@ class TestPendingAPIRequests(SuricateTests):
             "check": check,
             "uid_alerte": str(uid)
         })
-        self.assertEquals(pending_post.params, params)
-        self.assertEquals(pending_post.retries, 0)
-        self.assertEquals(pending_post.error_message, "('Failed to access Suricate API - Status code: 408',)")
+        self.assertEqual(pending_post.params, params)
+        self.assertEqual(pending_post.retries, 0)
+        self.assertEqual(pending_post.error_message, "('Failed to access Suricate API - Status code: 408',)")
         # Report sent fails a second time
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 1)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
         pending_post.refresh_from_db()
-        self.assertEquals(pending_post.retries, 1)
-        self.assertEquals(1, report.sync_errors)
+        self.assertEqual(pending_post.retries, 1)
+        self.assertEqual(1, report.sync_errors)
         # Report sent succeeds at second retry
         self.build_post_request_patch(mocked)
         management.call_command('retry_failed_requests_and_mails')
-        self.assertEquals(PendingSuricateAPIRequest.objects.count(), 0)
+        self.assertEqual(PendingSuricateAPIRequest.objects.count(), 0)
         report.refresh_from_db()
-        self.assertEquals(0, report.sync_errors)
+        self.assertEqual(0, report.sync_errors)
+        # Special case
+        # "waiting" status from suricate API does not override internal statuses on sync_suricate
+        # therefore, we need to manually set report status to waiting here if this is the call that failed
+        self.assertEqual('waiting', report.status.identifier)

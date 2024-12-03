@@ -1,27 +1,26 @@
+from tempfile import TemporaryDirectory
+
 from django.test import TestCase
+from django.urls import reverse
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from mapentity.tests import SuperUserFactory
 
-from geotrek.flatpages.tests.factories import FlatPageFactory
 
+class TinyMCEUploadViewTestCase(TestCase):
 
-class RESTViewsTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        FlatPageFactory.create_batch(10, published=True)
-        FlatPageFactory.create(published=False)
+    def test_tinymce_upload(self):
+        user = SuperUserFactory()
+        self.client.force_login(user)
+        file = get_dummy_uploaded_image("tinymce_uploaded_image.png")
 
-    def test_records_list(self):
-        response = self.client.get('/api/en/flatpages.json')
+        with TemporaryDirectory() as tmp_dir:
+            with self.settings(MEDIA_ROOT=tmp_dir):
+                url = reverse("flatpages:tinymce_upload")
+                response = self.client.post(url, data={"file": file})
+
         self.assertEqual(response.status_code, 200)
-        records = response.json()
-        self.assertEqual(len(records), 10)
-
-    def test_serialized_attributes(self):
-        response = self.client.get('/api/en/flatpages.json')
-        records = response.json()
-        record = records[0]
-        self.assertEqual(
-            sorted(record.keys()),
-            sorted(['content', 'external_url', 'id', 'last_modified',
-                    'media', 'portal', 'publication_date', 'published',
-                    'published_status', 'slug', 'source', 'target',
-                    'title']))
+        data = response.json()
+        self.assertIn("location", data)
+        location = data["location"]
+        self.assertTrue(location.startswith("http://") or location.startswith("https://"))
+        self.assertIn("tinymce_uploaded_image", location)

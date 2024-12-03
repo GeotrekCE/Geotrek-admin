@@ -57,7 +57,7 @@ class TouristicContentType2Inline(TranslationTabularInline):
 
 
 class TouristicContentCategoryAdmin(MergeActionMixin, TabbedTranslationAdmin):
-    list_display = ('label', 'prefixed_id', 'order', 'pictogram_img', 'type1_label', 'type2_label')
+    list_display = ('id', 'label', 'order', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
     inlines = [
         TouristicContentType1Inline,
@@ -88,9 +88,16 @@ class TouristicEventPlaceAdmin(LeafletGeoAdmin):
     search_fields = ('name',)
 
 
+class TouristicEventOrganizerAdmin(admin.ModelAdmin):
+    list_display = ('label',)
+    list_filter = ('label',)
+    search_fields = ('label',)
+
+
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
     admin.site.register(tourism_models.TouristicEventParticipantCategory, TouristicEventParticipantCategoryAdmin)
     admin.site.register(tourism_models.CancellationReason, CancellationReasonAdmin)
     admin.site.register(tourism_models.TouristicEventPlace, TouristicEventPlaceAdmin)
+    admin.site.register(tourism_models.TouristicEventOrganizer, TouristicEventOrganizerAdmin)

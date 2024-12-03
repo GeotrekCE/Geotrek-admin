@@ -5,22 +5,22 @@ from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.land.tests.test_filters import LandFiltersTest
-
-from geotrek.core.tests.factories import (
-    PathFactory, TrailFactory,
-    CertificationTrailFactory, CertificationLabelFactory
-)
 from geotrek.core.filters import PathFilterSet, TopologyFilter, TrailFilterSet
 from geotrek.core.models import Topology
-
-from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.land.tests.test_filters import LandFiltersTest
 from geotrek.trekking.filters import TrekFilterSet
+from geotrek.trekking.tests.factories import TrekFactory
+
+from .factories import (
+    CertificationLabelFactory,
+    CertificationTrailFactory,
+    PathFactory,
+    TrailFactory,
+)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathFilterLandTest(LandFiltersTest):
-
     filterclass = PathFilterSet
 
 
@@ -167,3 +167,53 @@ class TrailFilterTestCase(TestCase):
         """Test trail filter on certification label"""
         filterset = self.filterset_class({'certification_labels': [self.certification_label_1]})
         self.assertEqual(filterset.qs.count(), 1)
+
+
+class PathFilterTest(TestCase):
+    factory = PathFactory
+    filterset = PathFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = PathFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        path1 = PathFactory.create(provider='my_provider1')
+        path2 = PathFactory.create(provider='my_provider2')
+
+        filter_set = PathFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(path1, filter_set.qs)
+        self.assertIn(path2, filter_set.qs)
+
+
+class TrailFilterTest(TestCase):
+    factory = TrailFactory
+    filterset = TrailFilterSet
+
+    def test_provider_filter_without_provider(self):
+        filter_set = TrailFilterSet(data={})
+        filter_form = filter_set.form
+
+        self.assertTrue(filter_form.is_valid())
+        self.assertEqual(0, filter_set.qs.count())
+
+    def test_provider_filter_with_providers(self):
+        trail1 = TrailFactory.create(provider='my_provider1')
+        trail2 = TrailFactory.create(provider='my_provider2')
+
+        filter_set = TrailFilterSet()
+        filter_form = filter_set.form
+
+        self.assertIn('<option value="my_provider1">my_provider1</option>', filter_form.as_p())
+        self.assertIn('<option value="my_provider2">my_provider2</option>', filter_form.as_p())
+
+        self.assertIn(trail1, filter_set.qs)
+        self.assertIn(trail2, filter_set.qs)

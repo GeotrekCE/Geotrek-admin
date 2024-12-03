@@ -5,8 +5,8 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - dev-requirements.in
       - dev-requirements.txt
+      - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
 env:
@@ -18,46 +18,36 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-20.04']
+        os: ['ubuntu-latest']
         python-version: ['3.8']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: ./.github/actions/python-cache-requirements
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.wheel_dir
-
-          key: pip-${{ matrix.python-version }}
-          restore-keys: |
-            pip-${{ matrix.python-version }}
+          requirements: dev-requirements.txt
 
       - name: Install dependencies
         run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c dev-requirements.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
+          pip3 install -U "pip<24.3"  # prevent relative bug path with pip 24.3 and pip-tools 
+          pip3 install -c dev-requirements.txt pip-tools
 
       - name: Check dependency graph
         run: |
-          pip-compile -q
-          pip-compile -q dev-requirements.in
+          pip-compile -q --strip-extras
+          pip-compile -q --strip-extras dev-requirements.in
+          pip-compile -q --strip-extras docs/requirements.in
 
       - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v13
+        uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
         with:
           files: |
-             requirements.txt
-             dev-requirements.txt
+            requirements.txt
+            dev-requirements.txt
+            docs/requirements.txt
 
       - name: Validating graph
         if: steps.verify-changed-files.outputs.files_changed == 'true'

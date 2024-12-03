@@ -8,7 +8,6 @@ from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.api import APIViewSet
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -16,10 +15,8 @@ from geotrek.core.models import AltimetryMixin
 from .filters import SignageFilterSet, BladeFilterSet
 from .forms import SignageForm, BladeForm, LineFormset
 from .models import Signage, Blade
-from .serializers import (SignageSerializer, BladeSerializer,
-                          SignageAPIGeojsonSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
-                          SignageAPISerializer, BladeAPISerializer, BladeAPIGeojsonSerializer, SignageGeojsonSerializer,
-                          BladeGeojsonSerializer)
+from .serializers import (SignageSerializer, BladeSerializer, CSVBladeSerializer, ZipBladeShapeSerializer,
+                          SignageGeojsonSerializer, BladeGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
 
@@ -33,17 +30,17 @@ class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['code', 'type', 'condition']
+    default_extra_columns = ['code', 'type', 'conditions']
     searchable_columns = ['id', 'name', 'code']
 
 
 class SignageFormatList(MapEntityFormat, SignageList):
     mandatory_columns = ['id']
     default_extra_columns = [
-        'structure', 'name', 'code', 'type', 'condition', 'description',
+        'structure', 'name', 'code', 'type', 'conditions', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
-        'printed_elevation', 'sealing', 'manager', 'uuid',
+        'printed_elevation', 'sealing', 'access', 'manager', 'uuid',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -95,21 +92,12 @@ class SignageViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('structure', 'manager', 'sealing', 'type', 'condition')
+            qs = qs.select_related('structure', 'manager', 'sealing', 'access', 'type').prefetch_related('conditions')
         return qs
 
 
-class SignageAPIViewSet(APIViewSet):
-    model = Signage
-    serializer_class = SignageAPISerializer
-    geojson_serializer_class = SignageAPIGeojsonSerializer
-
-    def get_queryset(self):
-        return Signage.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
-
-
 class BladeDetail(MapEntityDetail):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -148,7 +136,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
 
 
 class BladeUpdate(LineMixin, MapEntityUpdate):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     form_class = BladeForm
 
     @same_structure_required('signage:blade_detail')
@@ -168,11 +156,11 @@ class BladeDelete(MapEntityDelete):
         return super().delete(request, args, kwargs)
 
     def get_success_url(self):
-        return self.signage.get_detail_url()
+        return self.get_object().signage.get_detail_url()
 
 
 class BladeList(CustomColumnsMixin, MapEntityList):
-    queryset = Blade.objects.all()
+    queryset = Blade.objects.existing()
     filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['type', 'color', 'direction']
@@ -195,8 +183,8 @@ class BladeList(CustomColumnsMixin, MapEntityList):
 class BladeFormatList(MapEntityFormat, BladeList):
     mandatory_columns = ['id']
     default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
-                             'condition', 'coordinates']
-    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
+                             'conditions', 'coordinates']
+    columns_line = ['number', 'direction', 'text', 'distance_pretty', 'time_pretty', 'pictograms']
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()
@@ -231,16 +219,9 @@ class BladeViewSet(GeotrekMapentityViewSet):
     mapentity_list_class = BladeList
 
     def get_queryset(self):
-        qs = self.model.objects.all()
+        qs = self.model.objects.existing()
         if self.format_kwarg == 'geojson':
             qs = qs.only('id', 'number')
+        else:
+            qs = qs.select_related('signage', 'direction', 'type', 'color').prefetch_related('conditions')
         return qs
-
-
-class BladeAPIViewSet(APIViewSet):
-    model = Blade
-    serializer_class = BladeAPISerializer
-    geojson_serializer_class = BladeAPIGeojsonSerializer
-
-    def get_queryset(self):
-        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))

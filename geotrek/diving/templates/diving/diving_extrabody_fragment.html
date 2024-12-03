@@ -1,5 +1,6 @@
 {% load static i18n %}
 <script type="text/javascript">
     MapEntity.i18n['Dives'] = "{% trans "Dives" %}";
+    MapEntity.i18n['Diving'] = "{% trans "Diving" %}";
     window.SETTINGS.urls['dive_layer'] = "{% url "diving:dive-drf-list" format="geojson" %}";
 </script>

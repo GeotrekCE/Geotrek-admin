@@ -8,8 +8,14 @@
             <td>{{ intervention.name }}</td>
         </tr>
         <tr>
-            <th>{{ intervention|verbose:"date" }}</th>
-            <td>{{ intervention.date }}</td>
+            <th>{{ intervention|verbose:"begin_date" }}</th>
+            <td>{{ intervention.begin_date }}</td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"end_date" }}</th>
+            <td>{% if intervention.end_date %}{{ intervention.end_date }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
         <tr>
             <th>{{ intervention|verbose:"stake" }}</th>
@@ -54,8 +60,8 @@
             <td>{{ intervention.heliport_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
-            <th>{{ intervention|verbose:"subcontract_cost" }}</th>
-            <td>{{ intervention.subcontract_cost|floatformat:2 }} &euro;</td>
+            <th>{{ intervention|verbose:"contractor_cost" }}</th>
+            <td>{{ intervention.contractor_cost|floatformat:2 }} &euro;</td>
         </tr>
         <tr>
             <th>{% trans "Mandays cost" %}</th>
@@ -90,6 +96,12 @@
                 {% endif %}
             </td>
         </tr>
+            <tr>
+            <th>{{ intervention|verbose:"contractors" }}</th>
+            <td>
+                {% valuelist intervention.contractors.all %}
+            </td>
+        </tr>
         <tr>
             <th>{% trans "Related object" %}</th>
             <td>{{ intervention.target_display|safe }}</td>
@@ -106,6 +118,12 @@
         <tr>
             <th>{{ intervention|verbose:"description" }}</th>
             <td>{% if intervention.description %}{{ intervention.description|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ intervention|verbose:"access" }}</th>
+            <td>{% if intervention.access %}{{ intervention.access|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

@@ -12,11 +12,11 @@ def forward(apps, schema_editor):
         if cursor.fetchone():
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 cursor.execute(
-                    f"SELECT 1 FROM information_schema.columns WHERE table_name='infrastructure_infrastructure' AND column_name='published_{lang}'"
+                    f"SELECT 1 FROM information_schema.columns WHERE table_name='infrastructure_infrastructure' AND column_name='published_{lang.replace('-', '_')}'"
                 )
                 if not cursor.fetchone():
                     cursor.execute(
-                        f"ALTER TABLE infrastructure_infrastructure ADD published_{lang} Boolean DEFAULT True;"
+                        f"ALTER TABLE infrastructure_infrastructure ADD published_{lang.replace('-', '_')} Boolean DEFAULT True;"
                     )
 
 

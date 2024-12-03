@@ -1,6 +1,7 @@
 import functools
 import json
 import logging
+from geotrek.common.signals import log_cascade_deletion
 import simplekml
 import uuid
 from django.conf import settings
@@ -12,6 +13,8 @@ from django.core.mail import mail_managers
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.db.models import ProtectedError
 from django.db.models.query import QuerySet
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
@@ -50,13 +53,13 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
     arrival = models.CharField(null=True, blank=True, default="", max_length=250, verbose_name=_("Arrival"),
                                help_text=_("Arrival place"))
 
-    comfort = models.ForeignKey('Comfort', on_delete=models.CASCADE,
+    comfort = models.ForeignKey('Comfort', on_delete=models.PROTECT,
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"))
-    source = models.ForeignKey('PathSource', on_delete=models.CASCADE,
+    source = models.ForeignKey('PathSource', on_delete=models.PROTECT,
                                null=True, blank=True, related_name='paths',
                                verbose_name=_("Source"))
-    stake = models.ForeignKey('Stake', on_delete=models.CASCADE,
+    stake = models.ForeignKey('Stake', on_delete=models.PROTECT,
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"))
     usages = models.ManyToManyField('Usage',
@@ -388,7 +391,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
             self.kind = self.__class__.KIND
 
     @property
-    def paths(self):
+    def paths(self):    # noqa
         return Path.objects.filter(aggregations__topo_object=self)
 
     @classproperty
@@ -778,7 +781,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
 
     @property
     def aggregations_optimized(self):
-        return self.aggregations.all().select_related('path', 'topo_object')
+        return self.aggregations.all().select_related('path')
 
 
 class PathAggregation(models.Model):
@@ -822,6 +825,18 @@ class PathAggregation(models.Model):
         verbose_name_plural = _("Path aggregations")
         # Important - represent the order of the path in the Topology path list
         ordering = ['order', ]
+
+
+@receiver(pre_delete, sender=Path)
+def log_cascade_deletion_from_pathaggregation_path(sender, instance, using, **kwargs):
+    # PathAggregation are deleted when Path are deleted
+    log_cascade_deletion(sender, instance, PathAggregation, 'path')
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_pathaggregation_topology(sender, instance, using, **kwargs):
+    # PathAggregation are deleted when Topology are deleted
+    log_cascade_deletion(sender, instance, PathAggregation, 'topo_object')
 
 
 class PathSource(StructureOrNoneRelated):
@@ -914,7 +929,7 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     name = models.CharField(verbose_name=_("Name"), max_length=64)
     category = models.ForeignKey(
         "TrailCategory",
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         verbose_name=_("Category"),
@@ -966,6 +981,12 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+
+@receiver(pre_delete, sender=Topology)
+def log_cascade_deletion_from_trail_topology(sender, instance, using, **kwargs):
+    # Trail are deleted when Topologies are deleted
+    log_cascade_deletion(sender, instance, Trail, 'topo_object')
 
 
 class TrailCategory(StructureOrNoneRelated):
@@ -1047,6 +1068,12 @@ class CertificationTrail(StructureOrNoneRelated):
 
     def __str__(self):
         return f"{self.certification_label} / {self.certification_status}"
+
+
+@receiver(pre_delete, sender=Trail)
+def log_cascade_deletion_from_certificationtrail_trail(sender, instance, using, **kwargs):
+    # CertificationTrail are deleted when Trails are deleted
+    log_cascade_deletion(sender, instance, CertificationTrail, 'trail')
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))

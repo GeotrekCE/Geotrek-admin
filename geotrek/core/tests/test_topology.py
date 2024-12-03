@@ -35,11 +35,10 @@ class TopologyTest(TestCase):
         self.assertTrue(t2 < e.date_update < t3)
 
     def test_latestupdate_delete(self):
-        for i in range(10):
-            TopologyFactory.create()
+        TopologyFactory.create_batch(10)
         t1 = dbnow()
         self.assertTrue(t1 > Topology.objects.latest("date_update").date_update)
-        (Topology.objects.all()[0]).delete(force=True)
+        Topology.objects.first().delete(force=True)
         self.assertFalse(t1 > Topology.objects.latest("date_update").date_update)
 
     def test_length(self):
@@ -63,12 +62,12 @@ class TopologyTest(TestCase):
 
         # Test with a concrete inheritance of Topology : LandEdge
         self.assertEqual('TOPOLOGY', Topology.KIND)
-        self.assertEqual(0, len(Topology.objects.filter(kind='LANDEDGE')))
+        self.assertEqual(0, Topology.objects.filter(kind='LANDEDGE').count())
         self.assertEqual('LANDEDGE', LandEdge.KIND)
         # Kind of instances
         e = LandEdgeFactory.create()
         self.assertEqual(e.kind, LandEdge.KIND)
-        self.assertEqual(1, len(Topology.objects.filter(kind='LANDEDGE')))
+        self.assertEqual(1, Topology.objects.filter(kind='LANDEDGE').count())
 
     def test_link_closest_visible_path(self):
         """
@@ -197,26 +196,25 @@ class TopologyDeletionTest(TestCase):
     def test_deleted_is_hidden_but_still_exists(self):
         topology = TopologyFactory.create(offset=1)
         path = topology.paths.get()
-        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
-        self.assertEqual(len(path.topology_set.all()), 1)
+        self.assertEqual(PathAggregation.objects.filter(topo_object=topology).count(), 1)
+        self.assertEqual(path.topology_set.all().count(), 1)
         topology.delete()
         # Make sure object remains in database with deleted status
-        self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
+        self.assertEqual(PathAggregation.objects.filter(topo_object=topology).count(), 1)
         # Make sure object has deleted status
         self.assertTrue(topology.deleted)
         # Make sure object still exists
-        self.assertEqual(len(path.topology_set.all()), 1)
+        self.assertEqual(path.topology_set.all().count(), 1)
         self.assertIn(topology, Topology.objects.all())
         # Make sure object can be hidden from managers
         self.assertNotIn(topology, Topology.objects.existing())
-        self.assertEqual(len(path.topology_set.existing()), 0)
+        self.assertEqual(path.topology_set.existing().count(), 0)
 
     def test_deleted_when_all_path_are_deleted(self):
         topology = TopologyFactory.create()
         self.assertFalse(topology.deleted)
 
-        paths = path = topology.paths.all()
-        for path in paths:
+        for path in topology.paths.all():
             path.delete()
 
         topology.reload()
@@ -228,13 +226,13 @@ class TopologyMutateTest(TestCase):
 
     def test_mutate(self):
         topology1 = TopologyFactory.create(paths=[])
-        self.assertEqual(len(topology1.paths.all()), 0)
+        self.assertEqual(topology1.paths.all().count(), 0)
         topology2 = TopologyFactory.create(offset=14.5)
-        self.assertEqual(len(topology2.paths.all()), 1)
+        self.assertEqual(topology2.paths.all().count(), 1)
         # Normal usecase
         topology1.mutate(topology2)
         self.assertEqual(topology1.offset, 14.5)
-        self.assertEqual(len(topology1.paths.all()), 1)
+        self.assertEqual(topology1.paths.all().count(), 1)
 
     def test_mutate_intersection(self):
         # Mutate a Point topology at an intersection, and make sure its aggregations
@@ -248,13 +246,13 @@ class TopologyMutateTest(TestCase):
         topology = TopologyFactory.create(paths=[(p2, 0, 0)])
         self.assertTrue(topology.ispoint())
         # Make sure, the trigger worked, and linked to 3 paths
-        self.assertEqual(len(topology.paths.all()), 3)
+        self.assertEqual(topology.paths.all().count(), 3)
         # Mutate it to another one !
         topology2 = TopologyFactory.create(paths=[])
-        self.assertEqual(len(topology2.paths.all()), 0)
+        self.assertEqual(topology2.paths.all().count(), 0)
         self.assertTrue(topology2.ispoint())
         topology2.mutate(topology)
-        self.assertEqual(len(topology2.paths.all()), 3)
+        self.assertEqual(topology2.paths.all().count(), 3)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -392,7 +390,7 @@ class TopologyPointTest(TestCase):
 
         # Create a junction point topology
         t = TopologyFactory.create(paths=[])
-        self.assertEqual(len(t.paths.all()), 0)
+        self.assertEqual(t.paths.all().count(), 0)
 
         pa = PathAggregationFactory.create(topo_object=t, path=p1,
                                            start_position=0.0, end_position=0.0)
@@ -414,7 +412,7 @@ class TopologyPointTest(TestCase):
     def test_point_at_end_of_path_not_moving_after_mutate(self):
         PathFactory.create(geom=LineString((400, 400), (410, 400),
                                            srid=settings.SRID))
-        self.assertEqual(1, len(Path.objects.all()))
+        self.assertEqual(1, Path.objects.all().count())
 
         father = Topology.deserialize({'lat': -1, 'lng': -1})
         father.save()
@@ -671,7 +669,7 @@ class TopologyLoopTests(TestCase):
         topod.kind = 'TOPOLOGY'
         topod.save()
         self.assertEqual(topo.geom, topod.geom)
-        self.assertEqual(len(topod.aggregations.all()), 7)
+        self.assertEqual(topod.aggregations.all().count(), 7)
 
     def test_spoon_loop_2(self):
         """
@@ -702,7 +700,7 @@ class TopologyLoopTests(TestCase):
         self.assertEqual(json.loads(serialized), json.loads(topo.serialize()))
         topod = Topology.deserialize(serialized)
         self.assertEqual(topo.geom, topod.geom)
-        self.assertEqual(len(topod.aggregations.all()), 7)
+        self.assertEqual(topod.aggregations.all().count(), 7)
 
     def test_trek_all_reverse(self):
         """
@@ -800,7 +798,7 @@ class TopologyDerialization(TestCase):
         topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
         self.assertEqual(topology.offset, 1)
         self.assertEqual(topology.kind, 'TMP')
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.paths.all().count(), 1)
         self.assertEqual(topology.aggregations.all()[0].path, path)
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
@@ -835,7 +833,7 @@ class TopologyDerialization(TestCase):
         # The point has same x as first point of path, and y to 0 :
         topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
         self.assertAlmostEqual(topology.offset, -70.7106781, places=6)
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertEqual(topology.paths.all().count(), 1)
         pagg = topology.aggregations.get()
         self.assertAlmostEqual(pagg.start_position, 0.5, places=6)
         self.assertAlmostEqual(pagg.end_position, 0.5, places=6)
@@ -847,7 +845,7 @@ class TopologyDerialization(TestCase):
         # Deserialize its serialized version !
         after = Topology.deserialize(before.serialize())
 
-        self.assertEqual(len(before.paths.all()), len(after.paths.all()))
+        self.assertEqual(before.paths.all().count(), after.paths.all().count())
         start_before = before.aggregations.all()[0].start_position
         end_before = before.aggregations.all()[0].end_position
         start_after = after.aggregations.all()[0].start_position
