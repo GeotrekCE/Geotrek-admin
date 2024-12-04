@@ -5,6 +5,10 @@ CHANGELOG
 2.110.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Features**
+
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947)
+
 **Improvements**
 
 - Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
