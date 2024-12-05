@@ -174,7 +174,7 @@ djangorestframework==3.15.2
     #   drf-extensions
     #   drf-yasg
     #   mapentity
-djangorestframework-datatables==0.7.0
+djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.0
     # via mapentity
@@ -306,7 +306,6 @@ pytz==2024.2
     # via
     #   datetime
     #   django-modelcluster
-    #   djangorestframework-datatables
     #   drf-yasg
 pyvips==2.2.3
     # via large-image-source-vips
