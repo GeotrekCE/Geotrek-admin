@@ -306,7 +306,6 @@ pytz==2024.2
     # via
     #   datetime
     #   django-modelcluster
-    #   djangorestframework-datatables
     #   drf-yasg
 pyvips==2.2.3
     # via large-image-source-vips
