@@ -986,7 +986,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 
     class SensitiveAreaSerializer(DynamicFieldsMixin, TimeStampedSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
-        name = serializers.SerializerMethodField()
+        name = serializers.CharField(source='area_name')
         elevation = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()

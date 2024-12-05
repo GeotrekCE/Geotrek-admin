@@ -186,14 +186,26 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
             return []
 
     @property
-    def species_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                             self.get_detail_url(),
-                                                             self.species.name,
-                                                             self.species.name)
+    def area_name(self):
+        if self.species.category == 1:
+            return self.species.name if self.name == "" else self.name
+        else:
+            return self.name
+        
+    @classproperty
+    def area_name_verbose_name(cls):
+        return _("Published name")
+        
+    @property
+    def name_display(self):
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.area_name}">{self.area_name}</a>'
         if self.published:
-            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = f"""<span class="badge badge-success" title="{_('Published')}">&#x2606;</span> {s}"""
         return s
+
+    @property
+    def species_display(self):
+        return self.species.name
 
     @property
     def extent(self):

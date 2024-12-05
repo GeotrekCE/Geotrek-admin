@@ -18,12 +18,12 @@
         </tr>
         {% if sensitivearea.species.category == 1 %}
             <tr>
-                <th>{{ sensitivearea|verbose:"species" }}</th>
-                <td>{{ sensitivearea.name }}</td>
+                <th>{{ sensitivearea|verbose:"area_name" }}</th>
+                <td>{{ sensitivearea.area_name }}</td>
             </tr>
         {% endif %}
         <tr>
-            <th>{{ sensitivearea.species|verbose:"name" }}</th>
+            <th>{{ sensitivearea|verbose:"name" }}</th>
             <td>{{ sensitivearea.name }}</td>
         </tr>
         <tr>
