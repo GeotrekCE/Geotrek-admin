@@ -174,7 +174,7 @@ djangorestframework==3.15.2
     #   drf-extensions
     #   drf-yasg
     #   mapentity
-djangorestframework-datatables==0.7.0
+djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.0
     # via mapentity
