@@ -222,7 +222,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.4
     # via coreschema
-kombu==5.3.7
+kombu==5.4.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
