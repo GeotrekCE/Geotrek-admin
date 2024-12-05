@@ -340,7 +340,6 @@ six==1.16.0
     #   django-extended-choices
     #   html5lib
     #   python-dateutil
-    #   zodb
 soupsieve==2.6
     # via beautifulsoup4
 sqlparse==0.5.1
@@ -402,7 +401,7 @@ zconfig==4.1
     # via zodb
 zipp==3.20.2
     # via importlib-metadata
-zodb==5.8.1
+zodb==6.0
     # via appy
 zodbpickle==4.0
     # via zodb
