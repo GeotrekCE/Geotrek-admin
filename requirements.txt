@@ -23,7 +23,7 @@ backports-zoneinfo==0.2.1 ; python_version < "3.10"
     #   kombu
 beautifulsoup4==4.12.3
     # via mapentity
-billiard==4.2.0
+billiard==4.2.1
     # via celery
 btrees==6.1
     # via zodb
