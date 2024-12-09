@@ -342,7 +342,7 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.6
     # via beautifulsoup4
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via django
 svglib==1.5.1
     # via easy-thumbnails
