@@ -87,7 +87,7 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
     #   geotrek (setup.py)
-crispy-bootstrap4==2024.1
+crispy-bootstrap4==2024.10
     # via mapentity
 cssselect2==0.7.0
     # via
