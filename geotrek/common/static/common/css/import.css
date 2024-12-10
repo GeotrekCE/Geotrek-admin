@@ -9,12 +9,10 @@
 }
 
 #progress-bars div.alert {
-	margin-left: 45px;
 	display: none;
 }
 
 #progress-bars div.description {
-	margin-left: 45px;
 }
 
 #progress-bars span.parser{

@@ -18,11 +18,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-20.04']
+        os: ['ubuntu-latest']
         python-version: ['3.8']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: ./.github/actions/python-cache-requirements
@@ -31,6 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip3 install -U "pip<24.3"  # prevent relative bug path with pip 24.3 and pip-tools 
           pip3 install -c dev-requirements.txt pip-tools
 
       - name: Check dependency graph

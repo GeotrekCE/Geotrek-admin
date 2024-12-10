@@ -57,7 +57,7 @@ class CityFactory(factory.django.DjangoModelFactory):
         model = models.City
 
     code = factory.Sequence(lambda n: "#%s" % n)  # id (!) with max_length=6
-    name = factory.Sequence(lambda n: "City name %s" % n)
+    name = factory.Faker('city')
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_city_iter)), srid=settings.SRID))
 
 
@@ -65,7 +65,7 @@ class DistrictFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.District
 
-    name = factory.Sequence(lambda n: "District name %s" % n)
+    name = factory.Faker('city')
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_district_iter)), srid=settings.SRID))
 
 

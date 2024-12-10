@@ -13,7 +13,7 @@ import textwrap
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
-from collections import Iterable
+from collections.abc import Iterable
 from time import sleep
 from PIL import Image, UnidentifiedImageError
 
@@ -124,11 +124,6 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
-
-        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
-            translation.activate(self.default_language)
-        else:
-            translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     def normalize_field_name(self, name):
         return name.upper()
@@ -537,24 +532,23 @@ class Parser:
             raise GlobalImportError(_("Filename or url is required"))
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_("File does not exists at: {filename}").format(filename=self.filename))
-        self.start()
-        for i, row in enumerate(self.next_row()):
-            if limit and i >= limit:
-                break
-            try:
-                self.parse_row(row)
-            except DatabaseError as e:
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-            except (ValueImportError, RowImportError) as e:
-                self.add_warning(str(e))
-            except Exception as e:
-                raise
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-        self.end()
+
+        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
+            lang = self.default_language
+        else:
+            lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        with translation.override(lang, deactivate=True):
+            self.start()
+            for i, row in enumerate(self.next_row()):
+                if limit and i >= limit:
+                    break
+                try:
+                    self.parse_row(row)
+                except (DatabaseError, RowImportError, ValueImportError) as e:
+                    self.add_warning(str(e))
+                except Exception as e:
+                    raise e
+            self.end()
 
     def request_or_retry(self, url, verb='get', **kwargs):
         try_get = settings.PARSER_NUMBER_OF_TRIES

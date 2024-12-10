@@ -26,7 +26,7 @@ from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common import models as common_models
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.tests import factories as common_factory, TranslationResetMixin
+from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image, get_dummy_uploaded_image_svg)
@@ -464,7 +464,7 @@ class BaseApiTest(TestCase):
         cls.color = signage_factory.BladeColorFactory()
         cls.sealing = signage_factory.SealingFactory()
         cls.direction = signage_factory.BladeDirectionFactory()
-        cls.bladetype = signage_factory.BladeFactory(
+        cls.blade = signage_factory.BladeFactory(
             color=cls.color,
             type=cls.bladetype,
             direction=cls.direction
@@ -515,10 +515,34 @@ class BaseApiTest(TestCase):
                         "annotationId": 2,
                         "annotationType": "point",
                     }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                    }
                 }
             ]
         }
-        annotations_categories = {'1234': str(cls.annotationcategory.pk)}
+        annotations_categories = {
+            '1234': str(cls.annotationcategory.pk),
+            '12345': str(cls.annotationcategory.pk)
+        }
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
             content_object=cls.treks[0],
             annotations=annotations,
@@ -2561,6 +2585,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                         "annotationType": "point",
                         "category": None
                     }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                        "category": self.annotationcategory.pk
+                    }
                 }
             ]
         }
@@ -4484,14 +4530,14 @@ class NearOutdoorFilterTestCase(BaseApiTest):
     def test_outdoorcourse_near_outdoorsite(self):
         response = self.get_course_list({'near_outdoorsite': self.site.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.course.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.course1.pk)
+        courses = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(courses, [self.course.pk, self.course1.pk])
 
     def test_outdoorsite_near_outdoorcourse(self):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
+        sites = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(sorted(sites), sorted([self.site.pk, self.site1.pk]))
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})
@@ -5593,7 +5639,7 @@ class CreateReportsAPITest(TestCase):
 
 
 @freeze_time("2020-01-01")
-class SensitivityAPIv2Test(TranslationResetMixin, TrekkingManagerTest):
+class SensitivityAPIv2Test(TrekkingManagerTest):
     def setUp(self):
         super().setUp()
         self.structure = authent_models.default_structure()

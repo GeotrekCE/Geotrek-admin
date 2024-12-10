@@ -525,7 +525,8 @@ msgid "Filter by one or more ratings id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
 
 msgid "Filter by one or more networks id, comma-separated."
-msgstr "Filtrer par un ou plusieurs réseaux d'itinéraire, séparés par des virgules."
+msgstr ""
+"Filtrer par un ou plusieurs réseaux d'itinéraire, séparés par des virgules."
 
 msgid "Root sites only"
 msgstr "Sites racine seulement"

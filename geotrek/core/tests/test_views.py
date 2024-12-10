@@ -1,10 +1,11 @@
 import re
 from unittest import mock, skipIf
+from collections import ChainMap
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon, GEOSGeometry
 from django.core.cache import caches
 from django.core.files.storage import default_storage
 from django.test import TestCase
@@ -663,8 +664,136 @@ class PathRouteViewTestCase(TestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
 
+        """
+        ─ : path
+        > : path direction
+        X : route step
+
+            step1     path1
+               X────────>────────┐
+               │                 │
+               │                 │
+               │                 │
+         path3 ^                 ^ path4
+               │                 │
+               │                 │
+               X────────>────────┘
+            step2     path2
+        """
+        cls.path_geometries = {
+            '1': LineString([[1.3974995, 43.5689304], [1.4138075, 43.5688646]], srid=settings.API_SRID),
+            '2': LineString([[1.3964173, 43.538244], [1.4125435, 43.5381258]], srid=settings.API_SRID),
+            '3': LineString([[1.3964173, 43.538244], [1.3974995, 43.5689304]], srid=settings.API_SRID),
+            '4': LineString([[1.4125435, 43.5381258], [1.4138075, 43.5688646]], srid=settings.API_SRID),
+        }
+        for geom in cls.path_geometries.values():
+            geom.transform(settings.SRID)
+        # TODO: check que les géométries soient correctes (comparer avec quand
+        # on les crée dans un test)
+
+        cls.steps_coordinates = {
+            '1': {"lat": 43.5689304, "lng": 1.3974995},
+            '2': {"lat": 43.538244, "lng": 1.3964173}
+        }
+
     def setUp(self):
         self.client.force_login(self.user)
+
+    def get_expected_data(self, case, path_pks):
+        """
+        Get expected response data depending on the routing case: going straight
+        though path3 or taking a detour through path4.
+        A `path_pks` dictionary mapping the paths nb to their pks is needed in
+        order to generate the topology.
+
+        ─ : path
+        ═ : expected route
+        > : path direction
+        X : route step
+
+        'through_path3' case:
+
+            step1     path1
+               X────────>────────┐
+               ║                 │
+               ║                 │
+               ║                 │
+         path3 ^                 ^ path4
+               ║                 │
+               ║                 │
+               X────────>────────┘
+            step2     path2
+
+
+        'through_path4' case:
+
+            step1     path1
+               X════════>════════╗
+               │                 ║
+               │                 ║
+               │                 ║
+         path3 ^                 ^ path4
+               │                 ║
+               │                 ║
+               X════════>════════╝
+            step2     path2
+        """
+        if case == 'through_path3':
+            return {
+                'geojson': {
+                    'type': 'GeometryCollection',
+                    'geometries': [
+                        {
+                            'type': 'LineString',
+                            'coordinates': [
+                                [1.397499663080186, 43.56893039935414],
+                                [1.3974995, 43.56893039999989],
+                                [1.3964173, 43.5382439999999],
+                                [1.396417461262331, 43.53824399882988]
+                            ]
+                        }
+                    ]
+                },
+                'serialized': [
+                    {
+                        'positions': {
+                            '0': [1e-05, 0.0],
+                            '1': [1.0, 0.0],
+                            '2': [0.0, 1e-05]
+                        },
+                        'paths': [path_pks['1'], path_pks['3'], path_pks['2']]
+                    }
+                ]
+            }
+        elif case == 'through_path4':
+            return {
+                'geojson': {
+                    'type': 'GeometryCollection',
+                    'geometries': [
+                        {
+                            'type': 'LineString',
+                            'coordinates': [
+                                [1.397499663080186, 43.56893039935414],
+                                [1.4138075, 43.56886459999987],
+                                [1.4125435, 43.538125799999904],
+                                [1.396417461262331, 43.53824399882988]
+                            ]
+                        }
+                    ]
+                },
+                'serialized': [
+                    {
+                        'positions': {
+                            '0': [1e-05, 1.0],
+                            '1': [1.0, 0.0],
+                            '2': [1.0, 1e-05]
+                        },
+                        'paths': [path_pks['1'], path_pks['4'], path_pks['2']]
+                    }
+                ]
+            }
+        else:
+            return None
 
     def get_route_geometry(self, body):
         return self.client.post(reverse('core:path-drf-route-geometry'), body, content_type='application/json')
@@ -1057,12 +1186,10 @@ class PathRouteViewTestCase(TestCase):
     def test_route_geometry_fail_with_draft_path(self):
         """
         Going from path2 to path1: fail
-
                 _________ path1
                       |
                       | path3 (draft)
             path2_____|
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1097,7 +1224,6 @@ class PathRouteViewTestCase(TestCase):
     def test_route_geometry_not_fail_with_draft_path(self):
         """
         Going from point1 to point2: go through path3
-
               point1
               __X_______________ path1
                       |     |
@@ -1107,7 +1233,6 @@ class PathRouteViewTestCase(TestCase):
                       |     |
          path2 ___X___|_____|
                 point2
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1175,12 +1300,10 @@ class PathRouteViewTestCase(TestCase):
     def test_route_geometry_fail_with_invisible_path(self):
         """
         Going from path2 to path1: fail
-
                 _________ path1
                       |
                       | path3 (invisible)
             path2_____|
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1215,7 +1338,6 @@ class PathRouteViewTestCase(TestCase):
     def test_route_geometry_not_fail_with_invisible_path(self):
         """
         Going from point1 to point2: go through paths 3 and 6
-
               point1
               __X____________________ path1
                            |     |
@@ -1225,7 +1347,6 @@ class PathRouteViewTestCase(TestCase):
                            |     |
          path2 ___X________|_____|
                 point2      path6
-
         """
         self.maxDiff = None
         path_geom1 = LineString([
@@ -1297,12 +1418,10 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from path2 to path1 (no possible route), then add path3:
         there is now a route going through path3
-
                 _________ path1
                       |
                       | path3 (added after 1st routing)
             path2_____|
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1370,7 +1489,6 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from pt1 to pt2 (goes through path3), then add path4: the
         route should now go through path4
-
                  point1
                   __X________________ path1
                            |     |
@@ -1380,7 +1498,6 @@ class PathRouteViewTestCase(TestCase):
                            |     |
          path2 ___X________|_____|
                 point2      path6
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1455,12 +1572,10 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from path2 to path1 (goes through path3), then delete
         path3: there is now no possible route
-
                 _________ path1
                       |
                       | path3 (deleted after 1st routing)
             path2_____|
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1502,7 +1617,6 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from pt 1 to pt 2 through path4, then delete path4: the
         route should now go through path3
-
                  point1
                   __X________________ path1
                            |     |
@@ -1512,7 +1626,6 @@ class PathRouteViewTestCase(TestCase):
                            |     |
          path2 ___X________|_____|
                 point2      path6
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1590,12 +1703,10 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from path2 to path1 (no possible route), then edit path3
         so it links path1 with path2: there is now a route going through path3
-
             path1________                           _________ path1
                             /                             |
                            /path3      ->                 | path3
             path2_____                          path2_____|
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1671,12 +1782,10 @@ class PathRouteViewTestCase(TestCase):
         """
         Route once from path2 to path1 (goes through path3), then edit path3
         so it doesn't link path1 with path2 anymore: there is no possible route
-
                   ______ path1                   path1 ______
                       |                                         /
                       | path3         ->                       /path3
             path2_____|                          path2_____
-
         """
         pathGeom1 = LineString([
             [1.3974995, 43.5689304],
@@ -1720,7 +1829,6 @@ class PathRouteViewTestCase(TestCase):
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 400)
         self.assertEqual(response2.data.get('error'), "No path between the given points")
-
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):

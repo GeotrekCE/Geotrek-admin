@@ -79,8 +79,8 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 1. Add ``deb https://packages.geotrek.fr/ubuntu bionic main`` to APT sources list.
 2. Add https://packages.geotrek.fr/geotrek.gpg.key to apt keyring.
 3. Run ``apt-get update``
-4. If you want to use a local database, install PostGIS package (before installing Geotrek-admin, not at the same time).
-   If not, you must create database and enable PostGIS extension before.
+4. If you want to use a local database, install the pgRouting package by running ``sudo apt install -y postgresql-pgrouting wget software-properties-common`` (before installing Geotrek-admin, not at the same time).
+   If not, you must create database and enable PostGIS and pgRouting extensions before.
 5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
 
 .. note ::
@@ -179,7 +179,7 @@ and to install it on other distributions than Ubuntu Linux 18.04.
 3. Unzip the tarball
 4. Copy docker/install folder where you want
 5. Edit ``docker-compose.yml`` to feed your needs if necessary
-6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary
+6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary. Leave the ``GUNICORN_CMD_ARGS`` variable only if you're not using any other scaling system.
 7. Create user and database, enable PostGIS extension
 8. Run ``docker compose run --rm web update.sh``
 9. Run ``docker compose up``

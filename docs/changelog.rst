@@ -2,12 +2,75 @@
 CHANGELOG
 =========
 
-2.109.1+dev     (XXXX-XX-XX)
+2.110.0+dev     (XXXX-XX-XX)
+----------------------------
+
+**Warnings**
+
+- When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+- After adding new paths, pre-existing topologies can follow routes that are no longer the shortest. When editing topology-based linear objects through the interface, their route will no longer be automatically recomputed to the shortest option, which was unwanted behavior. This means you might now encounter topologies that take a detour despite not using a via-point marker. Be careful when editing such a route, as moving or adding neighboring markers will remove the detour. Note: this does not address the topology ordering issue when adding new paths. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+
+**Improvements**
+
+- Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+- Improve sync mobile and import views with current bootstrap style.
+- Docker image is now mirrored on github registry
+
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
+- Fix SchemaRandonneeParser url update when description is null or was not updated (#4022)
+
+**Documentation**
+
+- Update documentation for release and update obsolete example
+- Add note about certbot ssl configuration in nginx
+
+
+2.110.0     (2024-11-13)
+----------------------------
+
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
+
+
+2.109.3     (2024-10-29)
 ----------------------------
 
 **Improvements**
 
+- Vocabulary adjustment for the 'add image gallery' button for flatpages
+- Improve translations for flatpages
+
+**Bug fixes**
+
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
+- Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
+- Fix intervention creation when target is not a report (suricate workflow)
+
+**Maintenance**
+
+- Docker image use now fully tested Ubuntu Jammy and python3.10
+- Use new crispy form
+- Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
+
+**Documentation**
+
+- Improve development quickstart documentation
+
+
+2.109.2     (2024-09-19)
+----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
+
+**Improvements**
+
 - ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
 
 **Minor fixes**
 
@@ -22,6 +85,14 @@ CHANGELOG
 - ApidaeTrekParser duration import is fixed for multiple-days treks
 - Apidae tourism parser now handles missing contact properties
 - ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
+**Documentation**
+
+- Add command line examples and templates for importing data
+
 
 2.109.1     (2024-08-22)
 ----------------------------
@@ -55,6 +126,7 @@ CHANGELOG
 **Improvements**
 
 - Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
 
 **Bug fixes**
 
@@ -885,7 +957,7 @@ In preparation for HD Views developments (PR #3298)
 
 !!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
 
-**Improvements**
+**Improvments**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.

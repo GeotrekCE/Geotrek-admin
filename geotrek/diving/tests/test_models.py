@@ -1,11 +1,9 @@
-from geotrek.common.tests import TranslationResetMixin
-
 from geotrek.diving.tests.factories import DiveFactory, LevelFactory
 
 from django.test import TestCase
 
 
-class DiveModelTest(TranslationResetMixin, TestCase):
+class DiveModelTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - master
+
     paths-ignore:
       - 'docs/**'
   release:
@@ -43,10 +44,12 @@ jobs:
     runs-on: ubuntu-latest
     container: makinacorpus/geodjango:${{ matrix.os }}
 
+    permissions:
+      packages: write  # required to publish docker image
+
     strategy:
       matrix:
-        os: ['bionic-3.8', 'focal-3.8']
-        python-version: ['3.8']
+        os: ['focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -57,7 +60,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-2.6.3
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -73,16 +76,18 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
         path: |
           ./venv
 
-        key: pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
+        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
         restore-keys: |
-          pip-${{ matrix.python-version }}-${{ matrix.os }}-${{ hashFiles('./requirements.txt', './dev-requirements.txt', './docs/requirements.txt') }}
-          pip-${{ matrix.python-version }}-${{ matrix.os }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}
+          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
+          pip-${{ matrix.os }}
 
     - name: Prepare test env
       run: |
@@ -113,12 +118,14 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
+    - name: Install python venv
+      run: |
+          python3 -m venv ./venv
+
     - name: Install python dependencies
       run: |
-        python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools -c requirements.txt -c dev-requirements.txt
-        ./venv/bin/pip3 install -r requirements.txt -U
-        ./venv/bin/pip3 install -r dev-requirements.txt -U
+        ./venv/bin/pip3 install --upgrade pip wheel setuptools pip-tools -c requirements.txt -c dev-requirements.txt
+        ./venv/bin/pip-sync requirements.txt dev-requirements.txt
 
     - name: Create test required directories
       run: |
@@ -150,7 +157,6 @@ jobs:
 
     - name: Save coverage
       uses: actions/upload-artifact@v4
-      if: ${{ matrix.os != 'bionic-3.8' }}
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -161,8 +167,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.8']
-        python-version: ['3.8']
+        os: ['focal-3.8', 'jammy-3.10']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -170,13 +175,13 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
 
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
             files: ./coverage.xml
             env_vars: OS,ENV
@@ -185,63 +190,66 @@ jobs:
 
   build_docker_image:
     name: Build docker image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build Docker image
-        run: |
-          docker build -f ./docker/Dockerfile -t geotrek:latest .
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+            push: false
+            builder: ${{ steps.buildx.outputs.name }}
+            tags: "geotrek:latest"
+            load: true
+            file: ./docker/Dockerfile
+
       - name: Upload image
-        uses: ishworkh/docker-image-artifact-upload@v1
+        uses: ishworkh/container-image-artifact-upload@v2.0.0
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-      name: Build 18.04 package
+  build_deb:
+      name: Build debian package
       runs-on: ubuntu-latest
+      strategy:
+          matrix:
+              os: ['bionic', 'focal', 'jammy']
+              include:
+                  - os: 'bionic'
+                    code: '18.04'
+                  - os: 'focal'
+                    code: '20.04'
+                  - os: 'jammy'
+                    code: '22.04'
+
+      env:
+          OS: ${{ matrix.os }}
+          CODE: ${{ matrix.code }}
+          DISTRO: ubuntu:${{ matrix.os }}
+
       steps:
-        - uses: actions/checkout@v3
-        - name: Prepare debian 18.04 versioning
-          run: |
-            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+          - uses: actions/checkout@v4
+          - name: Prepare versioning
+            run: |
+                grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
+                sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu'$CODE'\2) '$OS';/' debian/changelog
 
-        - name: Building package debian 18.04
-          run: |
-            DISTRO=ubuntu:bionic make build_deb
-            cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
+          - name: Building package
+            run: |
+              make build_deb
+              cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
-        - name: Archive package artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: debian-18-04
-            path: |
-              /home/runner/work/Geotrek-admin/*.deb
-
-  build_deb_20_04:
-    name: Build 20.04 package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare debian 20.04 versioning
-        run: |
-          sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu20.04\2) focal;/' debian/changelog
-
-      - name: Building package debian 18.04
-        run: |
-          DISTRO=ubuntu:focal make build_deb
-          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
-
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: debian-20-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
+          - name: Archive package artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: ${{ matrix.os }}
+              path: |
+                /home/runner/work/Geotrek-admin/*.deb
 
   e2e_docker_image:
     name: Tests E2E docker
@@ -253,7 +261,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-2.6.3
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -263,12 +271,15 @@ jobs:
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Download image
-        uses: ishworkh/docker-image-artifact-download@v1
+        uses: ishworkh/container-image-artifact-download@v2.0.0
         with:
           image: "geotrek:latest"
+
       - name: Launch service
         run: |
           docker tag geotrek:latest geotrekce/admin:latest
@@ -329,7 +340,7 @@ jobs:
   e2e_deb_20_04:
     name: Tests E2E 20.04
     runs-on: ubuntu-20.04
-    needs: [ build_deb_20_04 ]
+    needs: [ build_deb ]
 
     env:
       CYPRESS_BASE_URL: http://geotrek.local
@@ -337,7 +348,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-2.6.3
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -349,10 +360,10 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: debian-20-04
+          name: 'focal'
 
       - name: Simulate install.sh procedure
         run: |
@@ -407,53 +418,75 @@ jobs:
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
-    needs: [ test, e2e_docker_image, build_deb_18_04, e2e_deb_20_04 ]
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    needs: [ test, e2e_docker_image, build_deb, e2e_deb_20_04 ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download 18.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          name: debian-18-04
+          name: bionic
+
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
-          name: debian-20-04
+          name: focal
+
       - name: Download docker image
-        uses: ishworkh/docker-image-artifact-download@v1
+        uses: ishworkh/container-image-artifact-download@v2.0.0
         with:
-          image: "geotrek:latest"
-      - name: Attach debian packages as release binaries
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: '*.deb'
+          image: 'geotrek:latest'
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Publish Docker image (v2 and latest)
-        run: |
-          if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            export DOCKER_TAG=dev
-          else
-            docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-            docker push geotrekce/admin:$(cat VERSION)
-            export DOCKER_TAG=latest
-          fi
-          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
-          docker push geotrekce/admin:$DOCKER_TAG
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images:  |
+            geotrekce/admin
+            ghcr.io/geotrekce/geotrek-admin
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          provenance: mode=max
+          sbom: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          file: ./docker/Dockerfile
+
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
       - name: Publish debian packages
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DEB_COMPONENT=dev
@@ -469,3 +502,17 @@ jobs:
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
           fi
+
+      - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: jammy
+
+      - name: Attach debian packages as release binaries
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: '*.deb'

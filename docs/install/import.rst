@@ -47,11 +47,107 @@ Here are the operations:
 There are two ways to import path : importing your shapefile with command line,
 or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.
 
-To import a shapefile containing your paths, use the command ``loadpaths``::
+**To import a shapefile containing your paths, use the command** ``loadpaths``
 
-    sudo geotrek loadpaths {Troncons.shp} \
-        --srid=2154 --comments-attribute IT_VTT IT_EQ IT_PEDEST \
-        --encoding latin9 -i
+``sudo geotrek help loadpaths``
+
+::
+
+    usage: manage.py loadpaths [-h] [--structure STRUCTURE]
+                           [--name-attribute NAME]
+                           [--comments-attribute [COMMENT [COMMENT ...]]]
+                           [--encoding ENCODING] [--srid SRID] [--intersect]
+                           [--fail] [--dry] [--version] [-v {0,1,2,3}]
+                           [--settings SETTINGS] [--pythonpath PYTHONPATH]
+                           [--traceback] [--no-color] [--force-color]
+                           [--skip-checks]
+                           file_path
+
+    Load a layer with point geometries in a model
+
+    positional arguments:
+      point_layer
+
+    optional arguments:
+  -h, --help            show this help message and exit
+  --structure STRUCTURE
+                        Define the structure
+  --name-attribute NAME, -n NAME
+                        Name of the name's attribute inside the file
+  --comments-attribute [COMMENT [COMMENT ...]], -c [COMMENT [COMMENT ...]]
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --srid SRID, -s SRID  File's SRID
+  --intersect, -i       Check paths intersect spatial extent and not only
+                        within
+  --fail, -f            Allows to grant fails
+  --dry, -d             Do not change the database, dry run. Show the number
+                        of fail and objects potentially created
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
+
+.. note::
+
+    * **Optional fields** : Name, Comment, SRID, Encoding
+    * **Required fields** : Structure
+    * **Geometric type** : Linestring
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
+    * **Good to know** : 
+       * The default SRID code is 4326
+       * The default encoding is UTF-8
+       * Imported paths are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+       * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
+
+**Import command examples :**
+
+* Docker
+
+.. code-block:: bash
+
+    docker compose run --rm web ./manage.py loadpaths \
+    ./var/conf/paths.geojson
+    --srid=2154 \
+    --encoding latin1 \
+    --structure "DEMO" \
+    --name-attribute id \
+    --comments-attribute commentaire
+
+* Debian
+
+.. code-block:: bash
+
+    sudo geotrek loadpaths \
+    ./var/conf/paths.geojson
+    --srid=2154 \
+    --encoding latin1 \
+    --structure "DEMO" \
+    --name-attribute id \
+    --comments-attribute commentaire
+
+After importing a large quantity of paths, it is recommended to pre-generate the
+paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
+routing following the import.
+
+To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
+
+    sudo geotrek generate_pgr_network_topology
+    OR
+    docker compose run --rm web ./manage.py generate_pgr_network_topology
 
 After importing a large quantity of paths, it is recommended to pre-generate the
 paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
@@ -129,8 +225,6 @@ To import touristic content or touristic event from LEI , create (or update) ``/
     class XXXLEIEventParser(LEITouristicEventParser):
         label = "LEI TouristicEvent"
         url = "https://url.asp"
-
-
 
 Configure Marque Esprit Parc import
 -----------------------------------
@@ -458,7 +552,7 @@ For example, some parsers are not available by default but you can use them addi
 
 You can also use some of Geotrek commands to import data from a vector file handled by GDAL (https://gdal.org/drivers/vector/index.htm) (e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)
 
-Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, dives, paths.
+Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas, paths.
 
 You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually.
 
@@ -466,7 +560,6 @@ Here are the Geotrek commands available to import data from file:
 
 - ``loaddem``
 - ``loadpoi``
-- ``loaddive``
 - ``loadinfrastructure``
 - ``loadsignage``
 - ``loadcities``
@@ -491,8 +584,10 @@ Import DEM (altimetry)
 
 ::
 
-    usage: manage.py loaddem [-h] [--replace] [--update-altimetry] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color]
-                         [--skip-checks]
+    usage: manage.py loaddem [-h] [--replace] [--update-altimetry] [--version]
+                         [-v {0,1,2,3}] [--settings SETTINGS]
+                         [--pythonpath PYTHONPATH] [--traceback] [--no-color]
+                         [--force-color] [--skip-checks]
                          dem_path
 
     Load DEM data (projecting and clipping it if necessary). You may need to create a GDAL Virtual Raster if your DEM is composed of several files.
@@ -501,19 +596,34 @@ Import DEM (altimetry)
       dem_path
 
     optional arguments:
-      -h, --help            show this help message and exit
-      --replace             Replace existing DEM if any.
-      --update-altimetry    Update altimetry of all 3D geometries, /!\ This option takes lot of time to perform
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+  -h, --help            show this help message and exit
+  --replace             Replace existing DEM if any.
+  --update-altimetry    Update altimetry of all 3D geometries, /!\ This option
+                        takes lot of time to perform
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loaddem \
+    --replace \
+    --update-altimetry \
+    var/conf/dem.tif`
 
 .. _import-pois:
 
@@ -524,10 +634,15 @@ Import POIs
 
 ::
 
-    usage: manage.py loadpoi [-h] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--description-field DESCRIPTION_FIELD]
-                             [--name-default NAME_DEFAULT] [--type-default TYPE_DEFAULT] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH]
-                             [--traceback] [--no-color] [--force-color] [--skip-checks]
-                             point_layer
+    usage: manage.py loadpoi [-h] [--encoding ENCODING] [--name-field NAME_FIELD]
+                         [--type-field TYPE_FIELD]
+                         [--description-field DESCRIPTION_FIELD]
+                         [--name-default NAME_DEFAULT]
+                         [--type-default TYPE_DEFAULT] [--version]
+                         [-v {0,1,2,3}] [--settings SETTINGS]
+                         [--pythonpath PYTHONPATH] [--traceback] [--no-color]
+                         [--force-color] [--skip-checks]
+                         point_layer
 
     Load a layer with point geometries in a model
 
@@ -535,30 +650,63 @@ Import POIs
       point_layer
 
     optional arguments:
-      -h, --help            show this help message and exit
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --name-field NAME_FIELD, -n NAME_FIELD
-                            Name of the field that contains the name attribute. Required or use --name-default instead.
-      --type-field TYPE_FIELD, -t TYPE_FIELD
-                            Name of the field that contains the POI Type attribute. Required or use --type-default instead.
-      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
-                            Name of the field that contains the description of the POI (optional)
-      --name-default NAME_DEFAULT
-                            Default value for POI name. Use only if --name-field is not set
-      --type-default TYPE_DEFAULT
-                            Default value for POI Type. Use only if --type-field is not set
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will
-                            be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+  -h, --help            show this help message and exit
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --name-field NAME_FIELD, -n NAME_FIELD
+                        Name of the field that contains the name attribute.
+                        Required or use --name-default instead.
+  --type-field TYPE_FIELD, -t TYPE_FIELD
+                        Name of the field that contains the POI Type
+                        attribute. Required or use --type-default instead.
+  --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                        Name of the field that contains the description of the
+                        POI (optional)
+  --name-default NAME_DEFAULT
+                        Default value for POI name. Use only if --name-field
+                        is not set
+  --type-default TYPE_DEFAULT
+                        Default value for POI Type. Use only if --type-field
+                        is not set
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
+
+.. note::
+
+    * **Optional fields** : Description, SRID, Encoding
+    * **Required fields** : Name, Type
+    * **Geometric type** : Point
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`poi.geojson <../files/import/poi.geojson>`
+    * **Good to know** : 
+       * The SRID must be 4326
+       * The default encoding is UTF-8
+       * Imported POIs are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loadpoi \
+    --encoding latin1 \
+    --name-field name --name-default "Point d'intérêt" \
+    --type-field type --type-default "Faune" \
+    --description-field description \
+    ./var/conf/poi.geojson
 
 .. _import-infrastructure:
 
@@ -569,18 +717,28 @@ Import Infrastructure
 
 ::
 
-    usage: manage.py loadinfrastructure [-h] [--use-structure] [--encoding ENCODING]
-        [--name-field NAME_FIELD] [--name-default NAME_DEFAULT]
-        [--type-field TYPE_FIELD] [--type-default TYPE_DEFAULT]
-        [--category-field CATEGORY_FIELD] [--category-default CATEGORY_DEFAULT]
-        [--condition-field CONDITION_FIELD] [--condition-default CONDITION_DEFAULT]
-        [--structure-field STRUCTURE_FIELD] [--structure-default STRUCTURE_DEFAULT]
-        [--description-field DESCRIPTION_FIELD] [--description-default DESCRIPTION_DEFAULT]
-        [--year-field YEAR_FIELD] [--year-default YEAR_DEFAULT]
-        [--eid-field EID_FIELD]
-        [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback]
-        [--no-color] [--force-color] [--skip-checks]
-        point_layer
+    usage: manage.py loadinfrastructure [-h] [--use-structure]
+                                    [--encoding ENCODING]
+                                    [--name-field NAME_FIELD]
+                                    [--name-default NAME_DEFAULT]
+                                    [--type-field TYPE_FIELD]
+                                    [--type-default TYPE_DEFAULT]
+                                    [--category-field CATEGORY_FIELD]
+                                    [--category-default CATEGORY_DEFAULT]
+                                    [--condition-field CONDITION_FIELD]
+                                    [--condition-default CONDITION_DEFAULT]
+                                    [--structure-field STRUCTURE_FIELD]
+                                    [--structure-default STRUCTURE_DEFAULT]
+                                    [--description-field DESCRIPTION_FIELD]
+                                    [--description-default DESCRIPTION_DEFAULT]
+                                    [--year-field YEAR_FIELD]
+                                    [--year-default YEAR_DEFAULT]
+                                    [--eid-field EID_FIELD] [--version]
+                                    [-v {0,1,2,3}] [--settings SETTINGS]
+                                    [--pythonpath PYTHONPATH] [--traceback]
+                                    [--no-color] [--force-color]
+                                    [--skip-checks]
+                                    point_layer
 
     Load a layer with point geometries and import features as infrastructures objects
     (expected formats: shapefile or geojson)
@@ -589,90 +747,86 @@ Import Infrastructure
       point_layer
 
     optional arguments:
-      -h, --help            show this help message and exit
-      --use-structure
-                            If set the given (or default) structure is used to select or create
-                            conditions and types of infrastructures.
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --name-field NAME_FIELD, -n NAME_FIELD
-                            The field to be imported as the `name` of the infrastructure
-      --name-default NAME_DEFAULT
-                            Default name for all infrastructures, fallback for entries without a name
-      --type-field TYPE_FIELD, -t TYPE_FIELD
-                            The field to select or create the type value of the infrastructure
-                            (field `InfrastructureType.label`)
-      --type-default TYPE_DEFAULT
-                            Default type for all infrastructures, fallback for entries without a type.
-      --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
-                            The field to select or create the type value of the infrastructure
-                            (field `InfrastructureType.type`)
-      --category-default CATEGORY_DEFAULT
-                            Default category for all infrastructures, "B" by default. Fallback for entries
-                            without a category
-      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
-                            The field to select or create the condition value of the infrastructure
-                            (field `InfrastructureCondition.label`)
-      --condition-default CONDITION_DEFAULT
-                            Default condition for all infrastructures, fallback for entries without a category
-      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
-                            The field to be imported as the structure of the infrastructure
-      --structure-default STRUCTURE_DEFAULT
-                            Default Structure for all infrastructures
-      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
-                            The field to be imported as the description of the infrastructure
-      --description-default DESCRIPTION_DEFAULT
-                            Default description for all infrastructures, fallback for entries
-                            without a description
-      --year-field YEAR_FIELD, -y YEAR_FIELD
-                            The field to be imported as the `implantation_year` of the infrastructure
-      --year-default YEAR_DEFAULT
-                            Default year for all infrastructures, fallback for entries without a year
-      --eid-field EID_FIELD
-                            The field to be imported as the `eid` of the infrastructure (external ID)
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output,
-                                1=normal output,
-                                2=verbose output,
-                                3=very verbose output
-      --settings SETTINGS
-                            The Python path to a settings module, e.g. "myproject.settings.main".
-                            If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable
-                            will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+  -h, --help            show this help message and exit
+  --use-structure       If set the given (or default) structure is used to
+                        select or create conditions and types of
+                        infrastructures.
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --name-field NAME_FIELD, -n NAME_FIELD
+                        The field to be imported as the `name` of the
+                        infrastructure
+  --name-default NAME_DEFAULT
+                        Default name for all infrastructures, fallback for
+                        entries without a name
+  --type-field TYPE_FIELD, -t TYPE_FIELD
+                        The field to select or create the type value of the
+                        infrastructure (field `InfrastructureType.label`)
+  --type-default TYPE_DEFAULT
+                        Default type for all infrastructures, fallback for
+                        entries without a type.
+  --category-field CATEGORY_FIELD, -i CATEGORY_FIELD
+                        The field to select or create the type value of the
+                        infrastructure (field `InfrastructureType.type`)
+  --category-default CATEGORY_DEFAULT
+                        Default category for all infrastructures, "B" by
+                        default. Fallback for entries without a category
+  --condition-field CONDITION_FIELD, -c CONDITION_FIELD
+                        The field to select or create the condition value of
+                        the infrastructure (field
+                        `InfrastructureCondition.label`)
+  --condition-default CONDITION_DEFAULT
+                        Default condition for all infrastructures, fallback
+                        for entries without a category
+  --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
+                        The field to be imported as the structure of the
+                        infrastructure
+  --structure-default STRUCTURE_DEFAULT
+                        Default Structure for all infrastructures
+  --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                        The field to be imported as the description of the
+                        infrastructure
+  --description-default DESCRIPTION_DEFAULT
+                        Default description for all infrastructures, fallback
+                        for entries without a description
+  --year-field YEAR_FIELD, -y YEAR_FIELD
+                        The field to be imported as the `implantation_year` of
+                        the infrastructure
+  --year-default YEAR_DEFAULT
+                        Default year for all infrastructures, fallback for
+                        entries without a year
+  --eid-field EID_FIELD
+                        The field to be imported as the `eid` of the
+                        infrastructure (external ID)
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
 
+.. note::
 
-Load a layer with point geometries and import entities as infrastructures objects.
-
-- expected formats for the `point_layer` file are shapefile or geojson (other geodjango supported-formats may work but untested),
-- the command updates existing Infrastructure objects based on the `eid` field (external ID),
-- if the Infrastructure object does not exist (or if `eid` is not specified) it is created.
-
-**Usage example**
-
-::
-
-    sudo geotrek loadinfrastructure \
-        --name-field "shpname" \
-        --type-field "shptype" \
-        --description-field "shpdesc" \
-        --year-field "shpyear" \
-        --eid-field "shpid" \
-        --condition-default "Badly damaged" \
-        --year-default "2023" \
-        --category-default "A" \
-        ./infrastructures_to_be_imported.shp
-
-- The command expects entries from `point_layer` file to have the the following fields: `shpname`, `shptype`, `shpdesc`, `shpyear` and `shpid`.
-- A default value is provided for the condition. It will be set for all imported infrastructures.
-- A default value is provided for the year in addition to the field mapping. In case the shapefile entry does not have a year attribute the command will take the default value instead.
-- The command will select or create InfrastructureType values based on the `type` argument, taking the default value "A" for the category.
+    * **Optional fields** : Structure, Description, Status, Year, External ID, SRID, Encoding
+    * **Required fields** : Name, Type, Category
+    * **Geometric type** : Point
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`infrastructure.geojson <../files/import/infrastructure.geojson>`
+    * **Good to know** : 
+       * The SRID must be 4326
+       * The default encoding is UTF-8
+       * Imported infrastructures are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+       * The command will select or create InfrastructureType values based on the `type-field` argument, taking the default value "A" for the category
 
 **Required fields**
 
@@ -685,7 +839,7 @@ The following fields are mandatory to create an Infrastructure object: `name`, `
 
 **Selection and addition of parameterized values**
 
-Infrastructure objects have several values from Geotrek's parameterized values sets:
+Infrastructure objects have several values from Geotrek's parameterized values sets :
 
 - `type` from InfrastructureType values (and `category` which is implied by the `type` value),
 - `condition` from InfrastructureCondition values.
@@ -696,11 +850,11 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 
     sudo geotrek loadinfrastructure  --type-field "type"  --category-field "cat" [...]
 
-Selected or added InfrastructureType value:
+**Selected or added InfrastructureType value :**
 
-	- label <- value of `type` import field
-	- type <- value of `cat` import field
-	- optionnally if `--use-structure`: structure <- the structure value (import field or default)
+    - label <- value of `type` import field
+    - type <- value of `cat` import field
+    - optionnally if `--use-structure`: structure <- the structure value (import field or default)
 
 For InfrastructureCondition the check uses the `condition` argument.
 
@@ -708,49 +862,26 @@ For InfrastructureCondition the check uses the `condition` argument.
 
     sudo geotrek loadinfrastructure  --condition-field "cond" [...]
 
-Selected or added InfrastructureCondition value:
+**Selected or added InfrastructureCondition value :**
 
- 	- label <- value of `cond` field
-	- optionnally if `--use-structure`: structure <- the structure value (import field or default)
+    - label <- value of `cond` field
+    - optionnally if `--use-structure`: structure <- the structure value (import field or default)
 
+**Import command example :**
 
-Import Dive
------------
+.. code-block:: bash
 
-``sudo geotrek help loaddive``
-
-::
-
-    usage: manage.py loaddive [-h] [--encoding ENCODING] [--name-field NAME_FIELD] [--depth-field DEPTH_FIELD] [--practice-default PRACTICE_DEFAULT]
-                              [--structure-default STRUCTURE_DEFAULT] [--eid-field EID_FIELD] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback]
-                              [--no-color] [--force-color] [--skip-checks]
-                              point_layer
-
-    Load a layer with point geometries in the Dive model
-
-    positional arguments:
-      point_layer
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --name-field NAME_FIELD, -n NAME_FIELD
-      --depth-field DEPTH_FIELD, -d DEPTH_FIELD
-      --practice-default PRACTICE_DEFAULT
-      --structure-default STRUCTURE_DEFAULT
-      --eid-field EID_FIELD
-                            External ID field
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+    sudo geotrek loadinfrastructure \
+    ./var/conf/infrastructure.geojson \
+    --encoding latin1 \
+    --name-field name --name-default "Banc" \
+    --type-field type --type-default "Banc" \
+    --category-field categorie --category-default "E" \
+    --description-field descriptio --description-default "Banc confortable" \
+    --condition-field etat --condition-default "Bon état" \
+    --structure-field structure --structure-default "Ma structure" \
+    --year-field annee --year-default "2024" \
+    --eid-field id
 
 .. _import-signage:
 
@@ -762,12 +893,30 @@ Import Signage
 
 ::
 
-    usage: manage.py loadsignage [-h] [--use-structure] [--encoding ENCODING] [--name-field NAME_FIELD] [--type-field TYPE_FIELD] [--condition-field CONDITION_FIELD]
-                                 [--structure-field STRUCTURE_FIELD] [--description-field DESCRIPTION_FIELD] [--year-field YEAR_FIELD] [--code-field CODE_FIELD]
-                                 [--type-default TYPE_DEFAULT] [--name-default NAME_DEFAULT] [--condition-default CONDITION_DEFAULT] [--structure-default STRUCTURE_DEFAULT]
-                                 [--description-default DESCRIPTION_DEFAULT] [--eid-field EID_FIELD] [--year-default YEAR_DEFAULT] [--code-default CODE_DEFAULT] [--version]
-                                 [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-                                 point_layer
+    usage: manage.py loadsignage [-h] [--use-structure] [--encoding ENCODING]
+                             [--name-field NAME_FIELD]
+                             [--type-field TYPE_FIELD]
+                             [--condition-field CONDITION_FIELD]
+                             [--manager-field MANAGER_FIELD]
+                             [--sealing-field SEALING_FIELD]
+                             [--structure-field STRUCTURE_FIELD]
+                             [--description-field DESCRIPTION_FIELD]
+                             [--year-field YEAR_FIELD]
+                             [--code-field CODE_FIELD] [--eid-field EID_FIELD]
+                             [--type-default TYPE_DEFAULT]
+                             [--name-default NAME_DEFAULT]
+                             [--condition-default CONDITION_DEFAULT]
+                             [--manager-default MANAGER_DEFAULT]
+                             [--sealing-default SEALING_DEFAULT]
+                             [--structure-default STRUCTURE_DEFAULT]
+                             [--description-default DESCRIPTION_DEFAULT]
+                             [--year-default YEAR_DEFAULT]
+                             [--code-default CODE_DEFAULT] [--version]
+                             [-v {0,1,2,3}] [--settings SETTINGS]
+                             [--pythonpath PYTHONPATH] [--traceback]
+                             [--no-color] [--force-color] [--skip-checks]
+                             point_layer
+
 
     Load a layer with point geometries in te structure model
 
@@ -775,62 +924,119 @@ Import Signage
       point_layer
 
     optional arguments:
-      -h, --help            show this help message and exit
-      --use-structure       Allow to use structure for condition and type of infrastructures
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --name-field NAME_FIELD, -n NAME_FIELD
-                            Name of the field that will be mapped to the Name field in Geotrek
-      --type-field TYPE_FIELD, -t TYPE_FIELD
-                            Name of the field that will be mapped to the Type field in Geotrek
-      --condition-field CONDITION_FIELD, -c CONDITION_FIELD
-                            Name of the field that will be mapped to the Condition field in Geotrek
-      --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
-                            Name of the field that will be mapped to the Structure field in Geotrek
-      --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
-                            Name of the field that will be mapped to the Description field in Geotrek
-      --year-field YEAR_FIELD, -y YEAR_FIELD
-                            Name of the field that will be mapped to the Year field in Geotrek
-      --code-field CODE_FIELD
-                            Name of the field that will be mapped to the Code field in Geotrek
-      --type-default TYPE_DEFAULT
-                            Default value for Type field
-      --name-default NAME_DEFAULT
-                            Default value for Name field
-      --condition-default CONDITION_DEFAULT
-                            Default value for Condition field
-      --structure-default STRUCTURE_DEFAULT
-                            Default value for Structure field
-      --description-default DESCRIPTION_DEFAULT
-                            Default value for Description field
-      --eid-field EID_FIELD
-                            External ID field
-      --year-default YEAR_DEFAULT
-                            Default value for Year field
-      --code-default CODE_DEFAULT
-                            Default value for Code field
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+  -h, --help            show this help message and exit
+  --use-structure       Allow to use structure for condition and type of
+                        infrastructures
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --name-field NAME_FIELD, -n NAME_FIELD
+                        Name of the field that will be mapped to the Name
+                        field in Geotrek
+  --type-field TYPE_FIELD, -t TYPE_FIELD
+                        Name of the field that will be mapped to the Type
+                        field in Geotrek
+  --condition-field CONDITION_FIELD, -c CONDITION_FIELD
+                        Name of the field that will be mapped to the Condition
+                        field in Geotrek
+  --manager-field MANAGER_FIELD, -m MANAGER_FIELD
+                        Name of the field that will be mapped to the Manager
+                        field in Geotrek
+  --sealing-field SEALING_FIELD
+                        Name of the field that will be mapped to the sealing
+                        field in Geotrek
+  --structure-field STRUCTURE_FIELD, -s STRUCTURE_FIELD
+                        Name of the field that will be mapped to the Structure
+                        field in Geotrek
+  --description-field DESCRIPTION_FIELD, -d DESCRIPTION_FIELD
+                        Name of the field that will be mapped to the
+                        Description field in Geotrek
+  --year-field YEAR_FIELD, -y YEAR_FIELD
+                        Name of the field that will be mapped to the Year
+                        field in Geotrek
+  --code-field CODE_FIELD
+                        Name of the field that will be mapped to the Code
+                        field in Geotrek
+  --eid-field EID_FIELD
+                        Name of the field that will be mapped to the External
+                        ID in Geotrek
+  --type-default TYPE_DEFAULT
+                        Default value for Type field
+  --name-default NAME_DEFAULT
+                        Default value for Name field
+  --condition-default CONDITION_DEFAULT
+                        Default value for Condition field
+  --manager-default MANAGER_DEFAULT
+                        Default value for the Manager field
+  --sealing-default SEALING_DEFAULT
+                        Default value for the Sealing field
+  --structure-default STRUCTURE_DEFAULT
+                        Default value for Structure field
+  --description-default DESCRIPTION_DEFAULT
+                        Default value for Description field
+  --year-default YEAR_DEFAULT
+                        Default value for Year field
+  --code-default CODE_DEFAULT
+                        Default value for Code field
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
 
+.. note::
+
+    * **Optional fields** : Name, Comment, SRID, Encoding
+    * **Required fields** : Structure
+    * **Geometric type** : Point
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`signage.geojson <../files/import/signage.geojson>`
+    * **Good to know** : 
+       * The default SRID code is 4326
+       * The default encoding is UTF-8
+       * Imported signage are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loadsignage \
+    ./var/conf/signage.geojson \
+    --encoding latin1 \
+    --name-field name \
+    --type-field type --type-default "Directionnelle" \
+    --condition-field etat --condition-default "Bon état" \
+    --manager-field gestionnaire \
+    --sealing-field scellement --sealing-default "Planté" \
+    --structure-field structure \
+    --description-field description --description-default "Poteau planté" \
+    --year-field annee --year-default "2024" \
+    --code-field code --code-default "81150_PR2_P1" \
+    --eid-field id
 
 Import Cities
 -------------
-
 
 ``sudo geotrek help loadcities``
 
 ::
 
-    usage: manage.py loadcities [-h] [--code-attribute CODE] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
-                            [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+    usage: manage.py loadcities [-h] [--code-attribute CODE]
+                            [--name-attribute NAME] [--encoding ENCODING]
+                            [--srid SRID] [--intersect] [--version]
+                            [-v {0,1,2,3}] [--settings SETTINGS]
+                            [--pythonpath PYTHONPATH] [--traceback]
+                            [--no-color] [--force-color] [--skip-checks]
                             file_path
 
     Load Cities from a file within the spatial extent
@@ -839,39 +1045,71 @@ Import Cities
       file_path             File's path of the cities
 
     optional arguments:
-      -h, --help            show this help message and exit
-      --code-attribute CODE, -c CODE
-                            Name of the code's attribute inside the file
-      --name-attribute NAME, -n NAME
-                            Name of the name's attribute inside the file
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --srid SRID, -s SRID  File's SRID
-      --intersect, -i       Check features intersect spatial extent and not only within
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+  -h, --help            show this help message and exit
+  --code-attribute CODE, -c CODE
+                        Name of the code's attribute inside the file
+  --name-attribute NAME, -n NAME
+                        Name of the name's attribute inside the file
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --srid SRID, -s SRID  File's SRID
+  --intersect, -i       Check features intersect spatial extent and not only
+                        within
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
 
+.. note::
+
+    * **Optional fields** : Code, SRID, Encoding
+    * **Required fields** : Name
+    * **Geometric type** : Polygon
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`cities.geojson <../files/import/cities.geojson>`
+    * **Good to know** : 
+       * The default SRID code is 4326
+       * The default encoding is UTF-8
+       * Imported cities are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loadcities \
+    ./var/conf/cities.geojson \
+    --srid=2154 \
+    --encoding latin1 \
+    --name-attribute nom \
+    --code-attribute insee_com
 
 Import Districts
 ----------------
-
 
 ``sudo geotrek help loaddistricts``
 
 
 ::
 
-    usage: manage.py loaddistricts [-h] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
-                                   [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-                                   file_path
+    usage: manage.py loaddistricts [-h] [--name-attribute NAME]
+                               [--encoding ENCODING] [--srid SRID]
+                               [--intersect] [--version] [-v {0,1,2,3}]
+                               [--settings SETTINGS] [--pythonpath PYTHONPATH]
+                               [--traceback] [--no-color] [--force-color]
+                               [--skip-checks]
+                               file_path
 
     Load Districts from a file within the spatial extent
 
@@ -879,6 +1117,29 @@ Import Districts
       file_path             File's path of the districts
 
     optional arguments:
+  -h, --help            show this help message and exit
+  --name-attribute NAME, -n NAME
+                        Name of the name's attribute inside the file
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --srid SRID, -s SRID  File's SRID
+  --intersect, -i       Check features intersect spatial extent and not only
+                        within
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
       -h, --help            show this help message and exit
       --name-attribute NAME, -n NAME
                             Name of the name's attribute inside the file
@@ -897,19 +1158,44 @@ Import Districts
       --force-color         Force colorization of the command output.
       --skip-checks         Skip system checks.
 
+.. note::
 
+    * **Optional fields** : SRID, Encoding
+    * **Required fields** : Name
+    * **Geometric type** : Polygon
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`districts.geojson <../files/import/districts.geojson>`
+    * **Good to know** : 
+       * The default SRID code is 4326
+       * The default encoding is UTF-8
+       * Imported districts are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loaddistricts \
+    ./var/conf/districts.geojson \
+    --srid=2154 \
+    --encoding latin1 \
+    --name-attribute nom
 
 Import Restricted areas
 -----------------------
-
 
 ``sudo geotrek help loadrestrictedareas``
 
 ::
 
-    usage: manage.py loadrestrictedareas [-h] [--name-attribute NAME] [--encoding ENCODING] [--srid SRID] [--intersect] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
-                                         [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-                                         file_path area_type
+    usage: manage.py loadrestrictedareas [-h] [--name-attribute NAME]
+                                     [--encoding ENCODING] [--srid SRID]
+                                     [--intersect] [--version] [-v {0,1,2,3}]
+                                     [--settings SETTINGS]
+                                     [--pythonpath PYTHONPATH] [--traceback]
+                                     [--no-color] [--force-color]
+                                     [--skip-checks]
+                                     file_path area_type
 
     Load Restricted Area from a file within the spatial extent
 
@@ -917,25 +1203,59 @@ Import Restricted areas
       file_path             File's path of the restricted area
       area_type             Type of restricted areas in the file
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      --name-attribute NAME, -n NAME
-                            Name of the name's attribute inside the file
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --srid SRID, -s SRID  File's SRID
-      --intersect, -i       Check features intersect spatial extent and not only within
-      --version             show program's version number and exit
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output, 2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g. "myproject.settings.main". If this isn't provided, the DJANGO_SETTINGS_MODULE environment variable will be used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g. "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
+    positional arguments:
+  file_path             File's path of the restricted area
+  area_type             Type of restricted areas in the file
 
+    optional arguments:
+  -h, --help            show this help message and exit
+  --name-attribute NAME, -n NAME
+                        Name of the name's attribute inside the file
+  --encoding ENCODING, -e ENCODING
+                        File encoding, default utf-8
+  --srid SRID, -s SRID  File's SRID
+  --intersect, -i       Check features intersect spatial extent and not only
+                        within
+  --version             Show program's version number and exit.
+  -v {0,1,2,3}, --verbosity {0,1,2,3}
+                        Verbosity level; 0=minimal output, 1=normal output,
+                        2=verbose output, 3=very verbose output
+  --settings SETTINGS   The Python path to a settings module, e.g.
+                        "myproject.settings.main". If this isn't provided, the
+                        DJANGO_SETTINGS_MODULE environment variable will be
+                        used.
+  --pythonpath PYTHONPATH
+                        A directory to add to the Python path, e.g.
+                        "/home/djangoprojects/myproject".
+  --traceback           Raise on CommandError exceptions.
+  --no-color            Don't colorize the command output.
+  --force-color         Force colorization of the command output.
+  --skip-checks         Skip system checks.
+
+.. note::
+
+    * **Optional fields** : SRID, Encoding
+    * **Required fields** : Name, Type zone
+    * **Geometric type** : Polygon
+    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
+    * **Template** : :download:`restrictedareas.geojson <../files/import/restrictedareas.geojson>`
+    * **Good to know** : 
+       * The default SRID code is 4326
+       * The default encoding is UTF-8
+       * Imported restricted areas are unpublished by default
+       * When importing a Geopackage, the first layer is always used
+       * Only objects within the project bounding box can be imported
+
+**Import command example :**
+
+.. code-block:: bash
+
+    sudo geotrek loadrestrictedareas \
+    ./var/conf/restrictedareas.geojson \
+    "Réserve naturelle"  \
+    --srid=2154 \
+    --encoding latin1 \
+    --name-attribute nom_site
 
 Exploitation commands
 =====================
