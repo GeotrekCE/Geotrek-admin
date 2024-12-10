@@ -5,7 +5,7 @@ from collections import ChainMap
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon, GEOSGeometry
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
 from django.test import TestCase
@@ -934,31 +934,18 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(response.status_code, 500, response.json())
         self.assertEqual(response.data.get('error'), "This is an error message")
 
-    def test_route_geometry_fail_paths_not_linked(self):
-        pathGeom1 = LineString([
-            [1.3664246, 43.4569065],
-            [1.6108704, 43.4539158],
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.5305685, 43.5267991],
-            [1.5765381, 43.5266465],
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        response = self.get_route_geometry({
-            "steps": [
-                {"path_id": path1.pk, "lat": 43.4569065, "lng": 1.3664246},
-                {"path_id": path2.pk, "lat": 43.5266465, "lng": 1.5765381}
-            ]
-        })
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('error'), "No path between the given points")
-
     def test_route_geometry_not_fail_no_via_point_one_path(self):
+        """
+        Simple route: 2 markers on one path
+
+        ─ : path
+        > : path direction
+        X : route step
+
+        ──X─────────>───────X──
+        start              end
+
+        """
         path_geom = LineString([
             [1.3664246, 43.4569065],
             [1.6108704, 43.4539158],
@@ -998,6 +985,25 @@ class PathRouteViewTestCase(TestCase):
         self.check_route_geometry_response(response.data, expected_data)
 
     def test_route_geometry_not_fail_no_via_point_several_paths(self):
+        """
+        Simple route: 2 markers on 2 paths
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                     X end
+                     │
+                     │
+                     │
+                     V path2
+                     │
+                     │
+      start          │
+        X─────>──────┘
+            path1
+
+        """
         pathGeom1 = LineString([
             [1.3904572, 43.5271443],
             [1.4451303, 43.5270311],
@@ -1045,6 +1051,18 @@ class PathRouteViewTestCase(TestCase):
         self.check_route_geometry_response(response.data, expected_data)
 
     def test_route_geometry_not_fail_with_via_point_one_path(self):
+        """
+        3 markers on one path
+
+        ─ : path
+        > : path direction
+        X : route step
+
+
+        ───X─────>────X──────────X──
+         start      via-pt1     end
+
+        """
         path_geom = LineString([
             [1.3664246, 43.4569065],
             [1.6108704, 43.4539158],
@@ -1099,6 +1117,28 @@ class PathRouteViewTestCase(TestCase):
         self.check_route_geometry_response(response.data, expected_data)
 
     def test_route_geometry_not_fail_with_via_points_several_paths(self):
+        """
+        4 markers on 3 paths
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                          │
+                          X end
+                          │
+                          │
+                          │
+                          ^ path3
+        │                 │
+        X start           X via-pt2
+        │                 │
+        │                 │
+        V path1           X via-pt1
+        │                 │
+        └────────>────────┘
+               path2
+        """
         pathGeom1 = LineString([
             [1.4447021, 43.5803909],
             [1.4451303, 43.5270311]
@@ -1108,14 +1148,14 @@ class PathRouteViewTestCase(TestCase):
 
         pathGeom2 = LineString([
             [1.4451303, 43.5270311],
-            [1.5305685, 43.5267991],
+            [1.5305685, 43.5267991]
         ], srid=settings.API_SRID)
         pathGeom2.transform(settings.SRID)
         path2 = PathFactory(geom=pathGeom2)
 
         pathGeom3 = LineString([
             [1.5305685, 43.5267991],
-            [1.5277863, 43.6251412],
+            [1.5277863, 43.6251412]
         ], srid=settings.API_SRID)
         pathGeom3.transform(settings.SRID)
         path3 = PathFactory(geom=pathGeom3)
@@ -1183,264 +1223,33 @@ class PathRouteViewTestCase(TestCase):
         }
         self.check_route_geometry_response(response.data, expected_data)
 
-    def test_route_geometry_fail_with_draft_path(self):
+    # FAIL #2
+    def test_route_geometry_with_draft_path_fail_then_succeed(self):
         """
-        Going from path2 to path1: fail
-                _________ path1
-                      |
-                      | path3 (draft)
-            path2_____|
+        Routing fails because path4 is a draft, then succeeds when it is no longer a draft
+
+        ─ : path
+        > : path direction
+        X : route step
+
+            start     path1
+               X────────>────────┐
+                                 │
+                                 │
+                                 │
+                                 ^ path4 (draft then not draft)
+                                 │
+                                 │
+               X────────>────────┘
+            end     path2
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        PathFactory(geom=pathGeom3, draft=True)
-
-        response = self.get_route_geometry({
-            "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
-            ]
-        })
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('error'), "No path between the given points")
-
-    def test_route_geometry_not_fail_with_draft_path(self):
-        """
-        Going from point1 to point2: go through path3
-              point1
-              __X_______________ path1
-                      |     |
-                      |     |
-         path4 (draft)|     |path3
-                      |     |
-                      |     |
-         path2 ___X___|_____|
-                point2
-        """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
-
-        pathGeom4 = LineString([
-            [1.3964173, 43.538244],
-            [1.3974995, 43.5689304]
-        ], srid=settings.API_SRID)
-        pathGeom4.transform(settings.SRID)
-        PathFactory(geom=pathGeom4, draft=True)
-
-        response = self.get_route_geometry({
-            "steps": [
-                {"path_id": path1.pk, "lat": 43.56894323430811, "lng": 1.3942327273595632},
-                {"path_id": path2.pk, "lat": 43.53827293909704, "lng": 1.3923461380281665}
-            ]
-        })
-        self.assertEqual(response.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.397499663080187, 43.568930399354294],
-                            [1.413807500133418, 43.568864617166724],
-                            [1.4125435, 43.538125799999904],
-                            [1.392346144971155, 43.53827344821782]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [1e-05, 1.0],
-                        '1': [1.0, 0.0],
-                        '2': [1.0, 0.5777741903242499]
-                    },
-                    'paths': [path1.pk, path3.pk, path2.pk]
-                }
-            ]
-        }
-        self.check_route_geometry_response(response.data, expected_data)
-
-    def test_route_geometry_fail_with_invisible_path(self):
-        """
-        Going from path2 to path1: fail
-                _________ path1
-                      |
-                      | path3 (invisible)
-            path2_____|
-        """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        PathFactory(geom=pathGeom3, visible=False)
-
-        response = self.get_route_geometry({
-            "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
-            ]
-        })
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data.get('error'), "No path between the given points")
-
-    def test_route_geometry_not_fail_with_invisible_path(self):
-        """
-        Going from point1 to point2: go through paths 3 and 6
-              point1
-              __X____________________ path1
-                           |     |
-                           |     |
-          path4 (invisible)|     |path3
-                           |     |
-                           |     |
-         path2 ___X________|_____|
-                point2      path6
-        """
-        self.maxDiff = None
-        path_geom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        path_geom1.transform(settings.SRID)
-        path1 = PathFactory(geom=path_geom1)
-
-        path_geom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        path_geom2.transform(settings.SRID)
-        path2 = PathFactory(geom=path_geom2)
-
-        path_geom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        path_geom3.transform(settings.SRID)
-        path3 = PathFactory(geom=path_geom3)
-
-        path_geom4 = LineString([
-            [1.3964173, 43.538244],
-            [1.3974995, 43.5689304]
-        ], srid=settings.API_SRID)
-        path_geom4.transform(settings.SRID)
-        path4 = PathFactory(geom=path_geom4, visible=False)
-
-        response = self.get_route_geometry({
-            "steps": [
-                {"path_id": path1.pk, "lat": 43.56894323430811, "lng": 1.3942327273595632},
-                {"path_id": path2.pk, "lat": 43.53827293909704, "lng": 1.3923461380281665}
-            ]
-        })
-        self.assertEqual(response.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.397499663080187, 43.568930399354294],
-                            [1.413807500133418, 43.568864617166724],
-                            [1.4125435, 43.538125799999904],
-                            [1.396417299855292, 43.53824398944357],
-                            [1.392346144971155, 43.53827344821782]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [1e-05, 1.0],
-                        '1': [1.0, 0.0],
-                        '2': [1.0, 0.0],
-                        '3': [1.0, 0.8716100305310497]
-                    },
-                    'paths': [path1.pk, path3.pk, path4.pk + 1, path2.pk]
-                }
-            ]
-        }
-        self.check_route_geometry_response(response.data, expected_data)
-
-    def test_route_geometry_not_fail_after_adding_path(self):
-        """
-        Route once from path2 to path1 (no possible route), then add path3:
-        there is now a route going through path3
-                _________ path1
-                      |
-                      | path3 (added after 1st routing)
-            path2_____|
-        """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path4 = PathFactory(geom=self.path_geometries['4'], draft=True)
         steps = {
             "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
 
@@ -1448,291 +1257,382 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(response1.status_code, 400)
         self.assertEqual(response1.data.get('error'), "No path between the given points")
 
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
-
+        path4.draft = False
+        path4.save()
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.368657469125895, 43.53844182910046],
-                            [1.4125435, 43.538125799999904],
-                            [1.413807500133418, 43.568864617166724],
-                            [1.413807337053604, 43.56886461783681]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [0.08256502766077582, 1.0],
-                        '1': [0.0, 1.0],
-                        '2': [1.0, 0.99999]
-                    },
-                    'paths': [path2.pk, path3.pk, path1.pk]
-                }
-            ]
-        }
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
         self.check_route_geometry_response(response2.data, expected_data)
 
-    def test_route_geometry_not_fail_update_after_adding_path(self):
+    def test_route_geometry_with_draft_path_succeed_then_succeed_with_detour(self):
         """
-        Route once from pt1 to pt2 (goes through path3), then add path4: the
-        route should now go through path4
-                 point1
-                  __X________________ path1
-                           |     |
-                           |     |
-         path4 (added after|     |path3
-               1st routing)|     |
-                           |     |
-         path2 ___X________|_____|
-                point2      path6
+        Go through path3 when it is not a draft, then take a detour via path4 after path3 has become a draft
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                       start    path1
+                         X───────>───┐
+                         │           │
+                         │           │
+                         │           │
+        path3 (not draft ^           ^ path4
+        then draft)      │           │
+                         │           │
+                         X──────>────┘
+                        end    path2
+
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
 
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
-
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path3 = PathFactory(geom=self.path_geometries['3'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
         steps = {
             "steps": [
-                {"path_id": path1.pk, "lat": 43.56894323430811, "lng": 1.3942327273595632},
-                {"path_id": path2.pk, "lat": 43.53827293909704, "lng": 1.3923461380281665}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
 
         response1 = self.get_route_geometry(steps)
         self.assertEqual(response1.status_code, 200)
-        self.assertIn(path3.pk, response1.data['serialized'][0]['paths'])
+        expected_data = self.get_expected_data('through_path3', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '3': path3.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
 
-        pathGeom4 = LineString([
-            [1.3964173, 43.538244],
-            [1.3974995, 43.5689304]
-        ], srid=settings.API_SRID)
-        pathGeom4.transform(settings.SRID)
-        path4 = PathFactory(geom=pathGeom4)
-
+        path3.draft = True
+        path3.save()
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.397499663080187, 43.568930399354294],
-                            [1.3974995, 43.56893039999989],
-                            [1.396417299855292, 43.53824398944357],
-                            [1.392346144971155, 43.53827344821782]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [1e-05, 0.0],
-                        '1': [1.0, 0.0],
-                        '2': [1.0, 0.8716100305310497]
-                    },
-                    'paths': [path1.pk, path4.pk, path2.pk]
-                }
-            ]
-        }
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
         self.check_route_geometry_response(response2.data, expected_data)
 
-    def test_route_geometry_fail_after_deleting_path(self):
+    def test_route_geometry_with_invisible_path_fail_then_succeed(self):
         """
-        Route once from path2 to path1 (goes through path3), then delete
-        path3: there is now no possible route
-                _________ path1
-                      |
-                      | path3 (deleted after 1st routing)
-            path2_____|
+        Routing fails because path4 is invisible, then succeeds when it is no longer invisible
+
+        ─ : path
+        > : path direction
+        X : route step
+
+            start     path1
+               X────────>────────┐
+                                 │
+                                 │
+                                 │
+                                 ^ path4 (invisible then visible)
+                                 │
+                                 │
+               X────────>────────┘
+            end     path2
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
-
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path4 = PathFactory(geom=self.path_geometries['4'], visible=False)
         steps = {
             "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
 
-        response = self.get_route_geometry(steps)
-        self.assertEqual(response.status_code, 200)
-        path3.delete()
+        response1 = self.get_route_geometry(steps)
+        self.assertEqual(response1.status_code, 400)
+        self.assertEqual(response1.data.get('error'), "No path between the given points")
 
+        path4.visible = True
+        path4.save()
+        response2 = self.get_route_geometry(steps)
+        self.assertEqual(response2.status_code, 200)
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response2.data, expected_data)
+
+    def test_route_geometry_with_invisible_path_succeed_then_succeed_with_detour(self):
+        """
+        Go through path3 when it is visible, then take a detour via path4 after path3 has become invisible
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                       start    path1
+                         X───────>───┐
+                         │           │
+                         │           │
+                         │           │
+          path3 (visible ^           ^ path4
+         then invisible) │           │
+                         │           │
+                         X──────>────┘
+                        end    path2
+
+        """
+
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path3 = PathFactory(geom=self.path_geometries['3'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
+        steps = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
+            ]
+        }
+
+        response1 = self.get_route_geometry(steps)
+        self.assertEqual(response1.status_code, 200)
+        expected_data = self.get_expected_data('through_path3', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '3': path3.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
+
+        path3.visible = False
+        path3.save()
+        response2 = self.get_route_geometry(steps)
+        self.assertEqual(response2.status_code, 200)
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response2.data, expected_data)
+
+    # FAIL #2
+    def test_route_geometry_fail_then_add_path_and_succeed(self):
+        """
+        Routing fails because paths do not touch, then succeeds after path4 has been added
+
+        ─ : path
+        > : path direction
+        X : route step
+
+            start     path1
+               X────────>────────┐
+                                 │
+                                 │
+                                 │
+                                 ^ path4 (added after 1st routing)
+                                 │
+                                 │
+               X────────>────────┘
+            end     path2
+        """
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        steps = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
+            ]
+        }
+
+        response1 = self.get_route_geometry(steps)
+        self.assertEqual(response1.status_code, 400)
+        self.assertEqual(response1.data.get('error'), "No path between the given points")
+
+        path4 = PathFactory(geom=self.path_geometries['4'])
+        response2 = self.get_route_geometry(steps)
+        self.assertEqual(response2.status_code, 200)
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response2.data, expected_data)
+
+    def test_route_geometry_succeed_with_detour_then_add_path_and_succeed(self):
+        """
+        Route once going through path4, then add path3: the route should now go through path3
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                       start    path1
+                         X───────>───┐
+                         │           │
+                         │           │
+                         │           │
+                  path3  ^           ^ path4
+           (added later) │           │
+                         │           │
+                         X──────>────┘
+                        end    path2
+        """
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
+        steps = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
+            ]
+        }
+
+        response1 = self.get_route_geometry(steps)
+        self.assertEqual(response1.status_code, 200)
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
+
+        path3 = PathFactory(geom=self.path_geometries['3'])
+        response2 = self.get_route_geometry(steps)
+        self.assertEqual(response2.status_code, 200)
+        expected_data = self.get_expected_data('through_path3', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '3': path3.pk,
+        })
+        self.check_route_geometry_response(response2.data, expected_data)
+
+    # FAIL #2
+    def test_route_geometry_succeed_then_delete_path_and_fail(self):
+        """
+        Route once from path2 to path1 going through path4, then delete path4: routing now fails
+
+        ─ : path
+        > : path direction
+        X : route step
+
+            start     path1
+               X────────>────────┐
+                                 │
+                                 │
+                                 │
+                                 ^ path4 (deleted after 1st routing)
+                                 │
+                                 │
+               X────────>────────┘
+            end     path2
+        """
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
+        steps = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
+            ]
+        }
+
+        response1 = self.get_route_geometry(steps)
+        self.assertEqual(response1.status_code, 200)
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
+
+        path4.delete()
         response = self.get_route_geometry(steps)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('error'), "No path between the given points")
 
-    def test_route_geometry_not_fail_after_deleting_path(self):
+    # FAIL #2
+    def test_route_geometry_succeed_then_delete_path_and_succeed_with_detour(self):
         """
-        Route once from pt 1 to pt 2 through path4, then delete path4: the
-        route should now go through path3
-                 point1
-                  __X________________ path1
-                           |     |
-                           |     |
-       path4 (deleted after|     |path3
-               1st routing)|     |
-                           |     |
-         path2 ___X________|_____|
-                point2      path6
+        Route once through path3, then delete it: the route now takes a detour via path4
+
+        ─ : path
+        > : path direction
+        X : route step
+
+                         start    path1
+                           X───────>───┐
+                           │           │
+                           │           │
+                           │           │
+        path3 (deleted     ^           ^ path4
+        after 1st routing) │           │
+                           │           │
+                           X──────>────┘
+                          end    path2
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
-
-        pathGeom4 = LineString([
-            [1.3964173, 43.538244],
-            [1.3974995, 43.5689304]
-        ], srid=settings.API_SRID)
-        pathGeom4.transform(settings.SRID)
-        path4 = PathFactory(geom=pathGeom4)
-
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path3 = PathFactory(geom=self.path_geometries['3'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
         steps = {
             "steps": [
-                {"path_id": path1.pk, "lat": 43.56894323430811, "lng": 1.3942327273595632},
-                {"path_id": path2.pk, "lat": 43.53827293909704, "lng": 1.3923461380281665}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
 
         response1 = self.get_route_geometry(steps)
         self.assertEqual(response1.status_code, 200)
-        self.assertIn(path4.pk, response1.data['serialized'][0]['paths'])
+        expected_data = self.get_expected_data('through_path3', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '3': path3.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
 
-        path4.delete()
+        path3.delete()
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.397499663080187, 43.568930399354294],
-                            [1.413807500133418, 43.568864617166724],
-                            [1.4125435, 43.538125799999904],
-                            [1.396417299855292, 43.53824398944357],
-                            [1.392346144971155, 43.53827344821782]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [1e-05, 1.0],
-                        '1': [1.0, 0.0],
-                        '2': [1.0, 0.0],
-                        '3': [1.0, 0.8716100305310497]
-                    },
-                    'paths': [path1.pk, path3.pk, path3.pk + 3, path2.pk]
-                }
-            ]
-        }
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
         self.check_route_geometry_response(response2.data, expected_data)
 
-    def test_route_geometry_not_fail_after_editing_path(self):
+    def test_route_geometry_fail_then_edit_and_succeed(self):
         """
-        Route once from path2 to path1 (no possible route), then edit path3
-        so it links path1 with path2: there is now a route going through path3
-            path1________                           _________ path1
-                            /                             |
-                           /path3      ->                 | path3
-            path2_____                          path2_____|
+        Route once from path1 to path2 (no possible route), then edit path4
+        so it links path1 with path2: there is now a route going through path4
+
+        ─ : path
+        > : path direction
+        X : route step
+
+        start    path1                         start    path1
+            X───────>───                         X───────>───┐
+                               /                             │
+                              /                              │
+                             / path4   ->                    ^ path4
+                            /                                │
+            X──────>─────                        X──────>────┘
+            end    path2                        end    path2
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
 
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
+        pathGeom4 = LineString([
             [1.4507103, 43.5547065],
             [1.4611816, 43.5567592]
         ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
+        pathGeom4.transform(settings.SRID)
+        path4 = PathFactory(geom=pathGeom4)
 
         steps = {
             "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
 
@@ -1740,95 +1640,68 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(response1.status_code, 400)
         self.assertEqual(response1.data.get('error'), "No path between the given points")
 
-        newPathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        newPathGeom3.transform(settings.SRID)
-        path3.geom = newPathGeom3
-        path3.save()
+        path4.geom = self.path_geometries['4']
+        path4.save()
 
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 200)
-        expected_data = {
-            'geojson': {
-                'type': 'GeometryCollection',
-                'geometries': [
-                    {
-                        'type': 'LineString',
-                        'coordinates': [
-                            [1.368657469125895, 43.53844182910046],
-                            [1.4125435, 43.538125799999904],
-                            [1.413807500133418, 43.568864617166724],
-                            [1.413807337053604, 43.56886461783681]
-                        ]
-                    }
-                ]
-            },
-            'serialized': [
-                {
-                    'positions': {
-                        '0': [0.08256502766077582, 1.0],
-                        '1': [0.0, 1.0],
-                        '2': [1.0, 0.99999]
-                    },
-                    'paths': [path2.pk, path3.pk, path1.pk]
-                }
-            ]
-        }
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
         self.check_route_geometry_response(response2.data, expected_data)
 
     def test_route_geometry_fail_after_editing_path(self):
         """
-        Route once from path2 to path1 (goes through path3), then edit path3
+        Route once from path1 to path2 (going through path4), then edit path4
         so it doesn't link path1 with path2 anymore: there is no possible route
-                  ______ path1                   path1 ______
-                      |                                         /
-                      | path3         ->                       /path3
-            path2_____|                          path2_____
+
+        ─ : path
+        > : path direction
+        X : route step
+
+        start    path1                      start    path1
+            X───────>──┐                      X───────>────
+                       │                                        /
+                       │                                       /
+                       ^ path4      ->                        / path4
+                       │                                     /
+            X─────>────┘                      X──────>─────
+          end    path2                      end    path2
+
         """
-        pathGeom1 = LineString([
-            [1.3974995, 43.5689304],
-            [1.4520836, 43.5687006]
-        ], srid=settings.API_SRID)
-        pathGeom1.transform(settings.SRID)
-        path1 = PathFactory(geom=pathGeom1)
-
-        pathGeom2 = LineString([
-            [1.3647079, 43.5384694],
-            [1.4125435, 43.5381258]
-        ], srid=settings.API_SRID)
-        pathGeom2.transform(settings.SRID)
-        path2 = PathFactory(geom=pathGeom2)
-
-        pathGeom3 = LineString([
-            [1.4125435, 43.5381258],
-            [1.4138075, 43.5688646]
-        ], srid=settings.API_SRID)
-        pathGeom3.transform(settings.SRID)
-        path3 = PathFactory(geom=pathGeom3)
+        path1 = PathFactory(geom=self.path_geometries['1'])
+        path2 = PathFactory(geom=self.path_geometries['2'])
+        path4 = PathFactory(geom=self.path_geometries['4'])
 
         steps = {
             "steps": [
-                {"path_id": path2.pk, "lat": 43.53844132536213, "lng": 1.3686574624640402},
-                {"path_id": path1.pk, "lat": 43.56874619579079, "lng": 1.441441969927424}
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates['2']))
             ]
         }
         response1 = self.get_route_geometry(steps)
         self.assertEqual(response1.status_code, 200)
-        self.assertIn(path3.pk, response1.data['serialized'][0]['paths'])
+        expected_data = self.get_expected_data('through_path4', {
+            '1': path1.pk,
+            '2': path2.pk,
+            '4': path4.pk,
+        })
+        self.check_route_geometry_response(response1.data, expected_data)
 
-        newPathGeom3 = LineString([
+        newPathGeom4 = LineString([
             [1.4507103, 43.5547065],
             [1.4611816, 43.5567592]
         ], srid=settings.API_SRID)
-        newPathGeom3.transform(settings.SRID)
-        path3.geom = newPathGeom3
-        path3.save()
+        newPathGeom4.transform(settings.SRID)
+        path4.geom = newPathGeom4
+        path4.save()
 
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 400)
         self.assertEqual(response2.data.get('error'), "No path between the given points")
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
