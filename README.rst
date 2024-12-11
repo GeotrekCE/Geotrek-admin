@@ -109,7 +109,7 @@ Made with `contrib.rocks <https://contrib.rocks>`_.
 License
 -------
 
-This project is under the MIT License. See the `LICENSE <Geotrek-admin/blob/main/LICENSE>`_ for details.
+This project is under the BSD License. See the `LICENSE <Geotrek-admin/blob/main/LICENSE>`_ for details.
 
 - OpenSource - BSD
 - Copyright (c) 2012-2024 - Makina Corpus Territoires / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
