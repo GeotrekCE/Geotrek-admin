@@ -46,7 +46,7 @@ With Geotrek-admin, you can:
 - Organize your data with maps, layers, and metadata.
 - Export content to various public interfaces, such as Geotrek-rando or printed topoguides.
 
-You can explore Geotrek-admin in action through our demonstration website:
+You can explore Geotrek-admin in action through the demonstration website:
 
 - `https://demo-admin.geotrek.fr/ <https://demo-admin.geotrek.fr/>`_ (demo / demo)
 
