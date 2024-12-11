@@ -8,7 +8,7 @@ Geotrek-admin
     <p align="center"><img alt="geotrek admin image" src="/docs/_static/geotrek-admin.png"></p>
     
     <p align="center">
-    <a href="https://geotrek.readthedocs.io/" rel="nofollow"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-green.svg" style="max-width:100%;"></a>
+    <a href="https://geotrek.readthedocs.io/" rel="nofollow"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-red.svg" style="max-width:100%;"></a>
     <a href="https://demo-admin.geotrek.fr/" rel="nofollow"><img alt="Geotrek Admin demo" src="https://img.shields.io/badge/Demo-purple.svg" style="max-width:100%;"></a>
     <a href="https://matrix.to/#/%23geotrek:matrix.org" rel="nofollow"><img alt="Chat Matrix" src="https://img.shields.io/badge/Chat-blue.svg" style="max-width:100%;"></a>
     <a href="https://groups.google.com/g/geotrek-fr" rel="nofollow"><img alt="Forum Google Group" src="https://img.shields.io/badge/Forum-brightgreen.svg" style="max-width:100%;"></a>
