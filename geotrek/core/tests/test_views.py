@@ -1562,26 +1562,26 @@ class PathRouteViewTestCase(TestCase):
 
     def test_route_geometry_succeed_then_delete_path_and_fail(self):
         """
-        Route once from path2 to path1 going through path4, then delete path4: routing now fails
+        Route once from path2 to path1 going through path3, then delete path3: routing now fails
 
         ─ : path
         > : path direction
         X : route step
 
             start     path1
-               X────────>────────┐
-                                 │
-                                 │
-                                 │
-                                 ^ path4 (deleted after 1st routing)
-                                 │
-                                 │
-               X────────>────────┘
+               X────────>────────
+               │
+               │
+               │
+               ^ path3
+               │
+               │
+               X────────>────────
             end     path2
         """
         path1 = PathFactory(geom=self.path_geometries['1'])
         path2 = PathFactory(geom=self.path_geometries['2'])
-        path4 = PathFactory(geom=self.path_geometries['4'])
+        path3 = PathFactory(geom=self.path_geometries['3'])
         steps = {
             "steps": [
                 dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates['1'])),
@@ -1590,15 +1590,11 @@ class PathRouteViewTestCase(TestCase):
         }
 
         response1 = self.get_route_geometry(steps)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
         self.assertEqual(response1.status_code, 200)
-        expected_data = self.get_expected_data('through_path4', {
-            '1': path1.pk,
-            '2': path2.pk,
-            '4': path4.pk,
-        })
-        self.check_route_geometry_response(response1.data, expected_data)
 
-        path4.delete()
+        path3.delete()
         response = self.get_route_geometry(steps)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('error'), "No path between the given points")
@@ -1702,26 +1698,26 @@ class PathRouteViewTestCase(TestCase):
 
     def test_route_geometry_fail_after_editing_path(self):
         """
-        Route once from path1 to path2 (going through path4), then edit path4
+        Route once from path1 to path2 (going through path3), then edit path3
         so it doesn't link path1 with path2 anymore: there is no possible route
 
         ─ : path
         > : path direction
         X : route step
 
-        start    path1                      start    path1
-            X───────>──┐                      X───────>────
-                       │                                        /
-                       │                                       /
-                       ^ path4      ->                        / path4
-                       │                                     /
-            X─────>────┘                      X──────>─────
-          end    path2                      end    path2
+           start    path1              start    path1
+              X───────>───              X───────>────
+              │                                               /
+              │                                              /
+        path3 ^               ->                            / path3
+              │                                            /
+              X─────>─────              X──────>─────
+            end    path2              end    path2
 
         """
         path1 = PathFactory(geom=self.path_geometries['1'])
         path2 = PathFactory(geom=self.path_geometries['2'])
-        path4 = PathFactory(geom=self.path_geometries['4'])
+        path3 = PathFactory(geom=self.path_geometries['3'])
 
         steps = {
             "steps": [
@@ -1730,21 +1726,17 @@ class PathRouteViewTestCase(TestCase):
             ]
         }
         response1 = self.get_route_geometry(steps)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
         self.assertEqual(response1.status_code, 200)
-        expected_data = self.get_expected_data('through_path4', {
-            '1': path1.pk,
-            '2': path2.pk,
-            '4': path4.pk,
-        })
-        self.check_route_geometry_response(response1.data, expected_data)
 
-        newPathGeom4 = LineString([
+        newPathGeom3 = LineString([
             [1.4507103, 43.5547065],
             [1.4611816, 43.5567592]
         ], srid=settings.API_SRID)
-        newPathGeom4.transform(settings.SRID)
-        path4.geom = newPathGeom4
-        path4.save()
+        newPathGeom3.transform(settings.SRID)
+        path3.geom = newPathGeom3
+        path3.save()
 
         response2 = self.get_route_geometry(steps)
         self.assertEqual(response2.status_code, 400)
