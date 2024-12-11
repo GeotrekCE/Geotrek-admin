@@ -126,7 +126,7 @@ This project is under the MIT License. See the `LICENSE <Geotrek-admin/blob/main
 ----
 
 .. image:: http://geotrek.fr/assets/img/parc_ecrins.png
-    :alt: Parc des Ecrins
+    :alt: Parc national des Ecrins
     :target: http://www.ecrins-parcnational.fr
 
 .. image:: http://geotrek.fr/assets/img/parc_mercantour.png
