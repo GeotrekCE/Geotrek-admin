@@ -4,13 +4,13 @@
 #
 #    pip-compile --strip-extras
 #
-amqp==5.2.0
+amqp==5.3.1
     # via kombu
 appy==1.0.18
     # via django-appypod
 asgiref==3.8.1
     # via django
-async-timeout==4.0.3
+async-timeout==5.0.1
     # via redis
 attrs==24.2.0
     # via fiona
@@ -23,7 +23,7 @@ backports-zoneinfo==0.2.1 ; python_version < "3.10"
     #   kombu
 beautifulsoup4==4.12.3
     # via mapentity
-billiard==4.2.0
+billiard==4.2.1
     # via celery
 btrees==6.1
     # via zodb
@@ -87,7 +87,7 @@ coreschema==0.0.4
     #   coreapi
     #   drf-yasg
     #   geotrek (setup.py)
-crispy-bootstrap4==2024.1
+crispy-bootstrap4==2024.10
     # via mapentity
 cssselect2==0.7.0
     # via
@@ -98,7 +98,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.16
+django==4.2.17
     # via
     #   crispy-bootstrap4
     #   django-appconf
@@ -146,7 +146,7 @@ django-extended-choices==1.3.3
     # via geotrek (setup.py)
 django-filter==24.3
     # via mapentity
-django-js-asset==2.0.0
+django-js-asset==2.2.0
     # via django-mptt
 django-large-image==0.8.1
     # via geotrek (setup.py)
@@ -174,7 +174,7 @@ djangorestframework==3.15.2
     #   drf-extensions
     #   drf-yasg
     #   mapentity
-djangorestframework-datatables==0.7.0
+djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.0
     # via mapentity
@@ -222,7 +222,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.4
     # via coreschema
-kombu==5.3.7
+kombu==5.4.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
@@ -306,15 +306,14 @@ pytz==2024.2
     # via
     #   datetime
     #   django-modelcluster
-    #   djangorestframework-datatables
     #   drf-yasg
 pyvips==2.2.3
     # via large-image-source-vips
 rcssmin==1.1.2
     # via django-compressor
-redis==5.1.1
+redis==5.2.0
     # via geotrek (setup.py)
-reportlab==4.1.0
+reportlab==4.2.5
     # via
     #   easy-thumbnails
     #   svglib
@@ -341,16 +340,15 @@ six==1.16.0
     #   django-extended-choices
     #   html5lib
     #   python-dateutil
-    #   zodb
-soupsieve==2.5
+soupsieve==2.6
     # via beautifulsoup4
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via django
 svglib==1.5.1
     # via easy-thumbnails
 tif2geojson==0.1.3
     # via geotrek (setup.py)
-tinycss2==1.3.0
+tinycss2==1.4.0
     # via
     #   cairosvg
     #   cssselect2
@@ -372,7 +370,7 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-yasg
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   requests
     #   sentry-sdk
@@ -395,7 +393,7 @@ webencodings==0.5.1
     #   tinycss2
 xlrd==2.0.1
     # via geotrek (setup.py)
-xmltodict==0.13.0
+xmltodict==0.14.2
     # via tif2geojson
 zc-lockfile==3.0.post1
     # via zodb
@@ -403,7 +401,7 @@ zconfig==4.1
     # via zodb
 zipp==3.20.2
     # via importlib-metadata
-zodb==5.8.1
+zodb==6.0
     # via appy
 zodbpickle==4.0
     # via zodb

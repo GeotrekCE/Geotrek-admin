@@ -53,10 +53,12 @@ Exemple : ajouter une étiquette
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages : 
+
 - ne pas avoir à saisir à chaque itinéraire les même informations
 - permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
 
 Pour les configurer, vous devez :
+
 - vous rendre dans le module de configuration
 - dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ Ajouter`
 
@@ -285,7 +287,7 @@ Geotrek permet de configurer un ou plusieurs portails. Ce terme est utilisé pou
 
 Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire apparaitre une information.
 
-Avec le widget Geotrek (https://github.com/GeotrekCE/geotrek-rando-widget) il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre (https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura).
+Avec `Geotrek-widget <https://github.com/GeotrekCE/geotrek-rando-widget>`_ il est également possible d'utiliser cette fonctionnalité pour distinguer les contenus à afficher dans un widget ou dans un autre `(voir cet article) <https://makina-corpus.com/logiciel-libre/developpement-geotrek-widget-finance-parc-naturel-regional-haut-jura>`_.
 
 Pour configurer un ou pluseurs portails, il faut se rendre dans le module de configuration sur la section "Portails cibles".
 
@@ -314,9 +316,9 @@ Intégration des fonds de cartes
 
 Il est possible d'intégrer dans Geotrek différents fonds de carte comme :
 
-* OpenStreetMap : https://www.openstreetmap.org/#map=6/46.449/2.210
-* OpenTopoMap : https://opentopomap.org/#map=6.49.000/10.000 
-* ou les données IGN : https://geoservices.ign.fr/services-geoplateforme-diffusion
+* `OpenStreetMap <https://www.openstreetmap.org/#map=6/46.449/2.210>`_
+* `OpenTopoMap  <https://opentopomap.org/#map=6.49.000/10.000>`_
+* `ou les données IGN  <https://geoservices.ign.fr/services-geoplateforme-diffusion>`_
 
 Pour configurer l'ajout de fonds de plan, référez vous à cette section :ref:`Map settings <map-settings>`
 
@@ -345,16 +347,16 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 
 Voici quelques ressources en ligne proposant des pictogrammes (sous licence libre) :
 
-- `https://pictogrammers.com/library/mdi/ <https://pictogrammers.com/library/mdi/>`_
-- `https://thenounproject.com/ <https://thenounproject.com/>`_
-- `http://map-icons.com/ <http://map-icons.com/>`_
-- `https://www.opensymbols.org/ <https://www.opensymbols.org/>`_
-- `https://www.svgrepo.com/ <https://www.svgrepo.com/>`_
-- `http://www.entypo.com/ <http://www.entypo.com/>`_
-- `https://icons.getbootstrap.com/ <https://icons.getbootstrap.com/>`_
-- `https://icongr.am/ <https://icongr.am/>`_
-- `https://cocomaterial.com/ <https://cocomaterial.com/>`_
-- `https://icofont.com/ <https://icofont.com/>`_
-- `https://fontello.com/ <https://fontello.com/>`_
-- `https://iconmonstr.com/ <https://iconmonstr.com/>`_
-- `https://fontawesome.com/icons <https://fontawesome.com/icons>`_
+- `Pictogrammers <https://pictogrammers.com/library/mdi/>`_
+- `The Noun Project <https://thenounproject.com/>`_
+- `Map icons <http://map-icons.com/>`_
+- `Opensymbols <https://www.opensymbols.org/>`_
+- `SVG repo <https://www.svgrepo.com/>`_
+- `Entypo <http://www.entypo.com/>`_
+- `Icons Getbootstrap <https://icons.getbootstrap.com/>`_
+- `Icongr <https://icongr.am/>`_
+- `Cocomaterial <https://cocomaterial.com/>`_
+- `Icofont <https://icofont.com/>`_
+- `Fontello <https://fontello.com/>`_
+- `Iconmonstr <https://iconmonstr.com/>`_
+- `Fontawesome <https://fontawesome.com/icons>`_
