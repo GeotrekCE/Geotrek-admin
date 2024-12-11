@@ -994,7 +994,7 @@ class PathRouteViewTestCase(TestCase):
                      │
                      │
                      │
-                     V path2
+                     ^ path2
                      │
                      │
       start          │
@@ -1010,8 +1010,8 @@ class PathRouteViewTestCase(TestCase):
         path1 = PathFactory(geom=pathGeom1)
 
         pathGeom2 = LineString([
-            [1.4447021, 43.5803909],
             [1.4451303, 43.5270311],
+            [1.4447021, 43.5803909],
         ], srid=settings.API_SRID)
         pathGeom2.transform(settings.SRID)
         path2 = PathFactory(geom=pathGeom2)
@@ -1040,7 +1040,7 @@ class PathRouteViewTestCase(TestCase):
             'serialized': [
                 {
                     'positions': {
-                        '0': [1e-05, 1.0], '1': [1.0, 1e-05]
+                        '0': [1e-05, 1.0], '1': [0, 0.99999]
                     },
                     'paths': [path1.pk, path2.pk]
                 }
