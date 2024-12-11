@@ -130,7 +130,7 @@ This project is under the MIT License. See the `LICENSE <Geotrek-admin/blob/main
     :target: http://www.ecrins-parcnational.fr
 
 .. image:: http://geotrek.fr/assets/img/parc_mercantour.png
-    :alt: Parc du Mercantour
+    :alt: Parc national du Mercantour
     :target: http://www.mercantour.eu
 
 .. image:: http://geotrek.fr/assets/img/alpi_maritime.png
