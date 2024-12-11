@@ -66,7 +66,7 @@ Geotrek-Admin is a powerful web mapping application designed for managing trekki
 - **Publishing tools**:
   - Create public websites with `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando-v3>`_ (e.g., `Destination Écrins <https://rando.ecrins-parcnational.fr>`_, `Alpes Rando <https://alpesrando.net/>`_).
   - Embed trek information into existing websites with `Geotrek-widget <https://github.com/GeotrekCE/Geotrek-rando-widget>`_ for flexible and lightweight integration (e.g., `Sidobre Vallée Tourisme <https://sidobre-vallees-tourisme.com/type_activite/balades-et-randonnees-sidobre-vallees/>`_, `la Toscane Occitane <https://www.la-toscane-occitane.com/a-voir-a-faire/balades-randonnees>`_).
-  - Develop mobile applications with `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile>`_ (e.g., `Grand Carcassonne <https://play.google.com/store/apps/details?id=io.geotrek.grandcarcassonne>`_, `Jura outdoor <https://apps.apple.com/app/jura-outdoor/id6446137384>`_).
+  - Deploy mobile applications with `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile>`_ (e.g., `Grand Carcassonne <https://play.google.com/store/apps/details?id=io.geotrek.grandcarcassonne>`_, `Jura outdoor <https://apps.apple.com/app/jura-outdoor/id6446137384>`_).
 - **Customizable outputs**: export data in various formats (PDF, GPX, KML) for offline use and tailored user experiences.
 - **Interactive mapping**: enable users to visualize and explore data-rich maps with detailed elevation profiles.
 - **Documentation and support**: access comprehensive documentation, best practices, and community support for all your needs in the `official documentation <https://geotrek.readthedocs.io/en/2.111.0/usage/overview.html>`_.
