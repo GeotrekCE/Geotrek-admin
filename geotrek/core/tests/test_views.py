@@ -688,8 +688,6 @@ class PathRouteViewTestCase(TestCase):
         }
         for geom in cls.path_geometries.values():
             geom.transform(settings.SRID)
-        # TODO: check que les géométries soient correctes (comparer avec quand
-        # on les crée dans un test)
 
         cls.steps_coordinates = {
             '1': {"lat": 43.5689304, "lng": 1.3974995},
@@ -1223,7 +1221,6 @@ class PathRouteViewTestCase(TestCase):
         }
         self.check_route_geometry_response(response.data, expected_data)
 
-    # FAIL #2
     def test_route_geometry_with_draft_path_fail_then_succeed(self):
         """
         Routing fails because path4 is a draft, then succeeds when it is no longer a draft
@@ -1416,7 +1413,6 @@ class PathRouteViewTestCase(TestCase):
         })
         self.check_route_geometry_response(response2.data, expected_data)
 
-    # FAIL #2
     def test_route_geometry_fail_then_add_path_and_succeed(self):
         """
         Routing fails because paths do not touch, then succeeds after path4 has been added
@@ -1507,7 +1503,6 @@ class PathRouteViewTestCase(TestCase):
         })
         self.check_route_geometry_response(response2.data, expected_data)
 
-    # FAIL #2
     def test_route_geometry_succeed_then_delete_path_and_fail(self):
         """
         Route once from path2 to path1 going through path4, then delete path4: routing now fails
@@ -1551,7 +1546,6 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get('error'), "No path between the given points")
 
-    # FAIL #2
     def test_route_geometry_succeed_then_delete_path_and_succeed_with_detour(self):
         """
         Route once through path3, then delete it: the route now takes a detour via path4
