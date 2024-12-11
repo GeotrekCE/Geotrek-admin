@@ -106,7 +106,7 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
     * **Geometric type** : Linestring
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported paths are unpublished by default
@@ -138,6 +138,16 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
     --structure "DEMO" \
     --name-attribute id \
     --comments-attribute commentaire
+
+After importing a large quantity of paths, it is recommended to pre-generate the
+paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
+routing following the import.
+
+To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
+
+    sudo geotrek generate_pgr_network_topology
+    OR
+    docker compose run --rm web ./manage.py generate_pgr_network_topology
 
 After importing a large quantity of paths, it is recommended to pre-generate the
 paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
@@ -458,17 +468,17 @@ It is also possible to import sensitive areas through command line:
 
     sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
 
-.. warning:: 
-  If you don't see any data in your area, it means that Biodiv'Sports does not contains data for your territory. 
-  Then it is widely recommended to add your data directly into Biodiv'Sports, as it will be available for 
-  multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sports 
+.. warning::
+  If you don't see any data in your area, it means that Biodiv'Sports does not contains data for your territory.
+  Then it is widely recommended to add your data directly into Biodiv'Sports, as it will be available for
+  multiple users, and then retrieve them into your Geotrek instance. To import data in Biodiv'Sports
   go visit its website: https://biodiv-sports.fr
 
 
 Import from shapefile
 ---------------------
 
-Imported data must be in standard ESRI shapefile format. 
+Imported data must be in standard ESRI shapefile format.
 The various Shapefile files (``.shp``, ``.shx``, ``.dbf``, ``.prj``, *etc*.) must be assembled in a zip archive.
 
 .. warning::
@@ -478,7 +488,7 @@ Attribute data for sensitive areas species
 
 - ``espece``: Species name. Mandatory. A species with this name must first have been created in Biodiv'sports. Otherwise, import of the line will fail.
 - ``contact``: Contact in text or HTML format. *Optional*.
-- ``descriptio``: Description in text or HTML format. *Optional*. 
+- ``descriptio``: Description in text or HTML format. *Optional*.
 
 .. warning::
   Species name must strictly respect the species name string (accentuation, case and punctuation).
@@ -522,7 +532,7 @@ or:
     sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
 
 
-.. warning:: 
+.. warning::
   Relaunching an import **with the same file** will create duplicates.
 
 
@@ -681,7 +691,7 @@ Import POIs
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`poi.geojson <../files/import/poi.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The SRID must be 4326
        * The default encoding is UTF-8
        * Imported POIs are unpublished by default
@@ -811,7 +821,7 @@ Import Infrastructure
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`infrastructure.geojson <../files/import/infrastructure.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The SRID must be 4326
        * The default encoding is UTF-8
        * Imported infrastructures are unpublished by default
@@ -990,7 +1000,7 @@ Import Signage
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`signage.geojson <../files/import/signage.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported signage are unpublished by default
@@ -1068,7 +1078,7 @@ Import Cities
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`cities.geojson <../files/import/cities.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported cities are unpublished by default
@@ -1155,7 +1165,7 @@ Import Districts
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`districts.geojson <../files/import/districts.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported districts are unpublished by default
@@ -1229,7 +1239,7 @@ Import Restricted areas
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`restrictedareas.geojson <../files/import/restrictedareas.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported restricted areas are unpublished by default

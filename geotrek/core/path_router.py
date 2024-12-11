@@ -128,168 +128,158 @@ class PathRouter:
             from_step: {edge_id: int, fraction: float}
             to_step: {edge_id: int, fraction: float}
         """
-        query = """
-                WITH points as (
-                    -- This is a virtual table of the points (start and end)
-                    -- and their position on the closest edge
-                    SELECT
-                        points.pid,
-                        points.edge_id,
-                        points.fraction_start,
-                        points.fraction_end,
-                        ST_SmartLineSubstring(
-                            core_path.geom,
-                            points.fraction_start,
-                            points.fraction_end
-                        ) AS geom
-                    FROM
-                        (VALUES
-                            (1, %s, 0, %s::float),
-                            (1, %s, %s::float, 1),
-                            (2, %s, 0, %s::float),
-                            (2, %s, %s::float, 1)
-                        ) AS points(pid, edge_id, fraction_start, fraction_end)
-                        JOIN core_path ON core_path.id = points.edge_id
-                ),
-
-                pgr AS (
-                    -- Get the route from point 1 to point 2 using pgr_withPoints.
-                    -- next_node, prev_geom and next_geom will be used later
-                    -- to reconstruct the final geometry of the shortest path.
-                    SELECT
-                        pgr.path_seq,
-                        pgr.node,
-                        pgr.edge,
-                        core_path.geom as edge_geom,
-                        (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
-                        (LAG(core_path.geom) OVER (ORDER BY path_seq)) AS prev_geom,
-                        (LEAD(core_path.geom) OVER (ORDER BY path_seq)) AS next_geom
-                    FROM
-                        pgr_withPoints(
-                            'SELECT
-                                id,
-                                source,
-                                target,
-                                length as cost,
-                                length as reverse_cost
-                            FROM core_path
-                            WHERE draft = false AND visible = true
-                            ORDER by id',
-                            'SELECT *
-                            FROM (
-                                VALUES
-                                    (1, %s, %s::float),
-                                    (2, %s, %s::float)
-                                ) AS points (pid, edge_id, fraction)',
-                            -1, -2
-                        ) as pgr
-                        JOIN core_path ON core_path.id = pgr.edge
-                ),
-
-                route_geometry AS (
-                    -- Get the geometries edge by edge.
-                    -- At point 1 and 2, we get a portion of the edge.
-                    SELECT
-                        CASE
-                        WHEN node = -1 THEN  -- Start point
-                            (SELECT points.geom
-                                FROM points
-                                -- Get the edge portion that leads to the next edge
-                                WHERE points.pid = -pgr.node
-                                ORDER BY ST_Distance(points.geom, pgr.next_geom) ASC
-                                LIMIT 1)
-                        WHEN next_node is NULL THEN
-                            -- End point: the next row does not exist because next edge id is -1
-                            (SELECT points.geom
-                                FROM points
-                                -- Get the edge portion that leads to the previous edge
-                                WHERE points.pid = 2
-                                ORDER BY ST_Distance(points.geom, pgr.prev_geom) ASC
-                                LIMIT 1)
-                        ELSE
-                            edge_geom -- Return the full edge's geometry
-                        END AS final_geometry,
-                        edge,
-                        CASE
-                            WHEN node = -1 THEN
-                                (SELECT points.fraction_start
-                                FROM points
-                                WHERE points.pid = -pgr.node
-                                ORDER BY points.fraction_start DESC
-                                LIMIT 1)
-                            ELSE 0
-                        END AS fraction_start,
-                        CASE
-                            WHEN next_node is NULL THEN
-                                -- The next row does not exist because next edge id is -1
-                                (SELECT points.fraction_end
-                                FROM points
-                                WHERE points.pid = 2
-                                ORDER BY points.fraction_end ASC
-                                LIMIT 1)
-                            ELSE 1
-                        END AS fraction_end,
-                        node,
-                        next_node
-                    FROM pgr
-                )
-
-                SELECT
-
-                    CASE  -- Reverse the geometries if needed
-                    WHEN core_path.source = route_geometry.next_node
-                         OR core_path.target = route_geometry.node THEN
-                        -- If the ending point of the geometry (next_node) is the starting
-                        -- point of the edge (path source), the geometry must be reversed
-                        -- (same for starting point of the geom and ending pt of the edge).
-                        -- pgr_createTopology has assigned the path's start point as core_path's source
-                        -- with ST_StartPoint and the path's end point as core_path's target with ST_EndPoint
-                        -- so we can use core_path.source as the starting pt of the geom.
-                        ST_Reverse(final_geometry)
-                    ELSE
-                        final_geometry
-                    END AS geometry,
-
-                    edge,
-
-                    CASE -- Set fraction_start to 0 or 1 depending on the path
-                         -- direction compared to the route (same logic as for geometry)
-                    WHEN core_path.target = route_geometry.node THEN
-                        -- fraction_start is set to 1 if the path is reversed
-                        -- except for the starting geom
-                        1
-                    ELSE
-                        fraction_start
-                    END AS fraction_start,
-
-                    CASE -- Set fraction_end to 0 or 1 depending on the path
-                         -- direction compared to the route
-                    WHEN core_path.source = route_geometry.next_node THEN
-                        -- fraction_end is set to 0 if the path is reversed
-                        -- except for the ending geom
-                        0
-                    ELSE
-                        fraction_end
-                    END AS fraction_end
-
-                FROM route_geometry
-                JOIN core_path on core_path.id = route_geometry.edge
-                """
-
         start_edge = from_step.get('edge_id')
         end_edge = to_step.get('edge_id')
         fraction_start = self._fix_fraction(from_step.get('fraction'))
         fraction_end = self._fix_fraction(to_step.get('fraction'))
 
+        query = """
+            DO $$
+            DECLARE
+                max_edge_id integer;
+                max_vertex_id integer;
+
+            BEGIN
+
+                SELECT MAX(id) FROM core_path INTO max_edge_id;
+                SELECT MAX(vid) FROM (
+                    SELECT source AS vid FROM core_path
+                    UNION
+                    SELECT target AS vid FROM core_path
+                ) AS vids INTO max_vertex_id;
+
+                DROP TABLE IF EXISTS temporary_edges_info;
+                CREATE TEMPORARY TABLE temporary_edges_info AS
+                    -- This info will be added to the A* inner query edges_sql.
+                    -- It represents the temporary edges created by adding the start
+                    -- and end steps as nodes onto the graph (aka pgr network topology)
+                    WITH graph_temporary_edges AS (
+                        SELECT
+                            core_path.id AS path_id,
+                            max_edge_id + index AS edge_id,
+                            ST_SmartLineSubstring(
+                                core_path.geom,
+                                fraction_start,
+                                fraction_end
+                            ) as edge_geom,
+                            CASE
+                                WHEN (index % 2) != 0
+                                    THEN core_path.source
+                                    ELSE max_vertex_id + (index > 2)::int + 1
+                                END AS source_id,
+                            CASE
+                                WHEN (index % 2) = 0
+                                    THEN core_path.target
+                                    ELSE max_vertex_id + (index > 2)::int + 1
+                                END AS target_id,
+                            CASE
+                                WHEN (index % 2) != 0
+                                    THEN ST_StartPoint(geom)
+                                    ELSE ST_LineInterpolatePoint(core_path.geom, fraction_start)
+                                END AS source_geom,
+                            CASE
+                                WHEN (index % 2) = 0
+                                    THEN ST_EndPoint(geom)
+                                    ELSE ST_LineInterpolatePoint(core_path.geom, fraction_end)
+                                END AS target_geom
+                        FROM (
+                            VALUES
+                                (1, '{}'::int, 0, '{}'::float),
+                                (2, '{}'::int, '{}'::float, 1),
+                                (3, '{}'::int, 0, '{}'::float),
+                                (4, '{}'::int, '{}'::float, 1)
+                        ) AS tmp_edges_info (index, path_id, fraction_start, fraction_end)
+                        JOIN core_path ON core_path.id = tmp_edges_info.path_id
+                    )
+                    SELECT
+                        path_id,
+                        edge_id AS id,
+                        source_id AS source,
+                        target_id AS target,
+                        ST_Length(edge_geom) AS cost,
+                        ST_Length(edge_geom) AS reverse_cost,
+                        ST_X(source_geom) AS x1,
+                        ST_Y(source_geom) AS y1,
+                        ST_X(target_geom) AS x2,
+                        ST_Y(target_geom) AS y2,
+                        edge_geom as geom
+                    FROM graph_temporary_edges;
+
+                DROP TABLE IF EXISTS route;
+                CREATE TEMPORARY TABLE route AS
+                WITH pgr AS (
+                    SELECT
+                        pgr.path_seq,
+                        pgr.node,
+                        (LEAD(pgr.node) OVER (ORDER BY path_seq)) AS next_node,
+                        COALESCE(core_path.source, temporary_edges_info.source) as source,
+                        COALESCE(core_path.target, temporary_edges_info.target) as target,
+                        COALESCE(core_path.geom, temporary_edges_info.geom) as edge_geom,
+                        CASE
+                            WHEN pgr.edge > max_edge_id
+                                THEN temporary_edges_info.path_id
+                                ELSE pgr.edge
+                            END AS edge
+                    FROM
+                        pgr_aStar(
+                            'SELECT
+                                id,
+                                source,
+                                target,
+                                length AS cost,
+                                length AS reverse_cost,
+                                ST_X(ST_StartPoint(geom)) AS x1,
+                                ST_Y(ST_StartPoint(geom)) AS y1,
+                                ST_X(ST_EndPoint(geom)) AS x2,
+                                ST_Y(ST_EndPoint(geom)) AS y2
+                            FROM core_path
+                            WHERE draft = false AND visible = true
+                            UNION ALL SELECT
+                                id, source, target, cost, reverse_cost, x1, y1, x2, y2
+                            FROM temporary_edges_info
+                            ORDER by id',
+                            max_vertex_id + 1, max_vertex_id + 2
+                        ) AS pgr
+                        LEFT JOIN core_path ON id = pgr.edge
+                        LEFT JOIN temporary_edges_info ON temporary_edges_info.id = pgr.edge
+                        WHERE edge != -1
+                )
+                SELECT
+                    CASE
+                        WHEN source = next_node THEN ST_Reverse(edge_geom)
+                        ELSE edge_geom
+                        END AS edge_geom,
+                    edge,
+                    CASE
+                        WHEN node = max_vertex_id + 1 THEN '{}'::float
+                        WHEN node = source THEN 0
+                        ELSE 1  -- node = target
+                        END AS fraction_start,
+                    CASE
+                        WHEN next_node IS NULL THEN '{}'::float
+                        WHEN next_node = source THEN 0
+                        ELSE 1  -- next_node = target
+                        END AS fraction_end
+                FROM pgr;
+
+            END $$;
+
+            SELECT
+                edge_geom,
+                edge,
+                fraction_start,
+                fraction_end
+            FROM route
+        """.format(
+            start_edge, fraction_start,
+            start_edge, fraction_start,
+            end_edge, fraction_end,
+            end_edge, fraction_end,
+            fraction_start, fraction_end
+        )
+
         with connection.cursor() as cursor:
-            cursor.execute(query, [
-                start_edge, fraction_start,
-                start_edge, fraction_start,
-                end_edge, fraction_end,
-                end_edge, fraction_end,
-                start_edge, fraction_start,
-                end_edge, fraction_end
-            ])
+            cursor.execute(query)
 
             query_result = cursor.fetchall()
             if query_result == []:
