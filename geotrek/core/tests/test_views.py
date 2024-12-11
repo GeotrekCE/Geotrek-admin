@@ -5,7 +5,7 @@ from collections import ChainMap
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon, GEOSGeometry
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
 from django.test import TestCase
