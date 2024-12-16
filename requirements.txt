@@ -403,7 +403,7 @@ zipp==3.20.2
     # via importlib-metadata
 zodb==6.0
     # via appy
-zodbpickle==4.0
+zodbpickle==4.1.1
     # via zodb
 zope-deferredimport==5.0
     # via persistent
