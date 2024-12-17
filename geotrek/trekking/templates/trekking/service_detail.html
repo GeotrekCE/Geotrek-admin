@@ -1,17 +1,1 @@
 {% extends "common/common_detail.html" %}
-{% load i18n static mapentity_tags %}
-
-
-{% block before_attachments_extra_tab_nav %}
-    <li class="nav-item">
-        <a class="nav-link" id="tab-related-objects" href="#related-objects" data-toggle="tab">
-            <i class="bi-grid"></i>
-            <span class="d-none d-sm-inline">{% trans "Related objects" %}</span>
-        </a>
-{% endblock %}
-
-{% block before_attachments_extra_tab_content %}
-    <div id="related-objects" class="tab-pane">
-        {% smart_include "detail" %}
-    </div>
-{% endblock %}

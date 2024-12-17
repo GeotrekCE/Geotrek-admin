@@ -12,14 +12,6 @@
     <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
 {% endblock download %}
 
-{% block before_attachments_extra_tab_nav %}
-    <li class="nav-item">
-        <a class="nav-link" id="tab-related-objects" href="#related-objects" data-toggle="tab">
-            <i class="bi-grid"></i>
-            <span class="d-none d-sm-inline">{% trans "Related objects" %}</span>
-        </a>
-{% endblock %}
-
 {% block attachments_extra_tab_nav %}
     {% with attachments_count=object.attachments.count|add:object.attachments_accessibility.count|add:object.view_points.count %}
         <li class="nav-item">
@@ -27,12 +19,6 @@
             <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ attachments_count }})</span></a>
         </li>
     {% endwith %%}
-{% endblock %}
-
-{% block before_attachments_extra_tab_content %}
-    <div id="related-objects" class="tab-pane">
-        {% smart_include "detail" %}
-    </div>
 {% endblock %}
 
 {% block attachmentspanel %}
