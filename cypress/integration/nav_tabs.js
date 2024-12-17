@@ -22,9 +22,9 @@ describe('Nav tabs properties/attachments', () => {
                 cy.visit(href);
             });
         cy.get("a#tab-properties").should('have.class', 'active');
-        cy.get("a#tab-attachments-accessibility").should('not.have.class', 'active');
-        cy.get("a#tab-attachments-accessibility").click();
-        cy.get("a#tab-attachments-accessibility").should('have.class', 'active');
+        cy.get("a#tab-related-objects").should('not.have.class', 'active');
+        cy.get("a#tab-related-objects").click();
+        cy.get("a#tab-related-objects").should('have.class', 'active');
         cy.get("a#tab-properties").should('not.have.class', 'active');
     });
 });

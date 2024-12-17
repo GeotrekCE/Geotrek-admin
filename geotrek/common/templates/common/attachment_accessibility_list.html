@@ -77,7 +77,8 @@
 
 {% if perms|add_attachment %}
     {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
-        <div class="file-attachment-accessibility-form">
+        <div class="file-attachment-form">
+            <h4>New accessibility photo</h4>
             <div class="create">
                 {% crispy accessibility_form %}
             </div>

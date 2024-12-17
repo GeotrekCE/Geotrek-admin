@@ -114,7 +114,7 @@
             <td>
                 {% for label in object.labels.all %}
                     {% if label.published %}
-                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span>
                     {% endif %}
                     {{ label.name }}<br>
                 {% endfor %}
@@ -179,5 +179,4 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
-    {{ block.super }}
 {% endblock attributes %}
