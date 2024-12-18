@@ -1,3 +1,5 @@
+.. _import-from-touristic-data-systems:
+
 ===================================
 Import from touristic data systems 
 ===================================
