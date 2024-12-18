@@ -861,7 +861,7 @@ The following settings are related to sensitive areas:
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
-see :ref:`import-sensitive-areas` to import data.
+see :ref:`sensitive-areas-import` to import data.
 
 Feedback reports settings
 -------------------------

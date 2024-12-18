@@ -93,7 +93,7 @@ Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tour
 
 Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
-Pour configurer APIDAE, se référer à cette section :ref:`Configure APIDAE (ex-SITRA) import <configure-apidae-ex-sitra-import>`
+Pour configurer APIDAE, se référer à cette section :ref:`Import from APIDAE <import-from-apidae>`
 
 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~
