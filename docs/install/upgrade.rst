@@ -46,49 +46,6 @@ Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade wi
 
    sudo apt-mark hold geotrek-admin
 
-
-From Geotrek-admin <= 2.32
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-First of all, make sure your current Geotrek-admin version works correctly.
-Especially, after an upgrade of the Ubuntu distribution, you will have to run ``./install.sh``
-before proceeding with Geotrek-admin upgrade.
-
-Then, go inside your existing Geotrek-admin installation directory and run the dedicated migration script:
-
-::
-
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/migrate.sh | bash
-
-
-Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
-
-.. note::
-
-    Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory
-    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``
-    (with spatial extent, map and modules configuration...).
-
-    See advanced configuration documentation for details.
-
-    The ``etc/settings.ini`` file is replaced by basic configuration, updated with
-    ``sudo dpkg-reconfigure geotrek-admin`` command (database, SRID, languages, server_name, timeout...).
-
-    Update your imports, synchronization and backup commands and directories.
-
-
-From Geotrek-admin <= 2.69.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**WARNING!**
-
-Starting from version 2.70.0, Geotrek now needs PostgreSQL extension 'pgrypto'.
-
-Make sure to run the following command **BEFORE** upgrading:
-
-``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
-
-
 Server migration
 ~~~~~~~~~~~~~~~~
 
