@@ -6,9 +6,10 @@ Configuration
    :local:
    :depth: 2
    
+.. _basic-configuration-update:
 
 Basic configuration update
---------------------------
+===========================
 
 To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
 
@@ -19,9 +20,10 @@ To update basic configuration (server name, database connection, languages, or s
 The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` file, not to be changed manually.
 This file also contains the PostgreSQL authentification details, if you need to access your Geotrek-admin database.
 
+.. _custom-setting-file:
 
 Custom setting file
--------------------
+====================
 
 Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
 
@@ -44,6 +46,7 @@ Sometimes you also have to run:
 
     Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
 
+.. _nginx-configuration:
 
 NGINX configuration
 -------------------
@@ -56,9 +59,10 @@ Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.
 
     sudo dpkg-reconfigure geotrek-admin
 
+.. _activate-ssl-https:
 
 Activate SSL / HTTPS
---------------------
+=====================
 
 To activate https, you need firstly to change ``custom.py`` and add:
 
@@ -79,12 +83,13 @@ You have to move the configuration to the file ``nginx.conf.in`` because ``nginx
 
     You need to replace the ``$`` from Certbot with ``${DOLLAR}`` everywhere in the ``nginx.conf.in`` file, then run the command ``sudo dpkg-reconfigure geotrek-admin`` to regenerate the file.
 
+.. _mandatory-settings:
 
 Mandatory settings
-------------------
+==================
 
 Spatial reference identifier
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 .. code-block:: python
 
@@ -99,7 +104,7 @@ Spatial reference identifier of your database. Default 2154 is RGF93 / Lambert-9
 .. _default-structure:
 
 Default Structure
-~~~~~~~~~~~~~~~~~
+----------------------------
 
 .. code-block:: python
 
@@ -114,9 +119,8 @@ Name for your default structure.
    * *Change in the settings*
    * *Re-run the server.*
 
-
 Dynamic segmentation
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 .. code-block:: python
 
@@ -134,9 +138,8 @@ So if you want to use Geotrek-admin without dynamic segmentation, set TREKKING_T
 
 Do not change it again to true after setting it to false.
 
-
 Translations
-~~~~~~~~~~~~
+-------------
 
 .. code-block:: python
 
@@ -152,9 +155,11 @@ Languages of your project. It will be used to generate fields for translations. 
 
 *You won't be able to change it easily, avoid to add any languages and do not remove any.*
 
+.. note::
+  It is preferable, when in doubt, to include all necessary languages during the initial installation, even if some remain unused afterward, rather than missing some and facing complications to add them later.
 
 Spatial extents
-~~~~~~~~~~~~~~~
+----------------
 
 Boundingbox of your project : x minimum , y minimum , x max, y max::
 
@@ -180,15 +185,17 @@ is available at ``http://<server_url>/tools/extents/``.
 
     Administrator privileges are required.
 
+.. _users-management:
 
 Users management
-----------------
+==================
 
 See :ref:`user management section in usage <user-management-section>`.
 
+.. _database-users:
 
 Database users
---------------
+===============
 
 It is not safe to use the ``geotrek`` user in QGIS, or to give its password to
 many collaborators.
@@ -198,7 +205,6 @@ A wise approach, is to create a *read-only* user, or with specific permissions.
 With *pgAdmin*, you can create database users like this:
 
 ::
-
 
     CREATE ROLE lecteur LOGIN;
     ALTER USER lecteur PASSWORD 'passfacile';
@@ -213,6 +219,6 @@ And give them permissions by schema :
     GRANT SELECT ON ALL TABLES IN SCHEMA public TO lecteur;
     GRANT SELECT ON ALL TABLES IN SCHEMA geotrek TO lecteur;
 
+You can also create groups, etc. See `PostgreSQL documentation <https://www.postgresql.org/docs/>`_.
 
-You can also create groups, etc. See PostgreSQL documentation.
 

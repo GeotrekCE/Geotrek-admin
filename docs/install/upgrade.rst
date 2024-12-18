@@ -6,9 +6,10 @@ Upgrade
    :local:
    :depth: 2
 
+.. _upgrade-geotrek-admin:
 
-From Geotrek-admin >= 2.33
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Upgrade Geotrek-Admin
+======================
 
 Beforehand you shoud update your system's catalog:
 
@@ -16,7 +17,8 @@ Beforehand you shoud update your system's catalog:
 
    sudo apt-get update
 
-If your current version is <= 2.40.1 you should run instead:
+.. warning::
+  If your current version is <= 2.40.1 you should run instead:
 
 ::
 
@@ -46,8 +48,10 @@ Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade wi
 
    sudo apt-mark hold geotrek-admin
 
+.. _server-migration:
+
 Server migration
-~~~~~~~~~~~~~~~~
+=================
 
 It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version.
 
@@ -65,9 +69,10 @@ Restore files on the new server:
     scp old_server_ip:path/to/data.tgz .
     tar xvzf data.tgz
 
+.. _postgresql:
 
 PostgreSQL
-~~~~~~~~~~
+==========
 
 Geotrek-admin support PostgreSQL 12+ and PostGIS 2.5+ for now.
 We recommend to upgrade to PostgreSQL 16 and PostGIS 3.4.
@@ -78,7 +83,6 @@ You can check your PostgreSQL version with the following command:
 
    sudo geotrek check_versions --postgresql
 
-
 If your PostgreSQL version is below 12, you should upgrade your PostgreSQL server.
 If you can not upgrade for the moment, check release notes before each Geotrek-admin upgrade to ensure compatibility.
 You will be able to mark hold your Geotrek-admin Ubuntu package to prevent unwanted upgrade.
@@ -87,14 +91,11 @@ You will be able to mark hold your Geotrek-admin Ubuntu package to prevent unwan
 
    sudo apt-mark hold geotrek-admin
 
-
 In case of unwanted upgrade, you will be able to revert your Geotrek-admin version to last supporting PostgreSQL 10 with, for example:
-
 
 ::
 
    sudo apt-get install geotrek-admin=2.102.1.ubuntu20.04
-
 
 for Ubuntu 20.04, or
 
@@ -102,9 +103,7 @@ for Ubuntu 20.04, or
 
    sudo apt-get install geotrek-admin=2.102.1.ubuntu18.04
 
-
 for Ubuntu bionic
-
 
 Update PostgreSQL / PostGIS on Ubuntu Bionic
 --------------------------------------------
@@ -125,13 +124,11 @@ Update PostgreSQL / PostGIS on Ubuntu Bionic
     sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt-archive.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
     sudo apt update
 
-
 Then, make a database dump. You can see user / database / password in /opt/geotrek-admin/conf/env file.
 
 ::
 
     sudo -u postgres pg_dump -Fc --no-acl --no-owner -d <your geotrek database name> > ./backup.dump
-
 
 Now, install newest version of PostgreSQL and PostGIS:
 
@@ -139,21 +136,16 @@ Now, install newest version of PostgreSQL and PostGIS:
 
     sudo apt install postgresql-14-postgis-3
 
-
-
 .. note::
 
     Installing many PostgreSQL versions on the same system will use another port than default 5432.
     You can check the newest port with ``pg_lsclusters`` command. For next lines, we consider new port is 5433.
 
-
 Recreate user and database:
-
 
 ::
 
     sudo -u postgres psql -p 5433
-
 
 ::
 
@@ -178,7 +170,6 @@ Recreate user and database:
 
 You can now restore your database dump.
 
-
 ::
 
     pg_restore -h 127.0.0.1 -p 5433 -U <your geotrek user> -d <your geotrek database> ./backup.dump
@@ -188,7 +179,6 @@ You can now restore your database dump.
     Note you have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
     Some errors can occurs, around extensions creation or ``spatial_ref_sys`` table content.
     This is normal. We already create these extensions on previous steps.
-
 
 .. warning::
 
@@ -200,18 +190,13 @@ You can now restore your database dump.
 
         sudo systemctl restart postgresql
 
-
-
 Now, you can update your Geotrek-admin configuration to use the new PostgreSQL server, by changing its default port to the new one.
-
 
 ::
 
     sudo dpkg-reconfigure geotrek-admin
 
-
 And change ``POSTGRES_PORT`` to 5433
-
 
 You can now upgrade your Geotrek-admin, and check that the right database is used.
 
@@ -224,9 +209,7 @@ You can now upgrade your Geotrek-admin, and check that the right database is use
 
         sudo geotrek check_versions --postgresql
 
-
 If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
-
 
 ::
 

@@ -1,5 +1,3 @@
-.. _synchronization-section:
-
 ===============
 Synchronization
 ===============
@@ -8,9 +6,10 @@ Synchronization
    :local:
    :depth: 2
 
+.. _geotrek-mobile-app-v3:
 
 Geotrek-mobile app v3
----------------------
+======================
 
 The Geotrek-mobile app v3 has its own API and synchronization command called ``sync_mobile``.
 
@@ -23,8 +22,10 @@ The Geotrek-mobile app v3 has its own API and synchronization command called ``s
                         [--no-color] [--force-color]
                         path
 
+.. _automatic-synchronization:
+
 Automatic synchronization
--------------------------
+==========================
 
 You can set up automatic synchronization by creating a file ``/etc/cron.d/geotrek_sync`` that contains:
 
