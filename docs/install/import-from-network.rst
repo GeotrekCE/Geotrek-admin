@@ -51,7 +51,7 @@ Treks are now imported into your own instance.
 Sensitive Areas Import
 =======================
 
-Geotrek provides tools to import sensitive areas data when the module is enabled. The imports can be done through the web interface or the command line. Below are the available options:
+Geotrek-admin provides tools to import sensitive areas data when the module is enabled. The imports can be done through the web interface or the command line. Below are the available options:
 
 Import from Biodiv'Sports
 ----------------------------
