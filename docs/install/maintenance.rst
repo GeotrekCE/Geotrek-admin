@@ -6,8 +6,10 @@ Maintenance
    :local:
    :depth: 2
 
+.. _application-backup:
+
 Application backup
-------------------
+==================
 
 Database
 
@@ -27,9 +29,10 @@ Configuration
 
     tar -zcvf `date +%Y%m%d%H%M`-conf.tar.gz /opt/geotrek-admin/var/conf/
 
+.. _application-restore:
 
 Application restore
--------------------
+====================
 
 If you restore Geotrek-admin on a new server, you will have to install PostgreSQL and PostGIS and create a database user first.
 Otherwise go directly to the database creation step.
@@ -49,7 +52,6 @@ Create an empty database (``geotrekdb`` in this example):
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
 
-
 Restore backup:
 
 .. code-block:: bash
@@ -67,9 +69,10 @@ Extract media and configuration files:
 
 Follow *Fresh installation* method. Choose to manage database by yourself.
 
+.. _postgresql-optimization:
 
 PostgreSQL optimization
------------------------
+=======================
 
 * Increase ``shared_buffers`` and ``work_mem`` according to your RAM
 
@@ -77,37 +80,21 @@ PostgreSQL optimization
 
 * Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for monitoring
 
+.. _access-your-database-securely-on-your-local-machine-qgis:
 
 Access your database securely on your local machine (QGIS)
-----------------------------------------------------------
+==========================================================
 
 Instead of opening your database to the world (by opening the 5432 port for
 example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
 
+.. _manage-cache:
 
 Manage Cache
-------------
+============
 
 * You can purge application cache with command or in admin interface
 
 .. code-block:: bash
 
     sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori
-
-
-Major evolutions from version 2.33
-----------------------------------
-
-From version 2.33, Geotrek-admin is packaged in a debian package. This mean several things :
-
-- a system user ``geotrek`` is created on install ;
-
-- base code is located in ``/opt/geotrek-admin`` folder ;
-
-- ``geotrek`` is the new command, replacing ``bin/django``, and must be run in root (system user ``geotrek`` is used after) ;
-
-- there is no more ``settings.ini`` but an ``env`` file with environment variables ;
-
-- configuration files (custom.py et env), parsers and all customisation files (templates and translations) are now located in ``/opt/geotrek-admin/var/conf`` ;
-
-- we advise you to configure data synchronization in ``/opt/geotrek-admin/var``

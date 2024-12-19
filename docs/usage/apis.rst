@@ -93,7 +93,7 @@ Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tour
 
 Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
-Pour configurer APIDAE, se référer à cette section :ref:`Configure APIDAE (ex-SITRA) import <configure-apidae-ex-sitra-import>`
+Pour configurer APIDAE, se référer à cette section :ref:`Import from APIDAE <import-from-apidae>`
 
 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~
@@ -118,64 +118,68 @@ The Geotrek API provides a set of parameters that can be used to filter and sort
 
 This section focuses on some common parameters useful to work with sensitivity information and gives details about some endpoints.
 
+.. _commons-parameters:
 
-.. envvar:: Commons parameters
+Commons parameters
+~~~~~~~~~~~~~~~~~~~
 
-
-   If ``language`` parameter is provided, API returns directly translated fields, else, a dictionnary of traductions is returned
+If ``language`` parameter is provided, API returns directly translated fields, else, a dictionnary of traductions is returned
       
-   e.g. ``/api/v2/sensitivearea_practice/1/?``
+e.g. ``/api/v2/sensitivearea_practice/1/?``
 
 
-   .. code-block:: JSON
+.. code-block:: JSON
 
-      {
-         "id":1,
-         "name":{
-         "fr":"Terrestre",
-         "en":"Land",
-         "it":null
-         }
+   {
+      "id":1,
+      "name":{
+      "fr":"Terrestre",
+      "en":"Land",
+      "it":null
       }
+   }
 
 
-   e.g. ``/api/v2/sensitivearea_practice/1/?language=en``
+e.g. ``/api/v2/sensitivearea_practice/1/?language=en``
 
 
-   .. code-block:: JSON
+.. code-block:: JSON
 
-      {
-         "id":1,
-         "name":"Land"
-      }
+   {
+      "id":1,
+      "name":"Land"
+   }
+
+.. _sport-practices:
+
+Sport practices
+~~~~~~~~~~~~~~~~
+
+List of sport practices
+
+``/api/v2/sensitivearea_practice/``
+
+e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/
 
 
-.. envvar:: Sport practices
+Sensitive areas
+~~~~~~~~~~~~~~~~
 
-   List of sport practices
+List of sensitive areas
 
-   ``/api/v2/sensitivearea_practice/``
+``/api/v2/sensitivearea/``
 
-   e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/
+The default output format is ``json``. To obtain output in ``geojson`` format, simply add the ``format=geojson`` parameter.
 
+``/api/v2/sensitivearea/?format=geojson`` 
 
-.. envvar:: Sensitive areas
-
-   List of sensitive areas
-
-   ``/api/v2/sensitivearea/``
-
-   The default output format is ``json``. To obtain output in ``geojson`` format, simply add the ``format=geojson`` parameter.
-
-   ``/api/v2/sensitivearea/?format=geojson`` 
-
-   e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson
+e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson
 
    **Filtering data**
 
    Data can be filtered through these parameters:
 
-   - ``language`` : API language (see :envvar:`Commons parameters`)
+   - ``language`` : API language (see :ref:`Commons parameters <commons-parameters>`)
 
    - Expected values: ``fr``, ``en``, ``es`` or ``it``
    - e.g. ``/api/v2/sensitivearea/?language=fr``
@@ -187,7 +191,7 @@ This section focuses on some common parameters useful to work with sensitivity i
 
    - ``practices`` : Sport practices
 
-   - Expected values: List of practices ids (see :envvar:`Sport practices`)
+   - Expected values: List of practices ids (see :ref:`Sport practices <sport-practices>`)
    - e.g. ``/api/v2/sensitivearea/?practices=1,2``
 
    - ``structure`` : Organization that declared the sensitive area. 

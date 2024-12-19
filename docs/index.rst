@@ -29,12 +29,22 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
     install/installation
     install/upgrade
-    install/loading-data
     install/configuration
     install/advanced-configuration
     install/maintenance
+    install/exploitation-commands
     install/synchronization
-    install/import
+
+.. toctree::
+    :caption: 🗃️ Import data
+    :maxdepth: 2
+
+    install/minimal-initial-data
+    install/load-mnt-raster
+    install/import-paths
+    install/import-other-data-from-file
+    install/import-from-network
+    install/import-from-touristic-data-systems
 
 .. toctree::
     :caption: ✨ Contribute
