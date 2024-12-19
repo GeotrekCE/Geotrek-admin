@@ -3257,7 +3257,7 @@ Settings for Geotrek-mobile
 ---------------------------
 
 SYNC_MOBILE_ROOT
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
   Path on your server where the datas for mobile will be saved.
 
@@ -3270,7 +3270,7 @@ SYNC_MOBILE_ROOT
   - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
 
 SYNC_MOBILE_OPTIONS
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
   Options of the sync_mobile command.
 
@@ -3283,7 +3283,7 @@ SYNC_MOBILE_OPTIONS
         True
 
 MOBILE_NUMBER_PICTURES_SYNC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Number max of pictures that will be displayed and synchronized for each object (trek, POI, etc.) in the mobile app.
 
@@ -3292,7 +3292,7 @@ MOBILE_NUMBER_PICTURES_SYNC
         MOBILE_NUMBER_PICTURES_SYNC = 3
 
 MOBILE_TILES_URL
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
   URL's Tiles used for the mobile.
 
@@ -3305,7 +3305,7 @@ MOBILE_TILES_URL
         MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
 
 MOBILE_LENGTH_INTERVALS
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Intervals of the mobile for the length filter.
 
@@ -3323,7 +3323,7 @@ MOBILE_LENGTH_INTERVALS
   - You can add new intervals
 
 MOBILE_ASCENT_INTERVALS
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~
 
   Intervals of the mobile for the ascent filter.
 
@@ -3340,7 +3340,7 @@ MOBILE_ASCENT_INTERVALS
   Do the same as above
 
 MOBILE_DURATION_INTERVALS
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Intervals of the mobile for the duration filter.
 
@@ -3358,7 +3358,7 @@ MOBILE_DURATION_INTERVALS
   Check ``MOBILE_LENGTH_INTERVALS`` section to use it, here interval correspond to 1 unit of hour
 
 ENABLED_MOBILE_FILTERS
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 
   List of all the filters enabled on mobile.
 
