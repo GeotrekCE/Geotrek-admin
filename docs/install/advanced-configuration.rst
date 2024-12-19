@@ -47,7 +47,8 @@ be sent to the managers:
 API
 ~~~
 
-.. envvar:: API_IS_PUBLIC
+API_IS_PUBLIC
+^^^^^^^^^^^^^^
 
     Set to ``True`` if you want the API V2 to be available for everyone without authentication. 
 
@@ -68,7 +69,8 @@ API
 Swagger API documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: INSTALLED_APPS for API V2
+INSTALLED_APPS for API V2
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
 
@@ -187,7 +189,8 @@ By default, you have two basemaps layers in your Geotrek-admin (OSM and OpenTopo
 
 You can change or add more basemaps layers like this:
 
-.. envvar:: LEAFLET_CONFIG['TILES'] 
+LEAFLET_CONFIG['TILES'] 
+^^^^^^^^^^^^^^^^^^^^^^^
 
   Specify the tiles URLs this way in your custom Django setting file:
 
@@ -272,7 +275,8 @@ You can change or add more basemaps layers like this:
 Map layers zoom
 ~~~~~~~~~~~~~~~
 
-.. envvar:: LEAFLET_CONFIG
+LEAFLET_CONFIG
+^^^^^^^^^^^^^^^
 
     You can define the max_zoom the user can zoom for all tiles.
 
@@ -288,7 +292,8 @@ Map layers zoom
 Map layers colors and style
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for layers color and style
+MAPENTITY_CONFIG for layers color and style
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     All layers colors can be customized from the settings. See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial layer style.
 
@@ -304,7 +309,8 @@ Map layers colors and style
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
 
-.. envvar:: COLORS_POOL
+COLORS_POOL
+^^^^^^^^^^^^
 
     Regarding colors that depend from database content, such as land layers (physical types, work management...) or restricted areas. We use a specific setting that receives a list of colors:
 
@@ -365,7 +371,8 @@ External raster layers
     - Home made layers (*with Tilemill or QGisMapserver for example*).
     - Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths that are marked as invisible in the database!
 
-.. envvar:: LEAFLET_CONFIG['OVERLAYS']
+LEAFLET_CONFIG['OVERLAYS']
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     In ``custom.py``, just add the following lines:
 
@@ -392,7 +399,8 @@ For ``GeoJSON`` files, you can provide the following properties :
 Geographical CRUD
 ~~~~~~~~~~~~~~~~~
 
-.. envvar:: PATH_SNAPPING_DISTANCE
+PATH_SNAPPING_DISTANCE
+^^^^^^^^^^^^^^^^^^^^^^^
 
     Minimum distance to merge two paths in unit of SRID
 
@@ -404,7 +412,8 @@ Geographical CRUD
   - Change the distance. Better to keep it like this. 
   - Not used when ``TREKKING_TOPOLOGY_ENABLED = True``
 
-.. envvar:: SNAP_DISTANCE
+SNAP_DISTANCE
+^^^^^^^^^^^^^^
 
     Distance of snapping for the cursor in pixels on Leaflet map.
 
@@ -412,7 +421,8 @@ Geographical CRUD
 
         SNAP_DISTANCE = 30
 
-.. envvar:: PATH_MERGE_SNAPPING_DISTANCE
+PATH_MERGE_SNAPPING_DISTANCE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Minimum distance to merge two paths.
 
@@ -424,7 +434,8 @@ Geographical CRUD
   - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
   - Used when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
-.. envvar:: TREK_POINTS_OF_REFERENCE_ENABLED
+TREK_POINTS_OF_REFERENCE_ENABLED
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Points of reference are enabled on form of treks.
 
@@ -436,7 +447,8 @@ Geographical CRUD
 
         False
 
-.. envvar:: OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
+OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Points of reference are enabled on form of otudoor courses.
 
@@ -448,7 +460,8 @@ Geographical CRUD
     
         False
 
-.. envvar:: TOPOLOGY_STATIC_OFFSETS
+TOPOLOGY_STATIC_OFFSETS
+^^^^^^^^^^^^^^^^^^^^^^^^
 
     Land objects are added on other objects (path for example) with offset, avoiding overlay.
 
@@ -488,7 +501,8 @@ Geographical CRUD
 Disable darker map backgrounds
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for map background
+MAPENTITY_CONFIG for map background
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
 
@@ -511,7 +525,8 @@ Map screenshots
     SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
     SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
-.. envvar:: MAP_CAPTURE_SIZE
+MAP_CAPTURE_SIZE
+^^^^^^^^^^^^^^^^^
 
     Show objects on maps of PDF
 
@@ -542,7 +557,8 @@ In order to disable a full set of modules, in the custom settings file, add the 
     INSTALLED_APPS = _INSTALLED_APPS
 
 
-.. envvar:: TRAIL_MODEL_ENABLED
+TRAIL_MODEL_ENABLED
+^^^^^^^^^^^^^^^^^^^^
 
     In order to remove notion of trails.
 
@@ -555,7 +571,8 @@ In order to disable a full set of modules, in the custom settings file, add the 
         True
 
 
-.. envvar:: LANDEDGE_MODEL_ENABLED
+LANDEDGE_MODEL_ENABLED
+^^^^^^^^^^^^^^^^^^^^^^^
 
     In order to remove landedge model.
 
@@ -577,7 +594,8 @@ In order to remove zoning combo-boxes on list map:
     LAND_BBOX_AREAS_ENABLED = False
 
 
-.. envvar:: TOURISM_ENABLED
+TOURISM_ENABLED
+^^^^^^^^^^^^^^^^
 
     In order to hide TouristicContents and TouristicEvents on menu.
 
@@ -589,7 +607,8 @@ In order to remove zoning combo-boxes on list map:
 
         True
 
-.. envvar:: FLATPAGES_ENABLED
+FLATPAGES_ENABLED
+^^^^^^^^^^^^^^^^^^
 
     In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
 
@@ -601,7 +620,8 @@ In order to remove zoning combo-boxes on list map:
 
         True
 
-.. envvar:: ACCESSIBILITY_ATTACHMENTS_ENABLED
+ACCESSIBILITY_ATTACHMENTS_ENABLED
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     In order to hide the accessibility menu for attachments.
 
@@ -621,7 +641,8 @@ In order to remove zoning combo-boxes on list map:
 Paths
 ~~~~~
 
-.. envvar:: ALLOW_PATH_DELETION_TOPOLOGY
+ALLOW_PATH_DELETION_TOPOLOGY
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     If ``False``, it forbids to delete a path when at least one topology is linked to this path.
 
@@ -634,7 +655,8 @@ Paths
         False
 
 
-.. envvar:: ALERT_DRAFT
+ALERT_DRAFT
+^^^^^^^^^^^^
 
     If ``True``, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
 
@@ -647,7 +669,8 @@ Paths
 
         True
 
-.. envvar:: ALERT_REVIEW
+ALERT_REVIEW
+^^^^^^^^^^^^^
 
     If ``True``, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
 
@@ -671,7 +694,8 @@ Signage and Blade
 
 ``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
 
-.. envvar:: BLADE_CODE_TYPE
+BLADE_CODE_TYPE
+^^^^^^^^^^^^^^^^
 
     Type of the blade code (string or integer)
 
@@ -685,7 +709,8 @@ Signage and Blade
   - If you have an integer code : ``int``
   - If you have an string code : ``str``
 
-.. envvar:: BLADE_CODE_FORMAT
+BLADE_CODE_FORMAT
+^^^^^^^^^^^^^^^^^^
 
     Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
 
@@ -702,7 +727,8 @@ Signage and Blade
   - ``signagecode`` is the code of the signage
   - ``bladenumber`` is the number of the blade
 
-.. envvar:: LINE_CODE_FORMAT
+LINE_CODE_FORMAT
+^^^^^^^^^^^^^^^^^
 
     Corresponds to the format used in export of lines. Used in csv of signage
 
@@ -724,7 +750,8 @@ Signage and Blade
 POI
 ~~~~
 
-.. envvar:: TREK_POI_INTERSECTION_MARGIN
+TREK_POI_INTERSECTION_MARGIN
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Buffer around treks to intersects POIs (works only without dynamic segmentation)
 
@@ -739,7 +766,8 @@ POI
 Diving
 ~~~~~~
 
-.. envvar:: INSTALLED_APPS for Diving
+INSTALLED_APPS for Diving
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     In order to enable diving module, in the custom settings file, add the following code:
 
@@ -778,7 +806,8 @@ You can insert circulation and authorization types with this command :
 Outdoor
 ~~~~~~~
 
-.. envvar:: INSTALLED_APPS for Outdoor
+INSTALLED_APPS for Outdoor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     In order to enable Outdoor module, in the custom settings file, add the following code:
 
@@ -812,7 +841,8 @@ Sensitive areas
     The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
 
 
-.. envvar:: INSTALLED_APPS for Sensitive areas
+INSTALLED_APPS for Sensitive areas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     In order to enable sensitivity module, in the custom settings file, add the following code:
 
@@ -831,7 +861,8 @@ Sensitive areas
 
 The following settings are related to sensitive areas:
 
-.. envvar:: SENSITIVITY_DEFAULT_RADIUS
+SENSITIVITY_DEFAULT_RADIUS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Default radius of sensitivity bubbles when not specified for species
 
@@ -844,7 +875,8 @@ The following settings are related to sensitive areas:
         100
 
 
-.. envvar:: SENSITIVE_AREA_INTERSECTION_MARGIN
+SENSITIVE_AREA_INTERSECTION_MARGIN
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Buffer around treks to intersects sensitive areas
 
@@ -869,7 +901,8 @@ Feedback reports settings
 Send acknowledge email
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: SEND_REPORT_ACK
+SEND_REPORT_ACK
+^^^^^^^^^^^^^^^^
 
     If ``False``, no email will be sent to the sender of any feedback on Geotrek-rando website.
 
@@ -1084,7 +1117,8 @@ Make sure to run these three commands daily to maintain synchronization and upda
 Display reports with status defined colors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: ENABLE_REPORT_COLORS_PER_STATUS
+ENABLE_REPORT_COLORS_PER_STATUS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
@@ -1145,7 +1179,8 @@ Attachments
 View attachments in the browser
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for medias
+MAPENTITY_CONFIG for medias
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Attached files are downloaded by default by browser, with the following line, files will be opened in the browser :
 
@@ -1160,7 +1195,8 @@ View attachments in the browser
 Resizing uploaded pictures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD
+PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Attached pictures can be resized at upload by enabling this parameter :
 
@@ -1184,7 +1220,8 @@ These corresponding height/width parameters can be overriden to select resized i
 Prohibit usage of big pictures and small width / height
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PAPERCLIP_MAX_BYTES_SIZE_IMAGE
+PAPERCLIP_MAX_BYTES_SIZE_IMAGE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     If you want to prohibit the usage of heavy pictures:
 
@@ -1238,7 +1275,8 @@ Here is the default value for this setting, which you can extend if needed:
 
 It will verify that the mimetype of the file matches the extension. 
 
-.. envvar:: PAPERCLIP_EXTRA_ALLOWED_MIMETYPES
+PAPERCLIP_EXTRA_ALLOWED_MIMETYPES
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     You can add extra allowed mimetypes for a given extension with the following syntax:
 
@@ -1246,7 +1284,8 @@ It will verify that the mimetype of the file matches the extension.
 
         PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
 
-.. envvar:: PAPERCLIP_ALLOWED_EXTENSIONS
+PAPERCLIP_ALLOWED_EXTENSIONS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     You can also entirely deactivate these checks with the following:
 
@@ -1279,7 +1318,8 @@ For each module, use the following syntax to configure columns to export as CSV 
 
 Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
 
-.. envvar:: ENABLE_JOBS_COSTS_DETAILED_EXPORT
+ENABLE_JOBS_COSTS_DETAILED_EXPORT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Enable a more detailed export
 
@@ -2372,7 +2412,8 @@ A (nearly?) exhaustive list of attributes available for display and export as co
 Configure form fields in creation views
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: HIDDEN_FORM_FIELDS
+HIDDEN_FORM_FIELDS
+^^^^^^^^^^^^^^^^^^^
 
     For each module, use the following syntax to configure fields to hide in the creation form.
 
@@ -2691,7 +2732,8 @@ Configure form fields required or needed for review or publication
 Set ``error_on_publication`` to avoid publication without completeness fields
 and ``error_on_review`` if you want this fields to be required before sending to review.
 
-.. envvar:: COMPLETENESS_LEVEL
+COMPLETENESS_LEVEL
+^^^^^^^^^^^^^^^^^^^
 
     Configure completeness level
 
@@ -2699,7 +2741,8 @@ and ``error_on_review`` if you want this fields to be required before sending to
 
         COMPLETENESS_LEVEL = 'warning'
 
-.. envvar:: COMPLETENESS_FIELDS
+COMPLETENESS_FIELDS
+^^^^^^^^^^^^^^^^^^^^
 
     For each module, configure fields to be needed or required on review or publication
 
@@ -2720,7 +2763,8 @@ Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
 Its configuration can be customized using advanced settings (see above paragraph).
 
-.. envvar:: TINYMCE_DEFAULT_CONFIG
+TINYMCE_DEFAULT_CONFIG
+^^^^^^^^^^^^^^^^^^^^^^^
 
     For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
 
@@ -2739,7 +2783,8 @@ Its configuration can be customized using advanced settings (see above paragraph
 Max characters count
 ~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for characters
+MAPENTITY_CONFIG for characters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
 
@@ -2759,7 +2804,8 @@ Copyright on pictures
 ~~~~~~~~~~~~~~~~~~~~~
 
 
-.. envvar:: THUMBNAIL_COPYRIGHT_FORMAT
+THUMBNAIL_COPYRIGHT_FORMAT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     If you want copyright added to your pictures, change this parameter like so :
 
@@ -2774,7 +2820,8 @@ Copyright on pictures
 
 You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
 
-.. envvar:: THUMBNAIL_COPYRIGHT_SIZE
+THUMBNAIL_COPYRIGHT_SIZE
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Change the size of thumbnail
 
@@ -2794,7 +2841,8 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 .. image:: /images/facebookappid.png
 
 
-.. envvar:: FACEBOOK_APP_ID
+FACEBOOK_APP_ID
+^^^^^^^^^^^^^^^^^
 
     In ``custom.py`` set Facebook App ID:
 
@@ -2944,7 +2992,8 @@ Test your modifications by exporting a trek or a content to PDF from Geotrek-adm
 PDF as booklet
 ~~~~~~~~~~~~~~
 
-.. envvar:: USE_BOOKLET_PDF
+USE_BOOKLET_PDF
+^^^^^^^^^^^^^^^^
 
     Use booklet for PDF
 
@@ -2986,7 +3035,8 @@ For more information, check out Ubuntu documentation.
 Custom colors in public document template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: MAPENTITY_CONFIG for custom colors in PDF
+MAPENTITY_CONFIG for custom colors in PDF
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
 
@@ -3000,7 +3050,8 @@ See *Leaflet* reference documentation for detail about layers apparence.
 Primary color in PDF templates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. envvar:: PRIMARY_COLOR
+PRIMARY_COLOR
+^^^^^^^^^^^^^^
 
     You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 
@@ -3030,7 +3081,8 @@ Settings for Geotrek-rando
 Distances
 ~~~~~~~~~
 
-.. envvar:: TOURISM_INTERSECTION_MARGIN
+TOURISM_INTERSECTION_MARGIN
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Distance to which tourist contents, tourist events, treks, pois, services will be displayed
 
@@ -3045,7 +3097,8 @@ Distances
 .. note:: 
   This distance can be changed by practice for treks in the admin.
 
-.. envvar:: DIVING_INTERSECTION_MARGIN
+DIVING_INTERSECTION_MARGIN
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Distance to which dives will be displayed.
 
@@ -3061,7 +3114,8 @@ Distances
 Limits
 ~~~~~~
 
-.. envvar:: TREK_EXPORT_POI_LIST_LIMIT
+TREK_EXPORT_POI_LIST_LIMIT
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Limit of the number of POIs on treks pdf.
 
@@ -3072,7 +3126,8 @@ Limits
 .. note:: 
   ``14`` is already a huge amount of POI, but it's possible to add more
 
-.. envvar:: TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT
+TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    Limit of the number of information desks on treks pdf.
 
@@ -3086,7 +3141,8 @@ Limits
 Categories
 ~~~~~~~~~~~
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_PRACTICE
+SPLIT_TREKS_CATEGORIES_BY_PRACTICE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    On the Geotrek-rando V2 website, treks practices will be displayed separately
 
@@ -3101,7 +3157,8 @@ Categories
 .. note:: 
   Field order for each practices in admin will be taken in account
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY
+SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   On the Geotrek-rando V2 website, accessibilites will be displayed separately
 
@@ -3113,7 +3170,8 @@ Categories
 
         True
 
-.. envvar:: SPLIT_TREKS_CATEGORIES_BY_ITINERANCY
+SPLIT_TREKS_CATEGORIES_BY_ITINERANCY
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   On the Geotrek-rando V2 website, if a trek has a children it will be displayed separately
 
@@ -3125,7 +3183,8 @@ Categories
 
         True
 
-.. envvar:: SPLIT_DIVES_CATEGORIES_BY_PRACTICE
+SPLIT_DIVES_CATEGORIES_BY_PRACTICE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   On the Geotrek-rando V2 website, dives practices will be displayed separately
 
@@ -3138,7 +3197,8 @@ Categories
 
         False
 
-.. envvar:: HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
+HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   On the Geotrek-rando V2 website, treks near other are hidden
 
@@ -3151,7 +3211,8 @@ Categories
 
         True
 
-.. envvar:: TREK_WITH_POIS_PICTURES
+TREK_WITH_POIS_PICTURES
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   It enables correlated pictures on Geotrek-rando V2 to be displayed in the slideshow
 
@@ -3164,7 +3225,8 @@ Categories
 
         True
 
-.. envvar:: ONLY_EXTERNAL_PUBLIC_PDF
+ONLY_EXTERNAL_PUBLIC_PDF
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   On Geotrek-rando V2 website, only PDF imported with filetype "Topoguide"will be used and not autogenerated.
 
@@ -3194,7 +3256,8 @@ Categories
 Settings for Geotrek-mobile
 ---------------------------
 
-.. envvar:: SYNC_MOBILE_ROOT
+SYNC_MOBILE_ROOT
+^^^^^^^^^^^^^^^^^
 
   Path on your server where the datas for mobile will be saved.
 
@@ -3206,7 +3269,8 @@ Settings for Geotrek-mobile
   - If you want to modify it, do not forget to import os at the top of the file.
   - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
 
-.. envvar:: SYNC_MOBILE_OPTIONS
+SYNC_MOBILE_OPTIONS
+^^^^^^^^^^^^^^^^^^^^
 
   Options of the sync_mobile command.
 
@@ -3218,7 +3282,8 @@ Settings for Geotrek-mobile
 
         True
 
-.. envvar:: MOBILE_NUMBER_PICTURES_SYNC
+MOBILE_NUMBER_PICTURES_SYNC
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Number max of pictures that will be displayed and synchronized for each object (trek, POI, etc.) in the mobile app.
 
@@ -3226,7 +3291,8 @@ Settings for Geotrek-mobile
 
         MOBILE_NUMBER_PICTURES_SYNC = 3
 
-.. envvar:: MOBILE_TILES_URL
+MOBILE_TILES_URL
+^^^^^^^^^^^^^^^^^
 
   URL's Tiles used for the mobile.
 
@@ -3238,7 +3304,8 @@ Settings for Geotrek-mobile
 
         MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
 
-.. envvar:: MOBILE_LENGTH_INTERVALS
+MOBILE_LENGTH_INTERVALS
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   Intervals of the mobile for the length filter.
 
@@ -3255,7 +3322,8 @@ Settings for Geotrek-mobile
   - Interval key is in meters.
   - You can add new intervals
 
-.. envvar:: MOBILE_ASCENT_INTERVALS
+MOBILE_ASCENT_INTERVALS
+^^^^^^^^^^^^^^^^^^^^^^^^
 
   Intervals of the mobile for the ascent filter.
 
@@ -3271,7 +3339,8 @@ Settings for Geotrek-mobile
 .. note:: 
   Do the same as above
 
-.. envvar:: MOBILE_DURATION_INTERVALS
+MOBILE_DURATION_INTERVALS
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
   Intervals of the mobile for the duration filter.
 
@@ -3288,7 +3357,8 @@ Settings for Geotrek-mobile
 .. note:: 
   Check ``MOBILE_LENGTH_INTERVALS`` section to use it, here interval correspond to 1 unit of hour
 
-.. envvar:: ENABLED_MOBILE_FILTERS
+ENABLED_MOBILE_FILTERS
+^^^^^^^^^^^^^^^^^^^^^^^
 
   List of all the filters enabled on mobile.
 
