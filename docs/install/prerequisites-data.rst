@@ -12,7 +12,7 @@ Basemap layers
 * WMTS protocol
 * WebMercator Projection
 
-Core
+Core paths
 ====
 
 * Only LineString geometries
