@@ -9,7 +9,7 @@ Prerequisites for your data
 Basemap layers
 ======
 
-* WMTS protocol
+* WMTS protocol (OSM, IGN...)
 * WebMercator Projection
 
 Core paths
