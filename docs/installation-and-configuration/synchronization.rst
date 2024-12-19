@@ -1,5 +1,3 @@
-.. _synchronization-section:
-
 ===============
 Synchronization
 ===============
@@ -8,9 +6,10 @@ Synchronization
    :local:
    :depth: 2
 
+.. _geotrek-mobile-app-v3:
 
 Geotrek-mobile app v3
----------------------
+======================
 
 The Geotrek-mobile app v3 has its own API and synchronization command called ``sync_mobile``.
 
@@ -23,8 +22,10 @@ The Geotrek-mobile app v3 has its own API and synchronization command called ``s
                         [--no-color] [--force-color]
                         path
 
+.. _automatic-synchronization:
+
 Automatic synchronization
--------------------------
+==========================
 
 You can set up automatic synchronization by creating a file ``/etc/cron.d/geotrek_sync`` that contains:
 
@@ -35,16 +36,3 @@ You can set up automatic synchronization by creating a file ``/etc/cron.d/geotre
 This example will automatically synchronize data a 3 am every day.
 
 Note: it is required to give the full path to the geotrek command since cron set the PATH only to `bin:/usr/bin`.
-
-
-Synchronization with a distant Geotrek-rando server
----------------------------------------------------
-
-If your server hosts both Geotrek-admin and Geotrek-rando, you just have to configure Geotrek-rando so
-it uses the directory chosen above. Be sure NGINX or Apache will have access rights to read these data.
-
-If you have separated servers, you have to copy files, for example with ``rsync`` command:
-
-::
-
-    rsync /path/of/generated/data other-server:/path/of/generated/data
