@@ -6,7 +6,7 @@ Prerequisites for your data
    :local:
    :depth: 2
 
-Layers
+Basemap layers
 ======
 
 * WMTS protocol
