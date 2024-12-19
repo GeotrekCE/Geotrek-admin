@@ -93,7 +93,7 @@ as usual (*standalone*), and plug the other instances on its underlying services
 
 
 Capture and conversion
-''''''''''''''''''''''
+^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to use external services, in ``.env``, add following variables:
 
@@ -108,7 +108,7 @@ Then, you can delete all screamshotter and convertit references in ``docker-comp
 
 
 Shutdown useless services
-'''''''''''''''''''''''''
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now that your instances point the shared server. You can shutdown the useless
 services on each instance.
@@ -1332,7 +1332,7 @@ ENABLE_JOBS_COSTS_DETAILED_EXPORT
        False
 
 Custom columns available
-''''''''''''''''''''''''
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
 
@@ -2423,7 +2423,7 @@ HIDDEN_FORM_FIELDS
 
 
 Hideable form fields
-''''''''''''''''''''
+^^^^^^^^^^^^^^^^^^^^
 
 An exhaustive list of form fields hideable in each module.
 

@@ -1,3 +1,5 @@
+.. _installation:
+
 ============
 Installation
 ============
@@ -189,3 +191,7 @@ To load minimal data and create an application superuser, run:
 
    docker compose run --rm web load_data.sh
    docker compose run --rm web ./manage.py createsuperuser
+
+.. IMPORTANT::
+   Once your Geotrek is installed, you need to import :ref:`initial data <prerequisites-for-your-data>`.
+

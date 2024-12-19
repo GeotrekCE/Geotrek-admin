@@ -1,3 +1,5 @@
+.. _prerequisites-for-your-data:
+
 ===========================
 Prerequisites for your data
 ===========================
@@ -5,6 +7,9 @@ Prerequisites for your data
 .. contents::
    :local:
    :depth: 2
+
+.. IMPORTANT::
+   These data are the minimal initial data required to have a functional Geotrek after completing the :ref:`installation <installation>`.
 
 Basemap layers
 ======
