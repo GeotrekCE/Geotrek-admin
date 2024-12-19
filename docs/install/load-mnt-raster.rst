@@ -1,5 +1,5 @@
 ================
-Load MNT raster
+Load DEM raster
 ================
 
 .. contents::
