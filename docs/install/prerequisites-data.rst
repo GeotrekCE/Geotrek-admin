@@ -9,7 +9,7 @@ Prerequisites for your data
    :depth: 2
 
 .. IMPORTANT::
-   These data are the minimal initial data required to have a functional Geotrek after completing the :ref:`installation <installation>`.
+   These data are the minimal initial data required to have a functional Geotrek-admin after completing the :ref:`installation <installation>`.
 
 Basemap layers
 ===============
