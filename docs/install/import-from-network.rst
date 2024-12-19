@@ -11,7 +11,7 @@ Import from network
 Import data from a remote Geotrek instance
 ===========================================
 
-Importing from a Geotrek instance works the same way as from SIT.
+Importing from a Geotrek-admin instance works the same way as from SIT.
 A usecase for this is to aggregate data from several Geotrek-admin instance.
 
 .. danger::
