@@ -11,7 +11,7 @@ Import from touristic data systems
 Real-time integration
 ======================
 
-Geotrek integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
+Geotrek-admin integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
 
 These imported data elements are automatically linked to nearby treks, regardless of activity type (hiking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.). This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
