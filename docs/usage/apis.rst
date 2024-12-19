@@ -161,7 +161,6 @@ List of sport practices
 
 e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/
 
-.. _sensitive-areas:
 
 Sensitive areas
 ~~~~~~~~~~~~~~~~

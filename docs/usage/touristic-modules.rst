@@ -457,7 +457,7 @@ Si une randonnée ou un site outdoor intersecte une ou plusieurs zones zones de 
 
 Il est également possible d’importer directement les zonages depuis un format Shapefile (SHP).
 
-Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitive-areas>`
+Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitivity>`
 
 .. _pleinenature:
 
