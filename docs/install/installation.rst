@@ -38,7 +38,7 @@ Software requirements are :
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
 Information to prepare before installation
-==========================================
+===========================================
 
 These information will be asked during the installation process and are the basic configuration of Geotrek-admin:
 
@@ -131,7 +131,7 @@ Make sure to change alert recepient (``admin@example.com`` above) and make this 
 If a suspicious file is put in quarantine, you will need to manually delete the corresponding attachment from Geotrek-Admin (since the file for this attachment has moved to the quarantine folder, it will no longer be found).
 
 Uninstallation
-==============
+===============
 
 Run:
 
@@ -193,5 +193,5 @@ To load minimal data and create an application superuser, run:
    docker compose run --rm web ./manage.py createsuperuser
 
 .. IMPORTANT::
-   Once your Geotrek is installed, you need to import :ref:`initial data <prerequisites-for-your-data>`.
+   Once your Geotrek is installed, you need to import :ref:`initial data <minimal-initial-data>`.
 

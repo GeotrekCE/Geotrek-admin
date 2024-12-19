@@ -39,7 +39,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
     :caption: 🗃️ Import data
     :maxdepth: 2
 
-    install/prerequisites-data
+    install/minimal-initial-data
     install/load-mnt-raster
     install/import-paths
     install/import-other-data-from-file

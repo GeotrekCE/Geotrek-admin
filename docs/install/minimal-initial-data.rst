@@ -1,8 +1,8 @@
-.. _prerequisites-for-your-data:
+.. _minimal-initial-data:
 
-===========================
-Prerequisites for your data
-===========================
+======================
+Minimal initial data
+======================
 
 .. contents::
    :local:
