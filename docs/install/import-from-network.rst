@@ -8,7 +8,7 @@ Import from network
 
 .. _import-data-from-a-remote-geotrek-instance:
 
-Import data from a remote Geotrek instance
+Import data from a remote Geotrek-admin instance
 ===========================================
 
 Importing from a Geotrek-admin instance works the same way as from SIT.
