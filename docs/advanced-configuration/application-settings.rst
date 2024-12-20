@@ -58,10 +58,7 @@ API_IS_PUBLIC
 
 
 Swagger API documentation
----------------------------
-
-INSTALLED_APPS for API V2
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
 
