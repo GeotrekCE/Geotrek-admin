@@ -1,17 +1,35 @@
 Geotrek-admin's documentation
 =============================
 
-Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and Geotrek-widget.
+**Geotrek-admin** is a web application designed to manage, centralize, and structure geographical and touristic information for your territory. It is the back-office application of the Geotrek ecosystem.
+
+.. image:: http://geotrek.fr/assets/img/screen-1.png
+   :align: center
+   :alt: Interface de Geotrek-admin
+
+With **Geotrek-admin**, you can:
+
+- Manage treks, touristic information, and related content (media, descriptions, etc.).
+- Organize your data with maps, layers, and metadata.
+- Export content to various public interfaces, such as Geotrek-rando or printed topoguides.
+
+You can explore **Geotrek-admin** in action through the demonstration website:
+
+- `https://demo-admin.geotrek.fr/ <https://demo-admin.geotrek.fr/>`_ (demo / demo)
+
+**Geotrek-admin** is built on Django and leverages a PostGIS database for handling geographical data. It serves as the data source for Geotrek-rando, Geotrek-widget, and other tools of the Geotrek ecosystem.
+
+Learn more about Geotrek-admin in the `general documentation (French) <https://geotrek.readthedocs.io/fr/latest/about/geotrek.html>`_.
 
 .. toctree::
     :caption: 💡 About
-    :maxdepth: 2
+    :hidden:
 
     about/geotrek.rst
 
 .. toctree::
     :caption: 🚀 User manual
-    :maxdepth: 2
+    :hidden:
 
     user-manual/overview.rst
     user-manual/interfaces.rst
@@ -25,7 +43,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
 .. toctree::
     :caption: 🔧 Installation & configuration
-    :maxdepth: 2
+    :hidden:
 
     installation-and-configuration/installation
     installation-and-configuration/upgrade
@@ -36,7 +54,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
 .. toctree::
     :caption: ⚙️ Advanced configuration
-    :maxdepth: 2
+    :hidden:
 
     advanced-configuration/application-settings
     advanced-configuration/map-settings
@@ -50,7 +68,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
 .. toctree::
     :caption: 🗃️ Import data
-    :maxdepth: 2
+    :hidden:
 
     import-data/minimal-initial-data
     import-data/load-mnt-raster
@@ -61,7 +79,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
 .. toctree::
     :caption: ✨ Contribute
-    :maxdepth: 2
+    :hidden:
 
     contribute/contributing
     contribute/development
@@ -71,7 +89,7 @@ Geotrek-admin is backend management data for Geotrek-rando, Geotrek-mobile and G
 
 .. toctree::
     :caption: 📝 Others
-    :maxdepth: 1
+    :hidden:
 
     others/troubleshooting
     others/authors
