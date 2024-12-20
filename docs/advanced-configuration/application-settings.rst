@@ -41,7 +41,7 @@ API
 API_IS_PUBLIC
 ~~~~~~~~~~~~~~
 
-    Set to ``True`` if you want the API V2 to be available for everyone without authentication. 
+    Set to ``True`` if you want the API V2 to be available for everyone without authentication (mandatory to use Geotrek-Rando). Set to ``False`` if you don't want to share through API informations marked as 'published'. 
 
     Example::
 
