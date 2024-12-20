@@ -2,10 +2,6 @@
 Import paths
 =============
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. danger::
     With dynamic segmentation, importing paths is very risky if paths are already present in the same area in Geotrek,
     it is only safe for an area where no path is already created.

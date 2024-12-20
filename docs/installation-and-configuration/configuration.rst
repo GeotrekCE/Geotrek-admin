@@ -2,10 +2,6 @@
 Configuration
 =============
 
-.. contents::
-   :local:
-   :depth: 2
-   
 .. _basic-configuration-update:
 
 Basic configuration update

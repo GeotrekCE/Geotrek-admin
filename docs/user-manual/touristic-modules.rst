@@ -2,10 +2,6 @@
 Modules de valorisation
 =======================
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _itineraires:
 
 Itinéraires

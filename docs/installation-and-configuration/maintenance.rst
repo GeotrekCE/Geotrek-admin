@@ -2,10 +2,6 @@
 Maintenance
 ===========
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _application-backup:
 
 Application backup

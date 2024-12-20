@@ -4,10 +4,6 @@
 Map settings
 ===============
 
-.. contents::
-   :local:
-   :depth: 2
-
 Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
 ---------------------------------------------------
 

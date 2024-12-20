@@ -4,11 +4,6 @@
 Edition
 ==========
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 WYSIWYG editor configuration
 -----------------------------
 

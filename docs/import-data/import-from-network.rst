@@ -2,10 +2,6 @@
 Import from network
 ====================
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _import-data-from-a-remote-geotrek-instance:
 
 Import data from a remote Geotrek-admin instance

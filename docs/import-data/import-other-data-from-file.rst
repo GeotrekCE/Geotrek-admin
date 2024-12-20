@@ -2,11 +2,6 @@
 Import other data from a file
 ==============================
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to
 import data from files directly in your admin (superusers only).
 For example, some parsers are not available by default but you can use them adding some lines in your parsers file :

@@ -4,10 +4,6 @@
 Settings for Geotrek-mobile
 ============================
 
-.. contents::
-   :local:
-   :depth: 2
-
 SYNC_MOBILE_ROOT
 -----------------
 

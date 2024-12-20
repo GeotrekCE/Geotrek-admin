@@ -4,10 +4,6 @@
 Minimal initial data
 ======================
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. IMPORTANT::
    These data are the minimal initial data required to have a functional Geotrek-admin after completing the :ref:`installation <installation>`.
 

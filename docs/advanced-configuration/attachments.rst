@@ -4,11 +4,6 @@
 Attachments
 ==============
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 View attachments in the browser
 ---------------------------------
 

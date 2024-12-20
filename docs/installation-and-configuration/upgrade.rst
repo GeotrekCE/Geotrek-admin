@@ -2,10 +2,6 @@
 Upgrade
 =======
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _upgrade-geotrek-admin:
 
 Upgrade Geotrek-Admin

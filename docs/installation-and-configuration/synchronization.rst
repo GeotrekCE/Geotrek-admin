@@ -2,10 +2,6 @@
 Synchronization
 ===============
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _geotrek-mobile-app-v3:
 
 Geotrek-mobile app v3

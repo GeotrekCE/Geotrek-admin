@@ -2,10 +2,6 @@
 Présentation générale
 =====================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Architecture
 ============
 

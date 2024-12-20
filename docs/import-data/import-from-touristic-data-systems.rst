@@ -4,10 +4,6 @@
 Import from touristic data systems 
 ===================================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Real-time integration
 ======================
 

@@ -4,11 +4,6 @@
 Application settings
 ======================
 
-.. contents::
-   :local:
-   :depth: 2
-
-
 Spatial extents
 ----------------
 

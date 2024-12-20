@@ -4,10 +4,6 @@
 Modules and components
 =======================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Enable Apps
 ------------
 

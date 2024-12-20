@@ -4,10 +4,6 @@
 Settings for Geotrek-rando
 ===========================
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. _distances:
 
 Distances

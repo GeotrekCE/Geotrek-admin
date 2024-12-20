@@ -4,10 +4,6 @@
 Interface
 ============
 
-.. contents::
-   :local:
-   :depth: 2
-
 Configure columns displayed in lists views and exports
 --------------------------------------------------------
 

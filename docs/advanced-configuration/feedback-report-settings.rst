@@ -4,10 +4,6 @@
 Feedback reports settings
 ==========================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Send acknowledge email
 ------------------------
 

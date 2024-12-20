@@ -2,10 +2,6 @@
 APIs
 ====
 
-.. contents::
-   :local:
-   :depth: 2
-
 .. image:: ../images/user-manual/api-ecosystem.png
 
 API Geotrek

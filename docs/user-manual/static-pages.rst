@@ -2,10 +2,6 @@
 Pages statiques & menus
 =======================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
 
 .. figure:: ../images/user-manual/flatpages-gtecrins.jpg
