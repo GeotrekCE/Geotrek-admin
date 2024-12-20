@@ -49,7 +49,7 @@ API_IS_PUBLIC
 
     Default::
 
-        False
+        True
 
 .. note::
   - This API provides access to promotion content (Treks, POIs, Touristic Contents ...). 
