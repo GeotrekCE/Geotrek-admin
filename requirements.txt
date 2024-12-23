@@ -48,7 +48,7 @@ certifi==2024.12.14
     #   fiona
     #   requests
     #   sentry-sdk
-cffi==1.16.0
+cffi==1.17.1
     # via
     #   cairocffi
     #   persistent
