@@ -354,7 +354,7 @@ tinycss2==1.4.0
     #   cssselect2
     #   svglib
     #   weasyprint
-transaction==3.1.0
+transaction==5.0
     # via zodb
 typing-extensions==4.12.2
     # via
