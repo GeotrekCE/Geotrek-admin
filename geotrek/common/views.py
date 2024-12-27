@@ -43,7 +43,7 @@ from large_image import config
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
-from mapentity.views import MapEntityList
+from mapentity.views import MapEntityList, MapEntityFilter
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
 from rest_framework import mixins, viewsets
@@ -292,14 +292,19 @@ def import_update_json(request):
 
 class HDViewPointList(MapEntityList):
     queryset = HDViewPoint.objects.all()
-    filterform = HDViewPointFilterSet
     columns = ['id', 'title']
+
+
+class HDViewPointFilter(MapEntityFilter):
+    model = HDViewPoint
+    filterset_class = HDViewPointFilterSet
 
 
 class HDViewPointViewSet(GeotrekMapentityViewSet):
     model = HDViewPoint
     serializer_class = HDViewPointSerializer
     geojson_serializer_class = HDViewPointGeoJSONSerializer
+    filterset_class = HDViewPointFilterSet
     mapentity_list_class = HDViewPointList
 
     def get_queryset(self):

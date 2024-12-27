@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 from django.utils.functional import classproperty
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityFilter,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
@@ -28,13 +28,18 @@ class LineMixin(FormsetMixin):
 
 class SignageList(CustomColumnsMixin, MapEntityList):
     queryset = Signage.objects.existing()
-    filterform = SignageFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['code', 'type', 'conditions']
     searchable_columns = ['id', 'name', 'code']
 
 
+class SignageFilter(MapEntityFilter):
+    model = Signage
+    filterset_class = SignageFilterSet
+
+
 class SignageFormatList(MapEntityFormat, SignageList):
+    filterset_class = SignageFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'code', 'type', 'conditions', 'description',
@@ -161,7 +166,6 @@ class BladeDelete(MapEntityDelete):
 
 class BladeList(CustomColumnsMixin, MapEntityList):
     queryset = Blade.objects.existing()
-    filterform = BladeFilterSet
     mandatory_columns = ['id', 'number']
     default_extra_columns = ['type', 'color', 'direction']
     searchable_columns = ['id', 'number']
@@ -180,7 +184,13 @@ class BladeList(CustomColumnsMixin, MapEntityList):
         return columns
 
 
+class BladeFilter(MapEntityFilter):
+    model = Blade
+    filterset_class = BladeFilterSet
+
+
 class BladeFormatList(MapEntityFormat, BladeList):
+    filterset_class = BladeFilterSet
     mandatory_columns = ['id']
     default_extra_columns = ['city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction',
                              'conditions', 'coordinates']

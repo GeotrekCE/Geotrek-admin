@@ -5,11 +5,16 @@ CHANGELOG
 2.111.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
 **Documentation**
 
 - Update theme color
 - Fix typo in documentation
 - Update and homogenize README.rst
+
 
 2.111.0     (2024-12-05)
 ----------------------------

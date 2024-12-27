@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import CreateView
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail, MapEntityFilter,
                              MapEntityDelete, MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -34,7 +34,6 @@ logger = logging.getLogger(__name__)
 
 class TouristicContentList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicContent.objects.existing()
-    filterform = TouristicContentFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['category']
     searchable_columns = ['id', 'name']
@@ -45,7 +44,13 @@ class TouristicContentList(CustomColumnsMixin, MapEntityList):
         return TouristicContentCategory.objects.filter(pk__in=used)
 
 
+class TouristicContentFilter(MapEntityFilter):
+    model = TouristicContent
+    filterset_class = TouristicContentFilterSet
+
+
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
+    filterset_class = TouristicContentFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
@@ -158,13 +163,18 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
 
 class TouristicEventList(CustomColumnsMixin, MapEntityList):
     queryset = TouristicEvent.objects.existing()
-    filterform = TouristicEventFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'begin_date', 'end_date']
     searchable_columns = ['id', 'name']
 
 
+class TouristicEventFilter(MapEntityFilter):
+    model = TouristicEvent
+    filterset_class = TouristicEventFilterSet
+
+
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
+    filterset_class = TouristicEventFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
