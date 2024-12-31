@@ -11,6 +11,11 @@ CHANGELOG
 - Fix typo in documentation
 - Update and homogenize README.rst
 
+**Bug fixes**
+
+- Fix missing Structures in APIv2
+
+
 2.111.0     (2024-12-05)
 ----------------------------
 
