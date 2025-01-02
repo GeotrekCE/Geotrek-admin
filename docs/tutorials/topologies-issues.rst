@@ -13,7 +13,7 @@ Message d'erreur : "L'objet est publié mais a une géométrie invalide"
 .. image:: ../images/tutorials/topologies-1.jpeg
 
 Profil altimétrique incorrect : le profil ne correspond pas au terrain ou semble incohérent
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 .. image:: ../images/tutorials/topologies-2.jpeg
