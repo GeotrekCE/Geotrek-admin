@@ -23,9 +23,10 @@ et nous ajoutons un peu de lissage pour éviter le bruit.
 Pour plus de détails :
 
 * `The smoothing explanation <https://github.com/GeotrekCE/Geotrek-admin/issues/840#issuecomment-30229813>`_
+
 * `The piece of code to compute positive and negative accumulations <https://github.com/GeotrekCE/Geotrek-admin/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_
-* `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_
-(or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
+
+* `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_ (or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
 
 Lien entre les POIs et les itinéraires
 ---------------------------------------
