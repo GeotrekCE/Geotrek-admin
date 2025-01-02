@@ -36,7 +36,7 @@ Créer une connexion à la base de données PostgreSQL du projet
 * Cliquer sur « Tester la connexion »
 * Si la connexion est réussi, cliquer sur OK pour enregistrer la connexion
 
-.. image:: ../images/qgis/Connexion_bdd.png
+.. image:: ../images/tutorials/qgis/Connexion_bdd.png
 
 Créer un projet QGIS à partir des vues SQL
 ==========================================
@@ -76,7 +76,7 @@ Créer des groupes de couches
 
 Il peut être utile de créer des groupes de couches dans le cas où certaines couches sont disponibles dans plusieurs types géométriques : exemple pour la couche Sentiers qui peut contenir des lignes et des points
 
-.. image:: ../images/qgis/groupe_couches.png
+.. image:: ../images/tutorials/qgis/groupe_couches.png
 
 Changer le style d'une couche
 ------------------------------
