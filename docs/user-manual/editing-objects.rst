@@ -39,12 +39,12 @@ Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont 
 
 .. note::
 
-Il n'existe actuellement aucun moyen de contrôler manuellement l'association entre
-randonnées et les POIs.
+	Il n'existe actuellement aucun moyen de contrôler manuellement l'association entre
+	randonnées et les POIs.
 
-Si le paramètre ``TREKKING_TOPOLOGY_ENABLED`` est défini sur ``False``, aucun tronçon n'est impliqué.
-Les POIs sont ainsi liés à des treks utilisant une intersection spatiale de base, avec une
-distance définie dans le paramètre ``TREK_POI_INTERSECTION_MARGIN`` (par défaut à 500 mètres).
+	Si le paramètre ``TREKKING_TOPOLOGY_ENABLED`` est défini sur ``False``, aucun tronçon n'est impliqué.
+	Les POIs sont ainsi liés à des treks utilisant une intersection spatiale de base, avec une
+	distance définie dans le paramètre ``TREK_POI_INTERSECTION_MARGIN`` (par défaut à 500 mètres).
 
 .. _segmentation-dynamique:
 
@@ -86,10 +86,6 @@ L'édition des objets s'effectue en 2D, et leur géométrie est “drapée” au
 Cette information est visible à travers le profil altimétrique pour les tronçons, les itinéraires et les autres objets linéaires.
 
 .. figure:: ../images/user-manual/altimetrie.png
-:alt: Profil altimétrique d'un itinéraire
-:align: center
-
-Profil altimétrique d'un itinéraire
 
 Pour importer automatiquement un MNT, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`
 
@@ -99,9 +95,6 @@ Attributs aditionnels sur les objets
 * `Tutoriel - ajout de photos <http://youtu.be/n96O09284ao>`_ :
 
 .. image:: https://img.youtube.com/vi/n96O09284ao/maxresdefault.jpg
-:alt: Ajout de photos
-:target: https://www.youtube.com/watch?v=n96O09284ao
-
 
 Ajout de fichiers
 ------------------
@@ -118,11 +111,7 @@ Les contenus saisis sont publiés automatiquement.
 
 Il est possible de limiter la gestion des fichiers liés à un groupe restreint d’utilisateurs.
 
-.. figure:: ../images/user-manual/fichiers-lies.png
-:alt: Fenêtre d'ajout de fichiers
-:align: center
-
-Fenêtre d'ajout de fichiers
+.. image:: ../images/user-manual/fichiers-lies.png
 
 Représentation verticale : les vues HD
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,21 +141,11 @@ Photos accessibilité
 
 Cet onglet permet d'ajouter des photos afin d'illustrer les informations liées à l'accessibilité des randonnées.
 
-.. figure:: ../images/user-manual/photos-accessibilite.png
-:alt: Fenêtre d'ajout de photos liées à l'accessibilité
-:align: center
-
-Fenêtre d'ajout de photos liées à l'accessibilité
-
+.. image:: ../images/user-manual/photos-accessibilite.png
 
 Historique
 -----------
 
 Tous les objets créés dans Geotrek-admin possèdent un historique donnant des renseignement sur la date de l'évènement, l'utilisateur à l'origine de l'évènement et l'action réalisée (modification, ajout de fichier, etc.)
 
-.. figure:: ../images/user-manual/historique.png
-:alt: Historique des modifications sur un objet
-:align: center
-
-Historique des modifications sur un objet
-
+.. image:: ../images/user-manual/historique.png
