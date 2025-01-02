@@ -69,7 +69,7 @@ Chaque évènement dispose néanmoins d'une géométrie calculée à partir de l
 
 .. note::
 
-Des vues SQL sont disponibles pour accéder aux objets de manière plus lisible et simplifiée (``v_interventions`` par exemple).
+	Des vues SQL sont disponibles pour accéder aux objets de manière plus lisible et simplifiée (``v_interventions`` par exemple).
 
 Snapping - Aimantage - Accrochage
 ----------------------------------
@@ -134,7 +134,7 @@ La vue HD est également associée à une localisation correspondant à l'emplac
 
 .. note::
 
-Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
+	Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
 
 Photos accessibilité
 ---------------------
