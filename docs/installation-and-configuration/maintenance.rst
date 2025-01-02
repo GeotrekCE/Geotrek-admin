@@ -82,7 +82,7 @@ Access your database securely on your local machine (QGIS)
 ==========================================================
 
 Instead of opening your database to the world (by opening the 5432 port for
-example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
+example), you can use `SSH tunnels <https://www.postgresql.org/docs/current/ssh-tunnels.html>`_. Follow `this tutorial <https://makina-corpus.com/devops/acceder-base-donnees-postgresql-depuis-qgis-pgadmin-securisee>`_ for more information (in french).
 
 .. _manage-cache:
 

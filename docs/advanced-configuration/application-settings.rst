@@ -4,15 +4,6 @@
 Application settings
 ======================
 
-Spatial extents
-----------------
-
-In order to check your configuration of spatial extents, a small tool
-is available at http://server/tools/extents/.
-
-.. note::
-  Administrator privileges are required.
-
 Email settings
 ----------------
 
@@ -23,8 +14,6 @@ Geotrek-admin will send emails:
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
 recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
-
-Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
 
 You can test your configuration with the following command. A fake email will
 be sent to the managers:
@@ -41,15 +30,15 @@ API
 API_IS_PUBLIC
 ~~~~~~~~~~~~~~
 
-    Set to ``True`` if you want the API V2 to be available for everyone without authentication (mandatory to use Geotrek-Rando). Set to ``False`` if you don't want to share through API informations marked as 'published'. 
+Set to ``True`` if you want the API V2 to be available for everyone without authentication (mandatory to use Geotrek-Rando). Set to ``False`` if you don't want to share through API informations marked as 'published'. 
 
-    Example::
+Example::
 
-        API_IS_PUBLIC = True
+    API_IS_PUBLIC = True
 
-    Default::
+Default::
 
-        True
+    True
 
 .. note::
   - This API provides access to promotion content (Treks, POIs, Touristic Contents ...). 
@@ -62,9 +51,9 @@ Swagger API documentation
 
 In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
 
-    Enable API V2 documentation::
+Enable API V2 documentation::
 
-        INSTALLED_APPS += ('drf_yasg', )
+    INSTALLED_APPS += ('drf_yasg', )
 
 Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
 The API swagger documentation is now availaible here : ``<GEOTREK_ADMIN_URL>/api/v2``
@@ -78,7 +67,6 @@ between several instances, in order to save system resources for example.
 
 A simple way to achieve this is to install one instance with everything
 as usual (*standalone*), and plug the other instances on its underlying services.
-
 
 Capture and conversion
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,7 +82,6 @@ If you want to use external services, in ``.env``, add following variables:
 
 Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
 
-
 Shutdown useless services
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -107,7 +94,6 @@ Start by stopping everything:
 
     sudo systemctl stop geotrek
 
-
 Control number of workers and request timeouts
 ---------------------------------------------------
 
@@ -116,7 +102,6 @@ By default, the application runs on 4 processes, and timeouts after 30 seconds.
 To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
-
 
 External authent
 ------------------

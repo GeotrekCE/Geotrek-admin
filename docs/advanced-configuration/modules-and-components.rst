@@ -21,30 +21,28 @@ In order to disable a full set of modules, in the custom settings file, add the 
 TRAIL_MODEL_ENABLED
 ~~~~~~~~~~~~~~~~~~~~
 
-    In order to remove notion of trails.
+In order to remove notion of trails.
 
-    Example::
+Example::
 
-        TRAIL_MODEL_ENABLED = False
+    TRAIL_MODEL_ENABLED = False
 
-    Default::
+Default::
 
-        True
-
+    True
 
 LANDEDGE_MODEL_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-    In order to remove landedge model.
+In order to remove landedge model.
 
-    Example::
+Example::
 
-        LANDEDGE_MODEL_ENABLED = False
+    LANDEDGE_MODEL_ENABLED = False
 
-    Default::
+Default::
 
-        True
-
+    True
 
 In order to remove zoning combo-boxes on list map:
 
@@ -58,46 +56,45 @@ In order to remove zoning combo-boxes on list map:
 TOURISM_ENABLED
 ~~~~~~~~~~~~~~~~~
 
-    In order to hide TouristicContents and TouristicEvents on menu.
+In order to hide TouristicContents and TouristicEvents on menu.
 
-    Example::
+Example::
 
-        TOURISM_ENABLED = False
+    TOURISM_ENABLED = False
 
-    Default::
+Default::
 
-        True
+    True
 
 FLATPAGES_ENABLED
 ~~~~~~~~~~~~~~~~~~~~
 
-    In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
+In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando.
 
-    Example::
+Example::
 
-        FLATPAGES_ENABLED = False
+    FLATPAGES_ENABLED = False
 
-    Default::
+Default::
 
-        True
+    True
 
 ACCESSIBILITY_ATTACHMENTS_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    In order to hide the accessibility menu for attachments.
+In order to hide the accessibility menu for attachments.
 
-    Example::
+Example::
 
-        ACCESSIBILITY_ATTACHMENTS_ENABLED = False
+    ACCESSIBILITY_ATTACHMENTS_ENABLED = False
 
-    Default::
+Default::
 
-        True
+    True
 
 .. note::
   - By doing so, some software upgrades may not be as smooth as usual.
   - Never forget to mention this customization if you ask for community support.
-
 
 Paths
 ------
@@ -105,44 +102,43 @@ Paths
 ALLOW_PATH_DELETION_TOPOLOGY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If ``False``, it forbids to delete a path when at least one topology is linked to this path.
+If ``False``, it forbids to delete a path when at least one topology is linked to this path.
 
-    Example::
+Example::
 
-        ALLOW_PATH_DELETION_TOPOLOGY = True
+    ALLOW_PATH_DELETION_TOPOLOGY = True
 
-    Default::
+Default::
 
-        False
-
+    False
 
 ALERT_DRAFT
 ~~~~~~~~~~~~~
 
-    If ``True``, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
+If ``True``, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
 
 
-    Example::
+Example::
 
-        ALERT_DRAFT = False
+    ALERT_DRAFT = False
 
-    Default::
+Default::
 
-        True
+    True
 
 ALERT_REVIEW
 ~~~~~~~~~~~~~
 
-    If ``True``, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
+If ``True``, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
 
 
-    Example::
+Example::
 
-        ALERT_REVIEW = False
+    ALERT_REVIEW = False
 
-    Default::
+Default::
 
-        True
+    True
 
 .. note::
   Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
@@ -157,12 +153,12 @@ Signage and Blade
 BLADE_CODE_TYPE
 ~~~~~~~~~~~~~~~~
 
-    Type of the blade code (string or integer)
+Type of the blade code (string or integer)
 
 
-    Example::
+Example::
 
-        BLADE_CODE_TYPE = INT
+    BLADE_CODE_TYPE = INT
 
 .. note::
   - It can be string or integer
@@ -172,12 +168,12 @@ BLADE_CODE_TYPE
 BLADE_CODE_FORMAT
 ~~~~~~~~~~~~~~~~~~
 
-    Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
+Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
 
 
-    Example::
+Example::
 
-        BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+    BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 
 .. note::
   - If you want to change : move information under bracket
@@ -190,12 +186,12 @@ BLADE_CODE_FORMAT
 LINE_CODE_FORMAT
 ~~~~~~~~~~~~~~~~~
 
-    Corresponds to the format used in export of lines. Used in csv of signage
+Corresponds to the format used in export of lines. Used in csv of signage
 
 
-    Example::
+Example::
 
-        LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+    LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
 .. note::
   - Similar with above
@@ -213,15 +209,15 @@ POI
 TREK_POI_INTERSECTION_MARGIN
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Buffer around treks to intersects POIs (works only without dynamic segmentation)
+Buffer around treks to intersects POIs (works only without dynamic segmentation)
 
-    Example::
+Example::
 
-        TREK_POI_INTERSECTION_MARGIN = 500  # meters
+    TREK_POI_INTERSECTION_MARGIN = 500  # meters
 
-    Default::
+Default::
 
-        500
+    500
 
 Diving
 -------
@@ -229,12 +225,11 @@ Diving
 INSTALLED_APPS for Diving
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    In order to enable diving module, in the custom settings file, add the following code:
+In order to enable diving module, in the custom settings file, add the following code:
 
-    Example::
+Example::
 
-        INSTALLED_APPS += ('geotrek.diving', )
-
+    INSTALLED_APPS += ('geotrek.diving', )
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
@@ -269,12 +264,11 @@ Outdoor
 INSTALLED_APPS for Outdoor
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    In order to enable Outdoor module, in the custom settings file, add the following code:
+In order to enable Outdoor module, in the custom settings file, add the following code:
 
-    Example::
+Example::
 
-        INSTALLED_APPS += ('geotrek.outdoor', )
-
+    INSTALLED_APPS += ('geotrek.outdoor', )
 
 Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
@@ -300,58 +294,55 @@ Sensitive areas
 
     The official address of the Geotrek instance of the Biodiv'Sports project is: https://biodiv-sports.fr, and is the base URL for the following API URLs.
 
-
 INSTALLED_APPS for Sensitive areas
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    In order to enable sensitivity module, in the custom settings file, add the following code:
+In order to enable sensitivity module, in the custom settings file, add the following code:
 
-    Example::
+Example::
 
-        INSTALLED_APPS += ('geotrek.sensitivity', )
+    INSTALLED_APPS += ('geotrek.sensitivity', )
 
 
-    You can insert rules of sensitive area with these commands:
+You can insert rules of sensitive area with these commands:
 
-    .. code-block:: bash
+.. code-block:: bash
 
-        sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-        cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
-
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
 The following settings are related to sensitive areas:
 
 SENSITIVITY_DEFAULT_RADIUS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Default radius of sensitivity bubbles when not specified for species
+Default radius of sensitivity bubbles when not specified for species
 
-    Example::
+Example::
 
-        SENSITIVITY_DEFAULT_RADIUS = 100  # meters
+    SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 
-    Default::
+Default::
 
-        100
-
+    100
 
 SENSITIVE_AREA_INTERSECTION_MARGIN
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Buffer around treks to intersects sensitive areas
+Buffer around treks to intersects sensitive areas
 
-    Example::
+Example::
 
-        SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+    SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
 
-    Default::
+Default::
 
-        500
+    500
 
 .. notes
 
     # Take care if you change this value after adding data. You should update buffered geometry in sql.
     ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
 
-see :ref:`sensitive-areas-import` to import data.
+See :ref:`sensitive-areas-import` to import data.
 

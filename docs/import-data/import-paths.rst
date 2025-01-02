@@ -1,3 +1,5 @@
+.. _import-paths:
+
 =============
 Import paths
 =============

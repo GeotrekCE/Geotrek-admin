@@ -75,7 +75,7 @@ But you will have to move the configuration automatically added into ``nginx.con
 
 You have to move the configuration to the file ``nginx.conf.in`` because ``nginx.conf`` is automatically changed during command ``dpkg-reconfigure geotrek-admin``.
 
-.. note::
+.. warning::
 
     You need to replace the ``$`` from Certbot with ``${DOLLAR}`` everywhere in the ``nginx.conf.in`` file, then run the command ``sudo dpkg-reconfigure geotrek-admin`` to regenerate the file.
 
@@ -124,7 +124,7 @@ Dynamic segmentation
 
 Use dynamic segmentation or not.
 
-`Dynamic segmentation <https://geotrek.readthedocs.io/en/latest/usage/editing-objects.html#segmentation-dynamique>`_ is used by default when installing Geotrek-admin.
+:ref:`Dynamic segmentation <segmentation-dynamique>` is used by default when installing Geotrek-admin.
 
 With this mode, linear objects are built and stored related to paths.
 
@@ -171,15 +171,12 @@ Default values::
 
     SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
-*If you extend spatial extent, don't forget to load a new DEM that covers all the zone.*
-*If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.*
+.. warning::
+  * If you extend spatial extent, don't forget to load a new DEM that covers all the zone.
+  * If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.
 
 In order to check your configuration of spatial extents, a small tool
-is available at ``http://<server_url>/tools/extents/``.
-
-.. note::
-
-    Administrator privileges are required.
+is available at ``http://<server_url>/tools/extents/``. Administrator privileges are required.
 
 .. _users-management:
 

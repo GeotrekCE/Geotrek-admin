@@ -14,19 +14,18 @@ Its configuration can be customized using advanced settings (see above paragraph
 TINYMCE_DEFAULT_CONFIG
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-    For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
+For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
 
-    Example::
+Example::
 
-        TINYMCE_DEFAULT_CONFIG = {
-        'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
-        'valid_elements': "img,p,a,em/i,strong/b",
-        }
+    TINYMCE_DEFAULT_CONFIG = {
+    'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
+    'valid_elements': "img,p,a,em/i,strong/b",
+    }
 
 .. note::
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
-
 
 Max characters count
 ---------------------
@@ -34,49 +33,45 @@ Max characters count
 MAPENTITY_CONFIG for characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
+Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
 
-    Example::
+Example::
 
-        MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = { 
-           "tourism_touristicevent": [{'field': 'description_teaser_fr', 'value': 50}, {'field': 'accessibility_fr', 'value': 25}],
-           "trekking_trek": [{'field': 'description_teaser_fr', 'value': 150}],
-        }
+    MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = { 
+       "tourism_touristicevent": [{'field': 'description_teaser_fr', 'value': 50}, {'field': 'accessibility_fr', 'value': 25}],
+       "trekking_trek": [{'field': 'description_teaser_fr', 'value': 150}],
+    }
 
 .. note::
   - This will apply field by field, language by language.
   - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for details.
 
-
 Copyright on pictures
 ------------------------
-
 
 THUMBNAIL_COPYRIGHT_FORMAT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If you want copyright added to your pictures, change this parameter like so :
+If you want copyright added to your pictures, change this parameter like so :
 
-    Example::
+Example::
 
-        THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
 .. note::
   - This will apply to all text fields.
   - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
-
 
 You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
 
 THUMBNAIL_COPYRIGHT_SIZE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Change the size of thumbnail
+Change the size of thumbnail
 
-    Example::
+Example::
 
-        THUMBNAIL_COPYRIGHT_SIZE = 15
-
+    THUMBNAIL_COPYRIGHT_SIZE = 15
 
 Facebook configuration
 -----------------------
@@ -92,11 +87,11 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 FACEBOOK_APP_ID
 ~~~~~~~~~~~~~~~~
 
-    In ``custom.py`` set Facebook App ID:
+In ``custom.py`` set Facebook App ID:
 
-    Example::
+Example::
 
-        FACEBOOK_APP_ID = '<your Facebook AppID>'
+    FACEBOOK_APP_ID = '<your Facebook AppID>'
 
 **You can also override these settings:**
 
@@ -105,7 +100,6 @@ FACEBOOK_APP_ID
     FACEBOOK_IMAGE = '/images/logo-geotrek.png'
     FACEBOOK_IMAGE_WIDTH = 200
     FACEBOOK_IMAGE_HEIGHT = 200
-
 
 Override translations
 ----------------------
@@ -162,7 +156,6 @@ Override the translations that you want in these files.
     sudo geotrek compilemessages
     sudo service geotrek restart
 
-
 Override public PDF templates
 ------------------------------
 
@@ -180,7 +173,6 @@ To override trekking PDF for example, copy the file ``geotrek/trekking/templates
 to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file::
 
     {% extends "trekking/trek_public_pdf.html" %}
-
 
 These templates derive from base templates, which content is organized in blocks.
 To override for example the description block of trek PDF, copy and change the ``{% block description }…{% endblock description %}``
@@ -202,7 +194,6 @@ Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url pa
 ::
 
     {% extends "trekking/trek_public_pdf.html" %}
-
 
 The template for a specific portal will use the modification made on the overriden template in  ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
 ( except if you change specific  block)
@@ -236,22 +227,21 @@ Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/
 
 Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
 
-
 PDF as booklet
 ----------------
 
 USE_BOOKLET_PDF
 ~~~~~~~~~~~~~~~~
 
-    Use booklet for PDF
+Use booklet for PDF
 
-    Example::
+Example::
 
-        USE_BOOKLET_PDF = True
+    USE_BOOKLET_PDF = True
 
-    Default::
+Default::
 
-        False
+    False
 
 .. note:: 
   - During the synchro, pois details will be removed, and the pages will be merged.
@@ -279,21 +269,19 @@ For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
 
 For more information, check out Ubuntu documentation.
 
-
 Custom colors in public document template
 ------------------------------------------
 
 MAPENTITY_CONFIG for custom colors in PDF
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
+Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
 
-    Example::
+Example::
 
-        MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
+    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
-
 
 Primary color in PDF templates
 -------------------------------
@@ -301,15 +289,14 @@ Primary color in PDF templates
 PRIMARY_COLOR
 ~~~~~~~~~~~~~~
 
-    You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
+You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 
-    Example::
+Example::
 
-        PRIMARY_COLOR = "#7b8c12"
+    PRIMARY_COLOR = "#7b8c12"
 
 .. note:: 
   Beware of contrast, white colour is used for text so we advise you to avoid light colour.
-
 
 Custom logos
 -------------

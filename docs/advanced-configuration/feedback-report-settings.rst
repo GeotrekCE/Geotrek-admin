@@ -10,15 +10,15 @@ Send acknowledge email
 SEND_REPORT_ACK
 ~~~~~~~~~~~~~~~~
 
-    If ``False``, no email will be sent to the sender of any feedback on Geotrek-rando website.
+If ``False``, no email will be sent to the sender of any feedback on Geotrek-rando website.
 
-    Example::
+Example::
 
-        SEND_REPORT_ACK = True
+    SEND_REPORT_ACK = True
 
-    Default::
+Default::
 
-        False
+    False
 
 .. _suricate-support:
 
@@ -106,7 +106,6 @@ The manager has three options when handling a newly filed report:
     * Reject treatment : The report does not involve an area or an equipment under responsibility of the workflow users, but could be handled by another member of the Suricate community. The report is excluded from Geotrek workflow but is still accessible to the community via other applications using Suricate API.
     * Assignation : The manager selects a supervisor from a drop-down selector, and enters a message with instructions or further information. The supervisor receives an e-mail notifying them about the newly assigned report, along with the manager’s message. * The manager also enters a message destined to the sentinel, to notify them that the report is about to be handled. The report is set to status “Waiting”. Only after assignation can we proceed to the following steps.
 
-
 **2** - Planification
 
 The supervisor logs onto Geotrek and creates an Intervention linked to the assigned report, with a planification date. The intervention has status “Plannified”. If too many days have passed between report assignation and intervention creation, the report is automatically set to “Late intervention” status, marked with color red, and the supervisor receives a reminder by e-mail.
@@ -158,9 +157,9 @@ Communication between Suricate and Geotrek operates as follows :
 Maintaining synchronization between Suricate and Geotrek confronts us to the challenges of distributed software architecture. At any point, the connection between both applications can be lost, meaning that Suricate and Geotrek will no longer agree on a report’s status. Most of the time, this is simply due to temporary network failure.
 A system is in place to compensate for such failures. If a request to Suricate API fails, it is stored in the database and resent a few hours later. In case of a long term loss of connection, Django commands are available for an administrator to run some connection tests and resend stored information once connection is recovered.
 
-For technical documentation refer to : https://geotrek.ecrins-parcnational.fr/ressources/technique/2023-02-Geotrek-Suricate-configuration.pdf
+For technical documentation refer to `this ressource <https://geotrek.ecrins-parcnational.fr/ressources/technique/2023-02-Geotrek-Suricate-configuration.pdf>`_.
 
-You can find the same detailled explanation on the workflow in this article in french : https://makina-corpus.com/geotrek/gestion-territoires-naturels-geotrek-traitement-signalements-suricate
+You can find the same detailled explanation on the workflow in `this article in french <https://makina-corpus.com/geotrek/gestion-territoires-naturels-geotrek-traitement-signalements-suricate>`_.
 
 - Set your settings in ``custom.py`` :
 
@@ -209,7 +208,7 @@ Load alerts from Suricate (located in your bounding box) :
 
   - if you want to include the moderation steps (``SKIP_MANAGER_MODERATION = False``), select a user as Workflow Manager (`/admin/feedback/workflowmanager/`). Their role is to assign reports to other users.
   - select a district as Workflow District (`/admin/feedback/workflowdistrict/`). This zone defines the area of reponsibility for reports. Reports relocated outside of the district will be excluded from workflow.
-  - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use `##intervention_end_date##` and `##supervisor##` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
+  - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use ``intervention_end_date`` and ``supervisor`` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
   - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
 .. note:: 
@@ -231,16 +230,15 @@ Display reports with status defined colors
 ENABLE_REPORT_COLORS_PER_STATUS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
+Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
-    Example::
+Example::
 
-        ENABLE_REPORT_COLORS_PER_STATUS = True
+    ENABLE_REPORT_COLORS_PER_STATUS = True
 
-    Default::
+Default::
 
-        False
-
+    False
 
 Use timers to receive alerts for your reports
 -------------------------------------------------
@@ -262,7 +260,6 @@ Use timers to receive alerts for your reports
 .. code-block:: python
 
     geotrek check_timers
-
 
 Anonymize feedback reports
 ---------------------------

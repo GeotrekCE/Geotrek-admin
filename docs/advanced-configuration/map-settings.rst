@@ -14,82 +14,82 @@ You can change or add more basemaps layers like this:
 LEAFLET_CONFIG['TILES'] 
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-  Specify the tiles URLs this way in your custom Django setting file:
+Specify the tiles URLs this way in your custom Django setting file:
 
-    Syntax::
+Syntax::
 
-        LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
+    LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
-    Basic example::
+Basic example::
 
-        LEAFLET_CONFIG['TILES'] = [
-        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
-        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
-        ]
+    LEAFLET_CONFIG['TILES'] = [
+    ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© OpenStreetMap Contributors'),
+    ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
+    ]
 
-    Example with IGN and OSM basemaps::
+Example with IGN and OSM basemaps::
 
-        LEAFLET_CONFIG['TILES'] = [
-        (
-            'IGN Plan V2',
-            '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-            {
-                'attribution': 'Plan IGNV2 - Carte © IGN/Geoportail',
-                'maxNativeZoom': 16,
-                'maxZoom': 22
-            }
-        ),
-        (
-            'IGN Orthophotos',
-            '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-            {
-                'attribution': 'Orthophotos - Carte © IGN/Geoportail',
-                'maxNativeZoom': 19,
-                'maxZoom': 22
-            }
-        ),
-        (
-            'OpenStreetMap',
-            '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
-                'maxNativeZoom': 19,
-                'maxZoom': 22
-            }
-        ),
-        (
-            'OpenTopoMap',
-            '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-            {
-                'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                'maxNativeZoom': 17,
-                'maxZoom': 22
-            }
-        ),
-        (
-            'IGN Scan 25',
-            '//data.geopf.fr/private/wmts?apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-            {
-                'attribution': 'Plan Scan 25 Touristique - Carte © IGN/Geoportail',
-                'maxNativeZoom': 17,
-                'maxZoom': 22
-            }
-        ),
-        ]
+    LEAFLET_CONFIG['TILES'] = [
+    (
+        'IGN Plan V2',
+        '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+        {
+            'attribution': 'Plan IGNV2 - Carte © IGN/Geoportail',
+            'maxNativeZoom': 16,
+            'maxZoom': 22
+        }
+    ),
+    (
+        'IGN Orthophotos',
+        '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+        {
+            'attribution': 'Orthophotos - Carte © IGN/Geoportail',
+            'maxNativeZoom': 19,
+            'maxZoom': 22
+        }
+    ),
+    (
+        'OpenStreetMap',
+        '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
+            'maxNativeZoom': 19,
+            'maxZoom': 22
+        }
+    ),
+    (
+        'OpenTopoMap',
+        '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        {
+            'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+            'maxNativeZoom': 17,
+            'maxZoom': 22
+        }
+    ),
+    (
+        'IGN Scan 25',
+        '//data.geopf.fr/private/wmts?apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+        {
+            'attribution': 'Plan Scan 25 Touristique - Carte © IGN/Geoportail',
+            'maxNativeZoom': 17,
+            'maxZoom': 22
+        }
+    ),
+    ]
 
-    You can also configure overlays layers like this::
+You can also configure overlays layers like this::
 
-        LEAFLET_CONFIG['OVERLAYS'] = [
-        (
-            'IGN Cadastre',
-            '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-            {
-                'attribution': 'Cadastre - Carte © IGN/Geoportail',
-                'maxNativeZoom': 19,
-                'maxZoom': 22
-            }
-        ),
-        ]
+    LEAFLET_CONFIG['OVERLAYS'] = [
+    (
+        'IGN Cadastre',
+        '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+        {
+            'attribution': 'Cadastre - Carte © IGN/Geoportail',
+            'maxNativeZoom': 19,
+            'maxZoom': 22
+        }
+    ),
+    ]
 
 .. note:: 
   To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
@@ -100,16 +100,14 @@ Map layers zoom
 LEAFLET_CONFIG
 ~~~~~~~~~~~~~~~~
 
-    You can define the max_zoom the user can zoom for all tiles.
+You can define the max_zoom the user can zoom for all tiles.
 
-    Example::
+Example::
 
-        LEAFLET_CONFIG= 19
-
+    LEAFLET_CONFIG= 19
 
 .. note::
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
-
 
 Map layers colors and style
 ----------------------------
@@ -117,28 +115,27 @@ Map layers colors and style
 MAPENTITY_CONFIG for layers color and style
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    All layers colors can be customized from the settings. See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial layer style.
+All layers colors can be customized from the settings. See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial layer style.
 
-    Example::
+Example::
 
-        MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
-    Example with one parameter::
+Example with one parameter::
 
-        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 .. note::
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
 
-
 COLORS_POOL
 ~~~~~~~~~~~~
 
-    Regarding colors that depend from database content, such as land layers (physical types, work management...) or restricted areas. We use a specific setting that receives a list of colors:
+Regarding colors that depend from database content, such as land layers (physical types, work management...) or restricted areas. We use a specific setting that receives a list of colors:
 
-    Example::
+Example::
 
-        COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
+    COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
 
 See the default values in ``geotrek/settings/base.py`` for the complete list
 of available styles.
@@ -183,7 +180,6 @@ Color of the different layers on the top right for landing.
   - For restricted Area: add as many color as your number of restricted area type
   - **Restart** the application for changes to take effect.
 
-
 External raster layers
 -----------------------
 
@@ -196,14 +192,14 @@ External raster layers
 LEAFLET_CONFIG['OVERLAYS']
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    In ``custom.py``, just add the following lines:
+In ``custom.py``, just add the following lines:
 
-    Example::
+Example::
 
-        LEAFLET_CONFIG['OVERLAYS'] = [
-        ('Cadastre', '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; Cadastre - Carte © IGN/Geoportail')
-        ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-        ]
+    LEAFLET_CONFIG['OVERLAYS'] = [
+    ('Cadastre', '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; Cadastre - Carte © IGN/Geoportail')
+    ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+    ]
 
 **Expected properties:**
 
@@ -216,18 +212,17 @@ For ``GeoJSON`` files, you can provide the following properties :
 * ``pictures``: list of objects with ``url`` and ``copyright`` attributes
 * ``category``: object with ``id`` and ``label`` attributes
 
-
 Geographical CRUD
 -------------------
 
 PATH_SNAPPING_DISTANCE
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-    Minimum distance to merge two paths in unit of SRID
+Minimum distance to merge two paths in unit of SRID
 
-    Example::
+Example::
 
-        PATH_SNAPPING_DISTANCE = 2.0
+    PATH_SNAPPING_DISTANCE = 2.0
 
 .. note::
   - Change the distance. Better to keep it like this. 
@@ -236,20 +231,20 @@ PATH_SNAPPING_DISTANCE
 SNAP_DISTANCE
 ~~~~~~~~~~~~~~~
 
-    Distance of snapping for the cursor in pixels on Leaflet map.
+Distance of snapping for the cursor in pixels on Leaflet map.
 
-    Example::
+Example::
 
-        SNAP_DISTANCE = 30
+    SNAP_DISTANCE = 30
 
 PATH_MERGE_SNAPPING_DISTANCE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Minimum distance to merge two paths.
+Minimum distance to merge two paths.
 
-    Example::
+Example::
 
-        PATH_MERGE_SNAPPING_DISTANCE = 2
+    PATH_MERGE_SNAPPING_DISTANCE = 2
 
 .. note::
   - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
@@ -258,41 +253,41 @@ PATH_MERGE_SNAPPING_DISTANCE
 TREK_POINTS_OF_REFERENCE_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Points of reference are enabled on form of treks.
+Points of reference are enabled on form of treks.
 
-    Example::
+Example::
 
-        TREK_POINTS_OF_REFERENCE_ENABLED = True
+    TREK_POINTS_OF_REFERENCE_ENABLED = True
 
-    Default::
+Default::
 
-        False
+    False
 
 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Points of reference are enabled on form of otudoor courses.
+Points of reference are enabled on form of otudoor courses.
 
-    Example::
+Example::
 
-        OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
+    OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
 
-    Default::
-    
-        False
+Default::
+
+    False
 
 TOPOLOGY_STATIC_OFFSETS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Land objects are added on other objects (path for example) with offset, avoiding overlay.
+Land objects are added on other objects (path for example) with offset, avoiding overlay.
 
-    Example::
+Example::
 
-        TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
+    TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
 
-    Example with more overlays::
+Example with more overlays::
 
-        TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
+    TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
 
 .. note::
   You should not change it to avoid overlay except if you want to have more overlays.
@@ -318,22 +313,21 @@ TOPOLOGY_STATIC_OFFSETS
   - All these settings can be modified but you need to check the result every time
   - The only one modified most of the time is ``ALTIMETRIC_PROFILE_COLOR``
 
-
 Disable darker map backgrounds
 -------------------------------
 
 MAPENTITY_CONFIG for map background
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
+Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
 
-    Example::
+Example::
 
-        MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
-    Default::
+Default::
 
-        True
+    True
 
 Map screenshots
 ----------------
@@ -349,11 +343,11 @@ Map screenshots
 MAP_CAPTURE_SIZE
 ~~~~~~~~~~~~~~~~~
 
-    Show objects on maps of PDF
+Show objects on maps of PDF
 
-    Example::
+Example::
 
-        MAP_CAPTURE_SIZE = 800
+    MAP_CAPTURE_SIZE = 800
 
 .. note::
   - Size in pixels of the capture.

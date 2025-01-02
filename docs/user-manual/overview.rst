@@ -26,7 +26,6 @@ Page d'authentification
 
    Accès à Geotrek-admin via un login et un mot de passe
 
-
 Les modules de Geotrek
 =======================
 
@@ -35,7 +34,7 @@ Geotrek-admin est composé de deux types de modules pour la gestion et la valori
 Modules de gestion
 -------------------
 
-.. list-table:: Modules de gestion
+.. list-table:: 
    :widths: 25 25 50
    :header-rows: 1
 
@@ -79,7 +78,7 @@ Modules de gestion
 Modules de valorisation
 ------------------------
 
-.. list-table:: Modules de valorisation
+.. list-table:: 
    :widths: 25 25 50
    :header-rows: 1
 

@@ -11,14 +11,12 @@ Beforehand you shoud update your system's catalog:
 
 ::
 
-   sudo apt-get update
+   sudo apt update
 
 .. warning::
-  If your current version is <= 2.40.1 you should run instead:
+  If your current version is <= 2.40.1 you should run instead :
+  ``sudo apt update --allow-releaseinfo-change``
 
-::
-
-   sudo apt-get update  --allow-releaseinfo-change
 
 To display the installed version and the latest upgradeable version, run:
 
@@ -30,13 +28,13 @@ To upgrade only geotrek-admin and its dependencies, run:
 
 ::
 
-   sudo apt-get install geotrek-admin
+   sudo apt install geotrek-admin
 
 .. note::
 
    - It is only possible to install the latest version of geotrek-admin via this command line
-   - All package versions remain available as `release assets <https://github.com/GeotrekCE/Geotrek-admin/releases/>`_. Download the .deb for your architecture and do ``sudo apt-get install <the .deb package>``.
-   - Example : ``sudo apt-get install geotrek-admin_2.106.0.ubuntu20.04_amd64.deb``
+   - All package versions remain available as `release assets <https://github.com/GeotrekCE/Geotrek-admin/releases/>`_. Download the .deb for your architecture and do ``sudo apt install <the .deb package>``.
+   - Example : ``sudo apt install geotrek-admin_2.106.0.ubuntu20.04_amd64.deb``
 
 Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
 
