@@ -8,7 +8,7 @@ Corriger les problèmes de topologie
 Lorsque vous observez des anomalies dans l'affichage de votre itinéraire dans Geotrek, cela peut se manifester de différentes manières :
 
 Message d'erreur : "L'objet est publié mais a une géométrie invalide"
--------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 .. image:: ../images/tutorials/topologies-1.jpeg
 
