@@ -20,13 +20,13 @@ Nous calculons le `dénivelé positif cumulé <https://fr.wikipedia.org/wiki/D%C
 Nous échantillonnons le DEM tous les 25m par défaut (voir paramètre ``ALTIMETRIC_PROFILE_PRECISION``),
 et nous ajoutons un peu de lissage pour éviter le bruit.
 
-Pour plus de détails :
+.. seealso::
 
-* `The smoothing explanation <https://github.com/GeotrekCE/Geotrek-admin/issues/840#issuecomment-30229813>`_
+	* `The smoothing explanation <https://github.com/GeotrekCE/Geotrek-admin/issues/840#issuecomment-30229813>`_
 
-* `The piece of code to compute positive and negative accumulations <https://github.com/GeotrekCE/Geotrek-admin/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_
+	* `The piece of code to compute positive and negative accumulations <https://github.com/GeotrekCE/Geotrek-admin/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_
 
-* `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_ (or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
+	* `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_ (or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
 
 Lien entre les POIs et les itinéraires
 ---------------------------------------
@@ -87,7 +87,9 @@ Cette information est visible à travers le profil altimétrique pour les tronç
 
 .. figure:: ../images/user-manual/altimetrie.png
 
-Pour importer automatiquement un MNT, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`
+.. seealso::
+
+	Pour importer automatiquement un MNT, se référer à la section :ref:`Import DEM (altimetry) <import-dem-altimetry>`
 
 Attributs aditionnels sur les objets
 =====================================
@@ -95,6 +97,9 @@ Attributs aditionnels sur les objets
 * `Tutoriel - ajout de photos <http://youtu.be/n96O09284ao>`_ :
 
 .. image:: https://img.youtube.com/vi/n96O09284ao/maxresdefault.jpg
+    :alt: Ajout de photos
+    :target: https://img.youtube.com/vi/n96O09284ao
+
 
 Ajout de fichiers
 ------------------

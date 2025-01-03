@@ -5,7 +5,7 @@ Interface, navigation et saisie
 Navigation et saisie
 ====================
 
-Les résultats sont affichés sous forme de carte et liste puis on accède aux détails des objets.
+Les résultats sont affichés sous forme de carte et liste, puis on accède aux détails des objets.
 
 `Présentation de l'interface <http://youtu.be/-iVe9cwBZ50>`_ :
 
@@ -122,4 +122,7 @@ Toutes les listes de choix (thématiques, pratiques, parcours…) sont administr
 
    Exemple d’édition des pratiques et de leur pictogramme
 
-Voir la section :ref:`Paramétrage des modules <parametrages-des-modules>`
+.. seealso::
+    Voir la section :ref:`Paramétrage des modules <parametrages-des-modules>`
+
+

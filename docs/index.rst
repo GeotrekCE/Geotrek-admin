@@ -19,7 +19,8 @@ You can explore **Geotrek-admin** in action through the demonstration website:
 
 **Geotrek-admin** is built on Django and leverages a PostGIS database for handling geographical data. It serves as the data source for Geotrek-rando, Geotrek-widget, and other tools of the Geotrek ecosystem.
 
-Learn more about Geotrek-admin in the :ref:`general documentation (french) <qu-est-ce-que-geotrek>`.
+.. seealso::
+    Learn more about Geotrek-admin in the :ref:`general documentation (french) <qu-est-ce-que-geotrek>`.
 
 .. toctree::
     :caption: 💡 A propos

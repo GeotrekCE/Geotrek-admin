@@ -80,7 +80,9 @@ Comme pour les autres modules, il sont intersectés avec les autres modules pour
 
 Il est aussi possible de les exporter, de leur attacher des fichiers (images, PDF, tableurs, ZIP...) et d'en consulter l'historique des modifications.
 
-Pour importer automatiquement des éléments d'aménagements, se référer à la section :ref:`Import Infrastructure <import-infrastructure>`
+.. seealso::
+
+	Pour importer automatiquement des éléments d'aménagements, se référer à la section :ref:`Import Infrastructure <import-infrastructure>`
 
 .. _la-signaletique:
 
@@ -93,7 +95,9 @@ Pour une signalétique, il est possible de définir chaque lame et chaque ligne 
 
 .. image:: ../images/user-manual/signage.png
 
-Pour importer automatiquement des éléments de signalétiques, se référer à la section :ref:`Import Signage <import-signage>`
+.. seealso::
+
+	Pour importer automatiquement des éléments de signalétiques, se référer à la section :ref:`Import Signage <import-signage>`
 
 .. _les-interventions:
 

@@ -178,4 +178,6 @@ En lançant ensuite l'interface, les fonds configurés seront disponibles. Les f
 
 .. image:: ../images/tutorials/update-basemaps.jpeg
 
-Des ressources complémentaires peuvent être trouvées sur `cet article <https://makina-corpus.com/logiciel-libre/bascule-ign-tutoriel-modification-fonds-plan-geotrek/>`_ .
+.. seealso:: 
+
+    Des ressources complémentaires peuvent être trouvées sur `cet article <https://makina-corpus.com/logiciel-libre/bascule-ign-tutoriel-modification-fonds-plan-geotrek/>`_ .

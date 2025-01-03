@@ -208,8 +208,6 @@ If you use an url that filters a unique category, you can change its name. Examp
             'type1': "GeotrekTypeName",
         }
 
-URL to get Esp
-
 .. _multiple-imports:
 
 Multiple imports
@@ -218,7 +216,7 @@ Multiple imports
 When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
 It can be interesting with portals for example.
 
-Param for the aggregation : ``m2m_aggregate_fields``
+Parameters for the aggregation : ``m2m_aggregate_fields``
 
 Here is an example with 2 parsers :
 
@@ -259,10 +257,9 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
         provider = "provider_2"
 
 .. danger::
-    It is recommended to use ``provider`` from the first import - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
 
-.. danger::
-    If a parser does not have a ``provider`` value, it will not take providers into account, meaning that it could delete objects from preceeding parsers even if these other parsers do have a ``provider`` themselves.
+    - It is recommended to use ``provider`` from the first import - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
+    - If a parser does not have a ``provider`` value, it will not take providers into account, meaning that it could delete objects from preceeding parsers even if these other parsers do have a ``provider`` themselves.
 
 The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.
 

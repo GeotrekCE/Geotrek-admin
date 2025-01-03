@@ -33,7 +33,6 @@ Résumé des actions pouvant causer le problème
 ---------------------------------------------
 
 .. example:: Suppression d'un tronçon utilisé par un itinéraire
-    :collapsible:
 
 	Lorsque vous supprimez un tronçon déjà utilisé par un itinéraire, un "trou" est créé dans la continuité des tronçons de l'itinéraire. Cela provoque une rupture immédiate du tracé de l'itinéraire, le rendant incorrect. 
 
@@ -41,7 +40,6 @@ Résumé des actions pouvant causer le problème
 
 
 .. example:: Ajout d'un tronçon intersectant un itinéraire existant 
-    :collapsible:
 
 	Lorsque vous ajoutez un tronçon qui vient intercepter l’un des tronçons déjà utilisés par un itinéraire, cela ne provoque pas automatiquement de rupture de l’itinéraire, car Geotrek recalculera normalement la topologie des tronçons pour s’ajuster aux changements. 
 
@@ -72,10 +70,11 @@ Il est malheureusement plus facile de détecter les problèmes que de les corrig
 5. Comment corriger le problème ?
 ==================================
 
-Les solutions varient en fonction de la nature du problème :
+.. example:: Les solutions varient en fonction de la nature du problème :
 
-- Géométrie invalide : Lorsque la géométrie d'un itinéraire est invalide, il n’existe pas de correction automatique. La seule solution consiste à retracer manuellement l'itinéraire.
-- Topologie invalide (géométrie intacte) : Si la topologie est invalide mais que la géométrie reste correcte, il est possible de lancer une commande pour réparer la topologie. La commande ``reorder_topologies`` est documentée :ref:`ici <reorder-topologies>`. Celle-ci peut corriger la plupart des erreurs de topologie. Pour toute assistance, n’hésitez pas à nous contacter pour lancer cette commande sur votre serveur.
+
+	- Géométrie invalide : Lorsque la géométrie d'un itinéraire est invalide, il n’existe pas de correction automatique. La seule solution consiste à retracer manuellement l'itinéraire.
+	- Topologie invalide (géométrie intacte) : Si la topologie est invalide mais que la géométrie reste correcte, il est possible de lancer une commande pour réparer la topologie. La commande ``reorder_topologies`` est documentée :ref:`ici <reorder-topologies>`. Celle-ci peut corriger la plupart des erreurs de topologie. Pour toute assistance, n’hésitez pas à nous contacter pour lancer cette commande sur votre serveur.
 
 6. Quelle suite pour ce sujet ?
 ================================

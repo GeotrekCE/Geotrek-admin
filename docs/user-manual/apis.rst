@@ -15,7 +15,9 @@ Cette API, désormais dans sa version 2 permet à toute structure tierce de réc
 
 L'API Geotrek est le point central pour permettre les interconnexions avec divers services. Grâce à cette interface de données, Geotrek s'est positionné comme un point central dans un écosystème de solutions du monde de la gestion et promotion des activités de pleine nature.
 
-Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
+.. seealso:: 
+   
+   Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
 
 APIs externes
 =============
@@ -32,22 +34,17 @@ Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin a
 - [URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml
 - [URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml
 
-Il est possible d'exclure les POI du flux pour ne diffuser que les randonnées. Pour cela, ajouter le paramètre ``?withoutpois=1`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``).
+.. hint::
 
-Il est possible de filtrer les POI du flux par structure. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/pois.xml?structures=2``).
-Vous pouvez filtrer avec plusieurs structures : en séparant les identifiants par des virgules (``http://XXXXX/api/cirkwi/pois.xml?structures=2,5,3``).
+   - **Exclure les POI du flux pour ne diffuser que les randonnées**. Pour cela, ajouter le paramètre ``?withoutpois=1`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``).
 
-Il est également possible de filtrer les randonnées du flux par structure et par portail. 
-Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
+   - **Filtrer les POI du flux par structure**. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/pois.xml?structures=2``). Vous pouvez filtrer avec plusieurs structures : en séparant les identifiants par des virgules (``http://XXXXX/api/cirkwi/pois.xml?structures=2,5,3``).
 
-Il est également possible d'exclure du flux les randonnées provenant de sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour
-ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
+   - **Filtrer les randonnées du flux par structure et par portail**. Pour cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?portals=3``).
 
-Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
+   - **Exclure du flux les randonnées provenant de sources externes à Geotrek-admin**. Ce filtre est notamment nécessaire pour ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
 
-Il est également possible d'exclure du flux les randonnées provenant de sources externes à Geotrek-Admin. Ce filtre est notamment nécessaire pour ne pas renvoyer à Cirkwi les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre ``?include_externals=false`` à la fin de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``).
-
-Il est possible de cumuler ces différents filtres, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
+   - **Cumuler ces différents filtres**, en séparant les valeurs par un ``&`` (``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``).
 
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le module de configuration (à ne pas modifier) :
 
@@ -57,7 +54,7 @@ Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le modu
 
    Ensemble des champs paramétrables pour le référentiel CIRKWI
 
-Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans le module de configuration. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806.
+Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans le module de configuration, comme indiqué `dans ce ticket Github <https://github.com/GeotrekCE/Geotrek-admin/issues/806>`_.
 
 * Pratique >> locomotion/loisirs
 * Accessibilite >> thematiques/tags
@@ -66,7 +63,7 @@ Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos pro
 
 Les correspondances avec les valeurs de ces 3 tables sont donc à renseigner dans les tables Geotrek des Pratiques, Accessibilités, Thèmes et Types de POI.
 
-Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirkwi : https://pro.cirkwi.com/importez-vos-donnees-geotrek-dans-cirkwi/.
+Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirkwi (`voir cette page <https://pro.cirkwi.com/importez-vos-donnees-geotrek-dans-cirkwi/>`_).
 
 .. note::
 
@@ -89,7 +86,9 @@ Les contenus touristiques peuvent aussi être synchronisés depuis des flux Tour
 
 Il est également possible de mettre en place des passerelles pour importer des POIs, des lieux de renseignement, des aménagements ainsi que des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir le lien avec les contenus touristiques pour avoir par exemple d'autres catégories.
 
-Pour configurer APIDAE, se référer à cette section :ref:`Import from APIDAE <import-from-apidae>`
+.. seealso::
+
+   Pour configurer APIDAE, se référer à cette section :ref:`Import from APIDAE <import-from-apidae>`
 
 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~
@@ -100,7 +99,9 @@ L'API permet de connecter une instance Geotrek pour importer des itinéraires ve
 
 Les randonnées VTT, trail, vélo et les tours itinérants sont également intégrés dans la passerelle.
 
-Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 
+.. seealso::
+
+   Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 
 
 
 Sensitivity module (or Biodiv'Sports)
