@@ -77,7 +77,25 @@ Example with IGN and OSM basemaps::
     ),
     ]
 
-You can also configure overlays layers like this::
+.. note:: 
+  To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
+
+
+External raster layers
+-----------------------
+
+.. tip::
+  It is possible to add overlay tiles layer on maps. For example, it can be useful to:
+    - Get the cadastral parcels on top of satellite images
+    - Home made layers (*with Tilemill or QGisMapserver for example*).
+    - Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths that are marked as invisible in the database!
+
+LEAFLET_CONFIG['OVERLAYS']
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ONGLET : EXEMPLE
+
+You can configure overlays layers like this::
 
     LEAFLET_CONFIG['OVERLAYS'] = [
     (
@@ -91,8 +109,26 @@ You can also configure overlays layers like this::
     ),
     ]
 
-.. note:: 
-  To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
+ONGLET : ADVANCED Examples
+
+Example::
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+    ('Cadastre', '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; Cadastre - Carte © IGN/Geoportail')
+    ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+    ]
+
+**Expected properties:**
+
+For ``GeoJSON`` files, you can provide the following properties :
+
+* ``title``: string
+* ``description``: string
+* ``website``: string
+* ``phone``: string
+* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
+* ``category``: object with ``id`` and ``label`` attributes
+
 
 Map layers zoom
 ----------------
@@ -117,16 +153,51 @@ MAPENTITY_CONFIG for layers color and style
 
 All layers colors can be customized from the settings. See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial layer style.
 
-Example::
+.. md-tab-set::
+    :name: mapentity-config-tabs
 
-    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+    .. md-tab-item:: Default configuration
 
-Example with one parameter::
+        See the default values in ` ``geotrek/settings/base.py``<https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available styles.    
 
-    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+        .. code-block:: python
 
-.. note::
-  It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
+            MAPENTITY_CONFIG['MAP_STYLES'] = {
+                'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+                'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+                'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+                'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+                'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+                'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+                'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+                'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+                'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
+                
+                'detail': {'color': '#ffff00'},
+                'others': {'color': '#ffff00'},
+
+                'print': {
+                    'path': {'weight': 1},
+                    'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                            'arrowColor': 'black', 'arrowSize': 10},
+                }
+            }
+
+    .. md-tab-item:: Examples
+
+        Example to override configuration for the display of ``Path`` objects::
+
+            MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
+
+        .. hint::
+            It is also possible to override a specific parameter. Example::
+
+            MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+
 
 COLORS_POOL
 ~~~~~~~~~~~~
@@ -137,26 +208,6 @@ Example::
 
     COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
 
-See the default values in ``geotrek/settings/base.py`` for the complete list
-of available styles.
-
-.. code-block:: python
-
-    MAPENTITY_CONFIG['MAP_STYLES'] = {
-        'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
-        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-        'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-        'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-        'print': {'path': {'weight': 1},
-                  'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                           'arrowColor': 'black', 'arrowSize': 10},}
-    }
 
 Color of the different layers on the map :
 
@@ -176,41 +227,9 @@ Color of the different layers on the map :
 Color of the different layers on the top right for landing.
 
 .. note:: 
-  - For land, physical, competence, signagemanagement, workmanagement should have 5 values.
-  - For restricted Area: add as many color as your number of restricted area type
-  - **Restart** the application for changes to take effect.
+  - Eache of the object types for Status module (``land``, ``physical``, ``competence``, ``signagemanagement``, ``workmanagement``...) should have values defined.
+  - For ``restrictedarea``: add as many color as your number of restricted area type
 
-External raster layers
------------------------
-
-.. tip::
-  It is possible to add overlay tiles layer on maps. For example, it can be useful to:
-    - Get the cadastral parcels on top of satellite images
-    - Home made layers (*with Tilemill or QGisMapserver for example*).
-    - Like the park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths that are marked as invisible in the database!
-
-LEAFLET_CONFIG['OVERLAYS']
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In ``custom.py``, just add the following lines:
-
-Example::
-
-    LEAFLET_CONFIG['OVERLAYS'] = [
-    ('Cadastre', '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', '&copy; Cadastre - Carte © IGN/Geoportail')
-    ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-    ]
-
-**Expected properties:**
-
-For ``GeoJSON`` files, you can provide the following properties :
-
-* ``title``: string
-* ``description``: string
-* ``website``: string
-* ``phone``: string
-* ``pictures``: list of objects with ``url`` and ``copyright`` attributes
-* ``category``: object with ``id`` and ``label`` attributes
 
 Geographical CRUD
 -------------------
