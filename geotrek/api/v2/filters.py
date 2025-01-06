@@ -1106,11 +1106,25 @@ class SitesRelatedPortalAndCourseRelatedFilter(RelatedObjectsPublishedNotDeleted
         return (set_1 | set_2).distinct()
 
 
-class RelatedPortalStructureOrReservationSystemFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+class RelatedPortalReservationSystemFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
         set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'trek')
         set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontent')
         return (set_1 | set_2).distinct()
+
+
+class RelatedPortalStructureFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
+    def filter_queryset(self, request, qs, view):
+        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'trek')
+        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristiccontent')
+        set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'poi')
+        set_4 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'service')
+        set_5 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'infrastructure')
+        set_6 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'signage')
+        set_7 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'touristicevent')
+        set_8 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'site')
+        set_9 = self.filter_queryset_related_objects_published_not_deleted_by_portal(qs, request, 'course')
+        return (set_1 | set_2 | set_3 | set_4 | set_5 | set_6 | set_7 | set_8 | set_9).distinct()
 
 
 class TouristicContentRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):

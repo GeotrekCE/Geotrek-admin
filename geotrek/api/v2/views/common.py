@@ -76,7 +76,7 @@ class SourceViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.RelatedPortalStructureOrReservationSystemFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.RelatedPortalReservationSystemFilter,)
     serializer_class = api_serializers.ReservationSystemSerializer
     queryset = common_models.ReservationSystem.objects.all()
 
