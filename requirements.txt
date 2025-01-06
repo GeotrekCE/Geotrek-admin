@@ -220,7 +220,7 @@ inflection==0.5.1
     # via drf-yasg
 itypes==1.2.0
     # via coreapi
-jinja2==3.1.4
+jinja2==3.1.5
     # via coreschema
 kombu==5.4.2
     # via celery
