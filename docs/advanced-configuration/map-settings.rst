@@ -244,15 +244,14 @@ Example::
     PATH_SNAPPING_DISTANCE = 2.0
 
 .. note::
-  - Change the distance. Better to keep it like this. 
-  - Not used when ``TREKKING_TOPOLOGY_ENABLED = True``
+  - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
 
 SNAP_DISTANCE
 ~~~~~~~~~~~~~~~
 
 Distance of snapping for the cursor in pixels on Leaflet map.
 
-Example::
+Default value::
 
     SNAP_DISTANCE = 30
 
@@ -261,44 +260,46 @@ PATH_MERGE_SNAPPING_DISTANCE
 
 Minimum distance to merge two paths.
 
-Example::
+Default value::
 
     PATH_MERGE_SNAPPING_DISTANCE = 2
 
 .. note::
-  - Change the distance. Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
-  - Used when ``TREKKING_TOPOLOGY_ENABLED = True``.
+  - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
+  - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
 TREK_POINTS_OF_REFERENCE_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Points of reference are enabled on form of treks.
 
-Example::
+Default value::
 
     TREK_POINTS_OF_REFERENCE_ENABLED = True
-
-Default::
-
-    False
 
 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Points of reference are enabled on form of otudoor courses.
 
-Example::
+Default value::
 
     OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
-
-Default::
-
-    False
 
 TOPOLOGY_STATIC_OFFSETS
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Land objects are added on other objects (path for example) with offset, avoiding overlay.
+
+DEFAULT
+
+.. code-block:: python
+    TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+                            'physical': 0,
+                            'circulation': 15,
+                            'competence': 5,
+                            'signagemanagement': -10,
+                            'workmanagement': 10}
 
 Example::
 
@@ -307,9 +308,6 @@ Example::
 Example with more overlays::
 
     TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
-
-.. note::
-  You should not change it to avoid overlay except if you want to have more overlays.
 
 **All settings used to generate altimetric profile :**
 
@@ -329,8 +327,14 @@ Example with more overlays::
     ALTIMETRIC_AREA_MARGIN = 0.15
 
 .. note::
-  - All these settings can be modified but you need to check the result every time
-  - The only one modified most of the time is ``ALTIMETRIC_PROFILE_COLOR``
+  For all these settings, we recommand you to check the result every time. Be careful, altimetric profiles are stored in cache so you need to force the re-generation of the computed images. To do so, you need to update the geometry of an object and save it, it'll re-create image and help verify your configuration.
+
+  After validation of your modifications, to force Geotrek to re-create all the altimetric profiles, you need to delete cached files in the folder ``/opt/geotrek-admin/var/media/profiles``.
+
+  .. code-block:: bash
+    cd /opt/geotrek-admin/var/media/profiles``
+    rm *
+
 
 Disable darker map backgrounds
 -------------------------------
@@ -340,16 +344,17 @@ MAPENTITY_CONFIG for map background
 
 Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
 
-Example::
+Default value::
 
-    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
-
-Default::
-
-    True
+    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True
 
 Map screenshots
 ----------------
+
+When you generate a PDF in Geotrek-admin, a screenshot of the map with the object location is done. This section list all the available parameters to configure this screenshot. Therefore, if you change one of those values, pdfs will be rendered differently.
+
+Display related objects
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -362,15 +367,9 @@ Map screenshots
 MAP_CAPTURE_SIZE
 ~~~~~~~~~~~~~~~~~
 
-Show objects on maps of PDF
+Allow to change the size in pixels of the screenshot.
 
 Example::
 
     MAP_CAPTURE_SIZE = 800
-
-.. note::
-  - Size in pixels of the capture.
-  - Be careful with your pdfs.
-  - If you change this value, pdfs will be rendered differently
-
 
