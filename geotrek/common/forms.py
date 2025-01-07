@@ -388,7 +388,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
         self.helper.form_style = "default"
         self.helper.label_class = 'col-md-3'
         self.helper.field_class = 'col-md-9'
-        self.fields['next'].initial = f"{self._object.get_detail_url()}?tab=attachments-accessibility"
+        self.fields['next'].initial = f"{self._object.get_detail_url()}?tab=attachments"
 
         if not self.instance.pk:
             form_actions = [
@@ -423,7 +423,7 @@ class AttachmentAccessibilityForm(forms.ModelForm):
 
     def success_url(self):
         obj = self._object
-        return f"{obj.get_detail_url()}?tab=attachments-accessibility"
+        return f"{obj.get_detail_url()}?tab=attachments"
 
     def clean_attachment_accessibility_file(self):
         uploaded_image = self.cleaned_data.get("attachment_accessibility_file", False)

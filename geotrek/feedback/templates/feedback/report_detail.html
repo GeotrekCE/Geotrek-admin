@@ -1,5 +1,5 @@
 {% extends "common/common_detail.html" %}
-{% load feedback_tags i18n %}
+{% load feedback_tags i18n mapentity_tags %}
 
 
 {% block detailspanel %}
@@ -19,3 +19,38 @@
     {{ block.super }}
     <p hidden=true id="report_color">{{ report.color }}</p>
 {% endblock detailspanel %}
+
+{% block related_objects_tab_content %}
+    {% suricate_workflow_enabled as suricate_workflow_enabled %}
+    <div id="related-objects" class="tab-pane">
+        <table class="table">
+            <tr>
+                <td colspan="3">
+                {% if perms.maintenance.add_intervention %}
+                    <h3>{% trans "Intervention" %}</h3>
+                        {% with columns="name,status,stake,total_cost,begin_date,end_date" %}
+                                {% valuetable report.interventions.all columns=columns %}
+                        {% endwith %}
+                        {% if not suricate_workflow_enabled %}
+                            <p class="spacer"></p>
+                            <p class="autohide">
+                                <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
+                                class="btn btn-sm btn-success">
+                                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
+                            </p>
+                        {% elif suricate_workflow_enabled and report.interventions.all|length == 0 %}
+                            {% if report.status.identifier == 'late_intervention' or report.status.identifier == 'waiting' %}
+                                <p class="spacer"></p>
+                                <p class="autohide">
+                                    <a href="{% url 'maintenance:intervention_add' %}?target_id={{ report.pk }}&target_type={{ report.get_content_type_id }}"
+                                    class="btn btn-sm btn-success">
+                                    <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
+                                </p>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        </table>
+    </div>
+{% endblock %}

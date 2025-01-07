@@ -487,7 +487,7 @@ def delete_attachment_accessibility(request, attachment_pk):
     else:
         error_msg = _('You are not allowed to delete this attachment.')
         messages.error(request, error_msg)
-    return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments-accessibility")
+    return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments")
 
 
 home = last_list
