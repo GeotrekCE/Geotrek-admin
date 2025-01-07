@@ -23,8 +23,8 @@ Custom setting file
 
 Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
 
-The list of all overridable setting and default values can be found
-`there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
+The list of all overridable setting and default values can be found at : 
+`geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 After any change in ``custom.py``, run:
 
@@ -157,7 +157,7 @@ Languages of your project. It will be used to generate fields for translations. 
 Spatial extents
 ----------------
 
-Boundingbox of your project : x minimum , y minimum , x max, y max::
+Bounding box of your project : x minimum , y minimum , x max, y max::
 
         4 ^
           |
@@ -176,14 +176,18 @@ Default values::
   * If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.
 
 In order to check your configuration of spatial extents, a small tool
-is available at ``http://<server_url>/tools/extents/``. Administrator privileges are required.
+is available at ``https://<server_url>/tools/extents/``. Administrator privileges are required.
+
+.. image:: /images/installation-and-configuration/toolextent.jpg
+   :align: center
+   :alt: Interface de Tool extents
 
 .. _users-management:
 
 Users management
 ==================
 
-See :ref:`user management section in usage <user-management-section>`.
+See :ref:`User management section in usage <user-management-section>`.
 
 .. _database-users:
 

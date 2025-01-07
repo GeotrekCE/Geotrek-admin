@@ -30,78 +30,79 @@ Syntax::
 
         .. code-block:: python
 
-            LEAFLET_CONFIG['TILES'] = [
+    
+                LEAFLET_CONFIG['TILES'] = [
+                    (
+                        'OpenTopoMap',
+                        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                        {
+                            'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>; contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>;)',
+                            'maxNativeZoom': 17,
+                            'maxZoom': 22
+                        }
+                    ),
+                    (
+                        'OpenStreetMap',
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        {
+                            'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
+                            'maxNativeZoom': 19,
+                            'maxZoom': 22
+                        }
+                    )
+                ]
+    .. md-tab-item:: Example with IGN and OSM basemaps
+
+         .. code-block:: python
+
+    
+                LEAFLET_CONFIG['TILES'] = [
                 (
-                    'OpenTopoMap',
-                    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                    'IGN Plan V2',
+                    '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
                     {
-                        'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>; contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>;)',
-                        'maxNativeZoom': 17,
+                        'attribution': 'Plan IGNV2 - Carte © IGN/Geoportail',
+                        'maxNativeZoom': 16,
+                        'maxZoom': 22
+                    }
+                ),
+                (
+                    'IGN Orthophotos',
+                    '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+                    {
+                        'attribution': 'Orthophotos - Carte © IGN/Geoportail',
+                        'maxNativeZoom': 19,
                         'maxZoom': 22
                     }
                 ),
                 (
                     'OpenStreetMap',
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                     {
                         'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
                         'maxNativeZoom': 19,
                         'maxZoom': 22
                     }
-                )
-            ]
-
-    .. md-tab-item:: Example with IGN and OSM basemaps
-
-         .. code-block:: python
-
-            LEAFLET_CONFIG['TILES'] = [
-            (
-                'IGN Plan V2',
-                '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-                {
-                    'attribution': 'Plan IGNV2 - Carte © IGN/Geoportail',
-                    'maxNativeZoom': 16,
-                    'maxZoom': 22
-                }
-            ),
-            (
-                'IGN Orthophotos',
-                '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-                {
-                    'attribution': 'Orthophotos - Carte © IGN/Geoportail',
-                    'maxNativeZoom': 19,
-                    'maxZoom': 22
-                }
-            ),
-            (
-                'OpenStreetMap',
-                '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                {
-                    'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
-                    'maxNativeZoom': 19,
-                    'maxZoom': 22
-                }
-            ),
-            (
-                'OpenTopoMap',
-                '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                {
-                    'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                    'maxNativeZoom': 17,
-                    'maxZoom': 22
-                }
-            ),
-            (
-                'IGN Scan 25',
-                '//data.geopf.fr/private/wmts?apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-                {
-                    'attribution': 'Plan Scan 25 Touristique - Carte © IGN/Geoportail',
-                    'maxNativeZoom': 17,
-                    'maxZoom': 22
-                }
-            ),
-            ]
+                ),
+                (
+                    'OpenTopoMap',
+                    '//{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                    {
+                        'attribution': 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                        'maxNativeZoom': 17,
+                        'maxZoom': 22
+                    }
+                ),
+                (
+                    'IGN Scan 25',
+                    '//data.geopf.fr/private/wmts?apikey=ign_scan_ws&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+                    {
+                        'attribution': 'Plan Scan 25 Touristique - Carte © IGN/Geoportail',
+                        'maxNativeZoom': 17,
+                        'maxZoom': 22
+                    }
+                ),
+                ]
 
 Map overlays
 ~~~~~~~~~~~~~~
@@ -121,25 +122,26 @@ Map overlays
 
         .. code-block:: python
 
-            LEAFLET_CONFIG['OVERLAYS'] = [
-            (
-                'IGN Cadastre',
-                '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
-                {
-                    'attribution': 'Cadastre - Carte © IGN/Geoportail',
-                    'maxNativeZoom': 19,
-                    'maxZoom': 22
-                }
-            ),
-            ]
-
+    
+                LEAFLET_CONFIG['OVERLAYS'] = [
+                (
+                    'IGN Cadastre',
+                    '//data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+                    {
+                        'attribution': 'Cadastre - Carte © IGN/Geoportail',
+                        'maxNativeZoom': 19,
+                        'maxZoom': 22
+                    }
+                ),
+                ]
     .. md-tab-item:: Advanced example
 
          .. code-block:: python
 
-            LEAFLET_CONFIG['OVERLAYS'] = [
-            ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
-            ]
+    
+                LEAFLET_CONFIG['OVERLAYS'] = [
+                ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
+                ]
 
 **Expected properties:**
 
@@ -181,31 +183,31 @@ All layers colors can be customized from the settings. See `Leaflet reference <h
 
         .. code-block:: python
 
-            MAPENTITY_CONFIG['MAP_STYLES'] = {
-                'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
-                'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-                'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
-                'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-                'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-                'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-                'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-                'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-                'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
-                
-                'detail': {'color': '#ffff00'},
-                'others': {'color': '#ffff00'},
-
-                'print': {
-                    'path': {'weight': 1},
-                    'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                            'arrowColor': 'black', 'arrowSize': 10},
+    
+                MAPENTITY_CONFIG['MAP_STYLES'] = {
+                    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+                    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+                    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+                    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+                    'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+                    'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                    'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+                    'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+                    'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                    'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                    'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+    
+                    'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
+                    
+                    'detail': {'color': '#ffff00'},
+                    'others': {'color': '#ffff00'},
+    
+                    'print': {
+                        'path': {'weight': 1},
+                        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                                'arrowColor': 'black', 'arrowSize': 10},
+                    }
                 }
-            }
-
     .. md-tab-item:: Examples
 
             Example to override configuration for displaying ``Path`` objects::
@@ -233,24 +235,24 @@ Regarding colors that depend from database content, such as land layers (physica
 
         .. code-block:: python
 
-            COLORS_POOL = {
-                           'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
-                           'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
-                           'circulation': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
-                           'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
-                           'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
-                           'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
-                           'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
-                                              'darkviolet', 'lightcoral', 'palevioletred',
-                                              'MediumVioletRed', 'MediumOrchid', 'Magenta',
-                                              'LightSalmon', 'HotPink', 'Fuchsia']}
-
+    
+                COLORS_POOL = {
+                               'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
+                               'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+                               'circulation': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+                               'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
+                               'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                               'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                               'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
+                                                  'darkviolet', 'lightcoral', 'palevioletred',
+                                                  'MediumVioletRed', 'MediumOrchid', 'Magenta',
+                                                  'LightSalmon', 'HotPink', 'Fuchsia']}
     .. md-tab-item:: Example
 
          .. code-block:: python
 
-            COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
-
+    
+                COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
 .. note:: 
   - Each of the object types for Status module (``land``, ``physical``, ``competence``, ``signagemanagement``, ``workmanagement``...) should have values defined.
   - For ``restrictedarea``: add as many color there are restricted area types
@@ -302,16 +304,16 @@ Minimum distance to merge two paths in unit of SRID.
 
     .. md-tab-item:: Default configuration
 
-        .. code-block:: python
-
-            PATH_SNAPPING_DISTANCE = 1.0
-
+    
+            .. code-block:: python
+    
+                PATH_SNAPPING_DISTANCE = 1.0
     .. md-tab-item:: Example
 
          .. code-block:: python
 
-            PATH_SNAPPING_DISTANCE = 2.0
-
+    
+                PATH_SNAPPING_DISTANCE = 2.0
 .. note::
   - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
 
@@ -372,22 +374,23 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
         .. code-block:: python
 
-            TOPOLOGY_STATIC_OFFSETS = {'land': -5,
-                                    'physical': 0,
-                                    'circulation': 15,
-                                    'competence': 5,
-                                    'signagemanagement': -10,
-                                    'workmanagement': 10}
-
+    
+                TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+                                        'physical': 0,
+                                        'circulation': 15,
+                                        'competence': 5,
+                                        'signagemanagement': -10,
+                                        'workmanagement': 10}
     .. md-tab-item:: Example
 
          .. code-block:: python
 
-            TOPOLOGY_STATIC_OFFSETS = {'land': -5, 
-                                    'physical': 0, 
-                                    'competence': 5, 
-                                    'signagemanagement': -10, 
-                                    'workmanagement': 10}
+    
+                TOPOLOGY_STATIC_OFFSETS = {'land': -5, 
+                                        'physical': 0, 
+                                        'competence': 5, 
+                                        'signagemanagement': -10, 
+                                        'workmanagement': 10}
 
 Altimetric profile
 ~~~~~~~~~~~~~~~~~~~~~
