@@ -301,7 +301,7 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 **Import command examples :**
 
 .. md-tab-set::
-    :name: cities-import-command-tabs
+    :name: infrastructures-import-command-tabs
 
     .. md-tab-item:: Example with Debian
 
