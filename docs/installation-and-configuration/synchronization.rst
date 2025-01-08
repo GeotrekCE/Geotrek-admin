@@ -25,10 +25,21 @@ Automatic synchronization
 
 You can set up automatic synchronization by creating a file ``/etc/cron.d/geotrek_sync`` that contains:
 
-::
+.. md-tab-set::
+    :name: automatic-synchronization-tabs
 
-    0 3 * * * root /usr/sbin/geotrek sync_mobile /opt/geotrek-admin/var/data
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+
+         	0 3 * * * root /usr/sbin/geotrek sync_mobile /opt/geotrek-admin/var/data 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+         	0 3 * * * root /usr/bin/docker compose run --rm web ./manage.py sync_mobile /opt/geotrek-admin/var/data 
 
 This example will automatically synchronize data a 3 am every day.
 
-Note: it is required to give the full path to the geotrek command since cron set the PATH only to `bin:/usr/bin`.
+Note: it is required to give the full path to the geotrek command since cron sets the PATH only to `bin:/usr/sbin` with Debian and `bin:/usr/bin` with Docker.

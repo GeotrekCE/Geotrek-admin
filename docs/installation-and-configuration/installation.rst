@@ -64,9 +64,21 @@ Don't forget to enable PostGIS extension in your remote database before installa
 
 Then create the application administrator account and connect to the web interface.
 
-::
+.. md-tab-set::
+    :name: create-superuser-command-tabs
 
-   sudo geotrek createsuperuser
+    .. md-tab-item:: With Debian
+
+         .. code-block:: python
+
+          sudo geotrek createsuperuser
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+          docker compose run --rm web ./manage.py createsuperuser
+
 
 If you are not confident with the ``install.sh`` script, or if you are having troubles, you can do the same operations by hand:
 
@@ -154,17 +166,15 @@ To remove dependencies (convertit, screamshooter…), run:
 .. _docker-section:
 
 Docker
-------
+=======
 
 Docker is an alternative installation method, recommended for experts only.
 It allows to install several instances of Geotrek-admin on the same serveur,
 and to install it on other distributions than Ubuntu Linux 18.04.
 
 
-1. Install Docker and Docker Compose, either from your distribution or from upstream packages
-   (cf. https://docs.docker.com/install/)
-2. Download the code from https://github.com/GeotrekCE/Geotrek-admin/releases
-   or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/
+1. Install Docker and Docker Compose, either from your distribution or `from upstream packages <https://docs.docker.com/install/>`_
+2. Download the code from `Geotrek-admin releases page <https://github.com/GeotrekCE/Geotrek-admin/releases>`_ or checkout it with git from `Geotrek-admin GitHub repository <https://github.com/GeotrekCE/Geotrek-admin/>`_
 3. Unzip the tarball
 4. Copy docker/install folder where you want
 5. Edit ``docker-compose.yml`` to feed your needs if necessary

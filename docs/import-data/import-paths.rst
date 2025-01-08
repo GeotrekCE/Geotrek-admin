@@ -4,8 +4,11 @@
 Import paths
 =============
 
-.. danger::
-    With dynamic segmentation, importing paths is very risky if paths are already present in the same area in Geotrek,
+Requirements
+=============
+
+.. important::
+    With :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, importing paths is very risky if paths are already present in the same area in Geotrek,
     it is only safe for an area where no path is already created.
 
     Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.
@@ -16,6 +19,9 @@ Before import paths layer, it is important to prepare them. Paths must be:
 - simple geometry (no intersection)
 - all intersections must cut the paths
 - not double or covering others
+
+Clean paths
+=============
 
 We use QGis to clean a path layer, with plugin Grass.
 Here are the operations:
@@ -43,55 +49,59 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
 
 **To import a shapefile containing your paths, use the command** ``loadpaths``
 
-``sudo geotrek help loadpaths``
+Load paths
+===========
 
-::
+.. example:: sudo geotrek help loadpaths
+    :collapsible:
 
-    usage: manage.py loadpaths [-h] [--structure STRUCTURE]
-                           [--name-attribute NAME]
-                           [--comments-attribute [COMMENT [COMMENT ...]]]
-                           [--encoding ENCODING] [--srid SRID] [--intersect]
-                           [--fail] [--dry] [--version] [-v {0,1,2,3}]
-                           [--settings SETTINGS] [--pythonpath PYTHONPATH]
-                           [--traceback] [--no-color] [--force-color]
-                           [--skip-checks]
-                           file_path
+    ::
 
-    Load a layer with point geometries in a model
+      usage: manage.py loadpaths [-h] [--structure STRUCTURE]
+                             [--name-attribute NAME]
+                             [--comments-attribute [COMMENT [COMMENT ...]]]
+                             [--encoding ENCODING] [--srid SRID] [--intersect]
+                             [--fail] [--dry] [--version] [-v {0,1,2,3}]
+                             [--settings SETTINGS] [--pythonpath PYTHONPATH]
+                             [--traceback] [--no-color] [--force-color]
+                             [--skip-checks]
+                             file_path
 
-    positional arguments:
-      point_layer
+      Load a layer with point geometries in a model
 
-    optional arguments:
-  -h, --help            show this help message and exit
-  --structure STRUCTURE
-                        Define the structure
-  --name-attribute NAME, -n NAME
-                        Name of the name's attribute inside the file
-  --comments-attribute [COMMENT [COMMENT ...]], -c [COMMENT [COMMENT ...]]
-  --encoding ENCODING, -e ENCODING
-                        File encoding, default utf-8
-  --srid SRID, -s SRID  File's SRID
-  --intersect, -i       Check paths intersect spatial extent and not only
-                        within
-  --fail, -f            Allows to grant fails
-  --dry, -d             Do not change the database, dry run. Show the number
-                        of fail and objects potentially created
-  --version             Show program's version number and exit.
-  -v {0,1,2,3}, --verbosity {0,1,2,3}
-                        Verbosity level; 0=minimal output, 1=normal output,
-                        2=verbose output, 3=very verbose output
-  --settings SETTINGS   The Python path to a settings module, e.g.
-                        "myproject.settings.main". If this isn't provided, the
-                        DJANGO_SETTINGS_MODULE environment variable will be
-                        used.
-  --pythonpath PYTHONPATH
-                        A directory to add to the Python path, e.g.
-                        "/home/djangoprojects/myproject".
-  --traceback           Raise on CommandError exceptions.
-  --no-color            Don't colorize the command output.
-  --force-color         Force colorization of the command output.
-  --skip-checks         Skip system checks.
+      positional arguments:
+        point_layer
+
+      optional arguments:
+      -h, --help            show this help message and exit
+      --structure STRUCTURE
+                            Define the structure
+      --name-attribute NAME, -n NAME
+                            Name of the name's attribute inside the file
+      --comments-attribute [COMMENT [COMMENT ...]], -c [COMMENT [COMMENT ...]]
+      --encoding ENCODING, -e ENCODING
+                            File encoding, default utf-8
+      --srid SRID, -s SRID  File's SRID
+      --intersect, -i       Check paths intersect spatial extent and not only
+                            within
+      --fail, -f            Allows to grant fails
+      --dry, -d             Do not change the database, dry run. Show the number
+                            of fail and objects potentially created
+      --version             Show program's version number and exit.
+      -v {0,1,2,3}, --verbosity {0,1,2,3}
+                            Verbosity level; 0=minimal output, 1=normal output,
+                            2=verbose output, 3=very verbose output
+      --settings SETTINGS   The Python path to a settings module, e.g.
+                            "myproject.settings.main". If this isn't provided, the
+                            DJANGO_SETTINGS_MODULE environment variable will be
+                            used.
+      --pythonpath PYTHONPATH
+                            A directory to add to the Python path, e.g.
+                            "/home/djangoprojects/myproject".
+      --traceback           Raise on CommandError exceptions.
+      --no-color            Don't colorize the command output.
+      --force-color         Force colorization of the command output.
+      --skip-checks         Skip system checks.
 
 .. note::
 
@@ -103,32 +113,35 @@ or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/
     * **Good to know** : 
        * The default SRID code is 4326
        * The default encoding is UTF-8
-       * Imported paths are unpublished by default
        * When importing a Geopackage, the first layer is always used
        * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
 
 **Import command examples :**
 
-* Docker
+.. md-tab-set::
+    :name: path-import-command-tabs
 
-.. code-block:: bash
+    .. md-tab-item:: Example with Debian
 
-    docker compose run --rm web ./manage.py loadpaths \
-    ./var/conf/paths.geojson
-    --srid=2154 \
-    --encoding latin1 \
-    --structure "DEMO" \
-    --name-attribute id \
-    --comments-attribute commentaire
+         .. code-block:: bash
 
-* Debian
+          sudo geotrek loadpaths \
+          ./var/conf/paths.geojson \
+          --srid=2154 \
+          --encoding latin1 \
+          --structure "DEMO" \
+          --name-attribute id \
+          --comments-attribute commentaire
 
-.. code-block:: bash
 
-    sudo geotrek loadpaths \
-    ./var/conf/paths.geojson
-    --srid=2154 \
-    --encoding latin1 \
-    --structure "DEMO" \
-    --name-attribute id \
-    --comments-attribute commentaire
+    .. md-tab-item:: Example with Docker
+
+         .. code-block:: bash
+    
+          docker compose run --rm web ./manage.py loadpaths \
+          ./var/conf/paths.geojson \
+          --srid=2154 \
+          --encoding latin1 \
+          --structure "DEMO" \
+          --name-attribute id \
+          --comments-attribute commentaire

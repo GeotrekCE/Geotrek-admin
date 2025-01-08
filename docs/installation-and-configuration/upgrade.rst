@@ -170,7 +170,7 @@ You can now restore your database dump.
 
 .. note::
 
-    Note you have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
+    You have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
     Some errors can occurs, around extensions creation or ``spatial_ref_sys`` table content.
     This is normal. We already create these extensions on previous steps.
 

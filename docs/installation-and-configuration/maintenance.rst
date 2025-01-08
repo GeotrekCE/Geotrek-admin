@@ -89,8 +89,23 @@ example), you can use `SSH tunnels <https://www.postgresql.org/docs/current/ssh-
 Manage Cache
 ============
 
-* You can purge application cache with command or in admin interface
+You can purge application cache :
 
-.. code-block:: bash
+- with command line :
 
-    sudo geotrek clearcache --cache_name default --cache_name fat --cache_name api_v2h ori
+.. md-tab-set::
+    :name: purge-cache-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+
+            sudo geotrek clearcache 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+          docker compose run --rm web ./manage.py clearcache 
+
+- in Geotrek-admin interface : ``https://<server_url>/admin/clearcache/``

@@ -22,8 +22,10 @@ L'API Geotrek est le point central pour permettre les interconnexions avec diver
 APIs externes
 =============
 
-Geotrek et IGNrando'
---------------------
+.. _geotrek-ignrando-cirkwi-api:
+
+Geotrek et IGNrando' / Cirkwi
+-------------------------------
 
 Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' `(voir cet article) <https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne>`_.
 
@@ -65,9 +67,10 @@ Les correspondances avec les valeurs de ces 3 tables sont donc à renseigner dan
 
 Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirkwi (`voir cette page <https://pro.cirkwi.com/importez-vos-donnees-geotrek-dans-cirkwi/>`_).
 
-.. note::
+.. seealso::
 
-    Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``
+    - Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse ``[URL_GEOTREK-ADMIN]/api/v2/``
+    - Pour importer des itinéraires et contenus touristiques depuis CIRKWI, se référer à la section :ref:`Import from Cirkwi <import-from-cirkwi>`.
 
 Geotrek et APIDAE
 -----------------

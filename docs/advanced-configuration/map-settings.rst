@@ -214,12 +214,9 @@ All layers colors can be customized from the settings. See `Leaflet reference <h
 
                 MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
-            .. hint::
-                It is also possible to override a specific parameter. 
+            Example to override a specific parameter::
 
-                Example::
-
-                    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
+                MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 Colors pool
 ~~~~~~~~~~~~
@@ -271,6 +268,17 @@ Map screenshots
 
 When you generate a PDF in Geotrek-admin, a screenshot of the map with the object location is done. This section list all the available parameters to configure this screenshot. Therefore, if you change one of those values, pdfs will be rendered differently.
 
+.. note::
+  For all these settings, we recommand you to check the result every time. Be careful, map screenshots are stored in cache so you need to force the re-generation of the computed images. To do so, you need to update the geometry of an object and save it, it will re-create image and help check your configuration.
+
+  After validation of your modifications, to force Geotrek to re-create all the screenshots, you need to delete cached files in the folder ``/opt/geotrek-admin/var/media/maps``.
+
+  .. code-block:: bash
+
+    cd /opt/geotrek-admin/var/media/maps
+    rm *
+
+
 Display related objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -314,8 +322,9 @@ Minimum distance to merge two paths in unit of SRID.
 
     
                 PATH_SNAPPING_DISTANCE = 2.0
+
 .. note::
-  - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
+  Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
 
 Snap distance
 ~~~~~~~~~~~~~~~

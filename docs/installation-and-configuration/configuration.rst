@@ -115,6 +115,8 @@ Name for your default structure.
    * *Change in the settings*
    * *Re-run the server.*
 
+.. _configuration-dynamic-segmentation:
+
 Dynamic segmentation
 ----------------------
 
