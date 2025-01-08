@@ -1,6 +1,6 @@
-===========
-Import DEM 
-===========
+================
+Altimetry (DEM)
+================
 
 In `QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
 you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).

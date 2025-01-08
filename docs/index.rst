@@ -79,17 +79,19 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     :hidden:
 
     import-data/minimal-initial-data
-    import-data/load-mnt-raster
+    import-data/import-dem-raster
     import-data/import-paths
-    import-data/import-other-data-from-file
-    import-data/import-from-network
-    import-data/import-from-touristic-data-systems
+    import-data/import-areas
+    import-data/import-touristic-data-systems
+    import-data/import-other-data
+    import-data/import-agregator
 
 .. toctree::
     :caption: ✨ Contribute
     :hidden:
 
     contribute/contributing
+    contribute/guidelines
     contribute/development
     contribute/translating
     contribute/documentation

@@ -1,8 +1,8 @@
 .. _import-from-touristic-data-systems:
 
-===================================
-Import from touristic data systems 
-===================================
+=======================
+Touristic Data Systems
+=======================
 
 Real-time integration
 ======================

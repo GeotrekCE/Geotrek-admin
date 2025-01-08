@@ -1,8 +1,8 @@
 .. _import-paths:
 
-=============
-Import paths
-=============
+=======
+Paths
+=======
 
 Requirements
 =============
