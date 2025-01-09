@@ -1,6 +1,14 @@
+.. _altimetry-dem:
+
 ================
 Altimetry (DEM)
 ================
+
+Refer to :ref:`this section <altimetry-dem-source-list>` to learn about the available downloadable data sources.
+
+.. warning::
+
+    We recommend not importing a DEM with too precise resolution for performance reasons. For example, the BD Alti DEM with a 25m resolution is perfect to cover a department.
 
 In `QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
 you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).

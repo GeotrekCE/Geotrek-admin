@@ -2,6 +2,11 @@
 From other Geotrek (agregator)
 ===============================
 
+.. abstract:: Key words
+
+   ``Agregator``, ``Non dynamic segmentation``, ``parsers``, ``cron``
+
+
 .. _import-data-from-a-remote-geotrek-instance:
 
 Import data from an other Geotrek-admin (aggregator)

@@ -4,6 +4,12 @@
 Paths
 =======
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Dynamic segmentation
+
 Requirements
 =============
 

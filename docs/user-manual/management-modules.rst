@@ -22,6 +22,12 @@ Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche
 Les tronçons
 ============
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
+
 C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre deux intersections. Le mécanisme de segmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 
 Les tronçons peuvent être soit numérisés dans Geotrek-admin, soit importés directement dans l'outil via :
@@ -50,6 +56,12 @@ Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en affi
 Les sentiers
 ============
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
+
 Il s'agit d'un ensemble linéaire composés d'un ou plusieurs tronçons (entiers ou partiels) grâce à la segmentation dynamique.
 
 Les sentiers permettent d'avoir une vision de gestionnaire sur un linéaire plus complet que les tronçons (qui sont découpés à chaque intersection) pour en connaitre les statuts, la signalétique, les aménagements, les interventions ainsi que les itinéraires et POI. Il est d'ailleurs possible d'ajouter une intervention sur un sentier complet directement depuis la fiche détail d'un sentier.
@@ -63,12 +75,24 @@ A ne pas confondre avec le module Itinéraires qui permet de créer des randonn�
 Les statuts
 ============
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
+
 Ils permettent de renseigner des informations sur le linéaire (type physique, statut foncier, organismes ayant la compétence sentiers, gestionnaires des travaux et de la signalétique) sans avoir à le faire tronçon par tronçon grâce à la segmentation dynamique qui permet de localiser le départ et l'arrivée sur un ou plusieurs tronçons.
 
 .. _les-amenagements:
 
 Les aménagements
 ================
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
 
 Ils permettent d'inventorier les aménagements sur les sentiers (passerelles, mains courantes, cunettes, soutènements, bancs, parkings...) en les localisant, les typant, les décrivant, renseignant leur état et leur année d'implantation.
 
@@ -89,6 +113,12 @@ Il est aussi possible de les exporter, de leur attacher des fichiers (images, PD
 La signalétique
 ===============
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
+
 Centralise les informations sur la signalétique d'accueil, d'information et d'orientation des randonneurs. Permet de localiser, décrire l'implantation, et gérer les fichiers concernant la signalétique (BAT, maquettes, photos, etc.).
 
 Pour une signalétique, il est possible de définir chaque lame et chaque ligne de lame. L'image ci-dessous montre un exemple de correspondance entre une signalétique terrain et sa saisie dans Geotrek.
@@ -103,6 +133,12 @@ Pour une signalétique, il est possible de définir chaque lame et chaque ligne 
 
 Les interventions
 =================
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
 
 Les interventions permettent d'inventorier et suivre les travaux réalisés sur les sentiers. Chaque intervention correspond à une action sur un tronçon, sentier, aménagement ou signalétique.
 

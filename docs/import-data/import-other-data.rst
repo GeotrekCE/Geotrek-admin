@@ -39,6 +39,12 @@ To get help about a command:
 Load POIs
 ==========
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Dynamic segmentation
+
 .. example:: sudo geotrek help loadpoi
     :collapsible:
 
@@ -144,6 +150,12 @@ Load POIs
 
 Load Infrastructure
 ======================
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Dynamic segmentation
 
 .. example:: sudo geotrek help loadinfrastructure
     :collapsible:
@@ -339,6 +351,12 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 
 Load Signage
 ===============
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Dynamic segmentation
 
 .. example:: sudo geotrek help loadsignage
     :collapsible:

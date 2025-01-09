@@ -7,6 +7,8 @@ Areas
 Load Cities
 ==============
 
+Refer to :ref:`this section <cities-source-list>` to learn about the available downloadable data sources.
+
 .. example:: sudo geotrek help loadcities
     :collapsible:
 
@@ -102,6 +104,8 @@ Load Cities
 
 Load Districts
 =================
+
+Refer to :ref:`this section <districts-source-list>` to learn about the available downloadable data sources.
 
 .. example:: sudo geotrek help loaddistricts
     :collapsible:
@@ -212,6 +216,8 @@ Load Districts
 Load Restricted areas
 ========================
 
+Refer to :ref:`this section <restrictedareas-source-list>` to learn about the available downloadable data sources.
+
 .. example:: sudo geotrek help loadrestrictedareas
     :collapsible:
 
@@ -310,7 +316,7 @@ Load Restricted areas
 
 .. _sensitive-areas-import:
 
-Sensitive Areas Import
+Sensitive areas Import
 =======================
 
 Geotrek-admin provides tools to import sensitive areas data when the module is enabled. The imports can be done through the web interface or the command line. Below are the available options:
@@ -351,6 +357,8 @@ From the command line
 
 Import from a Shapefile
 --------------------------
+
+Refer to :ref:`this section <sensitiveareas-source-list>` to learn about the available downloadable data sources.
 
 Sensitive areas can also be imported from an ESRI Shapefile (zipped). Ensure the following:
 

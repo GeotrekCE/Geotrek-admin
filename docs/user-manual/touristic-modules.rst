@@ -7,6 +7,12 @@ Modules de valorisation
 Itinéraires
 ===========
 
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
+
 Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout ou la modification sont fréquents.
 
@@ -370,7 +376,7 @@ Fiche détaillée
 Itinérance
 ----------
 
-Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : https://www.grand-tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-Ecrins.
+Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur `cet exemple <https://www.grand-tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-Ecrins>`_.
 
 Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y associer des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet.
 
@@ -395,6 +401,12 @@ Pour que des puces numérotées sous forme de pastilles rouges soient affichées
 
 Points d'intérêts (POI)
 =======================
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Segmentation dynamique
 
 Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmentation dynamique, en fonction des tronçons communs de l'itinéraire et des POIs.
 
