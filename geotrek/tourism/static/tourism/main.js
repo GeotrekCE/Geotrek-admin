@@ -87,7 +87,7 @@ $(window).on('entity:map', function (e, data) {
 });
 
 
-$(window).on('entity:view:list', function (e, data) {
+$(window).on('entity:view:filter', function (e, data) {
 
     // Date picker
     $('#id_before, #id_after').datepicker({

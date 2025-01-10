@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Prefetch
 from geotrek.common.models import HDViewPoint
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate,
+from mapentity.views import (MapEntityList, MapEntityFilter, MapEntityDetail, MapEntityDocument, MapEntityCreate,
                              MapEntityUpdate, MapEntityDelete, MapEntityFormat)
 
 from geotrek.authent.decorators import same_structure_required
@@ -18,10 +18,14 @@ from .serializers import SiteSerializer, CourseSerializer, SiteGeojsonSerializer
 
 class SiteList(CustomColumnsMixin, MapEntityList):
     queryset = Site.objects.all()
-    filterform = SiteFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['super_practices', 'date_update']
     searchable_columns = ['id', 'name']
+
+
+class SiteFilter(MapEntityFilter):
+    model = Site
+    filterset_class = SiteFilterSet
 
 
 class SiteDetail(CompletenessMixin, MapEntityDetail):
@@ -104,6 +108,7 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
 
 
 class SiteFormatList(MapEntityFormat, SiteList):
+    filterset_class = SiteFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'practice', 'description',
@@ -130,10 +135,14 @@ class SiteViewSet(GeotrekMapentityViewSet):
 
 class CourseList(CustomColumnsMixin, MapEntityList):
     queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
-    filterform = CourseFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['parent_sites', 'date_update']
     searchable_columns = ['id', 'name']
+
+
+class CourseFilter(MapEntityFilter):
+    model = Course
+    filterset_class = CourseFilterSet
 
 
 class CourseDetail(CompletenessMixin, MapEntityDetail):
@@ -208,6 +217,7 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 
 
 class CourseFormatList(MapEntityFormat, CourseList):
+    filterset_class = CourseFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'parent_sites', 'description', 'advice', 'equipment', 'accessibility',

@@ -5,11 +5,22 @@ CHANGELOG
 2.111.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
 **Documentation**
 
 - Update theme color
 - Fix typo in documentation
 - Update and homogenize README.rst
+
 
 2.111.0     (2024-12-05)
 ----------------------------

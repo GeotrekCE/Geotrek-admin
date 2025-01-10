@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityFilter, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
@@ -15,7 +15,6 @@ from .serializers import DiveSerializer, DiveGeojsonSerializer
 
 
 class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
-    filterform = DiveFilterSet
     queryset = Dive.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['levels', 'thumbnail']
@@ -23,7 +22,13 @@ class DiveList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     searchable_columns = ['id', 'name']
 
 
+class DiveFilter(MapEntityFilter):
+    model = Dive
+    filterset_class = DiveFilterSet
+
+
 class DiveFormatList(MapEntityFormat, DiveList):
+    filterset_class = DiveFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'eid', 'structure', 'name', 'departure',

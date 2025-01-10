@@ -19,7 +19,7 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, LastModifiedMixin)
+                             MapEntityDelete, MapEntityFormat, LastModifiedMixin, MapEntityFilter)
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
@@ -60,14 +60,19 @@ class CreateFromTopologyMixin:
 
 class PathList(CustomColumnsMixin, MapEntityList):
     queryset = Path.objects.all()
-    filterform = PathFilterSet
     mandatory_columns = ['id', 'checkbox', 'name', 'length']
     default_extra_columns = ['length_2d']
     unorderable_columns = ['checkbox']
     searchable_columns = ['id', 'name']
 
 
+class PathFilter(MapEntityFilter):
+    model = Path
+    filterset_class = PathFilterSet
+
+
 class PathFormatList(MapEntityFormat, PathList):
+    filterset_class = PathFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
@@ -343,13 +348,18 @@ class CertificationTrailMixin(FormsetMixin):
 
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
-    filterform = TrailFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['departure', 'arrival', 'length']
     searchable_columns = ['id', 'name', 'departure', 'arrival', ]
 
 
+class TrailFilter(MapEntityFilter):
+    model = Trail
+    filterset_class = TrailFilterSet
+
+
 class TrailFormatList(MapEntityFormat, TrailList):
+    filterset_class = TrailFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'comments',
