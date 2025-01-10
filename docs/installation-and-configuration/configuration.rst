@@ -9,9 +9,20 @@ Basic configuration update
 
 To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: update-configuration-tabs
 
-    sudo dpkg-reconfigure geotrek-admin
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+    
+                sudo dpkg-reconfigure geotrek-admin 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web update.sh 
 
 The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` file, not to be changed manually.
 This file also contains the PostgreSQL authentification details, if you need to access your Geotrek-admin database.
@@ -28,15 +39,38 @@ The list of all overridable setting and default values can be found at :
 
 After any change in ``custom.py``, run:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: restart-service-tabs
 
-    sudo service geotrek restart
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+    
+                sudo service geotrek restart 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose down && up -d 
+
 
 Sometimes you also have to run:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: reconfigure-tabs
 
-    sudo dpkg-reconfigure -u geotrek-admin
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+    
+                sudo dpkg-reconfigure geotrek-admin 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web update.sh 
 
 .. note::
 
@@ -51,9 +85,20 @@ NGINX configuration is controlled by Geotrek-admin and will be erased at each up
 Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or ``/etc/nginx/sites-enable/geotrek.conf``.
 Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then run:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: reconfigure-ngninx-tabs
 
-    sudo dpkg-reconfigure geotrek-admin
+    .. md-tab-item:: With Debian
+    
+            .. code-block:: bash
+    
+                sudo dpkg-reconfigure geotrek-admin 
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web update.sh 
 
 .. _activate-ssl-https:
 
@@ -119,6 +164,12 @@ Name for your default structure.
 
 Dynamic segmentation
 ----------------------
+
+.. task-list::
+    :class: custom-task-list-style
+    :custom:
+
+    + [x] Dynamic segmentation
 
 .. code-block:: python
 

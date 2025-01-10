@@ -187,9 +187,15 @@ and to install it on other distributions than Ubuntu Linux 18.04.
 Management commands
 ====================
 
-Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker compose run --rm web ./manage.py …``
+Replace ``sudo geotrek …`` commands by :
 
-Replace ``sudo dpkg-reconfigure geotrek-admin`` by ``cd <install directory>; docker compose run --rm web update.sh``
+1. ``cd <install directory>``
+2. ``docker compose run --rm web ./manage.py …``
+
+Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
+
+1. ``cd <install directory>`` 
+2. ``docker compose run --rm web update.sh``
 
 To load minimal data and create an application superuser, run:
 
