@@ -84,7 +84,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     import-data/import-areas
     import-data/import-touristic-data-systems
     import-data/import-other-data
-    import-data/import-agregator
+    import-data/import-aggregator
 
 .. toctree::
     :caption: ✨ Contribute

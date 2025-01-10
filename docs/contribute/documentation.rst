@@ -10,7 +10,7 @@ To compile and test documentation on local environment, run:
 
 .. code-block:: bash
 
-    docker compose up -d sphinx
+    docker compose up sphinx postgres
 
 Access to documentation built in html : http://0.0.0.0:8800
 

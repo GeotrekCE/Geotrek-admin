@@ -105,6 +105,8 @@ Districts
      - GeoJSON
      - Annually
 
+Districts are not necessarily administrative boundaries. They can be intercommunalities, departments, parks, or natural regions. The advantage of importing them as Districts is that you will be able to filter them in Geotrek-rando, which will not be possible with Restricted areas.
+
 .. seealso::
 
 	Refer to :ref:`this section <import-districts>` to learn more about loading districts in your Geotrek-admin.

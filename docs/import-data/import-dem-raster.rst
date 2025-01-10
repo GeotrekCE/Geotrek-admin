@@ -8,7 +8,8 @@ Refer to :ref:`this section <altimetry-dem-source-list>` to learn about the avai
 
 .. warning::
 
-    We recommend not importing a DEM with too precise resolution for performance reasons. For example, the BD Alti DEM with a 25m resolution is perfect to cover a department.
+    - We recommend not importing a DEM with too precise resolution for performance reasons. For example, the BD Alti DEM with a 25m resolution is perfect to cover a department.
+    - If you downloaded the BD Alti or RGE Alti, you will need to convert the ``.asc`` DEM to ``.tif`` format (e.g. with QGIS) before uploading it on the server.
 
 In `QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
 you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).

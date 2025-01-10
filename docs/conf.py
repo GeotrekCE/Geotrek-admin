@@ -29,6 +29,14 @@ pygments_style = 'sphinx'
 
 html_logo = "_static/logo.svg"
 
+sphinx_immaterial_custom_admonitions = [
+    {
+        "name": "legend",
+        "color": (142, 142, 142),
+        "icon": "fontawesome/solid/eye",
+    }
+]
+
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     "icon": {

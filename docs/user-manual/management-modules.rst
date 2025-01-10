@@ -22,11 +22,11 @@ Lors de la saisie d'un objet sur la carte, il est possible d'afficher une couche
 Les tronçons
 ============
 
-.. task-list::
-    :class: custom-task-list-style
-    :custom:
+.. legend:: Bon à savoir
 
-    + [x] Segmentation dynamique
+      ✨ Disponible uniquement en segmentation dynamique
+
+      🗺️ Calcul reposant sur la segmentation dynamique lorsqu'elle est activée
 
 C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre deux intersections. Le mécanisme de segmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
 

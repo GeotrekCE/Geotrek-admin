@@ -17,7 +17,6 @@ In order to disable a full set of modules, in the custom settings file, add the 
     _INSTALLED_APPS.remove('geotrek.maintenance')
     INSTALLED_APPS = _INSTALLED_APPS
 
-
 TRAIL_MODEL_ENABLED
 ~~~~~~~~~~~~~~~~~~~~
 
