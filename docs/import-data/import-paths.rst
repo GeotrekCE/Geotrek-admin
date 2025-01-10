@@ -4,12 +4,10 @@
 Paths
 =======
 
-.. task-list::
-    :class: custom-task-list-style
-    :custom:
+.. ns-only::
 
-    + [x] Dynamic segmentation
-
+    .. 
+      
 Requirements
 =============
 

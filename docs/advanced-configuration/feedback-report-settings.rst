@@ -7,18 +7,24 @@ Feedback reports settings
 Send acknowledge email
 ------------------------
 
-SEND_REPORT_ACK
+Send report ack
 ~~~~~~~~~~~~~~~~
 
 If ``False``, no email will be sent to the sender of any feedback on Geotrek-rando website.
 
-Example::
+.. md-tab-set::
+    :name: send-report-ack-tabs
 
-    SEND_REPORT_ACK = True
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SEND_REPORT_ACK = False
+    .. md-tab-item:: Example
 
-    False
+         .. code-block:: python
+    
+                SEND_REPORT_ACK = True
 
 .. _suricate-support:
 
@@ -223,22 +229,27 @@ Make sure to run these three commands daily to maintain synchronization and upda
     geotrek check_timers
     geotrek sync_suricate
 
-
 Display reports with status defined colors
 --------------------------------------------
 
-ENABLE_REPORT_COLORS_PER_STATUS
+Enable report colors per status 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
 
-Example::
+.. md-tab-set::
+    :name: enable-report-colors-per-status-tabs
 
-    ENABLE_REPORT_COLORS_PER_STATUS = True
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                ENABLE_REPORT_COLORS_PER_STATUS = False
+    .. md-tab-item:: Example
 
-    False
+         .. code-block:: python
+    
+                ENABLE_REPORT_COLORS_PER_STATUS = True
 
 Use timers to receive alerts for your reports
 -------------------------------------------------

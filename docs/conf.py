@@ -34,7 +34,31 @@ sphinx_immaterial_custom_admonitions = [
         "name": "legend",
         "color": (142, 142, 142),
         "icon": "fontawesome/solid/eye",
-    }
+    },
+    {
+        "name": "ns-only-fr",
+        "color": (72, 138, 87),
+        "icon": None,  # This does not work, it is overriden in CSS
+        "title": "✨ Disponible uniquement en segmentation dynamique",
+    },
+    {
+        "name": "ns-only",
+        "color": (72, 138, 87),
+        "icon": None,  # This does not work, it is overriden in CSS
+        "title": "✨ Only available in dynamic segmentation",
+    },
+    {
+        "name": "ns-detail-fr",
+        "color": (72, 138, 87),
+        "icon": None,  # This does not work, it is overriden in CSS
+        "title": "🗺️ Données stockées via segmentation dynamique lorsqu'elle est activée",
+    },
+    {
+        "name": "ns-detail",
+        "color": (72, 138, 87),
+        "icon": None,  # This does not work, it is overriden in CSS
+        "title": "🗺️ Data stored via dynamic segmentation when enabled",
+    },
 ]
 
 # Material theme options (see theme.conf for more information)
@@ -102,6 +126,7 @@ html_theme_options = {
 html_favicon = "_static/favicon.png"
 
 html_static_path = ['_static']
+html_css_files = ["extra_css.css"]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Geotrekdoc'
@@ -120,6 +145,6 @@ html_sidebars = {
 }
 texinfo_documents = [
     ('index', 'Geotrek', 'Geotrek-admin Documentation',
-     'Makina Corpus', 'Geotrek-admin', 'One line description of project.',
+     'Makina Corpus', 'Geotrek-admin',
      'Miscellaneous'),
 ]

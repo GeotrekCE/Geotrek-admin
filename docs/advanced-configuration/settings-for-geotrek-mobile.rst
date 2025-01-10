@@ -22,13 +22,20 @@ SYNC_MOBILE_OPTIONS
 
 Options of the sync_mobile command.
 
-Example::
+.. md-tab-set::
+    :name: sync-mobile-options-tabs
 
-    SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SYNC_MOBILE_OPTIONS = {'skip_tiles': True}
 
-    True
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 MOBILE_NUMBER_PICTURES_SYNC
 ----------------------------

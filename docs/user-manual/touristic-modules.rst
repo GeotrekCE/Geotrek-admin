@@ -7,11 +7,9 @@ Modules de valorisation
 Itinéraires
 ===========
 
-.. task-list::
-    :class: custom-task-list-style
-    :custom:
+.. ns-detail-fr::
 
-    + [x] Segmentation dynamique
+    .. 
 
 Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout ou la modification sont fréquents.
@@ -402,11 +400,9 @@ Pour que des puces numérotées sous forme de pastilles rouges soient affichées
 Points d'intérêts (POI)
 =======================
 
-.. task-list::
-    :class: custom-task-list-style
-    :custom:
+.. ns-detail-fr::
 
-    + [x] Segmentation dynamique
+    .. 
 
 Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par segmentation dynamique, en fonction des tronçons communs de l'itinéraire et des POIs.
 

@@ -18,27 +18,44 @@ recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 You can test your configuration with the following command. A fake email will
 be sent to the managers:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: sendtestemail-tabs
 
-    sudo geotrek sendtestemail --managers
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: bash
     
+                sudo geotrek sendtestemail --managers
+    .. md-tab-item:: Example
+
+         .. code-block:: bash
+    
+                docker compose run --rm web ./manage.py sendtestemail --managers
+
 .. _API:
 
 API
 ----------------
 
-API_IS_PUBLIC
+API is public
 ~~~~~~~~~~~~~~
 
 Set to ``True`` if you want the API V2 to be available for everyone without authentication (mandatory to use Geotrek-Rando). Set to ``False`` if you don't want to share through API informations marked as 'published'. 
 
-Example::
+.. md-tab-set::
+    :name: api-is-public-tabs
 
-    API_IS_PUBLIC = True
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                API_IS_PUBLIC = False
 
-    True
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                API_IS_PUBLIC = True
 
 .. note::
   - This API provides access to promotion content (Treks, POIs, Touristic Contents ...). 
@@ -90,9 +107,20 @@ services on each instance.
 
 Start by stopping everything:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: shutdown-service-tabs
 
-    sudo systemctl stop geotrek
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: bash
+    
+                sudo systemctl stop geotrek
+
+    .. md-tab-item:: Example
+
+         .. code-block:: bash
+    
+                docker compose down
 
 Control number of workers and request timeouts
 ---------------------------------------------------

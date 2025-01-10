@@ -11,7 +11,7 @@ Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
 Its configuration can be customized using advanced settings (see above paragraph).
 
-TINYMCE_DEFAULT_CONFIG
+TinyMCE default config
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
@@ -30,7 +30,7 @@ Example::
 Max characters count
 ---------------------
 
-MAPENTITY_CONFIG for characters
+Mapentity for characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
@@ -49,7 +49,7 @@ Example::
 Copyright on pictures
 ------------------------
 
-THUMBNAIL_COPYRIGHT_FORMAT
+Thumbnail copyright format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want copyright added to your pictures, change this parameter like so :
@@ -64,7 +64,7 @@ Example::
 
 You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
 
-THUMBNAIL_COPYRIGHT_SIZE
+Thumbnail copyright size
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Change the size of thumbnail
@@ -83,8 +83,7 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 
 .. image:: /images/facebookappid.png
 
-
-FACEBOOK_APP_ID
+Facebook App ID
 ~~~~~~~~~~~~~~~~
 
 In ``custom.py`` set Facebook App ID:
@@ -230,18 +229,22 @@ Test your modifications by exporting a trek or a content to PDF from Geotrek-adm
 PDF as booklet
 ----------------
 
-USE_BOOKLET_PDF
-~~~~~~~~~~~~~~~~
+Use booklet for PDF:
 
-Use booklet for PDF
+.. md-tab-set::
+    :name: use-booklet-pdf-tabs
 
-Example::
+    .. md-tab-item:: Default configuration
 
-    USE_BOOKLET_PDF = True
+            .. code-block:: python
+    
+                USE_BOOKLET_PDF = False
 
-Default::
+    .. md-tab-item:: Example
 
-    False
+         .. code-block:: python
+    
+                USE_BOOKLET_PDF = True
 
 .. note:: 
   - During the synchro, pois details will be removed, and the pages will be merged.
@@ -272,7 +275,7 @@ For more information, check out Ubuntu documentation.
 Custom colors in public document template
 ------------------------------------------
 
-MAPENTITY_CONFIG for custom colors in PDF
+Mapentity for custom colors in PDF
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
@@ -286,7 +289,7 @@ See *Leaflet* reference documentation for detail about layers apparence.
 Primary color in PDF templates
 -------------------------------
 
-PRIMARY_COLOR
+Primary color
 ~~~~~~~~~~~~~~
 
 You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.

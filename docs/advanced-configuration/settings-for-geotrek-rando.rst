@@ -9,42 +9,56 @@ Settings for Geotrek-rando
 Distances
 ----------
 
-TOURISM_INTERSECTION_MARGIN
+Tourism intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Distance to which tourist contents, tourist events, treks, pois, services will be displayed
+Distance to which tourist contents, tourist events, treks, pois, services will be displayed.
 
-Example::
+.. md-tab-set::
+    :name: tourism-intersection-margin-tabs
 
-    TOURISM_INTERSECTION_MARGIN = 500 # meters
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                TOURISM_INTERSECTION_MARGIN = 500 # meters
 
-    500
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               TOURISM_INTERSECTION_MARGIN = 800 # meters
 
 .. note:: 
   This distance can be changed by practice for treks in the admin.
 
-DIVING_INTERSECTION_MARGIN
+Diving intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Distance to which dives will be displayed.
 
-Example::
+.. md-tab-set::
+    :name: diving-intersection-margin-tabs
 
-    DIVING_INTERSECTION_MARGIN = 500 # meters
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                DIVING_INTERSECTION_MARGIN = 500 # meters
 
-    500
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               DIVING_INTERSECTION_MARGIN = 800 # meters
 
 Limits
 -------
 
-TREK_EXPORT_POI_LIST_LIMIT
+Trek export POI list limit 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Limit of the number of POIs on treks pdf.
+Limit of the number of POIs on treks PDF.
 
 Example::
 
@@ -53,10 +67,10 @@ Example::
 .. note:: 
   ``14`` is already a huge amount of POI, but it's possible to add more
 
-TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT
+Trek export information desk list limit 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Limit of the number of information desks on treks pdf.
+Limit of the number of information desks on treks PDF.
 
 Example::
 
@@ -68,99 +82,148 @@ Example::
 Categories
 -----------
 
-SPLIT_TREKS_CATEGORIES_BY_PRACTICE
+Split treks categories by practice
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the Geotrek-rando V2 website, treks practices will be displayed separately
+On the Geotrek-rando V2 website, treks practices will be displayed separately.
 
-Example::
+.. md-tab-set::
+    :name: split-treks-categories-by-practices-tabs
 
-    SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SPLIT_TREKS_CATEGORIES_BY_PRACTICE = True
 
-    True
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 
 .. note:: 
   Field order for each practices in admin will be taken in account
 
-SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY
+Split treks categories by accessibility
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the Geotrek-rando V2 website, accessibilites will be displayed separately
+On the Geotrek-rando V2 website, accessibilites will be displayed separately.
 
-Example::
+.. md-tab-set::
+    :name: split-treks-categories-by-accessibility-tabs
 
-    SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = True
 
-    True
+    .. md-tab-item:: Example
 
-SPLIT_TREKS_CATEGORIES_BY_ITINERANCY
+         .. code-block:: python
+    
+               SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+
+Split treks categories by itinerancy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the Geotrek-rando V2 website, if a trek has a children it will be displayed separately
+On the Geotrek-rando V2 website, if a trek has a children it will be displayed separately.
 
-Example::
+.. md-tab-set::
+    :name: split-treks-categories-by-itinerancy-tabs
 
-    SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = True
 
-    True
+    .. md-tab-item:: Example
 
-SPLIT_DIVES_CATEGORIES_BY_PRACTICE
+         .. code-block:: python
+    
+               SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
+
+Split dives categories by practice
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the Geotrek-rando V2 website, dives practices will be displayed separately
+On the Geotrek-rando V2 website, dives practices will be displayed separately.
 
-Example::
+.. md-tab-set::
+    :name: split-dives-categories-by-practices-tabs
 
-    SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                SPLIT_DIVES_CATEGORIES_BY_PRACTICE = False
 
-    False
+    .. md-tab-item:: Example
 
-HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
+         .. code-block:: python
+    
+               SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
+
+Hide published treks in topologies 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On the Geotrek-rando V2 website, treks near other are hidden
+On the Geotrek-rando V2 website, treks near other are hidden.
 
-Example::
+.. md-tab-set::
+    :name: hide-published-treks-in-topologies-tabs
 
-    HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = True
 
-    True
+    .. md-tab-item:: Example
 
-TREK_WITH_POIS_PICTURES
+         .. code-block:: python
+    
+               HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+
+Trek with POIs pictures
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-It enables correlated pictures on Geotrek-rando V2 to be displayed in the slideshow
+It enables correlated pictures on Geotrek-rando V2 to be displayed in the slideshow.
 
-Example::
+.. md-tab-set::
+    :name: trek-with-pois-pictures-tabs
 
-    TREK_WITH_POIS_PICTURES = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                TREK_WITH_POIS_PICTURES = True
 
-    True
+    .. md-tab-item:: Example
 
-ONLY_EXTERNAL_PUBLIC_PDF
+         .. code-block:: python
+    
+               TREK_WITH_POIS_PICTURES = False
+
+Only external public PDF
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 On Geotrek-rando V2 website, only PDF imported with filetype "Topoguide"will be used and not autogenerated.
 
-Example::
+.. md-tab-set::
+    :name: only-external-public-tabs
 
-    ONLY_EXTERNAL_PUBLIC_PDF = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                ONLY_EXTERNAL_PUBLIC_PDF = True
 
-    True
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               ONLY_EXTERNAL_PUBLIC_PDF = False
 
 **Order of all the objects without practices on Geotrek-rando website** :
 

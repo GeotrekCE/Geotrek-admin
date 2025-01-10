@@ -165,12 +165,6 @@ Name for your default structure.
 Dynamic segmentation
 ----------------------
 
-.. task-list::
-    :class: custom-task-list-style
-    :custom:
-
-    + [x] Dynamic segmentation
-
 .. code-block:: python
 
     TREKKING_TOPOLOGY_ENABLED = True

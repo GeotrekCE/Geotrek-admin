@@ -7,34 +7,48 @@ Attachments
 View attachments in the browser
 ---------------------------------
 
-MAPENTITY_CONFIG for medias
+Mapentity config for medias
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Attached files are downloaded by default by browser, with the following line, files will be opened in the browser :
 
-Example::
+.. md-tab-set::
+    :name: mapentityconfig-medias-tabs
 
-    MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = True
 
-    True
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
 Resizing uploaded pictures
 ----------------------------
 
-PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD
+Paperclip resize attachments on upload 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Attached pictures can be resized at upload by enabling this parameter :
 
-Example::
+.. md-tab-set::
+    :name: paperclip-resize-attachments-medias-tabs
 
-    PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
+    .. md-tab-item:: Default configuration
 
-Default::
+            .. code-block:: python
+    
+                PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = False
 
-    False
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PAPERCLIP_RESIZE_ATTACHMENTS_ON_UPLOAD = True
 
 These corresponding height/width parameters can be overriden to select resized image size:
 
@@ -47,7 +61,7 @@ These corresponding height/width parameters can be overriden to select resized i
 Prohibit usage of big pictures and small width / height
 ---------------------------------------------------------
 
-PAPERCLIP_MAX_BYTES_SIZE_IMAGE
+Paperclip max bytes size images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to prohibit the usage of heavy pictures:
@@ -101,7 +115,7 @@ Here is the default value for this setting, which you can extend if needed:
 
 It will verify that the mimetype of the file matches the extension. 
 
-PAPERCLIP_EXTRA_ALLOWED_MIMETYPES
+Paperclip extra alloawed mimetypes 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can add extra allowed mimetypes for a given extension with the following syntax:
@@ -110,7 +124,7 @@ Example::
 
     PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
 
-PAPERCLIP_ALLOWED_EXTENSIONS
+Paperclip allowed extensions 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also entirely deactivate these checks with the following:
