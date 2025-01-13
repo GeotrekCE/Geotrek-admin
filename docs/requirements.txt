@@ -30,7 +30,7 @@ imagesize==1.4.1
     # via sphinx
 importlib-metadata==6.8.0
     # via sphinx
-jinja2==3.1.4
+jinja2==3.1.5
     # via sphinx
 livereload==2.7.0
     # via sphinx-autobuild
@@ -50,7 +50,7 @@ pydantic-extra-types==2.10.0
     # via sphinx-immaterial
 pygments==2.18.0
     # via sphinx
-pytz==2023.3.post1
+pytz==2024.2
     # via babel
 requests==2.32.3
     # via
@@ -82,7 +82,7 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-tornado==6.4.1
+tornado==6.4.2
     # via livereload
 typing-extensions==4.12.2
     # via

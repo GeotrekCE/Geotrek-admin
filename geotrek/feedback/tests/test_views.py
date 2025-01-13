@@ -393,9 +393,30 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         column_names = list(dict_from_csv.keys())
         self.assertIn("Email", column_names)
 
+    @test_for_workflow_mode
+    def test_filters_manager_sees_emails(self):
+        '''Test list FilterSet does contain emails for manager'''
+        self.client.force_login(user=self.workflow_manager_user)
+        response = self.client.get('/report/filter/')
+        self.assertContains(response, '<input type="text" name="email"')
+
+    @test_for_workflow_mode
+    def test_filters_hidden_emails(self):
+        '''Test list FilterSet do not contain emails for supervisor'''
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/filter/')
+        self.assertNotContains(response, '<input type="text" name="email"')
+
+    @test_for_report_and_basic_modes
+    def test_normal_filters_emails(self):
+        '''Test list FilterSet do contain emails for regular user'''
+        self.client.force_login(user=self.normal_user)
+        response = self.client.get('/report/filter/')
+        self.assertContains(response, '<input type="text" name="email"')
+
     @test_for_report_and_basic_modes
     def test_normal_csv_emails(self):
-        '''Test CSV job costs export do not contain emails for supervisor'''
+        '''Test CSV job costs export do contain emails for regular user'''
         self.client.force_login(user=self.normal_user)
         response = self.client.get('/report/list/export/')
         self.assertEqual(response.status_code, 200)

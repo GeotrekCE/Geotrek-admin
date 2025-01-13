@@ -71,11 +71,13 @@ After this, edit ``nginx.conf.in`` to add your certificate.
 
 If you generate it with letsencrypt :
 You can use certbot to add the certificate in your configuration.
-But you will have to move the configuration automatically added into ``nginx.conf``, to the file ``nginx.conf.in``
-in ``/opt/geotrek-admin/var/conf/`` directory
+But you will have to move the configuration automatically added into ``nginx.conf``, to the file ``nginx.conf.in`` in ``/opt/geotrek-admin/var/conf/`` directory.
 
-You have to move the configuration to the file ``nginx.conf.in`` because ``nginx.conf`` is automatically
-changed during command ``dpkg-reconfigure geotrek-admin``.
+You have to move the configuration to the file ``nginx.conf.in`` because ``nginx.conf`` is automatically changed during command ``dpkg-reconfigure geotrek-admin``.
+
+.. note::
+
+    You need to replace the ``$`` from Certbot with ``${DOLLAR}`` everywhere in the ``nginx.conf.in`` file, then run the command ``sudo dpkg-reconfigure geotrek-admin`` to regenerate the file.
 
 
 Mandatory settings

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import Subquery, OuterRef, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityFilter, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.altimetry.models import AltimetryMixin
@@ -34,14 +34,19 @@ def _normalize_annotation_column_name(col_name):
 
 class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
-    filterform = InterventionFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['begin_date', 'end_date', 'type', 'target', 'status', 'stake']
     searchable_columns = ['id', 'name']
     unorderable_columns = ['target']
 
 
+class InterventionFilter(MapEntityFilter):
+    model = Intervention
+    filterset_class = InterventionFilterSet
+
+
 class InterventionFormatList(MapEntityFormat, InterventionList):
+    filterset_class = InterventionFilterSet
 
     @classmethod
     def build_cost_column_name(cls, job_name):
@@ -190,14 +195,19 @@ class InterventionViewSet(GeotrekMapentityViewSet):
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
-    filterform = ProjectFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['period', 'type', 'domain']
     searchable_columns = ['id', 'name']
     unorderable_columns = ['period', ]
 
 
+class ProjectFilter(MapEntityFilter):
+    model = Project
+    filterset_class = ProjectFilterSet
+
+
 class ProjectFormatList(MapEntityFormat, ProjectList):
+    filterset_class = ProjectFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',

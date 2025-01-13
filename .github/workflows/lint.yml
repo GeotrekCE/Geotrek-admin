@@ -16,7 +16,7 @@ jobs:
     name: Checking SRID in migrations files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
@@ -24,7 +24,7 @@ jobs:
     name: Checking Flake8 rules
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/python-cache-requirements
         with:
           requirements: dev-requirements.txt

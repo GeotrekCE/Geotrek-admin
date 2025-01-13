@@ -58,9 +58,7 @@ function refresh_selector_with_areas($select, areas, selected) {
     $select.trigger('chosen:updated');
 }
 
-$(window).on('entity:view:list', function () {
-    // Move all topology-filters to separate tab
-    $('#mainfilter .right-filter').parent('p').detach().appendTo('#mainfilter > .right');
+$(window).on('entity:view:filter', function () {
     // Dynamic area filters
     $('#id_area_type').change(function () {
         // Parse area data

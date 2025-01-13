@@ -15,10 +15,10 @@ COLOR_DEBUG = \033[36m
 COLOR_RESET = \033[0m
 
 build:
-	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
+	docker build -t geotrek -f docker/Dockerfile . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
-build-no-cache:
-	docker build -t geotrek --no-cache .
+build_no_cache:
+	docker build -t geotrek -f docker/Dockerfile --no-cache .
 
 build_deb:
 	docker pull $(DISTRO)
