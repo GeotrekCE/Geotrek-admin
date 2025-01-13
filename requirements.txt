@@ -6,7 +6,7 @@
 #
 amqp==5.3.1
     # via kombu
-appy==1.0.18
+appy==1.0.19
     # via django-appypod
 asgiref==3.8.1
     # via django
