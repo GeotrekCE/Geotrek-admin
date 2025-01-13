@@ -375,7 +375,7 @@ Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 You can also insert Outdoor minimal data:
 
 .. md-tab-set::
-    :name: loaddata-outdoor-tabs
+    :name: loaddata-outdoor-minimal-data-tabs
 
     .. md-tab-item:: With Debian
 
