@@ -4,6 +4,8 @@
 Modules and components
 =======================
 
+See the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available parameters.
+
 Enable Apps
 ------------
 
@@ -30,9 +32,10 @@ In order to remove notion of trails:
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 TRAIL_MODEL_ENABLED = True
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -53,9 +56,10 @@ In order to remove landedge model:
 
     .. md-tab-item:: Default configuration
     
-            .. code-block:: python
+         .. code-block:: python
     
                 LANDEDGE_MODEL_ENABLED = True
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -81,9 +85,10 @@ In order to hide TouristicContents and TouristicEvents on menu.
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 TOURISM_ENABLED = True
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -100,9 +105,10 @@ In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando:
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 FLATPAGES_ENABLED = True
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -119,9 +125,10 @@ In order to hide the accessibility menu for attachments:
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -145,9 +152,10 @@ If ``False``, it forbids to delete a path when at least one topology is linked t
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 ALLOW_PATH_DELETION_TOPOLOGY = False
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -164,14 +172,15 @@ If ``True``, it sends a message to managers (MANAGERS) whenever a path has been 
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
-                ALERT_DRAFT = True
+                ALERT_DRAFT = False
+
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                ALERT_DRAFT = False
+                ALERT_DRAFT = True
 
 Alert review
 ~~~~~~~~~~~~~
@@ -183,14 +192,15 @@ If ``True``, it sends a message to managers (MANAGERS) whenever an object which 
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
-                ALERT_REVIEW = True
+                ALERT_REVIEW = False
+
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                ALERT_REVIEW = False
+                ALERT_REVIEW = True
 
 .. note::
   Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
@@ -266,9 +276,10 @@ Buffer around treks to intersects POIs (works only without dynamic segmentation)
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 TREK_POI_INTERSECTION_MARGIN = 500  # meters
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -291,17 +302,39 @@ Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: loaddata-diving-tabs
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
-    cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+                cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+                cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 You can insert licenses of attachments with this command :
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: loaddata-license-tabs
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+    .. md-tab-item:: With Debian
 
+         .. code-block:: bash
+    
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
 Land
 -----
@@ -309,14 +342,15 @@ Land
 You can insert circulation and authorization types with this command :
 
 .. md-tab-set::
-    :name: loaddata-tabs
+    :name: loaddata-circulation-tabs
 
-    .. md-tab-item:: Default configuration
+    .. md-tab-item:: With Debian
 
-            .. code-block:: bash
+         .. code-block:: bash
     
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
-    .. md-tab-item:: Example
+
+    .. md-tab-item:: With Docker
 
          .. code-block:: python
     
@@ -340,9 +374,21 @@ Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert Outdoor minimal data:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: loaddata-outdoor-tabs
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+
 
 After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
 
@@ -372,10 +418,22 @@ Example::
 
 You can insert rules of sensitive area with these commands:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: loaddata-outdoor-tabs
 
-    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-    cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+                cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
+                cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
 
 The following settings are related to sensitive areas:
 
@@ -389,14 +447,15 @@ Default radius of sensitivity bubbles when not specified for species
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
-                ENSITIVITY_DEFAULT_RADIUS = 100  # meters
+                SENSITIVITY_DEFAULT_RADIUS = 100  # meters
+
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                ENSITIVITY_DEFAULT_RADIUS = 200  # meters
+                SENSITIVITY_DEFAULT_RADIUS = 200  # meters
 
 
 Sensitive area intersection margin
@@ -409,9 +468,10 @@ Buffer around treks to intersects sensitive areas
 
     .. md-tab-item:: Default configuration
 
-            .. code-block:: python
+         .. code-block:: python
     
                 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+
     .. md-tab-item:: Example
 
          .. code-block:: python
@@ -420,8 +480,10 @@ Buffer around treks to intersects sensitive areas
 
 .. notes
 
-    # Take care if you change this value after adding data. You should update buffered geometry in sql.
-    ``` UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>); ```
+    # Take care if you change this value after adding data. You should update buffered geometry in SQL.
+    ```UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>);```
 
-See :ref:`sensitive-areas-import` to import data.
+.. seealso::
+  
+  See :ref:`sensitive-areas-import` to import data.
 

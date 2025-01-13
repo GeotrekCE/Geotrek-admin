@@ -4,6 +4,11 @@
 Minimal initial data
 ======================
 
+.. abstract:: Keywords
+
+   ``IGN``, ``INPN``
+
+
 .. IMPORTANT::
    These data are the minimal initial data required to have a functional Geotrek-admin after completing the :ref:`installation <installation>`.
 

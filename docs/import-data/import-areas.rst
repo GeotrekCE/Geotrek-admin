@@ -2,6 +2,11 @@
 Areas
 ======
 
+.. abstract:: Keywords
+
+   ``Biodiv'Sport``, ``command line``, ``import en ligne de commande``, ``shapefile``
+
+
 .. _import-cities:
 
 Load Cities
@@ -316,7 +321,7 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
 
 .. _sensitive-areas-import:
 
-Sensitive areas Import
+Sensitive areas import
 =======================
 
 Geotrek-admin provides tools to import sensitive areas data when the module is enabled. The imports can be done through the web interface or the command line. Below are the available options:

@@ -4,6 +4,8 @@
 Feedback reports settings
 ==========================
 
+See the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available parameters.
+
 Send acknowledge email
 ------------------------
 
@@ -19,12 +21,12 @@ If ``False``, no email will be sent to the sender of any feedback on Geotrek-ran
 
             .. code-block:: python
     
-                SEND_REPORT_ACK = False
+                SEND_REPORT_ACK = True
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                SEND_REPORT_ACK = True
+                SEND_REPORT_ACK = False
 
 .. _suricate-support:
 
@@ -42,9 +44,20 @@ This mode sends no report data to Suricate.
 
 To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) load lists for categories, activities, statuses and problem magnitude:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: loaddata-no-suricate-tabs
 
-    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
 2 - Suricate Standard
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,28 +200,73 @@ You can find the same detailled explanation on the workflow in `this article in 
 
 You can use the following command to test your connection settings:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: sync-suricate-connectiontest-tabs
 
-    geotrek sync_suricate -v 2 --connection-test
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek sync_suricate -v 2 --connection-test
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py sync_suricate -v 2 --connection-test
 
 Load lists for activities and/or report statuses from Suricate:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: sync-suricate-status-tabs
 
-    geotrek sync_suricate --activities --statuses -v 2
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek sync_suricate --activities --statuses -v 2
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py sync_suricate --activities --statuses -v 2
 
 Load alerts from Suricate (located in your bounding box) :
 
-.. code-block:: python
+.. md-tab-set::
+    :name: sync-suricate-alerts-tabs
 
-    geotrek sync_suricate -v 2 --no-notification
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek sync_suricate -v 2 --no-notification
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py sync_suricate -v 2 --no-notification
 
 - Then load extra required statuses for Reports and Interventions:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: sync-suricate-reports-tabs
 
-    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
-    geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
+                geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
 - Go to the configuration site and :
 
@@ -223,11 +281,24 @@ Load alerts from Suricate (located in your bounding box) :
 
 Make sure to run these three commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
 
-.. code-block:: python
+.. md-tab-set::
+    :name: sync-suricate-sync-tabs
 
-    geotrek retry_failed_requests_and_mails
-    geotrek check_timers
-    geotrek sync_suricate
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek retry_failed_requests_and_mails
+                geotrek check_timers
+                geotrek sync_suricate
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py retry_failed_requests_and_mails
+                docker compose run --rm web ./manage.py check_timers
+                docker compose run --rm web ./manage.py sync_suricate
 
 Display reports with status defined colors
 --------------------------------------------
@@ -244,12 +315,12 @@ Go to the Configuration site and select colors to display for each status (`/adm
 
             .. code-block:: python
     
-                ENABLE_REPORT_COLORS_PER_STATUS = False
+                ENABLE_REPORT_COLORS_PER_STATUS = True
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                ENABLE_REPORT_COLORS_PER_STATUS = True
+                ENABLE_REPORT_COLORS_PER_STATUS = False
 
 Use timers to receive alerts for your reports
 -------------------------------------------------
@@ -268,9 +339,21 @@ Use timers to receive alerts for your reports
 
 - Make sure to run this commands daily to send email alerts and clear obsolete timers (thanks to `cron` for instance) :
 
-.. code-block:: python
 
-    geotrek check_timers
+.. md-tab-set::
+    :name: sync-checktimers-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek check_timers
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py check_timers
 
 Anonymize feedback reports
 ---------------------------
@@ -279,16 +362,37 @@ To be compliant to GDPR, you cannot keep personnal data infinitely,
 and should notice your users on how many time you keep their email.
 
 A Django command is available to anonymize reports, by default older
-than 365 days.
+than 365 days:
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: erase-emails-tabs
 
-    geotrek erase_emails
+    .. md-tab-item:: With Debian
 
-Or if you want to erase emails for reports older than 90 days
+         .. code-block:: bash
+    
+                geotrek erase_emails
 
-.. code-block:: bash
+    .. md-tab-item:: With Docker
 
-    geotrek erase_emails --days 90
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py erase_emails
 
+Or if you want to erase emails for reports older than 90 days:
+
+.. md-tab-set::
+    :name: erase-emails-older-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                geotrek erase_emails --days 90
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web ./manage.py erase_emails --days 90
 

@@ -67,11 +67,22 @@ You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
 Thumbnail copyright size
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Change the size of thumbnail
+Change the size of thumbnail:
 
-Example::
+.. md-tab-set::
+    :name: thumbnail-copyright-tabs
 
-    THUMBNAIL_COPYRIGHT_SIZE = 15
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                THUMBNAIL_COPYRIGHT_SIZE = 15
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                THUMBNAIL_COPYRIGHT_SIZE = 20
 
 Facebook configuration
 -----------------------
@@ -103,7 +114,7 @@ Example::
 Override translations
 ----------------------
 
-Translations are managed by https://weblate.makina-corpus.net/ where you can contribute.
+Translations are managed by `Weblate <https://weblate.makina-corpus.net/>`_  where you can contribute.
 But you can also override default translation files available in each module
 (for example those from trekking module available in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
 

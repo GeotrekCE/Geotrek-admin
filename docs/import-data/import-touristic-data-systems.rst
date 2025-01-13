@@ -4,6 +4,11 @@
 Touristic Data Systems
 =======================
 
+.. abstract:: Keywords
+
+   ``SIT``, ``parser``, ``command line``, ``import en ligne de commande``
+
+
 Real-time integration
 ======================
 

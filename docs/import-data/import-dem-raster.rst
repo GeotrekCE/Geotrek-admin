@@ -4,6 +4,11 @@
 Altimetry (DEM)
 ================
 
+.. abstract:: Keywords
+
+   ``DEM``, ``MNT``, ``raster``, ``QGIS``
+
+
 Refer to :ref:`this section <altimetry-dem-source-list>` to learn about the available downloadable data sources.
 
 .. warning::

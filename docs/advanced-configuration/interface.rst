@@ -20,12 +20,6 @@ For each module, use the following syntax to configure columns to export as CSV 
 
     COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
 
-Another setting exists to enable a more detailed export of jobs costs in the interventions module. When enabling this settings, interventions list exports will contain a new column for each job's total cost.
-
-Enable jobs cost detailed export 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    Enable a more detailed export
 
 .. md-tab-set::
     :name: enable-job-costs-detailed-export-tabs
@@ -40,6 +34,27 @@ Enable jobs cost detailed export
          .. code-block:: python
     
                 ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+Enable jobs cost detailed export 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Enable a more detailed export : 
+
+.. md-tab-set::
+    :name: enable-job-costs-detailed-export-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
+
+When enabling this setting, interventions list exports will contain a new column for each job's total cost.
 
 Custom columns available
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1128,11 +1143,11 @@ Configure form fields in creation views
 Hidden form fields
 ~~~~~~~~~~~~~~~~~~~~
 
-    For each module, use the following syntax to configure fields to hide in the creation form.
+For each module, use the following syntax to configure fields to hide in the creation form.
 
-    Example::
+Example::
 
-        HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+  HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
 
 
 Hideable form fields
@@ -1449,20 +1464,18 @@ and ``error_on_review`` if you want this fields to be required before sending to
 Completeness level
 ~~~~~~~~~~~~~~~~~~~
 
-    Configure completeness level
+Example of completeness level configuration::
 
-    Example::
-
-        COMPLETENESS_LEVEL = 'warning'
+  COMPLETENESS_LEVEL = 'warning'
 
 Completeness fields
 ~~~~~~~~~~~~~~~~~~~~~
 
-    For each module, configure fields to be needed or required on review or publication
+For each module, you can configure fields to be needed or required on review or publication.
 
-    Example::
+Example::
 
-        COMPLETENESS_FIELDS = {
-        'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
-        'dive': ['practice', 'difficulty', 'description_teaser'],
-        }
+  COMPLETENESS_FIELDS = {
+  'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+  'dive': ['practice', 'difficulty', 'description_teaser'],
+  }

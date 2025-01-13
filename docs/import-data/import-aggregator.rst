@@ -2,9 +2,9 @@
 From other Geotrek (aggregator)
 ===============================
 
-.. abstract:: Key words
+.. abstract:: Keywords
 
-   ``Aggregator``, ``parsers``, ``cron``
+   ``aggregator``, ``agrégateur``, ``parser``, ``cron``
 
 
 .. _import-data-from-a-remote-geotrek-instance:

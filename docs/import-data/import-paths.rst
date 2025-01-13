@@ -4,6 +4,11 @@
 Paths
 =======
 
+.. abstract:: Keywords
+
+   ``command line``, ``import en ligne de commande``, ``QGIS``
+
+
 .. ns-only::
 
     .. 
