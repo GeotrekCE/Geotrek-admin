@@ -20,21 +20,6 @@ For each module, use the following syntax to configure columns to export as CSV 
 
     COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
 
-
-.. md-tab-set::
-    :name: enable-job-costs-detailed-export-tabs
-
-    .. md-tab-item:: Default configuration
-
-            .. code-block:: python
-    
-                ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
-    .. md-tab-item:: Example
-
-         .. code-block:: python
-    
-                ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
-
 Enable jobs cost detailed export 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
