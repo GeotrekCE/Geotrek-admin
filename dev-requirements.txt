@@ -37,7 +37,7 @@ flake8==7.1.1
     # via -r dev-requirements.in
 freezegun==1.5.1
     # via -r dev-requirements.in
-importlib-metadata==6.8.0
+importlib-metadata==8.5.0
     # via
     #   -c requirements.txt
     #   build
