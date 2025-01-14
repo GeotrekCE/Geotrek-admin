@@ -18,6 +18,7 @@ CHANGELOG
 **Bug fixes**
 
 - Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
 
 **Documentation**
 
