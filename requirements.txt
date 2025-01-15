@@ -98,7 +98,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.17
+django==4.2.18
     # via
     #   crispy-bootstrap4
     #   django-appconf
