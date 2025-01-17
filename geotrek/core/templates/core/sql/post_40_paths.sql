@@ -45,6 +45,8 @@ DECLARE
 BEGIN
     -- Geometry of linear topologies are always updated
     -- Geometry of point topologies are updated if offset = 0
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('update_topology_geom_when_path_changes', pg_trigger_depth(), clock_timestamp());
+
     FOR eid IN SELECT e.id
                FROM core_pathaggregation et, core_topology e
                WHERE et.path_id = NEW.id AND et.topo_object_id = e.id
@@ -98,6 +100,8 @@ CREATE FUNCTION {{ schema_geotrek }}.elevation_path_iu() RETURNS trigger SECURIT
 DECLARE
     elevation elevation_infos;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('elevation_path_iu', pg_trigger_depth(), clock_timestamp());
+
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
@@ -123,6 +127,8 @@ FOR EACH ROW EXECUTE PROCEDURE elevation_path_iu();
 CREATE FUNCTION {{ schema_geotrek }}.paths_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES("paths_related_objects_d", pg_trigger_depth());
+
     -- Mark empty topologies as deleted
     UPDATE core_topology e
         SET deleted = TRUE
@@ -148,6 +154,7 @@ FOR EACH ROW EXECUTE PROCEDURE paths_related_objects_d();
 CREATE FUNCTION {{ schema_geotrek }}.path_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('path_latest_updated_d', pg_trigger_depth());
     -- Touch latest path
     UPDATE core_path SET date_update = NOW()
     WHERE id IN (SELECT id FROM core_path ORDER BY date_update DESC LIMIT 1);

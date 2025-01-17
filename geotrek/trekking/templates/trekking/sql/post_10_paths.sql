@@ -1,6 +1,7 @@
 CREATE OR REPLACE FUNCTION {{ schema_geotrek }}.paths_unpublish_trek_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger) VALUES('paths_unpublish_trek_d', pg_trigger_depth());
     -- Un-published treks because they might be broken
     UPDATE trekking_trek i
         SET published = FALSE

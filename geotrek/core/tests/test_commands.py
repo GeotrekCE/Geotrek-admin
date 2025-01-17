@@ -2,14 +2,17 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import LineString, MultiLineString, Point, GEOSGeometry
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.db import connection, IntegrityError
+from rest_framework.renderers import JSONRenderer
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path, PathAggregation
+from geotrek.core.serializers import PathGeojsonSerializer
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 import os
@@ -419,12 +422,74 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                                              (self.path_1_b, 0, 1)])
         self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700005, 6600095),
                                     (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute("TRUNCATE trigger_count")
+        cursor.execute("TRUNCATE trigger_logs")
+        cursor.execute("TRUNCATE trigger_logs_recurs")
+        qs=Path.objects.annotate(api_geom=Transform('geom', settings.API_SRID))
+        s=PathGeojsonSerializer(qs, many=True)
+        json = JSONRenderer().render(s.data)
+        print("GEOJSON BEFORE")
+        print(json)
         PathFactory.create(geom=LineString(Point(700070, 6600000),
                                            Point(700020, 6600050),
                                            Point(700060, 6600090),
                                            Point(700100, 6600050),
                                            srid=settings.SRID))
         topo.reload()
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM trigger_count")
+        data = cursor.fetchall()
+        tup_list = []
+        keys = []
+        vals = []
+        for _, ide, count, date in data:
+            keys.append(ide)
+            vals.append(count)
+            tup_list.append((ide, count, date))
+        sorted_data = sorted(tup_list, key=lambda x: x[2])
+        keys.sort()
+        vals.sort()
+        print(sorted_data)
+        cursor.execute("SELECT * FROM trigger_logs")
+        data = cursor.fetchall()
+        before_update = []
+        after_update = []
+        before_insert = []
+        after_insert = []
+        for _, trg_type, pk, date, tgr_depth in data:
+            if trg_type == "BEFORE_INSERT":
+                before_insert.append((pk, tgr_depth, date))
+            elif trg_type == "AFTER_INSERT":
+                after_insert.append((pk, tgr_depth, date))
+            elif trg_type == "BEFORE_UPDATE":
+                before_update.append((pk, tgr_depth, date))
+            elif trg_type == "AFTER_UPDATE":
+                after_update.append((pk, tgr_depth, date))
+        sorted_before_update = sorted(before_update, key=lambda x: x[1])
+        sorted_after_update = sorted(after_update, key=lambda x: x[1])
+        print("sorted_before_update = " + str(sorted_before_update))
+        print("sorted_after_update = " + str(sorted_after_update))
+        sorted_before_insert = sorted(before_insert, key=lambda x: x[1])
+        sorted_after_insert = sorted(after_insert, key=lambda x: x[1])
+        print("sorted_before_insert = " + str(sorted_before_insert))
+        print("sorted_after_insert = " + str(sorted_after_insert))
+        print("GEOJSON AFTER")
+        qs=Path.objects.annotate(api_geom=Transform('geom', settings.API_SRID))
+        s=PathGeojsonSerializer(qs, many=True)
+        json = JSONRenderer().render(s.data)
+        print(json)
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM trigger_logs_recurs")
+        data = cursor.fetchall()
+        recurs_list = []
+        for _ , line_ref, paths, date, count in data:
+            recurs_list.append((line_ref, paths, date, count))
+        sorted_recurs_list = sorted(recurs_list, key=lambda x: x[2])
+        print("sorted_recurs_list = " + str(sorted_recurs_list))
+        print("_______________________________________________________")
         self.assertEqual(LineString((700000, 6600000), (700035, 6600035), (700050, 6600050), (700035, 6600065),
                                     (700007.1428571428, 6600092.857142857), (700035, 6600065),
                                     (700050, 6600050), (700075, 6600075), (700100, 6600100), srid=settings.SRID), topo.geom)
@@ -450,6 +515,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                                     (700007.1428571428, 6600092.857142857), (700035, 6600065),
                                     (700050, 6600050), (700075, 6600075), (700100, 6600100), srid=settings.SRID),
                          topo.geom)
+
 
     def test_split_reorder_4(self):
         """
@@ -489,6 +555,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                                              (self.path_1_b, 0, 1)])
         self.assertEqual(LineString((700000, 6600000), (700050, 6600050), (700025, 6600075),
                                     (700050, 6600050), (700100, 6600100), srid=settings.SRID), topo.geom)
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute("TRUNCATE trigger_count")
         PathFactory.create(geom=LineString(Point(700070, 6600000),
                                            Point(700020, 6600050),
                                            Point(700060, 6600090),

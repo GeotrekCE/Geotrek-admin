@@ -6,6 +6,7 @@ DO LANGUAGE plpgsql $$
 DECLARE
     row record;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('no_name', pg_trigger_depth(), clock_timestamp());
     -- Obtain FK name (which is dynamically generated when table is created)
     -- Use loop to delete all FK generated in previous migrate (bug fix)
     FOR row IN SELECT c.conname
@@ -33,6 +34,7 @@ DECLARE
   line GEOMETRY;
   result RECORD;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('no name 2', pg_trigger_depth());
     SELECT geom FROM core_path WHERE id=path INTO line;
     SELECT * FROM ST_InterpolateAlong(line, point) AS (position FLOAT, distance FLOAT) INTO result;
     RETURN result;
@@ -46,6 +48,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('ft_topologies_paths_geometry', pg_trigger_depth(), clock_timestamp());
     IF TG_OP = 'INSERT' THEN
         UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id AND kind != 'TMP';
     ELSE
@@ -73,6 +76,7 @@ CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_geometry_statement() RE
 DECLARE
     rec record;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('ft_topologies_paths_geometry_statement', pg_trigger_depth(), clock_timestamp());
     FOR rec IN SELECT * FROM core_topology WHERE geom_need_update = TRUE LOOP
         PERFORM update_geometry_of_topology(rec.id);
     END LOOP;
@@ -95,6 +99,7 @@ DECLARE
     junction geometry;
     t_count integer;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('ft_topologies_paths_junction_point_iu', pg_trigger_depth(), clock_timestamp());
     -- Deal with previously connected paths in the case of an UPDATE action
     IF TG_OP = 'UPDATE' THEN
         -- There were connected paths only if it was a junction point

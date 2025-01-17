@@ -70,3 +70,32 @@ DROP FUNCTION IF EXISTS ft_merge_path(integer,integer) CASCADE;
 -- 80
 
 DROP FUNCTION IF EXISTS path_deletion() CASCADE;
+
+CREATE TABLE IF NOT EXISTS trigger_count(
+    id SERIAL PRIMARY KEY,
+    trigger_id VARCHAR(100),
+    count_trigger INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+TRUNCATE trigger_count;
+
+CREATE TABLE IF NOT EXISTS trigger_logs(
+    id SERIAL PRIMARY KEY,
+    trigger_type VARCHAR(100),
+    path_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tgr_depth INTEGER
+);
+
+TRUNCATE trigger_logs;
+
+CREATE TABLE IF NOT EXISTS trigger_logs_recurs(
+    id SERIAL PRIMARY KEY,
+    line_reference VARCHAR(100),
+    path_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tgr_depth INTEGER
+);
+
+TRUNCATE trigger_logs_recurs;

@@ -10,6 +10,7 @@ DECLARE
 
     DISTANCE float8;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('paths_snap_extremities', pg_trigger_depth(), clock_timestamp());
     DISTANCE := {{ PATH_SNAPPING_DISTANCE }};
 
     linestart := ST_StartPoint(NEW.geom);
@@ -103,7 +104,7 @@ DECLARE
     intersections_on_new float8[];
     intersections_on_current float8[];
 BEGIN
-
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('paths_topology_intersect_split', pg_trigger_depth(), clock_timestamp());
     -- Copy original geometry
     newgeom := NEW.geom;
     intersections_on_new := ARRAY[0::float];
@@ -117,7 +118,7 @@ BEGIN
                          AND ST_DWithin(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
-
+        insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth) VALUES('loop', path.id, clock_timestamp(), pg_trigger_depth());
         -- RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), path.id, path.name, ST_AsText(path.geom), ST_AsText(ST_Intersection(path.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
@@ -196,7 +197,8 @@ BEGIN
                     SELECT COUNT(*) INTO t_count FROM core_path WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         -- RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.name, ST_AsText(NEW.geom), ST_AsText(segment);
-                        UPDATE core_path SET geom = segment WHERE id = NEW.id;
+                       insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth) VALUES('line3', NEW.id, clock_timestamp(), pg_trigger_depth());
+                       UPDATE core_path SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
@@ -232,6 +234,7 @@ BEGIN
                                     segment,
                                     NEW.draft)
                             RETURNING id INTO tid_clone;
+                        insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth) VALUES('line5', tid_clone, clock_timestamp(), pg_trigger_depth());
                     END IF;
                 END IF;
             END LOOP;
@@ -271,7 +274,8 @@ BEGIN
                     SELECT geom INTO t_geom FROM core_path WHERE id = path.id;
                     IF NOT ST_Equals(t_geom, segment) THEN
                         -- RAISE NOTICE 'Current: Skrink %-% (%) to %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
-                        UPDATE core_path SET geom = segment WHERE id = path.id;
+                       insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth) VALUES('line1', path.id, clock_timestamp(), pg_trigger_depth());
+                       UPDATE core_path SET geom = segment WHERE id = path.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
@@ -307,6 +311,7 @@ BEGIN
                                     segment,
                                     path.draft)
                             RETURNING id INTO tid_clone;
+                        insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth) VALUES('line4', tid_clone, clock_timestamp(), pg_trigger_depth());
 
                         -- Copy N-N relations
                         INSERT INTO core_path_networks (path_id, network_id)
@@ -407,6 +412,16 @@ BEGIN
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
                 -- Update geom of affected paths to trigger update_topology_geom_when_path_changes()
+                insert into trigger_logs_recurs (line_reference, path_id, created_at, tgr_depth)
+                SELECT
+                    'line2',
+                    (SELECT string_agg(t.id::text, ',')
+                     FROM core_path t
+                     JOIN core_pathaggregation et ON t.id = et.path_id
+                     WHERE et.start_position = et.end_position
+                       AND et.id = ANY(existing_et)),
+                    clock_timestamp(),
+                    pg_trigger_depth();
                 UPDATE core_path t SET geom = geom
                   FROM core_pathaggregation et
                  WHERE t.id = et.path_id

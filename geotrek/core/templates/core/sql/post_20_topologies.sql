@@ -21,6 +21,7 @@ CREATE TRIGGER core_topology_date_update_tgr
 CREATE FUNCTION {{ schema_geotrek }}.topology_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('topology_latest_updated_d', pg_trigger_depth(), clock_timestamp());
     -- Touch latest path
     UPDATE core_topology SET date_update = NOW()
     WHERE id IN (SELECT id FROM core_topology ORDER BY date_update DESC LIMIT 1);
@@ -58,6 +59,7 @@ DECLARE
     smart_makeline line_infos;
     smart_makeline_3d line_infos;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('update_geometry_of_topology', pg_trigger_depth(), clock_timestamp());
     -- If Geotrek-light, don't do anything
     IF NOT {{ TREKKING_TOPOLOGY_ENABLED }} THEN
         RETURN;
@@ -155,6 +157,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION {{ schema_geotrek }}.update_topology_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('update_topology_geom_when_offset_changes', pg_trigger_depth(), clock_timestamp());
     -- Note: We are using an "after" trigger here because the function below
     -- takes topology id as an argument and emits its own SQL queries to read
     -- and write data.
@@ -181,6 +184,7 @@ CREATE FUNCTION {{ schema_geotrek }}.topology_elevation_iu() RETURNS trigger SEC
 DECLARE
     elevation elevation_infos;
 BEGIN
+    insert into trigger_count (trigger_id, count_trigger, created_at) VALUES('topology_elevation_iu', pg_trigger_depth(), clock_timestamp());
     IF {{ TREKKING_TOPOLOGY_ENABLED }} THEN
         RETURN NEW;
     END IF;
