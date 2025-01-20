@@ -25,7 +25,7 @@ django==4.2.18
     #   -c requirements.txt
     #   django-debug-toolbar
     #   django-extensions
-django-debug-toolbar==4.3.0
+django-debug-toolbar==4.4.6
     # via -r dev-requirements.in
 django-extensions==3.2.3
     # via -r dev-requirements.in
