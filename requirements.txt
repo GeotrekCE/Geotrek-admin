@@ -58,7 +58,7 @@ chardet==5.2.0
     # via
     #   geotrek (setup.py)
     #   reportlab
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
 click==8.1.3
     # via
