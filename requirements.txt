@@ -177,7 +177,9 @@ djangorestframework==3.15.2
 djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.1
-    # via mapentity
+    # via
+    #   djangorestframework-gis
+    #   mapentity
 docutils==0.20.1
     # via geotrek (setup.py)
 drf-dynamic-fields==0.4.0
