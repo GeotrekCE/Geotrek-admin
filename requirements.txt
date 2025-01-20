@@ -329,7 +329,7 @@ ruamel-yaml==0.18.10
     # via drf-yasg
 ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
-sentry-sdk==2.14.0
+sentry-sdk==2.20.0
     # via geotrek (setup.py)
 shapely==2.0.6
     # via pyopenair
