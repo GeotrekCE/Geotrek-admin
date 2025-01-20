@@ -415,7 +415,7 @@ zope-interface==7.2
     #   transaction
     #   zodb
     #   zope-proxy
-zope-proxy==5.2
+zope-proxy==6.1
     # via zope-deferredimport
 
 # The following packages are considered to be unsafe in a requirements file:
