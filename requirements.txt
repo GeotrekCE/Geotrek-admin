@@ -176,7 +176,7 @@ djangorestframework==3.15.2
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
-djangorestframework-gis==1.0
+djangorestframework-gis==1.1
     # via mapentity
 docutils==0.20.1
     # via geotrek (setup.py)
