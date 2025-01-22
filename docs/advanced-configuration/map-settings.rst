@@ -1,3 +1,7 @@
+.. meta::
+    :description: Advanced configuration - Map settings
+    :keywords: Leaflet, Mapentity, CRUD
+
 .. _map-settings:
 
 ===============

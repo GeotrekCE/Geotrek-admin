@@ -1,3 +1,8 @@
+.. meta::
+    :description lang=en: Welcome to the Geotrek-admin documentation!
+    :description lang=fr: Bienvenue sur la documentation de Geotrek-admin!
+    :keywords: Geotrek-admin documentation
+
 Geotrek-admin's documentation
 =============================
 

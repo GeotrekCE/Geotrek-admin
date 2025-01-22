@@ -9,8 +9,6 @@ WYSIWYG editor configuration
 
 Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
-Its configuration can be customized using advanced settings (see above paragraph).
-
 TinyMCE default config
 ~~~~~~~~~~~~~~~~~~~~~~~
 

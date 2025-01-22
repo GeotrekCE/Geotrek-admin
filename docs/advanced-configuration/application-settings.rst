@@ -4,6 +4,8 @@
 Application settings
 ======================
 
+.. _email-settings:
+
 Email settings
 ----------------
 
@@ -14,6 +16,32 @@ Geotrek-admin will send emails:
 
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
 recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
+
+
+.. md-tab-set::
+    :name: email-configuration-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+  
+              ADMINS = ()
+
+              MANAGERS = ADMINS
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              ADMINS = (
+              "administrator@example.org",
+              "adminsys@exxample.org"
+              )
+
+              MANAGERS = (
+              "manager@example.org",
+              "administrator@example.org"
+              )
 
 You can test your configuration with the following command. A fake email will
 be sent to the managers:

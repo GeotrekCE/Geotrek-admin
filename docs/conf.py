@@ -70,7 +70,7 @@ html_theme_options = {
     "site_url": "https://geotrek.fr/",
     "repo_url": "https://github.com/GeotrekCE/Geotrek-admin/",
     "repo_name": "Geotrek-admin",
-    "edit_uri": "blob/main/docs",
+    "edit_uri": "tree/master/docs",
     "globaltoc_collapse": True,
     "features": [
         "navigation.expand",

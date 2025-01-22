@@ -11,13 +11,41 @@ Enable Apps
 
 In order to disable a full set of modules, in the custom settings file, add the following code:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: disable-app-tabs
 
-    # Disable infrastructure and maintenance
-    _INSTALLED_APPS = list(INSTALLED_APPS)
-    _INSTALLED_APPS.remove('geotrek.infrastructure')
-    _INSTALLED_APPS.remove('geotrek.maintenance')
-    INSTALLED_APPS = _INSTALLED_APPS
+    .. md-tab-item:: Examples of disabling apps
+
+         .. code-block:: python
+    
+              # Disable infrastructure and maintenance
+              _INSTALLED_APPS = list(INSTALLED_APPS)
+              _INSTALLED_APPS.remove('geotrek.infrastructure')
+              _INSTALLED_APPS.remove('geotrek.maintenance')
+              INSTALLED_APPS = _INSTALLED_APPS
+
+    .. md-tab-item:: Default enabled apps
+
+         .. code-block:: python
+    
+              INSTALLED_APPS = (
+                'geotrek.cirkwi',
+                'geotrek.authent',
+                'geotrek.common',
+                'geotrek.altimetry',
+                'geotrek.core',
+                'geotrek.infrastructure',
+                'geotrek.signage',
+                'geotrek.maintenance',
+                'geotrek.zoning',
+                'geotrek.land',
+                'geotrek.trekking',
+                'geotrek.tourism',
+                'geotrek.flatpages',
+                'geotrek.feedback',
+                'geotrek.api',
+              )
+
 
 Trail model enabled
 ~~~~~~~~~~~~~~~~~~~~
@@ -25,7 +53,7 @@ Trail model enabled
 
     .. 
 
-In order to remove notion of trails:
+This parameter is used to enable or disable trail module.
 
 .. md-tab-set::
     :name: trail-model-enabled-tabs
@@ -49,7 +77,7 @@ Landedge model enabled
 
     .. 
 
-In order to remove landedge model:
+This parameter is used to enable or disable landedge module.
 
 .. md-tab-set::
     :name: landedge-model-enabled-tabs
@@ -67,18 +95,10 @@ In order to remove landedge model:
                 LANDEDGE_MODEL_ENABLED = False
 
 
-In order to remove zoning combo-boxes on list map:
-
-.. code-block:: python
-
-    LAND_BBOX_CITIES_ENABLED = False
-    LAND_BBOX_DISTRICTS_ENABLED = False
-    LAND_BBOX_AREAS_ENABLED = False
-
 Tourism enabled
 ~~~~~~~~~~~~~~~~~
 
-In order to hide TouristicContents and TouristicEvents on menu.
+This parameter is used to enable or disable touristic contents or touristic events menus. 
 
 .. md-tab-set::
     :name: tourism-enabled-tabs
@@ -98,7 +118,7 @@ In order to hide TouristicContents and TouristicEvents on menu.
 Flatpages enabled
 ~~~~~~~~~~~~~~~~~~~~
 
-In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando:
+This parameter is used to enable or disable flatpages on menu. Flatpages are used in Geotrek-rando and Geotrek-mobile.
 
 .. md-tab-set::
     :name: flatpages-enabled-tabs
@@ -118,7 +138,7 @@ In order to hide Flatpages on menu. Flatpages are used in Geotrek-rando:
 Accessibility attachments enabled
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to hide the accessibility menu for attachments:
+This parameter is used to enable or disable the accessibility menu for attachments.
 
 .. md-tab-set::
     :name: accessibility-attachements-enabled-tabs
@@ -165,7 +185,7 @@ If ``False``, it forbids to delete a path when at least one topology is linked t
 Alert draft
 ~~~~~~~~~~~~~
 
-If ``True``, it sends a message to managers (MANAGERS) whenever a path has been changed to draft.
+If ``True``, it :ref:`sends a message to managers <email-settings>` whenever a path has been changed to draft.
 
 .. md-tab-set::
     :name: alert-draft-tabs
@@ -185,7 +205,7 @@ If ``True``, it sends a message to managers (MANAGERS) whenever a path has been 
 Alert review
 ~~~~~~~~~~~~~
 
-If ``True``, it sends a message to managers (MANAGERS) whenever an object which can be published has been changed to review mode.
+If ``True``, it :ref:`sends a message to managers <email-settings>` whenever an object which can be validated has been changed to review mode.
 
 .. md-tab-set::
     :name: alert-review-tabs
@@ -202,65 +222,115 @@ If ``True``, it sends a message to managers (MANAGERS) whenever an object which 
     
                 ALERT_REVIEW = True
 
-.. note::
-  Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
 Signage and Blade
 -------------------
 
-``BLADE_ENABLED`` and ``LINE_ENABLED`` settings (default to ``True``) allow to enable or disable blades and lines submodules.
+These parameters are used to enable or disable blades and lines submodules.
 
-``DIRECTION_ON_LINES_ENABLED`` setting (default to ``False``) allow to have the `direction` field on lines instead of blades.
+.. md-tab-set::
+    :name: signage-blade-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                BLADE_ENABLED = True
+                LINE_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                BLADE_ENABLED = False
+                LINE_ENABLED = True
+
+These parameters are used to have `direction` field on lines instead of blades.
+
+.. md-tab-set::
+    :name: direction-on-lines-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                DIRECTION_ON_LINES_ENABLED = False
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                DIRECTION_ON_LINES_ENABLED = True
 
 Blade code type
 ~~~~~~~~~~~~~~~~
 
-Type of the blade code (string or integer)
+You can change the type of the blade code field (string or integer) :
 
+.. md-tab-set::
+    :name: blade-code-type-tabs
 
-Example::
+    .. md-tab-item:: Default configuration
 
-    BLADE_CODE_TYPE = INT
+         .. code-block:: python
+    
+                BLADE_CODE_TYPE = INT
 
-.. note::
-  - It can be string or integer
-  - If you have an integer code : ``int``
-  - If you have an string code : ``str``
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                BLADE_CODE_TYPE = STR
+
 
 Blade code format
 ~~~~~~~~~~~~~~~~~~
 
-Correspond to the format of blades. Show N3-1 for the blade 1 of the signage N3.
+You can change the format of blade codes :
 
-Example::
+.. md-tab-set::
+    :name: blade-code-format-tabs
 
-    BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+    .. md-tab-item:: Default configuration
 
-.. note::
-  - If you want to change : move information under bracket
-  - You can also remove one element between bracket
-  - You can do for exemple : ``"CD99.{signagecode}.{bladenumber}"``
-  - It will display : ``CD99.XIDNZEIU.01 (first blade of XIDNZEIU)``
-  - ``signagecode`` is the code of the signage
-  - ``bladenumber`` is the number of the blade
+         .. code-block:: python
+    
+              BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+
+    .. md-tab-item:: Example
+
+        .. info::
+            It will display : ``CD99.XIDNZEIU.01 (first blade of XIDNZEIU)``
+
+          .. code-block:: python
+      
+                BLADE_CODE_FORMAT = "CD99.{signagecode}.{bladenumber}"
+
+        
 
 Line code format
 ~~~~~~~~~~~~~~~~~
 
-Corresponds to the format used in export of lines. Used in csv of signage
+You can change the format of line codes. It is used in the CSV export of lines.
 
-Example::
+.. md-tab-set::
+    :name: line-code-format-tabs
 
-    LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+    .. md-tab-item:: Default configuration
 
-.. note::
-  - Similar with above
-  - You can do for example : ``"CD99.{signagecode}-{bladenumber}.{linenumber}"``
-  - It will display : ``CD99.XIDNZEIU-01.02`` (second line of the first blade of XIDNZEIU)
-  - ``signagecode`` is the code of the signage
-  - ``bladenumber`` is the number of the blade
-  - ``linenumber`` is the number of the line
+         .. code-block:: python
+    
+              LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
+    .. md-tab-item:: Example
+
+        .. info::
+            It will display : ``CD99.XIDNZEIU-01.02``
+
+          .. code-block:: python
+      
+                BLADE_CODE_FORMAT = "CD99.{signagecode}-{bladenumber}.{linenumber}"
+         
 .. _trek-poi-intersection:
 
 POI
@@ -269,7 +339,7 @@ POI
 Trek POI intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Buffer around treks to intersects POIs (works only without dynamic segmentation).
+You can define buffer around treks to intersects POIs (works only without dynamic segmentation).
 
 .. md-tab-set::
     :name: trek-poi-intersection-marging-tabs
@@ -286,55 +356,6 @@ Buffer around treks to intersects POIs (works only without dynamic segmentation)
     
                 TREK_POI_INTERSECTION_MARGIN = 800  # meters
 
-Diving
--------
-
-Installed app for Diving
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In order to enable diving module, in the custom settings file, add the following code:
-
-Example::
-
-    INSTALLED_APPS += ('geotrek.diving', )
-
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
-
-You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
-
-.. md-tab-set::
-    :name: loaddata-diving-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
-                cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
-                cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
-
-You can insert licenses of attachments with this command :
-
-.. md-tab-set::
-    :name: loaddata-license-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
 
 Land
 -----
@@ -366,11 +387,26 @@ Installed app for Outdoor
 
 In order to enable Outdoor module, in the custom settings file, add the following code:
 
-Example::
+.. code-block:: python
 
     INSTALLED_APPS += ('geotrek.outdoor', )
 
-Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
+Then run :
+
+.. md-tab-set::
+    :name: install-outdoor-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: bash
+    
+                sudo dpkg-reconfigure -pcritical geotrek-admin
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+    
+                docker compose run --rm web update.sh
 
 You can also insert Outdoor minimal data:
 
@@ -390,7 +426,7 @@ You can also insert Outdoor minimal data:
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
 
-After installing Outdoor module, you have to add permissions to your user groups on outdoor sites and courses.
+After installing Outdoor module, you need to add permissions to your user groups on outdoor sites and courses.
 
 .. note::
   - Outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
@@ -411,7 +447,7 @@ Installed app for Sensitive areas
 
 In order to enable sensitivity module, in the custom settings file, add the following code:
 
-Example::
+.. code-block:: python
 
     INSTALLED_APPS += ('geotrek.sensitivity', )
 
@@ -440,7 +476,7 @@ The following settings are related to sensitive areas:
 Sensitivity default radius
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Default radius of sensitivity bubbles when not specified for species
+You can define radius of sensitivity areas when not specified for species :
 
 .. md-tab-set::
     :name: sensitivity-default-radius-tabs
@@ -461,7 +497,7 @@ Default radius of sensitivity bubbles when not specified for species
 Sensitive area intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Buffer around treks to intersects sensitive areas
+You can define buffer around treks to intersects sensitive areas :
 
 .. md-tab-set::
     :name: sensitive-areas-intersection-margin-tabs
@@ -487,3 +523,30 @@ Buffer around treks to intersects sensitive areas
   
   See :ref:`sensitive-areas-import` to import data.
 
+Zoning
+--------
+
+These parameters are used to enable/disable zoning combo-boxes on list map.
+
+.. md-tab-set::
+    :name: zoning-combo-boxes-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+              LAND_BBOX_CITIES_ENABLED = True
+              LAND_BBOX_DISTRICTS_ENABLED = True
+              LAND_BBOX_AREAS_ENABLED = False
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              LAND_BBOX_CITIES_ENABLED = False
+              LAND_BBOX_DISTRICTS_ENABLED = False
+              LAND_BBOX_AREAS_ENABLED = False
+
+.. image:: ../images/advanced-configuration/zoning-combo-boxes.png
+   :align: center
+   :alt: Zoning combo boxes
