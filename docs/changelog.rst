@@ -5,6 +5,12 @@ CHANGELOG
 2.111.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-112-0
+
 **Warnings**
 
 - When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
