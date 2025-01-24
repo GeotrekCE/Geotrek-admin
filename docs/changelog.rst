@@ -9,7 +9,7 @@ CHANGELOG
 
 This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-112-0
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
 
 **Warnings**
 
