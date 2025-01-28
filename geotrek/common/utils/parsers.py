@@ -67,7 +67,7 @@ def get_geom_from_gpx(data):
             geos = convert_to_geos(feat.geom)
             if geos.geom_type == 'MultiLineString':
                 geos = geos.merged  # If possible we merge the MultiLineString into a LineString
-                if geos.geom_type == 'MultiLineString':
+                if geos.geom_type != 'LineString':
                     raise GeomValueError(
                         _("Feature geometry cannot be converted to a single continuous LineString feature"))
             geoms.append(geos)
@@ -75,7 +75,7 @@ def get_geom_from_gpx(data):
         full_geom = MultiLineString(geoms)
         full_geom.srid = geoms[0].srid
         full_geom = full_geom.merged  # If possible we merge the MultiLineString into a LineString
-        if full_geom.geom_type == 'MultiLineString':
+        if full_geom.geom_type != 'LineString':
             raise GeomValueError(
                 _("Geometries from various features cannot be converted to a single continuous LineString feature"))
 
@@ -109,7 +109,10 @@ def get_geom_from_kml(data):
         geom.coord_dim = 2
         geos = geom.geos
         if geos.geom_type == 'MultiLineString':
-            geos = geos.merged
+            geos = geos.merged  # If possible we merge the MultiLineString into a LineString
+            if geos.geom_type != 'LineString':
+                raise GeomValueError(
+                    _("Feature geometry cannot be converted to a single continuous LineString feature"))
         return geos
 
     def get_first_geom_with_type_in(types, geoms):

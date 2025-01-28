@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix path pcture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
 
 
 2.113.0    (2025-01-30)
