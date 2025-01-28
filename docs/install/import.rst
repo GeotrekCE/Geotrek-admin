@@ -149,16 +149,6 @@ To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
     OR
     docker compose run --rm web ./manage.py generate_pgr_network_topology
 
-After importing a large quantity of paths, it is recommended to pre-generate the
-paths graph needed for the routing. This action is not mandatory, but will reduce the time needed for the first
-routing following the import.
-
-To pre-generate the graph, use the ``generate_pgr_network_topology`` command::
-
-    sudo geotrek generate_pgr_network_topology
-    OR
-    docker compose run --rm web ./manage.py generate_pgr_network_topology
-
 .. _import-data-from-touristic-data-systems-sit:
 
 Import data from touristic data systems (SIT)

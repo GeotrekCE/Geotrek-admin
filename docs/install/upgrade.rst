@@ -47,7 +47,7 @@ Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade wi
    sudo apt-mark hold geotrek-admin
 
 
-From Geotrek-admin <= 2.32
+From Geotrek-admin < 2.33
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First of all, make sure your current Geotrek-admin version works correctly.
@@ -77,7 +77,7 @@ Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.
     Update your imports, synchronization and backup commands and directories.
 
 
-From Geotrek-admin <= 2.69.0
+From Geotrek-admin < 2.70.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **WARNING!**
@@ -89,17 +89,31 @@ Make sure to run the following command **BEFORE** upgrading:
 ``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgcrypto;'"``
 
 
-From Geotrek-admin <= 2.110.0
+From Geotrek-admin < 2.113.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **WARNING!**
 
-Starting from version 2.111.0, Geotrek now requires pgRouting. Before upgrading:
+Starting from version 2.113.0, Geotrek now requires pgRouting. Please follow these steps before updating.
 
-1. Install the pgRouting package by running ``sudo apt install -y postgresql-pgrouting wget software-properties-common``
+**On a Debian packaging installation with database on same host :**
 
-2. Run the following command: ``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgrouting;'"``
+1. Backup your database : see `Maintenance <https://geotrek.readthedocs.io/en/latest/install/maintenance.html#application-backup>`_.
 
+2. Install the pgRouting package from your distribution's package manager (if you installed Geotrek using the `install script <https://geotrek.readthedocs.io/en/latest/install/installation.html#fresh-installation>`_ : ``sudo apt install postgresql-pgrouting``).
+
+3. Activate the extension in your database : ``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgrouting;'"``
+
+4. Update Geotrek as usual
+
+
+**On a Docker installation :**
+
+1. Backup your database : ``docker compose run --rm web bash -c 'pg_dump --no-acl --no-owner -Fc -h postgres $POSTGRES_DB > `date +%Y%m%d%H%M`-database.backup'``
+
+2. Replace the docker image in ``docker-compose.yml`` for service ``postgres`` with an image that includes PostgreSQL, PostGIS and pgRouting version >=3.0.0 (`example with PostgreSQL 12, PostGIS 3.0 and pgRouting 3.0.0 <https://hubgw.docker.com/layers/pgrouting/pgrouting/12-3.0-3.0.0/images/sha256-382a2862cac07b0d3e57be9ddac587ad7a0d890ae2adc9fbae96a320a50194fb>`_). We highly recommend picking an image including the **same versions of PostgreSQL and PostGIS that you already use**. If you choose to pick later versions instead, you will need to delete your database, recreate it, and use ``pg_restore`` to restore the backup from step 1 (see "Recreate user and database" below).
+
+3. Update Geotrek as usual
 
 
 Server migration

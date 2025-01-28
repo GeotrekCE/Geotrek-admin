@@ -80,7 +80,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 2. Add https://packages.geotrek.fr/geotrek.gpg.key to apt keyring.
 3. Run ``apt-get update``
 4. If you want to use a local database, install the pgRouting package by running ``sudo apt install -y postgresql-pgrouting wget software-properties-common`` (before installing Geotrek-admin, not at the same time).
-   If not, you must create database and enable PostGIS and pgRouting extensions before.
+   If not, you must create database and enable PostGIS, pgRouting and pgcrypto extensions before.
 5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
 
 .. note ::
