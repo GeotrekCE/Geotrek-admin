@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-08 16:23+0000\n"
+"POT-Creation-Date: 2025-01-06 15:41+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -469,16 +469,6 @@ msgstr ""
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
-msgstr ""
-
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
-msgstr ""
-
 msgid "Trek geometry is None"
 msgstr ""
 
@@ -540,9 +530,6 @@ msgid "Public print booklet"
 msgstr ""
 
 msgid "Print booklet"
-msgstr ""
-
-msgid "Photos accessibility"
 msgstr ""
 
 msgid "Itinerancy"

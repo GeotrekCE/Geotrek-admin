@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.111.0+dev     (XXXX-XX-XX)
+2.112.0+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Breaking changes**
@@ -25,11 +25,31 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 
 - Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
 
+
+2.112.0     (2024-01-14)
+----------------------------
+
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
+**Bug fixes**
+
+- Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
+
 **Documentation**
 
 - Update theme color
 - Fix typo in documentation
 - Update and homogenize README.rst
+
 
 2.111.0     (2024-12-05)
 ----------------------------

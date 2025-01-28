@@ -12,19 +12,8 @@
     <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
 {% endblock download %}
 
-{% block after_attachments_extra_tab_nav %}
-   {% is_photos_accessibilities_enabled as enabled %}
-   {% if enabled %}
-        <li class="nav-item">
-          <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
-            <span class="d-none d-sm-inline">{% trans "Photos accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
-        </li>
-   {% endif %}
-{% endblock %}
-
-
 {% block attachments_extra_tab_nav %}
-    {% with attachments_count=object.attachments.count|add:object.view_points.count %}
+    {% with attachments_count=object.attachments.count|add:object.attachments_accessibility.count|add:object.view_points.count %}
         <li class="nav-item">
         <a id="tab-attachments" class="nav-link" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i>
             <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ attachments_count }})</span></a>
@@ -32,19 +21,15 @@
     {% endwith %%}
 {% endblock %}
 
-{% block after_attachments_extra_tab_content %}
-   {% is_photos_accessibilities_enabled as enabled %}
-   {% if enabled %}
-        <div id="attachments-accessibility" class="tab-pane">
-            {{ accessibility_attachments_enabled }}
-            {% include 'common/attachment_accessibility_list.html' %}
-        </div>
-   {% endif %}
-{% endblock %}
-
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
+    {% is_photos_accessibilities_enabled as is_photos_accessibilities_enabled %}
+    {% if is_photos_accessibilities_enabled %}
+        <br>
+        <br>
+        {% include 'common/attachment_accessibility_list.html' %}
+    {% endif %}
     {% are_hdviews_enabled as are_hdviews_enabled %}
     {% if are_hdviews_enabled %}
         <br>

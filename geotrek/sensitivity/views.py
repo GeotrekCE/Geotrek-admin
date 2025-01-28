@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from django.views.generic.detail import BaseDetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail,
-                             MapEntityDelete, MapEntityFormat, LastModifiedMixin)
+                             MapEntityDelete, MapEntityFormat, LastModifiedMixin, MapEntityFilter)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -26,12 +26,17 @@ logger = logging.getLogger(__name__)
 
 class SensitiveAreaList(CustomColumnsMixin, MapEntityList):
     queryset = SensitiveArea.objects.existing()
-    filterform = SensitiveAreaFilterSet
     mandatory_columns = ['id', 'species']
     default_extra_columns = ['category']
 
 
+class SensitiveAreaFilter(MapEntityFilter):
+    model = SensitiveArea
+    filterset_class = SensitiveAreaFilterSet
+
+
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
+    filterset_class = SensitiveAreaFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',

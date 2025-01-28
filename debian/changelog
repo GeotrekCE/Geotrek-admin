@@ -1,8 +1,14 @@
-geotrek-admin (2.111.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.112.0+dev) UNRELEASED; urgency=medium
 
   * 
 
- -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 05 Dec 2024 14:29:50 +0100
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 14 Jan 2025 15:16:32 +0100
+
+geotrek-admin (2.112.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 14 Jan 2025 14:46:23 +0100
 
 geotrek-admin (2.111.0) RELEASED; urgency=medium
 
