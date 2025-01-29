@@ -145,7 +145,9 @@ django-embed-video==1.4.10
 django-extended-choices==1.3.3
     # via geotrek (setup.py)
 django-filter==24.3
-    # via mapentity
+    # via
+    #   djangorestframework-gis
+    #   mapentity
 django-js-asset==2.2.0
     # via django-mptt
 django-large-image==0.8.1
@@ -176,7 +178,7 @@ djangorestframework==3.15.2
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
-djangorestframework-gis==1.0
+djangorestframework-gis==1.1
     # via mapentity
 docutils==0.20.1
     # via geotrek (setup.py)
