@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-18 14:36+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -117,9 +117,6 @@ msgstr "Aménagements"
 
 msgid "Published Infrastructures"
 msgstr "Aménagements publiés"
-
-msgid "Attributes"
-msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
