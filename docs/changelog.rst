@@ -21,6 +21,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Optimize routing: computation is now done in the backend using the A* algorithm (#4070)
 - Prevent from placing route markers outside of paths or on unreachable paths (#4070)
 - Fix clickable labels in admin site for Difficulty Levels and Touristic Content Categories
+- Change Admin site header to "Geotrek configuration"
 
 **Bug fixes**
 
