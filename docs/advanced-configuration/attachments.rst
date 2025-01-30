@@ -27,6 +27,10 @@ Attached files are downloaded by default by browser, with the following line, fi
     
                 MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
+.. seealso:: 
+  Check the official documentation of Django Mapentity `mapentity/views/base.py <https://django-mapentity.readthedocs.io/en/stable/customization.html#media>`_ to know more.
+
+
 Resizing uploaded pictures
 ----------------------------
 
@@ -35,7 +39,7 @@ See the default values in `geotrek/settings/base.py <https://github.com/GeotrekC
 Paperclip resize attachments on upload 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Attached pictures can be resized at upload by enabling this parameter :
+To enable automatic resizing of uploaded pictures:
 
 .. md-tab-set::
     :name: paperclip-resize-attachments-medias-tabs
@@ -54,11 +58,22 @@ Attached pictures can be resized at upload by enabling this parameter :
 
 These corresponding height/width parameters can be overriden to select resized image size:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: paperclip-resize-max-attachments-medias-tabs
 
-    PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
-    PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+    .. md-tab-item:: Default configuration
 
+            .. code-block:: python
+    
+                PAPERCLIP_MAX_ATTACHMENT_WIDTH = 1280
+                PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 1280
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PAPERCLIP_MAX_ATTACHMENT_WIDTH = 800
+                PAPERCLIP_MAX_ATTACHMENT_HEIGHT = 800
 
 Prohibit usage of big pictures and small width / height
 ---------------------------------------------------------
@@ -68,52 +83,101 @@ Paperclip max bytes size images
 
 If you want to prohibit the usage of heavy pictures:
 
-Example::
+.. md-tab-set::
+    :name: paperclip-max-bytes-size-tabs
 
-    PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000 # Bytes
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PAPERCLIP_MAX_BYTES_SIZE_IMAGE = None
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000 # Bytes
 
 If you want to prohibit the usage of small pictures in pixels:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: paperclip-min-bytes-size-tabs
 
-    PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 100
-    PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 100
+    .. md-tab-item:: Default configuration
 
-These three settings will also not allow downloading images from the parsers.
+            .. code-block:: python
+    
+                PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = None
+                PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = None
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = None
+               PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = None
+
+.. note:: 
+  These three settings will also not allow downloading images from the parsers.
 
 Prohibit usage of certain file types
 -------------------------------------
 
 Paperclip will only accept attachment files matching a list of allowed extensions.
+
 Here is the default value for this setting, which you can extend if needed:
 
-.. code-block:: python
+.. md-tab-set::
+    :name: paperclip-allowed-extensions-tabs
 
-    PAPERCLIP_ALLOWED_EXTENSIONS = [
-        'jpeg',
-        'jpg',
-        'mp3',
-        'mp4',
-        'odt',
-        'pdf',
-        'png',
-        'svg',
-        'txt',
-        'gif',
-        'tiff',
-        'tif',
-        'docx',
-        'webp',
-        'bmp',
-        'flac',
-        'mpeg',
-        'doc',
-        'ods',
-        'gpx',
-        'xls',
-        'xlsx',
-        'odg',
-    ]
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+              PAPERCLIP_ALLOWED_EXTENSIONS = [
+                  'jpeg',
+                  'jpg',
+                  'mp3',
+                  'mp4',
+                  'odt',
+                  'pdf',
+                  'png',
+                  'svg',
+                  'txt',
+                  'gif',
+                  'tiff',
+                  'tif',
+                  'docx',
+                  'webp',
+                  'bmp',
+                  'flac',
+                  'mpeg',
+                  'doc',
+                  'ods',
+                  'gpx',
+                  'xls',
+                  'xlsx',
+                  'odg',
+              ]
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+            PAPERCLIP_ALLOWED_EXTENSIONS = [
+                'jpeg',
+                'avi',
+                'zip',
+                'jpg',
+                'mp3',
+                'mp4',
+                'odt',
+                'pdf',
+                'png',
+                'svg',
+                'txt',
+                'gif',
+            ]
 
 It will verify that the mimetype of the file matches the extension. 
 
@@ -122,20 +186,36 @@ Paperclip extra alloawed mimetypes
 
 You can add extra allowed mimetypes for a given extension with the following syntax:
 
-Example::
+.. md-tab-set::
+    :name: paperclip-extra-allowed-mimetypes-tabs
 
-    PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PAPERCLIP_EXTRA_ALLOWED_MIMETYPES = {
+                  'bmp': ['image/bmp'],
+                  'gpx': ['text/xml'],
+                  'webp': ['image/webp'],
+                  'svg': ['image/svg']
+                }
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+               PAPERCLIP_EXTRA_ALLOWED_MIMETYPES['gpx'] = ['text/xml']
 
 Paperclip allowed extensions 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can also entirely deactivate these checks with the following:
 
-Example::
+.. code-block:: python
 
     PAPERCLIP_ALLOWED_EXTENSIONS = None
 
 .. note:: 
-  These two settings will also not allow downloading images from the parsers.
+  These two settings (``PAPERCLIP_ALLOWED_EXTENSIONS`` and ``PAPERCLIP_EXTRA_ALLOWED_MIMETYPES``) will also not allow downloading images from the parsers.
 
 

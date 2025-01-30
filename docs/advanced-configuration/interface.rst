@@ -7,23 +7,76 @@ Interface
 Configure columns displayed in lists views and exports
 --------------------------------------------------------
 
-For each module, use the following syntax to configure columns to display in the main table.
+You can customize the columns displayed in list views and data exports for each module.
 
-.. code-block:: python
+To configure which columns appear in the main table view for a specific module, use the following syntax:
 
-    COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
+.. md-tab-set::
+    :name: module-view-list-columns-tabs
 
+    .. md-tab-item:: Syntax
 
-For each module, use the following syntax to configure columns to export as CSV or SHP.
+        .. code-block:: python
+    
+              COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
 
-.. code-block:: python
+    .. md-tab-item:: Example
 
-    COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
+         .. code-block:: python
+    
+              COLUMNS_LISTS['trek_view'] = [
+              'structure',
+              'departure',
+              'arrival',
+              'duration',
+              'description_teaser',
+              'description',
+              'gear',
+              'route',
+              'difficulty',
+              'ambiance',
+              'access',
+              'themes',
+              'practice']
+
+To define which columns should be included when exporting data to CSV or SHP formats, use the syntax below:
+
+.. md-tab-set::
+    :name: module-view-list-columns-export-tabs
+
+    .. md-tab-item:: Syntax
+
+        .. code-block:: python
+    
+              COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              COLUMNS_LISTS['outdoor_site_export'] = [
+                    'structure',
+                    'name',
+                    'practice',
+                    'description',
+                    'description_teaser',
+                    'ambiance',
+                    'advice',
+                    'accessibility',
+                    'period',
+                    'labels',
+                    'themes',
+                    'portal',
+                    'source',
+                    'information_desks',
+                    'orientation',
+                    'wind'
+                ]
 
 Enable jobs cost detailed export 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Enable a more detailed export : 
+By default, job cost details are not included in intervention exports. You can enable a more detailed export by setting the following parameter:
 
 .. md-tab-set::
     :name: enable-job-costs-detailed-export-tabs
@@ -39,14 +92,14 @@ Enable a more detailed export :
     
                 ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
 
-When enabling this setting, interventions list exports will contain a new column for each job's total cost.
+When enabled, a new column will be added to intervention exports, displaying the total cost for each job.
 
 Custom columns available
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A (nearly?) exhaustive list of attributes available for display and export as columns in each module.
+A complete list of attributes that can be used for displaying or exporting columns is available. You can customize these based on your requirements.
 
-.. example:: List of available attributes
+.. example:: List of available attributes for displaying
     :collapsible:
 
     ::
@@ -132,33 +185,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
           "authors",
       ]
       COLUMNS_LISTS["competenceedge_view"] = [
-          "eid",
-          "date_insert",
-          "date_update",
-          "length",
-          "length_2d",
-          "min_elevation",
-          "max_elevation",
-          "uuid",
-          "last_author",
-          "creator",
-          "authors",
-      ]
-      COLUMNS_LISTS["signagemanagementedge_export"] = [
-          "eid",
-          "date_insert",
-          "date_update",
-          "length",
-          "length_2d",
-          "min_elevation",
-          "max_elevation",
-          "uuid",
-          "provider",
-          "last_author",
-          "creator",
-          "authors",
-      ]
-      COLUMNS_LISTS["workmanagementedge_export"] = [
           "eid",
           "date_insert",
           "date_update",
@@ -321,28 +347,6 @@ A (nearly?) exhaustive list of attributes available for display and export as co
           "date_update",
           "date_insert",
           "uuid",
-          "last_author",
-          "creator",
-          "authors",
-      ]
-      COLUMNS_LISTS["dive_view"] = [
-          "structure",
-          "description_teaser",
-          "description",
-          "owner",
-          "practice",
-          "departure",
-          "disabled_sport",
-          "facilities",
-          "difficulty",
-          "levels",
-          "depth",
-          "advice",
-          "themes",
-          "source",
-          "portal",
-          "date_update",
-          "date_insert",
           "last_author",
           "creator",
           "authors",
@@ -514,6 +518,12 @@ A (nearly?) exhaustive list of attributes available for display and export as co
           "creator",
           "authors",
       ]
+
+.. example:: List of available attributes for exporting
+    :collapsible:
+
+    ::
+
       COLUMNS_LISTS["path_export"] = [
           "structure",
           "valid",
@@ -560,6 +570,33 @@ A (nearly?) exhaustive list of attributes available for display and export as co
           "min_elevation",
           "max_elevation",
           "slope",
+          "uuid",
+          "last_author",
+          "creator",
+          "authors",
+      ]
+      COLUMNS_LISTS["signagemanagementedge_export"] = [
+          "eid",
+          "date_insert",
+          "date_update",
+          "length",
+          "length_2d",
+          "min_elevation",
+          "max_elevation",
+          "uuid",
+          "provider",
+          "last_author",
+          "creator",
+          "authors",
+      ]
+      COLUMNS_LISTS["workmanagementedge_export"] = [
+          "eid",
+          "date_insert",
+          "date_update",
+          "length",
+          "length_2d",
+          "min_elevation",
+          "max_elevation",
           "uuid",
           "last_author",
           "creator",
@@ -1130,15 +1167,30 @@ Hidden form fields
 
 For each module, use the following syntax to configure fields to hide in the creation form.
 
-Example::
+.. md-tab-set::
+    :name: module-view-hidden-columns-export-tabs
 
-  HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+    .. md-tab-item:: Syntax
 
+        .. code-block:: python
+    
+              HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              HIDDEN_FORM_FIELDS['signage'] = [
+                      'condition',
+                      'description',
+                      'implantation_year',
+                      'code'
+                  ]
 
 Hideable form fields
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. example:: Exhaustive list of form fields hideable in each module.
+.. example:: Exhaustive list of form fields hideable in each module
     :collapsible:
 
     ::
@@ -1437,8 +1489,10 @@ Hideable form fields
           ]
 
 .. note::
-  ``assigned_user`` is hidden by default in ``HIDDEN_FORM_FIELDS["report"]``, it is possible to force it to appear using ``HIDDEN_FORM_FIELDS["report"] = []``.
+By default, the assigned_user field is hidden in HIDDEN_FORM_FIELDS['report']. To make it visible, set:
 
+.. code-block:: python
+  HIDDEN_FORM_FIELDS['report'] = []
 
 Configure form fields required or needed for review or publication
 -------------------------------------------------------------------
@@ -1449,18 +1503,50 @@ and ``error_on_review`` if you want this fields to be required before sending to
 Completeness level
 ~~~~~~~~~~~~~~~~~~~
 
-Example of completeness level configuration::
+Controls the strictness of completeness checks:
 
-  COMPLETENESS_LEVEL = 'warning'
+.. md-tab-set::
+    :name: module-view-list-columns-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+    
+              COMPLETENESS_LEVEL = 'warning'
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              COMPLETENESS_LEVEL = 'error_on_publication' 
 
 Completeness fields
 ~~~~~~~~~~~~~~~~~~~~~
 
-For each module, you can configure fields to be needed or required on review or publication.
+Define which fields are mandatory before review or publication:
 
-Example::
+.. md-tab-set::
+    :name: module-view-list-columns-tabs
 
-  COMPLETENESS_FIELDS = {
-  'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
-  'dive': ['practice', 'difficulty', 'description_teaser'],
-  }
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+    
+              COMPLETENESS_FIELDS = {
+              'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+              'dive': ['practice', 'difficulty', 'description_teaser'],
+              }
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+              COMPLETENESS_FIELDS = {
+              'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+              'signage': ['code', 'type', 'condition','description','sealing'],
+              'intervention': ['begin_date', 'end_date', 'status','material_cost','description'],
+              }
+
+
+
+
