@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.112.0+dev     (XXXX-XX-XX)
+2.113.0    (2025-01-30)
 ----------------------------
 
 **Breaking changes**
@@ -29,7 +29,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
 
 
-2.112.0     (2024-01-14)
+2.112.0     (2025-01-14)
 ----------------------------
 
 **Performances**
