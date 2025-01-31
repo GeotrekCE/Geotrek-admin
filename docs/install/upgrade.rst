@@ -96,7 +96,7 @@ From Geotrek-admin < 2.113.0
 
 Starting from version 2.113.0, Geotrek now requires pgRouting. Please follow these steps before updating.
 
-If you use Ubuntu Bionic 18.04 on your database host (on same or external geotrek-admin host), you can follow the instructions below to install PgRouting on it.
+If you use Ubuntu Bionic 18.04 on your database host (on same or external geotrek-admin host), you can follow the instructions below :ref:`Install pgrouting bionic`.
 
 **On Debian packaging >= Ubuntu Focal 20.04 installation with database on same host:**
 
@@ -316,8 +316,10 @@ If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
     sudo apt autoremove
 
 
-To Install PgRouting:
-^^^^^^^^^^^^^^^^^^^^^
+.. _Install pgrouting bionic:
+
+Install PgRouting on Ubuntu Bionic
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
