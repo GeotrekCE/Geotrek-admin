@@ -114,7 +114,7 @@ These instructions could be the same as previous if you use a debian like distri
 
 1. Backup your database.
 2. Install pgrouting version corresponding to your PostgreSQL version on your database server. (see `pgRouting documentation <https://docs.pgrouting.org/latest/en/index.html>`_).
-3. Enable pgrouting extension in your geotrek database with your superuser.
+3. Enable pgrouting extension in your geotrek database with your database superuser.
 
 **On a Docker installation: (if your database is a docker container)**
 
@@ -251,6 +251,7 @@ Recreate user and database:
     \c <your geotrek database>
     CREATE EXTENSION postgis;
     CREATE EXTENSION postgis_raster;
+    CREATE EXTENSION pgrouting;
     CREATE EXTENSION pgcrypto;
     \q
 
