@@ -5,6 +5,10 @@ CHANGELOG
 2.113.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Do not display "None" on Blade Direction
+
 
 2.113.0    (2025-01-30)
 ----------------------------
