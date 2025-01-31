@@ -192,8 +192,11 @@ Update PostgreSQL / PostGIS / PgRouting on Ubuntu Bionic
 
     Ubuntu Bionic is already deprecated. We recommend you to install PostgreSQL on a dedicated server, with a most recent version of Ubuntu.
     If possible, on the same host or datacenter than your Geotrek-admin instance.
-    If you can't, you can follow these instructions to upgrade PostgreSQL and PostGIS on Ubuntu Bionic with official PostgreSQL APT archive repository.
+    If you can't, you can follow these instructions to upgrade PostgreSQL, PostGIS and PgRouting on Ubuntu Bionic with official PostgreSQL APT archive repository.
     The ultimate version published for Bionic is PostgreSQL 14, supported until November 12, 2026.
+
+
+I you have Postgresql < 14:
 
 ::
 
@@ -226,16 +229,6 @@ Now, install newest version of PostgreSQL and PostGIS:
     You can check the newest port with ``pg_lsclusters`` command. For next lines, we consider new port is 5433.
 
 
-Now, you should install PgRouting for Ubuntu bionic:
-
-::
-
-    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/pgrouting_bionic.tar.xz
-    tar xavf pgrouting_bionic.tar.xz
-    cd pgrouting_bionic
-    ./install.sh
-
-
 Recreate user and database:
 
 
@@ -251,7 +244,6 @@ Recreate user and database:
     \c <your geotrek database>
     CREATE EXTENSION postgis;
     CREATE EXTENSION postgis_raster;
-    CREATE EXTENSION pgrouting;
     CREATE EXTENSION pgcrypto;
     \q
 
@@ -322,3 +314,26 @@ If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
 
     sudo apt remove --purge postgresql-10
     sudo apt autoremove
+
+
+To Install PgRouting:
+^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/pgrouting_bionic.tar.xz
+    tar xavf pgrouting_bionic.tar.xz
+    cd pgrouting_bionic
+    ./install.sh
+
+
+::
+
+    sudo -u postgres psql
+
+
+::
+
+    \c <your geotrek database>
+    CREATE EXTENSION pgrouting;
+    \q
