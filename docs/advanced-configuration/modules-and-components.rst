@@ -4,9 +4,10 @@
 Modules and components
 =======================
 
-The full list of available parameters can be found in the default settings file: 
-`geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
-
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
+  
 Enable Apps
 ------------
 

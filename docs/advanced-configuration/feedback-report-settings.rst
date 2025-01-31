@@ -4,7 +4,9 @@
 Feedback reports settings
 ==========================
 
-See the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available parameters.
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Send acknowledge email
 ------------------------
@@ -249,7 +251,7 @@ Load alerts from Suricate (located in your bounding box) :
     
                 docker compose run --rm web ./manage.py sync_suricate -v 2 --no-notification
 
-- Then load extra required statuses for Reports and Interventions:
+Then load extra required statuses for Reports and Interventions:
 
 .. md-tab-set::
     :name: sync-suricate-reports-tabs

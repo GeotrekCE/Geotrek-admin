@@ -4,6 +4,10 @@
 Application settings
 ======================
 
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
+
 .. _email-settings:
 
 Email settings
@@ -94,14 +98,31 @@ Set to ``True`` if you want the API V2 to be available for everyone without auth
 Swagger API documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to enable swagger module to auto-document API, in the custom settings file, add the following code : 
+In order to enable swagger module to auto-document API, add the following code in the ``custom.py`` file: 
 
-Enable API V2 documentation::
+.. code-block:: bash
+    :caption: Enable API V2 documentation
 
     INSTALLED_APPS += ('drf_yasg', )
 
-Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
-The API swagger documentation is now availaible here : ``<GEOTREK_ADMIN_URL>/api/v2``
+Then run :
+
+.. md-tab-set::
+    :name: update-configuration-tabs
+
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+    
+                sudo dpkg-reconfigure -u geotrek-admin
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web update.sh 
+
+The API swagger documentation is now availaible at : ``<GEOTREK_ADMIN_URL>/api/v2``
 
 Share services between several Geotrek instances
 --------------------------------------------------

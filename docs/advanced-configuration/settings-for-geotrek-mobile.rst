@@ -4,21 +4,22 @@
 Settings for Geotrek-mobile
 ============================
 
-See the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available parameters.
-
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 SYNC_MOBILE_ROOT
 -----------------
 
-Path on your server where the datas for mobile will be saved.
+Defines the path on your server where mobile data will be saved.
 
 Example::
 
     SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
 .. note:: 
-  - If you want to modify it, do not forget to import os at the top of the file.
-  - Check `import Python <https://docs.python.org/3/reference/import.html>`_ , if you need any information
+  - If modifying this setting, ensure to import ``os`` at the top of the file.
+  - See the `Python import reference <https://docs.python.org/3/reference/import.html>`_ for details.
 
 SYNC_MOBILE_OPTIONS
 --------------------
@@ -43,7 +44,7 @@ Options of the sync_mobile command.
 MOBILE_NUMBER_PICTURES_SYNC
 ----------------------------
 
-Number max of pictures that will be displayed and synchronized for each object (trek, POI, etc.) in the mobile app.
+Defines the maximum number of pictures synchronized and displayed for each object (trek, POI, etc.) in the mobile app.
 
 .. md-tab-set::
     :name: sync-mobile-pictures-tabs
@@ -63,7 +64,7 @@ Number max of pictures that will be displayed and synchronized for each object (
 MOBILE_TILES_URL
 -----------------
 
-URL's Tiles used for the mobile.
+Defines the tile URLs used for the mobile application.
 
 Example with OpenTopoMap::
 
@@ -76,7 +77,7 @@ Example with IGN::
 MOBILE_LENGTH_INTERVALS
 -------------------------
 
-Intervals of the mobile for the length filter.
+Defines length intervals for filtering in the mobile app.
 
 .. md-tab-set::
     :name: mobile-length-intervals-tabs
@@ -104,13 +105,13 @@ Intervals of the mobile for the length filter.
                       ]
 
 .. note:: 
-  - Interval key is in meters.
-  - You can add new intervals
+  - The ``interval`` values are in meters.
+  - You can define custom intervals.
 
 MOBILE_ASCENT_INTERVALS
 ------------------------
 
-Intervals of the mobile for the ascent filter.
+Defines ascent intervals for filtering in the mobile app.
 
 .. md-tab-set::
     :name: mobile-ascent-intervals-tabs
@@ -138,12 +139,13 @@ Intervals of the mobile for the ascent filter.
                       ]
 
 .. note:: 
-  Do the same as above
+  - The ``interval`` values are in meters.
+  - You can define custom intervals.
 
 MOBILE_DURATION_INTERVALS
 ---------------------------
 
-Intervals of the mobile for the duration filter.
+Defines duration intervals for filtering in the mobile app.
 
 .. md-tab-set::
     :name: mobile-duration-intervals-tabs
@@ -173,12 +175,12 @@ Intervals of the mobile for the duration filter.
                       ]
 
 .. note:: 
-  Check ``MOBILE_LENGTH_INTERVALS`` section to use it, here interval correspond to 1 unit of hour
+  The intervals represent hours.
 
 ENABLED_MOBILE_FILTERS
 -----------------------
 
-List of all the filters enabled on mobile.
+Defines the list of enabled filters in the mobile app.
 
 .. md-tab-set::
     :name: enabled-mobile-filters-tabs
@@ -216,5 +218,4 @@ List of all the filters enabled on mobile.
 
 
 .. note:: 
-  Remove any of the filters if you don't want one of them. 
-
+  Remove any filter from the list if you do not want it enabled.

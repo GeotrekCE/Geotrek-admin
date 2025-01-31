@@ -34,7 +34,9 @@ Attached files are downloaded by default by browser, with the following line, fi
 Resizing uploaded pictures
 ----------------------------
 
-See the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_ for the complete list of available parameters.
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Paperclip resize attachments on upload 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

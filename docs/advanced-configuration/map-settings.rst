@@ -8,6 +8,10 @@
 Map settings
 ===============
 
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
+
 Leaflet configuration
 ----------------------
 
@@ -20,7 +24,7 @@ You can change or add more basemaps layers like this:
 
 Specify the tiles URLs this way in your custom Django setting file:
 
-Syntax::
+.. code-block:: python
 
     LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
@@ -163,9 +167,20 @@ Map layers zoom
 
 You can define the max_zoom the user can zoom for all tiles.
 
-Example::
+.. md-tab-set::
+    :name: leaflet-config-max-zoom-tabs
 
-    LEAFLET_CONFIG['MAX_ZOOM'] = 19
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                LEAFLET_CONFIG['MAX_ZOOM'] = 19
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                LEAFLET_CONFIG['MAX_ZOOM'] = 20
 
 .. note::
   It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.
@@ -263,9 +278,20 @@ Disable darker map backgrounds
 
 Since IGN map backgrounds are very dense and colourful, a dark opacity is applied. In order to disable, change this MapEntity setting:
 
-Default value::
+.. md-tab-set::
+    :name: map-background-fogged-tabs
 
-    MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+          MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = True
+
+    .. md-tab-item:: Example
+
+        .. code-block:: python
+
+          MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
 Map screenshots
 ----------------
@@ -286,20 +312,34 @@ When you generate a PDF in Geotrek-admin, a screenshot of the map with the objec
 Display related objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+.. md-tab-set::
+    :name: show-on-map-screenshot-tabs
 
-    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
-    SHOW_POIS_ON_MAP_SCREENSHOT = True
-    SHOW_SERVICES_ON_MAP_SCREENSHOT = True
-    SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
-    SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+          SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+          SHOW_POIS_ON_MAP_SCREENSHOT = True
+          SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+          SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
+          SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
+
+    .. md-tab-item:: Example
+      
+        .. code-block:: python
+
+          SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+          SHOW_POIS_ON_MAP_SCREENSHOT = False
+          SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+          SHOW_SIGNAGES_ON_MAP_SCREENSHOT = False
+          SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = False
 
 Map capture size
 ~~~~~~~~~~~~~~~~~
 
-Allow to change the size in pixels of the screenshot.
-
-Example::
+.. code-block:: bash
+    :caption: Allow to change the size in pixels of the screenshot
 
     MAP_CAPTURE_SIZE = 800
 
@@ -309,6 +349,10 @@ Geographical CRUD
 Path snapping distance
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+.. ns-detail::
+
+    .. 
+
 Minimum distance to merge two paths in unit of SRID.
 
 .. md-tab-set::
@@ -316,16 +360,15 @@ Minimum distance to merge two paths in unit of SRID.
 
     .. md-tab-item:: Default configuration
 
-    
             .. code-block:: python
     
-                PATH_SNAPPING_DISTANCE = 1.0
+                PATH_SNAPPING_DISTANCE = 1 # Distance of path snapping in meters
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-
     
-                PATH_SNAPPING_DISTANCE = 2.0
+                PATH_SNAPPING_DISTANCE = 2
 
 .. note::
   Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
@@ -335,18 +378,40 @@ Snap distance
 
 Distance of snapping for the cursor in pixels on Leaflet map.
 
-Default value::
+.. md-tab-set::
+    :name: path-snap-distance-tabs
 
-    SNAP_DISTANCE = 30
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                SNAP_DISTANCE = 30 # Distance of snapping in pixels
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SNAP_DISTANCE = 15
 
 Path merge snapping distance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Minimum distance to merge two paths.
 
-Default value::
+.. md-tab-set::
+    :name: path-merge-snapping-distance-tabs
 
-    PATH_MERGE_SNAPPING_DISTANCE = 2
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PATH_MERGE_SNAPPING_DISTANCE = 2 # minimum distance to merge paths
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PATH_MERGE_SNAPPING_DISTANCE = 3
 
 .. note::
   - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
@@ -357,18 +422,41 @@ Enable treks points of reference
 
 Points of reference are enabled on form of treks.
 
-Default value::
+.. md-tab-set::
+    :name: trek-points-of-reference-enabled-tabs
 
-    TREK_POINTS_OF_REFERENCE_ENABLED = True
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                TREK_POINTS_OF_REFERENCE_ENABLED = True
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TREK_POINTS_OF_REFERENCE_ENABLED = False
+
 
 Enable outdoor course points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Points of reference are enabled on form of otudoor courses.
 
-Default value::
+.. md-tab-set::
+    :name: outdoor-course-of-reference-enabled-tabs
 
-    OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False
 
 Topology static offset
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -408,20 +496,42 @@ Land objects are added on other objects (path for example) with offset, avoiding
 Altimetric profile
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+.. md-tab-set::
+    :name: altimetric-profile-tabs
 
-    ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
-    ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
-    ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
-    ALTIMETRIC_PROFILE_BACKGROUND = 'white'
-    ALTIMETRIC_PROFILE_COLOR = '#F77E00'
-    ALTIMETRIC_PROFILE_HEIGHT = 400
-    ALTIMETRIC_PROFILE_WIDTH = 800
-    ALTIMETRIC_PROFILE_FONTSIZE = 25
-    ALTIMETRIC_PROFILE_FONT = 'ubuntu'
-    ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
-    ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
-    ALTIMETRIC_AREA_MARGIN = 0.15
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+          ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
+          ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
+          ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
+          ALTIMETRIC_PROFILE_BACKGROUND = 'white'
+          ALTIMETRIC_PROFILE_COLOR = '#F77E00'
+          ALTIMETRIC_PROFILE_HEIGHT = 400
+          ALTIMETRIC_PROFILE_WIDTH = 800
+          ALTIMETRIC_PROFILE_FONTSIZE = 25
+          ALTIMETRIC_PROFILE_FONT = 'ubuntu'
+          ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
+          ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+          ALTIMETRIC_AREA_MARGIN = 0.15
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+          ALTIMETRIC_PROFILE_PRECISION = 30  
+          ALTIMETRIC_PROFILE_AVERAGE = 4  # nb of points for altimetry moving average
+          ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
+          ALTIMETRIC_PROFILE_BACKGROUND = 'white'
+          ALTIMETRIC_PROFILE_COLOR = '#F77E00'
+          ALTIMETRIC_PROFILE_HEIGHT = 500
+          ALTIMETRIC_PROFILE_WIDTH = 1000
+          ALTIMETRIC_PROFILE_FONTSIZE = 30
+          ALTIMETRIC_PROFILE_FONT = 'ubuntu'
+          ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
+          ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+          ALTIMETRIC_AREA_MARGIN = 0.30
 
 .. note::
   For all these settings, we recommand you to check the result every time. Be careful, altimetric profiles are stored in cache so you need to force the re-generation of the computed images. To do so, you need to update the geometry of an object and save it, it will re-create image and help check your configuration.

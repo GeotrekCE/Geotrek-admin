@@ -4,6 +4,10 @@
 Interface
 ============
 
+.. info::
+  
+  For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
+
 Configure columns displayed in lists views and exports
 --------------------------------------------------------
 
@@ -1497,8 +1501,9 @@ By default, the assigned_user field is hidden in HIDDEN_FORM_FIELDS['report']. T
 Configure form fields required or needed for review or publication
 -------------------------------------------------------------------
 
-Set ``error_on_publication`` to avoid publication without completeness fields
-and ``error_on_review`` if you want this fields to be required before sending to review.
+.. info::
+
+  Set ``error_on_publication`` to avoid publication without completeness fields and ``error_on_review`` if you want this fields to be required before sending to review.
 
 Completeness level
 ~~~~~~~~~~~~~~~~~~~

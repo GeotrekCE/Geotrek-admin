@@ -9,12 +9,13 @@ WYSIWYG editor configuration
 
 Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_.
 
-TinyMCE default config
-~~~~~~~~~~~~~~~~~~~~~~~
+TinyMCE default configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For example, in order to control which buttons are to be shown, and which tags are to be kept when cleaning-up, add this bloc :
+To customize which buttons are displayed and which tags are preserved during cleanup, use the following configuration:
 
-Example::
+.. code-block:: bash
+    :caption: Example
 
     TINYMCE_DEFAULT_CONFIG = {
     'theme_advanced_buttons1': 'bold,italic,forecolor,separator,code',
@@ -22,8 +23,8 @@ Example::
     }
 
 .. note::
-  - This will apply to all text fields.
-  - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
+  - This configuration applies to all text fields.
+  - For more details, refer to the official *TinyMCE version 3* documentation.
 
 Max characters count
 ---------------------
@@ -31,9 +32,10 @@ Max characters count
 Mapentity for characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add ``MAX_CHARACTERS_BY_FIELD`` setting to be able to define a maximum number of characters for text fields.
+To set a maximum character limit for text fields, add the ``MAX_CHARACTERS_BY_FIELD`` setting:
 
-Example::
+.. code-block:: bash
+    :caption: Example
 
     MAPENTITY_CONFIG['MAX_CHARACTERS_BY_FIELD'] = { 
        "tourism_touristicevent": [{'field': 'description_teaser_fr', 'value': 50}, {'field': 'accessibility_fr', 'value': 25}],
@@ -41,8 +43,8 @@ Example::
     }
 
 .. note::
-  - This will apply field by field, language by language.
-  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for details.
+  - Limits are applied per field and per language.
+  - See `this issue <https://github.com/GeotrekCE/Geotrek-admin/issues/3844>`_ for further details.
 
 Copyright on pictures
 ------------------------
@@ -50,25 +52,36 @@ Copyright on pictures
 Thumbnail copyright format
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want copyright added to your pictures, change this parameter like so :
+To add copyright information to images, modify this parameter:
 
-Example::
+.. md-tab-set::
+    :name: thumbnail-copyright-format-tabs
 
-    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                THUMBNAIL_COPYRIGHT_FORMAT = ""
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
 .. note::
-  - This will apply to all text fields.
-  - For more information on configuration entries available, please refer to the official documentation of *TinyMCE version 3*.
+  - This configuration applies to all text fields.
+  - For more details, refer to the official *TinyMCE version 3* documentation.
 
-You can also add ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
+You can also include ``{legend}``: ``"{title}-:-{author}-:-{legend}"``
 
 Thumbnail copyright size
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Change the size of thumbnail:
+To modify the size of the copyright text on thumbnails:
 
 .. md-tab-set::
-    :name: thumbnail-copyright-tabs
+    :name: thumbnail-copyright-size-tabs
 
     .. md-tab-item:: Default configuration
 
@@ -85,45 +98,77 @@ Change the size of thumbnail:
 Facebook configuration
 -----------------------
 
-When a content is shared to Facebook in Geotrek-rando V2,
-it needs static html files built by synchronization (thanks to option ``--rando-url``).
+To share content from Geotrek-rando V2 on Facebook, you need static HTML files built during synchronization (using the ``--rando-url`` option).
 
-In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
+Create a dedicated Facebook app in the Facebook Developer Dashboard and activate it.
 
 .. image:: /images/facebookappid.png
 
 Facebook App ID
 ~~~~~~~~~~~~~~~~
 
-In ``custom.py`` set Facebook App ID:
+Set the Facebook App ID in ``custom.py``:
 
-Example::
+.. md-tab-set::
+    :name: facebook-app-id-tabs
 
-    FACEBOOK_APP_ID = '<your Facebook AppID>'
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                FACEBOOK_APP_ID = ''
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                FACEBOOK_APP_ID = '<your Facebook AppID>'
 
 **You can also override these settings:**
 
-.. code-block:: python
+.. md-tab-set::
+    :name: facebook-app-id-tabs
 
-    FACEBOOK_IMAGE = '/images/logo-geotrek.png'
-    FACEBOOK_IMAGE_WIDTH = 200
-    FACEBOOK_IMAGE_HEIGHT = 200
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                 FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+                 FACEBOOK_IMAGE_WIDTH = 200
+                 FACEBOOK_IMAGE_HEIGHT = 200
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                 FACEBOOK_IMAGE = '/images/logo.png'
+                 FACEBOOK_IMAGE_WIDTH = 300
+                 FACEBOOK_IMAGE_HEIGHT = 300
 
 Override translations
 ----------------------
 
-Translations are managed by `Weblate <https://weblate.makina-corpus.net/>`_  where you can contribute.
-But you can also override default translation files available in each module
-(for example those from trekking module available in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
+Translations in Geotrek-admin are managed through `Weblate <https://weblate.makina-corpus.net/>`_, where you can contribute to the official translations.
 
-Don't edit these default files, use them to find which words you want to override.
+However, if you need to modify specific translations without altering the global project, you can override default translation files for each module.
 
-**Create the custom translations destination folder:**
+For example, the translation files for the Trekking module are located at:
+``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``.
 
-- Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
-- You can do one folder and one ``django.po`` file for each language (example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
+.. important::
+  
+  Do not edit these default files directly. Instead, use them as a reference to identify the terms you want to override.
 
-Override the translations that you want in these files.
+Create custom translation folder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To override translations, follow these steps:
+
+1. Create a ``django.po`` file inside the ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
+2. Organize translations by language: each language should have its own folder with a ``django.po`` file. 
+   - Example for French: ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po``.
+
+In this file, override only the necessary translations.
 
 **Example of content for the French translation overriding:**
 
@@ -155,85 +200,143 @@ Override the translations that you want in these files.
     msgid "District"
     msgstr "Pays"
 
-**Apply changes (French translation in this example):**
+Apply changes
+~~~~~~~~~~~~~~
 
 .. code-block:: bash
+    :caption: Once you have modified the translation file, apply the changes using the following commands:
 
     cd /opt/geotrek-admin/var/conf/extra_locale
-    sudo chown geotrek. fr/LC_MESSAGES/
+    sudo chown -R geotrek: geotrek-admin fr/LC_MESSAGES/
     sudo geotrek compilemessages
     sudo service geotrek restart
+
+.. note::
+  - The default PDF templates and translations may be updated in future versions of Geotrek-admin. Ensure that you maintain your custom modifications accordingly.
+  - Restarting the Geotrek service ensures the new translations are applied correctly.
 
 Override public PDF templates
 ------------------------------
 
-PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
-Treks, touristic contents, touristic events, outdoor sites and courses can be exported in PDF files.
+PDF files are generated from HTML templates using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_. The following elements can be exported as PDFs:
 
-- Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-- Touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
-- Touristic events : ``geotrek/tourism/templates/tourism/touristicevent_public_pdf.html``
-- Outdoor sites : ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``
-- Outdoor courses : ``geotrek/outdoor/templates/outdoor/course_public_pdf.html``
+- **Treks:** ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+- **Touristic Contents:** ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- **Touristic Events:** ``geotrek/tourism/templates/tourism/touristicevent_public_pdf.html``
+- **Outdoor Sites:** ``geotrek/outdoor/templates/outdoor/site_public_pdf.html``
+- **Outdoor Courses:** ``geotrek/outdoor/templates/outdoor/course_public_pdf.html``
 
-Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
-To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``. Or add inside your file::
+Customize PDF templates
+~~~~~~~~~~~~~~~~~~~~~~~
+
+To customize a PDF template, you need to place your modified version in:
+
+``/opt/geotrek-admin/var/conf/extra_templates/<appname>`` where ``<appname>`` corresponds to the relevant module (e.g., ``trekking``, ``tourism``).
+
+.. code-block:: bash
+    :caption: For example, to override the **Trek PDF template**, copy the default file:
+
+    cp geotrek/trekking/templates/trekking/trek_public_pdf.html \
+       /opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html
+
+.. code-block:: django
+    :caption: Alternatively, you can extend the default template by including the following in your custom file:
 
     {% extends "trekking/trek_public_pdf.html" %}
 
-These templates derive from base templates, which content is organized in blocks.
-To override for example the description block of trek PDF, copy and change the ``{% block description }…{% endblock description %}``
-in your ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
 
-It is also possible to use color defined for practice for pictogram by adding in your
-``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file::
+Customize specific sections
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Geotrek PDF templates use a block structure, allowing you to override specific sections without modifying the entire file.
+
+.. code-block:: django
+    :caption: For instance, to modify only the **description block**, add:
+
+    {% block description %}
+        Custom description content here.
+    {% endblock description %}
+
+Use custom for pictograms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: django
+    :caption: You can use practice-specific colors for pictograms by adding the following inside your template:
 
     {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
 
-CSS can be overriden like html templates: copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
-``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.css`` for example.
+Override CSS style
+~~~~~~~~~~~~~~~~~~~~~
 
-**You can also create a template for each portal.**
+To customize the styles of exported PDFs, copy the CSS files to:
 
-Add a folder ``portal_{id_portal}`` (portal ids are located in the portal url path ``/admin/common/targetportal/{id_portal}``) in
-``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, as the first template, and add at the top of your file:
+- ``var/media/templates/trekking/``
+- ``var/media/templates/tourism/``
 
-::
+.. code-block:: bash
+    :caption: For example:
+
+    cp geotrek/trekking/templates/trekking/trek_public_pdf.css \
+       /opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.css
+
+Create a template for each portal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you need to apply different templates for specific portals, you can create dedicated templates by following these steps:
+
+.. code-block:: bash
+    :caption: 1.Identify the portal ID by checking its URL in the admin interface:
+
+    /admin/common/targetportal/{id_portal}
+
+.. code-block:: bash
+    :caption: 2.Create a corresponding folder in:
+
+    /opt/geotrek-admin/var/conf/extra_templates/portal_{id_portal}
+
+.. code-block:: django
+    :caption: 3.Place your customized template inside this directory and extend the base template:
 
     {% extends "trekking/trek_public_pdf.html" %}
 
-The template for a specific portal will use the modification made on the overriden template in  ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``
-( except if you change specific  block)
+Only the modifications in this folder will apply to the specified portal.
 
 .. note::
-  This modification is not mandatory, if you have multiple portal and you want to modify the template of only one portal, you create one folder for this specific portal
+  This step is **optional**. If you have multiple portals but only need to modify the template for one, you can create a dedicated folder for that portal only.
 
-**You might need to use your own images in the PDF templates.**
+Custom images in PDF
+~~~~~~~~~~~~~~~~~~~~
 
-Add your own images in ``/opt/geotrek-admin/var/conf/extra_static/images/``.
+If you need to include your own images in the PDF templates, store them in:
 
-You can then use these images in your PDF templates with ``{% static 'images/file.jpg' %}``, after adding ``{% load static %}`` at the top of the file.
+``/opt/geotrek-admin/var/conf/extra_static/images/``
 
-Example of a customised template (``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``) with a customised logo and URL:
+Then, reference them in your template as follows:
 
-::
+.. code-block:: django
+
+    {% load static %}
+    <img src="{% static 'images/custom-logo.jpg' %}" alt="Custom Logo">
+
+Add custom logo and URL
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: django
 
     {% extends "trekking/trek_public_pdf.html" %}
     {% load static %}
 
     {% block logo %}
-       <img src="{% static 'images/logo-gte.jpg' %}" alt="Grand tour des Ecrins">
+       <img src="{% static 'images/logo-gte.jpg' %}" alt="Grand Tour des Écrins">
     {% endblock %}
     {% block url %}
-       <div class="main">Grand tour des Ecrins</div>
+       <div class="main">Grand Tour des Écrins</div>
        <div class="geo"><a href="https://www.grand-tour-ecrins.fr">grand-tour-ecrins.fr</a></div>
     {% endblock url %}
 
-.. note::
-  The default template may change in the future versions. You will be in charge of porting the modification to your copy.
 
-Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
+- The default PDF templates may be updated in future versions of Geotrek-admin. Ensure that you maintain your custom modifications accordingly.
+- Test your modifications by exporting a trek or touristic content to PDF from the Geotrek-admin interface.
 
 PDF as booklet
 ----------------
@@ -257,7 +360,7 @@ Use booklet for PDF:
 
 .. note:: 
   - During the synchro, pois details will be removed, and the pages will be merged.
-  - It is possible to customize the pdf, with trek_public_booklet_pdf.html.
+  - It is possible to customize the PDF, with trek_public_booklet_pdf.html.
 
 Custom font in public document template
 ----------------------------------------
@@ -289,9 +392,20 @@ Mapentity for custom colors in PDF
 
 Trek export geometries are translucid red by default. In order to control the apparence of objects in public trek PDF exports, use the following setting:
 
-Example::
+.. md-tab-set::
+    :name: mapentity-config-map-style-tabs
 
-    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 1}
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
@@ -303,9 +417,20 @@ Primary color
 
 You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 
-Example::
+.. md-tab-set::
+    :name: mapentity-config-map-style-color-tabs
 
-    PRIMARY_COLOR = "#7b8c12"
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PRIMARY_COLOR = "#7b8c12"
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PRIMARY_COLOR = "#0000FF"
 
 .. note:: 
   Beware of contrast, white colour is used for text so we advise you to avoid light colour.
