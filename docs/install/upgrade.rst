@@ -321,6 +321,9 @@ If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
 Install PgRouting on Ubuntu Bionic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+If you have your database host on Ubuntu Bionic 18.04, you should install a PgRouting version compatible with your PostgreSQL 14 version.
+PostgreSQL does not provide PgRouting package in its repository, so you should install it manually.
+
 ::
 
     wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/pgrouting_bionic.tar.xz
