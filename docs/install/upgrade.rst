@@ -108,7 +108,7 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external geotre
 
 4. Update Geotrek as usual
 
-**On a external database host: (Ubuntu >= 20.04 or docker with external database)**
+**On an external database host: (Ubuntu >= 20.04 or docker with external database)**
 
 These instructions could be the same as previous if you use a debian like distribution on your database host.
 
