@@ -114,7 +114,7 @@ These instructions could be the same as previous if you use a debian like distri
 
 1. Backup your database.
 2. Install pgrouting version corresponding to your PostgreSQL version on your database server. (see `pgRouting documentation <https://docs.pgrouting.org/latest/en/index.html>`_).
-3. Enable pgrouting extension in your geotrek database with your database superuser.
+3. Activate pgrouting extension in your Geotrek-admin database with your database superuser.
 
 **On a Docker installation: (if your database is a docker container)**
 
@@ -196,7 +196,7 @@ Update PostgreSQL / PostGIS / PgRouting on Ubuntu Bionic
     The ultimate version published for Bionic is PostgreSQL 14, supported until November 12, 2026.
 
 
-I you have Postgresql < 14:
+If you have Postgresql < 14:
 
 ::
 
