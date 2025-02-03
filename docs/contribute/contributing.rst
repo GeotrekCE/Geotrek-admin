@@ -23,8 +23,6 @@ Definition of done
 
 * ``docs/changelog.rst`` is up-to-date
 * An explicit unit-test covers the bugfix or the new feature.
-* A frontend test (:path:jstests/nav-\*.js) covers the navigation bug fix or feature
-* A JS *Mocha* test (:path:jstests/tests.\*.js) covers the JavaScript bug fix or feature
 * Unit-tests total coverage is above or at least equal with previous commits. Patch coverage is 100% on new lines.
 * Settings have default value in ``settings/base.py``
 * Installation instructions and documentation are up-to-date
