@@ -130,7 +130,7 @@ django-celery-results==2.5.1
     # via geotrek (setup.py)
 django-clearcache==1.2.1
     # via geotrek (setup.py)
-django-colorfield==0.11.0
+django-colorfield==0.12.0
     # via geotrek (setup.py)
 django-compressor==4.5.1
     # via mapentity
