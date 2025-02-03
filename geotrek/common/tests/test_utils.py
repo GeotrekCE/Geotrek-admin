@@ -188,6 +188,11 @@ class GpxToGeomTests(SimpleTestCase):
         with self.assertRaises(GeomValueError):
             get_geom_from_gpx(gpx)
 
+    def test_it_raises_error_on_invalid_multilinestring_merge(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_only_two_duplicate_track_points.gpx')
+        with self.assertRaises(GeomValueError):
+            get_geom_from_gpx(gpx)
+
 
 class KmlToGeomTests(SimpleTestCase):
 
@@ -211,6 +216,12 @@ class KmlToGeomTests(SimpleTestCase):
 
     def test_it_raises_exception_when_no_linear_data(self):
         kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
+
+        with self.assertRaises(GeomValueError):
+            get_geom_from_kml(kml)
+
+    def test_it_raises_exception_on_invalid_multilinestring_merge(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_only_two_duplicate_coordinates.kml')
 
         with self.assertRaises(GeomValueError):
             get_geom_from_kml(kml)
