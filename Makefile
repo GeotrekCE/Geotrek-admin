@@ -70,19 +70,7 @@ test:
 test_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --shuffle --noinput --parallel
 
-test_nav:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
-
-test_export:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-auth.js geotrek/jstests/export-*.js
-
-node_modules:
-	npm install geotrek/jstests
-
-test_js: node_modules
-	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
-
-tests: test test_nds test_js test_nav
+tests: test test_nds
 
 update:
 	$(docker_compose) run web update.sh
