@@ -5,6 +5,10 @@ CHANGELOG
 2.113.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix path pcture in intervention form (#4450)
+
 
 2.113.0    (2025-01-30)
 ----------------------------
