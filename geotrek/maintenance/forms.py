@@ -128,19 +128,13 @@ class InterventionForm(CommonForm):
         if self.instance.target.__class__ == Topology:
             # Intervention has its own topology
             title = _("On: %(target)s") % {"target": _("Paths")}
-            self.fields['topology'].label = \
-                mark_safe(f'<img src="{static("images/path-16.png")}" title="{title}" />{title}'
-            )
+            self.fields['topology'].label = mark_safe(f'<img src="{static("images/path-16.png")}" title="{title}" />{title}')
         else:
             # Intervention on an existing topology
             icon = self.instance.target._meta.model_name
             title = _("On: %(target)s") % {"target": str(self.instance.target)}
             self.fields['topology'].label = mark_safe(
-                f'''<img src="{static(f"images/{icon}-16.png")}" 
-                         title="{title}" />
-                    <a href="{self.instance.target.get_detail_url()}">
-                         {title}
-                    </a>'''
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.instance.target.get_detail_url()}">{title}</a>'
             )
             # Topology is readonly
             del self.fields['topology']
