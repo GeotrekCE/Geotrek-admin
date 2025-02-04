@@ -345,6 +345,12 @@ You can define a buffer around treks to intersect POIs (works only without dynam
     
                 TREK_POI_INTERSECTION_MARGIN = 800  # meters
 
+Tourism
+-------
+
+.. _trek-tourism-intersection:
+
+
 Tourism intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

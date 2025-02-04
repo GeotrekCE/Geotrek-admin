@@ -49,7 +49,7 @@ From Geotrek-admin < 2.113.0
 
   Starting from version 2.113.0, Geotrek now requires pgRouting. Please follow these steps before updating.
 
-If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotrek-admin host), you can follow the instructions below :ref:`Install pgrouting bionic`.
+If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotrek-admin host), you can follow the instructions :ref:`Install PgRouting on Ubuntu Bionic section <install-pgrouting-bionic>`.
 
 .. md-tab-set::
     :name: upgrade-fromgta-tabs
@@ -72,9 +72,9 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
 
       These instructions could be the same as previous if you use a debian like distribution on your database host.
 
-      1. Backup your database.
-      2. Install pgrouting version corresponding to your PostgreSQL version on your database server. (see `pgRouting documentation <https://docs.pgrouting.org/latest/en/index.html>`_).
-      3. Activate pgrouting extension in your Geotrek-admin database with your database superuser.
+      5. Backup your database.
+      6. Install pgrouting version corresponding to your PostgreSQL version on your database server. (see `pgRouting documentation <https://docs.pgrouting.org/latest/en/index.html>`_).
+      7. Activate pgrouting extension in your Geotrek-admin database with your database superuser.
 
 
     .. md-tab-item:: On a Docker installation
@@ -88,42 +88,6 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
       3. Update Geotrek as usual
 
 .. _server-migration:
-
-From Geotrek-admin < 2.113.0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**WARNING!**
-
-Starting from version 2.113.0, Geotrek now requires pgRouting. Please follow these steps before updating.
-
-If you use Ubuntu Bionic 18.04 on your database host (on same or external geotrek-admin host), you can follow the instructions below :ref:`Install pgrouting bionic`.
-
-**On Debian packaging >= Ubuntu Focal 20.04 installation with database on same host:**
-
-1. Backup your database : see `Maintenance <https://geotrek.readthedocs.io/en/latest/install/maintenance.html#application-backup>`_.
-
-2. Install the pgRouting package from your distribution's package manager (if you installed Geotrek using the `install script <https://geotrek.readthedocs.io/en/latest/install/installation.html#fresh-installation>`_ : ``sudo apt install postgresql-pgrouting``).
-
-3. Activate the extension in your database : ``su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION pgrouting;'"``
-
-4. Update Geotrek as usual
-
-**On an external database host: (Ubuntu >= 20.04 or docker with external database)**
-
-These instructions could be the same as previous if you use a debian like distribution on your database host.
-
-1. Backup your database.
-2. Install pgrouting version corresponding to your PostgreSQL version on your database server. (see `pgRouting documentation <https://docs.pgrouting.org/latest/en/index.html>`_).
-3. Activate pgrouting extension in your Geotrek-admin database with your database superuser.
-
-**On a Docker installation: (if your database is a docker container)**
-
-1. Backup your database : ``docker compose run --rm web bash -c 'pg_dump --no-acl --no-owner -Fc -h postgres $POSTGRES_DB > `date +%Y%m%d%H%M`-database.backup'``
-
-2. Replace the docker image in ``docker-compose.yml`` for service ``postgres`` with an image that includes PostgreSQL, PostGIS and pgRouting version >=3.0.0 (`example with PostgreSQL 12, PostGIS 3.0 and pgRouting 3.0.0 <https://hubgw.docker.com/layers/pgrouting/pgrouting/12-3.0-3.0.0/images/sha256-382a2862cac07b0d3e57be9ddac587ad7a0d890ae2adc9fbae96a320a50194fb>`_). We highly recommend picking an image including the **same versions of PostgreSQL and PostGIS that you already use**. If you choose to pick later versions instead, you will need to delete your database, recreate it, and use ``pg_restore`` to restore the backup from step 1 (see "Recreate user and database" below).
-
-3. Update Geotrek as usual
-
 
 Server migration
 =================
@@ -301,7 +265,7 @@ If it shows PostgreSQL 14, you can remove the old PostgreSQL version.
     sudo apt remove --purge postgresql-10
     sudo apt autoremove
 
-.. _Install pgrouting bionic:
+.. _install-pgrouting-bionic:
 
 Install PgRouting on Ubuntu Bionic
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

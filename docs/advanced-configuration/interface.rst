@@ -1509,7 +1509,7 @@ Completeness level
 Controls the strictness of completeness checks:
 
 .. md-tab-set::
-    :name: module-view-list-columns-tabs
+    :name: completeness-checks-tabs
 
     .. md-tab-item:: Default configuration
 
@@ -1534,7 +1534,7 @@ Completeness fields
 Define which fields are mandatory before review or publication:
 
 .. md-tab-set::
-    :name: module-view-list-columns-tabs
+    :name: completeness-fields-tabs
 
     .. md-tab-item:: Default configuration
 

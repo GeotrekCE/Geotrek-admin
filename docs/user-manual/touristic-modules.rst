@@ -437,7 +437,7 @@ La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remo
 
 .. seealso::
 
-	Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Distances <distances>`
+	Pour modifier la distance de la zone tampon (buffer), se référer à la section :ref:`Tourism intersection margin (en)<trek-tourism-intersection>`
 
 .. _evenements-touristiques:
 
