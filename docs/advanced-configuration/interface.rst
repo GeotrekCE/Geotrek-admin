@@ -1493,7 +1493,8 @@ Hideable form fields
           ]
 
 .. note::
-By default, the *assigned_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
+  
+  By default, the *assigned_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
 
 .. code-block:: python
 
