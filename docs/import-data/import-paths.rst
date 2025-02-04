@@ -154,3 +154,27 @@ Load paths
           --structure "DEMO" \
           --name-attribute id \
           --comments-attribute commentaire
+
+
+.. note::
+
+  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing. 
+
+  This action is not mandatory, but will reduce the time needed for the first routing following the import.
+
+  To pre-generate the graph, use the ``generate_pgr_network_topology`` command:
+
+  .. md-tab-set::
+      :name: path-import-command-regenerate-topologytabs
+
+      .. md-tab-item:: Example with Debian
+
+          .. code-block:: bash
+
+            sudo geotrek generate_pgr_network_topology
+
+      .. md-tab-item:: Example with Docker
+
+          .. code-block:: bash
+      
+            docker compose run --rm web ./manage.py generate_pgr_network_topology

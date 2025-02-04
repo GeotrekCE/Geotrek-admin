@@ -45,6 +45,8 @@ These information will be asked during the installation process and are the basi
 * The list of **languages** into which translation of contents will be made
 * The name or acronym of your **organization**
 
+.. _fresh-installation:
+
 Fresh installation
 ==================
 
@@ -85,8 +87,8 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 1. Add ``deb https://packages.geotrek.fr/ubuntu bionic main`` to APT sources list.
 2. Add https://packages.geotrek.fr/geotrek.gpg.key to apt keyring.
 3. Run ``apt-get update``
-4. If you want to use a local database, install PostGIS package (before installing Geotrek-admin, not at the same time).
-   If not, you must create database and enable PostGIS extension before.
+4. If you want to use a local database, install the pgRouting package by running ``sudo apt install -y postgresql-pgrouting wget software-properties-common`` (before installing Geotrek-admin, not at the same time).
+   If not, you must create database and enable PostGIS, pgRouting and pgcrypto extensions before.
 5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
 
 .. note ::

@@ -154,8 +154,8 @@ This setting enables or disables the accessibility menu for attachments:
 Paths
 ------
 
-Allow path deletion enabled
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Allow path deletion 
+~~~~~~~~~~~~~~~~~~~~~~
 
 If set to ``False``, paths that are linked to at least one topology cannot be deleted:
 
@@ -345,6 +345,29 @@ You can define a buffer around treks to intersect POIs (works only without dynam
     
                 TREK_POI_INTERSECTION_MARGIN = 800  # meters
 
+Tourism intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Defines the distance within which tourist content, events, treks, POIs, and services are displayed.
+
+.. md-tab-set::
+    :name: tourism-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+            TOURISM_INTERSECTION_MARGIN = 500  # meters
+
+    .. md-tab-item:: Example
+
+        .. code-block:: python
+
+            TOURISM_INTERSECTION_MARGIN = 800  # meters
+
+.. note::
+  This distance can be customized per trek practice in the admin interface.
+
 Land
 -----
 
@@ -503,7 +526,7 @@ Defines the buffer around treks to intersect sensitive areas:
   ``UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>);``
 
 .. seealso::
-  See :ref:sensitive-areas-import for data import instructions.
+  See :ref:`Sensitive area import section <sensitive-areas-import>` for data import instructions.
 
 Zoning
 --------

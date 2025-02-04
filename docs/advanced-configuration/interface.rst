@@ -1192,7 +1192,7 @@ For each module, use the following syntax to configure fields to hide in the cre
                   ]
 
 Hideable form fields
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 .. example:: Exhaustive list of form fields hideable in each module
     :collapsible:
@@ -1493,17 +1493,14 @@ Hideable form fields
           ]
 
 .. note::
-By default, the assigned_user field is hidden in HIDDEN_FORM_FIELDS['report']. To make it visible, set:
+By default, the *assigned_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
 
 .. code-block:: python
+
   HIDDEN_FORM_FIELDS['report'] = []
 
 Configure form fields required or needed for review or publication
 -------------------------------------------------------------------
-
-.. info::
-
-  Set ``error_on_publication`` to avoid publication without completeness fields and ``error_on_review`` if you want this fields to be required before sending to review.
 
 Completeness level
 ~~~~~~~~~~~~~~~~~~~
@@ -1524,6 +1521,11 @@ Controls the strictness of completeness checks:
          .. code-block:: python
     
               COMPLETENESS_LEVEL = 'error_on_publication' 
+
+.. info::
+
+  Set ``error_on_publication`` to avoid publication without completeness fields and ``error_on_review`` if you want this fields to be required before sending to review.
+
 
 Completeness fields
 ~~~~~~~~~~~~~~~~~~~~~

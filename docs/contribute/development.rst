@@ -93,17 +93,17 @@ When updating or adding a new field ``my_field`` to a model ``MyModel``, please 
 
   - If it exists, and field needs to be included in form, add ``my_field`` to form attributes (``fields`` on the ``Meta`` class, sometimes ``fieldslayout`` as well).
 
-  - If field is added to the form **and is optional**, please add ``my_field`` to the documentation for hideable form fields : in ``docs/advanced-configuration.rst`` look for ``HIDDEN_FORM_FIELDS['mymodel']`` and add your field to the list.
+  - If field is added to the form **and is optional**, please add ``my_field`` to the documentation for hideable form fields : in ``docs/advanced-configuration/interface.rst`` look for ``HIDDEN_FORM_FIELDS['mymodel']`` and add your field to the list.
 
 - Look for list view class ``MyModelList(CustomColumnsMixin, MapEntityList)`` :
 
-  - If it exists, please add ``my_field`` to the documentation for custom list view columns : in ``docs/advanced-configuration.rst`` look for ``COLUMNS_LISTS['mymodel_view']`` and add your field to the list.
+  - If it exists, please add ``my_field`` to the documentation for custom list view columns : in ``docs/advanced-configuration/interface.rst`` look for ``COLUMNS_LISTS['mymodel_view']`` and add your field to the list.
 
   - If it exists, and if you wish to display a column for ``my_field`` in the list view for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
 
 - Look for exports view class ``MyModelFormatList(MapEntityFormat, MyModelList)`` :
 
-  - If it exists, please add ``my_field`` to the documentation for custom list exports columns : in ``docs/advanced-configuration.rst`` look for ``COLUMNS_LISTS['mymodel_export']`` and add your field to the list.
+  - If it exists, please add ``my_field`` to the documentation for custom list exports columns : in ``docs/advanced-configuration/interface.rst`` look for ``COLUMNS_LISTS['mymodel_export']`` and add your field to the list.
 
   - If it exists, and if you wish to display a column for ``my_field`` in CSV/SHP exports for this model by default, simply add ``my_field`` to ``default_extra_colums`` on this class.
 

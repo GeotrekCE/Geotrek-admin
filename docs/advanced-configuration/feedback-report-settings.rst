@@ -84,6 +84,10 @@ Set your account settings in ``custom.py``:
 3 - Suricate Management (Workflow)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. seealso::
+
+  You can find the same detailled explanation on the workflow in `this article in french <https://makina-corpus.com/geotrek/gestion-territoires-naturels-geotrek-traitement-signalements-suricate>`_.
+
 This mode allows to retrieve reports and related data directly from Suricate, using the Management API to get data. It is used to process and manage reports, using the Intervention module and following a predefined worklow, while sending all progress to Suricate. It implies enabling Suricate Report mode as well.
 
 .. figure:: ../images/advanced-configuration/suricate.png
@@ -179,8 +183,6 @@ Maintaining synchronization between Suricate and Geotrek confronts us to the cha
 A system is in place to compensate for such failures. If a request to Suricate API fails, it is stored in the database and resent a few hours later. In case of a long term loss of connection, Django commands are available for an administrator to run some connection tests and resend stored information once connection is recovered.
 
 For technical documentation refer to `this ressource <https://geotrek.ecrins-parcnational.fr/ressources/technique/2023-02-Geotrek-Suricate-configuration.pdf>`_.
-
-You can find the same detailled explanation on the workflow in `this article in french <https://makina-corpus.com/geotrek/gestion-territoires-naturels-geotrek-traitement-signalements-suricate>`_.
 
 - Set your settings in ``custom.py`` :
 

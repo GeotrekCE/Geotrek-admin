@@ -76,7 +76,6 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     advanced-configuration/attachments
     advanced-configuration/interface
     advanced-configuration/edition
-    advanced-configuration/settings-for-geotrek-rando
     advanced-configuration/settings-for-geotrek-mobile
 
 .. toctree::

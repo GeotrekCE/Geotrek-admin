@@ -2,15 +2,66 @@
 CHANGELOG
 =========
 
-2.111.0+dev     (XXXX-XX-XX)
+2.113.0+dev    (XXXX-XX-XX)
 ----------------------------
+
+**Bug fixes**
+
+- Fix path pcture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
+
+
+2.113.0    (2025-01-30)
+----------------------------
+
+**Breaking changes**
+
+This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
+
+**Warnings**
+
+- The database migration to this version might take several minutes due to the generation of pgRouting's network topology.
+- When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+- After adding new paths, pre-existing topologies can follow routes that are no longer the shortest. When editing topology-based linear objects through the interface, their route will no longer be automatically recomputed to the shortest option, which was unwanted behavior. This means you might now encounter topologies that take a detour despite not using a via-point marker. Be careful when editing such a route, as moving or adding neighboring markers will remove the detour. Note: this does not address the topology ordering issue when adding new paths. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+
+**Improvements**
+
+- Optimize routing: computation is now done in the backend using the A* algorithm (#4070)
+- Prevent from placing route markers outside of paths or on unreachable paths (#4070)
+- Fix clickable labels in admin site for Difficulty Levels and Touristic Content Categories
+- Change Admin site header to "Geotrek configuration"
+
+**Bug fixes**
+
+- Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
+
+
+2.112.0     (2025-01-14)
+----------------------------
+
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
+**Bug fixes**
+
+- Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
 
 **Documentation**
 
 - Update theme color
 - Fix typo in documentation
 - Update and homogenize README.rst
-- Reorganize sections (#4415)
+
 
 2.111.0     (2024-12-05)
 ----------------------------

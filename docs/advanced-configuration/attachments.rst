@@ -116,8 +116,8 @@ If you want to prohibit the usage of small pictures in pixels:
 
          .. code-block:: python
     
-               PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = None
-               PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = None
+               PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH = 300
+               PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT = 300
 
 .. note:: 
   These three settings will also not allow downloading images from the parsers.

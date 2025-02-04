@@ -8,7 +8,7 @@ Settings for Geotrek-mobile
   
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-SYNC_MOBILE_ROOT
+Sync mobile root
 -----------------
 
 Defines the path on your server where mobile data will be saved.
@@ -21,10 +21,12 @@ Example::
   - If modifying this setting, ensure to import ``os`` at the top of the file.
   - See the `Python import reference <https://docs.python.org/3/reference/import.html>`_ for details.
 
-SYNC_MOBILE_OPTIONS
+Sync mobile options 
 --------------------
 
 Options of the sync_mobile command.
+
+Here are the options you can use with this command : ``portal``, ``languages``, ``skip_tiles``
 
 .. md-tab-set::
     :name: sync-mobile-options-tabs
@@ -41,7 +43,7 @@ Options of the sync_mobile command.
     
                 SYNC_MOBILE_OPTIONS = {'skip_tiles': True}
 
-MOBILE_NUMBER_PICTURES_SYNC
+Mobile number pictures sync 
 ----------------------------
 
 Defines the maximum number of pictures synchronized and displayed for each object (trek, POI, etc.) in the mobile app.
@@ -61,20 +63,27 @@ Defines the maximum number of pictures synchronized and displayed for each objec
     
                 MOBILE_NUMBER_PICTURES_SYNC = 5
 
-MOBILE_TILES_URL
+Mobile tile URL
 -----------------
 
 Defines the tile URLs used for the mobile application.
 
-Example with OpenTopoMap::
+.. md-tab-set::
+    :name: mobile-tile-url-tabs
 
-    MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
+    .. md-tab-item:: Example with OpenTopoMap
 
-Example with IGN::
+         .. code-block:: python
+    
+                MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
 
-    MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
+    .. md-tab-item:: Example with IGN
 
-MOBILE_LENGTH_INTERVALS
+         .. code-block:: python
+    
+                MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
+
+Mpbile length intervals 
 -------------------------
 
 Defines length intervals for filtering in the mobile app.
@@ -108,7 +117,7 @@ Defines length intervals for filtering in the mobile app.
   - The ``interval`` values are in meters.
   - You can define custom intervals.
 
-MOBILE_ASCENT_INTERVALS
+Mobile ascent intervals  
 ------------------------
 
 Defines ascent intervals for filtering in the mobile app.
@@ -142,7 +151,7 @@ Defines ascent intervals for filtering in the mobile app.
   - The ``interval`` values are in meters.
   - You can define custom intervals.
 
-MOBILE_DURATION_INTERVALS
+Mobile duration intervals  
 ---------------------------
 
 Defines duration intervals for filtering in the mobile app.
@@ -177,7 +186,7 @@ Defines duration intervals for filtering in the mobile app.
 .. note:: 
   The intervals represent hours.
 
-ENABLED_MOBILE_FILTERS
+Enabled mobile filters  
 -----------------------
 
 Defines the list of enabled filters in the mobile app.
@@ -217,5 +226,3 @@ Defines the list of enabled filters in the mobile app.
                     ]
 
 
-.. note:: 
-  Remove any filter from the list if you do not want it enabled.
