@@ -84,8 +84,18 @@ load_demo:
 load_test_integration:
 	$(docker_compose) run web ./manage.py loaddata test-integration
 
-css:
-	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
+clean_data:
+	$(docker_compose) down -v --remove-orphans
+	rm -rf var/cache/*
+	rm -rf var/tiles/*
+	rm -rf var/media/*
+	rm -rf var/static/*
+	rm -rf var/tmp/*
+	rm -rf var/log/*
+	rm -rf var/mobile/*
+
+
+flush: clean_data update load_data
 
 %.pdf:
 	mkdir -p docs/data-model

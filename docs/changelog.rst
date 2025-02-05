@@ -10,6 +10,10 @@ CHANGELOG
 - Fix path pcture in intervention form (#4450)
 - Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
 
+**Development**
+
+- Add clean and flush make command to init data in development mode
+
 
 2.113.0    (2025-01-30)
 ----------------------------
