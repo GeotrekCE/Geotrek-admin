@@ -201,6 +201,31 @@ Languages of your project. It will be used to generate fields for translations. 
 .. note::
   It is preferable, when in doubt, to include all necessary languages during the initial installation, even if some remain unused afterward, rather than missing some and facing complications to add them later.
 
+Adding a new language
+~~~~~~~~~~~~~~~~~~~~~
+
+.. note::
+  
+  When adding a new language to Geotrek, you must define default values for translated fields that are not ``NULLABLE``. The ``MODELTRANSLATION_LANGUAGES`` command used to generate translated fields does not automatically assign these values.
+
+  For example, if you add the German language (``de``) and need to add the ``published_de`` field (indicating whether content is published in German), you must set a default value.
+
+  To ensure the database functions correctly after adding a new language, execute the following SQL queries for each affected model:
+
+.. code-block:: sql
+
+    ALTER TABLE infrastructure_infrastructure ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE signage_signage ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE trekking_trek ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE trekking_poi ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE tourism_touristiccontent ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE tourism_touristicevent ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+    ALTER TABLE flatpages_flatpage ADD COLUMN published_de boolean NOT NULL DEFAULT False;
+
+.. info::
+
+  Ensure that all tables containing translated fields include this column before running the ``MODELTRANSLATION_LANGUAGES`` command._
+
 Spatial extents
 ----------------
 
