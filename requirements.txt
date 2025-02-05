@@ -21,7 +21,7 @@ backports-zoneinfo==0.2.1 ; python_version < "3.10"
     #   djangorestframework
     #   geotrek (setup.py)
     #   kombu
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.0
     # via mapentity
 billiard==4.2.1
     # via celery
@@ -361,6 +361,7 @@ transaction==5.0
 typing-extensions==4.12.2
     # via
     #   asgiref
+    #   beautifulsoup4
     #   django-modeltranslation
     #   kombu
 tzdata==2025.1
