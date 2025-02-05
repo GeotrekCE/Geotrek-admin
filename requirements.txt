@@ -8,17 +8,12 @@ amqp==5.3.1
     # via kombu
 appy==1.0.19
     # via django-appypod
-argdispatch==1.4.0
-    # via pdfimpose
 asgiref==3.8.1
     # via django
 async-timeout==5.0.1
     # via redis
 attrs==25.1.0
-    # via
-    #   fiona
-    #   jsonschema
-    #   referencing
+    # via fiona
 backports-zoneinfo==0.2.1 ; python_version < "3.10"
     # via
     #   celery
@@ -26,7 +21,7 @@ backports-zoneinfo==0.2.1 ; python_version < "3.10"
     #   djangorestframework
     #   geotrek (setup.py)
     #   kombu
-beautifulsoup4==4.13.3
+beautifulsoup4==4.12.3
     # via mapentity
 billiard==4.2.1
     # via celery
@@ -34,7 +29,7 @@ btrees==6.1
     # via zodb
 cachetools==5.5.1
     # via large-image
-cairocffi==1.7.1
+cairocffi==0.9.0
     # via
     #   cairosvg
     #   geotrek (setup.py)
@@ -48,7 +43,7 @@ celery==5.4.0
     # via
     #   django-celery-results
     #   geotrek (setup.py)
-certifi==2024.8.30
+certifi==2025.1.31
     # via
     #   fiona
     #   requests
@@ -63,9 +58,9 @@ chardet==5.2.0
     # via
     #   geotrek (setup.py)
     #   reportlab
-charset-normalizer==3.3.2
+charset-normalizer==3.4.1
     # via requests
-click==8.1.3
+click==8.1.8
     # via
     #   celery
     #   click-didyoumean
@@ -84,10 +79,13 @@ click-repl==0.3.0
 cligj==0.7.2
     # via fiona
 coreapi==2.3.3
-    # via geotrek (setup.py)
+    # via
+    #   drf-yasg
+    #   geotrek (setup.py)
 coreschema==0.0.4
     # via
     #   coreapi
+    #   drf-yasg
     #   geotrek (setup.py)
 crispy-bootstrap4==2024.10
     # via mapentity
@@ -116,11 +114,9 @@ django==4.2.18
     #   django-leaflet
     #   django-modelcluster
     #   django-modeltranslation
-    #   django-tinymce
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
-    #   drf-spectacular
     #   drf-yasg
     #   easy-thumbnails
     #   geotrek (setup.py)
@@ -154,17 +150,17 @@ django-filter==24.3
     #   mapentity
 django-js-asset==2.2.0
     # via django-mptt
-django-large-image==0.10.0
+django-large-image==0.8.1
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
 django-modelcluster==6.3
     # via geotrek (setup.py)
-django-modeltranslation==0.19.4
+django-modeltranslation==0.18.11
     # via mapentity
 django-mptt==0.14.0
     # via geotrek (setup.py)
-django-tinymce==4.1.0
+django-tinymce==3.5.0
     # via mapentity
 django-treebeard==4.7.1
     # via geotrek (setup.py)
@@ -178,7 +174,6 @@ djangorestframework==3.15.2
     #   djangorestframework-datatables
     #   djangorestframework-gis
     #   drf-extensions
-    #   drf-spectacular
     #   drf-yasg
     #   mapentity
 djangorestframework-datatables==0.7.2
@@ -191,10 +186,10 @@ drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.7.1
     # via geotrek (setup.py)
-drf-spectacular==0.28.0
-    # via django-large-image
-drf-yasg==1.21.8
-    # via geotrek (setup.py)
+drf-yasg==1.21.5
+    # via
+    #   django-large-image
+    #   geotrek (setup.py)
 easy-thumbnails==2.9
     # via
     #   geotrek (setup.py)
@@ -216,40 +211,30 @@ gunicorn==23.0.0
     # via geotrek (setup.py)
 html5lib==1.1
     # via weasyprint
-idna==3.7
+idna==3.10
     # via requests
-importlib-metadata==6.8.0
+importlib-metadata==8.5.0
     # via
     #   fiona
     #   markdown
     #   pygal
-importlib-resources==6.4.5
-    # via
-    #   jsonschema
-    #   jsonschema-specifications
 inflection==0.5.1
-    # via
-    #   drf-spectacular
-    #   drf-yasg
+    # via drf-yasg
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.5
     # via coreschema
-jsonschema==4.23.0
-    # via drf-spectacular
-jsonschema-specifications==2023.12.1
-    # via jsonschema
 kombu==5.4.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.31.0
+large-image==1.20.3
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.31.0
+large-image-source-vips==1.17.2
     # via geotrek (setup.py)
-lxml==5.3.0
+lxml==4.9.3
     # via
     #   mapentity
     #   svglib
@@ -279,7 +264,7 @@ paperclip==2.7.2
     #   mapentity
 papersize==1.6.0
     # via pdfimpose
-pdfimpose==2.0.0
+pdfimpose==1.1.0
     # via geotrek (setup.py)
 persistent==6.1
     # via
@@ -295,10 +280,10 @@ pillow==10.4.0
     #   paperclip
     #   reportlab
     #   weasyprint
-pkgutil-resolve-name==1.3.10
-    # via jsonschema
 prompt-toolkit==3.0.50
     # via click-repl
+psutil==6.1.1
+    # via large-image
 psycopg2==2.9.10
     # via geotrek (setup.py)
 pycparser==2.22
@@ -307,11 +292,11 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.24.11
-    # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
-pyphen==0.16.0
+pypdf2==1.27.5
+    # via pdfimpose
+pyphen==0.11.0
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
@@ -319,26 +304,18 @@ python-dotenv==1.0.1
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
-pytz==2024.2
+pytz==2025.1
     # via
     #   datetime
     #   django-modelcluster
     #   drf-yasg
 pyvips==2.2.3
     # via large-image-source-vips
-pyyaml==6.0.2
-    # via
-    #   drf-spectacular
-    #   drf-yasg
 rcssmin==1.1.2
     # via django-compressor
 redis==5.2.1
     # via geotrek (setup.py)
-referencing==0.35.1
-    # via
-    #   jsonschema
-    #   jsonschema-specifications
-reportlab==4.3.0
+reportlab==4.2.5
     # via
     #   easy-thumbnails
     #   svglib
@@ -350,10 +327,10 @@ requests==2.32.3
     #   mapentity
 rjsmin==1.2.2
     # via django-compressor
-rpds-py==0.20.1
-    # via
-    #   jsonschema
-    #   referencing
+ruamel-yaml==0.18.10
+    # via drf-yasg
+ruamel-yaml-clib==0.2.8
+    # via ruamel-yaml
 sentry-sdk==2.20.0
     # via geotrek (setup.py)
 shapely==2.0.7
@@ -384,11 +361,8 @@ transaction==5.0
 typing-extensions==4.12.2
     # via
     #   asgiref
-    #   beautifulsoup4
     #   django-modeltranslation
-    #   drf-spectacular
     #   kombu
-    #   large-image
 tzdata==2025.1
     # via
     #   backports-zoneinfo
@@ -397,9 +371,8 @@ tzdata==2025.1
 uritemplate==4.1.1
     # via
     #   coreapi
-    #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   requests
     #   sentry-sdk
@@ -420,8 +393,6 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
-xdg==6.0.0
-    # via pdfimpose
 xlrd==2.0.1
     # via geotrek (setup.py)
 xmltodict==0.14.2
@@ -431,9 +402,7 @@ zc-lockfile==3.0.post1
 zconfig==4.1
     # via zodb
 zipp==3.20.2
-    # via
-    #   importlib-metadata
-    #   importlib-resources
+    # via importlib-metadata
 zodb==6.0
     # via appy
 zodbpickle==4.1.1
