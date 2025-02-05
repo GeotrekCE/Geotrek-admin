@@ -14,6 +14,10 @@ CHANGELOG
 
 - Add clean and flush make command to init data in development mode
 
+**Documentation**
+
+- Update documentation theme and content, re-organize sections (#4484)
+- Add infos about adding new languages 
 
 2.113.0    (2025-01-30)
 ----------------------------
