@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -419,9 +419,6 @@ msgstr ""
 
 msgid "Print booklet"
 msgstr ""
-
-msgid "Attributes"
-msgstr "Informationen"
 
 msgid "yes,no"
 msgstr "Ja, nein,"

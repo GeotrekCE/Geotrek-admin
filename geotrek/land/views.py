@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityDocument,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityFilter, MapEntityDetail, MapEntityDocument,
                              MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -22,12 +22,17 @@ from .serializers import LandEdgeSerializer, PhysicalEdgeSerializer, CompetenceE
 
 class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
     queryset = PhysicalEdge.objects.existing()
-    filterform = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'physical_type']
     default_extra_columns = ['length', 'length_2d']
 
 
+class PhysicalEdgeFilter(MapEntityFilter):
+    model = PhysicalEdge
+    filterset_class = PhysicalEdgeFilterSet
+
+
 class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
+    filterset_class = PhysicalEdgeFilterSet
     mandatory_columns = ['id', 'physical_type']
     default_extra_columns = [
         'date_insert', 'date_update',
@@ -77,12 +82,17 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
 
 class LandEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = LandEdge.objects.existing()
-    filterform = LandEdgeFilterSet
     mandatory_columns = ['id', 'land_type']
     default_extra_columns = ['length', 'length_2d']
 
 
+class LandEdgeFilter(MapEntityFilter):
+    model = LandEdge
+    filterset_class = LandEdgeFilterSet
+
+
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
+    filterset_class = LandEdgeFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'land_type', 'owner', 'agreement', 'date_insert', 'date_update',
@@ -130,12 +140,17 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
 
 class CirculationEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CirculationEdge.objects.existing()
-    filterform = CirculationEdgeFilterSet
     mandatory_columns = ['id', 'circulation_type', 'authorization_type']
     default_extra_columns = ['length', 'length_2d']
 
 
+class CirculationEdgeFilter(MapEntityFilter):
+    model = CirculationEdge
+    filterset_class = CirculationEdgeFilterSet
+
+
 class CirculationEdgeFormatList(MapEntityFormat, CirculationEdgeList):
+    filterset_class = CirculationEdgeFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'circulation_type', 'authorization_type', 'date_insert', 'date_update',
@@ -183,12 +198,17 @@ class CirculationEdgeViewSet(GeotrekMapentityViewSet):
 
 class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = CompetenceEdge.objects.existing()
-    filterform = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
 
 
+class CompetenceEdgeFilter(MapEntityFilter):
+    model = CompetenceEdge
+    filterset_class = CompetenceEdgeFilterSet
+
+
 class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
+    filterset_class = CompetenceEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update',
@@ -236,12 +256,17 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
 
 class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = WorkManagementEdge.objects.existing()
-    filterform = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
 
 
+class WorkManagementEdgeFilter(MapEntityFilter):
+    model = WorkManagementEdge
+    filterset_class = WorkManagementEdgeFilterSet
+
+
 class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
+    filterset_class = WorkManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'
@@ -288,12 +313,17 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
 
 class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
     queryset = SignageManagementEdge.objects.existing()
-    filterform = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = ['length', 'length_2d']
 
 
+class SignageManagementEdgeFilter(MapEntityFilter):
+    model = SignageManagementEdge
+    filterset_class = SignageManagementEdgeFilterSet
+
+
 class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
+    filterset_class = SignageManagementEdgeFilterSet
     mandatory_columns = ['id', 'organization']
     default_extra_columns = [
         'date_insert', 'date_update', 'cities', 'districts', 'areas', 'uuid', 'length_2d'

@@ -70,19 +70,7 @@ test:
 test_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --shuffle --noinput --parallel
 
-test_nav:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
-
-test_export:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-auth.js geotrek/jstests/export-*.js
-
-node_modules:
-	npm install geotrek/jstests
-
-test_js: node_modules
-	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
-
-tests: test test_nds test_js test_nav
+tests: test test_nds
 
 update:
 	$(docker_compose) run web update.sh
@@ -96,8 +84,18 @@ load_demo:
 load_test_integration:
 	$(docker_compose) run web ./manage.py loaddata test-integration
 
-css:
-	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
+clean_data:
+	$(docker_compose) down -v --remove-orphans
+	rm -rf var/cache/*
+	rm -rf var/tiles/*
+	rm -rf var/media/*
+	rm -rf var/static/*
+	rm -rf var/tmp/*
+	rm -rf var/log/*
+	rm -rf var/mobile/*
+
+
+flush: clean_data update load_data
 
 %.pdf:
 	mkdir -p docs/data-model

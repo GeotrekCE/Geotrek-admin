@@ -478,6 +478,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         description_teaser = serializers.SerializerMethodField()
         practical_info = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        published = serializers.SerializerMethodField()
+
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)

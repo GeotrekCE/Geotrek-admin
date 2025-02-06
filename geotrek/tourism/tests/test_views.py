@@ -88,7 +88,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         self.client.logout()
 
     def test_only_used_categories_are_shown(self):
-        url = "/touristiccontent/list/"
+        url = "/touristiccontent/filter/"
         response = self.client.get(url)
         self.assertContains(response, 'title="Category"')
         self.assertNotContains(response, 'title="Another category"')

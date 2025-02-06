@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-03 16:28+0100\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -180,9 +180,6 @@ msgstr "Évènements touristiques"
 
 msgid "Published touristic events"
 msgstr "Évènements touristiques publiées"
-
-msgid "Attributes"
-msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"

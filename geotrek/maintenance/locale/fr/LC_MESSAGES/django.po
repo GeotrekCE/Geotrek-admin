@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-28 12:55+0000\n"
+"POT-Creation-Date: 2025-02-03 09:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,13 +24,13 @@ msgid "length 3d"
 msgstr "Longueur 3D"
 
 msgid "ascent"
-msgstr ""
+msgstr "Dénivelé positif"
 
 msgid "descent"
-msgstr ""
+msgstr "Dénivelé négatif"
 
 msgid "slope"
-msgstr ""
+msgstr "Pente"
 
 msgid "min"
 msgstr "min"
@@ -63,7 +63,7 @@ msgid "Trail"
 msgstr "Sentier"
 
 msgid "Report"
-msgstr ""
+msgstr "Rapport"
 
 msgid "Outdoor Course"
 msgstr "Parcours Outdoor"
@@ -90,16 +90,16 @@ msgid "On"
 msgstr "Sur"
 
 msgid "Restricted area type"
-msgstr ""
+msgstr "Type de zone réglementaire"
 
 msgid "Restricted area"
-msgstr ""
+msgstr "Zone réglementaire"
 
 msgid "City"
-msgstr ""
+msgstr "Ville"
 
 msgid "District"
-msgstr ""
+msgstr "District"
 
 msgid "Year of activity"
 msgstr "Année d'activité"
@@ -122,11 +122,11 @@ msgstr "Date de fin"
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
+msgid "On: %(target)s"
+msgstr "Sur : %(target)s"
+
 msgid "Paths"
 msgstr "Tronçons"
-
-msgid "On {}"
-msgstr "Sur {}"
 
 msgid "Begin date is after end date"
 msgstr "La date de début est après la date de fin"
@@ -195,7 +195,7 @@ msgid "Remarks and notes"
 msgstr "Remarques et notes"
 
 msgid "Access mean"
-msgstr ""
+msgstr "Moyen d'accès"
 
 msgid "External id"
 msgstr "ID externe"
@@ -207,7 +207,7 @@ msgid "Interventions"
 msgstr "Interventions"
 
 msgid "Deleted"
-msgstr ""
+msgstr "Supprimé"
 
 msgid "Mandays cost"
 msgstr "Coût jours-hommes"

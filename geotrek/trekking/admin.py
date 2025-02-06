@@ -71,7 +71,7 @@ class DifficultyLevelForm(forms.ModelForm):
 
 class DifficultyLevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = DifficultyLevelForm
-    list_display = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram_img')
+    list_display = ('difficulty', 'id', 'cirkwi_level', 'cirkwi', 'pictogram_img')
     search_fields = ('difficulty',)
     fields = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram')
     merge_field = 'difficulty'
