@@ -24,8 +24,6 @@ Architecture: any
 Pre-depends:
  libcairo2
 Depends:
- ${misc:Depends},
- ${shlibs:Depends},
  nginx,
  memcached,
  gettext,

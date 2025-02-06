@@ -5,9 +5,13 @@ CHANGELOG
 2.113.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Officially support Ubuntu 22.04 debian package.
+
 **Bug fixes**
 
-- Fix path pcture in intervention form (#4450)
+- Fix path picture in intervention form (#4450)
 - Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
 
 **Development**
