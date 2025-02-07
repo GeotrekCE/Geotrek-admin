@@ -139,7 +139,7 @@ In case of unwanted upgrade, you will be able to revert your Geotrek-admin versi
 
    sudo apt-get install geotrek-admin=2.102.1.ubuntu20.04
 
-for Ubuntu 20.04, or
+for Ubuntu >= 20.04, or
 
 ::
 

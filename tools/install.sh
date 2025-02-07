@@ -35,4 +35,4 @@ sudo apt install -y $postgis_and_routing wget software-properties-common
 echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
 wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
 sudo apt update
-sudo apt install -y geotrek-admin
+sudo apt install --no-install-recommends -y geotrek-admin

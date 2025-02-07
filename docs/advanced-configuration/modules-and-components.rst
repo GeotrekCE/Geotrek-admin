@@ -446,7 +446,7 @@ After installing the Outdoor module, you need to add permissions to user groups 
 
 .. note::
   - The Outdoor module is not compatible with PostGIS <= 2.4, included in Ubuntu 18.04.
-  - Upgrade to Ubuntu 20.04 or upgrade PostGIS to 2.5 via https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+  - Upgrade your Ubuntu distribution or upgrade PostGIS to 2.5 via https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
 
 .. _sensitivity:

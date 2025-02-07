@@ -393,7 +393,7 @@ jobs:
       - name: Install package
         run: |
           sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl restart nginx
 
       - name: Load Data
