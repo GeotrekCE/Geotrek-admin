@@ -21,12 +21,11 @@ Build-Depends:
 
 Package: geotrek-admin
 Architecture: any
-Pre-depends:
- libcairo2
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
  nginx,
+ libcairo2,
  memcached,
  gettext,
  gdal-bin,
@@ -39,4 +38,6 @@ Depends:
  convertit,
  python3.8 | python3.10,
  libvips
+Recommends:
+Suggests:
 Description: Manage and promote your trails and tourist content and activities.

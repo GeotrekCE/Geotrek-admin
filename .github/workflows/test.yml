@@ -337,11 +337,18 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
-  e2e_deb_20_04:
-    name: Tests E2E 20.04
-    runs-on: ubuntu-20.04
+  e2e_deb:
+    name: Tests E2E debian package
+    runs-on: ubuntu-${{ matrix.code }}
     needs: [ build_deb ]
-
+    strategy:
+      matrix:
+          os: ['focal', 'jammy']
+          include:
+              - os: 'focal'
+                code: '20.04'
+              - os: 'jammy'
+                code: '22.04'
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
@@ -363,7 +370,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: 'focal'
+          name: ${{ matrix.os }}
 
       - name: Simulate install.sh procedure
         run: |
@@ -386,7 +393,7 @@ jobs:
       - name: Install package
         run: |
           sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -414,7 +421,7 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-20.04
+          name: cypress-${{ matrix.code }}
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
@@ -422,7 +429,7 @@ jobs:
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
-    needs: [ test, e2e_docker_image, build_deb, e2e_deb_20_04 ]
+    needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
@@ -437,6 +444,12 @@ jobs:
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: focal
+
+      - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: jammy
 
       - name: Download docker image
         uses: ishworkh/container-image-artifact-download@v2.0.0
@@ -498,16 +511,12 @@ jobs:
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
           else
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
           fi
-
-      - name: Download 22.04 debian artifact
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: jammy
 
       - name: Attach debian packages as release binaries
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
