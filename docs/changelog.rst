@@ -22,6 +22,7 @@ CHANGELOG
 
 - Update documentation theme and content, re-organize sections (#4484)
 - Add infos about adding new languages (#4486)
+- fix typo in docss
 
 2.113.0    (2025-01-30)
 ----------------------------
