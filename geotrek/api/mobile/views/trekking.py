@@ -6,7 +6,7 @@ from rest_framework import response, viewsets, decorators
 from rest_framework.permissions import AllowAny
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
-from geotrek.api.mobile.serializers import trekking as api_serializers_trekking, tourism as api_serializers_tourism
+from geotrek.api.mobile.serializers import trekking as api_serializers_trekking, tourism as api_serializers_tourism, sensitivity as api_serializers_sensitivity
 from geotrek.common.functions import StartPoint, EndPoint
 from geotrek.trekking import models as trekking_models
 
@@ -70,4 +70,14 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
         qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
+        return response.Response(data)
+
+    @decorators.action(detail=True, methods=['get'])
+    def sensitive_areas(self, request, *args, **kwargs):
+        trek = self.get_object()
+        root_pk = self.request.GET.get('root_pk') or trek.pk
+        qs = trek.sensitive_areas.filter(published=True) \
+            .prefetch_related('species') \
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)).order_by('pk')
+        data = api_serializers_sensitivity.SensitiveAreaListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
