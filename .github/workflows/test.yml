@@ -218,10 +218,8 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['bionic', 'focal', 'jammy']
+              os: ['focal', 'jammy']
               include:
-                  - os: 'bionic'
-                    code: '18.04'
                   - os: 'focal'
                     code: '20.04'
                   - os: 'jammy'
@@ -271,6 +269,8 @@ jobs:
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
+        volumes:
+          - postgres:/var/lib/postgresql/data
 
     steps:
       - uses: actions/checkout@v4
@@ -433,11 +433,6 @@ jobs:
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Download 18.04 debian artifact
-        uses: actions/download-artifact@v4
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        with:
-          name: bionic
 
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
@@ -509,11 +504,9 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
           fi
