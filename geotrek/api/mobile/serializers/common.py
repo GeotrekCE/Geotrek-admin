@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
+from geotrek.sensitivity import models as sensitivity_models
 
 
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
@@ -178,6 +179,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.POIType
             fields = ('id', 'label', 'pictogram')
+
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+
+    class SportPracticeSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = sensitivity_models.SportPractice
+            fields = ('id', 'name')
 
 
 class MobileMenuItemListSerializer(serializers.Serializer):

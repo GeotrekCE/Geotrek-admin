@@ -14,6 +14,7 @@ from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Ro
 from geotrek.tourism.models import (InformationDesk, InformationDeskType, TouristicContentType, TouristicEventType,
                                     TouristicContentCategory)
 from geotrek.zoning.models import City, District
+from geotrek.sensitivity.models import SportPractice
 
 
 class SettingsView(APIView):
@@ -199,6 +200,13 @@ class SettingsView(APIView):
                         TouristicContentCategory.objects.all().order_by('order'),
                         many=True, context={'request': request}).data,
                 },
+                {
+                    'id': 'sensitive_area_practices',
+                    'name': _('Sensitive area practices'),
+                    'values': api_serializers.SportPracticeSerializer(
+                        SportPractice.objects.all().order_by('name'),
+                        many=True, context={'request': request}).data,
+                }
             ]
         })
 
