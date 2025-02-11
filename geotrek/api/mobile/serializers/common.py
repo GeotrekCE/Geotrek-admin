@@ -179,6 +179,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POIType
             fields = ('id', 'label', 'pictogram')
 
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import models as sensitivity_models
+
+    class SportPracticeSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = sensitivity_models.SportPractice
+            fields = ('id', 'name')
+
 
 class MobileMenuItemListSerializer(serializers.Serializer):
 
