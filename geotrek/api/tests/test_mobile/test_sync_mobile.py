@@ -304,7 +304,7 @@ class SyncMobileSettingsTest(VarTmpTestCase):
             with open(os.path.join(self.sync_directory, lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 16)
+                self.assertEqual(len(settings_json['data']), 17)
 
         self.assertIn('en/settings.json', output.getvalue())
 
@@ -322,7 +322,7 @@ class SyncMobileSettingsTest(VarTmpTestCase):
             with open(os.path.join(self.sync_directory, lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 16)
+                self.assertEqual(len(settings_json['data']), 17)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
                 self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)
 
