@@ -31,8 +31,9 @@ else
 fi
 
 sudo apt update
-sudo apt install -y $postgis_and_routing wget software-properties-common
-echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
+sudo apt install -y $postgis_and_routing curl ca-certificates software-properties-common
+sudo install -d /usr/share/geotrek
+sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
+echo "deb [arch=amd64,signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
 sudo apt update
 sudo apt install --no-install-recommends -y geotrek-admin

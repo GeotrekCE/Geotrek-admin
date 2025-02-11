@@ -1,4 +1,4 @@
-ARG DISTRO=ubuntu:bionic
+ARG DISTRO=ubuntu:focal
 
 FROM ${DISTRO} AS base
 

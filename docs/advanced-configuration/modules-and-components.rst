@@ -445,7 +445,7 @@ To insert Outdoor minimal data:
 After installing the Outdoor module, you need to add permissions to user groups for outdoor sites and courses.
 
 .. note::
-  - The Outdoor module is not compatible with PostGIS <= 2.4, included in Ubuntu 18.04.
+  - The Outdoor module is not compatible with PostGIS <= 2.4.
   - Upgrade your Ubuntu distribution or upgrade PostGIS to 2.5 via https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
 
