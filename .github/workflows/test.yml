@@ -110,8 +110,6 @@ jobs:
            libfreetype6-dev \
            libxml2-dev \
            libxslt-dev \
-           libcairo2 \
-           libpango1.0-0 \
            libpangocairo-1.0-0 \
            libgdk-pixbuf2.0-dev \
            libffi-dev \
