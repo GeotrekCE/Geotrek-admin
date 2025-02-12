@@ -305,9 +305,20 @@ jobs:
           make load_test_integration
           docker compose up -d
 
-      - name: Prepare test server
+      - name: Prepare nginx
         run: |
-          docker run -d -p 80:80 -v /home/runner/work/Geotrek-admin/Geotrek-admin/var/:/var/www/geotrek -v /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+          sudo service apache2 stop
+          sudo apt-get purge apache2*
+          sudo apt-get autoremove
+          sudo apt-get install -q -y nginx
+          sudo unlink /etc/nginx/sites-enabled/default
+          sudo mkdir /var/www/geotrek -p
+          ls -als
+          pwd
+          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/media /var/www/geotrek/media
+          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
+          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
+          sudo systemctl restart nginx
 
       - name: install Cypress
         run: |
