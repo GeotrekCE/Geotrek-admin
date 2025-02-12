@@ -310,11 +310,9 @@ jobs:
           sudo service apache2 stop
           sudo apt-get purge apache2*
           sudo apt-get autoremove
-          sudo apt-get install -q -y nginx
           sudo unlink /etc/nginx/sites-enabled/default
           sudo mkdir /var/www/geotrek -p
-          ls -als
-          pwd
+          sudo chmown -R www-data:www-data /var/www/geotrek
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/media /var/www/geotrek/media
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
