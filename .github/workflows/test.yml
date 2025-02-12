@@ -370,7 +370,7 @@ jobs:
       - name: Simulate install.sh procedure
         run: |
           sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get purge apache2*
           sudo apt-get autoremove
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -

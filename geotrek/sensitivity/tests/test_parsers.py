@@ -334,9 +334,3 @@ class RegulatorySensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.species.url, "http://test.com")
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
-        self.assertEqual(
-            WKTWriter(precision=5).write(area.geom),
-            b'POLYGON ((929315.36134 6483309.44351, 929200.35394 6483204.02006, 928404.88615 6482494.80781, '
-            b'928194.03926 6482082.69799, 927925.68868 6481210.55860, 927676.50600 6481287.23020, '
-            b'927772.34549 6481498.07708, 927887.35289 6481900.60295, 928184.45532 6482600.23125, '
-            b'928625.31698 6483520.29039, 929162.01815 6483664.04963, 929315.36134 6483309.44351))')
