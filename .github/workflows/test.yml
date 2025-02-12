@@ -307,7 +307,7 @@ jobs:
 
       - name: Prepare test server
         run: |
-          docker run -d -p 80:80 -v /home/runner/work/Geotrek-admin/Geotrek-admin/var/:/var/www/geotrek -v /etc/nginx/sites-enabled/geotrek.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+          docker run -d -p 80:80 -v /home/runner/work/Geotrek-admin/Geotrek-admin/var/:/var/www/geotrek -v /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf:/etc/nginx/conf.d/default.conf nginx:alpine
 
       - name: install Cypress
         run: |
