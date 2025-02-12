@@ -40,15 +40,18 @@ class SiteTest(TestCase):
         self.assertEqual(site_simple.geom.wkt,
                          'GEOMETRYCOLLECTION (POINT (0 0), POLYGON ((1 1, 2 2, 1 2, 1 1)))'
                          )
-        site_complex_geom = SiteFactory.create(name='site',
-                                         geom=GeometryCollection(Point(0, 0), Point(1, 1),
-                                                                 Polygon(((1, 1), (2, 2), (1, 2), (1, 1)))))
+        site_complex_geom = SiteFactory.create(
+            name='site',
+            geom=GeometryCollection(Point(0, 0),
+                                    Point(1, 1),
+                                    Polygon(((1, 1), (2, 2), (1, 2), (1, 1))))
+        )
         self.assertEqual(site_complex_geom.geom.wkt,
                          'GEOMETRYCOLLECTION (POINT (0 0), POINT (1 1), POLYGON ((1 1, 2 2, 1 2, 1 1)))'
                          )
         site_multiple_point = SiteFactory.create(name='site',
                                                  geom=GeometryCollection(Point(0, 0), Point(1, 1), Point(1, 2)))
-        self.assertEqual(site_multiple_point.geom.wkt,'GEOMETRYCOLLECTION (POINT (0 0), POINT (1 1), POINT (1 2))')
+        self.assertEqual(site_multiple_point.geom.wkt, 'GEOMETRYCOLLECTION (POINT (0 0), POINT (1 1), POINT (1 2))')
 
     def test_delete_method_delete_site_with_child_sites_and_courses(self):
         self.parent_site = SiteFactory.create(name="parent_site")
