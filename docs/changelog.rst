@@ -5,6 +5,15 @@ CHANGELOG
 2.113.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
+
+**Improvements**
+
+- Officially support Ubuntu 24.04 debian package.
+- Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
+- Deprecate support of Ubuntu 18.04 bionic.
 
 
 2.113.1    (2025-02-17)
