@@ -41,7 +41,8 @@ export MEMCACHED_PORT="11211"
 
 # Create geotrek user (only on a new install)
 if [ "$2" = "" ]; then
-	adduser --system --group --no-create-home --quiet geotrek || true
+	useradd --system --create-home --home-dir /opt/geotrek-admin geotrek || true
+  chown -R geotrek:geotrek /opt/geotrek-admin || true
 fi
 
 # Create directories
@@ -53,13 +54,13 @@ mkdir -p /opt/geotrek-admin/var/cache/api_v2 || true
 mkdir -p /opt/geotrek-admin/var/cache/fat || true
 mkdir -p /opt/geotrek-admin/var/pid || true
 mkdir -p /opt/geotrek-admin/var/mobile || true
-chown -R geotrek.geotrek /opt/geotrek-admin/var || true
+chown -R geotrek:geotrek /opt/geotrek-admin/var || true
 
 # Create database (only on a new install)
 echo "MANAGE_DB : $MANAGE_DB - $2"
 if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	echo "Create Database" >&2
-	su postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD';\"" || true
+	su postgres -c "psql -q -c \"CREATE USER $POSTGRES_USER WITH ENCRYPTED PASSWORD '$POSTGRES_PASSWORD';\"" || true
 	su postgres -c "psql -q -c 'CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;'" || true
 	su postgres -c "psql -q -d $POSTGRES_DB -c 'CREATE EXTENSION postgis;'" || true
 	# postgis_raster is only useful on postgis 3, it fails on postgis 2 but this is harmless
@@ -73,7 +74,7 @@ SECRET_KEY_FILE=/opt/geotrek-admin/var/conf/secret_key
 if [ ! -f $SECRET_KEY_FILE ]; then
 	echo "Generate secret key" >&2
     dd bs=48 count=1 if=/dev/urandom 2>/dev/null | base64 > $SECRET_KEY_FILE
-	chown geotrek.geotrek $SECRET_KEY_FILE
+	chown geotrek:geotrek $SECRET_KEY_FILE
     chmod go-r $SECRET_KEY_FILE
 fi
 
@@ -89,7 +90,7 @@ for f in env nginx.conf gunicorn-geotrek.conf.py gunicorn-geotrek_api.conf.py; d
 
 END
 	envsubst < $CONF_DIR/$f.in >> $CONF_DIR/$f
-	chown geotrek.geotrek $CONF_DIR/$f || true
+	chown geotrek:geotrek $CONF_DIR/$f || true
 done
 
 # Install config files

@@ -34,7 +34,6 @@ release:
 	docker stop geotrek_release
 	docker rm geotrek_release
 
-
 serve:
 	$(docker_compose) up
 
