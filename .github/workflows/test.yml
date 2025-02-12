@@ -222,7 +222,7 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['focal', 'jammy']
+              os: ['focal', 'jammy', 'noble']
               include:
                   - os: 'focal'
                     code: '20.04'
