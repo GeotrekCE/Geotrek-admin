@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-03 09:36+0100\n"
+"POT-Creation-Date: 2025-02-13 10:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,7 @@ msgstr "Date de fin"
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
+#, python-format
 msgid "On: %(target)s"
 msgstr "Sur : %(target)s"
 
