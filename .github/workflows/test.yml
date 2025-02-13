@@ -291,6 +291,7 @@ jobs:
           docker tag geotrek:latest geotrekce/admin:latest
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
+          cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/localhost/geotrek.local/' .env
@@ -300,23 +301,10 @@ jobs:
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
-          sudo mkdir /var/www/geotrek/ -p
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
           docker compose run web update.sh
-          sudo chmod 777 -R /var/www/geotrek
-          sudo chown -R www-data:www-data /var/www/geotrek
-          sudo chown -R www-data:www-data /home/runner/work/Geotrek-admin/Geotrek-admin/var/static
           make load_data
           make load_test_integration
-          docker compose up -d
-          ls -als /var/www/geotrek/
-          ls -als /var/www/geotrek/static/
-
-      - name: Prepare nginx
-        run: |
-          sudo unlink /etc/nginx/sites-enabled/default
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
-          sudo systemctl restart nginx
+          COMPOSE_FILE=docker-compose.yml;docker-compose-cypress.yml docker compose up -d
 
       - name: install Cypress
         run: |
