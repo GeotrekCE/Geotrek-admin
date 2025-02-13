@@ -303,11 +303,14 @@ jobs:
           sudo mkdir /var/www/geotrek/ -p
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
           sudo chmod 777 -R /var/www/geotrek
+          sudo chmod 777 -R /var/www/geotrek/static
           docker compose run web update.sh
           sudo chown -R www-data:www-data /var/www/geotrek
+          sudo chown -R www-data:www-data /var/www/geotrek/static
           make load_data
           make load_test_integration
           docker compose up -d
+          ls -als /var/www/geotrek/
           ls -als /var/www/geotrek/static/
 
       - name: Prepare nginx
