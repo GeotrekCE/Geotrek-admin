@@ -8,6 +8,7 @@ from geotrek.trekking import models as trek_models
 from geotrek.tourism.tests import factories as tourism_factory
 from geotrek.tourism import models as tourism_models
 from geotrek.zoning.tests import factories as zoning_factory
+from geotrek.sensitivity.tests import factories as sensitivity_factory
 
 
 GEOJSON_STRUCTURE = sorted([
@@ -56,6 +57,10 @@ TOURISTIC_EVENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'description', 'description_teaser', 'category', 'themes', 'contact', 'email', 'website', 'practical_info',
     'pictures', 'type1', 'type2', 'approved', 'reservation_id', 'reservation_system', 'name',
+])
+
+SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'id', 'description', 'name', 'practices', 'contact', 'info_url', 'period'
 ])
 
 
@@ -112,6 +117,11 @@ class BaseApiTest(TestCase):
         cls.touristic_event = tourism_factory.TouristicEventFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
+
+        trek_geom_envelope = cls.trek.geom.envelope
+        cls.sensitive_area_species = sensitivity_factory.SensitiveAreaFactory(geom=trek_geom_envelope, published=True)
+        cls.sensitive_area_regulatory = sensitivity_factory.SensitiveAreaFactory(geom=trek_geom_envelope, published=True)
+
         cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
         cls.district2 = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)), published=False)
         bigger_extent = (cls.treks[0].geom.extent[0] - 1, cls.treks[0].geom.extent[1] - 1,
@@ -135,6 +145,9 @@ class BaseApiTest(TestCase):
     def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
                                headers={"accept-language": lang})
+
+    def get_sensitive_area_list(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-sensitive-areas', args=(id_trek, )), params, headers={"accept-language": lang})
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -361,6 +374,30 @@ class APIAccessTestCase(BaseApiTest):
                          TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual(json_response.get('features')[0].get('properties')['description'],
                          "Sisi")
+
+    def test_sensitive_area_list(self):
+        response = self.get_sensitive_area_list(self.trek.pk, 'fr')
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()), GEOJSON_STRUCTURE)
+
+        # sensitive areas count by trek is ok
+        self.assertEqual(len(json_response.get('features')),
+                         self.trek.published_sensitive_areas.count())
+
+        for feature in json_response.get('features'):
+            # test dim 2 ok
+            self.assertEqual(len(feature.get('geometry').get('coordinates')[0][0]), 2)
+            self.assertEqual(sorted(feature.keys()), DETAIL_GEOJSON_STRUCTURE)
+            self.assertEqual(sorted(feature.get('properties').keys()),
+                             SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+            sensitive_area_obj = self.trek.published_sensitive_areas.get(pk=feature.get('id'))
+            for i, month in enumerate(['period{:02}'.format(p) for p in range(1, 13)]):
+                self.assertEqual(getattr(sensitive_area_obj.species, month),
+                                 feature.get('properties').get('period')[i])
 
 
 class APISwaggerTestCase(BaseApiTest):
