@@ -307,9 +307,6 @@ jobs:
 
       - name: Prepare nginx
         run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2*
-          sudo apt-get autoremove
           sudo unlink /etc/nginx/sites-enabled/default
           sudo mkdir /var/www/geotrek -p
           sudo chown -R www-data:www-data /var/www/geotrek
