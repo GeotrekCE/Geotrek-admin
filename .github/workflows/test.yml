@@ -304,7 +304,7 @@ jobs:
           docker compose run web update.sh
           make load_data
           make load_test_integration
-          COMPOSE_FILE=docker-compose.yml;docker-compose-cypress.yml docker compose up -d
+          COMPOSE_FILE=docker-compose.yml:docker-compose-cypress.yml docker compose up -d
 
       - name: install Cypress
         run: |
