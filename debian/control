@@ -39,6 +39,4 @@ Depends:
  convertit,
  python3.10 | python3.12,
  libvips
-Recommends:
-Suggests:
 Description: Manage and promote your trails and tourist content and activities.
