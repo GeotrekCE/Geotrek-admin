@@ -308,7 +308,7 @@ jobs:
           make load_test_integration
           docker compose up -d
           ls -als /var/www/geotrek/static
-          chmod 777 -R /var/www/geotrek/static
+          sudo chmod 777 -R /var/www/geotrek/static
 
       - name: Prepare nginx
         run: |
