@@ -300,17 +300,19 @@ jobs:
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
-          sudo mkdir /var/www/geotrek/static /var/www/geotrek/media -p
+          sudo mkdir /var/www/geotrek/ -p
+          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
           sudo chmod 777 -R /var/www/geotrek
           docker compose run web update.sh
           make load_data
           make load_test_integration
           docker compose up -d
+          ls -als /var/www/geotrek/static
+          chmod 777 -R /var/www/geotrek/static
 
       - name: Prepare nginx
         run: |
           sudo unlink /etc/nginx/sites-enabled/default
-
           sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
           sudo systemctl restart nginx
 
