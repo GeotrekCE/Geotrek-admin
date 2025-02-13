@@ -4,3 +4,4 @@ TEST = True
 LANGUAGE_CODE = 'en'
 
 MODELTRANSLATION_LANGUAGES = ["en", "fr"]
+STATIC_ROOT = "/var/www/geotrek/static"
