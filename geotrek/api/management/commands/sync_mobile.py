@@ -160,6 +160,16 @@ class Command(BaseCommand):
             name = os.path.join(lang, str(trek.pk), 'touristic_events', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
+    def sync_trek_sensitive_areas(self, lang, trek):
+        params = {'format': 'geojson', 'root_pk': trek.pk}
+        view = TrekViewSet.as_view({'get': 'sensitive_areas'})
+        name = os.path.join(lang, str(trek.pk), 'sensitive_areas.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
+        # Sync sensitive areas of children too
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
+            name = os.path.join(lang, str(trek.pk), 'sensitive_areas', '{}.geojson'.format(child.pk))
+            self.sync_view(lang, view, name, params=params, pk=child.pk)
+
     def sync_file(self, name, src_root, url, directory='', zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
@@ -290,6 +300,7 @@ class Command(BaseCommand):
             self.sync_trek_pois(lang, trek)
             self.sync_trek_touristic_contents(lang, trek)
             self.sync_trek_touristic_events(lang, trek)
+            self.sync_trek_sensitive_areas(lang, trek)
             # Sync detail of children too
             for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
                 self.sync_geojson(
