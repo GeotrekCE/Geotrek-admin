@@ -301,7 +301,7 @@ jobs:
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
           sudo mkdir /var/www/geotrek/ -p
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
+          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek
           sudo chmod 777 -R /var/www/geotrek
           docker compose run web update.sh
           make load_data
