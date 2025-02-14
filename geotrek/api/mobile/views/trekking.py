@@ -10,6 +10,9 @@ from geotrek.api.mobile.serializers import trekking as api_serializers_trekking,
 from geotrek.common.functions import StartPoint, EndPoint
 from geotrek.trekking import models as trekking_models
 
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.api.mobile.serializers import sensitivity as api_serializers_sensitivity
+
 
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
@@ -71,3 +74,14 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         qs = qs.prefetch_related('attachments').annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
+
+    if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+        @decorators.action(detail=True, methods=['get'])
+        def sensitive_areas(self, request, *args, **kwargs):
+            trek = self.get_object()
+            root_pk = self.request.GET.get('root_pk') or trek.pk
+            qs = trek.sensitive_areas.filter(published=True) \
+                .prefetch_related('species') \
+                .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)).order_by('pk')
+            data = api_serializers_sensitivity.SensitiveAreaListSerializer(qs, many=True, context={'root_pk': root_pk}).data
+            return response.Response(data)
