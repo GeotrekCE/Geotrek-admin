@@ -375,9 +375,9 @@ class SyncMobileTreksTest(VarTmpTestCase):
         cls.touristic_event_portal_b = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                              published=True, portals=[cls.portal_b])
 
-        trek1_geom_envelope = cls.trek_1.geom.envelope
-        cls.sensitive_area_species = SensitiveAreaFactory(geom=trek1_geom_envelope, published=True)
-        cls.sensitive_area_regulatory = SensitiveAreaFactory(geom=trek1_geom_envelope, published=True)
+        treks_1_4_envelope = MultiLineString(cls.trek_1.geom, cls.trek_4.geom).envelope
+        cls.sensitive_area_species = SensitiveAreaFactory(geom=treks_1_4_envelope, published=True)
+        cls.sensitive_area_regulatory = SensitiveAreaFactory(geom=treks_1_4_envelope, published=True)
 
         cls.attachment_content_1 = AttachmentImageFactory.create(content_object=cls.touristic_content)
         cls.attachment_event_1 = AttachmentImageFactory.create(content_object=cls.touristic_event)
@@ -445,10 +445,18 @@ class SyncMobileTreksTest(VarTmpTestCase):
         output = StringIO()
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
-        with open(os.path.join(self.sync_directory, 'en', str(self.trek_1.pk), 'sensitive_areas.geojson'), 'r') as f:
+        # Check results for trek_1 as a simple Trek:
+        filepath_trek_data = os.path.join('en', str(self.trek_1.pk), 'sensitive_areas.geojson')
+        with open(os.path.join(self.sync_directory, filepath_trek_data), 'r') as f:
             sensitive_areas_geojson = json.load(f)
             self.assertEqual(len(sensitive_areas_geojson['features']), 2)
-        self.assertIn('en/{pk}/sensitive_areas.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+        self.assertIn(filepath_trek_data, output.getvalue())
+        # Check results for trek_1 as a parent Trek and trek_4 as its child:
+        filepath_child_trek_data = os.path.join('en', str(self.trek_1.pk), 'sensitive_areas', '{pk}.geojson'.format(pk=str(self.trek_4.pk)))
+        with open(os.path.join(self.sync_directory, filepath_child_trek_data), 'r') as f:
+            sensitive_areas_geojson = json.load(f)
+            self.assertEqual(len(sensitive_areas_geojson['features']), 2)
+        self.assertIn(filepath_child_trek_data, output.getvalue())
 
     def test_medias_treks(self):
         output = StringIO()

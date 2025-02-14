@@ -8,6 +8,7 @@ from geotrek.trekking import models as trek_models
 from geotrek.tourism.tests import factories as tourism_factory
 from geotrek.zoning.tests import factories as zoning_factory
 from geotrek.sensitivity.tests import factories as sensitivity_factory
+from geotrek.sensitivity.models import SensitiveArea
 
 
 GEOJSON_STRUCTURE = sorted([
@@ -365,11 +366,11 @@ class APIAccessTestCase(BaseApiTest):
 
         for feature in json_response.get('features'):
             # test dim 2 ok
-            self.assertEqual(len(feature.get('geometry').get('coordinates')[0][0]), 2)
             self.assertEqual(sorted(feature.keys()), DETAIL_GEOJSON_STRUCTURE)
+            self.assertEqual(len(feature.get('geometry').get('coordinates')[0][0]), 2)
             self.assertEqual(sorted(feature.get('properties').keys()),
                              SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE)
-            sensitive_area_obj = self.trek.published_sensitive_areas.get(pk=feature.get('id'))
+            sensitive_area_obj = SensitiveArea.objects.get(pk=feature.get('id'))
             for i, month in enumerate(['period{:02}'.format(p) for p in range(1, 13)]):
                 self.assertEqual(getattr(sensitive_area_obj.species, month),
                                  feature.get('properties').get('period')[i])
