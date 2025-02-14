@@ -140,7 +140,7 @@ msgid "Touristic event types"
 msgstr "Types d'événements touristiques"
 
 msgid "Sensitive area practices"
-msgstr "Pratiques en zones sensibles"
+msgstr "Pratiques en zone sensible"
 
 msgid "Sync verifications"
 msgstr "Vérification de la synchronisation"
