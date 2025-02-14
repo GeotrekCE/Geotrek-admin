@@ -31,6 +31,7 @@ from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
                                              TouristicContentFactory,
                                              TouristicEventFactory)
+from geotrek.sensitivity.tests.factories import SensitiveAreaFactory
 from geotrek.trekking.models import OrderedTrekChild, Trek
 from geotrek.trekking.tests.factories import (PracticeFactory, TrekFactory,
                                               TrekWithPublishedPOIsFactory)
@@ -373,6 +374,11 @@ class SyncMobileTreksTest(VarTmpTestCase):
                                                                  published=True, portals=[cls.portal_b])
         cls.touristic_event_portal_b = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                              published=True, portals=[cls.portal_b])
+
+        trek1_geom_envelope = cls.trek_1.geom.envelope
+        cls.sensitive_area_species = SensitiveAreaFactory(geom=trek1_geom_envelope, published=True)
+        cls.sensitive_area_regulatory = SensitiveAreaFactory(geom=trek1_geom_envelope, published=True)
+
         cls.attachment_content_1 = AttachmentImageFactory.create(content_object=cls.touristic_content)
         cls.attachment_event_1 = AttachmentImageFactory.create(content_object=cls.touristic_event)
 
@@ -434,6 +440,15 @@ class SyncMobileTreksTest(VarTmpTestCase):
                 # with the other treks.
                 self.assertEqual(len(trek_geojson['features']), 6)
         self.assertIn('en/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+
+    def test_sync_sensitive_areas_by_treks(self):
+        output = StringIO()
+        management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        with open(os.path.join(self.sync_directory, 'en', str(self.trek_1.pk), 'sensitive_areas.geojson'), 'r') as f:
+            sensitive_areas_geojson = json.load(f)
+            self.assertEqual(len(sensitive_areas_geojson['features']), 2)
+        self.assertIn('en/{pk}/sensitive_areas.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
     def test_medias_treks(self):
         output = StringIO()
