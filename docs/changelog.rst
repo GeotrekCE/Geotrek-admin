@@ -8,7 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Officially support Ubuntu 22.04 debian package.
-- Add sensitive areas to mobile API
+- Add sensitive areas to mobile API and sync
 
 **Bug fixes**
 
