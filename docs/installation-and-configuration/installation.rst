@@ -54,7 +54,7 @@ Run the following command in a shell prompt on your server:
 
 ::
 
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh | bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh)"
 
 If you don't want to use a local database, you can run the following command instead.
 This will prevent the script to install PostgreSQL server locally.
@@ -62,7 +62,7 @@ Don't forget to enable PostGIS extension in your remote database before installa
 
 ::
 
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
+    NODB=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh)"
 
 Then create the application administrator account and connect to the web interface.
 
