@@ -30,10 +30,10 @@ else
 	postgis_and_routing="postgresql-pgrouting"
 fi
 
-sudo apt update
-sudo apt install -y $postgis_and_routing curl ca-certificates software-properties-common
+sudo apt-get update
+sudo apt-get install -y $postgis_and_routing curl ca-certificates software-properties-common
 sudo install -d /usr/share/geotrek
 sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
 echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-sudo apt update
-sudo apt install -y geotrek-admin
+sudo apt-get update
+sudo apt-get install -y geotrek-admin
