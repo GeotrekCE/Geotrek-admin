@@ -21,19 +21,17 @@ if ! `localectl status | grep -q "System Locale: LANG=.*UTF-8"`; then
 	exit 1
 fi
 
-if [ "$*" == "--nodb" ]; then
+if [ "$NODB" == "true" ]; then
 	postgis_and_routing=""
-elif [ -n "$*" ]; then
-	echo "Usage: $0 [--nodb]"
-	exit 1
 else
 	postgis_and_routing="postgresql-pgrouting"
 fi
 
-sudo apt-get update
-sudo apt-get install -y $postgis_and_routing curl ca-certificates software-properties-common
+sudo apt update
+sudo apt install -y $postgis_and_routing curl ca-certificates software-properties-common
 sudo install -d /usr/share/geotrek
 sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
+sudo rm -f /etc/apt/sources.list.d/geotrek.list
 echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-sudo apt-get update
-DEBIAN_FRONTEND=dialog sudo apt-get install -y geotrek-admin
+sudo apt update
+sudo apt install --no-install-recommends -y geotrek-admin
