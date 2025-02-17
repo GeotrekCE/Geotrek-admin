@@ -15,6 +15,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Officially support Ubuntu 22.04 debian package.
 - Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
 - Deprecate support of Ubuntu 18.04 bionic.
+- Add sensitive areas to mobile API and sync
 
 **Bug fixes**
 
@@ -29,6 +30,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 - Update documentation theme and content, re-organize sections (#4484)
 - Add infos about adding new languages (#4486)
+
 
 2.113.0    (2025-01-30)
 ----------------------------

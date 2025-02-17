@@ -17,7 +17,7 @@ SETTINGS_STRUCTURE = sorted([
 SETTINGS_DATA_STRUCTURE = sorted([
     'information_desk_types', 'networks', 'route', 'practice', 'accessibilities', 'difficulty', 'themes', 'cities',
     'length', 'duration', 'poi_types', 'touristiccontent_categories', 'touristiccontent_types', 'touristicevent_types',
-    'ascent', 'districts'
+    'ascent', 'districts', 'sensitive_area_practices'
 ])
 
 
