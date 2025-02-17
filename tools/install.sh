@@ -4,8 +4,6 @@
 
 set -e
 
-export DEBIAN_FRONTEND=interactive
-
 if lsb_release -d | grep 'Ubuntu 24.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
 	echo "Either, Ubuntu 24.04, 22.04 found"
 else
@@ -38,4 +36,4 @@ sudo install -d /usr/share/geotrek
 sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
 echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
 sudo apt-get update
-sudo apt-get install -y geotrek-admin
+DEBIAN_FRONTEND=dialog sudo apt-get install -y geotrek-admin
