@@ -1,8 +1,8 @@
-geotrek-admin (2.113.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.113.1) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede@makina-corpus.com>  Wed, 12 Feb 2025 11:11:01 +0000
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Mon, 17 Feb 2025 15:41:12 +0100
 
 geotrek-admin (2.113.0) RELEASED; urgency=medium
 
