@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.113.0+dev    (XXXX-XX-XX)
+2.113.1    (2025-02-17)
 ----------------------------
 
 **Improvements**
@@ -23,6 +23,7 @@ CHANGELOG
 
 - Update documentation theme and content, re-organize sections (#4484)
 - Add infos about adding new languages (#4486)
+
 
 2.113.0    (2025-01-30)
 ----------------------------
