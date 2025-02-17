@@ -4,6 +4,8 @@
 
 set -e
 
+export DEBIAN_FRONTEND=interactive
+
 if lsb_release -d | grep 'Ubuntu 24.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
 	echo "Either, Ubuntu 24.04, 22.04 found"
 else
