@@ -29,7 +29,7 @@ database server level.
 
 Software requirements are :
 
-* Ubuntu Jammy 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
+* Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
