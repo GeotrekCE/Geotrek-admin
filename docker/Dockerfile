@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=jammy
+ARG BASE_IMAGE=noble
 
 FROM ubuntu:${BASE_IMAGE} AS base
 
@@ -14,6 +14,7 @@ LABEL org.opencontainers.image.description="Manage and promote your trails and t
 
 
 ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ENV=prod
 ENV SERVER_NAME="localhost"

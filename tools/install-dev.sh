@@ -4,10 +4,10 @@
 
 set -e
 
-if lsb_release -d | grep 'Ubuntu 20.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
-	echo "Either, Ubuntu 20.04, 22.04 found"
+if lsb_release -d | grep 'Ubuntu 24.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
+	echo "Either, Ubuntu 24.04, 22.04 found"
 else
-	echo "ERROR! Neither Ubuntu 20.04, Ubuntu 22.04 found."
+	echo "ERROR! Neither Ubuntu 24.04, Ubuntu 22.04 found."
 	exit 1
 fi
 

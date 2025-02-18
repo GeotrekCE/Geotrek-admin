@@ -92,21 +92,43 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
 Server migration
 =================
 
+New server
+----------
+
 It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version.
 
-Backup settings, media files and database on the old server:
-
-::
-
-    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/
+- :ref:`Backup <application-backup>` your data (database and `/opt/geotrek-admin/var` folders)
 
 Restore files on the new server:
 
+- /opt/geotrek-admin/var/conf
+- /opt/geotrek-admin/var/media
+- database.backup
+
+Same server
+-----------
+
+Take care to update your server to a supported version.
+
+- :ref:`Backup <application-backup>` your data (database and `/opt/geotrek-admin/var` folders)
+- Remove and purge your postgresql server version (take care about your configuration in your `postgresql.conf` and `pg_hba.conf`)
+
+.. note::
+
+    You can check postgresql versions installed with ``pg_lsclusters`` command.
+
 ::
 
-    scp old_server_ip:path/to/data.tgz .
-    tar xvzf data.tgz
+   sudo apt remove postgresql-14
+
+- Upgrade your distribution
+- Run again the install script referring to the :ref:`fresh-installation` section
+- Restore your database and media files and your custom `postgresql.conf` and `pg_hba.conf` files.
+
+With PostgreSQL on same server:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Check if your upgrade have installed new postgresql version or not.
 
 .. _postgresql:
 
@@ -146,6 +168,8 @@ for Ubuntu >= 20.04, or
    sudo apt-get install geotrek-admin=2.102.1.ubuntu18.04
 
 for Ubuntu bionic
+
+.. _update_postgres:
 
 Update PostgreSQL / PostGIS / PgRouting on Ubuntu Bionic
 ----------------------------------------------------------

@@ -7,7 +7,7 @@ Installation
 Ubuntu package
 ==============
 
-Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Focal 20.04 or Jammy 22.04 LTS server for production.
+Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Noble 24.04 or Jammy 22.04 LTS server for production.
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
 
@@ -29,7 +29,7 @@ database server level.
 
 Software requirements are :
 
-* Ubuntu Jammy 22.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
+* Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
@@ -54,7 +54,7 @@ Run the following command in a shell prompt on your server:
 
 ::
 
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh | bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh)"
 
 If you don't want to use a local database, you can run the following command instead.
 This will prevent the script to install PostgreSQL server locally.
@@ -62,7 +62,7 @@ Don't forget to enable PostGIS extension in your remote database before installa
 
 ::
 
-   curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/blob/master/tools/install.sh | bash -s - --nodb
+    NODB=true bash -c "$(curl -fsSL https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh)"
 
 Then create the application administrator account and connect to the web interface.
 
@@ -84,12 +84,27 @@ Then create the application administrator account and connect to the web interfa
 
 If you are not confident with the ``install.sh`` script, or if you are having troubles, you can do the same operations by hand:
 
-1. Add ``deb https://packages.geotrek.fr/ubuntu bionic main`` to APT sources list.
-2. Add https://packages.geotrek.fr/geotrek.gpg.key to apt keyring.
-3. Run ``apt-get update``
-4. If you want to use a local database, install the pgRouting package by running ``sudo apt install -y postgresql-pgrouting wget software-properties-common`` (before installing Geotrek-admin, not at the same time).
-   If not, you must create database and enable PostGIS, pgRouting and pgcrypto extensions before.
-5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
+.. code-block:: bash
+
+    sudo apt install curl ca-certificates
+    sudo install -d /usr/share/geotrek
+    sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
+    echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
+    sudo apt update
+
+If you want to use a local database, install the pgRouting package by running:
+
+.. code-block:: bash
+
+    sudo apt install -y postgresql-pgrouting
+
+You must create a user and its database, and enable `postgis`, `postgis_raster`, `pgrouting` and `pgcrypto` extensions before.
+
+Install the Geotrek-admin package
+
+.. code-block:: bash
+
+    sudo apt install -y --no-install-recommends geotrek-admin
 
 .. note ::
 
@@ -97,7 +112,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
     The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
-    The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
+    The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.*/site-packages/geotrek`` directory
 
 Extra steps
 ============
@@ -172,7 +187,7 @@ Docker
 
 Docker is an alternative installation method, recommended for experts only.
 It allows to install several instances of Geotrek-admin on the same serveur,
-and to install it on other distributions than Ubuntu Linux 18.04.
+and to install it on other distributions than Ubuntu.
 
 
 1. Install Docker and Docker Compose, either from your distribution or `from upstream packages <https://docs.docker.com/install/>`_
