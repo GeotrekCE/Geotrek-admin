@@ -238,7 +238,7 @@ Les éditeurs et les administrateurs peuvent travailler en simultané sur des fi
 Structures
 ----------
 
-Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l’installation, Geotrek crée une structure par défaut à laquelles premiers utilisateurs seront rattachés.Il est possible d’ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront amenés à travailler à vos côtés sur Geotrek.
+Chaque utilisateur est obligatoirement rattaché à une structure. Lors de l’installation, Geotrek crée une structure par défaut à laquelle les premiers utilisateurs seront rattachés. Il est possible d’ajouter de nouvelles structures, reflétant des partenaires territoriaux, entreprises, entités qui seront amenés à travailler à vos côtés sur Geotrek.
 
 Les utilisateurs d’une structure ne peuvent travailler que sur les objets dans Geotrek liés à leur structure. Ils pourront consulter les objets des autres structures mais n’auront pas le droit de les modifier.
 
