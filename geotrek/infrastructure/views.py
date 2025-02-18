@@ -8,6 +8,7 @@ from mapentity.views import (
     MapEntityDocument,
     MapEntityFormat,
     MapEntityList,
+    MapEntityFilter,
     MapEntityUpdate,
 )
 
@@ -25,13 +26,18 @@ from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializ
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
-    filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'conditions', 'cities']
     searchable_columns = ['id', 'name']
 
 
+class InfrastructureFilter(MapEntityFilter):
+    model = Infrastructure
+    filterset_class = InfrastructureFilterSet
+
+
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
+    filterset_class = InfrastructureFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'id', 'name', 'type', 'conditions', 'description', 'accessibility',

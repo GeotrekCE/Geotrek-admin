@@ -5,7 +5,6 @@
     <h3>{% trans "Tree view" %}</h3>
         {% site_as_list site.get_root as root_as_list %}
         {% include "outdoor/recursive_sites_tree.html" with sites_at_level=root_as_list original_site=object %}
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"structure" }}</th>
@@ -114,7 +113,7 @@
             <td>
                 {% for label in object.labels.all %}
                     {% if label.published %}
-                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span>
                     {% endif %}
                     {{ label.name }}<br>
                 {% endfor %}

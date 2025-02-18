@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-08 16:23+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -499,20 +499,6 @@ msgstr ""
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
 
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
-msgstr ""
-"La géométrie de la feature ne peut pas être convertie en une unique "
-"LineString continue"
-
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
-msgstr ""
-"Les géométries de plusieurs features ne peuvent pas être converties en une "
-"unique LineString continue"
-
 msgid "Trek geometry is None"
 msgstr "La valeur de la géométrie de l'itinéraire est None"
 
@@ -539,9 +525,6 @@ msgstr "La license '{val} n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
 msgid "Attached files"
 msgstr "Fichiers liés"
-
-msgid "Attributes"
-msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
@@ -582,9 +565,6 @@ msgstr "Impression livret grand public"
 
 msgid "Print booklet"
 msgstr "Impr. livret"
-
-msgid "Photos accessibility"
-msgstr "Photos accessibilité"
 
 msgid "Itinerancy"
 msgstr "Itinérance"

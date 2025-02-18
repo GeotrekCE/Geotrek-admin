@@ -30,6 +30,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.models import Path
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
+import geotrek.trekking.parsers  # noqa
 
 
 class DocumentPublicPortalTest(TestCase):
@@ -108,6 +109,7 @@ class ViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
+        cls.super_user = SuperUserFactory()
 
     def setUp(self):
         self.client.force_login(user=self.user)
@@ -118,13 +120,18 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_admin_check_extents(self):
+        """ Admin can access to extents view"""
         url = reverse('common:check_extents')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.user.is_superuser = True
-        self.user.save()
+        self.client.force_login(self.super_user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_simple_user_check_extents(self):
+        """ Simple user can't access to extents view"""
+        url = reverse('common:check_extents')
+        self.client.force_login(self.user)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
 
     @override_settings(COLUMNS_LISTS={})
     @mock.patch('geotrek.common.mixins.views.logger')
@@ -144,6 +151,9 @@ class ViewsImportTest(TestCase):
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.super_user = SuperUserFactory()
+
+    def setUp(self):
+        self.client.force_login(user=self.user)
 
     def test_import_form_access(self):
         self.client.force_login(user=self.user)

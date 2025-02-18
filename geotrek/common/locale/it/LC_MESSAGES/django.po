@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-06 08:26+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -563,9 +563,6 @@ msgstr ""
 msgid "Annotate"
 msgstr ""
 
-msgid "Attributes"
-msgstr ""
-
 msgid "Date"
 msgstr ""
 
@@ -693,6 +690,16 @@ msgstr ""
 
 msgctxt "West"
 msgid "W"
+msgstr ""
+
+msgid ""
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
+msgstr ""
+
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
 msgstr ""
 
 msgid "Reports"

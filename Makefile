@@ -5,6 +5,7 @@ else
 endif
 
 -include Makefile.perso.mk
+-include .env
 
 ###########################
 #          colors         #
@@ -33,7 +34,6 @@ release:
 	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
 	docker stop geotrek_release
 	docker rm geotrek_release
-
 
 serve:
 	$(docker_compose) up
@@ -70,19 +70,7 @@ test:
 test_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test --shuffle --noinput --parallel
 
-test_nav:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
-
-test_export:
-	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-auth.js geotrek/jstests/export-*.js
-
-node_modules:
-	npm install geotrek/jstests
-
-test_js: node_modules
-	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
-
-tests: test test_nds test_js test_nav
+tests: test test_nds
 
 update:
 	$(docker_compose) run web update.sh
@@ -96,24 +84,35 @@ load_demo:
 load_test_integration:
 	$(docker_compose) run web ./manage.py loaddata test-integration
 
-css:
-	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
+clean_data:
+	$(docker_compose) down -v --remove-orphans
+	rm -rf var/cache/*
+	rm -rf var/tiles/*
+	rm -rf var/media/*
+	rm -rf var/static/*
+	rm -rf var/tmp/*
+	rm -rf var/log/*
+	rm -rf var/mobile/*
+
+
+flush: clean_data update load_data
 
 %.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/$@
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "$*_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 authent.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "auth(ent)?_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 global.pdf:
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc  -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/global.pdf
+	rm ./${POSTGRES_DB}.dot
 
 uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf

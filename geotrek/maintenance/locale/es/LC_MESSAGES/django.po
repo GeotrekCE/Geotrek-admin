@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-28 12:55+0000\n"
+"POT-Creation-Date: 2025-02-03 09:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,10 +123,11 @@ msgstr ""
 msgid "Mandays"
 msgstr ""
 
-msgid "Paths"
+#, python-format
+msgid "On: %(target)s"
 msgstr ""
 
-msgid "On {}"
+msgid "Paths"
 msgstr ""
 
 msgid "Begin date is after end date"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-04 15:20+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -266,7 +266,10 @@ msgid ""
 "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr ""
 
-msgid "Attributes"
+msgid "Intervention"
+msgstr ""
+
+msgid "Add a new intervention"
 msgstr ""
 
 msgid "None"
@@ -294,12 +297,6 @@ msgid "Yes"
 msgstr ""
 
 msgid "No"
-msgstr ""
-
-msgid "Intervention"
-msgstr ""
-
-msgid "Add a new intervention"
 msgstr ""
 
 msgid "Map"

@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - master
+
     paths-ignore:
       - 'docs/**'
   release:
@@ -43,9 +44,12 @@ jobs:
     runs-on: ubuntu-latest
     container: makinacorpus/geodjango:${{ matrix.os }}
 
+    permissions:
+      packages: write  # required to publish docker image
+
     strategy:
       matrix:
-        os: ['bionic-3.8', 'focal-3.8', 'jammy-3.10']
+        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -56,7 +60,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -72,8 +76,8 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
       with:
         path: |
           ./venv
@@ -106,21 +110,19 @@ jobs:
            libfreetype6-dev \
            libxml2-dev \
            libxslt-dev \
-           libcairo2 \
-           libpango1.0-0 \
            libpangocairo-1.0-0 \
            libgdk-pixbuf2.0-dev \
            libffi-dev \
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv for bionic
-      if: ${{ matrix.os == 'bionic-3.8'}}
+    - name: Install python venv for focal
+      if: ${{ matrix.os == 'focal-3.10'}}
       run: |
-          python3.8 -m venv ./venv
+          python3.10 -m venv ./venv
 
     - name: Install python venv
-      if: ${{ matrix.os != 'bionic-3.8'}}
+      if: ${{ matrix.os != 'focal-3.10'}}
       run: |
           python3 -m venv ./venv
 
@@ -158,7 +160,6 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      if: ${{ matrix.os != 'bionic-3.8'}}
       uses: actions/upload-artifact@v4
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
@@ -170,7 +171,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.8', 'jammy-3.10']
+        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -221,14 +222,14 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['bionic', 'focal', 'jammy']
+              os: ['focal', 'jammy', 'noble']
               include:
-                  - os: 'bionic'
-                    code: '18.04'
                   - os: 'focal'
                     code: '20.04'
                   - os: 'jammy'
                     code: '22.04'
+                  - os: 'noble'
+                    code: '24.04'
 
       env:
           OS: ${{ matrix.os }}
@@ -256,7 +257,7 @@ jobs:
 
   e2e_docker_image:
     name: Tests E2E docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [build_docker_image]
     env:
       CYPRESS_BASE_URL: http://geotrek.local
@@ -264,7 +265,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -274,6 +275,8 @@ jobs:
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
+        volumes:
+          - postgres:/var/lib/postgresql/data
 
     steps:
       - uses: actions/checkout@v4
@@ -288,6 +291,7 @@ jobs:
           docker tag geotrek:latest geotrekce/admin:latest
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
+          cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/localhost/geotrek.local/' .env
@@ -300,22 +304,7 @@ jobs:
           docker compose run web update.sh
           make load_data
           make load_test_integration
-          docker compose up -d
-
-      - name: Prepare nginx
-        run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
-          sudo apt-get autoremove
-          sudo apt-get install -q -y nginx
-          sudo unlink /etc/nginx/sites-enabled/default
-          sudo mkdir /var/www/geotrek -p
-          ls -als
-          pwd
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/media /var/www/geotrek/media
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
-          sudo systemctl restart nginx
+          COMPOSE_FILE=docker-compose.yml:docker-compose-cypress.yml docker compose up -d
 
       - name: install Cypress
         run: |
@@ -340,18 +329,25 @@ jobs:
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
-  e2e_deb_20_04:
-    name: Tests E2E 20.04
-    runs-on: ubuntu-20.04
+  e2e_deb:
+    name: Tests E2E debian package
+    runs-on: ubuntu-${{ matrix.code }}
     needs: [ build_deb ]
-
+    strategy:
+      matrix:
+          os: ['jammy', 'noble']
+          include:
+              - os: 'jammy'
+                code: '22.04'
+              - os: 'noble'
+                code: '24.04'
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
       postgres:
-        image: postgis/postgis:12-2.5
+        image: pgrouting/pgrouting:12-3.0-3.0.0
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -366,12 +362,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: 'focal'
+          name: ${{ matrix.os }}
 
       - name: Simulate install.sh procedure
         run: |
           sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get purge apache2*
           sudo apt-get autoremove
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
@@ -389,7 +385,7 @@ jobs:
       - name: Install package
         run: |
           sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -417,7 +413,7 @@ jobs:
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-20.04
+          name: cypress-${{ matrix.code }}
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
@@ -425,19 +421,28 @@ jobs:
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
-    needs: [ test, e2e_docker_image, build_deb, e2e_deb_20_04 ]
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Download 18.04 debian artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: bionic
 
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v4
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: focal
+
+      - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: jammy
+
+      - name: Download 24.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: noble
 
       - name: Download docker image
         uses: ishworkh/container-image-artifact-download@v2.0.0
@@ -450,25 +455,44 @@ jobs:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Publish Docker image (v2 and latest)
-        run: |
-          if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            export DOCKER_TAG=dev
-          else
-            docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-            docker push geotrekce/admin:$(cat VERSION)
-            export DOCKER_TAG=latest
-          fi
-          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
-          docker push geotrekce/admin:$DOCKER_TAG
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images:  |
+            geotrekce/admin
+            ghcr.io/geotrekce/geotrek-admin
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          provenance: mode=max
+          sbom: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          file: ./docker/Dockerfile
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Publish debian packages
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DEB_COMPONENT=dev
@@ -478,19 +502,17 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
           fi
 
-      - name: Download 22.04 debian artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: jammy
-
       - name: Attach debian packages as release binaries
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

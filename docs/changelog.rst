@@ -2,12 +2,107 @@
 CHANGELOG
 =========
 
-2.110.0+dev     (XXXX-XX-XX)
+2.113.1+dev    (XXXX-XX-XX)
+----------------------------
+
+**Breaking changes**
+
+This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
+
+**Improvements**
+
+- Officially support Ubuntu 24.04 debian package.
+- Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
+- Deprecate support of Ubuntu 18.04 bionic.
+
+
+2.113.1    (2025-02-17)
 ----------------------------
 
 **Improvements**
 
+- Officially support Ubuntu 22.04 debian package.
+- Add sensitive areas to mobile API and sync
+
+**Bug fixes**
+
+- Fix path picture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
+
+**Development**
+
+- Add clean and flush make command to init data in development mode
+
+**Documentation**
+
+- Update documentation theme and content, re-organize sections (#4484)
+- Add infos about adding new languages (#4486)
+
+
+2.113.0    (2025-01-30)
+----------------------------
+
+**Breaking changes**
+
+This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
+
+**Warnings**
+
+- The database migration to this version might take several minutes due to the generation of pgRouting's network topology.
+- When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+- After adding new paths, pre-existing topologies can follow routes that are no longer the shortest. When editing topology-based linear objects through the interface, their route will no longer be automatically recomputed to the shortest option, which was unwanted behavior. This means you might now encounter topologies that take a detour despite not using a via-point marker. Be careful when editing such a route, as moving or adding neighboring markers will remove the detour. Note: this does not address the topology ordering issue when adding new paths. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+
+**Improvements**
+
+- Optimize routing: computation is now done in the backend using the A* algorithm (#4070)
+- Prevent from placing route markers outside of paths or on unreachable paths (#4070)
+- Fix clickable labels in admin site for Difficulty Levels and Touristic Content Categories
+- Change Admin site header to "Geotrek configuration"
+
+**Bug fixes**
+
+- Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
+
+
+2.112.0     (2025-01-14)
+----------------------------
+
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
+**Bug fixes**
+
+- Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
+
+**Documentation**
+
+- Update theme color
+- Fix typo in documentation
+- Update and homogenize README.rst
+
+
+2.111.0     (2024-12-05)
+----------------------------
+
+**Features**
+
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947)
+
+**Improvements**
+
 - Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+- Improve sync mobile and import views with current bootstrap style.
+- Docker image is now mirrored on github registry
 
 **Bug fixes**
 
@@ -947,7 +1042,7 @@ In preparation for HD Views developments (PR #3298)
 
 !!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
 
-**Improvements**
+**Improvments**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.

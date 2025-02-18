@@ -1031,6 +1031,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+        # Test result is not duplicated
+        self.parent.themes.add(self.theme3)
+        response = self.get_trek_list({'themes': f"{self.theme2.pk},{self.theme3.pk}"})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
     def test_trek_portal_filter(self):
         response = self.get_trek_list({'portals': self.portal.pk})
         #  test response code

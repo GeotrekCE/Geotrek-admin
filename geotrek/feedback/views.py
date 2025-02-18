@@ -36,7 +36,6 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         .prefetch_related("attachments")
     )
     model = feedback_models.Report
-    filterform = ReportEmailFilterSet
     mandatory_columns = ['id', 'eid', 'activity']
     default_extra_columns = ['category', 'status', 'date_update']
     searchable_columns = ['id', 'eid']
@@ -48,6 +47,11 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
             qs = qs.filter(assigned_user=self.request.user)
         return qs
 
+
+class ReportFilter(mapentity_views.MapEntityFilter):
+    model = feedback_models.Report
+    filterset_class = ReportEmailFilterSet
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Remove email from available filters in workflow mode for supervisors
@@ -57,12 +61,13 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
             self._filterform.helper = FormHelper()
             self._filterform.helper.field_class = 'form-control-sm'
             self._filterform.helper.submit = None
-        context['filterform'] = self._filterform
+        context['filter'] = self._filterform
         return context
 
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     mandatory_columns = ['id', 'email']
+    filterset_class = ReportEmailFilterSet
     default_extra_columns = [
         'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',

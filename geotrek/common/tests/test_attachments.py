@@ -230,7 +230,7 @@ class UploadAddAttachmentTestCase(SetUpTestDataMixin, TestCase):
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
             'info_accessibility': 'slope',
-            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            'next': f"{self.object.get_detail_url()}?tab=attachments"
         }
         return data
 
@@ -238,7 +238,7 @@ class UploadAddAttachmentTestCase(SetUpTestDataMixin, TestCase):
         response = self.client.post(add_url_for_obj(self.object),
                                     data=self.attachmentPostData())
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments")
         self.assertEqual(3, AccessibilityAttachment.objects.count())
 
         self.client.force_login(user=self.user)
@@ -278,7 +278,7 @@ class UploadUpdateAttachmentTestCase(SetUpTestDataMixin, TestCase):
             'legend': "A legend",
             'attachment_accessibility_file': get_dummy_uploaded_image(name='face.png'),
             'info_accessibility': 'slope',
-            'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+            'next': f"{self.object.get_detail_url()}?tab=attachments"
         }
         return data
 
@@ -300,7 +300,7 @@ class UploadUpdateAttachmentTestCase(SetUpTestDataMixin, TestCase):
                                     data=self.attachmentPostData(),
                                     )
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments")
         self.attachment.refresh_from_db()
         self.assertEqual(self.attachment.legend, "A legend")
         self.client.force_login(user=self.user)
@@ -318,7 +318,7 @@ class UploadDeleteAttachmentTestCase(SetUpTestDataMixin, TestCase):
         self.client.force_login(user=self.superuser)
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments")
         self.assertEqual(1, AccessibilityAttachment.objects.count())
 
         self.client.force_login(user=self.user)
@@ -334,7 +334,7 @@ class UploadDeleteAttachmentTestCase(SetUpTestDataMixin, TestCase):
         self.client.force_login(user=self.user)
         response = self.client.get(delete_url_for_obj(self.attachment))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments-accessibility")
+        self.assertEqual(response['location'], f"{self.object.get_detail_url()}?tab=attachments")
         self.assertEqual(2, AccessibilityAttachment.objects.count())
         response = self.client.get(delete_url_for_obj(self.attachment), follow=True)
         self.assertIn(b'You are not allowed to delete this attachment.', response.content)
@@ -446,7 +446,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -462,7 +462,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': big_image,
                 'author': "newauthor",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             },
             follow=True
         )
@@ -488,7 +488,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'author': "newauthor",
                 'legend': "A legend",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -508,7 +508,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(small_file.name, small_file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             },
             follow=True
         )
@@ -535,7 +535,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'attachment_accessibility_file': SimpleUploadedFile(file.name, file.read(), content_type='image/png'),
                 'author': "newauthor",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             }
         )
         self.assertEqual(response.status_code, 302)
@@ -555,7 +555,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'author': "newauthor",
                 'legend': "A legend",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             },
             follow=True
         )
@@ -577,7 +577,7 @@ class ReduceSaveSettingsTestCase(TestCase):
                 'author': "newauthor",
                 'legend': "A legend",
                 'info_accessibility': 'slope',
-                'next': f"{self.object.get_detail_url()}?tab=attachments-accessibility"
+                'next': f"{self.object.get_detail_url()}?tab=attachments"
             }
         )
         self.assertEqual(response.status_code, 302)

@@ -166,7 +166,7 @@ class Intervention(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixi
                 return _('Deleted') + title
             if model._meta.model_name == "topology":
                 title = _('Path')
-                return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all()])
+                return ", ".join(["%s: %s (%s)" % (title, path, path.pk) for path in self.target.paths.all().order_by('id')])
             return "%s: %s (%s)" % (
                 _(self.target._meta.verbose_name),
                 self.target,
