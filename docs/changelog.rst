@@ -2,12 +2,42 @@
 CHANGELOG
 =========
 
-2.113.0+dev    (XXXX-XX-XX)
+2.113.1+dev    (XXXX-XX-XX)
+----------------------------
+
+**Breaking changes**
+
+This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
+
+**Improvements**
+
+- Officially support Ubuntu 24.04 debian package.
+- Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
+- Deprecate support of Ubuntu 18.04 bionic.
+- Do not display "None" on Blade Direction
+
+
+2.113.1    (2025-02-17)
 ----------------------------
 
 **Improvements**
 
-- Do not display "None" on Blade Direction
+- Officially support Ubuntu 22.04 debian package.
+- Add sensitive areas to mobile API and sync
+
+**Bug fixes**
+
+- Fix path picture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
+
+**Development**
+
+- Add clean and flush make command to init data in development mode
+
+**Documentation**
+
+- Update documentation theme and content, re-organize sections (#4484)
+- Add infos about adding new languages (#4486)
 
 
 2.113.0    (2025-01-30)

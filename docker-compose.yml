@@ -6,7 +6,7 @@ x-images:
       dockerfile: ./docker/Dockerfile
       target: dev
       args:
-          BASE_IMAGE: focal
+        BASE_IMAGE: jammy
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
@@ -15,7 +15,7 @@ x-images:
 
 services:
   postgres:
-    image: pgrouting/pgrouting:12-3.0-3.0.0
+    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:12-3.0-3.0.0}
     env_file:
       - .env
     ports:

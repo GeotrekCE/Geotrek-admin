@@ -323,7 +323,9 @@ msgid "The marker was not dropped on a path."
 msgstr "Le marqueur n'a pas été déposé sur un tronçon."
 
 msgid "No routing found for this marker. Please move or delete it."
-msgstr "Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer ou le supprimer."
+msgstr ""
+"Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer ou le "
+"supprimer."
 
 msgid "No certification"
 msgstr "Aucune labellisation"

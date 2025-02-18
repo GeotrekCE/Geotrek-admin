@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=jammy
+ARG BASE_IMAGE=noble
 
 FROM ubuntu:${BASE_IMAGE} AS base
 
@@ -14,6 +14,7 @@ LABEL org.opencontainers.image.description="Manage and promote your trails and t
 
 
 ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ENV=prod
 ENV SERVER_NAME="localhost"
@@ -76,6 +77,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     python3-dev \
     python3-venv \
     build-essential \
+    graphviz \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
