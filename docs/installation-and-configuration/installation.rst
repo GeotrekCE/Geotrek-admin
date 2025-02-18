@@ -7,7 +7,7 @@ Installation
 Ubuntu package
 ==============
 
-Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Focal 20.04 or Jammy 22.04 LTS server for production.
+Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Noble 24.04 or Jammy 22.04 LTS server for production.
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
 
@@ -29,7 +29,7 @@ database server level.
 
 Software requirements are :
 
-* Ubuntu Jammy 22.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
+* Ubuntu Jammy 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
