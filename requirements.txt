@@ -240,7 +240,7 @@ numpy==2.2.2
     #   large-image
     #   large-image-source-vips
     #   shapely
-packaging==24.0
+packaging==24.2
     # via
     #   drf-yasg
     #   gunicorn
