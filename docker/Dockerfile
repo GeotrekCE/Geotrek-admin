@@ -77,6 +77,7 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     python3-dev \
     python3-venv \
     build-essential \
+    graphviz \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
