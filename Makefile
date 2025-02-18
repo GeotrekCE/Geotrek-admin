@@ -1,5 +1,3 @@
-include .env
-
 ifeq (, $(shell which docker-compose))
   docker_compose=docker compose
 else
@@ -7,6 +5,7 @@ else
 endif
 
 -include Makefile.perso.mk
+-include .env
 
 ###########################
 #          colors         #
