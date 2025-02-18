@@ -1,3 +1,5 @@
+include .env
+
 ifeq (, $(shell which docker-compose))
   docker_compose=docker compose
 else
@@ -97,20 +99,21 @@ clean_data:
 flush: clean_data update load_data
 
 %.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/$@
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "$*_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 authent.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "auth(ent)?_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 global.pdf:
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc  -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/global.pdf
+	rm ./${POSTGRES_DB}.dot
 
 uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
