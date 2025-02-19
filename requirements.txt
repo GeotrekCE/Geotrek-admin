@@ -235,7 +235,7 @@ markupsafe==2.1.5
     # via jinja2
 mbutil==0.3.0
     # via landez
-numpy==2.2.2
+numpy==2.2.3
     # via
     #   large-image
     #   large-image-source-vips
