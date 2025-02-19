@@ -271,7 +271,7 @@ pillow==11.1.0
     #   weasyprint
 prompt-toolkit==3.0.50
     # via click-repl
-psutil==6.1.1
+psutil==7.0.0
     # via large-image
 psycopg2==2.9.10
     # via geotrek (setup.py)
