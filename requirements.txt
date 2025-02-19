@@ -312,7 +312,7 @@ pyvips==2.2.3
     # via large-image-source-vips
 pyyaml==6.0.2
     # via drf-spectacular
-rcssmin==1.1.2
+rcssmin==1.2.1
     # via django-compressor
 redis==5.2.1
     # via geotrek (setup.py)
