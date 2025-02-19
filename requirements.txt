@@ -114,7 +114,7 @@ django==4.2.18
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-django-appconf==1.0.6
+django-appconf==1.1.0
     # via django-compressor
 django-appypod==2.0.7
     # via mapentity
