@@ -192,7 +192,7 @@ easy-thumbnails==2.9
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-filelock==3.16.1
+filelock==3.17.0
     # via django-large-image
 fiona==1.10.1
     # via
