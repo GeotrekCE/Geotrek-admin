@@ -319,7 +319,7 @@ rjsmin==1.2.2
     # via django-compressor
 ruamel-yaml==0.18.10
     # via drf-yasg
-ruamel-yaml-clib==0.2.8
+ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
 sentry-sdk==2.20.0
     # via geotrek (setup.py)
