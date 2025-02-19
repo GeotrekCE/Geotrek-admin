@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-02-13 10:14+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -138,6 +138,9 @@ msgstr "Types de contenu touristique"
 
 msgid "Touristic event types"
 msgstr "Types d'événements touristiques"
+
+msgid "Sensitive area practices"
+msgstr "Pratiques en zone sensible"
 
 msgid "Sync verifications"
 msgstr "Vérification de la synchronisation"
@@ -523,6 +526,10 @@ msgstr "Cotations"
 
 msgid "Filter by one or more ratings id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
+
+msgid "Filter by one or more networks id, comma-separated."
+msgstr ""
+"Filtrer par un ou plusieurs réseaux d'itinéraire, séparés par des virgules."
 
 msgid "Root sites only"
 msgstr "Sites racine seulement"

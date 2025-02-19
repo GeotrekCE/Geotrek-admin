@@ -6,12 +6,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.forms import FloatField
 from django.forms.models import inlineformset_factory
+from django.templatetags.static import static
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
-
 from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
@@ -19,7 +21,6 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 
 
 class ManDayForm(forms.ModelForm):
-
     class Meta:
         model = ManDay
         fields = ('id', 'nb_days', 'job')
@@ -43,7 +44,6 @@ ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, f
 
 
 class FundingForm(forms.ModelForm):
-
     class Meta:
         fields = ('id', 'amount', 'organism')
 
@@ -60,7 +60,6 @@ FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=F
 
 class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
-
     topology = TopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(
@@ -128,19 +127,14 @@ class InterventionForm(CommonForm):
 
         if self.instance.target.__class__ == Topology:
             # Intervention has its own topology
-            title = _("On {}".format(_("Paths")))
-            self.fields['topology'].label = \
-                '<img src="{prefix}images/path-16.png" title="{title}">{title}'.format(
-                    prefix=settings.STATIC_URL, title=title
-            )
+            title = _("On: %(target)s") % {"target": _("Paths")}
+            self.fields['topology'].label = mark_safe(f'<img src="{static("images/path-16.png")}" title="{title}" />{title}')
         else:
             # Intervention on an existing topology
             icon = self.instance.target._meta.model_name
-            title = _("On {}".format(str(self.instance.target)))
-            self.fields['topology'].label = \
-                '<img src="{prefix}images/{icon}-16.png" title="{title}"><a href="{url}">{title}</a>'.format(
-                    prefix=settings.STATIC_URL, icon=icon, title=title,
-                    url=self.instance.target.get_detail_url()
+            title = _("On: %(target)s") % {"target": str(self.instance.target)}
+            self.fields['topology'].label = mark_safe(
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.instance.target.get_detail_url()}">{title}</a>'
             )
             # Topology is readonly
             del self.fields['topology']
@@ -167,12 +161,11 @@ class InterventionForm(CommonForm):
         if 'geotrek.feedback' in settings.INSTALLED_APPS and settings.SURICATE_WORKFLOW_ENABLED:
             target = self.instance.target
             intervention_is_updated = self.instance.pk
-            target_is_a_report = target and isinstance(target, Report)
-            report_is_programmed_or_late = target.status and target.status.identifier in ["programmed", "late_resolution"]
-            intervention_is_being_resolved_without_end_date = status == InterventionStatus.objects.get(order=30) and end_date is None
-            if intervention_is_updated and target_is_a_report and report_is_programmed_or_late and \
-               intervention_is_being_resolved_without_end_date:
-                self.add_error('end_date', _('End date is required.'))
+            if target and isinstance(target, Report):
+                report_is_programmed_or_late = target.status and target.status.identifier in ["programmed", "late_resolution"]
+                intervention_is_being_resolved_without_end_date = status == InterventionStatus.objects.get(order=30) and end_date is None
+                if intervention_is_updated and report_is_programmed_or_late and intervention_is_being_resolved_without_end_date:
+                    self.add_error('end_date', _('End date is required.'))
         return clean_data
 
     def save(self, *args, **kwargs):

@@ -26,7 +26,7 @@ from geotrek.authent.tests import factories as authent_factory
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common import models as common_models
 from geotrek.common.models import Attachment, FileType
-from geotrek.common.tests import factories as common_factory, TranslationResetMixin
+from geotrek.common.tests import factories as common_factory
 from geotrek.common.utils.testdata import (get_dummy_uploaded_document,
                                            get_dummy_uploaded_file,
                                            get_dummy_uploaded_image, get_dummy_uploaded_image_svg)
@@ -57,6 +57,9 @@ from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
+ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'pictogram'
+])
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -214,7 +217,7 @@ SERVICE_TYPE_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 INFRASTRUCTURE_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry',
+    'id', 'accessibility', 'attachments', 'conditions', 'description', 'eid', 'geometry',
     'implantation_year', 'maintenance_difficulty', 'name', 'provider', 'structure',
     'type', 'usage_difficulty', 'uuid'
 ])
@@ -300,6 +303,7 @@ class BaseApiTest(TestCase):
         cls.organism = common_factory.OrganismFactory.create()
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
+        cls.network2 = trek_factory.TrekNetworkFactory.create()
         cls.rating = trek_factory.RatingFactory()
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory(id=23)
@@ -320,6 +324,7 @@ class BaseApiTest(TestCase):
         cls.treks[0].save()
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
+        cls.treks[1].networks.add(cls.network2)
         cls.treks[0].labels.add(cls.label)
         cls.treks[0].ratings.add(cls.rating)
         cls.treks[1].ratings.add(cls.rating2)
@@ -451,15 +456,15 @@ class BaseApiTest(TestCase):
             type=cls.infrastructure_type,
             usage_difficulty=cls.infrastructure_usagedifficulty,
             maintenance_difficulty=cls.infrastructure_maintenancedifficulty,
-            condition=cls.infrastructure_condition,
             published=True
         )
+        cls.infrastructure.conditions.add(cls.infrastructure_condition)
         cls.bladetype = signage_factory.BladeTypeFactory(
         )
         cls.color = signage_factory.BladeColorFactory()
         cls.sealing = signage_factory.SealingFactory()
         cls.direction = signage_factory.BladeDirectionFactory()
-        cls.bladetype = signage_factory.BladeFactory(
+        cls.blade = signage_factory.BladeFactory(
             color=cls.color,
             type=cls.bladetype,
             direction=cls.direction
@@ -477,8 +482,71 @@ class BaseApiTest(TestCase):
         cls.site2.themes.add(cls.theme3)
         cls.label_3 = common_factory.LabelFactory()
         cls.site2.labels.add(cls.label_3)
+        cls.annotationcategory = common_factory.AnnotationCategoryFactory(label='A category')
+        annotations = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            259.26707830454814,
+                            148.1029483470403
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 1",
+                        "annotationId": 1234,
+                        "annotationType": "point",
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            540.4490176472651,
+                            161.10558138022952
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 2",
+                        "annotationId": 2,
+                        "annotationType": "point",
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                    }
+                }
+            ]
+        }
+        annotations_categories = {
+            '1234': str(cls.annotationcategory.pk),
+            '12345': str(cls.annotationcategory.pk)
+        }
         cls.hdviewpoint_trek = common_factory.HDViewPointFactory(
-            content_object=cls.treks[0]
+            content_object=cls.treks[0],
+            annotations=annotations,
+            annotations_categories=annotations_categories
         )
         cls.hdviewpoint_poi = common_factory.HDViewPointFactory(
             content_object=cls.poi
@@ -827,6 +895,12 @@ class BaseApiTest(TestCase):
     def get_hdviewpoint_detail(self, id_hdviewpoint, params=None):
         return self.client.get(reverse('apiv2:hdviewpoint-detail', args=(id_hdviewpoint,)), params)
 
+    def get_annotationcategory_list(self, params=None):
+        return self.client.get(reverse('apiv2:annotation-category-list'), params)
+
+    def get_annotationcategory_detail(self, id_annotationcategory, params=None):
+        return self.client.get(reverse('apiv2:annotation-category-detail', args=(id_annotationcategory,)), params)
+
 
 class NoPaginationTestCase(BaseApiTest):
     """
@@ -956,6 +1030,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
+
+        # Test result is not duplicated
+        self.parent.themes.add(self.theme3)
+        response = self.get_trek_list({'themes': f"{self.theme2.pk},{self.theme3.pk}"})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
 
     def test_trek_portal_filter(self):
         response = self.get_trek_list({'portals': self.portal.pk})
@@ -1132,6 +1213,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
 
+    def test_trek_networks_filter(self):
+        response = self.get_trek_list({'networks': self.network.pk})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 1)
+
+        response = self.get_trek_list({'networks': 0})
+
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
     def test_version_route(self):
         response = self.client.get("/api/v2/version")
         self.assertEqual(response.status_code, 200)
@@ -1284,6 +1378,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_trek_ratings(self):
         response = self.get_trek_list({'ratings': f"{self.rating.pk},{self.rating2.pk}"})
+        self.assertEqual(len(response.json()['results']), 2)
+
+    def test_trek_networks(self):
+        response = self.get_trek_list({'networks': f"{self.network.pk},{self.network2.pk}"})
         self.assertEqual(len(response.json()['results']), 2)
 
     def test_trek_child_not_published_detail_view_ok_if_ancestor_published(self):
@@ -1481,6 +1579,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_number_elems_response(
             self.get_hdviewpoint_list(),
             common_models.HDViewPoint
+        )
+
+    def test_annotationcategory_detail(self):
+        self.check_structure_response(
+            self.get_annotationcategory_detail(self.annotationcategory.pk),
+            ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_annotationcategory_list(self):
+        self.check_number_elems_response(
+            self.get_annotationcategory_list(),
+            common_models.AnnotationCategory
         )
 
     def test_route_detail(self):
@@ -2447,7 +2557,68 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             json_response.get('picture_tiles_url'),
             f"http://testserver/api/hdviewpoint/drf/hdviewpoints/{self.hdviewpoint_trek.pk}/tiles/%7Bz%7D/%7Bx%7D/%7By%7D.png?source=vips"
         )
-        json.dumps(json_response.get('annotations'))
+        annotations = json_response.get('annotations')
+        serialized_annotations = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            259.26707830454814,
+                            148.1029483470403
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 1",
+                        "annotationId": 1234,
+                        "annotationType": "point",
+                        "category": self.annotationcategory.pk
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            540.4490176472651,
+                            161.10558138022952
+                        ]
+                    },
+                    "properties": {
+                        "name": "Point 2",
+                        "annotationId": 2,
+                        "annotationType": "point",
+                        "category": None
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "LineString",
+                        "coordinates": [
+                            [
+                                296.59070688800216,
+                                107.85521976008415
+                            ],
+                            [
+                                295.2543114908704,
+                                27.671495932178686
+                            ]
+                        ]
+                    },
+                    "properties": {
+                        "name": "Line 6",
+                        "annotationId": 12345,
+                        "annotationType": "line",
+                        "category": self.annotationcategory.pk
+                    }
+                }
+            ]
+        }
+        self.assertEqual(str(self.annotationcategory), 'A category')
+        self.assertJSONEqual(json.dumps(serialized_annotations), json.dumps(annotations))
         self.assertIsNone(json_response.get('site'))
         self.assertIsNone(json_response.get('poi'))
         self.assertEqual(json_response.get('trek').get('uuid'), str(self.treks[0].uuid))
@@ -3439,6 +3610,27 @@ class MenuItemTestCase(TestCase):
         parent_repr = data[0]
         self.assertEqual(len(parent_repr["children"]), 0)
 
+    def test_tree_menuitem_for_mobile_platform_not_exposed(self):
+        parent1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
+        child1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        self.add_child(parent1, child1)
+        child2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.WEB)
+        self.add_child(parent1, child2)
+        parent2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        child3 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
+        self.add_child(parent2, child3)
+
+        response = self.client.get('/api/v2/menu_item/')
+
+        self.assertEqual(response.status_code, 200)
+        menu_items = response.data
+        self.assertEqual(len(menu_items), 1)
+        menu_item = menu_items[0]
+        self.assertEqual(menu_item["id"], parent1.id)
+        self.assertEqual(len(menu_item["children"]), 1)
+        child = menu_item["children"][0]
+        self.assertEqual(child["id"], child2.id)
+
     def test_detail(self):
         menu_item = self.published_menu_item_factory(title_en="Hello!", title_fr="Bonjour !")
 
@@ -4345,14 +4537,14 @@ class NearOutdoorFilterTestCase(BaseApiTest):
     def test_outdoorcourse_near_outdoorsite(self):
         response = self.get_course_list({'near_outdoorsite': self.site.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.course.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.course1.pk)
+        courses = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(courses, [self.course.pk, self.course1.pk])
 
     def test_outdoorsite_near_outdoorcourse(self):
         response = self.get_site_list({'near_outdoorcourse': self.course.pk})
         self.assertEqual(response.json()["count"], 2)
-        self.assertEqual(response.json()["results"][0]["id"], self.site.pk)
-        self.assertEqual(response.json()["results"][1]["id"], self.site1.pk)
+        sites = [x['id'] for x in response.json()["results"]]
+        self.assertListEqual(sorted(sites), sorted([self.site.pk, self.site1.pk]))
 
     def test_outdoorsite_near_outdoorsite(self):
         response = self.get_site_list({'near_outdoorsite': self.site.pk})
@@ -5454,7 +5646,7 @@ class CreateReportsAPITest(TestCase):
 
 
 @freeze_time("2020-01-01")
-class SensitivityAPIv2Test(TranslationResetMixin, TrekkingManagerTest):
+class SensitivityAPIv2Test(TrekkingManagerTest):
     def setUp(self):
         super().setUp()
         self.structure = authent_models.default_structure()

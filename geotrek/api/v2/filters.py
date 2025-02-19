@@ -743,7 +743,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 Q(name__icontains=q) | Q(description__icontains=q)
                 | Q(description_teaser__icontains=q) | Q(ambiance__icontains=q)
             )
-        return qs
+        return qs.distinct()
 
     def get_schema_fields(self, view):
         return (
@@ -865,6 +865,24 @@ class GeotrekRatingsFilter(BaseFilterBackend):
                 name='ratings', required=False, location='query', schema=coreschema.Integer(
                     title=_("Ratings"),
                     description=_('Filter by one or more ratings id, comma-separated.')
+                )
+            ),
+        )
+
+
+class GeotrekNetworksFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        networks = request.GET.get('networks')
+        if networks:
+            queryset = queryset.filter(networks__in=networks.split(','))
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='networks', required=False, location='query', schema=coreschema.String(
+                    title=_("Networks"),
+                    description=_('Filter by one or more networks id, comma-separated.')
                 )
             ),
         )

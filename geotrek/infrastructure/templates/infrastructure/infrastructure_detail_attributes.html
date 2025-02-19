@@ -3,7 +3,6 @@
 
 {% block attributes %}
 
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"structure" }}</th>
@@ -17,9 +16,11 @@
             <th>{{ object|verbose:"type" }}</th>
             <td>{{ object.type }}</td>
         </tr>
-        <tr>
-            <th>{{ object|verbose:"condition" }}</th>
-            <td>{{ object.condition }}</td>
+            <tr>
+            <th>{{ object|verbose:"conditions" }}</th>
+            <td>
+                <span> {{ object.conditions_display }} </span>
+            </td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>

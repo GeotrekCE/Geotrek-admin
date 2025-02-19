@@ -1,11 +1,10 @@
-import env_file
 import os
 import sys
 
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
-from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
-
+from dotenv import load_dotenv
 from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
@@ -33,14 +32,14 @@ TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
 if os.path.exists(DOT_ENV_FILE):
-    env_file.load(path=DOT_ENV_FILE)
+    load_dotenv(DOT_ENV_FILE)
 
 ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
 ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
-TITLE = _("Geotrek")
+TITLE = "Geotrek-Admin"
 
 DEBUG = False
 TEST = 'test' in sys.argv
@@ -287,6 +286,7 @@ PROJECT_APPS += (
     'django.contrib.admindocs',
     'django.contrib.gis',
     'crispy_forms',
+    'crispy_bootstrap4',
     'compressor',
     'django_filters',
     'tinymce',
@@ -478,15 +478,13 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN),
     'NO_GLOBALS': False,
     'PLUGINS': {
-        'geotrek': {'js': ['core/leaflet.lineextremities.js',
-                           'core/leaflet.textpath.js',
+        'geotrek': {'js': ['vendor/leaflet.lineextremities.v0.1.1.js',
+                           'vendor/leaflet.textpath.v1.1.0.js',
                            'common/points_reference.js',
                            'trekking/parking_location.js']},
         'topofields': {'js': ['core/geotrek.forms.snap.js',
                               'core/geotrek.forms.topology.js',
-                              'core/dijkstra.js',
-                              'core/multipath.js',
-                              'core/topology_helper.js']}
+                              'core/multipath.js']}
     }
 }
 
@@ -842,7 +840,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
-HIDDEN_FORM_FIELDS = {}
+HIDDEN_FORM_FIELDS = {'report': ['assigned_user']}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
@@ -925,3 +923,6 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
 ]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+if SURICATE_WORKFLOW_ENABLED and 'report' in HIDDEN_FORM_FIELDS.keys() and "assigned_user" in HIDDEN_FORM_FIELDS['report']:
+    HIDDEN_FORM_FIELDS['report'].remove("assigned_user")

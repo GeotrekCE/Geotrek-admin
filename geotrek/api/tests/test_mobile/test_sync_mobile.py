@@ -14,27 +14,24 @@ from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.utils import translation
 from landez.sources import DownloadError
 from modeltranslation.utils import build_localized_fieldname
 from PIL import Image
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.tests.factories import (AttachmentFactory,
+                                            AttachmentImageFactory,
                                             RecordSourceFactory,
                                             TargetPortalFactory,
                                             ThemeFactory)
-from geotrek.common.utils.testdata import (get_dummy_uploaded_file,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_image_svg)
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg
 from geotrek.core.tests.factories import PathFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
-from geotrek.tourism.models import TouristicEventType
 from geotrek.tourism.tests.factories import (InformationDeskFactory,
                                              InformationDeskTypeFactory,
                                              TouristicContentFactory,
                                              TouristicEventFactory)
+from geotrek.sensitivity.tests.factories import SensitiveAreaFactory
 from geotrek.trekking.models import OrderedTrekChild, Trek
 from geotrek.trekking.tests.factories import (PracticeFactory, TrekFactory,
                                               TrekWithPublishedPOIsFactory)
@@ -170,8 +167,7 @@ class SyncMobileFailTest(VarTmpTestCase):
     def test_attachments_missing_from_disk(self, mocke):
         mocke.side_effect = Exception()
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image(), is_image=True)
-        os.remove(attachment.attachment_file.path)
+        AttachmentImageFactory(content_object=trek_1, attachment_file=None)
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
         self.assertFalse(os.path.exists(os.path.join(self.sync_directory, 'nolang', 'media', 'trekking_trek')))
@@ -198,7 +194,7 @@ class SyncMobileFailTest(VarTmpTestCase):
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
 
-class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileSpecificOptionsTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -222,11 +218,10 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
             self.assertEqual(len(flatpages), 1)
 
 
-class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileFlatpageTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        translation.deactivate()
         cls.portals = []
 
         cls.portal_a = TargetPortalFactory()
@@ -297,7 +292,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
         self.assertIn('en/flatpages.json', output.getvalue())
 
 
-class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileSettingsTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -310,7 +305,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(self.sync_directory, lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 16)
+                self.assertEqual(len(settings_json['data']), 17)
 
         self.assertIn('en/settings.json', output.getvalue())
 
@@ -318,7 +313,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
         output = StringIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
         self.trek = TrekFactory.create(practice=practice, published_fr=True, published_it=True, published_es=True, published_en=True)
-        information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
+        information_desk_type = InformationDeskTypeFactory.create()
         InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
         pictogram_desk_png = information_desk_type.pictogram.url
@@ -328,7 +323,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
             with open(os.path.join(self.sync_directory, lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 16)
+                self.assertEqual(len(settings_json['data']), 17)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
                 self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)
 
@@ -339,14 +334,12 @@ class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
         self.assertIn('en/settings.json', output.getvalue())
 
 
-class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
+class SyncMobileTreksTest(VarTmpTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
-        picto_desk = get_dummy_uploaded_image()
-        cls.information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
+        cls.information_desk_type = InformationDeskTypeFactory.create()
         cls.info_desk = InformationDeskFactory.create(type=cls.information_desk_type)
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
@@ -360,20 +353,14 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
 
         cls.trek_4.information_desks.add(cls.desk)
 
-        cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
-                                                    attachment_file=get_dummy_uploaded_image())
-        AttachmentFactory.create(content_object=cls.trek_1,
-                                 attachment_file=get_dummy_uploaded_image())
+        cls.attachment_1 = AttachmentImageFactory.create(content_object=cls.trek_1)
+        AttachmentImageFactory.create(content_object=cls.trek_1)
 
         cls.poi_1 = cls.trek_1.published_pois.first()
-        cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
-                                                              attachment_file=get_dummy_uploaded_image())
-        cls.attachment_poi_image_2 = AttachmentFactory.create(content_object=cls.poi_1,
-                                                              attachment_file=get_dummy_uploaded_image())
-        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1,
-                                                           attachment_file=get_dummy_uploaded_file())
-        cls.attachment_trek_image = AttachmentFactory.create(content_object=cls.trek_4,
-                                                             attachment_file=get_dummy_uploaded_image())
+        cls.attachment_poi_image_1 = AttachmentImageFactory.create(content_object=cls.poi_1)
+        cls.attachment_poi_image_2 = AttachmentImageFactory.create(content_object=cls.poi_1)
+        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1)
+        cls.attachment_trek_image = AttachmentImageFactory.create(content_object=cls.trek_4)
 
         cls.touristic_content = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                         published=True)
@@ -387,10 +374,13 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                                                  published=True, portals=[cls.portal_b])
         cls.touristic_event_portal_b = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
                                                              published=True, portals=[cls.portal_b])
-        cls.attachment_content_1 = AttachmentFactory.create(content_object=cls.touristic_content,
-                                                            attachment_file=get_dummy_uploaded_image())
-        cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
-                                                          attachment_file=get_dummy_uploaded_image())
+
+        treks_1_4_envelope = MultiLineString(cls.trek_1.geom, cls.trek_4.geom).envelope
+        cls.sensitive_area_species = SensitiveAreaFactory(geom=treks_1_4_envelope, published=True)
+        cls.sensitive_area_regulatory = SensitiveAreaFactory(geom=treks_1_4_envelope, published=True)
+
+        cls.attachment_content_1 = AttachmentImageFactory.create(content_object=cls.touristic_content)
+        cls.attachment_event_1 = AttachmentImageFactory.create(content_object=cls.touristic_event)
 
     def test_sync_treks(self):
         output = StringIO()
@@ -451,6 +441,23 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                 self.assertEqual(len(trek_geojson['features']), 6)
         self.assertIn('en/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
+    def test_sync_sensitive_areas_by_treks(self):
+        output = StringIO()
+        management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        # Check results for trek_1 as a simple Trek:
+        filepath_trek_data = os.path.join('en', str(self.trek_1.pk), 'sensitive_areas.geojson')
+        with open(os.path.join(self.sync_directory, filepath_trek_data), 'r') as f:
+            sensitive_areas_geojson = json.load(f)
+            self.assertEqual(len(sensitive_areas_geojson['features']), 2)
+        self.assertIn(filepath_trek_data, output.getvalue())
+        # Check results for trek_1 as a parent Trek and trek_4 as its child:
+        filepath_child_trek_data = os.path.join('en', str(self.trek_1.pk), 'sensitive_areas', '{pk}.geojson'.format(pk=str(self.trek_4.pk)))
+        with open(os.path.join(self.sync_directory, filepath_child_trek_data), 'r') as f:
+            sensitive_areas_geojson = json.load(f)
+            self.assertEqual(len(sensitive_areas_geojson['features']), 2)
+        self.assertIn(filepath_child_trek_data, output.getvalue())
+
     def test_medias_treks(self):
         output = StringIO()
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
@@ -472,7 +479,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(2, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))), output.getvalue())
         self.assertEqual(2, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                         'media', 'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
@@ -501,7 +508,7 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
-                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+                                                        'media', 'paperclip', 'trekking_trek', str(self.trek_1.pk)))), output.getvalue())
         self.assertEqual(1, len(os.listdir(os.path.join(self.sync_directory, 'nolang', str(self.trek_1.pk),
                                                         'media', 'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
         with open(os.path.join(self.sync_directory, 'en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
@@ -544,15 +551,10 @@ class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
                                 skip_tiles=True, verbosity=0)
         self.assertIn(pictogram_name_before, os.listdir(os.path.join(self.sync_directory, 'nolang', 'media',
                                                                      'upload')))
-
-        for event_type in TouristicEventType.objects.all():
-            event_type.pictogram = None
-            event_type.save()
+        TouristicEventFactory(type__pictogram=None, published=True)
 
         management.call_command('sync_mobile', self.sync_directory, url='http://localhost:8000',
                                 skip_tiles=True, verbosity=0)
-        self.assertNotIn(pictogram_name_before, os.listdir(os.path.join(self.sync_directory, 'nolang',
-                                                                        'media', 'upload')))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_multilinestring(self):

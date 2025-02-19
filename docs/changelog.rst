@@ -2,7 +2,241 @@
 CHANGELOG
 =========
 
-2.107.0+dev (XXXX-XX-XX)
+2.113.1+dev    (XXXX-XX-XX)
+----------------------------
+
+**Breaking changes**
+
+This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
+
+**Improvements**
+
+- Officially support Ubuntu 24.04 debian package.
+- Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
+- Deprecate support of Ubuntu 18.04 bionic.
+
+
+2.113.1    (2025-02-17)
+----------------------------
+
+**Improvements**
+
+- Officially support Ubuntu 22.04 debian package.
+- Add sensitive areas to mobile API and sync
+
+**Bug fixes**
+
+- Fix path picture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
+
+**Development**
+
+- Add clean and flush make command to init data in development mode
+
+**Documentation**
+
+- Update documentation theme and content, re-organize sections (#4484)
+- Add infos about adding new languages (#4486)
+
+
+2.113.0    (2025-01-30)
+----------------------------
+
+**Breaking changes**
+
+This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
+
+https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
+
+**Warnings**
+
+- The database migration to this version might take several minutes due to the generation of pgRouting's network topology.
+- When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+- After adding new paths, pre-existing topologies can follow routes that are no longer the shortest. When editing topology-based linear objects through the interface, their route will no longer be automatically recomputed to the shortest option, which was unwanted behavior. This means you might now encounter topologies that take a detour despite not using a via-point marker. Be careful when editing such a route, as moving or adding neighboring markers will remove the detour. Note: this does not address the topology ordering issue when adding new paths. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+
+**Improvements**
+
+- Optimize routing: computation is now done in the backend using the A* algorithm (#4070)
+- Prevent from placing route markers outside of paths or on unreachable paths (#4070)
+- Fix clickable labels in admin site for Difficulty Levels and Touristic Content Categories
+- Change Admin site header to "Geotrek configuration"
+
+**Bug fixes**
+
+- Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
+
+
+2.112.0     (2025-01-14)
+----------------------------
+
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
+**Bug fixes**
+
+- Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
+
+**Documentation**
+
+- Update theme color
+- Fix typo in documentation
+- Update and homogenize README.rst
+
+
+2.111.0     (2024-12-05)
+----------------------------
+
+**Features**
+
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947)
+
+**Improvements**
+
+- Remove overriding of SchemaRandonneeParser's filetype_name attribute (#4022)
+- Improve sync mobile and import views with current bootstrap style.
+- Docker image is now mirrored on github registry
+
+**Bug fixes**
+
+- Fix missing Dockerfile path on make build scripts
+- Fix SchemaRandonneeParser url update when description is null or was not updated (#4022)
+
+**Documentation**
+
+- Update documentation for release and update obsolete example
+- Add note about certbot ssl configuration in nginx
+
+
+2.110.0     (2024-11-13)
+----------------------------
+
+**New features**
+
+- Add parser for schema_randonnee-compliant files (#4022)
+
+
+2.109.3     (2024-10-29)
+----------------------------
+
+**Improvements**
+
+- Vocabulary adjustment for the 'add image gallery' button for flatpages
+- Improve translations for flatpages
+
+**Bug fixes**
+
+- Fix missing unpublished related categories in Aggregator when retrieving unpublished Tour Steps (#3569)
+- Fix `loadinfrastructure` condition when adding to infra without `eid-field` option (#4328)
+- Fix intervention creation when target is not a report (suricate workflow)
+
+**Maintenance**
+
+- Docker image use now fully tested Ubuntu Jammy and python3.10
+- Use new crispy form
+- Bump mapentity to 8.10.0. Mapentity login page has been improved, take care about your logo-login.png size.
+
+**Documentation**
+
+- Improve development quickstart documentation
+
+
+2.109.2     (2024-09-19)
+----------------------------
+
+**Warning**
+
+- The default Nginx configuration template has been improved (https://github.com/GeotrekCE/Geotrek-admin/pull/4307/commits/99bd87db24a2b2fce072f9c681a600b986cc914f)
+
+**Improvements**
+
+- ApidaeTrekParser now imports all features from GPX
+- Optimize path aggregations query in detail view
+
+**Minor fixes**
+
+- Fix swapped plural and singular translations for Annotation Categories (#4032)
+- Filter out deleted services in API responses (#4284)
+- MenuItems with platform "Mobile" are now hidden on public API (#4127)
+
+**Bug fixes**
+
+- ApidaeTrekParser now fallbacks on trace filename extension if no extension property
+- ApidaeTrekParser now ignores when no linestring in GPX
+- ApidaeTrekParser duration import is fixed for multiple-days treks
+- Apidae tourism parser now handles missing contact properties
+- ApidaeTrekParser now handles missing source website
+- Fix Aggregator does not retrieve unpublished Tour Steps (#3569)
+- Fix missing Annotation Categories in APIv2 for annotations other than Points (#4032)
+- Change default CORS configuration to 'always' : see https://github.com/GeotrekCE/Geotrek-rando-v3/issues/1257
+
+**Documentation**
+
+- Add command line examples and templates for importing data
+
+
+2.109.1     (2024-08-22)
+----------------------------
+
+**Improvements**
+
+- Allow use of Annotation Categories on annotations other than Points (#4032)
+- Allow using custom.py to make assigned_user field in Report Form available (#4085)
+
+**Bug fixes**
+
+-  Fix APIv2 exception on HD Views without Annotations (#4032)
+
+**Documentation**
+
+- Add authors, creators and last_author columns in displayed lists views and exports
+
+**Maintenance**
+
+- Replace deprecated `env_file` with `dotenv`
+- Optimize some backend queries for performances
+
+
+2.109.0     (2024-08-08)
+----------------------------
+
+**New features**
+
+- Add Annotation Categories to improve annotations on HD Views (#4032)
+
+**Improvements**
+
+- Change infrastructure condition field to ManyToMany field (#3970)
+- Add an image gallery tinyMCE plugin for flatpages
+
+**Bug fixes**
+
+- Fix empty linetring in reorder_topology cmd (fixes #4092)
+- Prevent Pillow Decompressed Data Too Large Error from interrupting Parsers
+- Fix ZeroDivisionError raised on generating thumbnails in APIv2 (#4231)
+- Fix error on APIv2 for Signages with pictograms (#3839)
+
+**Maintenance**
+
+- Bump to django 4.2.15
+
+
+2.108.0     (2024-07-12)
+------------------------
+
+**Improvements**
+
+- Add trek filter by network in API v2 (#4216)
+
+
+2.107.1     (2024-07-02)
 ------------------------
 
 **Improvements**
@@ -10,10 +244,12 @@ CHANGELOG
 - Allows user to edit flatpage WYSIWYG button-link and suggestion block
 - Display years in Report filter in descending order (#4085)
 - Change CSS overflow in filters popup, to display full select dropdowns (with mapentity update)
+- Add trek filter by network in API v2 (#4216)
 
 **Documentation**
 
 - Improve PostgreSQL upgrade documentation
+- Integration of sensitivity module notices (import and public api usage)
 
 **Bug fixes**
 
@@ -810,7 +1046,7 @@ In preparation for HD Views developments (PR #3298)
 
 !!!! Clear cache after update. You can do this by going to admin panel, "clearcache" section, then delete default / fat and api_v2 !!!!
 
-**Improvements**
+**Improvments**
 
 - Cache API v2 Detail endpoints and themes list endpoint
 - Sensitive areas are now computed with buffered geometries with settings SENSITIVE_AREA_INTERSECTION_MARGIN. Use ST_INTERSECTS on it is faster.

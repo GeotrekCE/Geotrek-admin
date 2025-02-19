@@ -328,6 +328,7 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     content_object = GenericForeignKey('content_type', 'object_id')
     annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
+    annotations_categories = models.JSONField(blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     author = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_('Author'),
@@ -380,6 +381,18 @@ class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
 
     def get_annotate_url(self):
         return reverse('common:hdviewpoint_annotate', args=[self.pk])
+
+
+class AnnotationCategory(TimeStampedModelMixin, PictogramMixin):
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Annotation category")
+        verbose_name_plural = _("Annotation categories")
+        ordering = ['label']
+
+    def __str__(self):
+        return self.label
 
 
 class AccessMean(TimeStampedModelMixin):

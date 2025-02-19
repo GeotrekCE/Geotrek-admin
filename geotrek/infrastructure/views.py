@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models.query import Prefetch
 from mapentity.views import (
     MapEntityCreate,
     MapEntityDelete,
@@ -7,6 +8,7 @@ from mapentity.views import (
     MapEntityDocument,
     MapEntityFormat,
     MapEntityList,
+    MapEntityFilter,
     MapEntityUpdate,
 )
 
@@ -18,22 +20,27 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
-from .models import Infrastructure
+from .models import Infrastructure, InfrastructureCondition
 from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializer
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
-    filterform = InfrastructureFilterSet
     mandatory_columns = ['id', 'name']
-    default_extra_columns = ['type', 'condition', 'cities']
+    default_extra_columns = ['type', 'conditions', 'cities']
     searchable_columns = ['id', 'name']
 
 
+class InfrastructureFilter(MapEntityFilter):
+    model = Infrastructure
+    filterset_class = InfrastructureFilterSet
+
+
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
+    filterset_class = InfrastructureFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
-        'id', 'name', 'type', 'condition', 'description', 'accessibility',
+        'id', 'name', 'type', 'conditions', 'description', 'accessibility',
         'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'usage_difficulty',
         'maintenance_difficulty', 'access', 'uuid',
@@ -88,5 +95,7 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
             qs = qs.only('id', 'name', 'published')
         else:
-            qs = qs.select_related('type', 'condition', 'maintenance_difficulty', 'access', 'usage_difficulty')
+            qs = qs.select_related('type', 'maintenance_difficulty', 'access', 'usage_difficulty').prefetch_related(
+                Prefetch('conditions',
+                         queryset=InfrastructureCondition.objects.select_related('structure'), to_attr="conditions_list"),)
         return qs

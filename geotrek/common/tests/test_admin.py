@@ -6,9 +6,8 @@ from mapentity.tests.factories import SuperUserFactory
 from paperclip.models import random_suffix_regexp
 
 from geotrek.common.models import Attachment, FileType, Theme
-from geotrek.common.tests.factories import (AttachmentFactory,
+from geotrek.common.tests.factories import (AnnotationCategoryFactory, AttachmentImageFactory,
                                             HDViewPointFactory, ThemeFactory)
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.models import POI, DifficultyLevel, Trek
 from geotrek.trekking.tests.factories import (DifficultyLevelFactory,
                                               POIFactory, TrekFactory)
@@ -19,14 +18,11 @@ class AttachmentAdminTest(TestCase):
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
         cls.poi = POIFactory.create(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        cls.picture = AttachmentFactory(content_object=cls.poi, title='img1',
-                                        attachment_file=get_dummy_uploaded_image())
+        cls.picture = AttachmentImageFactory(content_object=cls.poi, title='img1')
         cls.trek = TrekFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0, 2 0)' % settings.SRID)
-        cls.picture_2 = AttachmentFactory(content_object=cls.trek, title='img2',
-                                          attachment_file=get_dummy_uploaded_image())
+        cls.picture_2 = AttachmentImageFactory(content_object=cls.trek, title='img2')
         cls.theme = ThemeFactory.create(label="Theme 1")
-        cls.picture_3 = AttachmentFactory(content_object=cls.theme, title='img3',
-                                          attachment_file=get_dummy_uploaded_image())
+        cls.picture_3 = AttachmentImageFactory(content_object=cls.theme, title='img3')
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -35,8 +31,8 @@ class AttachmentAdminTest(TestCase):
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        regexp1 = f"img1{random_suffix_regexp()}.png"
-        regexp2 = f"img2{random_suffix_regexp()}.png"
+        regexp1 = f"img1{random_suffix_regexp()}.jpg"
+        regexp2 = f"img2{random_suffix_regexp()}.jpg"
         self.assertRegex(self.picture.filename, regexp1)
         self.assertRegex(self.picture_2.filename, regexp2)
         self.assertContains(response, self.picture.filename)
@@ -176,7 +172,12 @@ class HDViewPointAdminTest(TestCase):
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
         cls.trek = TrekFactory()
-        cls.vp = HDViewPointFactory(content_object=cls.trek)
+        cls.category = AnnotationCategoryFactory()
+        cls.category_2 = AnnotationCategoryFactory()
+        cls.vp = HDViewPointFactory(
+            content_object=cls.trek,
+            annotations_categories={'1': f"{cls.category.pk}"}
+        )
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -187,3 +188,13 @@ class HDViewPointAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, f'<a data-pk="{self.trek.pk}" href="{self.trek.get_detail_url()}" >{str(self.trek)}</a>')
         self.assertContains(response, f'<a data-pk="{self.vp.pk}" href="{self.vp.full_url}" >{self.vp.title}</a>')
+
+    def test_nodelete_annotation_category(self):
+        delete_url = reverse('admin:common_annotationcategory_delete', args=(self.category.pk,))
+        response = self.client.get(delete_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_delete_annotation_category(self):
+        delete_url = reverse('admin:common_annotationcategory_delete', args=(self.category_2.pk,))
+        response = self.client.get(delete_url)
+        self.assertEqual(response.status_code, 200)

@@ -63,28 +63,34 @@ class SignageManagementEdgeFilterSet(OrganismFilterSet):
 """
 
 
-class TopologyFilterPhysicalType(TopologyFilter):
+class PrefetchStructureMixin:
+    def get_queryset(self, request=None):
+        qs = super().get_queryset(request)
+        return qs.select_related('structure')
+
+
+class TopologyFilterPhysicalType(PrefetchStructureMixin, TopologyFilter):
     model = PhysicalType
 
     def values_to_edges(self, values):
         return PhysicalEdge.objects.filter(physical_type__in=values)
 
 
-class TopologyFilterCirculationType(TopologyFilter):
+class TopologyFilterCirculationType(PrefetchStructureMixin, TopologyFilter):
     model = CirculationType
 
     def values_to_edges(self, values):
         return CirculationEdge.objects.filter(circulation_type__in=values)
 
 
-class TopologyFilterAuthorizationType(TopologyFilter):
+class TopologyFilterAuthorizationType(PrefetchStructureMixin, TopologyFilter):
     model = AuthorizationType
 
     def values_to_edges(self, values):
         return CirculationEdge.objects.filter(authorization_type__in=values)
 
 
-class TopologyFilterLandType(TopologyFilter):
+class TopologyFilterLandType(PrefetchStructureMixin, TopologyFilter):
     model = LandType
 
     def values_to_edges(self, values):

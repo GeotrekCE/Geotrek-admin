@@ -10,7 +10,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityDetail, MapEntityMapImage, MapEntityFilter,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -52,7 +52,6 @@ class FlattenPicturesMixin:
 
 
 class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
-    filterform = TrekFilterSet
     queryset = Trek.objects.existing()
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['duration', 'difficulty', 'departure', 'thumbnail']
@@ -60,7 +59,13 @@ class TrekList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     searchable_columns = ['id', 'name', 'departure', 'arrival']
 
 
+class TrekFilter(MapEntityFilter):
+    model = Trek
+    filterset_class = TrekFilterSet
+
+
 class TrekFormatList(MapEntityFormat, TrekList):
+    filterset_class = TrekFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = [
         'eid', 'eid2', 'structure', 'departure', 'arrival', 'duration', 'duration_pretty', 'description',
@@ -96,7 +101,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
 
 class TrekDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Trek.objects.existing().select_related('topo_object').prefetch_related(
+    queryset = Trek.objects.existing().select_related('topo_object', 'structure').prefetch_related(
         Prefetch('view_points',
                  queryset=HDViewPoint.objects.select_related('content_type', 'license'))
     )
@@ -112,13 +117,6 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
             'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
         }
 
-    def dispatch(self, *args, **kwargs):
-        lang = self.request.GET.get('lang')
-        if lang:
-            translation.activate(lang)
-            self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
@@ -129,13 +127,6 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
 
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
-
-    def dispatch(self, *args, **kwargs):
-        lang = kwargs.pop('lang')
-        if lang:
-            translation.activate(lang)
-            self.request.LANGUAGE_CODE = lang
-        return super().dispatch(*args, **kwargs)
 
 
 class TrekDocument(MapEntityDocument):
@@ -243,14 +234,19 @@ class TrekViewSet(GeotrekMapentityViewSet):
 
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
-    filterform = POIFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = ['type', 'thumbnail']
     unorderable_columns = ['thumbnail']
     searchable_columns = ['id', 'name', ]
 
 
+class POIFilter(MapEntityFilter):
+    model = POI
+    filterset_class = POIFilterSet
+
+
 class POIFormatList(MapEntityFormat, POIList):
+    filterset_class = POIFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'structure', 'eid', 'name', 'type', 'description', 'treks',
@@ -292,7 +288,7 @@ class POIDetail(CompletenessMixin, MapEntityDetail):
     queryset = POI.objects.existing().prefetch_related(
         Prefetch('view_points',
                  queryset=HDViewPoint.objects.select_related('content_type', 'license'))
-    )
+    ).select_related('type')
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -400,13 +396,18 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 
 class ServiceList(CustomColumnsMixin, MapEntityList):
     queryset = Service.objects.existing()
-    filterform = ServiceFilterSet
     mandatory_columns = ['id', 'name']
     default_extra_columns = []
     searchable_columns = ['id']
 
 
+class ServiceFilter(MapEntityFilter):
+    model = Service
+    filterset_class = ServiceFilterSet
+
+
 class ServiceFormatList(MapEntityFormat, ServiceList):
+    filterset_class = ServiceFilterSet
     mandatory_columns = ['id']
     default_extra_columns = [
         'id', 'eid', 'type', 'uuid',

@@ -1,33 +1,44 @@
-FROM ubuntu:focal as base
+ARG BASE_IMAGE=noble
 
-ENV PYTHONBUFFERED 1
-ENV DEBIAN_FRONTEND noninteractive
-ENV ENV prod
-ENV SERVER_NAME "localhost"
-# If POSTGRES_HOST is empty, entrypoint will set it to the IP of the docker host in the container
-ENV POSTGRES_HOST ""
-ENV POSTGRES_PORT "5432"
-ENV POSTGRES_USER "geotrek"
-ENV POSTGRES_PASSWORD "geotrek"
-ENV POSTGRES_DB "geotrekdb"
-ENV REDIS_HOST "redis"
-ENV CONVERSION_HOST "convertit"
-ENV CAPTURE_HOST "screamshotter"
-ENV CUSTOM_SETTINGS_FILE "/opt/geotrek-admin/var/conf/custom.py"
-ENV TZ UTC
+FROM ubuntu:${BASE_IMAGE} AS base
+
+# add labels
+LABEL org.opencontainers.image.authors="Makina Corpus"
+LABEL org.opencontainers.image.source="https://github.com/GeotrekCE/Geotrek-admin/"
+LABEL org.opencontainers.image.documentation="https://geotrek.readthedocs.io/"
+LABEL org.opencontainers.image.vendor="Makina Corpus"
+LABEL org.opencontainers.image.licenses="BSD-2-Clause"
+LABEL org.opencontainers.image.url="https://geotrek.fr"
+LABEL org.opencontainers.image.title="Geotrek-admin"
+LABEL org.opencontainers.image.description="Manage and promote your trails and tourist content and activities."
+
+
+ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ENV=prod
+ENV SERVER_NAME="localhost"
+ENV POSTGRES_HOST="host.docker.internal"
+ENV POSTGRES_PORT="5432"
+ENV POSTGRES_USER="geotrek"
+ENV POSTGRES_DB="geotrekdb"
+ENV REDIS_HOST="redis"
+ENV CONVERSION_HOST="convertit"
+ENV CAPTURE_HOST="screamshotter"
+ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
+ENV TZ=UTC
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
-RUN adduser geotrek --disabled-password && chown geotrek:geotrek -R /opt
+RUN useradd -m -d /opt/geotrek-admin -s /bin/false geotrek && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update -qq && apt-get install -y -qq  \
-    python3.8 \
+    python3 \
     ca-certificates \
     gettext \
     postgresql-client \
     tzdata \
-    netcat \
     gdal-bin \
     binutils \
     libproj-dev \
@@ -38,13 +49,12 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     curl \
     software-properties-common \
     shared-mime-info \
+    libmagic1 \
     fonts-liberation \
     libssl-dev \
     libfreetype6-dev \
     libxml2-dev \
     libxslt-dev \
-    libcairo2 \
-    libpango1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
     libffi-dev \
@@ -58,26 +68,28 @@ COPY --chown=geotrek:geotrek docker/scripts/* /usr/local/bin/
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
 EXPOSE 8000
 
-FROM base as build
+FROM base AS build
 
 USER root
 
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
-    python3.8-dev \
-    python3.8-venv \
+    python3-dev \
+    python3-venv \
     build-essential \
+    graphviz \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN python3.8 -m venv /opt/venv
-RUN /opt/venv/bin/pip install --no-cache-dir -U pip setuptools wheel
+RUN python3 -m venv /opt/venv
+RUN /opt/venv/bin/pip install --no-cache-dir -U "pip<24.3" setuptools wheel
 COPY requirements.txt requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
-FROM build as dev
+FROM build AS dev
 
+ENV ENV=dev
 COPY dev-requirements.txt dev-requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt
 COPY ./docs/requirements.txt doc-requirements.txt
@@ -85,9 +97,7 @@ RUN /opt/venv/bin/pip install --no-cache-dir -r doc-requirements.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
-FROM base as prod
-
-ENV ENV prod
+FROM base AS prod
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/

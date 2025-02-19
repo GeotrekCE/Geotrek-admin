@@ -6,8 +6,9 @@ from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking import models as trek_models
 from geotrek.tourism.tests import factories as tourism_factory
-from geotrek.tourism import models as tourism_models
 from geotrek.zoning.tests import factories as zoning_factory
+from geotrek.sensitivity.tests import factories as sensitivity_factory
+from geotrek.sensitivity.models import SensitiveArea
 
 
 GEOJSON_STRUCTURE = sorted([
@@ -58,6 +59,10 @@ TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'pictures', 'type1', 'type2', 'approved', 'reservation_id', 'reservation_system', 'name',
 ])
 
+SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'id', 'description', 'name', 'practices', 'contact', 'info_url', 'period'
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -105,17 +110,22 @@ class BaseApiTest(TestCase):
         trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
                                      child=cls.trek_child_not_published_2, order=1).save()
 
-        cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
+        cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.trek.published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
                                                                         description_teaser_fr="mini", published_fr=True)
 
-        cls.touristic_event = tourism_factory.TouristicEventFactory(geom=cls.treks[0].published_pois.first().geom,
+        cls.touristic_event = tourism_factory.TouristicEventFactory(geom=cls.trek.published_pois.first().geom,
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
-        cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
-        cls.district2 = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)), published=False)
-        bigger_extent = (cls.treks[0].geom.extent[0] - 1, cls.treks[0].geom.extent[1] - 1,
-                         cls.treks[0].geom.extent[2] + 1, cls.treks[0].geom.extent[3] + 1)
+
+        trek_geom_envelope = cls.trek.geom.envelope
+        cls.sensitive_area_species = sensitivity_factory.SensitiveAreaFactory(geom=trek_geom_envelope, published=True)
+        cls.sensitive_area_regulatory = sensitivity_factory.SensitiveAreaFactory(geom=trek_geom_envelope, published=True)
+
+        cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.trek.geom.extent)))
+        cls.district2 = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.trek.geom.extent)), published=False)
+        bigger_extent = (cls.trek.geom.extent[0] - 1, cls.trek.geom.extent[1] - 1,
+                         cls.trek.geom.extent[2] + 1, cls.trek.geom.extent[3] + 1)
         cls.city = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)))
         cls.city2 = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)), published=False)
 
@@ -135,6 +145,9 @@ class BaseApiTest(TestCase):
     def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
                                headers={"accept-language": lang})
+
+    def get_sensitive_area_list(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-sensitive-areas', args=(id_trek, )), params, headers={"accept-language": lang})
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -168,7 +181,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(len(json_response['properties']['districts']), 1)
         self.assertEqual(len(json_response['properties']['cities']), 1)
         self.assertEqual(json_response['properties']['departure_city'], self.city.code)
-        self.assertEqual(json_response['properties']['arrival_city'], self.city.code)
+        self.assertEqual(json_response['properties']['arrival_city'], self.city.code, json_response)
 
     def test_trek_detail_no_parking_location(self):
         trek_no_parking = trek_factory.TrekFactory(name_fr='no_parking', parking_location=None, published_fr=True)
@@ -275,55 +288,39 @@ class APIAccessTestCase(BaseApiTest):
 
         # json collection structure is ok
         json_response = response.json()
-        # poi count by treks is ok
+        self.assertEqual(sorted(json_response.keys()), GEOJSON_STRUCTURE)
+
+        # poi count by trek is ok
         self.assertEqual(len(json_response.get('features')),
                          self.trek.published_pois.count())
 
         # test dim 2 ok
-
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         trek_models.POI.objects.all().count())
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
                          DETAIL_GEOJSON_STRUCTURE)
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
+                         2)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_touristic_event_list(self):
-        response = self.get_touristic_event_list(trek_models.Trek.objects.first().pk, 'fr')
+        response = self.get_touristic_event_list(self.trek.pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
         json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()), GEOJSON_STRUCTURE)
 
-        # poi count by treks is ok
+        # touristic events count by trek is ok
         self.assertEqual(len(json_response.get('features')),
-                         trek_models.Trek.objects.order_by('?').last().published_touristic_events.count())
+                         self.trek.published_touristic_events.count())
 
         # test dim 2 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         tourism_models.TouristicEvent.objects.all().count())
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
                          DETAIL_GEOJSON_STRUCTURE)
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
+                         2)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          TOURISTIC_EVENT_LIST_PROPERTIES_GEOJSON_STRUCTURE)
@@ -331,36 +328,52 @@ class APIAccessTestCase(BaseApiTest):
                          "Sisi_Event")
 
     def test_touristic_content_list(self):
-        response = self.get_touristic_content_list(trek_models.Trek.objects.first().pk, 'fr')
+        response = self.get_touristic_content_list(self.trek.pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
         json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()), GEOJSON_STRUCTURE)
 
-        # poi count by treks is ok
+        # touristic contents count by trek is ok
         self.assertEqual(len(json_response.get('features')),
-                         trek_models.Trek.objects.order_by('?').last().published_touristic_contents.count())
+                         self.trek.published_touristic_contents.count())
 
         # test dim 2 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         tourism_models.TouristicContent.objects.all().count())
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         2)
-
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
                          DETAIL_GEOJSON_STRUCTURE)
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
+                         2)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual(json_response.get('features')[0].get('properties')['description'],
                          "Sisi")
+
+    def test_sensitive_area_list(self):
+        response = self.get_sensitive_area_list(self.trek.pk, 'fr')
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()), GEOJSON_STRUCTURE)
+
+        # sensitive areas count by trek is ok
+        self.assertEqual(len(json_response.get('features')),
+                         self.trek.published_sensitive_areas.count())
+
+        for feature in json_response.get('features'):
+            # test dim 2 ok
+            self.assertEqual(sorted(feature.keys()), DETAIL_GEOJSON_STRUCTURE)
+            self.assertEqual(len(feature.get('geometry').get('coordinates')[0][0]), 2)
+            self.assertEqual(sorted(feature.get('properties').keys()),
+                             SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+            sensitive_area_obj = SensitiveArea.objects.get(pk=feature.get('id'))
+            for i, month in enumerate(['period{:02}'.format(p) for p in range(1, 13)]):
+                self.assertEqual(getattr(sensitive_area_obj.species, month),
+                                 feature.get('properties').get('period')[i])
 
 
 class APISwaggerTestCase(BaseApiTest):

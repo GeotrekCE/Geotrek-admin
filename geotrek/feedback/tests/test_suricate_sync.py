@@ -14,7 +14,6 @@ from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.factories import UserProfileFactory
 from geotrek.common.models import Attachment
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.feedback.forms import ReportForm
 from geotrek.feedback.helpers import SuricateMessenger, SuricateRequestManager
 from geotrek.feedback.models import (AttachedMessage, Report, ReportActivity,
@@ -58,9 +57,9 @@ def mocked_image(file_name):
         return bytearray(f.read())
 
 
-@override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS)
-@override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
-class SuricateTests(TranslationResetMixin, TestCase):
+@override_settings(SURICATE_REPORT_SETTINGS=SURICATE_REPORT_SETTINGS,
+                   SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)
+class SuricateTests(TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False):
@@ -189,7 +188,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek-Admin] New reports from Suricate")
         self.assertIn("New reports have been imported from Suricate", sent_mail.body)
         self.assertIn("Please consult your reports in Geotrek", sent_mail.body)
         for report in Report.objects.all():
@@ -282,7 +281,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(Attachment.objects.count(), 6)
         self.assertEqual(len(mail.outbox), 1)
         sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, "[Geotrek] New reports from Suricate")
+        self.assertEqual(sent_mail.subject, "[Geotrek-Admin] New reports from Suricate")
         # Test update report does not send email and saves
         r = Report.objects.all()[0]
         r.category = None
@@ -549,7 +548,7 @@ def test_for_all_suricate_modes(test_func):
             e.args += ("Failed for 'Suricate Report' mode",)
             exceptions.append(e)
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True):
+            with override_settings(SURICATE_REPORT_ENABLED=False, SURICATE_WORKFLOW_ENABLED=True, HIDDEN_FORM_FIELDS={}):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)
@@ -580,7 +579,7 @@ def test_for_report_and_basic_modes(test_func):
 def test_for_workflow_mode(test_func):
     def inner(self, *args, **kwargs):
         try:
-            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True):
+            with override_settings(SURICATE_REPORT_ENABLED=True, SURICATE_WORKFLOW_ENABLED=True, HIDDEN_FORM_FIELDS={}):
                 test_func(self, *args, **kwargs)
         except AssertionError as e:
             e.args += ("Failed for 'Suricate Workflow' mode",)

@@ -13,7 +13,7 @@ import textwrap
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
-from collections import Iterable
+from collections.abc import Iterable
 from time import sleep
 from PIL import Image, UnidentifiedImageError
 
@@ -43,7 +43,6 @@ from geotrek.common.models import FileType, Attachment, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 
-
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
 
@@ -72,9 +71,14 @@ class DownloadImportError(ImportError):
 
 class Parser:
     """
-    provider: Allow to differentiate multiple Parser for the same model
-    default_language: Allow to define which language this parser will populate by default
-    headers: Allow to configure headers on parser requests
+    provider: Allows to differentiate multiple Parser for the same model
+    default_language: Allows to define which language this parser will populate by default
+    headers: Allows to configure headers on parser requests
+    default_language: Allows to define which language this parser will populate by default
+    eid: Field to use as external id
+    provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
+    delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
+    update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
     """
     label = None
     model = None
@@ -124,11 +128,6 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
-
-        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
-            translation.activate(self.default_language)
-        else:
-            translation.activate(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
 
     def normalize_field_name(self, name):
         return name.upper()
@@ -537,24 +536,23 @@ class Parser:
             raise GlobalImportError(_("Filename or url is required"))
         if self.filename and not os.path.exists(self.filename):
             raise GlobalImportError(_("File does not exists at: {filename}").format(filename=self.filename))
-        self.start()
-        for i, row in enumerate(self.next_row()):
-            if limit and i >= limit:
-                break
-            try:
-                self.parse_row(row)
-            except DatabaseError as e:
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-            except (ValueImportError, RowImportError) as e:
-                self.add_warning(str(e))
-            except Exception as e:
-                raise
-                if settings.DEBUG:
-                    raise
-                self.add_warning(str(e))
-        self.end()
+
+        if self.default_language and self.default_language in settings.MODELTRANSLATION_LANGUAGES:
+            lang = self.default_language
+        else:
+            lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        with translation.override(lang, deactivate=True):
+            self.start()
+            for i, row in enumerate(self.next_row()):
+                if limit and i >= limit:
+                    break
+                try:
+                    self.parse_row(row)
+                except (DatabaseError, RowImportError, ValueImportError) as e:
+                    self.add_warning(str(e))
+                except Exception as e:
+                    raise e
+            self.end()
 
     def request_or_retry(self, url, verb='get', **kwargs):
         try_get = settings.PARSER_NUMBER_OF_TRIES
@@ -802,6 +800,9 @@ class AttachmentParserMixin:
                         return False, updated
             except UnidentifiedImageError:
                 pass
+            except ValueError:
+                # We want to catch : https://github.com/python-pillow/Pillow/blob/22ef8df59abf461824e4672bba8c47137730ef57/src/PIL/PngImagePlugin.py#L143
+                return False, updated
             attachment.attachment_file.save(name, f, save=False)
             attachment.is_image = attachment.is_an_image()
         else:

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-02-13 10:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,6 +136,9 @@ msgid "Touristic content types"
 msgstr ""
 
 msgid "Touristic event types"
+msgstr ""
+
+msgid "Sensitive area practices"
 msgstr ""
 
 msgid "Sync verifications"
@@ -481,6 +484,9 @@ msgid "Ratings"
 msgstr ""
 
 msgid "Filter by one or more ratings id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more networks id, comma-separated."
 msgstr ""
 
 msgid "Root sites only"

@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.testcases import TestCase
 
@@ -18,19 +17,13 @@ SETTINGS_STRUCTURE = sorted([
 SETTINGS_DATA_STRUCTURE = sorted([
     'information_desk_types', 'networks', 'route', 'practice', 'accessibilities', 'difficulty', 'themes', 'cities',
     'length', 'duration', 'poi_types', 'touristiccontent_categories', 'touristiccontent_types', 'touristicevent_types',
-    'ascent', 'districts'
+    'ascent', 'districts', 'sensitive_area_practices'
 ])
 
 
 class SettingsMobileTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.administrator = User.objects.create(username="administrator", is_superuser=True,
-                                                is_staff=True, is_active=True)
-        cls.administrator.set_password('administrator')
-        cls.administrator.save()
-        cls.administrator.refresh_from_db()
-
         cls.accessibility_1 = trekking_factories.AccessibilityFactory.create()
         cls.accessibility_2 = trekking_factories.AccessibilityFactory.create()
         cls.difficulty = trekking_factories.DifficultyLevelFactory.create()
@@ -180,8 +173,8 @@ class SettingsMobileTest(TestCase):
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
         self.assertEqual(len(accessibility_item), 2)
-        self.assertEqual(accessibility_item[0].get('name'), self.accessibility_2.name)
-        self.assertIn(str(self.accessibility_2.pictogram), accessibility_item[0].get('pictogram'))
+        self.assertIn(self.accessibility_2.name, [item.get('name') for item in accessibility_item])
+        self.assertIn(self.accessibility_2.pictogram.url, [item.get('pictogram') for item in accessibility_item])
 
     def test_settings_accessibility(self):
         response = self.get_settings()
@@ -193,8 +186,8 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(accessibility_item), 2)
 
     def test_settings_accessibility_no_picto(self):
-        self.accessibility_2.pictogram = None
-        self.accessibility_2.save()
+        accessibility = trekking_factories.AccessibilityFactory.create(pictogram=None)
+        self.trek.accessibilities.add(accessibility)
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -202,9 +195,9 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
-        self.assertEqual(len(accessibility_item), 2)
-        self.assertEqual(accessibility_item[0].get('name'), self.accessibility_2.name)
-        self.assertIsNone(accessibility_item[0].get('pictogram'))
+        self.assertEqual(len(accessibility_item), 3)
+        self.assertIn(accessibility.name, [a.get('name') for a in accessibility_item])
+        self.assertIn(None, [a.get('pictogram') for a in accessibility_item])
 
     def test_settings_difficulty(self):
         trekking_factories.DifficultyLevelFactory()
@@ -262,8 +255,8 @@ class SettingsMobileTest(TestCase):
         city_item = next((item.get('values') for item in json_response.get('data')
                           if item['id'] == 'cities'), None)
         self.assertEqual(len(city_item), City.objects.count())
-        self.assertEqual(city_item[0].get('name'), city.name)
-        self.assertEqual(city_item[0].get('id'), city.code)
+        self.assertIn(city.name, [c.get('name') for c in city_item])
+        self.assertIn(city.code, [c.get('id') for c in city_item])
 
     def test_settings_district(self):
         district = zoning_factories.DistrictFactory()
@@ -276,7 +269,7 @@ class SettingsMobileTest(TestCase):
         district_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'districts'), None)
         self.assertEqual(len(district_item), District.objects.count())
-        self.assertEqual(district_item[0].get('name'), district.name)
+        self.assertIn(district.name, [d.get('name') for d in district_item])
 
     def test_settings_poi_type(self):
         poi_type = trekking_factories.POITypeFactory.create()

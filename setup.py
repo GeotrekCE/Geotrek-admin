@@ -1,24 +1,10 @@
 #!/usr/bin/python3
+
 import os
-import distutils.command.build
-from pathlib import Path
+
 from setuptools import setup, find_packages
-from shutil import copy
 
 here = os.path.abspath(os.path.dirname(__file__))
-
-
-class BuildCommand(distutils.command.build.build):
-    def run(self):
-        distutils.command.build.build.run(self)
-        from django.core.management import call_command
-        curdir = os.getcwd()
-        for subdir in ('geotrek', ):
-            os.chdir(subdir)
-            call_command('compilemessages')
-            for path in Path('.').rglob('*.mo'):
-                copy(path, os.path.join(curdir, self.build_lib, subdir, path))
-            os.chdir(curdir)
 
 
 setup(
@@ -35,8 +21,7 @@ setup(
         'chardet',
         'cairosvg',
         'cairocffi',
-        'env_file',
-        # pinned by requirements.txt
+        'python-dotenv',
         'pymemcache',
         'coreschema',
         'coreapi',
@@ -65,17 +50,16 @@ setup(
         'django-colorfield',
         'Fiona',
         'markdown',
-        "weasyprint==52.5",  # newer version required libpango (not available in bionic)
-        'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
+        "weasyprint",
+        'django-weasyprint',
         "django-clearcache",
         "pyopenair",
         "django-treebeard",
+        'easy-thumbnails[svg]',
         # prod,
         'gunicorn',
         'sentry-sdk',
-        'easy-thumbnails[svg]',
     ],
-    cmdclass={"build": BuildCommand},
     include_package_data=True,
     license='BSD, see LICENSE file.',
     packages=find_packages(),

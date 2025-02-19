@@ -707,7 +707,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMix
                                                         Transform(F('geom'), settings.SRID)))
                 qs = qs.order_by('locate')
 
-        return qs
+        return qs.select_related("type")
 
     @classmethod
     def outdoor_all_pois(cls, obj):

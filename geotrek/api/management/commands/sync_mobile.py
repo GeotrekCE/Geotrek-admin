@@ -10,6 +10,7 @@ from time import sleep
 from zipfile import ZipFile
 
 import cairosvg
+from PIL import Image
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
@@ -19,7 +20,6 @@ from django.test.client import RequestFactory
 from django.utils import translation
 from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
-from PIL import Image
 
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
 from geotrek.api.mobile.views.trekking import TrekViewSet
@@ -160,6 +160,16 @@ class Command(BaseCommand):
             name = os.path.join(lang, str(trek.pk), 'touristic_events', '{}.geojson'.format(child.pk))
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
+    def sync_trek_sensitive_areas(self, lang, trek):
+        params = {'format': 'geojson', 'root_pk': trek.pk}
+        view = TrekViewSet.as_view({'get': 'sensitive_areas'})
+        name = os.path.join(lang, str(trek.pk), 'sensitive_areas.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
+        # Sync sensitive areas of children too
+        for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
+            name = os.path.join(lang, str(trek.pk), 'sensitive_areas', '{}.geojson'.format(child.pk))
+            self.sync_view(lang, view, name, params=params, pk=child.pk)
+
     def sync_file(self, name, src_root, url, directory='', zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
@@ -181,7 +191,7 @@ class Command(BaseCommand):
 
     def sync_pictograms(self, model, directory='', zipfile=None, size=None):
         for obj in model.objects.all():
-            if not obj.pictogram:
+            if not obj.pictogram or not os.path.exists(obj.pictogram.path):
                 continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == '.svg':
@@ -205,8 +215,8 @@ class Command(BaseCommand):
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                        directory=directory, url=obj.pictogram.url, name=name))
+                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                        directory=directory, url=obj.pictogram.url))
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
@@ -290,6 +300,7 @@ class Command(BaseCommand):
             self.sync_trek_pois(lang, trek)
             self.sync_trek_touristic_contents(lang, trek)
             self.sync_trek_touristic_events(lang, trek)
+            self.sync_trek_sensitive_areas(lang, trek)
             # Sync detail of children too
             for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(geom_type="LINESTRING"):
                 self.sync_geojson(
@@ -325,6 +336,11 @@ class Command(BaseCommand):
         if not self.skip_tiles:
             self.sync_trek_tiles(trek, trekid_zipfile)
 
+        if trek.resized_pictures:
+            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
+                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
+
         for poi in trek.published_pois.annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if poi.resized_pictures:
                 for picture, thdetail in poi.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
@@ -340,10 +356,7 @@ class Command(BaseCommand):
                 for picture, thdetail in touristic_event.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
                     self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
                                          zipfile=trekid_zipfile)
-        if trek.resized_pictures:
-            for picture, thdetail in trek.resized_pictures[:settings.MOBILE_NUMBER_PICTURES_SYNC]:
-                self.sync_media_file(thdetail, prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+
         for desk in trek.information_desks.all().annotate(geom_type=GeometryType("geom")).filter(geom_type="POINT"):
             if desk.resized_picture:
                 self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
@@ -406,8 +419,7 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek, zipfile):
-        """ Add tiles to zipfile for the specified Trek object.
-        """
+        """ Add tiles to zipfile for the specified Trek object."""
 
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
@@ -490,7 +502,7 @@ class Command(BaseCommand):
 
     def rename_root(self):
         if os.path.exists(self.dst_root):
-            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_mobile')
+            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), f'{os.path.basename(self.dst_root)}_deprecated_sync_mobile')
             os.rename(self.dst_root, tmp_root2)
             if os.path.exists(tmp_root2):
                 shutil.rmtree(tmp_root2)
@@ -536,7 +548,7 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': settings.MOBILE_TILES_PATH,
         }
-        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, 'sync_mobile')
+        sync_mobile_tmp_dir = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
         if options['empty_tmp_folder']:
             for dir in os.listdir(sync_mobile_tmp_dir):
                 shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))

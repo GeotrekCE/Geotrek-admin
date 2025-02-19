@@ -1,9 +1,13 @@
 from modeltranslation.translator import translator, TranslationOptions
 
-from geotrek.common.models import TargetPortal, Theme, Label, HDViewPoint
+from geotrek.common.models import AnnotationCategory, TargetPortal, Theme, Label, HDViewPoint
 
 
 class ThemeTO(TranslationOptions):
+    fields = ('label', )
+
+
+class AnnotationCategoryTO(TranslationOptions):
     fields = ('label', )
 
 
@@ -22,4 +26,5 @@ class HDViewPointTO(TranslationOptions):
 translator.register(Theme, ThemeTO)
 translator.register(TargetPortal, TargetPortalTO)
 translator.register(Label, LabelTO)
+translator.register(AnnotationCategory, AnnotationCategoryTO)
 translator.register(HDViewPoint, HDViewPointTO)

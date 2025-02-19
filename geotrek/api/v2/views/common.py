@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from django.utils.translation import activate
+from django.utils import translation
 
 from rest_framework.response import Response
 
@@ -117,8 +117,14 @@ class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.HDViewPointPublishedByPortalFilter,)
 
     def get_queryset(self):
-        activate(self.request.GET.get('language'))
-        return common_models.HDViewPoint.objects \
-            .prefetch_related('content_object') \
-            .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('title')  # Required for reliable pagination
+        with translation.override(self.request.GET.get('language'), deactivate=True):
+            return common_models.HDViewPoint.objects \
+                .prefetch_related('content_object') \
+                .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
+                .order_by('title')  # Required for reliable pagination
+
+
+class AnnotationCategoryViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends
+    serializer_class = api_serializers.AnnotationCategorySerializer
+    queryset = common_models.AnnotationCategory.objects.all()

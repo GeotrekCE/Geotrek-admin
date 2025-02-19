@@ -1,8 +1,8 @@
 import json
 import os
-import urllib
 from io import StringIO
 from unittest import mock, skipIf
+from urllib.parse import urlparse
 
 import requests
 from django.conf import settings
@@ -205,7 +205,7 @@ class MultilangFilterThemeParser(MultilangThemeParser):
         return 'filtered {}'.format(val)
 
 
-@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
 class MultilangParserTests(TestCase):
     """Test for translated fields
 - case 1 : flow has only one data
@@ -355,6 +355,16 @@ class AttachmentParserTests(TestCase):
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch('requests.get')
+    @mock.patch('PIL.Image.open')
+    def test_catch_decompression_error(self, mocked_open, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = b''
+        mocked_open.side_effect = ValueError("Decompressed Data Too Large")
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism4.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
+        self.assertEqual(Attachment.objects.count(), 0)
+
+    @mock.patch('requests.get')
     def test_attachment_with_other_filetype_with_structure(self, mocked):
         """
         It will always take the one without structure first
@@ -471,7 +481,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_download_fail(self, mocked_urlparse, mocked_get):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         mocked_get.side_effect = DownloadImportError("DownloadImportError")
-        mocked_urlparse.return_value = urllib.parse.urlparse('ftp://test.url.com/organism.xls')
+        mocked_urlparse.return_value = urlparse('ftp://test.url.com/organism.xls')
         output = StringIO()
         call_command('import', 'geotrek.common.tests.test_parsers.WarnAttachmentParser', filename, verbosity=2,
                      stdout=output)
@@ -526,23 +536,29 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
 
 
+class TestXmlParser(XmlParser):
+    results_path = 'Result/el'
+    model = Organism
+
+    fields = {'organism': 'ORGANISM'}
+
+    def __init__(self):
+        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
+        self.filetype = FileType.objects.create(type="Photographie")
+        super().__init__()
+
+
 class XMLParserTests(TestCase):
-    def test_xml(self):
-        class TestXmlParser(XmlParser):
-            results_path = 'Result/el'
-            model = Organism
-
-            fields = {'organism': 'ORGANISM'}
-
-            def __init__(self):
-                self.filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
-                self.filetype = FileType.objects.create(type="Photographie")
-                super().__init__()
-
+    def test_xml_parser(self):
         parser = TestXmlParser()
         parser.parse()
         self.assertEqual(Organism.objects.count(), 1)
         self.assertEqual(Organism.objects.get().organism, 'Organism a')
+
+    def test_parser_limit(self):
+        parser = TestXmlParser()
+        parser.parse(limit=-1)
+        self.assertEqual(Organism.objects.count(), 0)
 
 
 class TourInSoftParserTests(TestCase):
@@ -658,7 +674,7 @@ class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
     pass
 
 
-class GeotrekParserTest(TestCase):
+class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
 
@@ -666,37 +682,65 @@ class GeotrekParserTest(TestCase):
         with self.assertRaisesRegex(ImproperlyConfigured, 'foo_field is not configured in categories_keys_api_v2'):
             call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestParser', verbosity=2)
 
-    def mock_json(self):
-        filename = os.path.join('geotrek', 'common', 'tests', 'data', 'geotrek_parser_v2', 'treks.json')
-        with open(filename, 'r') as f:
-            return json.load(f)
-
     @mock.patch('requests.get')
-    def test_delete_according_to_provider(self, mocked_get):
+    @mock.patch('requests.head')
+    def test_delete_according_to_provider(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json'),
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json'),
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json')]
+
+        # Mock GET
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.json = self.mock_json
-        self.assertEqual(Trek.objects.count(), 0)
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 1)
         t = Trek.objects.first()
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider, "Provider1")
-        self.assertEqual(t.description_teaser, "Chapeau")
+        self.assertEqual(t.description_teaser, "Header")
         self.assertEqual(t.description_teaser_fr, "Chapeau")
         self.assertEqual(t.description_teaser_en, "Header")
         TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
         t2 = TrekFactory(provider="Provider2", name="I should not be deleted", eid="1236")
         t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
-        self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
+        self.assertEqual({t.pk, t2.pk, t3.pk}, set(Trek.objects.values_list('pk', flat=True)))
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser', verbosity=0)
-        self.assertEqual(set([t.pk, t2.pk, t3.pk]), set(Trek.objects.values_list('pk', flat=True)))
+        self.assertEqual({t.pk, t2.pk, t3.pk}, set(Trek.objects.values_list('pk', flat=True)))
 
     @mock.patch('requests.get')
-    def test_delete_according_to_no_provider(self, mocked_get):
+    @mock.patch('requests.head')
+    def test_delete_according_to_no_provider(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json'),
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json'),
+            ('common', 'treks.json'),
+            ('common', 'treks.json'),
+            ('trekking', 'trek_no_children.json')]
+
+        # Mock GET
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b''
+        mocked_head.return_value.status_code = 200
+
         self.assertEqual(Trek.objects.count(), 0)
         call_command('import', 'geotrek.common.tests.test_parsers.GeotrekTrekTestNoProviderParser', verbosity=0)
         self.assertEqual(Trek.objects.count(), 1)
@@ -799,7 +843,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     @mock.patch('requests.get')
     @mock.patch('requests.head')
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE='fr')
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
         self.mock_time = 0
         # First every categories (inside __init__)
@@ -828,6 +872,10 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ('trekking', 'trek_ids.json'),
             ('trekking', 'trek.json'),
             ('trekking', 'trek_children.json'),
+            ('trekking', 'trek_published_step.json'),
+            ('trekking', 'trek_unpublished_step.json'),
+            ('trekking', 'trek_unpublished_structure.json'),
+            ('trekking', 'trek_unpublished_practice.json'),
             ('trekking', 'poi_ids.json'),
             ('trekking', 'poi.json'),
             ('tourism', 'informationdesk_ids.json'),
@@ -853,6 +901,10 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ('trekking', 'trek_ids.json'),
             ('trekking', 'trek.json'),
             ('trekking', 'trek_children.json'),
+            ('trekking', 'trek_published_step.json'),
+            ('trekking', 'trek_unpublished_step.json'),
+            ('trekking', 'trek_unpublished_structure.json'),
+            ('trekking', 'trek_unpublished_practice.json'),
             ('trekking', 'poi_ids.json'),
             ('trekking', 'poi.json'),
             ('tourism', 'informationdesk_ids.json'),
@@ -875,9 +927,11 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         string_parser = output.getvalue()
         self.assertIn('0000: Trek (URL_1) (00%)', string_parser)
         self.assertIn('0000: Poi (URL_1) (00%)', string_parser)
-        self.assertIn('5/5 lignes importées.', string_parser)
+        # Published Tour steps are imported twice, but created once
+        self.assertIn('7/7 lignes importées.', string_parser)
+        self.assertIn('6 enregistrements créés.', string_parser)
         self.assertIn('2/2 lignes importées.', string_parser)
-        self.assertEqual(Trek.objects.count(), 5)
+        self.assertEqual(Trek.objects.count(), 6)
         self.assertEqual(POI.objects.count(), 2)
         self.assertEqual(1, Trek.objects.get(name="Foo").information_desks.count())
         self.assertEqual("Office de Tourisme de Seix",

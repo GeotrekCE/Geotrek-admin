@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.core.models import (
     PathSource, Stake, Usage, Network, Comfort, TrailCategory,
@@ -69,3 +70,6 @@ class CertificationStatusAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
     list_filter = ('structure',)
     merge_field = "label"
+
+
+admin.site.site_header = _('Geotrek configuration')

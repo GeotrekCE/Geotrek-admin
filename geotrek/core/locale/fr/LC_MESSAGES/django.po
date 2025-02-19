@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-01-30 13:53+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -18,6 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.1.1\n"
+
+msgid "Geotrek configuration"
+msgstr "Configuration de Geotrek"
 
 msgid "Core"
 msgstr "Cœur"
@@ -292,9 +295,6 @@ msgstr "KML"
 msgid "Not validated"
 msgstr "Non validé"
 
-msgid "Attributes"
-msgstr "Informations"
-
 msgid "Draft mode"
 msgstr "Mode brouillon"
 
@@ -315,6 +315,17 @@ msgstr "Fusionner les tronçons"
 
 msgid "Cancel"
 msgstr "Annuler"
+
+msgid "Warning"
+msgstr "Attention"
+
+msgid "The marker was not dropped on a path."
+msgstr "Le marqueur n'a pas été déposé sur un tronçon."
+
+msgid "No routing found for this marker. Please move or delete it."
+msgstr ""
+"Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer ou le "
+"supprimer."
 
 msgid "No certification"
 msgstr "Aucune labellisation"

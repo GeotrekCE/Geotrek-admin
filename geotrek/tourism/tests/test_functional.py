@@ -11,9 +11,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.tests.factories import StructureFactory, TrekkingManagerFactory
-from geotrek.common.tests import CommonTest
-from geotrek.common.tests.factories import AttachmentFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.tests import CommonTest, AttachmentImageFactory
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.zoning.tests.factories import CityFactory
 
@@ -138,11 +136,8 @@ class TouristicEventViewsTests(CommonTest):
     @patch('mapentity.helpers.requests')
     def test_document_export_with_attachment(self, mock_requests):
         obj = self.modelfactory.create()
-        attachment = AttachmentFactory.create(content_object=obj,
-                                              attachment_file=get_dummy_uploaded_image(),
-                                              title='mapimage')
-        obj.attachment = attachment
-        obj.save()
+        attachment = AttachmentImageFactory.create(content_object=obj,
+                                                   title='mapimage')
         mock_requests.get.return_value.status_code = 200
         mock_requests.get.return_value.content = '<p id="properties">Mock</p>'
         response = self.client.get(obj.get_document_url())

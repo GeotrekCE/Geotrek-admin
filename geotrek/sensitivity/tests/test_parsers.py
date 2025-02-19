@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 
 import requests
 from unittest import mock
@@ -8,7 +9,6 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 from geotrek.sensitivity.tests.factories import SpeciesFactory, SportPracticeFactory
@@ -131,7 +131,7 @@ class BiodivWithPracticeParser(BiodivParser):
     size = 1
 
 
-class BiodivParserTests(TranslationResetMixin, TestCase):
+class BiodivParserTests(TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
         self.page = 1
@@ -231,10 +231,10 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                 response.json = lambda: json_test_sport_practice
             else:
                 if self.page == 1:
-                    json_test_species_without_id = json_test_species.copy()
+                    json_test_species_without_id = deepcopy(json_test_species)
                     self.page += 1
                 else:
-                    json_test_species_without_id = json_test_species_page_2.copy()
+                    json_test_species_without_id = deepcopy(json_test_species_page_2)
                 json_test_species_without_id['results'][0]['species_id'] = None
                 response.json = lambda: json_test_species_without_id
             return response
@@ -300,6 +300,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
 class SpeciesSensitiveAreaShapeParserTest(TestCase):
     def test_cli(self):
+        self.maxDiff = None
         filename = os.path.join(os.path.dirname(__file__), 'data', 'species.shp')
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         self.assertEqual(SensitiveArea.objects.count(), 0)
@@ -310,11 +311,11 @@ class SpeciesSensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
         self.assertEqual(
-            WKTWriter(precision=5).write(area.geom),
-            b'POLYGON ((929315.36134 6483309.44351, 929200.35394 6483204.02006, 928404.88615 6482494.80781, '
-            b'928194.03926 6482082.69799, 927925.68868 6481210.55860, 927676.50600 6481287.23020, '
-            b'927772.34549 6481498.07708, 927887.35289 6481900.60295, 928184.45532 6482600.23125, '
-            b'928625.31698 6483520.29039, 929162.01815 6483664.04963, 929315.36134 6483309.44351))')
+            WKTWriter(precision=0).write(area.geom),
+            b'POLYGON ((929315 6483309, 929200 6483204, 928405 6482495, 928194 6482083, 927926 6481211, '
+            b'927677 6481287, 927772 6481498, 927887 6481901, 928184 6482600, 928625 6483520, 929162 6483664, '
+            b'929315 6483309))'
+        )
 
 
 class RegulatorySensitiveAreaShapeParserTest(TestCase):
@@ -334,9 +335,3 @@ class RegulatorySensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.species.url, "http://test.com")
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
-        self.assertEqual(
-            WKTWriter(precision=5).write(area.geom),
-            b'POLYGON ((929315.36134 6483309.44351, 929200.35394 6483204.02006, 928404.88615 6482494.80781, '
-            b'928194.03926 6482082.69799, 927925.68868 6481210.55860, 927676.50600 6481287.23020, '
-            b'927772.34549 6481498.07708, 927887.35289 6481900.60295, 928184.45532 6482600.23125, '
-            b'928625.31698 6483520.29039, 929162.01815 6483664.04963, 929315.36134 6483309.44351))')

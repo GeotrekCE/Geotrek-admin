@@ -38,6 +38,14 @@ fieldset {
   flex-basis: 55%;
 }
 
+#div_id_annotation_category {
+  display: none;
+}
+
+#id_annotation_category {
+  width: 18rem;
+}
+
 .loader-wrapper {
   display: table;
   margin: 0 auto;
@@ -169,7 +177,10 @@ fieldset {
 
 .entry {
   margin-right: 10px;
+  margin-bottom: 5px;
+  overflow: auto;
 }
+
 .entry .entry-name {
   margin-left: 10px;
   margin-right: 10px;

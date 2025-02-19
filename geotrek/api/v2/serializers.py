@@ -274,6 +274,8 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
 
     def get_thumbnail(self, obj):
         thumbnailer = get_thumbnailer(self.get_attachment_file(obj))
+        if hasattr(obj, 'is_image') and not obj.is_image:
+            return ""
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get('apiv2'))
         except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
@@ -360,6 +362,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class HDViewPointSerializer(TimeStampedSerializer):
     geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
     picture_tiles_url = serializers.SerializerMethodField()
+    annotations = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
     metadata_url = serializers.SerializerMethodField()
     trek = serializers.SerializerMethodField()
@@ -396,6 +399,17 @@ class HDViewPointSerializer(TimeStampedSerializer):
         if isinstance(related_obj, trekking_models.POI):
             return {'uuid': related_obj.uuid, 'id': related_obj.id}
         return None
+
+    def get_annotations(self, obj):
+        annotations = obj.annotations
+        annotations_categories = obj.annotations_categories
+        for feature in annotations.get("features", []):
+            feat_id = feature["properties"]["annotationId"]
+            if str(feat_id) in annotations_categories.keys():
+                feature["properties"]['category'] = int(annotations_categories[str(feat_id)])
+            else:
+                feature["properties"]['category'] = None
+        return annotations
 
     class Meta(TimeStampedSerializer.Meta):
         model = common_models.HDViewPoint
@@ -464,6 +478,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         description_teaser = serializers.SerializerMethodField()
         practical_info = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField('get_pdf_url')
+        published = serializers.SerializerMethodField()
+
+        def get_published(self, obj):
+            return get_translation_or_dict('published', self, obj)
 
         def get_accessibility(self, obj):
             return get_translation_or_dict('accessibility', self, obj)
@@ -922,6 +940,16 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Theme
+            fields = ('id', 'label', 'pictogram')
+
+    class AnnotationCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        label = serializers.SerializerMethodField()
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = common_models.AnnotationCategory
             fields = ('id', 'label', 'pictogram')
 
     class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -1558,7 +1586,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
         class Meta:
             model = infrastructure_models.Infrastructure
-            fields = ('id', 'accessibility', 'attachments', 'condition', 'description', 'eid', 'geometry', 'name',
+            fields = ('id', 'accessibility', 'attachments', 'conditions', 'description', 'eid', 'geometry', 'name',
                       'implantation_year', 'maintenance_difficulty', 'provider', 'structure', 'type', 'usage_difficulty', 'uuid')
 
     class InfrastructureConditionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -1581,12 +1609,18 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
 
+    class LinePictogramSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+
+        class Meta:
+            model = signage_models.LinePictogram
+            fields = ('label', 'code', 'pictogram', 'description')
+
     class LineSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        pictogram = serializers.CharField(source='pictogram_name')
+        pictograms = LinePictogramSerializer(many=True)
 
         class Meta:
             model = signage_models.Line
-            fields = ('id', 'direction', 'text', 'pictogram', 'distance', 'time')
+            fields = ('id', 'direction', 'text', 'pictograms', 'distance', 'time')
 
     class BladeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         lines = LineSerializer(many=True)

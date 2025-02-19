@@ -109,10 +109,6 @@ class PicturesMixin:
             return self._pictures
         return self.attachments.filter(is_image=True).exclude(title='mapimage').order_by('-starred', 'attachment_file')
 
-    @pictures.setter
-    def pictures(self, values):
-        self._pictures = values
-
     @property
     def serializable_pictures(self):
         serialized = []
@@ -156,7 +152,7 @@ class PicturesMixin:
 
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
+                logger.warning(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
             else:
                 resized.append((picture, thdetail))
         return resized

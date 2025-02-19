@@ -1,13 +1,18 @@
 import os
+from shutil import copy as copyfile
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.test import SimpleTestCase, TestCase, override_settings
+from django.test import SimpleTestCase, TestCase
+from django.test.utils import override_settings
 
 from ..parsers import Parser
-from ..utils import uniquify, format_coordinates, spatial_reference, simplify_coords
+from ..utils import (format_coordinates, simplify_coords, spatial_reference,
+                     uniquify)
+from ..utils.file_infos import get_encoding_file
 from ..utils.import_celery import create_tmp_destination, subclasses
-from ..utils.parsers import add_http_prefix
+from ..utils.parsers import (add_http_prefix, get_geom_from_gpx,
+                             get_geom_from_kml, maybe_fix_encoding_to_utf8, GeomValueError)
 
 
 class UtilsTest(TestCase):
@@ -100,3 +105,155 @@ class UtilsParsersTest(SimpleTestCase):
 
     def test_add_http_prefix_with_prefix(self):
         self.assertEqual('http://test.com', add_http_prefix('http://test.com'))
+
+
+class GpxToGeomTests(SimpleTestCase):
+
+    @staticmethod
+    def _get_gpx_from(filename):
+        with open(filename, 'r') as f:
+            gpx = f.read()
+        return bytes(gpx, 'utf-8')
+
+    def test_gpx_with_waypoint_can_be_converted(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/apidae_test_trek.gpx')
+
+        geom = get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_gpx_with_route_points_can_be_converted(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_route_points.gpx')
+
+        geom = get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_raises_an_error_on_not_continuous_segments(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_not_continuous_segments.gpx')
+
+        with self.assertRaises(GeomValueError):
+            get_geom_from_gpx(gpx)
+
+    def test_it_handles_segment_with_single_point(self):
+        gpx = self._get_gpx_from(
+            'geotrek/trekking/tests/data/apidae_trek_parser/trace_with_single_point_segment.gpx'
+        )
+        geom = get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 13)
+
+    def test_it_raises_an_error_when_no_linestring(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_feature.gpx')
+
+        with self.assertRaises(GeomValueError):
+            get_geom_from_gpx(gpx)
+
+    def test_it_handles_multiple_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features.gpx')
+        geom = get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_handles_multiple_continuous_features_with_one_empty(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_continuous_features_and_one_empty.gpx')
+        geom = get_geom_from_gpx(gpx)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 12)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 977776.9, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6547354.8, delta=0.1)
+
+    def test_it_raises_error_on_multiple_not_continuous_features(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_multiple_not_continuous_features.gpx')
+        with self.assertRaises(GeomValueError):
+            get_geom_from_gpx(gpx)
+
+    def test_it_raises_error_on_invalid_multilinestring_merge(self):
+        gpx = self._get_gpx_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_only_two_duplicate_track_points.gpx')
+        with self.assertRaises(GeomValueError):
+            get_geom_from_gpx(gpx)
+
+
+class KmlToGeomTests(SimpleTestCase):
+
+    @staticmethod
+    def _get_kml_from(filename):
+        with open(filename, 'r') as f:
+            kml = f.read()
+        return bytes(kml, 'utf-8')
+
+    def test_kml_can_be_converted(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace.kml')
+
+        geom = get_geom_from_kml(kml)
+
+        self.assertEqual(geom.srid, 2154)
+        self.assertEqual(geom.geom_type, 'LineString')
+        self.assertEqual(len(geom.coords), 61)
+        first_point = geom.coords[0]
+        self.assertAlmostEqual(first_point[0], 973160.8, delta=0.1)
+        self.assertAlmostEqual(first_point[1], 6529320.1, delta=0.1)
+
+    def test_it_raises_exception_when_no_linear_data(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_no_line.kml')
+
+        with self.assertRaises(GeomValueError):
+            get_geom_from_kml(kml)
+
+    def test_it_raises_exception_on_invalid_multilinestring_merge(self):
+        kml = self._get_kml_from('geotrek/trekking/tests/data/apidae_trek_parser/trace_with_only_two_duplicate_coordinates.kml')
+
+        with self.assertRaises(GeomValueError):
+            get_geom_from_kml(kml)
+
+
+class TestConvertEncodingFiles(TestCase):
+    data_dir = "geotrek/trekking/tests/data"
+
+    def setUp(self):
+        if not os.path.exists(settings.TMP_DIR):
+            os.mkdir(settings.TMP_DIR)
+
+    def test_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_bad_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_bad_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertNotEqual(encoding, "utf-8")
+
+        new_file_name = maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
+
+    def test_not_fix_encoding_to_utf8(self):
+        file_name = f'{settings.TMP_DIR}/file_good_encoding_tmp.kml'
+        copyfile(f'{self.data_dir}/file_good_encoding.kml', file_name)
+
+        encoding = get_encoding_file(file_name)
+        self.assertEqual(encoding, "utf-8")
+
+        new_file_name = maybe_fix_encoding_to_utf8(file_name)
+
+        encoding = get_encoding_file(new_file_name)
+        self.assertEqual(encoding, "utf-8")
