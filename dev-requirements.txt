@@ -5,7 +5,9 @@
 #    pip-compile --strip-extras dev-requirements.in
 #
 asgiref==3.8.1
-    # via django
+    # via
+    #   -c requirements.txt
+    #   django
 build==1.0.0
     # via pip-tools
 click==8.1.8
@@ -73,7 +75,9 @@ tomli==2.0.1
     #   pip-tools
     #   pyproject-hooks
 typing-extensions==4.12.2
-    # via asgiref
+    # via
+    #   -c requirements.txt
+    #   asgiref
 wheel==0.41.2
     # via pip-tools
 
