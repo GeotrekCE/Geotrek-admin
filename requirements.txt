@@ -231,7 +231,7 @@ mapentity==8.11.1
     # via geotrek (setup.py)
 markdown==3.7
     # via geotrek (setup.py)
-markupsafe==2.1.5
+markupsafe==3.0.2
     # via jinja2
 mbutil==0.3.0
     # via landez
