@@ -15,6 +15,10 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
 - Deprecate support of Ubuntu 18.04 bionic.
 
+**Bug fixes**
+
+- Fix: Parser loading with import command (#3538)
+
 
 2.113.1    (2025-02-17)
 ----------------------------
@@ -260,7 +264,6 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Fix: missing default values in SQL template for Report model (#4085)
 - Fix: users cannot add attachment to Report model (#4085)
 - Fix: remove legacy default value for `external_uuid` in database for Report model (#4085)
-- Fix: Parser loading with import command (#3538)
 
 
 2.107.0 (2024-06-07)
