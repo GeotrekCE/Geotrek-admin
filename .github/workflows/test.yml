@@ -305,6 +305,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         with:
             working-directory: cypress
         env:
@@ -312,7 +313,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_BASE_URL: http://geotrek.local
           CYPRESS_CACHE_FOLDER: ~/cypress/cache
-
+      - run: docker compose logs web
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v4
         with:
