@@ -27,6 +27,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
+    code = CharFilter(label=_('Code'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = MultipleChoiceFilter(choices=lambda: Signage.objects.implantation_year_choices())
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
