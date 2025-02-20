@@ -4,8 +4,8 @@ else
   docker_compose=docker-compose
 endif
 
--include Makefile.perso.mk
--include .env
+-include $(wildcard Makefile.perso.mk)
+-include $(wildcard .env)
 
 ###########################
 #          colors         #
@@ -16,9 +16,33 @@ COLOR_DEBUG = \033[36m
 COLOR_RESET = \033[0m
 
 build:
-	docker build -t geotrek -f docker/Dockerfile . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
+	$(docker_compose) build
 
 build_no_cache:
+	$(docker_compose) build --no-cache
+
+serve:
+	$(docker_compose) up --remove-orphans
+
+purge_docs:
+	rm -rf docs/_build
+
+serve_docs: purge_docs
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -p ${SPHINX_PORT}:8800 web bash -c "sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
+
+build_docs: purge_docs
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs web bash -c "make html SPHINXOPTS=\"-W\""
+
+build_doc_translations:
+	$(docker_compose) run -w /opt/geotrek-admin/docs --rm web bash -c "make gettext && sphinx-intl update -p _build/locale -l fr"
+
+bash:
+	$(docker_compose) run --rm web bash
+
+build_prod:
+	docker build -t geotrek -f docker/Dockerfile .
+
+build_prod_no_cache:
 	docker build -t geotrek -f docker/Dockerfile --no-cache .
 
 build_deb:
@@ -34,9 +58,6 @@ release:
 	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
 	docker stop geotrek_release
 	docker rm geotrek_release
-
-serve:
-	$(docker_compose) up
 
 deps:
 	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
@@ -116,3 +137,6 @@ global.pdf:
 	rm ./${POSTGRES_DB}.dot
 
 uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
+
+%:
+	$(docker_compose) run --rm web ./manage.py $@

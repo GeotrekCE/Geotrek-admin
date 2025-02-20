@@ -1,6 +1,6 @@
-ARG BASE_IMAGE=noble
+ARG BASE_IMAGE=ubuntu:noble
 
-FROM ubuntu:${BASE_IMAGE} AS base
+FROM ${BASE_IMAGE} AS base
 
 # add labels
 LABEL org.opencontainers.image.authors="Makina Corpus"
