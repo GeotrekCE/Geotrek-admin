@@ -210,7 +210,7 @@ gunicorn==23.0.0
     # via geotrek (setup.py)
 idna==3.10
     # via requests
-importlib-metadata==8.5.0
+importlib-metadata==8.6.1
     # via pygal
 inflection==0.5.1
     # via
