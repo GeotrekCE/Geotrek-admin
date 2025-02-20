@@ -33,6 +33,9 @@ serve_docs: purge_docs
 build_docs: purge_docs
 	$(docker_compose) run --rm -w /opt/geotrek-admin/docs web bash -c "make html SPHINXOPTS=\"-W\""
 
+build_doc_translations:
+	$(docker_compose) run -w /opt/geotrek-admin/docs --rm web bash -c "make gettext && sphinx-intl update -p _build/locale -l fr"
+
 bash:
 	$(docker_compose) run --rm web bash
 

@@ -70,3 +70,5 @@ docs/_build/
 /coverage.lcov
 /htmlcov/
 /.cache/
+/.python_history
+/.bash_history
