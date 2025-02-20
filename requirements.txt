@@ -330,7 +330,7 @@ requests==2.32.3
     #   django-embed-video
     #   landez
     #   mapentity
-rjsmin==1.2.2
+rjsmin==1.2.4
     # via django-compressor
 rpds-py==0.22.3
     # via
