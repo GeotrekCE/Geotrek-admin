@@ -423,7 +423,7 @@ MAPENTITY_CONFIG = {
                      'arrowColor': 'black', 'arrowSize': 10},
         }
     },
-    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg)$',
+    'REGEX_PATH_ATTACHMENTS': r'\.\d+x\d+_q\d+(_crop)?(_watermark-\w+)?\.(jpg|png|jpeg|bmp|webp)$',
     'MAX_CHARACTERS': None,
 }
 
