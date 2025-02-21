@@ -38,6 +38,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 - Update documentation theme and content, re-organize sections (#4484)
 - Add infos about adding new languages (#4486)
+- Fix typo in docs
 
 
 2.113.0    (2025-01-30)
