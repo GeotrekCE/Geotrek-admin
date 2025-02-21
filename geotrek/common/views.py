@@ -77,6 +77,11 @@ from .viewsets import GeotrekMapentityViewSet
 
 logger = logging.getLogger(__name__)
 
+ANNOTATION_FORBIDDEN_CHARS = re.compile(r"['`\"\]\[;\s]|--|/\*|\*/")
+REPLACEMENT_CHAR = "_"
+
+def normalize_annotation_column_name(col_name):
+    return ANNOTATION_FORBIDDEN_CHARS.sub(repl=REPLACEMENT_CHAR, string=col_name)
 
 def handler404(request, exception, template_name="404.html"):
     if "api/v2" in request.get_full_path():

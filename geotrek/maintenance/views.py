@@ -12,6 +12,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.views import normalize_annotation_column_name
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.models import Report
 from .filters import InterventionFilterSet, ProjectFilterSet
@@ -22,14 +23,6 @@ from .serializers import (InterventionSerializer, ProjectSerializer,
                           InterventionGeojsonSerializer, ProjectGeojsonSerializer)
 
 logger = logging.getLogger(__name__)
-
-
-ANNOTATION_FORBIDDEN_CHARS = re.compile(r"['`\"\]\[;\s]|--|/\*|\*/")
-REPLACEMENT_CHAR = "_"
-
-
-def _normalize_annotation_column_name(col_name):
-    return ANNOTATION_FORBIDDEN_CHARS.sub(repl=REPLACEMENT_CHAR, string=col_name)
 
 
 class InterventionList(CustomColumnsMixin, MapEntityList):
@@ -50,7 +43,7 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
     @classmethod
     def build_cost_column_name(cls, job_name):
-        return _normalize_annotation_column_name(f"{_('Cost')} {job_name}")
+        return normalize_annotation_column_name(f"{_('Cost')} {job_name}")
 
     def get_queryset(self):
         """Returns all interventions joined with a new column for each job, to record the total cost of each job in each intervention"""
