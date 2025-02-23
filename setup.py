@@ -32,7 +32,6 @@ setup(
         'simplekml',
         'pygal',
         'paperclip',
-        'django-extended-choices',
         'django-modelcluster',
         'django-mptt',
         'geojson',

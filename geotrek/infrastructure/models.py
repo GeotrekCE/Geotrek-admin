@@ -1,12 +1,11 @@
 import os
 
 from django.db import models
+from django.db.models.enums import TextChoices
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-
-from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.signals import log_cascade_deletion
@@ -17,16 +16,16 @@ from geotrek.common.models import AccessMean
 from geotrek.core.models import Topology, Path
 from geotrek.infrastructure.managers import InfrastructureGISManager
 
-INFRASTRUCTURE_TYPES = Choices(
-    ('BUILDING', 'A', _("Building")),
-    ('FACILITY', 'E', _("Facility")),
-)
+
+class InfrastructureTypeChoices(TextChoices):
+    BUILDING = 'A', _('Building')
+    FACILITY = 'E', _('Facility')
 
 
 class InfrastructureType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(max_length=128)
-    type = models.CharField(max_length=1, choices=INFRASTRUCTURE_TYPES)
+    type = models.CharField(max_length=1, choices=InfrastructureTypeChoices.choices)
 
     class Meta:
         verbose_name = _("Infrastructure Type")

@@ -1,8 +1,7 @@
-from extended_choices import Choices
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.db.models.enums import TextChoices
 from django.utils.translation import gettext_lazy as _
 from geotrek.common.mixins.models import (
     TimeStampedModelMixin, BasePublishableMixin, OptionalPictogramMixin
@@ -35,24 +34,21 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
 
 
 class MenuItem(OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMixin, MP_Node):
+    class TargetTypeChoices(TextChoices):
+        PAGE = 'page', _('Page')
+        LINK = 'link', _('Link')
 
-    TARGET_TYPE_CHOICES = Choices(
-        ("PAGE", "page", _("Page")),
-        ("LINK", "link", _("Link")),
-    )
-
-    PLATFORM_CHOICES = Choices(
-        ('ALL', 'all', _('All')),
-        ('MOBILE', 'mobile', _('Mobile')),
-        ('WEB', 'web', _('Web')),
-    )
+    class PlatformChoices(TextChoices):
+        ALL = 'all', _('All')
+        MOBILE = 'mobile', _('Mobile')
+        WEB = 'web', _('Web')
 
     title = models.CharField(verbose_name=_('Title'), max_length=200)
-    target_type = models.CharField(max_length=10, verbose_name=_('Target type'), null=True, blank=True, choices=TARGET_TYPE_CHOICES)
+    target_type = models.CharField(max_length=10, verbose_name=_('Target type'), null=True, blank=True, choices=TargetTypeChoices.choices)
     link_url = models.CharField(max_length=200, verbose_name=_('Link URL'), blank=True, default='')
     page = models.ForeignKey(FlatPage, on_delete=models.SET_NULL, null=True, blank=True, related_name="menu_items")
-    platform = models.CharField(verbose_name=_('Platform'), max_length=12, choices=PLATFORM_CHOICES,
-                                default=PLATFORM_CHOICES.ALL)
+    platform = models.CharField(verbose_name=_('Platform'), max_length=12, choices=PlatformChoices.choices,
+                                default=PlatformChoices.ALL)
     portals = models.ManyToManyField('common.TargetPortal',
                                      blank=True, related_name='menu_items',
                                      verbose_name=_("Portals"))

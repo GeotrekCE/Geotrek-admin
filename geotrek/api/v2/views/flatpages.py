@@ -44,7 +44,7 @@ class MenuItemTreeView(GenericAPIView):
     queryset = (
         flatpages_models.MenuItem.objects
         .filter(depth=1)
-        .exclude(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        .exclude(platform=MenuItem.PlatformChoices.MOBILE)
     )
     filter_backends = (
         GeotrekPublishedFilter,
@@ -75,7 +75,7 @@ class MenuItemTreeView(GenericAPIView):
     def _recursive_node_to_dict(self, node):
         result = self.get_serializer(instance=node).data
         children_qs = self.filter_queryset(
-            node.get_children().exclude(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+            node.get_children().exclude(platform=MenuItem.PlatformChoices.MOBILE)
         )
         children = [self._recursive_node_to_dict(c) for c in children_qs if self._check_page_published(c)]
         result["children"] = children

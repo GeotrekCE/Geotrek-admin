@@ -796,6 +796,7 @@ class TopologyDerialization(TestCase):
     def test_deserialize_line(self):
         path = PathFactory.create()
         topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
+        topology.save()
         self.assertEqual(topology.offset, 1)
         self.assertEqual(topology.kind, 'TMP')
         self.assertEqual(topology.paths.all().count(), 1)
@@ -832,6 +833,7 @@ class TopologyDerialization(TestCase):
         self.assertEqual(closest.geom.coords, ((700000, 6600000), (700100, 6600100)))
         # The point has same x as first point of path, and y to 0 :
         topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
+        topology.save()
         self.assertAlmostEqual(topology.offset, -70.7106781, places=6)
         self.assertEqual(topology.paths.all().count(), 1)
         pagg = topology.aggregations.get()

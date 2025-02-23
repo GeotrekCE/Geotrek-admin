@@ -3088,7 +3088,7 @@ class FlatPageTestCase(TestCase):
         page_factory = partial(flatpages_factory.FlatPageFactory, published_fr=True, portals=None)
         not_visible_page = page_factory()
         visible_page = page_factory()
-        menu_factory = partial(flatpages_factory.MenuItemFactory, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        menu_factory = partial(flatpages_factory.MenuItemFactory, target_type=MenuItem.TargetTypeChoices.PAGE)
         # Those 3 menu items are not visible given the following API query
         menu_factory(published=False, portals=[portal], page=not_visible_page)
         menu_factory(published_en=True, published_fr=False, portals=[portal], page=not_visible_page)
@@ -3443,7 +3443,7 @@ class MenuItemTestCase(TestCase):
         )
         MenuItem.add_root(
             published=True,
-            target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE,
+            target_type=MenuItem.TargetTypeChoices.PAGE,
             page=page,
         )
 
@@ -3459,7 +3459,7 @@ class MenuItemTestCase(TestCase):
     def test_tree_with_link_target(self):
         menu_item = MenuItem.add_root(
             published=True,
-            target_type=MenuItem.TARGET_TYPE_CHOICES.LINK,
+            target_type=MenuItem.TargetTypeChoices.LINK,
             link_url_en="https://en.example.com/",
             link_url_fr="https://fr.example.com/",
             open_in_new_tab=False,
@@ -3476,7 +3476,7 @@ class MenuItemTestCase(TestCase):
 
     def test_tree_target_type_is_lowercase_for_child(self):
         parent = self.published_menu_item_factory()
-        child = self.published_menu_item_factory(target_type=MenuItem.TARGET_TYPE_CHOICES.LINK)
+        child = self.published_menu_item_factory(target_type=MenuItem.TargetTypeChoices.LINK)
         self.add_child(parent, child)
 
         response = self.client.get('/api/v2/menu_item/')
@@ -3588,7 +3588,7 @@ class MenuItemTestCase(TestCase):
 
     def test_tree_menu_item_not_exposed_if_target_page_not_published(self):
         page = flatpages_factory.FlatPageFactory(published=False)
-        MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        MenuItemFactory(published=True, page=page, target_type=MenuItem.TargetTypeChoices.PAGE)
 
         response = self.client.get('/api/v2/menu_item/')
 
@@ -3599,7 +3599,7 @@ class MenuItemTestCase(TestCase):
     def test_tree_child_menu_item_not_exposed_if_target_page_not_published(self):
         page = flatpages_factory.FlatPageFactory(published=False)
         parent = MenuItemFactory(published=True)
-        child = MenuItemFactory(published=True, page=page, target_type=MenuItem.TARGET_TYPE_CHOICES.PAGE)
+        child = MenuItemFactory(published=True, page=page, target_type=MenuItem.TargetTypeChoices.PAGE)
         self.add_child(parent, child)
 
         response = self.client.get('/api/v2/menu_item/')
@@ -3611,13 +3611,13 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(len(parent_repr["children"]), 0)
 
     def test_tree_menuitem_for_mobile_platform_not_exposed(self):
-        parent1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
-        child1 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
+        parent1 = self.published_menu_item_factory(platform=MenuItem.PlatformChoices.ALL)
+        child1 = self.published_menu_item_factory(platform=MenuItem.PlatformChoices.MOBILE)
         self.add_child(parent1, child1)
-        child2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.WEB)
+        child2 = self.published_menu_item_factory(platform=MenuItem.PlatformChoices.WEB)
         self.add_child(parent1, child2)
-        parent2 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.MOBILE)
-        child3 = self.published_menu_item_factory(platform=MenuItem.PLATFORM_CHOICES.ALL)
+        parent2 = self.published_menu_item_factory(platform=MenuItem.PlatformChoices.MOBILE)
+        child3 = self.published_menu_item_factory(platform=MenuItem.PlatformChoices.ALL)
         self.add_child(parent2, child3)
 
         response = self.client.get('/api/v2/menu_item/')

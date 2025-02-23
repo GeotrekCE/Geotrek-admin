@@ -3,7 +3,7 @@ from django.conf import settings
 from geotrek.authent.tests.factories import PathManagerFactory
 from geotrek.common.tests import CommonTest
 from geotrek.core.tests.factories import PathFactory
-from geotrek.infrastructure.models import INFRASTRUCTURE_TYPES, Infrastructure
+from geotrek.infrastructure.models import InfrastructureTypeChoices, Infrastructure
 from geotrek.infrastructure.tests.factories import (
     InfrastructureConditionFactory,
     InfrastructureFactory,
@@ -45,7 +45,7 @@ class InfrastructureViewsTest(CommonTest):
             'name_fr': 'test',
             'name_en': 'test_en',
             'description': 'oh',
-            'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
+            'type': InfrastructureTypeFactory.create(type=InfrastructureTypeChoices.BUILDING).pk,
             'conditions': [InfrastructureConditionFactory.create().pk],
             'accessibility': 'description accessibility'
         }
@@ -62,7 +62,7 @@ class InfrastructureViewsTest(CommonTest):
         self.assertContains(response, "<b>Beautiful !</b>")
 
     def test_check_structure_or_none_related_are_visible(self):
-        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
+        infratype = InfrastructureTypeFactory.create(type=InfrastructureTypeChoices.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'form')
@@ -84,7 +84,7 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             'name_fr': 'test',
             'name_en': 'test_en',
             'description': 'oh',
-            'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
+            'type': InfrastructureTypeFactory.create(type=InfrastructureTypeChoices.BUILDING).pk,
             'conditions': [InfrastructureConditionFactory.create().pk],
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
