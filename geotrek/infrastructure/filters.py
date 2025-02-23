@@ -5,7 +5,7 @@ from django_filters import CharFilter, MultipleChoiceFilter, ModelMultipleChoice
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.core.filters import ValidTopologyFilterSet, TopologyFilterTrail
-from .models import Infrastructure, INFRASTRUCTURE_TYPES, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel
+from .models import Infrastructure, InfrastructureTypeChoices, InfrastructureMaintenanceDifficultyLevel, InfrastructureUsageDifficultyLevel
 from geotrek.maintenance.models import Intervention
 from geotrek.zoning.filters import ZoningFilterSet
 
@@ -17,7 +17,7 @@ class InfrastructureFilterSet(AltimetryAllGeometriesFilterSet, ValidTopologyFilt
     intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
                                              choices=lambda: Intervention.objects.year_choices())
     category = MultipleChoiceFilter(label=_("Category"), field_name='type__type',
-                                    choices=INFRASTRUCTURE_TYPES)
+                                    choices=InfrastructureTypeChoices.choices)
     trail = TopologyFilterTrail(label=_('Trail'), required=False)
     maintenance_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(), label=_("Maintenance difficulty"))
     usage_difficulty = ModelMultipleChoiceFilter(queryset=InfrastructureUsageDifficultyLevel.objects.all(), label=_("Usage difficulty"))

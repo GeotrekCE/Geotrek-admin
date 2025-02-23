@@ -7,8 +7,8 @@ from django.contrib.gis.measure import Distance
 from django.db import connection
 from django.db.models.base import ModelBase
 from django.db.models.expressions import Func
-from django.utils.timezone import utc
 from django.utils.translation import pgettext
+from pytz import utc
 
 from geotrek.common.functions import DumpGeom, StartPoint
 

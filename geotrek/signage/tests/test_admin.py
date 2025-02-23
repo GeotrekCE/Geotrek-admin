@@ -187,7 +187,7 @@ class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_bladetype_change', args=[bladetype.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<select name="structure" id="id_structure">')
+        self.assertContains(response, '<select name="structure" ')
 
 
 class SealingAdminTest(SealingAdminNoBypassTest):
@@ -203,7 +203,7 @@ class SealingAdminTest(SealingAdminNoBypassTest):
         change_url = reverse('admin:signage_sealing_change', args=[sealing.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<select name="structure" id="id_structure">')
+        self.assertContains(response, '<select name="structure" ')
 
 
 class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
@@ -219,7 +219,7 @@ class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_signagetype_change', args=[signagetype.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<select name="structure" id="id_structure">')
+        self.assertContains(response, '<select name="structure" ')
 
 
 class SignageConditionAdminTest(TestCase):
@@ -272,7 +272,7 @@ class SignageConditionAdminTest(TestCase):
         response = self.client.get(change_url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '<select name="structure" id="id_structure">')
+        self.assertContains(response, '<select name="structure" ')
         self.assertContains(response, '<input type="text" name="label" value="{}" class="vTextField" maxlength="250" required id="id_label">'.format(signagecondition.label))
 
     def test_formfield_for_foreignkey_signage_conditions_withoutpermission(self):

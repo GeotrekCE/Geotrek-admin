@@ -552,8 +552,10 @@ class Project(ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, Ti
 
     @property
     def intervention_contractors(self):
-        return self.interventions.aggregate(
-            intervention_contractors=ArrayAgg('contractors__contractor', distinct=True, filter=Q(contractors__isnull=False)))['intervention_contractors']
+        contractors =  self.interventions.aggregate(
+            intervention_contractors=ArrayAgg('contractors__contractor', distinct=True,
+                                              filter=Q(contractors__isnull=False)))['intervention_contractors']
+        return contractors or []
 
     @classproperty
     def intervention_contractors_verbose_name(cls):

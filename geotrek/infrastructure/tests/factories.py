@@ -11,7 +11,7 @@ class InfrastructureTypeFactory(factory.django.DjangoModelFactory):
         model = models.InfrastructureType
 
     label = factory.Sequence(lambda n: "Type %s" % n)
-    type = models.INFRASTRUCTURE_TYPES.BUILDING
+    type = models.InfrastructureTypeChoices.BUILDING
     pictogram = dummy_filefield_as_sequence('infrastructure-type-%s.png')
 
 
@@ -20,7 +20,7 @@ class InfrastructureTypeNoPictogramFactory(factory.django.DjangoModelFactory):
         model = models.InfrastructureType
 
     label = factory.Sequence(lambda n: "Type %s" % n)
-    type = models.INFRASTRUCTURE_TYPES.BUILDING
+    type = models.InfrastructureTypeChoices.BUILDING
 
 
 class InfrastructureConditionFactory(factory.django.DjangoModelFactory):

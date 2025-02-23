@@ -1,7 +1,7 @@
 import django_filters.rest_framework
 from django import forms
-from django.utils.datetime_safe import datetime
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
 from django_filters.filters import ChoiceFilter, ModelMultipleChoiceFilter
 
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -57,10 +57,10 @@ class CompletedFilter(django_filters.BooleanFilter):
         queryset = qs
 
         if value is True:
-            queryset = queryset.filter(end_date__lt=datetime.today())
+            queryset = queryset.filter(end_date__lt=timezone_today())
 
         elif value is False:
-            queryset = queryset.exclude(end_date__lt=datetime.today())
+            queryset = queryset.exclude(end_date__lt=timezone_today())
 
         return queryset
 
