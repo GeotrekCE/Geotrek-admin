@@ -256,7 +256,7 @@ packaging==24.0
     #   large-image-source-vips
 palettable==3.3.3
     # via large-image
-paperclip==2.7.2
+paperclip==2.7.3
     # via
     #   geotrek (setup.py)
     #   mapentity
