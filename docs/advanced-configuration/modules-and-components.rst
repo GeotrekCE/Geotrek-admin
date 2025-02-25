@@ -486,7 +486,7 @@ To insert sensitivity area rules:
     
                 sudo docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/sensitivity/fixtures/rules.json
                 docker compose run --rm web bash
-                cp -r /opt/geotrek-admin/geotrek/sensitivity/fixtures/upload/ /opt/geotrek-admin/var/media/upload/
+                cp -r /opt/geotrek-admin/geotrek/sensitivity/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 Sensitivity default radius
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
