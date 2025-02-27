@@ -16,6 +16,10 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Deprecate support of Ubuntu 18.04 bionic.
 - Improve filter on code signage (#4367)
 
+**Documentation**
+
+- Update documentation for sensitivity fixtures (#4492)
+
 
 2.113.1    (2025-02-17)
 ----------------------------
