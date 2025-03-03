@@ -52,7 +52,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#from-geotrek-admin-2-113-0
 
 **Warnings**
 
@@ -275,7 +275,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 
 - This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#postgresql
 
 **New features**
 
