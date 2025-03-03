@@ -16,6 +16,10 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Deprecate support of Ubuntu 18.04 bionic.
 - Improve filter on code signage (#4367)
 
+**UI/UX**
+
+- Fix right CSS class for images thumbnails max-width in attached files lists
+
 **Documentation**
 
 - Update documentation for sensitivity fixtures (#4492)
