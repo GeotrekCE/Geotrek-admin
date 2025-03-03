@@ -18,7 +18,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 **UI/UX**
 
-- Fix max-width for images thumbnails in attached files lists
+- Fix right CSS class for images thumbnails max-width in attached files lists
 
 **Documentation**
 
