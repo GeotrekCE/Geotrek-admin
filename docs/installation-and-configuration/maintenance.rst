@@ -35,9 +35,19 @@ Otherwise go directly to the database creation step.
 
 .. code-block:: bash
 
-    sudo apt install postgresql-14 postgresql-14-postgis-3
+    sudo apt install postgresql-14-pgrouting
     sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
+
+.. note::
+  The installation command will never be the same depending on the servers hosting the database (Ubuntu 22, 24 / official repository / PostgreSQL repository / RedHat, etc.). 
+  
+  Here is an example with the command to run to install PostgreSQL on Ubuntu 24.0 (Noble) :
+
+  .. code-block:: bash
+
+      sudo apt install postgresql-17-pgrouting
+      sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 Create an empty database (``geotrekdb`` in this example):
 
