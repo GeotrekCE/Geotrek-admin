@@ -20,6 +20,11 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 - Fix right CSS class for images thumbnails max-width in attached files lists
 
+**Bug fixes**
+
+- Fix parent-child trek linking in GeotrekTrekParser: failure to retrieve a parent trek lead to not parsing any remaining child Treks
+- Add try-except when linking information desks to treks in GeotrekInformationDeskParser
+
 **Documentation**
 
 - Update documentation for sensitivity fixtures (#4492)
