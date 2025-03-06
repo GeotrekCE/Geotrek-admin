@@ -4,10 +4,11 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import PermissionDenied
-from django.db.models import Sum
+from django.db.models import Sum, OuterRef, F
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.utils.html import escape
 from django.views.generic import CreateView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityList, MapEntityDetail, MapEntityFilter,
@@ -17,13 +18,13 @@ from rest_framework import permissions as rest_permissions, viewsets
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic
+from geotrek.common.views import DocumentPublic, DocumentBookletPublic, MarkupPublic, normalize_annotation_column_name
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.models import Trek
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet
 from .forms import TouristicContentForm, TouristicEventForm, TouristicEventOrganizerFormPopup
 from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, TouristicEventOrganizer,
-                     InformationDesk)
+                     InformationDesk, TouristicEventParticipantCategory, TouristicEventParticipantCount)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           TrekInformationDeskGeojsonSerializer,
                           TouristicContentGeojsonSerializer, TouristicEventGeojsonSerializer)
@@ -184,13 +185,56 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas', 'approved', 'uuid',
-        'cancelled', 'cancellation_reason', 'total_participants', 'place',
+        'cancelled', 'cancellation_reason', 'place',
         'preparation_duration', 'intervention_duration', 'price'
     ]
 
+    @classmethod
+    def build_participants_column_name(cls, category_label):
+        return normalize_annotation_column_name(f"{_('Participants')} {category_label}")
+
+    @classmethod
+    def get_mandatory_columns(cls):
+        mandatory_columns = ['id']
+        if settings.ENABLE_EVENTS_PARTICIPANTS_DETAILED_EXPORT:
+            categories_names = list(TouristicEventParticipantCategory.objects.order_by('order').values_list('label', flat=True))
+            # Create column names for each unique category
+            categories_columns_names = list(map(cls.build_participants_column_name, categories_names))
+            # Add these column names to export
+            mandatory_columns = mandatory_columns + categories_columns_names + ['total_participants']
+        else:
+            mandatory_columns = mandatory_columns + ['total_participants']
+        return mandatory_columns
+
     def get_queryset(self):
-        qs = super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
-        return qs.annotate(total_participants=Sum('participants__count'))
+        """Returns all events joined with a new column for each participant count"""
+
+        queryset = super().get_queryset().select_related('place', 'cancellation_reason').prefetch_related('participants')
+
+        if settings.ENABLE_EVENTS_PARTICIPANTS_DETAILED_EXPORT:
+            # Get all participants categories, as unique ids and names
+            categories = TouristicEventParticipantCategory.objects.order_by('order').values_list('id', 'label')
+
+            # Iter over unique categories
+            for category_id, label in categories:
+
+                # Create column name for current category
+                column_name = self.build_participants_column_name(label)
+
+                # Create subquery to retrieve category count (renamed because of ambiguity with 'count' method)
+                subquery = (TouristicEventParticipantCount.objects.filter(
+                    event=OuterRef('pk'),
+                    category=category_id
+                ).annotate(
+                        category_count=F('count')
+                ).values('category_count'))
+
+                # Annotate queryset with this cost query
+                params = {column_name: subquery}
+                queryset = queryset.annotate(**params).annotate(total_participants=Sum('participants__count'))
+        else:
+            return queryset.annotate(total_participants=Sum('participants__count'))
+        return queryset
 
 
 class TouristicEventDetail(CompletenessMixin, MapEntityDetail):
