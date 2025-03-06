@@ -8,6 +8,8 @@ amqp==5.3.1
     # via kombu
 appy==1.0.19
     # via django-appypod
+argdispatch==1.4.0
+    # via pdfimpose
 asgiref==3.8.1
     # via django
 async-timeout==5.0.1
@@ -290,10 +292,10 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
+pymupdf==1.25.3
+    # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
-pypdf2==1.27.5
-    # via pdfimpose
 pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
@@ -308,6 +310,8 @@ pytz==2025.1
     #   drf-yasg
 pyvips==2.2.3
     # via large-image-source-vips
+pyxdg==0.28
+    # via pdfimpose
 pyyaml==6.0.2
     # via drf-spectacular
 rcssmin==1.1.2
