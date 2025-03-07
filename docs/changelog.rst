@@ -23,7 +23,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 **Documentation**
 
 - Update documentation for sensitivity fixtures (#4492)
-
+- Update database restore process with PGRouting extension
 
 2.113.1    (2025-02-17)
 ----------------------------
