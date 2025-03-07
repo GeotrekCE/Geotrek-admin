@@ -68,7 +68,7 @@ Learn more on the [Geotrek product website](http://geotrek.fr).
 
 - [Presentation](https://geotrek.readthedocs.io/fr/latest/user-manual/overview.html)
 - [Management modules](https://geotrek.readthedocs.io/fr/latest/user-manual/management-modules.html)
-- [Touristic modules](https://geotrek.readthedocs.io/en/latest/user-manual/touristic-modules.html)
+- [Touristic modules](https://geotrek.readthedocs.io/fr/latest/user-manual/touristic-modules.html)
 
 ## Installation and configuration
 
