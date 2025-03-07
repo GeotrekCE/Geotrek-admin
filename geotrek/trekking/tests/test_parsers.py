@@ -668,7 +668,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                                 ('trekking', 'trek_published_step.json'),
                                 ('trekking', 'trek_unpublished_step.json'),
                                 ('trekking', 'trek_unpublished_structure.json'),
-                                ('trekking', 'trek_unpublished_practice_not_found.json')]
+                                ('trekking', 'trek_unpublished_practice_not_found.json'),
+                                ('trekking', 'trek_published_step_2.json')]
 
         # Mock GET
         mocked_get.return_value.status_code = 200
@@ -679,6 +680,17 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         call_command('import', 'geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser', verbosity=2,
                      stdout=output)
         self.assertIn("Trying to retrieve children for missing trek : could not find trek with UUID b2aea666-5e6e-4daa-a750-7d2ee52d3fe1", output.getvalue())
+        treks = Trek.objects.all()
+        self.assertEqual(len(treks), 7)
+        actual_uuids = treks.values_list('eid', flat=True)
+        expected_steps_uuids = [
+            'c9567576-2934-43ab-979e-e13d02c671a9',
+            '9e70b294-1134-4c50-9c56-d722720cace6',
+            # Checking that this step has been parsed even though the previous one
+            # (child of b2aea666-5e6e-4daa-a750-7d2ee52d3fe1) failed:
+            'c9567576-2934-43ab-979e-e13d02c671a8'
+        ]
+        self.assertTrue(set(expected_steps_uuids).issubset(set(actual_uuids)))
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')
