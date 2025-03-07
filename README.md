@@ -66,15 +66,15 @@ Learn more on the [Geotrek product website](http://geotrek.fr).
 
 ## User manual (french)
 
-- [Presentation](https://geotrek.readthedocs.io/fr/latest/usage/overview.html)
-- [Management modules](https://geotrek.readthedocs.io/fr/latest/usage/management-modules.html)
-- [Touristic modules](https://geotrek.readthedocs.io/fr/latest/usage/touristic-modules.html)
+- [Presentation](https://geotrek.readthedocs.io/fr/latest/user-manual/overview.html)
+- [Management modules](https://geotrek.readthedocs.io/fr/latest/user-manual/management-modules.html)
+- [Touristic modules](https://geotrek.readthedocs.io/fr/latest/user-manual/touristic-modules.html)
 
 ## Installation and configuration
 
-- [Installation](https://geotrek.readthedocs.io/fr/latest/install/installation.html)
-- [Configuration](https://geotrek.readthedocs.io/fr/latest/install/configuration.html)
-- [Advanced configuration](https://geotrek.readthedocs.io/fr/latest/install/advanced-configuration.html)
+- [Installation](https://geotrek.readthedocs.io/en/latest/installation-and-configuration/installation.html)
+- [Configuration](https://geotrek.readthedocs.io/en/latest/installation-and-configuration/configuration.html)
+- [Advanced configuration](https://geotrek.readthedocs.io/en/latest/advanced-configuration/application-settings.html)
 
 ## Support
 
