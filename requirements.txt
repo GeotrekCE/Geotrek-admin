@@ -84,7 +84,7 @@ coreschema==0.0.4
     #   geotrek (setup.py)
 crispy-bootstrap4==2024.10
     # via mapentity
-cssselect2==0.7.0
+cssselect2==0.8.0
     # via
     #   cairosvg
     #   svglib
