@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.113.1+dev    (XXXX-XX-XX)
+2.113.1+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Breaking changes**
@@ -29,7 +29,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Update documentation for sensitivity fixtures (#4492)
 - Update database restore process with PGRouting extension
 
-2.113.1    (2025-02-17)
+2.113.1         (2025-02-17)
 ----------------------------
 
 **Improvements**
@@ -53,7 +53,7 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Fix typo in docs
 
 
-2.113.0    (2025-01-30)
+2.113.0         (2025-01-30)
 ----------------------------
 
 **Breaking changes**
@@ -80,7 +80,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
 
 
-2.112.0     (2025-01-14)
+2.112.0         (2025-01-14)
 ----------------------------
 
 **Performances**
@@ -105,7 +105,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Update and homogenize README.rst
 
 
-2.111.0     (2024-12-05)
+2.111.0         (2024-12-05)
 ----------------------------
 
 **Features**
@@ -129,7 +129,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Add note about certbot ssl configuration in nginx
 
 
-2.110.0     (2024-11-13)
+2.110.0         (2024-11-13)
 ----------------------------
 
 **New features**
@@ -137,7 +137,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Add parser for schema_randonnee-compliant files (#4022)
 
 
-2.109.3     (2024-10-29)
+2.109.3         (2024-10-29)
 ----------------------------
 
 **Improvements**
@@ -162,7 +162,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Improve development quickstart documentation
 
 
-2.109.2     (2024-09-19)
+2.109.2         (2024-09-19)
 ----------------------------
 
 **Warning**
@@ -196,7 +196,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Add command line examples and templates for importing data
 
 
-2.109.1     (2024-08-22)
+2.109.1         (2024-08-22)
 ----------------------------
 
 **Improvements**
@@ -218,7 +218,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 - Optimize some backend queries for performances
 
 
-2.109.0     (2024-08-08)
+2.109.0         (2024-08-08)
 ----------------------------
 
 **New features**
