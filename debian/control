@@ -27,6 +27,7 @@ Depends:
  ${shlibs:Depends},
  nginx,
  postgis,
+ postgresql-client,
  libcairo2,
  memcached,
  gettext,
