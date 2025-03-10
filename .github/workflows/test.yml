@@ -392,13 +392,6 @@ jobs:
           sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl restart nginx
 
-      - name: Check raster2pgsql command
-        run: |
-          if ! command -v raster2pgsql &> /dev/null; then
-            echo "raster2pgsql could not be found"
-            exit 1
-          fi
-
       - name: Load Data
         run: |
           sudo geotrek loaddata minimal
