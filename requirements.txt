@@ -142,7 +142,7 @@ django-filter==24.3
     # via
     #   djangorestframework-gis
     #   mapentity
-django-js-asset==3.1.0
+django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.0
     # via geotrek (setup.py)
