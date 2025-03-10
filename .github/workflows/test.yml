@@ -318,7 +318,7 @@ jobs:
 
       - name: Check DEM scripts are available in docker image
         run: |
-          docker-compose run --rm web sh -c 'command -v raster2pgsql >/dev/null 2>&1 || { echo >&2 "raster2pgsql command not found."; exit 1; }'
+          docker compose run --rm web sh -c 'command -v raster2pgsql >/dev/null 2>&1 || { echo >&2 "raster2pgsql command not found."; exit 1; }'
 
       - name: E2E test
         run: |
