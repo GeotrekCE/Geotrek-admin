@@ -9,6 +9,10 @@ CHANGELOG
 
 This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
 
+**Bug fixes**
+
+- Fix `loaddem` command after debian fresh install which requires to install postgis package.
+
 **Improvements**
 
 - Officially support Ubuntu 24.04 debian package.
