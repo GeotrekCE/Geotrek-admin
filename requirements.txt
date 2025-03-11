@@ -138,7 +138,7 @@ django-embed-video==1.4.10
     # via
     #   mapentity
     #   paperclip
-django-filter==24.3
+django-filter==25.1
     # via
     #   djangorestframework-gis
     #   mapentity
