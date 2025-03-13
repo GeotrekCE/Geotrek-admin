@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from paperclip.validators import FileMimetypeValidator
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
@@ -74,8 +75,8 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    photo = models.FileField(verbose_name=_("Photo"), upload_to=settings.UPLOAD_DIR,
-                             max_length=512, blank=True, null=True)
+    photo = models.ImageField(verbose_name=_("Photo"), upload_to=settings.UPLOAD_DIR,
+                              max_length=512, blank=True, null=True, validators=[FileMimetypeValidator()])
 
     street = models.CharField(verbose_name=_("Street"), max_length=256,
                               blank=True, null=True)
