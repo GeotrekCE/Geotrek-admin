@@ -1,8 +1,8 @@
-geotrek-admin (2.113.1+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.114.0) RELEASED; urgency=medium
 
-  * 
+  * New package release
 
- -- Justine Fricou <justine.fricou@makina-corpus.com>  Mon, 17 Feb 2025 15:50:00 +0100
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 13 Mar 2025 16:40:58 +0100
 
 geotrek-admin (2.113.1) RELEASED; urgency=medium
 
