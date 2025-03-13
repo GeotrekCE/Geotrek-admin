@@ -1170,8 +1170,8 @@ class GeotrekInformationDeskParser(GeotrekParser):
             try:
                 trek = model_imported.objects.get(**{json_uuid_key: row[json_uuid_key]})
             except Trek.DoesNotExist:
-                self.add_warning(_("Cannot link information desk to trek: could not find trek with UUID {uuid}")
-                                 .format(uuid=row[json_uuid_key]))
+                self.add_warning(_("Cannot link information desk to trek: could not find "
+                                   "trek with UUID %(uuid)s") % {"uuid": row[json_uuid_key]})
             else:
                 infodesks_to_set = [match_id_uuid.get(val) for val in row[field]
                                     if match_id_uuid.get(val)]

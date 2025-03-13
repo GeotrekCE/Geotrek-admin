@@ -931,7 +931,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         self.assertIn('7/7 lignes importées.', string_parser)
         self.assertIn('6 enregistrements créés.', string_parser)
         self.assertIn('2/2 lignes importées.', string_parser)
-        self.assertIn("Impossible de lier le lieu de renseignement à un itinéraire: l'itinéraire correspondant à l'UUID 00000000-0000-0000-0000-000000000000 est introuvable", string_parser)
+        self.assertIn("Impossible de lier le lieu de renseignement à un itinéraire : l'itinéraire correspondant à l'UUID 00000000-0000-0000-0000-000000000000 est introuvable", string_parser)
         self.assertEqual(Trek.objects.count(), 6)
         self.assertEqual(POI.objects.count(), 2)
         self.assertEqual(1, Trek.objects.get(name="Foo").information_desks.count())
