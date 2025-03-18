@@ -1059,7 +1059,7 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser):
     type = "Foo"
     default_fields_values = {"name": "test_default"}
-    tags = {"amenity" : "ranger_station"}
+    tags = {"amenity": "ranger_station"}
 
 
 class OpenStreetMapParserTests(TestCase):
@@ -1149,4 +1149,3 @@ class OpenStreetMapParserTests(TestCase):
         point = Point((-5898321.244682654, 12807160.659235487), srid=2154)
         information_desk = InformationDesk.objects.get(eid=4)
         self.assertEqual(information_desk.geom, point)
-
