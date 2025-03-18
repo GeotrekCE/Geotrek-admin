@@ -8,6 +8,7 @@ import os
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.contrib.gis.geos import Point
 
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
@@ -21,7 +22,7 @@ from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEven
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser,
                                      InformationDeskApidaeParser, GeotrekTouristicContentParser,
                                      GeotrekTouristicEventParser, GeotrekInformationDeskParser,
-                                     LEITouristicContentParser, LEITouristicEventParser)
+                                     LEITouristicContentParser, LEITouristicEventParser, InformationDeskOpenStreetMapParser)
 
 
 class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
@@ -1053,3 +1054,99 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertAlmostEqual(information_desk.geom.y, 6276967.321705549, places=5)
         self.assertEqual(str(information_desk.photo), '')
         self.assertEqual(InformationDesk.objects.exclude(photo='').first().photo.read(), b'boo')
+
+
+class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser):
+    type = "Foo"
+    default_fields_values = {"name": "test_default"}
+    tags = {"amenity" : "ranger_station"}
+
+
+class OpenStreetMapParserTests(TestCase):
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    def import_information_desk(self, TestClass, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'information_desk_OSM.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        InformationDeskTypeFactory.create(label="Foo")
+        call_command('import', TestClass, verbosity=0)
+
+    def test_create_information_desk_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+        self.assertEqual(InformationDesk.objects.count(), 4)
+
+    def test_get_tag_info_existing_tag_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=1)
+        self.assertEqual(information_desk.phone, '0754347899')
+
+        information_desk2 = InformationDesk.objects.get(eid=2)
+        self.assertEqual(information_desk2.phone, '0754347899')
+
+    def test_get_tag_info_no_tag_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=3)
+        self.assertEqual(information_desk.phone, None)
+
+    def test_default_values_external_value_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=1)
+        self.assertEqual(information_desk.name, 'test')
+
+    def test_default_values_no_external_value_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=3)
+        self.assertEqual(information_desk.name, 'test_default')
+
+    def test_InformationDesk_street_filter_housenumber_and_street_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=1)
+        self.assertEqual(information_desk.street, '5 rue des chênes')
+
+    def test_InformationDesk_street_filter_street_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=2)
+        self.assertEqual(information_desk.street, 'rue des chênes')
+
+    def test_InformationDesk_street_filter_None_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        information_desk = InformationDesk.objects.get(eid=3)
+        self.assertEqual(information_desk.street, None)
+
+    @override_settings(SRID=2154)
+    def test_geom_point_to_point_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        point = Point((673775.5074406686, 6260613.093389216), srid=2154)
+        information_desk = InformationDesk.objects.get(eid=1)
+        self.assertEqual(information_desk.geom, point)
+
+    @override_settings(SRID=2154)
+    def test_geom_way_to_point_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        point = Point((639380.854410392, 6256494.451055847), srid=2154)
+        information_desk = InformationDesk.objects.get(eid=3)
+        self.assertEqual(information_desk.geom, point)
+
+    @override_settings(SRID=2154)
+    def test_geom_relation_to_point_OSM(self):
+        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
+
+        point = Point((-5898321.244682654, 12807160.659235487), srid=2154)
+        information_desk = InformationDesk.objects.get(eid=4)
+        self.assertEqual(information_desk.geom, point)
+
