@@ -5,6 +5,9 @@ CHANGELOG
 2.114.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix log book filters by updating mapentity (#4576)
 
 
 2.114.0     (2025-03-13)
