@@ -238,7 +238,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.12.2
+mapentity==8.12.0
     # via geotrek (setup.py)
 markdown==3.7
     # via geotrek (setup.py)
@@ -292,7 +292,7 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.25.4
+pymupdf==1.25.3
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -342,7 +342,7 @@ ruamel-yaml==0.18.10
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.24.0
+sentry-sdk==2.22.0
     # via geotrek (setup.py)
 shapely==2.0.7
     # via pyopenair
@@ -375,7 +375,7 @@ typing-extensions==4.12.2
     #   django-modeltranslation
     #   large-image
     #   referencing
-tzdata==2025.2
+tzdata==2025.1
     # via
     #   celery
     #   kombu
@@ -396,7 +396,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-weasyprint==65.0
+weasyprint==64.1
     # via
     #   django-weasyprint
     #   geotrek (setup.py)
