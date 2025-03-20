@@ -4,23 +4,21 @@ from django.db import migrations
 import magic
 
 
-def mimetype(photo):
-    if not photo:
-        return None
-    with photo.open('rb') as file:
-        file.seek(0)
-        mt = magic.from_buffer(file.read(), mime=True)
-        return mt
-
-
-def is_an_image(mimetype):
-    return False if not mimetype else mimetype.split('/')[0].startswith('image')
+def is_an_image(filefield):
+    file_mimetype = None
+    if filefield:
+        with filefield.open('rb') as file:
+            file.seek(0)
+            file_mimetype = magic.from_buffer(file.read(), mime=True)
+    if not file_mimetype:
+        return False
+    return file_mimetype.split('/')[0].startswith('image')
 
 
 def delete_non_image_photos(apps, schema_editor):
     InformationDesk = apps.get_model("tourism", "InformationDesk")
     for info_desk in InformationDesk.objects.all():
-        if not is_an_image(mimetype(info_desk.photo)):
+        if not is_an_image(info_desk.photo):
             info_desk.photo = None
             info_desk.save()
 
