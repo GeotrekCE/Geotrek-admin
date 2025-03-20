@@ -42,6 +42,7 @@ from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
+from geotrek.settings.base import api_bbox
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
@@ -1553,3 +1554,117 @@ class ApidaeBaseParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class OpenStreetMapParser(Parser):
+    """Parser to import "anything" from OpenStreetMap"""
+    delete = True
+    default_fields_values = None
+
+    url = 'https://overpass-api.de/api/interpreter/'
+    bbox = None
+    tags = None
+    query = ""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.default_fields_values is None:
+            self.default_fields_values = {}
+        if self.tags is None:
+            self.tags = {}
+
+        bbox_str = self.get_bbox_str()
+        for tag, value in self.tags.items():
+            self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+
+    def get_bbox_str(self):
+        margin = 0.0
+        bbox = api_bbox(settings.SPATIAL_EXTENT, margin)
+        return '{1},{0},{3},{2}'.format(*bbox)
+
+    def get_tag_info(self, osm_tags):
+        for tag in osm_tags:
+            if tag or tag == 0:
+                return tag
+        return None
+
+    def get_centroid_from_way(self, geometries):
+        polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
+        polygon.srid = 4326
+        polygon.transform(settings.SRID)
+        centroid = polygon.centroid
+        return centroid
+
+    def get_centroid_from_relation(self, bbox):
+        polygon = Polygon.from_bbox((bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"]))
+        polygon.srid = 4326
+        polygon.transform(settings.SRID)
+        centroid = polygon.centroid
+        return centroid
+
+    def next_row(self):
+        params = {
+            'data': f"[out:json];{self.query}out geom;",
+        }
+        response = self.request_or_retry(self.url, params=params)
+        self.root = response.json()
+        self.nb = len(self.root['elements'])
+        for row in self.root['elements']:
+            yield row
+
+    def normalize_field_name(self, name):
+        return name
+
+    def parse_real_field(self, dst, src, val):
+        """Returns True if modified"""
+        if hasattr(self.obj, dst):
+            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
+                old = set(getattr(self.obj, dst).all())
+            else:
+                old = getattr(self.obj, dst)
+
+        if hasattr(self, 'filter_{0}'.format(dst)):
+            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
+        else:
+            val = self.apply_filter(dst, src, val)
+
+        # if there is no value take the default value if it is provided
+        if dst in self.default_fields_values and not val:
+            val = self.default_fields_values[dst]
+
+        if hasattr(self.obj, dst):
+            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
+                val = set(val)
+                if dst in self.m2m_aggregate_fields:
+                    val = val | old
+            if isinstance(old, float) and isinstance(val, float):
+                old = round(old, 10)
+                val = round(val, 10)
+            if isinstance(old, str):
+                val = val or ""
+            if old != val:
+                self.set_value(dst, src, val)
+                return True
+            else:
+                return False
+        else:
+            self.set_value(dst, src, val)
+            return True
+
+    def get_part(self, dst, src, val):
+        if not src:
+            return val
+        if val is None:
+            return None
+        if '.' in src:
+            part, left = src.split('.', 1)
+        else:
+            part, left = src, ''
+        try:
+            value = int(part)
+            return self.get_part(dst, left, val[value])
+        except ValueError:
+            if part == '*':
+                return [self.get_part(dst, left, subval) for subval in val]
+            else:
+                return self.get_part(dst, left, val.get(part))
