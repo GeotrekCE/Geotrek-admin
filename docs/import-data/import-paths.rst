@@ -135,7 +135,7 @@ Load paths
          .. code-block:: bash
 
           sudo geotrek loadpaths \
-          ./var/conf/paths.geojson \
+          ./var/paths.geojson \
           --srid=2154 \
           --encoding latin1 \
           --structure "DEMO" \
@@ -145,10 +145,13 @@ Load paths
 
     .. md-tab-item:: Example with Docker
 
-         .. code-block:: bash
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+
+        .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadpaths \
-          ./var/conf/paths.geojson \
+          ./var/paths.geojson \
           --srid=2154 \
           --encoding latin1 \
           --structure "DEMO" \

@@ -130,7 +130,7 @@ Load POIs
          .. code-block:: bash
 
           sudo geotrek loadpoi \
-          ./var/conf/poi.geojson \
+          ./var/poi.geojson \
           --encoding latin1 \
           --name-field name --name-default "Point d'intérêt" \
           --type-field type --type-default "Faune" \
@@ -139,10 +139,15 @@ Load POIs
 
     .. md-tab-item:: Example with Docker
 
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+
+        .. code-block:: bash
+
          .. code-block:: bash
     
-          docker compose run --rm web ./manage.py loadpaths \
-          ./var/conf/poi.geojson \
+          docker compose run --rm web ./manage.py loadpoi \
+          ./var/poi.geojson \
           --encoding latin1 \
           --name-field name --name-default "Point d'intérêt" \
           --type-field type --type-default "Faune" \
@@ -320,7 +325,7 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
          .. code-block:: bash
 
           sudo geotrek loadinfrastructure \
-          ./var/conf/infrastructure.geojson \
+          ./var/infrastructure.geojson \
           --encoding latin1 \
           --name-field name --name-default "Banc" \
           --type-field type --type-default "Banc" \
@@ -333,10 +338,15 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 
     .. md-tab-item:: Example with Docker
 
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+
+        .. code-block:: bash
+
          .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadinfrastructure \
-          ./var/conf/infrastructure.geojson \
+          ./var/infrastructure.geojson \
           --encoding latin1 \
           --name-field name --name-default "Banc" \
           --type-field type --type-default "Banc" \
@@ -489,7 +499,7 @@ Load Signage
          .. code-block:: bash
 
           sudo geotrek loadsignage \
-          ./var/conf/signage.geojson \
+          ./var/signage.geojson \
           --encoding latin1 \
           --name-field name \
           --type-field type --type-default "Directionnelle" \
@@ -504,10 +514,15 @@ Load Signage
 
     .. md-tab-item:: Example with Docker
 
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+
+        .. code-block:: bash
+
          .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadsignage \
-          ./var/conf/signage.geojson \
+          ./var/signage.geojson \
           --encoding latin1 \
           --name-field name \
           --type-field type --type-default "Directionnelle" \

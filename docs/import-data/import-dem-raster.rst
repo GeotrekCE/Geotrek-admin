@@ -87,7 +87,7 @@ Load DEM
          .. code-block:: bash
 
 		    sudo geotrek loaddem \
-		    .var/conf/dem.tif \
+		    .var/dem.tif \
 		    --replace \
 		    --update-altimetry 
 
@@ -96,8 +96,20 @@ Load DEM
          .. code-block:: bash
     
 		    docker compose run --rm web ./manage.py loaddem \
-		    .var/conf/dem.tif \
+		    .var/dem.tif \
 		    --replace \
 		    --update-altimetry 
 			    
+.. _docker-container-path:
 
+.. IMPORTANT:: 
+   When running a command via Docker, all file paths must refer to locations **inside the container**, not on the host machine. The ``var`` folder is mounted as a volume in the container, with the following mapping:  
+   ``/path-on-host/var`` → ``/opt/geotrek-admin/var``.
+
+   So you just need to place the file in the ``var`` directory on the host, and it will be accessible from inside the container at the expected path.
+
+   👉 In short:  
+   Docker commands in Geotrek use **container paths**.  
+   The `var` folder is shared between the host and the container, so any file placed in `var` can be accessed using either ``./var/...`` or ``/opt/geotrek-admin/var/...`` **inside the container**.
+
+   Example : ``./var/dem.tif`` or ``/opt/geotrek-admin/var/dem.tif``
