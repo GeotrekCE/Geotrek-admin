@@ -4,7 +4,7 @@ from django.db import migrations
 import magic
 
 
-def is_an_image(filefield):
+def is_a_non_svg_image(filefield):
     file_mimetype = None
     if filefield:
         with filefield.open('rb') as file:
@@ -12,13 +12,15 @@ def is_an_image(filefield):
             file_mimetype = magic.from_buffer(file.read(), mime=True)
     if not file_mimetype:
         return False
-    return file_mimetype.split('/')[0].startswith('image')
+    file_type, file_subtype = file_mimetype.split('/')
+    return file_type == 'image' and file_subtype != 'svg+xml'
 
 
 def delete_non_image_photos(apps, schema_editor):
     InformationDesk = apps.get_model("tourism", "InformationDesk")
     for info_desk in InformationDesk.objects.all():
-        if not is_an_image(info_desk.photo):
+        # ImageField does not support svg files
+        if not is_a_non_svg_image(info_desk.photo):
             info_desk.photo = None
             info_desk.save()
 
