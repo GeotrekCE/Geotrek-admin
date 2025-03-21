@@ -140,7 +140,7 @@ Load POIs
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 
@@ -339,7 +339,7 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 
@@ -515,7 +515,7 @@ Load Signage
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 

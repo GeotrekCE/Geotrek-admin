@@ -92,7 +92,7 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 
@@ -209,7 +209,7 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 
@@ -316,7 +316,7 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
     .. md-tab-item:: Example with Docker
 
         .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about contain path in Docker commands
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
 
