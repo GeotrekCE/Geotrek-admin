@@ -24,6 +24,9 @@ CHANGELOG
 - Fix log book filters by updating mapentity (#4576)
 - Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
+**Documentation**
+
+- Update documentation about paths with docker commands
 
 **Documentation**
 
