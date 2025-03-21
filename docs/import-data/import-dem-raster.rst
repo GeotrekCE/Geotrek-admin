@@ -87,7 +87,7 @@ Load DEM
          .. code-block:: bash
 
 		    sudo geotrek loaddem \
-		    .var/dem.tif \
+		    ./var/dem.tif \
 		    --replace \
 		    --update-altimetry 
 
@@ -96,7 +96,7 @@ Load DEM
          .. code-block:: bash
     
 		    docker compose run --rm web ./manage.py loaddem \
-		    .var/dem.tif \
+		    ./var/dem.tif \
 		    --replace \
 		    --update-altimetry 
 			    
