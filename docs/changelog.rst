@@ -11,7 +11,7 @@ CHANGELOG
 
 **Documentation**
 
-- Update documentation about paths with docker commands
+- Update documentation about paths with docker commands (#4578)
 
 2.114.0     (2025-03-13)
 ----------------------------
