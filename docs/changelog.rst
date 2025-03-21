@@ -26,7 +26,7 @@ CHANGELOG
 
 **Documentation**
 
-- Update documentation about paths with docker commands
+- Update documentation about paths with docker commands (#4578)
 
 **Documentation**
 
