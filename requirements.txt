@@ -375,7 +375,7 @@ typing-extensions==4.12.2
     #   django-modeltranslation
     #   large-image
     #   referencing
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   celery
     #   kombu
