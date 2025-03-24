@@ -737,7 +737,8 @@ class ParserTests(TestCase):
 
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
-        mocked.return_value.content = b'Fake image'
+        # Mimetype is included in content in order to check that only non-svg images are saved:
+        mocked.return_value.content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR Fake png'
 
         InformationDeskTypeFactory.create(label="Foo")
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
@@ -748,16 +749,19 @@ class ParserTests(TestCase):
 
         with information_desk.photo.open() as f:
             data = f.read()
-        self.assertEqual(data, b'Fake image')
+        self.assertEqual(data, b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR Fake png')
 
-        mocked.return_value.content = b'Fake other image'
+        mocked.return_value.content = b'\xff\xd8\xff\xe0\x00\x10JFIF Fake jpeg'
         call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
-
         information_desk.refresh_from_db()
-
         with information_desk.photo.open() as f:
             data = f.read()
-        self.assertEqual(data, b'Fake other image')
+        self.assertEqual(data, b'\xff\xd8\xff\xe0\x00\x10JFIF Fake jpeg')
+
+        mocked.return_value.content = b'<?xml version="1.0"?><svg Fake svg/>'
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskParser')
+        information_desk.refresh_from_db()
+        self.assertFalse(information_desk.photo)
 
         information_desk_2 = InformationDesk.objects.get(eid=2)
         self.assertEqual(information_desk_2.website, None)
