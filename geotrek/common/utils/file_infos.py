@@ -1,6 +1,6 @@
 from chardet.universaldetector import UniversalDetector
 import magic
-from paperclip import is_an_image
+from paperclip.utils import is_an_image
 
 
 def get_encoding_file(file_name):
@@ -21,4 +21,4 @@ def is_a_non_svg_image(filefield):
         with filefield.open('rb') as file:
             file.seek(0)
             file_mimetype = magic.from_buffer(file.read(), mime=True)
-    return is_an_image(file_mimetype) and file_mimetype.split('/')[1] == 'svg+xml'
+    return is_an_image(file_mimetype) and file_mimetype.split('/')[1] != 'svg+xml'
