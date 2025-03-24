@@ -292,7 +292,7 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.25.3
+pymupdf==1.25.4
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
