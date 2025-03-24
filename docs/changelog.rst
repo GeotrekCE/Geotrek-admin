@@ -5,6 +5,8 @@ CHANGELOG
 2.114.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+- Add an InformationDesk for OpenStreetMap
 
 
 2.114.0     (2025-03-13)
