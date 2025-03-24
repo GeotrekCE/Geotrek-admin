@@ -291,7 +291,7 @@ To import information desks from OpenStreetMap, edit ``/opt/geotrek-admin/var/co
 
 Then set up appropriate values:
 
-* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures<https://wiki.openstreetmap.org/wiki/Map_features>`_  to get a list of existing tags)
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
 * ``type`` to select in which Geotrek type imported objects should go
 * ``default_fields_values`` to add a default value to a specific field in case this one is not reference in OpenStreetMap
 * See `/geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about Parsers

@@ -1130,22 +1130,22 @@ class OpenStreetMapParserTests(TestCase):
     def test_geom_point_to_point_OSM(self):
         self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
 
-        point = Point((673775.5074406686, 6260613.093389216), srid=2154)
         information_desk = InformationDesk.objects.get(eid=1)
-        self.assertEqual(information_desk.geom, point)
+        self.assertAlmostEqual(information_desk.geom.coords[0], 673775.5074406686)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 6260613.093389216)
 
     @override_settings(SRID=2154)
     def test_geom_way_to_point_OSM(self):
         self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
 
-        point = Point((639380.854410392, 6256494.451055847), srid=2154)
         information_desk = InformationDesk.objects.get(eid=3)
-        self.assertEqual(information_desk.geom, point)
+        self.assertAlmostEqual(information_desk.geom.coords[0], 639380.854410392)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 6256494.451055847)
 
     @override_settings(SRID=2154)
     def test_geom_relation_to_point_OSM(self):
         self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
 
-        point = Point((-5898321.244682654, 12807160.659235487), srid=2154)
         information_desk = InformationDesk.objects.get(eid=4)
-        self.assertEqual(information_desk.geom, point)
+        self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
