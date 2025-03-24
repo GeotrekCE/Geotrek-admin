@@ -8,7 +8,6 @@ import os
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.contrib.gis.geos import Point
 
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
