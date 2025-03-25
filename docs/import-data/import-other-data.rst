@@ -144,7 +144,6 @@ Load POIs
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadpoi \
           ./var/poi.geojson \
