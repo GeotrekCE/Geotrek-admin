@@ -1060,7 +1060,6 @@ class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser)
     default_fields_values = {"name": "test_default"}
     tags = {"amenity": "ranger_station"}
 
-
 class OpenStreetMapParserTests(TestCase):
 
     @mock.patch('geotrek.common.parsers.requests.get')

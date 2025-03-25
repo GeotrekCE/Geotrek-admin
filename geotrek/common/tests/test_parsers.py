@@ -21,7 +21,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     ExcelParser, GeotrekAggregatorParser,
                                     GeotrekParser, OpenSystemParser,
                                     TourInSoftParser, TourismSystemParser,
-                                    ValueImportError, XmlParser)
+                                    ValueImportError, XmlParser, OpenStreetMapParser)
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
@@ -70,6 +70,19 @@ class OrganismNoMappingPartialParser(StructureExcelParser):
 
 class OrganismNoNaturalKeysParser(StructureExcelParser):
     warn_on_missing_fields = True
+
+
+class OrganismFlexibleFieldsParser(ExcelParser):
+    model = RecordSource
+    flexible_fields = True
+    fields = {
+        'name': 'name',
+        'website': 'website',
+    }
+    eid = 'name'
+
+    def filter_website(self, src, val):
+        return "website test"
 
 
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
@@ -184,6 +197,12 @@ class ParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser', filename, verbosity=2, stdout=output)
         self.assertIn("Bad value 'Structure' for field STRUCTURE. Should contain ['foo']", output.getvalue())
+
+    def test_flexible_fields(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismFlexibleFieldsParser', filename, verbosity=0)
+        websites = RecordSource.objects.order_by('pk')
+        self.assertEqual(websites[0].website, "website test")
 
 
 class ThemeParser(ExcelParser):
@@ -1024,3 +1043,10 @@ class GeotrekAggregatorSourcesTests(TestCase):
         # Test bad response status
         GeotrekTrekTestSourcesParser()
         mocked_add_warning.assert_called_with("Failed to download 'https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerroragain.png'")
+
+
+class OpenStreetMapTestParser(TestCase):
+
+    def test_empty_dict_initialisation(self):
+        osmParser = OpenStreetMapParser()
+        self.assertEqual(osmParser.tags, {})

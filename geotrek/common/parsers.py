@@ -80,6 +80,7 @@ class Parser:
     provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
     delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
     update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
+    flexible_fields: The fields in the API response are flexible. It does not throw an error if a mapped field does not appear in the API response.
     """
     label = None
     model = None
@@ -95,6 +96,7 @@ class Parser:
     separator = '+'
     eid = None
     provider = None
+    flexible_fields = False
     fields = None
     m2m_fields = {}
     constant_fields = {}
@@ -105,6 +107,7 @@ class Parser:
     field_options = {}
     default_language = None
     headers = {"User-Agent": "Geotrek-Admin"}
+
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -160,7 +163,10 @@ class Parser:
             if part == '*':
                 return [self.get_part(dst, left, subval) for subval in val]
             else:
-                return self.get_part(dst, left, val[part])
+                if self.flexible_fields:
+                    return self.get_part(dst, left, val.get(part))
+                else:
+                    return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
         if isinstance(src, Iterable) and not isinstance(src, str):
@@ -1559,7 +1565,6 @@ class ApidaeBaseParser(Parser):
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
     delete = True
-    default_fields_values = None
 
     url = 'https://overpass-api.de/api/interpreter/'
     bbox = None
@@ -1568,8 +1573,6 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.default_fields_values is None:
-            self.default_fields_values = {}
         if self.tags is None:
             self.tags = {}
 
@@ -1614,57 +1617,3 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
-
-    def parse_real_field(self, dst, src, val):
-        """Returns True if modified"""
-        if hasattr(self.obj, dst):
-            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
-                old = set(getattr(self.obj, dst).all())
-            else:
-                old = getattr(self.obj, dst)
-
-        if hasattr(self, 'filter_{0}'.format(dst)):
-            val = getattr(self, 'filter_{0}'.format(dst))(src, val)
-        else:
-            val = self.apply_filter(dst, src, val)
-
-        # if there is no value take the default value if it is provided
-        if dst in self.default_fields_values and not val:
-            val = self.default_fields_values[dst]
-
-        if hasattr(self.obj, dst):
-            if dst in self.m2m_fields or dst in self.m2m_constant_fields:
-                val = set(val)
-                if dst in self.m2m_aggregate_fields:
-                    val = val | old
-            if isinstance(old, float) and isinstance(val, float):
-                old = round(old, 10)
-                val = round(val, 10)
-            if isinstance(old, str):
-                val = val or ""
-            if old != val:
-                self.set_value(dst, src, val)
-                return True
-            else:
-                return False
-        else:
-            self.set_value(dst, src, val)
-            return True
-
-    def get_part(self, dst, src, val):
-        if not src:
-            return val
-        if val is None:
-            return None
-        if '.' in src:
-            part, left = src.split('.', 1)
-        else:
-            part, left = src, ''
-        try:
-            value = int(part)
-            return self.get_part(dst, left, val[value])
-        except ValueError:
-            if part == '*':
-                return [self.get_part(dst, left, subval) for subval in val]
-            else:
-                return self.get_part(dst, left, val.get(part))
