@@ -342,7 +342,6 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadinfrastructure \
           ./var/infrastructure.geojson \
