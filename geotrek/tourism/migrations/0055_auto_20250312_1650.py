@@ -15,17 +15,18 @@ def remove_information_desk_incorrect_photos(apps, schema_editor):
     Attachment = apps.get_model("common", "Attachment")
 
     FileType = apps.get_model("common", "FileType")
-    filetype = FileType.objects.get_or_create(type="InformationDesk file backup")
+    filetype, created = FileType.objects.get_or_create(type="InformationDesk file backup")
 
     User = apps.get_model(settings.AUTH_USER_MODEL)
-    creator, created = User.objects.get_or_create(username='Django migration', defaults={'is_active': False})
+    creator, created = User.objects.get_or_create(username='Django migration',
+                                                  defaults={'is_active': False})
 
     for info_desk in InformationDesk.objects.all():
         # ImageField does not support svg files
-        if not is_a_non_svg_image(info_desk.photo):
+        if info_desk.photo and not is_a_non_svg_image(info_desk.photo):
             attachment = Attachment()
-            attachment.attachment_file = info_desk.photo
             attachment.content_object = info_desk
+            attachment.attachment_file = info_desk.photo
             attachment.filetype = filetype
             attachment.creator = creator
             attachment.title = info_desk.photo.name
