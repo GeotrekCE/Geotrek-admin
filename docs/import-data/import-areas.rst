@@ -213,7 +213,6 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loaddistricts \
           ./var/districts.geojson \
