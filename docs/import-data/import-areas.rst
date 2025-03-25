@@ -96,7 +96,6 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadcities \
           ./var/cities.geojson \
