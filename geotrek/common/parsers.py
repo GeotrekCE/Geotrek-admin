@@ -1573,7 +1573,7 @@ class OpenStreetMapParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.tags is None:
-            self.tags = {}
+            raise ImproperlyConfigured("Tags must be defined")
 
         bbox_str = self.get_bbox_str()
         for tag, value in self.tags.items():

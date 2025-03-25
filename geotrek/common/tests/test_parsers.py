@@ -25,6 +25,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
+from geotrek.tourism.models import InformationDesk
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
@@ -1043,3 +1044,14 @@ class GeotrekAggregatorSourcesTests(TestCase):
         # Test bad response status
         GeotrekTrekTestSourcesParser()
         mocked_add_warning.assert_called_with("Failed to download 'https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerroragain.png'")
+
+
+class OpenStreetMapInitialisationTest(OpenStreetMapParser):
+    model = InformationDesk
+
+
+class OpenStreetMapTestParser(TestCase):
+
+    def test_improperly_configurated_categories(self):
+        with self.assertRaisesRegex(ImproperlyConfigured, 'Tags must be defined'):
+            call_command('import', 'geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest', verbosity=2)

@@ -1135,7 +1135,3 @@ class OpenStreetMapParserTests(TestCase):
         information_desk = InformationDesk.objects.get(eid=4)
         self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
         self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
-
-    def test_empty_dict_initialisation(self):
-        osmParser = InformationDeskOpenStreetMapParser()
-        self.assertEqual(osmParser.tags, {})
