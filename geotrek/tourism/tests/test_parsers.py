@@ -1057,7 +1057,6 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
 class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser):
     type = "Foo"
-    default_fields_values = {"name": "test_default"}
     tags = {"amenity": "ranger_station"}
 
 
@@ -1094,18 +1093,6 @@ class OpenStreetMapParserTests(TestCase):
 
         information_desk = InformationDesk.objects.get(eid=3)
         self.assertEqual(information_desk.phone, None)
-
-    def test_default_values_external_value_OSM(self):
-        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
-
-        information_desk = InformationDesk.objects.get(eid=1)
-        self.assertEqual(information_desk.name, 'test')
-
-    def test_default_values_no_external_value_OSM(self):
-        self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
-
-        information_desk = InformationDesk.objects.get(eid=3)
-        self.assertEqual(information_desk.name, 'test_default')
 
     def test_InformationDesk_street_filter_housenumber_and_street_OSM(self):
         self.import_information_desk('geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser')
