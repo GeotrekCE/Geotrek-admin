@@ -517,7 +517,6 @@ Load Signage
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadsignage \
           ./var/signage.geojson \
