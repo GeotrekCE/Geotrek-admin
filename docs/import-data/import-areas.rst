@@ -82,7 +82,7 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
          .. code-block:: bash
 
           sudo geotrek loadcities \
-          ./var/conf/cities.geojson \
+          ./var/cities.geojson \
           --intersect \
           --srid=2154 \
           --encoding latin1 \
@@ -91,10 +91,14 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
 
     .. md-tab-item:: Example with Docker
 
-         .. code-block:: bash
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
+
+        .. code-block:: bash
+
     
           docker compose run --rm web ./manage.py loadcities \
-          ./var/conf/cities.geojson \
+          ./var/cities.geojson \
           --intersect \
           --srid=2154 \
           --encoding latin1 \
@@ -195,7 +199,7 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
          .. code-block:: bash
 
           sudo geotrek loaddistricts \
-          ./var/conf/districts.geojson \
+          ./var/districts.geojson \
           --intersect \
           --srid=2154 \
           --encoding latin1 \
@@ -203,10 +207,14 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
 
     .. md-tab-item:: Example with Docker
 
-         .. code-block:: bash
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
+
+        .. code-block:: bash
+
     
           docker compose run --rm web ./manage.py loaddistricts \
-          ./var/conf/districts.geojson \
+          ./var/districts.geojson \
           --intersect \
           --srid=2154 \
           --encoding latin1 \
@@ -296,7 +304,7 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
          .. code-block:: bash
 
           sudo geotrek loadrestrictedareas \
-          ./var/conf/restrictedareas.geojson \
+          ./var/restrictedareas.geojson \
           --intersect \
           "Réserve naturelle"  \
           --srid=2154 \
@@ -305,10 +313,14 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
 
     .. md-tab-item:: Example with Docker
 
-         .. code-block:: bash
+        .. seealso::
+	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
+
+        .. code-block:: bash
+
     
           docker compose run --rm web ./manage.py loadrestrictedareas \
-          ./var/conf/restrictedareas.geojson \
+          ./var/restrictedareas.geojson \
           --intersect \
           "Réserve naturelle"  \
           --srid=2154 \
