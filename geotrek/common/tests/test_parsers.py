@@ -72,7 +72,7 @@ class OrganismNoNaturalKeysParser(StructureExcelParser):
     warn_on_missing_fields = True
 
 
-class OrganismFlexibleFieldsParser(ExcelParser):
+class RecordSourceFlexibleFieldsParser(ExcelParser):
     model = RecordSource
     flexible_fields = True
     fields = {
@@ -200,7 +200,7 @@ class ParserTests(TestCase):
 
     def test_flexible_fields(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource.xls')
-        call_command('import', 'geotrek.common.tests.test_parsers.OrganismFlexibleFieldsParser', filename, verbosity=0)
+        call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceFlexibleFieldsParser', filename, verbosity=0)
         websites = RecordSource.objects.order_by('pk')
         self.assertEqual(websites[0].website, "website test")
 
@@ -1043,10 +1043,3 @@ class GeotrekAggregatorSourcesTests(TestCase):
         # Test bad response status
         GeotrekTrekTestSourcesParser()
         mocked_add_warning.assert_called_with("Failed to download 'https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerroragain.png'")
-
-
-class OpenStreetMapTestParser(TestCase):
-
-    def test_empty_dict_initialisation(self):
-        osmParser = OpenStreetMapParser()
-        self.assertEqual(osmParser.tags, {})
