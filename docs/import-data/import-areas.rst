@@ -318,7 +318,6 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
 
         .. code-block:: bash
 
-         .. code-block:: bash
     
           docker compose run --rm web ./manage.py loadrestrictedareas \
           ./var/restrictedareas.geojson \
