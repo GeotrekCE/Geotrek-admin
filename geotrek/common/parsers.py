@@ -108,7 +108,6 @@ class Parser:
     default_language = None
     headers = {"User-Agent": "Geotrek-Admin"}
 
-
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
         self.line = 0
