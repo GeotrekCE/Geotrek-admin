@@ -5,6 +5,7 @@ from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
 
+from geotrek.common.admin.inlines import AttachmentInline
 from geotrek.common.mixins.actions import MergeActionMixin
 from geotrek.tourism import models as tourism_models
 
@@ -32,16 +33,14 @@ class InformationDeskTypeAdmin(MergeActionMixin, TabbedTranslationAdmin):
 admin.site.register(tourism_models.InformationDeskType, InformationDeskTypeAdmin)
 
 
+@admin.register(tourism_models.InformationDesk)
 class InformationDeskAdmin(LeafletGeoAdmin, TabbedTranslationAdmin):
     list_display = ('name', 'website', 'municipality')
     search_fields = ('name',)
-
+    inlines = [AttachmentInline]
     formfield_overrides = {
         models.TextField: {'widget': TinyMCE},
     }
-
-
-admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
 
 
 class TouristicContentType1Inline(TranslationTabularInline):
