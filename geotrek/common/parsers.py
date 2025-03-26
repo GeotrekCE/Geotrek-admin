@@ -1572,6 +1572,7 @@ class OpenStreetMapParser(Parser):
     query = ""
 
     osm_srid = 4326
+    margin = 0.0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1583,8 +1584,7 @@ class OpenStreetMapParser(Parser):
             self.query += f"nwr['{tag}'='{value}']({bbox_str});"
 
     def get_bbox_str(self):
-        margin = 0.0
-        bbox = api_bbox(settings.SPATIAL_EXTENT, margin)
+        bbox = api_bbox(settings.SPATIAL_EXTENT, self.margin)
         return '{1},{0},{3},{2}'.format(*bbox)
 
     def get_tag_info(self, osm_tags):
