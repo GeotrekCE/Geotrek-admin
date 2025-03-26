@@ -1564,15 +1564,11 @@ class ApidaeBaseParser(Parser):
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
     delete = True
-    flexible_fields = True
 
     url = 'https://overpass-api.de/api/interpreter/'
     bbox = None
     tags = None
     query = ""
-
-    osm_srid = 4326
-    margin = 0.0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1584,7 +1580,8 @@ class OpenStreetMapParser(Parser):
             self.query += f"nwr['{tag}'='{value}']({bbox_str});"
 
     def get_bbox_str(self):
-        bbox = api_bbox(settings.SPATIAL_EXTENT, self.margin)
+        margin = 0.0
+        bbox = api_bbox(settings.SPATIAL_EXTENT, margin)
         return '{1},{0},{3},{2}'.format(*bbox)
 
     def get_tag_info(self, osm_tags):
@@ -1595,14 +1592,14 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
-        polygon.srid = self.osm_srid
+        polygon.srid = 4326
         polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid
 
     def get_centroid_from_relation(self, bbox):
         polygon = Polygon.from_bbox((bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"]))
-        polygon.srid = self.osm_srid
+        polygon.srid = 4326
         polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid
