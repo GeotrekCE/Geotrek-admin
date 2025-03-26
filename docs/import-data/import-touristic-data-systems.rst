@@ -39,6 +39,7 @@ This settings may be overriden when you define a new parser:
 - ``separator`` (default: ``'+'``)
 - ``eid`` field name for eid (default: ``None``)
 - ``provider`` (default: ``None``)
+- ``flexible_fields`` if True external source fields can be flexible (default: ``False``)
 - ``fields`` (default: ``None``)
 - ``m2m_fields``  (default: ``{}``)
 - ``constant_fields`` (default: ``{}``)
@@ -275,7 +276,7 @@ Import from OpenStreetMap
 Import information desks
 -------------------------
 
-To import information desks from OpenStreetMap, edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -283,20 +284,17 @@ To import information desks from OpenStreetMap, edit ``/opt/geotrek-admin/var/co
 
     class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
         provider = "OpenStreetMap"
-        tags = {"amenity" : "ranger_station"}
+        tags = {"amenity": "ranger_station"}
         type = "Maisons du parc"
-        default_fields_values = {
-            'name': "Maison du Parc",
-        }
 
 Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-* ``type`` to select in which Geotrek type imported objects should go
-* ``default_fields_values`` to add a default value to a specific field in case this one is not referenced in OpenStreetMap
-* See `/geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about Parsers
+* ``type`` to specify the Geotrek type for imported objects
+* See the `/geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
-You can duplicate the class. Each class must have a different name.
+The parsed objects will be those contained in the setting.SPATIAL_EXTENT bounding box.
+You can duplicate the class to import different types of information desks. In that case, each class must have a unique name.
 
 .. _multiple-imports:
 

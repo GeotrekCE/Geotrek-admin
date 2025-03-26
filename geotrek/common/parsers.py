@@ -80,7 +80,7 @@ class Parser:
     provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
     delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
     update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
-    flexible_fields: The fields in the API response are flexible. It does not throw an error if a mapped field does not appear in the API response.
+    flexible_fields: If set to True, all fields in the API response are flexible, meaning no error is thrown if a mapped field is missing. The default is False.
     """
     label = None
     model = None
@@ -1564,11 +1564,14 @@ class ApidaeBaseParser(Parser):
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
     delete = True
+    flexible_fields = True
 
     url = 'https://overpass-api.de/api/interpreter/'
     bbox = None
     tags = None
     query = ""
+
+    osm_srid = 4326
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1592,14 +1595,14 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
-        polygon.srid = 4326
+        polygon.srid = self.osm_srid
         polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid
 
     def get_centroid_from_relation(self, bbox):
         polygon = Polygon.from_bbox((bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"]))
-        polygon.srid = 4326
+        polygon.srid = self.osm_srid
         polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid

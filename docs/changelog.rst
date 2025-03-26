@@ -6,11 +6,13 @@ CHANGELOG
 ----------------------------
 
 **Improvements**
-- Add an InformationDesk for OpenStreetMap
+
+- Add OpenStreetMap parser for Information Desk
 
 **Bug fixes**
 
 - Fix log book filters by updating mapentity (#4576)
+
 
 
 2.114.0     (2025-03-13)

@@ -1267,7 +1267,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
     def filter_geom(self, src, val):
         type, lng, lat, area, bbox = val
         if type == "node":
-            geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
             geom.transform(settings.SRID)
             return geom
         elif type == "way":
