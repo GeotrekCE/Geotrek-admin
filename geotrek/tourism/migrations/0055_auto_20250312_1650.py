@@ -17,7 +17,6 @@ def remove_information_desk_incorrect_photos(apps, schema_editor):
     FileType = apps.get_model("common", "FileType")
     file_type = None
 
-
     User = apps.get_model(settings.AUTH_USER_MODEL)
     creator, created = User.objects.get_or_create(username='__internal__',
                                                   defaults={'is_active': False})
