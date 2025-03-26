@@ -1,8 +1,5 @@
-from django.contrib.contenttypes.admin import GenericTabularInline
-
-from geotrek.common.models import Attachment
+from paperclip.admin import AttachmentInlines
 
 
-class AttachmentInline(GenericTabularInline):
-    model = Attachment
+class AttachmentInline(AttachmentInlines):
     extra = 0
