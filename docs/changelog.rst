@@ -19,6 +19,12 @@ CHANGELOG
 - Attachment can now be managed for Information desks.
 
 
+**Warnings**
+
+- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
+- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
+- Attachment can now be managed for Information desks.
+
 **Bug fixes**
 
 - Fix log book filters by updating mapentity (#4576)
