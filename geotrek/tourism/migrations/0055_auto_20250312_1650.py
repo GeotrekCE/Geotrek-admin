@@ -16,6 +16,7 @@ def remove_information_desk_incorrect_photos(apps, schema_editor):
 
     FileType = apps.get_model("common", "FileType")
     file_type = None
+    ContentType = apps.get_model("contenttypes", "ContentType")
 
     User = apps.get_model(settings.AUTH_USER_MODEL)
     creator, created = User.objects.get_or_create(username='__internal__',
@@ -27,7 +28,8 @@ def remove_information_desk_incorrect_photos(apps, schema_editor):
             if not file_type:
                 file_type, created = FileType.objects.get_or_create(type="InformationDesk file backup")
             attachment = Attachment()
-            attachment.content_object = info_desk
+            attachment.object_id = info_desk.pk
+            attachment.content_type = ContentType.objects.get_for_model(InformationDesk)
             attachment.attachment_file = info_desk.photo
             attachment.filetype = file_type
             attachment.creator = creator
