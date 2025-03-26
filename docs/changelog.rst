@@ -5,9 +5,16 @@ CHANGELOG
 2.114.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
+- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
+- Attachment can now be managed for Information desks.
+
 **Bug fixes**
 
 - Fix log book filters by updating mapentity (#4576)
+- Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
 
 2.114.0     (2025-03-13)
