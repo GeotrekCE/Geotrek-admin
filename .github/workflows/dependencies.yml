@@ -63,5 +63,5 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.GHA_PAT }}
           branch: ${{ github.ref }}
