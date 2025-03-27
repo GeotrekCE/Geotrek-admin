@@ -6,7 +6,7 @@ x-images:
       dockerfile: ./docker/Dockerfile
       target: dev
       args:
-        BASE_IMAGE: jammy
+        BASE_IMAGE: ubuntu:jammy
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
@@ -58,14 +58,6 @@ services:
       default:
         aliases:
           - ${SERVER_NAME}
-
-  sphinx:
-    <<: [ *django ]
-    working_dir: /opt/geotrek-admin/docs
-    ports:
-      - "${SPHINX_PORT:-8800}:8800"
-
-    command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
 
 volumes:
   postgres:

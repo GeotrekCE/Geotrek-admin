@@ -1569,8 +1569,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
         type = serializers.SerializerMethodField()
 
         def get_type(self, obj):
-            type_label = infrastructure_models.INFRASTRUCTURE_TYPES.for_value(obj.type).display
-            return _(type_label)
+            return obj.get_type_display()
 
         class Meta:
             model = infrastructure_models.InfrastructureType

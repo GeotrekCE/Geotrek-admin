@@ -11,5 +11,5 @@ def get_translated_fields(model):
     except NotRegistered:
         translated_fields = []
     else:
-        translated_fields = mto.fields.keys()
+        return list(mto.fields)
     return translated_fields

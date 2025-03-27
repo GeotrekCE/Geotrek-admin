@@ -7,15 +7,16 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
+from django.db.models.enums import TextChoices
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from paperclip.validators import FileMimetypeValidator
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from extended_choices import Choices
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, PictogramMixin,
@@ -74,8 +75,8 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
                               blank=True, null=True)
     website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    photo = models.FileField(verbose_name=_("Photo"), upload_to=settings.UPLOAD_DIR,
-                             max_length=512, blank=True, null=True)
+    photo = models.ImageField(verbose_name=_("Photo"), upload_to=settings.UPLOAD_DIR,
+                              max_length=512, blank=True, null=True, validators=[FileMimetypeValidator()])
 
     street = models.CharField(verbose_name=_("Street"), max_length=256,
                               blank=True, null=True)
@@ -143,17 +144,16 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
         return os.path.join(settings.MEDIA_URL, thumbnail.name)
 
 
-GEOMETRY_TYPES = Choices(
-    ('POINT', 'point', _('Point')),
-    ('LINE', 'line', _('Line')),
-    ('POLYGON', 'polygon', _('Polygon')),
-    ('ANY', 'any', _('Any')),
-)
+class GeometryTypeChoices(TextChoices):
+    POINT = 'point', _('Point')
+    LINE = 'line', _('Line')
+    POLYGON = 'polygon', _('Polygon')
+    ANY = 'any', _('Any')
 
 
 class TouristicContentCategory(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Label"), max_length=128)
-    geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
+    geometry_type = models.CharField(max_length=16, choices=GeometryTypeChoices.choices, default=GeometryTypeChoices.POINT)
     type1_label = models.CharField(verbose_name=_("First list label"), max_length=128,
                                    blank=True)
     type2_label = models.CharField(verbose_name=_("Second list label"), max_length=128,

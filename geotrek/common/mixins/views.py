@@ -8,7 +8,8 @@ from django.utils.functional import classproperty
 from django.views import static
 from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
-from pdfimpose import PageList
+from pdfimpose.schema.saddle import impose
+from pymupdf import Document
 
 from geotrek.common.models import FileType, Attachment
 from geotrek.common.utils import logger
@@ -145,18 +146,15 @@ class BookletMixin:
 def transform_pdf_booklet_callback(response):
     content = response.content
     content_b = BytesIO(content)
-    import pdfimpose
 
-    pages = PageList([content_b])
-    for x in pages:
-        x.pdf.strict = False
-    new_pdf = pdfimpose._legacy_pypdf_impose(
-        matrix=pdfimpose.ImpositionMatrix([pdfimpose.Direction.horizontal], 'left'),
-        pages=pages,
-        last=0
-    )
     result = BytesIO()
-    new_pdf.write(result)
+
+    impose(
+        files=[Document(stream=content_b)],
+        output=result,
+        folds="h",
+    )
+
     response.content = result.getvalue()
 
 

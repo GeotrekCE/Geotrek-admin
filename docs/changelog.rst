@@ -2,22 +2,62 @@
 CHANGELOG
 =========
 
-2.113.1+dev    (XXXX-XX-XX)
+2.114.0+dev     (XXXX-XX-XX)
+----------------------------
+
+**Warnings**
+
+- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
+- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
+- Attachment can now be managed for Information desks.
+
+**Bug fixes**
+
+- Fix log book filters by updating mapentity (#4576)
+- Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
+
+**Improvements**
+
+- Do not display "None" on Blade Direction
+
+**Documentation**
+
+- Update documentation about paths with docker commands (#4578)
+
+2.114.0     (2025-03-13)
 ----------------------------
 
 **Breaking changes**
 
 This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
 
+**Bug fixes**
+
+- Fix `loaddem` command after debian fresh install which requires to install postgis package.
+
 **Improvements**
 
 - Officially support Ubuntu 24.04 debian package.
 - Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
 - Deprecate support of Ubuntu 18.04 bionic.
-- Do not display "None" on Blade Direction
+- Improve filter on code signage (#4367)
+
+**UI/UX**
+
+- Fix right CSS class for images thumbnails max-width in attached files lists
+
+**Bug fixes**
+
+- Fix parent-child trek linking in GeotrekTrekParser: failure to retrieve a parent trek lead to not parsing any remaining child Treks
+- Add try-except when linking information desks to treks in GeotrekInformationDeskParser
+
+**Documentation**
+
+- Update documentation for sensitivity fixtures (#4492)
+- Update database restore process with PGRouting extension
 
 
-2.113.1    (2025-02-17)
+2.113.1         (2025-02-17)
 ----------------------------
 
 **Improvements**
@@ -38,16 +78,17 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 
 - Update documentation theme and content, re-organize sections (#4484)
 - Add infos about adding new languages (#4486)
+- Fix typo in docs
 
 
-2.113.0    (2025-01-30)
+2.113.0         (2025-01-30)
 ----------------------------
 
 **Breaking changes**
 
 This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin-2-113-0
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#from-geotrek-admin-2-113-0
 
 **Warnings**
 
@@ -67,7 +108,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
 
 
-2.112.0     (2025-01-14)
+2.112.0         (2025-01-14)
 ----------------------------
 
 **Performances**
@@ -92,7 +133,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Update and homogenize README.rst
 
 
-2.111.0     (2024-12-05)
+2.111.0         (2024-12-05)
 ----------------------------
 
 **Features**
@@ -116,7 +157,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Add note about certbot ssl configuration in nginx
 
 
-2.110.0     (2024-11-13)
+2.110.0         (2024-11-13)
 ----------------------------
 
 **New features**
@@ -124,7 +165,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Add parser for schema_randonnee-compliant files (#4022)
 
 
-2.109.3     (2024-10-29)
+2.109.3         (2024-10-29)
 ----------------------------
 
 **Improvements**
@@ -149,7 +190,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Improve development quickstart documentation
 
 
-2.109.2     (2024-09-19)
+2.109.2         (2024-09-19)
 ----------------------------
 
 **Warning**
@@ -183,7 +224,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Add command line examples and templates for importing data
 
 
-2.109.1     (2024-08-22)
+2.109.1         (2024-08-22)
 ----------------------------
 
 **Improvements**
@@ -205,7 +246,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 - Optimize some backend queries for performances
 
 
-2.109.0     (2024-08-08)
+2.109.0         (2024-08-08)
 ----------------------------
 
 **New features**
@@ -270,7 +311,7 @@ https://geotrek.readthedocs.io/en/latest/install/upgrade.html#from-geotrek-admin
 
 - This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#postgresql
 
 **New features**
 

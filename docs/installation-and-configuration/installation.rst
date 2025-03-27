@@ -104,7 +104,7 @@ Install the Geotrek-admin package
 
 .. code-block:: bash
 
-    sudo apt install -y --no-install-recommends geotrek-admin
+    sudo apt install -y --no-install-recommends geotrek-admin postgis
 
 .. note ::
 
@@ -113,6 +113,8 @@ Install the Geotrek-admin package
     The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.*/site-packages/geotrek`` directory
+
+    PostGIS package, in combination with `--no-install-recommends`, include only scripts that are useful with `loaddem` command, not PostgreSQL server dependencies.
 
 Extra steps
 ============

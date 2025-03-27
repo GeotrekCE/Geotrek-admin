@@ -47,7 +47,7 @@ class License(StructureOrNoneRelated, BaseLicense):
         ordering = ['label']
 
 
-class AccessibilityAttachment(models.Model):
+class AccessibilityAttachment(TimeStampedModelMixin):
     # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = 'slope', _('Slope')
@@ -71,7 +71,6 @@ class AccessibilityAttachment(models.Model):
                                 verbose_name=_("License"),
                                 null=True, blank=True,
                                 on_delete=models.PROTECT)
-    creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 related_name="created_attachments_accessibility",
@@ -86,10 +85,6 @@ class AccessibilityAttachment(models.Model):
     legend = models.CharField(blank=True, default='', max_length=128,
                               verbose_name=_("Legend"),
                               help_text=_("Details displayed"))
-    date_insert = models.DateTimeField(editable=False, auto_now_add=True,
-                                       verbose_name=_("Insertion date"))
-    date_update = models.DateTimeField(editable=False, auto_now=True,
-                                       verbose_name=_("Update date"))
     random_suffix = models.CharField(null=False, blank=True, default='', max_length=128)
 
     class Meta:
@@ -183,7 +178,6 @@ class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
 
 
 class Attachment(BaseAttachment):
-    creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 

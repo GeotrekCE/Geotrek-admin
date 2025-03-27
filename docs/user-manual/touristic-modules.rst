@@ -364,7 +364,7 @@ Fiche détaillée
 	- Visibilité : publique
 	- Exemple : La montée du Saut du Laire, particulièrement les 150 derniers mètres, sont déconseillés aux joëlettes, notamment dans la perspective du retour en descente sur pavé pouvant être glissant.
 
-	**Signalétique accessiiblité [fr]**
+	**Signalétique accessibilité [fr]**
 
 	- Description : description de taille, forme et couleurs des signalétiques d'accessibilité
 	- Type : liste déroulante

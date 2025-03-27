@@ -14,9 +14,11 @@ from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser, GeotrekParser, ApidaeBaseParser, LEIParser)
+from geotrek.common.utils.file_infos import is_a_non_svg_image
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 from geotrek.trekking.parsers import GeotrekTrekParser
+from geotrek.trekking.models import Trek
 
 
 class TouristicContentMixin:
@@ -198,6 +200,8 @@ class InformationDeskApidaeParser(ApidaeParser):
                     if file and self.obj.photo:
                         if os.path.exists(self.obj.photo.path):
                             os.remove(self.obj.photo.path)
+        if not is_a_non_svg_image(file):
+            return None
         return file
 
     def filter_street(self, src, val):
@@ -1166,21 +1170,24 @@ class GeotrekInformationDeskParser(GeotrekParser):
         model_imported = parser.model
         field = "information_desks"
         for row in datas['results']:
-            infodesks_to_set = [match_id_uuid.get(val) for val in row[field]
-                                if match_id_uuid.get(val)]
-            # object_result_field is the objects found for each field in initial_fields
-            # example every information desks for one trek
-            current_infodesks = getattr(model_imported.objects.get(
-                **{json_uuid_key: row[json_uuid_key]}),
-                field)
-            infodesks_to_remove = current_infodesks.exclude(
-                id__in=[object_result.pk for object_result in infodesks_to_set])
-            if infodesks_to_remove:
-                current_infodesks.remove(
-                    *infodesks_to_remove
-                )
-            getattr(model_imported.objects.get(**{json_uuid_key: row[json_uuid_key]}), field).add(
-                *infodesks_to_set)
+            try:
+                trek = model_imported.objects.get(**{json_uuid_key: row[json_uuid_key]})
+            except Trek.DoesNotExist:
+                self.add_warning(_("Cannot link information desk to trek: could not find "
+                                   "trek with UUID %(uuid)s") % {"uuid": row[json_uuid_key]})
+            else:
+                infodesks_to_set = [match_id_uuid.get(val) for val in row[field]
+                                    if match_id_uuid.get(val)]
+                # object_result_field is the objects found for each field in initial_fields
+                # example every information desks for one trek
+                current_infodesks = getattr(trek, field)
+                infodesks_to_remove = current_infodesks.exclude(
+                    id__in=[object_result.pk for object_result in infodesks_to_set])
+                if infodesks_to_remove:
+                    current_infodesks.remove(
+                        *infodesks_to_remove
+                    )
+                getattr(trek, field).add(*infodesks_to_set)
 
     def end_meta(self):
         super().end_meta()

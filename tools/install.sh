@@ -34,4 +34,5 @@ sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geot
 sudo rm -f /etc/apt/sources.list.d/geotrek.list
 echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
 sudo apt update
+sudo apt install --no-install-recommends -y postgis  # force install postgis scripts only to use loaddem command, even if script does not manage database installation
 sudo apt install --no-install-recommends -y geotrek-admin
