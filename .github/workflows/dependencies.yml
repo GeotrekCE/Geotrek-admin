@@ -59,11 +59,14 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "fix dependencies"
 
       #- name: "Commiting dependencies files"
       #  uses: EndBug/add-and-commit@v9
       - name: Commit & Push changes
-        uses: devops-infra/action-commit-push@master
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.PAT }}
-          #branch: ${{ github.ref }}
+          branch: ${{ github.ref }}
