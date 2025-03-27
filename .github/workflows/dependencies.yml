@@ -63,7 +63,7 @@ jobs:
       #- name: "Commiting dependencies files"
       #  uses: EndBug/add-and-commit@v9
       - name: Commit & Push changes
-        uses: ad-m/github-push-action@master
+        uses: devops-infra/action-commit-push@master
         with:
           github_token: ${{ secrets.PAT }}
-          branch: ${{ github.ref }}
+          #branch: ${{ github.ref }}
