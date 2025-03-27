@@ -62,8 +62,11 @@ release:
 deps:
 	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
 
-flake8:
-	$(docker_compose) run --rm web flake8 geotrek
+format:
+	$(docker_compose) run --rm web ruff format geotrek
+
+lint:
+	$(docker_compose) run --rm web ruff check --fix geotrek
 
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
