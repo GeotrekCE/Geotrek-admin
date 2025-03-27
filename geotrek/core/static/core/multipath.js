@@ -937,6 +937,34 @@ L.Handler.MultiPath = L.Handler.extend({
             // If it's not the first time displaying a layer
             nbSubToposToRemove = oldStepsIndexes.length - 1
         }
+
+        function getFirstPositionOfTopology(topology) {
+            return topology.positions['0'][0]
+        }
+
+        function getLastPositionOfTopology(topology) {
+            lastPositionIndex = topology.paths.length - 1
+            return topology.positions[lastPositionIndex.toString()][1]
+        }
+
+        currentTopology = data.serialized
+
+        previousTopologyIndex = newStepsIndexes[0] - 1
+        if (previousTopologyIndex >= 0) {
+            previousTopology = this._routeTopology[newStepsIndexes[0] - 1]
+            currentTopology[0].positions['0'][0] = getLastPositionOfTopology(previousTopology)
+        }
+
+        nextTopologyIndex = newStepsIndexes[newStepsIndexes.length - 1]
+        if (nextTopologyIndex < this.steps.length) {  // TODO: check if this has to change if isNewMarkerBeingCorrected is True
+            nextTopology = this._routeTopology[nextTopologyIndex]
+            lastSubTopo = currentTopology[currentTopology.length - 1]
+            lastPositionIndex = lastSubTopo.paths.length - 1
+            lastSubTopo.positions[lastPositionIndex.toString()][1] = getFirstPositionOfTopology(nextTopology)
+        }
+
+        console.log(this._routeTopology)
+
         var spliceArgs = [newStepsIndexes[0], nbSubToposToRemove].concat(data.serialized)
         this._routeTopology.splice.apply(this._routeTopology, spliceArgs)
         this.fire('computed_topology', {topology: this._routeTopology});
