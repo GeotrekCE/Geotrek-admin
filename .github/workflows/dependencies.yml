@@ -62,7 +62,6 @@ jobs:
       #- name: "Commiting dependencies files"
       #  uses: EndBug/add-and-commit@v9
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: GuillaumeFalourd/git-commit-push@v1.3
         with:
-          github_token: ${{ secrets.PAT }}
-          branch: ${{ github.ref }}
+          access_token: ${{ secrets.PAT }}
