@@ -1067,8 +1067,10 @@ class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser)
 
 
 class OpenStreetMapParserTests(TestCase):
+
+    @classmethod
     @mock.patch('geotrek.common.parsers.requests.get')
-    def import_information_desk(self, mocked):
+    def import_information_desk(cls, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'information_desk_OSM.json')
             with open(filename, 'r') as f:
@@ -1083,8 +1085,7 @@ class OpenStreetMapParserTests(TestCase):
     def setUpTestData(cls):
         cls.type = InformationDeskTypeFactory.create(label="Foo")
 
-        # None argument is for mocked positional argument
-        cls.import_information_desk(None)
+        cls.import_information_desk()
 
         cls.objects = InformationDesk.objects
 
