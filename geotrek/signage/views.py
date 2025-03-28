@@ -156,10 +156,6 @@ class BladeDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        self.signage = self.get_object().signage
-        return super().delete(request, args, kwargs)
-
     def get_success_url(self):
         return self.get_object().signage.get_detail_url()
 
