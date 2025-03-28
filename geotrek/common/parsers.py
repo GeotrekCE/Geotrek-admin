@@ -105,6 +105,7 @@ class Parser:
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    default_fields_values = {}
     default_language = None
     headers = {"User-Agent": "Geotrek-Admin"}
 
@@ -228,6 +229,10 @@ class Parser:
                 old = set(getattr(self.obj, dst).all())
             else:
                 old = getattr(self.obj, dst)
+
+        # if there is no value take the default value if it is provided
+        if dst in self.default_fields_values and not val:
+            val = self.default_fields_values[dst]
 
         if hasattr(self, 'filter_{0}'.format(dst)):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
