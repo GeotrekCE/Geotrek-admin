@@ -19,7 +19,7 @@ CHANGELOG
 **Documentation**
 
 - Update documentation about paths with docker commands (#4578)
-- Update instructions to regenerate UML diagrams of data model
+- Update instructions to regenerate UML diagrams of data model (#4594)
 
 2.114.0     (2025-03-13)
 ----------------------------
