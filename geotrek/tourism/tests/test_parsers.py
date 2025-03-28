@@ -1065,10 +1065,12 @@ class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser)
         else:
             return "test_flexible"
 
+
 class TestInformationDeskOpenStreetMapDefaultValuesParser(InformationDeskOpenStreetMapParser):
     type = "Foo"
     tags = {"amenity": "ranger_station"}
     default_fields_values = {"name": "test_default"}
+
 
 class OpenStreetMapParserTests(TestCase):
 

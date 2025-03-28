@@ -85,6 +85,7 @@ class RecordSourceFlexibleFieldsParser(ExcelParser):
     def filter_website(self, src, val):
         return "website test"
 
+
 class RecordSourceDefaultFieldValuesParser(ExcelParser):
     model = RecordSource
     flexible_fields = True
@@ -94,6 +95,7 @@ class RecordSourceDefaultFieldValuesParser(ExcelParser):
         'website': 'website',
     }
     eid = 'name'
+
 
 class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
     model = RecordSource
@@ -235,7 +237,6 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceDefaultFieldValuesNotFlexibleParser', filename, verbosity=0)
         websites = RecordSource.objects.order_by('pk')
         self.assertEqual(websites[0].website, "website test default")
-
 
 
 class ThemeParser(ExcelParser):
