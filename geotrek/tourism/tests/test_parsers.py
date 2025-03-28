@@ -1065,6 +1065,10 @@ class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser)
         else:
             return "test_flexible"
 
+class TestInformationDeskOpenStreetMapDefaultValuesParser(InformationDeskOpenStreetMapParser):
+    type = "Foo"
+    tags = {"amenity": "ranger_station"}
+    default_fields_values = {"name": "test_default"}
 
 class OpenStreetMapParserTests(TestCase):
 
@@ -1136,3 +1140,21 @@ class OpenStreetMapParserTests(TestCase):
 
         information_desk2 = self.objects.get(eid=4)
         self.assertEqual(information_desk2.name, 'test_flexible')
+
+    @mock.patch('geotrek.common.parsers.requests.get')
+    def test_default_fields_values(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'information_desk_OSM.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapDefaultValuesParser')
+
+        information_desk = self.objects.get(eid=1)
+        self.assertEqual(information_desk.name, 'test')
+
+        information_desk2 = self.objects.get(eid=4)
+        self.assertEqual(information_desk2.name, 'test_default')

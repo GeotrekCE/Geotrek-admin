@@ -85,6 +85,25 @@ class RecordSourceFlexibleFieldsParser(ExcelParser):
     def filter_website(self, src, val):
         return "website test"
 
+class RecordSourceDefaultFieldValuesParser(ExcelParser):
+    model = RecordSource
+    flexible_fields = True
+    default_fields_values = {"website": "website test default"}
+    fields = {
+        'name': 'name',
+        'website': 'website',
+    }
+    eid = 'name'
+
+class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
+    model = RecordSource
+    default_fields_values = {"website": "website test default"}
+    fields = {
+        'name': 'name',
+        'website': 'website',
+    }
+    eid = 'name'
+
 
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {'attachments': 'photo'}
@@ -204,6 +223,19 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceFlexibleFieldsParser', filename, verbosity=0)
         websites = RecordSource.objects.order_by('pk')
         self.assertEqual(websites[0].website, "website test")
+
+    def test_default_fields_values_with_flexible_fields(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceDefaultFieldValuesParser', filename, verbosity=0)
+        websites = RecordSource.objects.order_by('pk')
+        self.assertEqual(websites[0].website, "website test default")
+
+    def test_default_fields_values_without_flexible_fields(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource2.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceDefaultFieldValuesNotFlexibleParser', filename, verbosity=0)
+        websites = RecordSource.objects.order_by('pk')
+        self.assertEqual(websites[0].website, "website test default")
+
 
 
 class ThemeParser(ExcelParser):

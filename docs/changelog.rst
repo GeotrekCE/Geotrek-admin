@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Add OpenStreetMap parser for Information Desk
+- Parsers accept default values for fields
 
 **Bug fixes**
 
