@@ -260,5 +260,4 @@ UML diagrams of data model
 ==========================
 
 UML diagrams of Geotrek-admin data models are available in `docs/data-model <https://github.com/GeotrekCE/Geotrek-admin/tree/master/docs/data-model>`_ directory.
-To regenerate them from PostgreSQL, install postgresql-autodoc and graphviz Ubuntu packages
-and run ``make uml``.
+To regenerate them from PostgreSQL, make sure your database is up to date and run ``make uml``.
