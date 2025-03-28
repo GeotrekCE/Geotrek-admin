@@ -14,6 +14,7 @@ from django.core.files.uploadedfile import UploadedFile
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     TourInSoftParser, GeotrekParser, ApidaeBaseParser, LEIParser, OpenStreetMapParser)
+from geotrek.common.utils.file_infos import is_a_non_svg_image
 from geotrek.tourism.models import (InformationDesk, TouristicContent, TouristicEvent,
                                     TouristicContentType1, TouristicContentType2)
 from geotrek.trekking.parsers import GeotrekTrekParser
@@ -199,6 +200,8 @@ class InformationDeskApidaeParser(ApidaeParser):
                     if file and self.obj.photo:
                         if os.path.exists(self.obj.photo.path):
                             os.remove(self.obj.photo.path)
+        if not is_a_non_svg_image(file):
+            return None
         return file
 
     def filter_street(self, src, val):
