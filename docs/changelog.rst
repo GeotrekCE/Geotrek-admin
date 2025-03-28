@@ -5,16 +5,31 @@ CHANGELOG
 2.114.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+
 **Improvements**
 
 - Add OpenStreetMap parser for Information Desk
 - Parsers accept default values for fields
+- Do not display "None" on Blade Direction
+
+
+**Warnings**
+
+- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
+- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
+- Attachment can now be managed for Information desks.
+
 
 **Bug fixes**
 
 - Fix log book filters by updating mapentity (#4576)
+- Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
 
+**Documentation**
+
+- Update documentation about paths with docker commands (#4578)
+- Update instructions to regenerate UML diagrams of data model (#4594)
 
 2.114.0     (2025-03-13)
 ----------------------------
