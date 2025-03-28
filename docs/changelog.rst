@@ -33,7 +33,7 @@ CHANGELOG
 **Documentation**
 
 - Update documentation about paths with docker commands (#4578)
-- Update instructions to regenerate UML diagrams of data model
+- Update instructions to regenerate UML diagrams of data model (#4594)
 
 **Documentation**
 
