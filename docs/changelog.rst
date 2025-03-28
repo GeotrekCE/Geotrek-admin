@@ -16,6 +16,10 @@ CHANGELOG
 - Fix log book filters by updating mapentity (#4576)
 - Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
+**Improvements**
+
+- Do not display "None" on Blade Direction
+
 **Documentation**
 
 - Update documentation about paths with docker commands (#4578)
