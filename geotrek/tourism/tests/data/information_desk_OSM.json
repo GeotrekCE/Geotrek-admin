@@ -1,0 +1,113 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-03-17T14:22:44Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1,
+  "lat": 43.4441381,
+  "lon": 2.6761940,
+  "tags": {
+    "amenity": "ranger_station",
+    "name": "test",
+    "contact:phone": "0754347899",
+    "addr:housenumber": "5",
+    "addr:street": "rue des chênes"
+  }
+},
+{
+  "type": "node",
+  "id": 2,
+  "lat": 42.6661906,
+  "lon": 2.2994199,
+  "tags": {
+    "amenity": "ranger_station",
+    "name": "test",
+    "phone": "0754347899",
+    "addr:street": "rue des chênes"
+  }
+},
+{
+  "type": "way",
+  "id": 3,
+  "bounds": {
+    "minlat": 43.4049208,
+    "minlon": 2.2519140,
+    "maxlat": 43.4050500,
+    "maxlon": 2.2521003
+  },
+  "nodes": [
+    2097948681,
+    2097948676,
+    2097948678,
+    2097948682,
+    2097948681
+  ],
+  "geometry": [
+    { "lat": 43.4050341, "lon": 2.2519140 },
+    { "lat": 43.4049208, "lon": 2.2519345 },
+    { "lat": 43.4049366, "lon": 2.2521003 },
+    { "lat": 43.4050500, "lon": 2.2520798 },
+    { "lat": 43.4050341, "lon": 2.2519140 }
+  ],
+  "tags": {
+    "amenity": "ranger_station",
+    "name": ""
+  }
+},
+{
+  "type": "relation",
+  "id": 4,
+  "bounds": {
+    "minlat": 41.6010720,
+    "minlon": -122.8475703,
+    "maxlat": 41.6015180,
+    "maxlon": -122.8468805
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 835597461,
+      "role": "outer",
+      "geometry": [
+         { "lat": 41.6010720, "lon": -122.8470988 },
+         { "lat": 41.6013038, "lon": -122.8475703 },
+         { "lat": 41.6015180, "lon": -122.8473820 },
+         { "lat": 41.6013940, "lon": -122.8471299 },
+         { "lat": 41.6014169, "lon": -122.8471098 },
+         { "lat": 41.6014046, "lon": -122.8470849 },
+         { "lat": 41.6014197, "lon": -122.8470716 },
+         { "lat": 41.6013979, "lon": -122.8470270 },
+         { "lat": 41.6013873, "lon": -122.8470363 },
+         { "lat": 41.6013773, "lon": -122.8470159 },
+         { "lat": 41.6013841, "lon": -122.8470100 },
+         { "lat": 41.6013204, "lon": -122.8468805 },
+         { "lat": 41.6010720, "lon": -122.8470988 }
+      ]
+    },
+    {
+      "type": "way",
+      "ref": 835597462,
+      "role": "inner",
+      "geometry": [
+         { "lat": 41.6012565, "lon": -122.8472256 },
+         { "lat": 41.6012268, "lon": -122.8471658 },
+         { "lat": 41.6012696, "lon": -122.8471277 },
+         { "lat": 41.6012993, "lon": -122.8471875 },
+         { "lat": 41.6012565, "lon": -122.8472256 }
+      ]
+    }
+  ],
+  "tags": {
+    "amenity": "ranger_station",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}
