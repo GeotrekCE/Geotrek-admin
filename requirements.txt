@@ -304,7 +304,7 @@ python-dotenv==1.0.1
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
-pytz==2025.1
+pytz==2025.2
     # via
     #   datetime
     #   drf-yasg
