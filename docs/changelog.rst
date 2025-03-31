@@ -19,6 +19,7 @@ CHANGELOG
 **Improvements**
 
 - Do not display "None" on Blade Direction
+- Add OpenStreetMap parser for Information Desk
 
 **Documentation**
 
