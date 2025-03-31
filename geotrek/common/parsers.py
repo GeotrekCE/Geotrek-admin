@@ -1560,6 +1560,7 @@ class ApidaeBaseParser(Parser):
     def normalize_field_name(self, name):
         return name
 
+
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
     delete = True

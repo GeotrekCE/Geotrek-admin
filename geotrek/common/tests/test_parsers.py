@@ -25,6 +25,7 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
+from geotrek.tourism.models import InformationDesk
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
@@ -204,6 +205,7 @@ class ParserTests(TestCase):
                      verbosity=0)
         websites = RecordSource.objects.order_by('pk')
         self.assertEqual(websites[0].website, "website test")
+
 
 class ThemeParser(ExcelParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
@@ -1046,7 +1048,7 @@ class GeotrekAggregatorSourcesTests(TestCase):
 
 
 class OpenStreetMapInitialisationTest(OpenStreetMapParser):
-    pass
+    model = InformationDesk
 
 
 class OpenStreetMapTestParser(TestCase):
