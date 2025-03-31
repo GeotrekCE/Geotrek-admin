@@ -300,7 +300,7 @@ pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
-python-dotenv==1.0.1
+python-dotenv==1.1.0
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
