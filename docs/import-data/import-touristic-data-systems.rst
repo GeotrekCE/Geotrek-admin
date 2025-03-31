@@ -113,7 +113,7 @@ Then set up appropriate values:
 * ``category``, ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go
 * You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal, provider...)
 * You can also use the class ``HebergementParser`` if you only import accomodations
-* See `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about Parsers
+* See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
 You can duplicate the class. Each class must have a different name.
 
@@ -293,7 +293,7 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
-The parsed objects will be those contained in the setting.SPATIAL_EXTENT bounding box.
+The parsed objects will be those contained in the ``setting.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name.
 
 .. _multiple-imports:
