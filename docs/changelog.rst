@@ -19,6 +19,7 @@ CHANGELOG
 **Improvements**
 
 - Do not display "None" on Blade Direction
+- Parsers accept default values for fields
 
 **Documentation**
 
