@@ -48,7 +48,7 @@ This settings may be overriden when you define a new parser:
 - ``non_fields`` (default: ``{}``)
 - ``natural_keys`` (default: ``{}``)
 - ``field_options`` (default: ``{}``)
-- ``default_fields_values`` set a default value for a particular field (default: ``{}``)
+- ``default_fields_values`` sets default values for fields (default: ``{}``)
 - ``default_language`` use another default language for this parser (default: ``None``)
 
 .. _start-import-from-command-line:
@@ -293,7 +293,7 @@ Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
 * ``type`` to specify the Geotrek type for imported objects
-* ``default_fields_values`` sets a default value for a particular field. It must be set for required fields, except geom.
+* ``default_fields_values`` sets default values for fields. It must be set for required fields, except geom.
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
 The parsed objects will be those contained in the setting.SPATIAL_EXTENT bounding box.
