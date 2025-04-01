@@ -20,6 +20,7 @@ CHANGELOG
 
 - Do not display "None" on Blade Direction
 - Add OpenStreetMap parser for Information Desk
+- Parsers accept default values for fields
 
 **Documentation**
 

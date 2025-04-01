@@ -86,6 +86,16 @@ class OrganismNoNaturalKeysParser(StructureExcelParser):
     warn_on_missing_fields = True
 
 
+class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
+    model = RecordSource
+    default_fields_values = {"website": "website test default"}
+    fields = {
+        'name': 'name',
+        'website': 'website',
+    }
+    eid = 'name'
+
+
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {'attachments': 'photo'}
 
@@ -205,6 +215,13 @@ class ParserTests(TestCase):
                      verbosity=0)
         websites = RecordSource.objects.order_by('pk')
         self.assertEqual(websites[0].website, "website test")
+
+    def test_default_fields_values_without_flexible_fields(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource2.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceDefaultFieldValuesNotFlexibleParser',
+                     filename, verbosity=0)
+        websites = RecordSource.objects.order_by('pk')
+        self.assertEqual(websites[0].website, "website test default")
 
 
 class ThemeParser(ExcelParser):

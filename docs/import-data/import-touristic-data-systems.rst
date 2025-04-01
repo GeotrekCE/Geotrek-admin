@@ -49,6 +49,7 @@ This settings may be overriden when you define a new parser:
 - ``natural_keys`` (default: ``{}``)
 - ``field_options`` (default: ``{}``)
 - ``default_language`` use another default language for this parser (default: ``None``)
+- ``default_fields_values`` sets default values for fields (default: ``{}``)
 
 .. _start-import-from-command-line:
 
