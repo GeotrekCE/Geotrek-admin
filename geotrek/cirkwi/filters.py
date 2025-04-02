@@ -9,26 +9,34 @@ from geotrek.trekking.models import POI, Trek
 
 
 class CirkwiPOIFilterSet(FilterSet):
-    structures = ComaSeparatedMultipleModelChoiceFilter(field_name='structure', required=False,
-                                                        queryset=Structure.objects.all())
+    structures = ComaSeparatedMultipleModelChoiceFilter(
+        field_name="structure", required=False, queryset=Structure.objects.all()
+    )
 
     class Meta:
         model = POI
-        fields = ('structures', )
+        fields = ("structures",)
 
 
 class CirkwiTrekFilterSet(FilterSet):
-    structures = ComaSeparatedMultipleModelChoiceFilter(field_name='structure', required=False,
-                                                        queryset=Structure.objects.all())
-    portals = ComaSeparatedMultipleModelChoiceFilter(field_name='portal', required=False,
-                                                     queryset=TargetPortal.objects.all())
-    include_externals = BooleanFilter(field_name='eid', method='filter_include_externals', required=False)
+    structures = ComaSeparatedMultipleModelChoiceFilter(
+        field_name="structure", required=False, queryset=Structure.objects.all()
+    )
+    portals = ComaSeparatedMultipleModelChoiceFilter(
+        field_name="portal", required=False, queryset=TargetPortal.objects.all()
+    )
+    include_externals = BooleanFilter(
+        field_name="eid", method="filter_include_externals", required=False
+    )
 
     def filter_include_externals(self, queryset, name, value):
         if not value:
-            return queryset.filter(Q(eid__isnull=True) | Q(eid__exact=''))
+            return queryset.filter(Q(eid__isnull=True) | Q(eid__exact=""))
         return queryset
 
     class Meta:
         model = Trek
-        fields = ('structures', 'portals', )
+        fields = (
+            "structures",
+            "portals",
+        )

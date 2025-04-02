@@ -14,11 +14,15 @@ class TestGeotrekSignageParser(GeotrekSignageParser):
     url = "https://test.fr"
 
     field_options = {
-        'sealing': {'create': True, },
-        'conditions': {'create': True, },
-        'type': {'create': True},
-        'geom': {'required': True},
-        'structure': {'create': True}
+        "sealing": {
+            "create": True,
+        },
+        "conditions": {
+            "create": True,
+        },
+        "type": {"create": True},
+        "geom": {"required": True},
+        "structure": {"create": True},
     }
 
 
@@ -29,30 +33,36 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
 
-    @mock.patch('requests.get')
-    @mock.patch('requests.head')
+    @mock.patch("requests.get")
+    @mock.patch("requests.head")
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_create(self, mocked_head, mocked_get):
         self.mock_time = 0
-        self.mock_json_order = [('signage', 'structure.json'),
-                                ('signage', 'signage_sealing.json'),
-                                ('signage', 'signage_conditions.json'),
-                                ('signage', 'signage_type.json'),
-                                ('signage', 'signage_ids.json'),
-                                ('signage', 'signage.json')]
+        self.mock_json_order = [
+            ("signage", "structure.json"),
+            ("signage", "signage_sealing.json"),
+            ("signage", "signage_conditions.json"),
+            ("signage", "signage_type.json"),
+            ("signage", "signage_ids.json"),
+            ("signage", "signage.json"),
+        ]
         # Mock GET
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.json = self.mock_json
-        mocked_get.return_value.content = b''
+        mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 200
 
-        call_command('import', 'geotrek.signage.tests.test_parsers.TestGeotrekSignageParser', verbosity=0)
+        call_command(
+            "import",
+            "geotrek.signage.tests.test_parsers.TestGeotrekSignageParser",
+            verbosity=0,
+        )
         self.assertEqual(Signage.objects.count(), 2)
         signage = Signage.objects.all().first()
-        self.assertEqual(str(signage.name), 'test gard')
-        self.assertEqual(str(signage.type), 'Limite Cœur')
-        self.assertEqual(str(signage.structure), 'Struct1')
-        self.assertEqual(str(signage.sealing), 'Socle béton')
+        self.assertEqual(str(signage.name), "test gard")
+        self.assertEqual(str(signage.type), "Limite Cœur")
+        self.assertEqual(str(signage.structure), "Struct1")
+        self.assertEqual(str(signage.sealing), "Socle béton")
         conditions = [str(c.label) for c in signage.conditions.all()]
         self.assertEqual(conditions, ["Dégradé"])
         self.assertAlmostEqual(signage.geom.x, 572941.1308660918, places=5)

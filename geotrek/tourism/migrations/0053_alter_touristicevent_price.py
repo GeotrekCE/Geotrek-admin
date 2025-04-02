@@ -5,15 +5,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0052_merge_20240229_1527'),
+        ("tourism", "0052_merge_20240229_1527"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristicevent',
-            name='price',
-            field=models.DecimalField(blank=True, decimal_places=2, help_text='0 means free', max_digits=8, null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Price'),
+            model_name="touristicevent",
+            name="price",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=2,
+                help_text="0 means free",
+                max_digits=8,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Price",
+            ),
         ),
     ]

@@ -4,13 +4,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0002_auto_20200211_1011'),
+        ("zoning", "0002_auto_20200211_1011"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE f_b_zonage_id_seq RENAME TO restrictedareatype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_secteur_id_seq RENAME TO district_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_zonage_reglementaire_id_seq RENAME TO restrictedarea_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE f_b_zonage_id_seq RENAME TO restrictedareatype_id_seq;"
+        ),
+        migrations.RunSQL("ALTER SEQUENCE l_secteur_id_seq RENAME TO district_id_seq;"),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_zonage_reglementaire_id_seq RENAME TO restrictedarea_id_seq;"
+        ),
     ]

@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sensitivity', '0019_auto_20200406_1411'),
+        ("sensitivity", "0019_auto_20200406_1411"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sensitivearea',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="sensitivearea",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
     ]

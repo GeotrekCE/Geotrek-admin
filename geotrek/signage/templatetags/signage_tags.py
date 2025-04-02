@@ -1,8 +1,7 @@
 from django import template
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import stringfilter
-
+from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
 
@@ -11,7 +10,7 @@ register = template.Library()
 @register.filter
 def meters(value):
     if value:
-        return '%s %s' % (value, _('meters'))
+        return "%s %s" % (value, _("meters"))
     return value
 
 

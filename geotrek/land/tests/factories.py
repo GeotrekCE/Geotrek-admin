@@ -1,7 +1,7 @@
 import factory
 
-from geotrek.core.tests.factories import TopologyFactory
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.core.tests.factories import TopologyFactory
 
 from .. import models
 

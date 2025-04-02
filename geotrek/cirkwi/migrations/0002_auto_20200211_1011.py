@@ -6,37 +6,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cirkwi', '0001_initial'),
+        ("cirkwi", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cirkwilocomotion',
-            name='name',
-            field=models.CharField(max_length=128, verbose_name='Cirkwi name'),
+            model_name="cirkwilocomotion",
+            name="name",
+            field=models.CharField(max_length=128, verbose_name="Cirkwi name"),
         ),
         migrations.AlterField(
-            model_name='cirkwipoicategory',
-            name='name',
-            field=models.CharField(max_length=128, verbose_name='Cirkwi name'),
+            model_name="cirkwipoicategory",
+            name="name",
+            field=models.CharField(max_length=128, verbose_name="Cirkwi name"),
         ),
         migrations.AlterField(
-            model_name='cirkwitag',
-            name='name',
-            field=models.CharField(max_length=128, verbose_name='Cirkwi name'),
+            model_name="cirkwitag",
+            name="name",
+            field=models.CharField(max_length=128, verbose_name="Cirkwi name"),
         ),
         migrations.AlterModelTable(
-            name='cirkwilocomotion',
+            name="cirkwilocomotion",
             table=None,
         ),
         migrations.AlterModelTable(
-            name='cirkwipoicategory',
+            name="cirkwipoicategory",
             table=None,
         ),
         migrations.AlterModelTable(
-            name='cirkwitag',
+            name="cirkwitag",
             table=None,
         ),
     ]

@@ -11,7 +11,9 @@ from django.views.decorators.http import require_http_methods
 @csrf_exempt
 @login_required
 def tinymce_upload(request):
-    file = request.FILES.get('file')
+    file = request.FILES.get("file")
     filename = f"flatpages/content/upload/{uuid4()}/{str(file)}"
     default_storage.save(filename, file)
-    return JsonResponse({"location": request.build_absolute_uri(default_storage.url(filename))})
+    return JsonResponse(
+        {"location": request.build_absolute_uri(default_storage.url(filename))}
+    )

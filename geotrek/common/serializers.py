@@ -9,41 +9,40 @@ from .models import HDViewPoint
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
     def get_field(self, model_field):
         kwargs = {}
-        if issubclass(model_field.__class__,
-                      (django_db_models.CharField,
-                       django_db_models.TextField)):
+        if issubclass(
+            model_field.__class__,
+            (django_db_models.CharField, django_db_models.TextField),
+        ):
             if model_field.null:
-                kwargs['allow_none'] = True
-            kwargs['max_length'] = getattr(model_field, 'max_length')
+                kwargs["allow_none"] = True
+            kwargs["max_length"] = getattr(model_field, "max_length")
             return rest_serializers.CharField(**kwargs)
         return super().get_field(model_field)
 
 
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):
-    pictogram = rest_serializers.ReadOnlyField(source='get_pictogram_url')
+    pictogram = rest_serializers.ReadOnlyField(source="get_pictogram_url")
 
 
 class PicturesSerializerMixin(rest_serializers.ModelSerializer):
-    thumbnail = rest_serializers.ReadOnlyField(source='serializable_thumbnail')
-    pictures = rest_serializers.ReadOnlyField(source='serializable_pictures')
-    videos = rest_serializers.ReadOnlyField(source='serializable_videos')
-    files = rest_serializers.ReadOnlyField(source='serializable_files')
+    thumbnail = rest_serializers.ReadOnlyField(source="serializable_thumbnail")
+    pictures = rest_serializers.ReadOnlyField(source="serializable_pictures")
+    videos = rest_serializers.ReadOnlyField(source="serializable_videos")
+    files = rest_serializers.ReadOnlyField(source="serializable_files")
 
     class Meta:
-        fields = ('thumbnail', 'pictures', 'videos', 'files')
+        fields = ("thumbnail", "pictures", "videos", "files")
 
 
 class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
     class Meta:
-        fields = ('published', 'published_status', 'publication_date')
+        fields = ("published", "published_status", "publication_date")
 
 
 class HDViewPointSerializer(TranslatedModelSerializer):
     class Meta:
         model = HDViewPoint
-        fields = (
-            'id', 'uuid', 'author', 'title', 'legend', 'license'
-        )
+        fields = ("id", "uuid", "author", "title", "legend", "license")
 
 
 class HDViewPointGeoJSONSerializer(MapentityGeojsonModelSerializer):
@@ -54,10 +53,10 @@ class HDViewPointGeoJSONSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = HDViewPoint
-        fields = ('id', 'title')
+        fields = ("id", "title")
 
 
 class HDViewPointAPISerializer(HDViewPointSerializer):
     class Meta(HDViewPointSerializer.Meta):
-        id_field = 'id'
+        id_field = "id"
         fields = HDViewPointSerializer.Meta.fields

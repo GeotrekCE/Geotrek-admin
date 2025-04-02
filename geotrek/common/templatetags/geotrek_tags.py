@@ -1,7 +1,7 @@
-from django import template
-from django.conf import settings
 from datetime import datetime, timedelta
 
+from django import template
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 register = template.Library()
@@ -24,22 +24,22 @@ def settings_value(name):
 
 @register.simple_tag
 def is_topology_model(model):
-    return hasattr(model, 'kind') and hasattr(model, 'offset')
+    return hasattr(model, "kind") and hasattr(model, "offset")
 
 
 @register.simple_tag
 def is_blade_model(model):
-    return model._meta.model_name == 'blade'
+    return model._meta.model_name == "blade"
 
 
 @register.simple_tag
 def is_site_model(model):
-    return model._meta.model_name == 'site'
+    return model._meta.model_name == "site"
 
 
 @register.simple_tag
 def is_course_model(model):
-    return model._meta.model_name == 'course'
+    return model._meta.model_name == "course"
 
 
 @register.filter
@@ -64,11 +64,13 @@ def duration(value):
                 final_duration = _("%s days") % (duration.day - 1)
 
     elif duration.hour > 0 and duration.minute > 0:
-        final_duration = _("%(hour)s h %(min)s") % {'hour': duration.hour,
-                                                    'min': duration.minute, }
+        final_duration = _("%(hour)s h %(min)s") % {
+            "hour": duration.hour,
+            "min": duration.minute,
+        }
 
     elif duration.hour > 0:
-        final_duration = _("%(hour)s h") % {'hour': duration.hour}
+        final_duration = _("%(hour)s h") % {"hour": duration.hour}
 
     else:
         final_duration = _("%s min") % duration.minute

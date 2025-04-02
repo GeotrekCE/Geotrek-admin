@@ -15,9 +15,13 @@ def forward(apps, schema_editor):
                     f"SELECT 1 FROM information_schema.columns WHERE table_name='trekking_trek' AND column_name='accessibility_infrastructure_{lang}'"
                 )
                 if cursor.fetchone():
-                    cursor.execute(f"UPDATE trekking_trek SET accessibility_infrastructure_{lang}=disabled_infrastructure_{lang} WHERE accessibility_infrastructure_{lang} = '';")
+                    cursor.execute(
+                        f"UPDATE trekking_trek SET accessibility_infrastructure_{lang}=disabled_infrastructure_{lang} WHERE accessibility_infrastructure_{lang} = '';"
+                    )
                 else:
-                    cursor.execute(f'ALTER TABLE trekking_trek RENAME disabled_infrastructure_{lang} TO accessibility_infrastructure_{lang}')
+                    cursor.execute(
+                        f"ALTER TABLE trekking_trek RENAME disabled_infrastructure_{lang} TO accessibility_infrastructure_{lang}"
+                    )
             cursor.execute(
                 f"SELECT 1 FROM information_schema.columns WHERE table_name='trekking_trek' AND column_name='equipment_{lang}'"
             )
@@ -26,16 +30,18 @@ def forward(apps, schema_editor):
                     f"SELECT 1 FROM information_schema.columns WHERE table_name='trekking_trek' AND column_name='gear_{lang}'"
                 )
                 if cursor.fetchone():
-                    cursor.execute(f"UPDATE trekking_trek SET gear_{lang}=equipment_{lang} WHERE equipment_{lang} = ''")
+                    cursor.execute(
+                        f"UPDATE trekking_trek SET gear_{lang}=equipment_{lang} WHERE equipment_{lang} = ''"
+                    )
                 else:
                     cursor.execute(
-                        f'ALTER TABLE trekking_trek RENAME equipment_{lang} TO gear_{lang}')
+                        f"ALTER TABLE trekking_trek RENAME equipment_{lang} TO gear_{lang}"
+                    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0038_auto_20220204_1537'),
+        ("trekking", "0038_auto_20220204_1537"),
     ]
 
     operations = [

@@ -5,27 +5,34 @@ from django.db import migrations
 
 def fix_topology_kind(apps, schema_editor):
     # Fix topology kind of interventions
-    Topology = apps.get_model('core', 'topology')
-    ContentType = apps.get_model('contenttypes', 'contenttype')
-    Intervention = apps.get_model('maintenance', 'intervention')
+    Topology = apps.get_model("core", "topology")
+    ContentType = apps.get_model("contenttypes", "contenttype")
+    Intervention = apps.get_model("maintenance", "intervention")
     topology_ct = ContentType.objects.get_for_model(Topology)
-    topo_ids = Intervention.objects.filter(target_type=topology_ct).values_list('target_id', flat=True)
-    topos = Topology.objects.filter(id__in=topo_ids).filter(kind__in=('TMP', 'TOPOLOGY'))
-    n = topos.update(kind='INTERVENTION')
+    topo_ids = Intervention.objects.filter(target_type=topology_ct).values_list(
+        "target_id", flat=True
+    )
+    topos = Topology.objects.filter(id__in=topo_ids).filter(
+        kind__in=("TMP", "TOPOLOGY")
+    )
+    n = topos.update(kind="INTERVENTION")
     if n:
-        print("\n  WARNING! Updated {} topologies directly linked to interventions with a wrong kind".format(n))
+        print(
+            "\n  WARNING! Updated {} topologies directly linked to interventions with a wrong kind".format(
+                n
+            )
+        )
 
 
 def clean_tmp_topologies(apps, schema_editor):
     # Remove temporary topologies
-    Topology = apps.get_model('core', 'topology')
-    Topology.objects.filter(kind__in=('TMP', 'TOPOLOGY')).delete()
+    Topology = apps.get_model("core", "topology")
+    Topology.objects.filter(kind__in=("TMP", "TOPOLOGY")).delete()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0016_auto_20210121_0943'),
+        ("maintenance", "0016_auto_20210121_0943"),
     ]
 
     operations = [

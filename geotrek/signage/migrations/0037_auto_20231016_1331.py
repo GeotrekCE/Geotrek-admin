@@ -4,24 +4,23 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0036_auto_20231013_1326'),
+        ("signage", "0036_auto_20231013_1326"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='blade',
-            old_name='condition_tmp',
-            new_name='conditions',
+            model_name="blade",
+            old_name="condition_tmp",
+            new_name="conditions",
         ),
         migrations.RenameField(
-            model_name='signage',
-            old_name='condition_tmp',
-            new_name='conditions',
+            model_name="signage",
+            old_name="condition_tmp",
+            new_name="conditions",
         ),
         migrations.RemoveField(
-            model_name='signage',
-            name='condition',
+            model_name="signage",
+            name="condition",
         ),
     ]

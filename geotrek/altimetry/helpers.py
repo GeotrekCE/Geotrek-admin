@@ -1,13 +1,12 @@
 import logging
 
-from django.contrib.gis.geos import GEOSGeometry
-from django.utils import translation
-from django.utils.translation import gettext as _, get_language
-from django.contrib.gis.geos import LineString
-from django.conf import settings
-from django.db import connection
-
 import pygal
+from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry, LineString
+from django.db import connection
+from django.utils import translation
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
 from pygal.style import LightSolarizedStyle
 
 logger = logging.getLogger(__name__)
@@ -22,15 +21,17 @@ class AltimetryHelper:
         """
         precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
 
-        if geometry3d.geom_type == 'Point':
+        if geometry3d.geom_type == "Point":
             return [[0, geometry3d.x, geometry3d.y, geometry3d.z]]
 
-        if geometry3d.geom_type == 'MultiLineString':
+        if geometry3d.geom_type == "MultiLineString":
             profile = []
             for subcoords in geometry3d.coords:
                 subline = LineString(subcoords, srid=geometry3d.srid)
                 offset += subline.length
-                subprofile = AltimetryHelper.elevation_profile(subline, precision, offset)
+                subprofile = AltimetryHelper.elevation_profile(
+                    subline, precision, offset
+                )
                 profile.extend(subprofile)
             return profile
 
@@ -41,13 +42,13 @@ class AltimetryHelper:
              line_measure AS (SELECT ST_Addmeasure(geom, 0, ST_length(geom)) AS geom FROM line2d),
              points2dm AS (SELECT (ST_DumpPoints(geom)).geom AS point FROM line_measure)
         SELECT (%(offset)s + ST_M(point)) FROM points2dm;
-        """ % {'offset': offset, 'ewkt': geometry3d.ewkt}
+        """ % {"offset": offset, "ewkt": geometry3d.ewkt}
         cursor = connection.cursor()
         cursor.execute(sql)
         pointsm = cursor.fetchall()
         # Join (offset+distance, x, y, z) together
         geom3dapi = geometry3d.transform(settings.API_SRID, clone=True)
-        assert len(pointsm) == len(geom3dapi.coords), 'Cannot map distance to xyz'
+        assert len(pointsm) == len(geom3dapi.coords), "Cannot map distance to xyz"
         dxyz = [pointsm[i] + v for i, v in enumerate(geom3dapi.coords)]
         return dxyz
 
@@ -72,18 +73,20 @@ class AltimetryHelper:
         """
         lang = language or get_language()
         ceil_elevation, floor_elevation = cls.altimetry_limits(profile)
-        config = dict(show_legend=False,
-                      print_values=False,
-                      show_dots=False,
-                      zero=floor_elevation,
-                      value_formatter=lambda v: '%d' % v,
-                      margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
-                      width=settings.ALTIMETRIC_PROFILE_WIDTH,
-                      height=settings.ALTIMETRIC_PROFILE_HEIGHT,
-                      title_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
-                      label_font_size=0.8 * settings.ALTIMETRIC_PROFILE_FONTSIZE,
-                      major_label_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
-                      js=[])
+        config = dict(
+            show_legend=False,
+            print_values=False,
+            show_dots=False,
+            zero=floor_elevation,
+            value_formatter=lambda v: "%d" % v,
+            margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
+            width=settings.ALTIMETRIC_PROFILE_WIDTH,
+            height=settings.ALTIMETRIC_PROFILE_HEIGHT,
+            title_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
+            label_font_size=0.8 * settings.ALTIMETRIC_PROFILE_FONTSIZE,
+            major_label_font_size=settings.ALTIMETRIC_PROFILE_FONTSIZE,
+            js=[],
+        )
 
         style = LightSolarizedStyle
         style.background = settings.ALTIMETRIC_PROFILE_BACKGROUND
@@ -99,7 +102,7 @@ class AltimetryHelper:
             line_chart.truncate_label = 50
             line_chart.range = [floor_elevation, ceil_elevation]
             line_chart.no_data_text = _("Elevation data not available")
-            line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
+            line_chart.add("", [(int(v[0]), int(v[3])) for v in profile])
             return line_chart.render()
 
     @classmethod
@@ -118,10 +121,12 @@ class AltimetryHelper:
             height = max(width * min_ratio, height)
         else:
             width = max(height * min_ratio, width)
-        xmin, ymin, xmax, ymax = (int(xcenter - width / 2.0),
-                                  int(ycenter - height / 2.0),
-                                  int(xcenter + width / 2.0),
-                                  int(ycenter + height / 2.0))
+        xmin, ymin, xmax, ymax = (
+            int(xcenter - width / 2.0),
+            int(ycenter - height / 2.0),
+            int(xcenter + width / 2.0),
+            int(ycenter + height / 2.0),
+        )
         return (xmin, ymin, xmax, ymax)
 
     @classmethod
@@ -183,13 +188,28 @@ class AltimetryHelper:
                    resolution.y AS resolution_h,
                    altitude
             FROM extent_latlng, resolution, all_draped;
-        """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
-                   srid=settings.SRID, precision=precision)
+        """.format(
+            xmin=xmin,
+            ymin=ymin,
+            xmax=xmax,
+            ymax=ymax,
+            srid=settings.SRID,
+            precision=precision,
+        )
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
-        envelop_native, envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
+        (
+            envelop_native,
+            envelop,
+            center_z,
+            min_z,
+            max_z,
+            resolution_w,
+            resolution_h,
+            a,
+        ) = first
         envelop = GEOSGeometry(envelop, srid=4326)
         envelop_native = GEOSGeometry(envelop_native, srid=settings.SRID)
 
@@ -208,46 +228,47 @@ class AltimetryHelper:
         altitudes.append(row)
 
         area = {
-            'center': {
-                'x': envelop_native.centroid.x,
-                'y': envelop_native.centroid.y,
-                'lat': envelop.centroid.y,
-                'lng': envelop.centroid.x,
-                'z': int(center_z)
+            "center": {
+                "x": envelop_native.centroid.x,
+                "y": envelop_native.centroid.y,
+                "lat": envelop.centroid.y,
+                "lng": envelop.centroid.x,
+                "z": int(center_z),
             },
-            'resolution': {
-                'x': resolution_w,
-                'y': resolution_h,
-                'step': precision
+            "resolution": {"x": resolution_w, "y": resolution_h, "step": precision},
+            "size": {
+                "x": envelop_native.coords[0][2][0] - envelop_native.coords[0][0][0],
+                "y": envelop_native.coords[0][2][1] - envelop_native.coords[0][0][1],
+                "lat": envelop.coords[0][2][0] - envelop.coords[0][0][0],
+                "lng": envelop.coords[0][2][1] - envelop.coords[0][0][1],
             },
-            'size': {
-                'x': envelop_native.coords[0][2][0] - envelop_native.coords[0][0][0],
-                'y': envelop_native.coords[0][2][1] - envelop_native.coords[0][0][1],
-                'lat': envelop.coords[0][2][0] - envelop.coords[0][0][0],
-                'lng': envelop.coords[0][2][1] - envelop.coords[0][0][1]
-            },
-            'extent': {
-                'altitudes': {
-                    'min': min_z,
-                    'max': max_z
+            "extent": {
+                "altitudes": {"min": min_z, "max": max_z},
+                "southwest": {
+                    "lat": envelop.coords[0][0][1],
+                    "lng": envelop.coords[0][0][0],
+                    "x": envelop_native.coords[0][0][0],
+                    "y": envelop_native.coords[0][0][1],
                 },
-                'southwest': {'lat': envelop.coords[0][0][1],
-                              'lng': envelop.coords[0][0][0],
-                              'x': envelop_native.coords[0][0][0],
-                              'y': envelop_native.coords[0][0][1]},
-                'northwest': {'lat': envelop.coords[0][1][1],
-                              'lng': envelop.coords[0][1][0],
-                              'x': envelop_native.coords[0][1][0],
-                              'y': envelop_native.coords[0][1][1]},
-                'northeast': {'lat': envelop.coords[0][2][1],
-                              'lng': envelop.coords[0][2][0],
-                              'x': envelop_native.coords[0][2][0],
-                              'y': envelop_native.coords[0][2][1]},
-                'southeast': {'lat': envelop.coords[0][3][1],
-                              'lng': envelop.coords[0][3][0],
-                              'x': envelop_native.coords[0][3][0],
-                              'y': envelop_native.coords[0][3][1]}
+                "northwest": {
+                    "lat": envelop.coords[0][1][1],
+                    "lng": envelop.coords[0][1][0],
+                    "x": envelop_native.coords[0][1][0],
+                    "y": envelop_native.coords[0][1][1],
+                },
+                "northeast": {
+                    "lat": envelop.coords[0][2][1],
+                    "lng": envelop.coords[0][2][0],
+                    "x": envelop_native.coords[0][2][0],
+                    "y": envelop_native.coords[0][2][1],
+                },
+                "southeast": {
+                    "lat": envelop.coords[0][3][1],
+                    "lng": envelop.coords[0][3][0],
+                    "x": envelop_native.coords[0][3][0],
+                    "y": envelop_native.coords[0][3][1],
+                },
             },
-            'altitudes': altitudes
+            "altitudes": altitudes,
         }
         return area

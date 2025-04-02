@@ -1,19 +1,17 @@
 from collections import namedtuple
 
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import translation
-
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_file
 from geotrek.trekking.models import DifficultyLevel
 
+Credential = namedtuple("Credential", ["username", "password"])
 
-Credential = namedtuple('Credential', ['username', 'password'])
 
-
-def create_superuser_from_cred(cred, email='admin@admin.com'):
+def create_superuser_from_cred(cred, email="admin@admin.com"):
     return User.objects.create_superuser(cred.username, email, cred.password)
 
 
@@ -23,12 +21,12 @@ def login_from_cred(client, cred):
 
 def admin_add_url_from_model(model):
     info = model._meta.app_label, model._meta.model_name
-    return reverse('admin:%s_%s_add' % info)
+    return reverse("admin:%s_%s_add" % info)
 
 
 def admin_list_url_from_model(model):
     info = model._meta.app_label, model._meta.model_name
-    return reverse('admin:%s_%s_changelist' % info)
+    return reverse("admin:%s_%s_changelist" % info)
 
 
 class TraductionTestCase(TestCase):
@@ -38,9 +36,9 @@ class TraductionTestCase(TestCase):
 
     def setUp(self):
         """
-            Create credential and associated superuser
+        Create credential and associated superuser
         """
-        self.cred = Credential('admin', 'adminpass')
+        self.cred = Credential("admin", "adminpass")
         self.superuser = create_superuser_from_cred(self.cred)
 
     @classmethod
@@ -51,7 +49,7 @@ class TraductionTestCase(TestCase):
             difficulty_en="difficulty_descr_en",
             difficulty_fr="difficulty_descr_fr",
             difficulty_it="difficulty_descr_it",
-            pictogram=get_dummy_uploaded_file()
+            pictogram=get_dummy_uploaded_file(),
         )
 
     def test_admin_set_trad(self):
@@ -75,7 +73,9 @@ class TraductionTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
         iss = DifficultyLevel.objects.all()
-        self.assertEqual(len(iss), 1, "One and only one DifficultyLevel should be created")
+        self.assertEqual(
+            len(iss), 1, "One and only one DifficultyLevel should be created"
+        )
 
         # This may test too much.
         # Test language translation for DifficultyLevel.difficulty works
@@ -84,7 +84,9 @@ class TraductionTestCase(TestCase):
         difficulty_trad = self.get_dummy_data_trad()
         intervention_difficulty = iss[0]
 
-        for language in ('fr', 'it', 'en'):
+        for language in ("fr", "it", "en"):
             with translation.override(language):
-                translated_difficulty = difficulty_trad['difficulty_%s' % language]
-                self.assertEqual(intervention_difficulty.difficulty, translated_difficulty)
+                translated_difficulty = difficulty_trad["difficulty_%s" % language]
+                self.assertEqual(
+                    intervention_difficulty.difficulty, translated_difficulty
+                )

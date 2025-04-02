@@ -6,19 +6,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0006_auto_20191029_1110'),
+        ("maintenance", "0006_auto_20191029_1110"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='interventionstatus',
-            options={'ordering': ['order', 'status'], 'verbose_name': "Intervention's status", 'verbose_name_plural': "Intervention's statuses"},
+            name="interventionstatus",
+            options={
+                "ordering": ["order", "status"],
+                "verbose_name": "Intervention's status",
+                "verbose_name_plural": "Intervention's statuses",
+            },
         ),
         migrations.AddField(
-            model_name='interventionstatus',
-            name='order',
-            field=models.PositiveSmallIntegerField(blank=True, db_column='order', default=None, null=True, verbose_name='Display order'),
+            model_name="interventionstatus",
+            name="order",
+            field=models.PositiveSmallIntegerField(
+                blank=True,
+                db_column="order",
+                default=None,
+                null=True,
+                verbose_name="Display order",
+            ),
         ),
     ]

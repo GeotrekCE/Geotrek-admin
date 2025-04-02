@@ -1,5 +1,5 @@
-from geotrek.api.v2 import serializers as api_serializers, \
-    viewsets as api_viewsets
+from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.zoning import models as zoning_models
 
 

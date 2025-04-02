@@ -1,4 +1,5 @@
 from mapentity.tests.factories import SuperUserFactory
+
 from . import factories
 from .base import AuthentFixturesTest
 
@@ -15,30 +16,30 @@ class AdminSiteTest(AuthentFixturesTest):
 
     def test_path_manager_cannot_see_trekking_apps(self):
         self.login(self.path_manager)
-        response = self.client.get('/admin/core/')
+        response = self.client.get("/admin/core/")
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/admin/trekking/')
+        response = self.client.get("/admin/trekking/")
         self.assertEqual(response.status_code, 404)
-        response = self.client.get('/admin/')
-        self.assertContains(response, 'Core')
-        self.assertContains(response, 'Maintenance')
-        self.assertContains(response, 'Infrastructure')
-        self.assertContains(response, 'Signage')
-        self.assertContains(response, 'Land')
-        self.assertNotContains(response, 'Zoning')
-        self.assertNotContains(response, 'Trekking')
+        response = self.client.get("/admin/")
+        self.assertContains(response, "Core")
+        self.assertContains(response, "Maintenance")
+        self.assertContains(response, "Infrastructure")
+        self.assertContains(response, "Signage")
+        self.assertContains(response, "Land")
+        self.assertNotContains(response, "Zoning")
+        self.assertNotContains(response, "Trekking")
 
     def test_trek_manager_cannot_see_core_apps(self):
         self.login(self.trek_manager)
-        response = self.client.get('/admin/core/')
+        response = self.client.get("/admin/core/")
         self.assertEqual(response.status_code, 404)
-        response = self.client.get('/admin/trekking/')
+        response = self.client.get("/admin/trekking/")
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/admin/')
-        self.assertContains(response, 'Trekking')
-        self.assertNotContains(response, 'Core')
-        self.assertNotContains(response, 'Maintenance')
-        self.assertNotContains(response, 'Infrastructure')
-        self.assertNotContains(response, 'Signage')
-        self.assertNotContains(response, 'Zoning')
-        self.assertNotContains(response, 'Land')
+        response = self.client.get("/admin/")
+        self.assertContains(response, "Trekking")
+        self.assertNotContains(response, "Core")
+        self.assertNotContains(response, "Maintenance")
+        self.assertNotContains(response, "Infrastructure")
+        self.assertNotContains(response, "Signage")
+        self.assertNotContains(response, "Zoning")
+        self.assertNotContains(response, "Land")

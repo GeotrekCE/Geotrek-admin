@@ -1,15 +1,21 @@
+from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
-
-from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 
 from .models import Dive
 
 
-class DiveFilterSet(AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class DiveFilterSet(
+    AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet
+):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Dive
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'difficulty', 'levels', 'themes',
-            'practice', 'source', 'portal'
+            "published",
+            "difficulty",
+            "levels",
+            "themes",
+            "practice",
+            "source",
+            "portal",
         ]

@@ -1,11 +1,14 @@
 from random import randint
 
+import factory
 from django.contrib.gis.geos import Point
 
-import factory
-
 from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
-from geotrek.common.tests.factories import ReservationSystemFactory, TargetPortalFactory, ThemeFactory
+from geotrek.common.tests.factories import (
+    ReservationSystemFactory,
+    TargetPortalFactory,
+    ThemeFactory,
+)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from .. import models
@@ -38,9 +41,9 @@ class InformationDeskFactory(factory.django.DjangoModelFactory):
     phone = "01 02 03 04 05"
     email = "email@makina-corpus.com"
     website = "https://makina-corpus.com"
-    photo = get_dummy_uploaded_image('photo')
+    photo = get_dummy_uploaded_image("photo")
     street = "42 Baker street"
-    postal_code = '28300'
+    postal_code = "28300"
     municipality = "Bailleau L'évêque"
     accessibility = "Accessible"
     geom = Point(3.14, 42)
@@ -53,7 +56,7 @@ class TouristicContentCategoryFactory(factory.django.DjangoModelFactory):
     label = "Category"
     type1_label = "Type1 label"
     # Keep type2_label with default value
-    pictogram = get_dummy_uploaded_image('touristiccontent-category.png')
+    pictogram = get_dummy_uploaded_image("touristiccontent-category.png")
 
 
 class TouristicContentType1Factory(factory.django.DjangoModelFactory):
@@ -62,7 +65,7 @@ class TouristicContentType1Factory(factory.django.DjangoModelFactory):
 
     label = "Type1"
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = get_dummy_uploaded_image('touristiccontent-type1.png')
+    pictogram = get_dummy_uploaded_image("touristiccontent-type1.png")
 
 
 class TouristicContentType2Factory(factory.django.DjangoModelFactory):
@@ -71,7 +74,7 @@ class TouristicContentType2Factory(factory.django.DjangoModelFactory):
 
     label = "Type2"
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = get_dummy_uploaded_image('touristiccontent-type2.png')
+    pictogram = get_dummy_uploaded_image("touristiccontent-type2.png")
 
 
 class CancellationReasonFactory(factory.django.DjangoModelFactory):
@@ -87,11 +90,11 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
 
     name = "Touristic content"
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    geom = 'POINT(0 0)'
+    geom = "POINT(0 0)"
     published = True
     reservation_system = factory.SubFactory(ReservationSystemFactory)
-    reservation_id = 'XXXXXXXXX'
-    description = '<p>Blah CT</p>'
+    reservation_id = "XXXXXXXXX"
+    description = "<p>Blah CT</p>"
     accessibility = "Accessible"
     label_accessibility = factory.SubFactory(LabelAccessibilityFactory)
 
@@ -136,11 +139,11 @@ class TouristicEventTypeFactory(factory.django.DjangoModelFactory):
         model = models.TouristicEventType
 
     type = "Type"
-    pictogram = get_dummy_uploaded_image('touristicevent-type.png')
+    pictogram = get_dummy_uploaded_image("touristicevent-type.png")
 
 
 class TouristicEventPlaceFactory(factory.django.DjangoModelFactory):
-    geom = 'POINT(0 0)'
+    geom = "POINT(0 0)"
     name = "Place"
 
     class Meta:
@@ -159,10 +162,10 @@ class TouristicEventFactory(factory.django.DjangoModelFactory):
         model = models.TouristicEvent
 
     name = "Touristic event"
-    geom = 'POINT(0 0)'
+    geom = "POINT(0 0)"
     published = True
-    begin_date = '2002-02-20'
-    end_date = '2202-02-22'
+    begin_date = "2002-02-20"
+    end_date = "2202-02-22"
 
     type = factory.SubFactory(TouristicEventTypeFactory)
 

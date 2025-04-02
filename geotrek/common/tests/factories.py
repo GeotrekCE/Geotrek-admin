@@ -1,7 +1,11 @@
 import factory
+
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
-from geotrek.common.utils.testdata import get_dummy_uploaded_file, get_dummy_uploaded_image_svg
+from geotrek.common.utils.testdata import (
+    get_dummy_uploaded_file,
+    get_dummy_uploaded_image_svg,
+)
 
 from .. import models
 
@@ -73,7 +77,7 @@ class RecordSourceFactory(factory.django.DjangoModelFactory):
         model = models.RecordSource
 
     name = factory.Sequence(lambda n: "Record source %s" % n)
-    website = 'http://geotrek.fr'
+    website = "http://geotrek.fr"
     pictogram = factory.django.ImageField()
 
 
@@ -122,6 +126,7 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
 class HDViewPointFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HDViewPoint
+
     picture = factory.django.ImageField()
     title = "A title"
     author = "An author"
@@ -136,36 +141,21 @@ class HDViewPointFactory(factory.django.DjangoModelFactory):
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [
-                                7997.087502861313,
-                                6997.090981210413
-                            ],
-                            [
-                                7997.087502861313,
-                                6456.7472299480705
-                            ],
-                            [
-                                8631.090837675794,
-                                6456.7472299480705
-                            ],
-                            [
-                                8631.090837675794,
-                                6997.090981210413
-                            ],
-                            [
-                                7997.087502861313,
-                                6997.090981210413
-                            ]
+                            [7997.087502861313, 6997.090981210413],
+                            [7997.087502861313, 6456.7472299480705],
+                            [8631.090837675794, 6456.7472299480705],
+                            [8631.090837675794, 6997.090981210413],
+                            [7997.087502861313, 6997.090981210413],
                         ]
-                    ]
+                    ],
                 },
                 "properties": {
                     "annotationType": "ellipse",
                     "name": "Ellipse 1",
-                    "annotationId": 1
-                }
+                    "annotationId": 1,
+                },
             }
-        ]
+        ],
     }
 
 

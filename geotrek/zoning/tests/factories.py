@@ -1,10 +1,8 @@
 import itertools
 
 import factory
-
 from django.conf import settings
-from django.contrib.gis.geos import Polygon, MultiPolygon
-
+from django.contrib.gis.geos import MultiPolygon, Polygon
 
 from .. import models
 
@@ -57,20 +55,27 @@ class CityFactory(factory.django.DjangoModelFactory):
         model = models.City
 
     code = factory.Sequence(lambda n: "#%s" % n)  # id (!) with max_length=6
-    name = factory.Faker('city')
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_city_iter)), srid=settings.SRID))
+    name = factory.Faker("city")
+    geom = factory.Sequence(
+        lambda _: MultiPolygon(
+            Polygon.from_bbox(next(geom_city_iter)), srid=settings.SRID
+        )
+    )
 
 
 class DistrictFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.District
 
-    name = factory.Faker('city')
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_district_iter)), srid=settings.SRID))
+    name = factory.Faker("city")
+    geom = factory.Sequence(
+        lambda _: MultiPolygon(
+            Polygon.from_bbox(next(geom_district_iter)), srid=settings.SRID
+        )
+    )
 
 
 class RestrictedAreaTypeFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = models.RestrictedAreaType
 
@@ -82,5 +87,9 @@ class RestrictedAreaFactory(factory.django.DjangoModelFactory):
         model = models.RestrictedArea
 
     name = factory.Sequence(lambda n: "Restricted area name %s" % n)
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_area_iter)), srid=settings.SRID))
+    geom = factory.Sequence(
+        lambda _: MultiPolygon(
+            Polygon.from_bbox(next(geom_area_iter)), srid=settings.SRID
+        )
+    )
     area_type = factory.SubFactory(RestrictedAreaTypeFactory)

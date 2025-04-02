@@ -6,41 +6,41 @@ from django.db.models.functions import Cast
 
 
 def clean_participants_number(apps, schema_editor):
-    TouristicEvent = apps.get_model('tourism', 'TouristicEvent')
+    TouristicEvent = apps.get_model("tourism", "TouristicEvent")
 
     # Clean participant number
-    qs = TouristicEvent.objects.exclude(participant_number__iregex=r'^[0-9]+$').exclude(participant_number__exact='')
-    events = qs.values_list('pk', 'participant_number')
+    qs = TouristicEvent.objects.exclude(participant_number__iregex=r"^[0-9]+$").exclude(
+        participant_number__exact=""
+    )
+    events = qs.values_list("pk", "participant_number")
     for id, participant_number in events:
         with schema_editor.connection.cursor() as cursor:
             new_info = f"Participants: {participant_number}"
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 cursor.execute(
-                    "UPDATE tourism_touristicevent SET practical_info_{} = practical_info_{} || ' ' || %s WHERE id='{}';".format(lang.replace('-', '_'), lang.replace('-', '_'), id), [new_info]
+                    "UPDATE tourism_touristicevent SET practical_info_{} = practical_info_{} || ' ' || %s WHERE id='{}';".format(
+                        lang.replace("-", "_"), lang.replace("-", "_"), id
+                    ),
+                    [new_info],
                 )
-    qs.update(
-        participant_number=''
-    )
+    qs.update(participant_number="")
     for t in qs:
         t.save()
 
     # Populate capacity with cleaned participant_number
-    qs = TouristicEvent.objects.exclude(
-        participant_number__exact=''
-    )
-    qs.update(
-        capacity=Cast(F('participant_number'), models.IntegerField())
-    )
+    qs = TouristicEvent.objects.exclude(participant_number__exact="")
+    qs.update(capacity=Cast(F("participant_number"), models.IntegerField()))
     for t in qs:
         t.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0032_auto_20220928_1526'),
+        ("tourism", "0032_auto_20220928_1526"),
     ]
 
     operations = [
-        migrations.RunPython(clean_participants_number, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            clean_participants_number, reverse_code=migrations.RunPython.noop
+        ),
     ]

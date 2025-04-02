@@ -4,29 +4,66 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0014_auto_20200228_2127'),
+        ("trekking", "0014_auto_20200228_2127"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE o_b_accessibilite_id_seq RENAME TO trekking_accessibility_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_parcours_id_seq RENAME TO trekking_route_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_poi_id_seq RENAME TO trekking_poitype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_pratique_id_seq RENAME TO trekking_practice_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_reseau_id_seq RENAME TO trekking_treknetwork_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_service_id_seq RENAME TO trekking_servicetype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_web_category_id_seq RENAME TO trekking_weblinkcategory_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_accessibilite_id_seq RENAME TO trekking_trek_accessibilities_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_itineraire2_id_seq RENAME TO trekking_orderedtrekchild_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_itineraire_id_seq RENAME TO trekking_trekrelationship_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_portal_id_seq RENAME TO trekking_trek_portal_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_renseignement_id_seq RENAME TO trekking_trek_information_desks_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_reseau_id_seq RENAME TO trekking_trek_networks_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_source_id_seq RENAME TO trekking_trek_source_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_theme_id_seq RENAME TO trekking_trek_themes_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_itineraire_web_id_seq RENAME TO trekking_trek_web_links_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_r_service_pratique_id_seq RENAME TO trekking_servicetype_practices_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_t_web_id_seq RENAME TO trekking_weblink_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_r_troncon_poi_exclus_id_seq RENAME TO trekking_trek_pois_excluded_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_accessibilite_id_seq RENAME TO trekking_accessibility_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_parcours_id_seq RENAME TO trekking_route_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_poi_id_seq RENAME TO trekking_poitype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_pratique_id_seq RENAME TO trekking_practice_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_reseau_id_seq RENAME TO trekking_treknetwork_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_service_id_seq RENAME TO trekking_servicetype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_web_category_id_seq RENAME TO trekking_weblinkcategory_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_accessibilite_id_seq RENAME TO trekking_trek_accessibilities_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_itineraire2_id_seq RENAME TO trekking_orderedtrekchild_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_itineraire_id_seq RENAME TO trekking_trekrelationship_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_portal_id_seq RENAME TO trekking_trek_portal_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_renseignement_id_seq RENAME TO trekking_trek_information_desks_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_reseau_id_seq RENAME TO trekking_trek_networks_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_source_id_seq RENAME TO trekking_trek_source_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_theme_id_seq RENAME TO trekking_trek_themes_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_itineraire_web_id_seq RENAME TO trekking_trek_web_links_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_r_service_pratique_id_seq RENAME TO trekking_servicetype_practices_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_t_web_id_seq RENAME TO trekking_weblink_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_r_troncon_poi_exclus_id_seq RENAME TO trekking_trek_pois_excluded_id_seq;"
+        ),
     ]

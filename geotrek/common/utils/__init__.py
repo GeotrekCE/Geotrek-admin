@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.contrib.gis.db.models.functions import LineLocatePoint, Intersection
+from django.contrib.gis.db.models.functions import Intersection, LineLocatePoint
 from django.contrib.gis.gdal import SpatialReference
 from django.contrib.gis.measure import Distance
 from django.db import connection
@@ -26,8 +26,7 @@ class classproperty:
 # This one come from pyramid
 # https://github.com/Pylons/pyramid/blob/master/pyramid/decorator.py
 class reify:
-
-    """ Put the result of a method which uses this (non-data)
+    """Put the result of a method which uses this (non-data)
     descriptor decorator in the instance dict after the first call,
     effectively replacing the decorator with an instance variable."""
 
@@ -54,8 +53,8 @@ def dbnow():
 
 
 def sqlfunction(function, *args):
-    """ Executes the SQL function with the specified args, and returns the result. """
-    sql = '%s(%s)' % (function, ','.join(args))
+    """Executes the SQL function with the specified args, and returns the result."""
+    sql = "%s(%s)" % (function, ",".join(args))
     logger.debug(sql)
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -88,29 +87,33 @@ def queryset_or_all_objects(queryset, model):
     # evaluated in bool() context. So here is a function not to forget that.
     if queryset is None:
         queryset = model.objects
-        if hasattr(queryset, 'existing'):
+        if hasattr(queryset, "existing"):
             queryset = queryset.existing()
     return queryset
 
 
-def intersecting(qs, obj, distance=None, ordering=True, field='geom', defer=None):
-    """ Small helper to filter all model instances by geometry intersection """
+def intersecting(qs, obj, distance=None, ordering=True, field="geom", defer=None):
+    """Small helper to filter all model instances by geometry intersection"""
     if isinstance(qs, ModelBase):
         qs = qs.objects
-        if hasattr(qs, 'existing'):
+        if hasattr(qs, "existing"):
             qs = qs.existing()
     if not obj.geom:
         return qs.none()
     if distance is None:
         distance = obj.distance(qs.model)
     if distance:
-        qs = qs.filter(**{'{}__dwithin'.format(field): (obj.geom, Distance(m=distance))})
+        qs = qs.filter(
+            **{"{}__dwithin".format(field): (obj.geom, Distance(m=distance))}
+        )
     else:
-        qs = qs.filter(**{'{}__intersects'.format(field): obj.geom})
-        if obj.geom.geom_type == 'LineString' and ordering:
-            qs = qs.order_by(LineLocatePoint(obj.geom,
-                                             StartPoint(DumpGeom(Intersection(obj.geom,
-                                                                              field)))))
+        qs = qs.filter(**{"{}__intersects".format(field): obj.geom})
+        if obj.geom.geom_type == "LineString" and ordering:
+            qs = qs.order_by(
+                LineLocatePoint(
+                    obj.geom, StartPoint(DumpGeom(Intersection(obj.geom, field)))
+                )
+            )
 
     if obj.__class__ == qs.model:
         # Prevent self intersection
@@ -128,11 +131,11 @@ def format_coordinates(geom):
             if location.y > 0:
                 degreelong = "%0.6f°N" % location.y
             else:
-                degreelong = "%0.6f°S" % - location.y
+                degreelong = "%0.6f°S" % -location.y
             if location.x > 0:
                 degreelat = "%0.6f°E" % location.x
             else:
-                degreelat = "%0.6f°W" % - location.x
+                degreelat = "%0.6f°W" % -location.x
             result = "%s, %s" % (degreelong, degreelat)
 
         else:
@@ -145,11 +148,15 @@ def format_coordinates(geom):
                 lat_deg=(rounded_lat_sec // 3600),
                 lat_min=((rounded_lat_sec // 60) % 60),
                 lat_sec=(rounded_lat_sec % 60),
-                lat_card=pgettext("North", "N") if location.y >= 0 else pgettext("South", "S"),
+                lat_card=pgettext("North", "N")
+                if location.y >= 0
+                else pgettext("South", "S"),
                 lng_deg=(rounded_lng_sec // 3600),
                 lng_min=((rounded_lng_sec // 60) % 60),
                 lng_sec=(rounded_lng_sec % 60),
-                lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
+                lng_card=pgettext("East", "E")
+                if location.x >= 0
+                else pgettext("West", "W"),
             )
     else:
         location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
@@ -162,9 +169,8 @@ def format_coordinates(geom):
 
 def collate_c(field):
     field_collate = Func(
-        field,
-        function='C',
-        template='(%(expressions)s) COLLATE "%(function)s"')
+        field, function="C", template='(%(expressions)s) COLLATE "%(function)s"'
+    )
     return field_collate
 
 
@@ -177,7 +183,9 @@ def simplify_coords(coords):
         return [simplify_coords(coord) for coord in coords]
     elif isinstance(coords, float):
         return round(coords, 7)
-    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
+    raise Exception(
+        "Param is {}. Should be <list>, <tuple> or <float>".format(type(coords))
+    )
 
 
 def leaflet_bounds(bbox):

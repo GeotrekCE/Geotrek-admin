@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0041_alter_pendingemail_recipient'),
+        ("feedback", "0041_alter_pendingemail_recipient"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='report',
-            name='email',
-            field=models.EmailField(blank=True, default='', max_length=254, verbose_name='Email'),
+            model_name="report",
+            name="email",
+            field=models.EmailField(
+                blank=True, default="", max_length=254, verbose_name="Email"
+            ),
         ),
     ]

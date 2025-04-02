@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0005_baseinfrastructure_eid'),
+        ("infrastructure", "0005_baseinfrastructure_eid"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='baseinfrastructure',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="baseinfrastructure",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
     ]

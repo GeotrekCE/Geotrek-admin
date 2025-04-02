@@ -5,34 +5,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0017_auto_20210121_0943'),
+        ("common", "0017_auto_20210121_0943"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='targetportal',
-            name='facebook_id',
-            field=models.CharField(blank=True, default=settings.FACEBOOK_APP_ID, help_text='Facebook ID for Geotrek Rando', max_length=20,
-                                   null=True, verbose_name='Facebook ID'),
+            model_name="targetportal",
+            name="facebook_id",
+            field=models.CharField(
+                blank=True,
+                default=settings.FACEBOOK_APP_ID,
+                help_text="Facebook ID for Geotrek Rando",
+                max_length=20,
+                null=True,
+                verbose_name="Facebook ID",
+            ),
         ),
         migrations.AlterField(
-            model_name='targetportal',
-            name='facebook_image_height',
-            field=models.IntegerField(default=settings.FACEBOOK_IMAGE_HEIGHT, help_text="Facebook image's height",
-                                      verbose_name='Facebook image height'),
+            model_name="targetportal",
+            name="facebook_image_height",
+            field=models.IntegerField(
+                default=settings.FACEBOOK_IMAGE_HEIGHT,
+                help_text="Facebook image's height",
+                verbose_name="Facebook image height",
+            ),
         ),
         migrations.AlterField(
-            model_name='targetportal',
-            name='facebook_image_url',
-            field=models.CharField(default=settings.FACEBOOK_IMAGE, help_text='Url of the facebook image',
-                                   max_length=256, verbose_name='Facebook image url'),
+            model_name="targetportal",
+            name="facebook_image_url",
+            field=models.CharField(
+                default=settings.FACEBOOK_IMAGE,
+                help_text="Url of the facebook image",
+                max_length=256,
+                verbose_name="Facebook image url",
+            ),
         ),
         migrations.AlterField(
-            model_name='targetportal',
-            name='facebook_image_width',
-            field=models.IntegerField(default=settings.FACEBOOK_IMAGE_WIDTH, help_text="Facebook image's width",
-                                      verbose_name='Facebook image width'),
+            model_name="targetportal",
+            name="facebook_image_width",
+            field=models.IntegerField(
+                default=settings.FACEBOOK_IMAGE_WIDTH,
+                help_text="Facebook image's width",
+                verbose_name="Facebook image width",
+            ),
         ),
     ]

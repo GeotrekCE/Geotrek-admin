@@ -2,11 +2,19 @@ import logging
 import re
 
 from django.conf import settings
-from django.db.models import Subquery, OuterRef, Sum
+from django.db.models import OuterRef, Subquery, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
-from mapentity.views import (MapEntityList, MapEntityFormat, MapEntityFilter, MapEntityDetail, MapEntityDocument,
-                             MapEntityCreate, MapEntityUpdate, MapEntityDelete)
+from mapentity.views import (
+    MapEntityCreate,
+    MapEntityDelete,
+    MapEntityDetail,
+    MapEntityDocument,
+    MapEntityFilter,
+    MapEntityFormat,
+    MapEntityList,
+    MapEntityUpdate,
+)
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
@@ -14,12 +22,16 @@ from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.models import Report
+
 from .filters import InterventionFilterSet, ProjectFilterSet
-from .forms import (InterventionForm, ProjectForm,
-                    FundingFormSet, ManDayFormSet)
-from .models import Intervention, Project, ManDay
-from .serializers import (InterventionSerializer, ProjectSerializer,
-                          InterventionGeojsonSerializer, ProjectGeojsonSerializer)
+from .forms import FundingFormSet, InterventionForm, ManDayFormSet, ProjectForm
+from .models import Intervention, ManDay, Project
+from .serializers import (
+    InterventionGeojsonSerializer,
+    InterventionSerializer,
+    ProjectGeojsonSerializer,
+    ProjectSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +46,17 @@ def _normalize_annotation_column_name(col_name):
 
 class InterventionList(CustomColumnsMixin, MapEntityList):
     queryset = Intervention.objects.existing()
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['begin_date', 'end_date', 'type', 'target', 'status', 'stake']
-    searchable_columns = ['id', 'name']
-    unorderable_columns = ['target']
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = [
+        "begin_date",
+        "end_date",
+        "type",
+        "target",
+        "status",
+        "stake",
+    ]
+    searchable_columns = ["id", "name"]
+    unorderable_columns = ["target"]
 
 
 class InterventionFilter(MapEntityFilter):
@@ -58,7 +77,6 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         queryset = super().get_queryset()
 
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
-
             # Get all jobs that are used in interventions, as unique names, ids and costs
             all_mandays = ManDay.objects.all()
             jobs_used_in_interventions = list(
@@ -67,13 +85,14 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
             # Iter over unique jobs
             for job_name, job_id, job_cost in jobs_used_in_interventions:
-
                 # Create column name for current job cost
                 column_name = self.build_cost_column_name(job_name)
 
                 # Create subquery to retrieve total cost of mandays for a given intervention and a given job
                 mandays_query = (
-                    ManDay.objects.filter(intervention=OuterRef("pk"), job_id=job_id)  # Extract all mandays for a given intervention and a given job
+                    ManDay.objects.filter(
+                        intervention=OuterRef("pk"), job_id=job_id
+                    )  # Extract all mandays for a given intervention and a given job
                     .values("job_id")  # Group by job
                     .annotate(total_days=Sum("nb_days"))  # Select number of days worked
                     .values("total_days")  # Rename result as total_days
@@ -89,13 +108,13 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
 
     @classmethod
     def get_mandatory_columns(cls):
-        mandatory_columns = ['id']
+        mandatory_columns = ["id"]
         if settings.ENABLE_JOBS_COSTS_DETAILED_EXPORT:
-            all_mandays = ManDay.objects.all()  # Used to find all jobs that ARE USED in interventions
+            all_mandays = (
+                ManDay.objects.all()
+            )  # Used to find all jobs that ARE USED in interventions
             # Get all jobs that are used in interventions, as unique names
-            jobs_as_names = list(
-                set(all_mandays.values_list("job__job", flat=True))
-            )
+            jobs_as_names = list(set(all_mandays.values_list("job__job", flat=True)))
             # Create column names for each unique job cost
             cost_column_names = list(map(cls.build_cost_column_name, jobs_as_names))
             # Add these column names to export
@@ -103,13 +122,33 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         return mandatory_columns
 
     default_extra_columns = [
-        'name', 'begin_date', 'end_date', 'type', 'target', 'status', 'stake',
-        'disorders', 'total_manday', 'project', 'contractors', 'subcontracting',
-        'width', 'height', 'area', 'structure',
-        'description', 'date_insert', 'date_update',
-        'material_cost', 'heliport_cost', 'contractor_cost',
-        'total_cost_mandays', 'total_cost',
-        'cities', 'districts', 'areas',
+        "name",
+        "begin_date",
+        "end_date",
+        "type",
+        "target",
+        "status",
+        "stake",
+        "disorders",
+        "total_manday",
+        "project",
+        "contractors",
+        "subcontracting",
+        "width",
+        "height",
+        "area",
+        "structure",
+        "description",
+        "date_insert",
+        "date_update",
+        "material_cost",
+        "heliport_cost",
+        "contractor_cost",
+        "total_cost_mandays",
+        "total_cost",
+        "cities",
+        "districts",
+        "areas",
     ] + AltimetryMixin.COLUMNS
 
 
@@ -118,7 +157,7 @@ class InterventionDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -127,7 +166,7 @@ class InterventionDocument(MapEntityDocument):
 
 
 class ManDayFormsetMixin(FormsetMixin):
-    context_name = 'manday_formset'
+    context_name = "manday_formset"
     formset_class = ManDayFormSet
 
 
@@ -137,10 +176,10 @@ class InterventionCreate(ManDayFormsetMixin, MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        if 'target_id' in self.request.GET and 'target_type' in self.request.GET:
+        if "target_id" in self.request.GET and "target_type" in self.request.GET:
             # Create intervention on an existing infrastructure
-            kwargs['target_id'] = self.request.GET['target_id']
-            kwargs['target_type'] = self.request.GET['target_type']
+            kwargs["target_id"] = self.request.GET["target_id"]
+            kwargs["target_type"] = self.request.GET["target_type"]
         return kwargs
 
 
@@ -148,23 +187,25 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
     queryset = Intervention.objects.existing()
     form_class = InterventionForm
 
-    @same_structure_required('maintenance:intervention_detail')
+    @same_structure_required("maintenance:intervention_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         # If deletion is allowed
-        if kwargs['can_delete']:
+        if kwargs["can_delete"]:
             intervention = self.get_object()
             # Disallow deletion if this intervention is part of Suricate Workflow at the moment
             if not settings.SURICATE_WORKFLOW_ENABLED:
                 kwargs["can_delete"] = True
             else:
-                is_report = intervention.target and isinstance(intervention.target, Report)
+                is_report = intervention.target and isinstance(
+                    intervention.target, Report
+                )
                 report_is_closed = False
                 if is_report:
-                    report_is_closed = (intervention.target.status.identifier == 'solved')
+                    report_is_closed = intervention.target.status.identifier == "solved"
                 kwargs["can_delete"] = (not is_report) or report_is_closed
         return kwargs
 
@@ -172,7 +213,7 @@ class InterventionUpdate(ManDayFormsetMixin, MapEntityUpdate):
 class InterventionDelete(MapEntityDelete):
     model = Intervention
 
-    @same_structure_required('maintenance:intervention_detail')
+    @same_structure_required("maintenance:intervention_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -186,19 +227,23 @@ class InterventionViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == 'geojson':
-            qs = qs.only('id', 'name')
+        if self.format_kwarg == "geojson":
+            qs = qs.only("id", "name")
         else:
-            qs = qs.select_related("stake", "status", "type", "target_type").prefetch_related('target')
+            qs = qs.select_related(
+                "stake", "status", "type", "target_type"
+            ).prefetch_related("target")
         return qs
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['period', 'type', 'domain']
-    searchable_columns = ['id', 'name']
-    unorderable_columns = ['period', ]
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["period", "type", "domain"]
+    searchable_columns = ["id", "name"]
+    unorderable_columns = [
+        "period",
+    ]
 
 
 class ProjectFilter(MapEntityFilter):
@@ -208,13 +253,28 @@ class ProjectFilter(MapEntityFilter):
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
     filterset_class = ProjectFilterSet
-    mandatory_columns = ['id']
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
-        'interventions', 'interventions_total_cost', 'comments', 'contractors', 'intervention_contractors',
-        'project_owner', 'project_manager', 'founders',
-        'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        "structure",
+        "name",
+        "period",
+        "type",
+        "domain",
+        "constraint",
+        "global_cost",
+        "interventions",
+        "interventions_total_cost",
+        "comments",
+        "contractors",
+        "intervention_contractors",
+        "project_owner",
+        "project_manager",
+        "founders",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
     ]
 
 
@@ -223,8 +283,8 @@ class ProjectDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
-        context['empty_map_message'] = _("No intervention related.")
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
+        context["empty_map_message"] = _("No intervention related.")
         return context
 
 
@@ -233,7 +293,7 @@ class ProjectDocument(MapEntityDocument):
 
 
 class FundingFormsetMixin(FormsetMixin):
-    context_name = 'funding_formset'
+    context_name = "funding_formset"
     formset_class = FundingFormSet
 
 
@@ -246,7 +306,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
     queryset = Project.objects.existing()
     form_class = ProjectForm
 
-    @same_structure_required('maintenance:project_detail')
+    @same_structure_required("maintenance:project_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -254,7 +314,7 @@ class ProjectUpdate(FundingFormsetMixin, MapEntityUpdate):
 class ProjectDelete(MapEntityDelete):
     model = Project
 
-    @same_structure_required('maintenance:project_detail')
+    @same_structure_required("maintenance:project_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -268,8 +328,12 @@ class ProjectViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == 'geojson':
-            non_empty_qs = Intervention.objects.existing().filter(project__isnull=False).values('project')
+        if self.format_kwarg == "geojson":
+            non_empty_qs = (
+                Intervention.objects.existing()
+                .filter(project__isnull=False)
+                .values("project")
+            )
             qs = qs.filter(pk__in=non_empty_qs)
-            qs = qs.only('id', 'name')
+            qs = qs.only("id", "name")
         return qs

@@ -5,18 +5,17 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations
 
-
 FIELDS = (
-    ('dive', 'nom', 'name'),
-    ('dive', 'depart', 'departure'),
-    ('dive', 'chapeau', 'description_teaser'),
-    ('dive', 'equipements', 'facilities'),
-    ('dive', 'handicap', 'disabled_sport'),
-    ('dive', 'recommandation', 'advice'),
-    ('dive', 'public', 'published'),
-    ('practice', 'nom', 'name'),
-    ('difficulty', 'nom', 'name'),
-    ('level', 'nom', 'name'),
+    ("dive", "nom", "name"),
+    ("dive", "depart", "departure"),
+    ("dive", "chapeau", "description_teaser"),
+    ("dive", "equipements", "facilities"),
+    ("dive", "handicap", "disabled_sport"),
+    ("dive", "recommandation", "advice"),
+    ("dive", "public", "published"),
+    ("practice", "nom", "name"),
+    ("difficulty", "nom", "name"),
+    ("level", "nom", "name"),
 )
 
 
@@ -25,16 +24,25 @@ def forward(apps, schema_editor):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             for model, old, new in FIELDS:
                 cursor.execute(
-                    "SELECT 1 FROM information_schema.columns WHERE table_name='diving_{}' AND column_name='{}_{}'".format(model, old, lang.replace('-', '_'))
+                    "SELECT 1 FROM information_schema.columns WHERE table_name='diving_{}' AND column_name='{}_{}'".format(
+                        model, old, lang.replace("-", "_")
+                    )
                 )
                 if cursor.fetchone():
-                    cursor.execute('ALTER TABLE diving_{} RENAME {}_{} TO {}_{}'.format(model, old, lang.replace('-', '_'), new, lang.replace('-', '_')))
+                    cursor.execute(
+                        "ALTER TABLE diving_{} RENAME {}_{} TO {}_{}".format(
+                            model,
+                            old,
+                            lang.replace("-", "_"),
+                            new,
+                            lang.replace("-", "_"),
+                        )
+                    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('diving', '0003_auto_20200302_0759'),
+        ("diving", "0003_auto_20200302_0759"),
     ]
 
     operations = [

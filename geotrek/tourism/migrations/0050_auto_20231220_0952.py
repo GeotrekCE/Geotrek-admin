@@ -15,20 +15,24 @@ def reverse_func(apps, schema_editors):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0049_alter_touristiccontentcategory_color'),
+        ("tourism", "0049_alter_touristiccontentcategory_color"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='touristicevent',
-            name='organizers',
-            field=models.ManyToManyField(blank=True, related_name='touristicevent', to='tourism.TouristicEventOrganizer', verbose_name='Organizers'),
+            model_name="touristicevent",
+            name="organizers",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="touristicevent",
+                to="tourism.TouristicEventOrganizer",
+                verbose_name="Organizers",
+            ),
         ),
         migrations.RunPython(forward_func, reverse_func),
         migrations.RemoveField(
-            model_name='touristicevent',
-            name='organizer',
+            model_name="touristicevent",
+            name="organizer",
         ),
     ]

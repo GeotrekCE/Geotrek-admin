@@ -1,12 +1,13 @@
-import factory
-import random
 import math
+import random
 
-from django.contrib.gis.geos import Point, LineString, Polygon
+import factory
 from django.conf import settings
+from django.contrib.gis.geos import LineString, Point, Polygon
 
 from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils import dbnow
+
 from .. import models
 
 
@@ -50,7 +51,9 @@ class PathFactory(StructureRelatedDefaultFactory):
         model = models.Path
 
     # (700000, 6600000) = Lambert93 origin (3.0° E, 46.5° N)
-    geom = LineString(Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID)
+    geom = LineString(
+        Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+    )
     geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: "name %s" % n)
@@ -75,9 +78,11 @@ def getRandomLineStringInBounds(*args, **kwargs):
     """Return an horizontal line with 2 in bounds random points"""
 
     srid = settings.SRID
-    minx, miny, maxx, maxy = kwargs.pop('bbox', settings.SPATIAL_EXTENT)
+    minx, miny, maxx, maxy = kwargs.pop("bbox", settings.SPATIAL_EXTENT)
 
-    assert srid == 2154, "Following code will use math fns that depends on this srid (floor)"
+    assert srid == 2154, (
+        "Following code will use math fns that depends on this srid (floor)"
+    )
 
     # SRID 2154 use integer values. Substract 1 to maxx and maxy to be sure to be in bounds
     def get_in_bound_x():
@@ -94,7 +99,7 @@ def getRandomLineStringInBounds(*args, **kwargs):
 
 def getExistingLineStringInBounds(*args, **kwargs):
     """Return the geom of the first Path whose geom is in bounds"""
-    bbox = kwargs.pop('bbox', settings.SPATIAL_EXTENT)
+    bbox = kwargs.pop("bbox", settings.SPATIAL_EXTENT)
     p = Polygon.from_bbox(bbox)
     return models.Path.objects.filter(geom__contained=p)[0].geom
 
@@ -102,6 +107,7 @@ def getExistingLineStringInBounds(*args, **kwargs):
 # Those two factories return Path whose geom is in bounds
 # (better for testing UI for example that always has a bbox filter)
 # TODO: Well genereting "in bounds" geom should be the default ?!
+
 
 class PathInBoundsRandomGeomFactory(PathFactory):
     geom = factory.Sequence(getRandomLineStringInBounds)
@@ -118,7 +124,7 @@ class TopologyFactory(factory.django.DjangoModelFactory):
     # Factory
     # paths (M2M)
     if not settings.TREKKING_TOPOLOGY_ENABLED:
-        geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
+        geom = "SRID=2154;LINESTRING (700000 6600000, 700100 6600100)"
     offset = 0
     deleted = False
 
@@ -142,7 +148,7 @@ class TopologyFactory(factory.django.DjangoModelFactory):
 
 class PointTopologyFactory(TopologyFactory):
     if not settings.TREKKING_TOPOLOGY_ENABLED:
-        geom = 'SRID=2154;POINT (700000 6600000)'
+        geom = "SRID=2154;POINT (700000 6600000)"
 
     @factory.post_generation
     def paths(obj, create, paths):
