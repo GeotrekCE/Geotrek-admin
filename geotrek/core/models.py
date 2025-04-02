@@ -1,6 +1,8 @@
 import functools
 import json
 import logging
+
+from geotrek.common.functions import IsSimple
 from geotrek.common.signals import log_cascade_deletion
 import simplekml
 import uuid
@@ -139,6 +141,16 @@ class Path(CheckBoxActionMixin, ZoningPropertiesMixin, AddPropertyMixin, Geotrek
             GistIndex(name='path_geom_3d_gist_idx', fields=['geom_3d']),
             # some other complex indexes can't be created by django and are created in migrations
             # Gist (ST_STARTPOINT(geom)) and (ST_ENDPOINT(geom))
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid"
+            ),
+            models.CheckConstraint(
+                check=IsSimple("geom"),
+                name="%(app_label)s_%(class)s_geom_is_simple"
+            ),
         ]
 
     @classmethod

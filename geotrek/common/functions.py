@@ -1,5 +1,5 @@
 from django.contrib.gis.db.models import PointField
-from django.db.models import CharField, FloatField
+from django.db.models import CharField, FloatField, BooleanField
 from django.contrib.gis.db.models.functions import GeoFunc, GeomOutputGeoFunc
 
 
@@ -42,3 +42,7 @@ class Buffer(GeomOutputGeoFunc):
 class Area(GeoFunc):
     """ ST_Area postgis function """
     output_field = FloatField()
+
+
+class IsSimple(GeoFunc):
+    output_field = BooleanField()
