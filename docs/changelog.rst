@@ -59,6 +59,10 @@ This version drop support for Ubuntu Bionic 18.04 debian package. Please update 
 - Update documentation for sensitivity fixtures (#4492)
 - Update database restore process with PGRouting extension
 
+**Bug fixes**
+
+- Fix: Parser loading with import command (#3538)
+
 
 2.113.1         (2025-02-17)
 ----------------------------
