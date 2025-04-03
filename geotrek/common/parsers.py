@@ -1570,12 +1570,10 @@ class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
     delete = True
     flexible_fields = True
-
     url = 'https://overpass-api.de/api/interpreter/'
     bbox = None
     tags = None
     query = ""
-
     osm_srid = 4326
     bbox_margin = 0.0
 
