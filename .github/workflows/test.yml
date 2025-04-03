@@ -120,19 +120,15 @@ jobs:
       if: ${{ matrix.os == 'focal-3.10'}}
       run: |
           uv venv -p python3.10 ./venv
-          pwd
-          ls -als
 
     - name: Install uv venv
       if: ${{ matrix.os != 'focal-3.10'}}
       run: |
           uv venv ./venv
-          pwd
-          ls -als
 
     - name: Install python dependencies
       run: |
-        UV_PYTHON=/home/runner/work/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
+        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
