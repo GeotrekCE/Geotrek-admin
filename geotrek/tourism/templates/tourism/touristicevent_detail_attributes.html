@@ -47,7 +47,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"price" }}</th>
-            <td>{{ object.price }}</td>
+            <td>{% if object.price %}{{ object.price }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"meeting_point" }}</th>
@@ -105,7 +106,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"capacity" }}</th>
-            <td>{{ object.capacity }}</td>
+            <td>{% if object.capacity %}{{ object.capacity }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"cancelled" }}</th>
@@ -113,7 +115,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"cancellation_reason" }}</th>
-            <td>{{ object.cancellation_reason|safe }}</td>
+            <td>{% if object.cancellation_reason %}{{ object.cancellation_reason|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
@@ -174,11 +177,13 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"preparation_duration" }}</th>
-            <td>{{ object.preparation_duration }}</td>
+            <td>{% if object.preparation_duration %}{{ object.preparation_duration|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"intervention_duration" }}</th>
-            <td>{{ object.intervention_duration }}</td>
+            <td>{% if object.intervention_duration %}{{ object.intervention_duration|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
 
         {% include "common/publication_info_fragment.html" %}
