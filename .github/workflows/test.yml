@@ -116,20 +116,14 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv for focal
-      if: ${{ matrix.os == 'focal-3.10'}}
-      run: |
-          uv venv ./venv
-
     - name: Install python venv
-      if: ${{ matrix.os != 'focal-3.10'}}
       run: |
           uv venv ./venv
+          export UV_PYTHON=$(pwd)/venv/bin/python
 
     - name: Install python dependencies
       run: |
-        source ./venv/bin/activate
-        uv pip sync requirements.txt dev-requirements.txt
+        uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
