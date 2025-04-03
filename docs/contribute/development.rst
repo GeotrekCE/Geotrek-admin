@@ -38,9 +38,9 @@ Install git hooks
 Adding or upgrade dependencies
 ==============================
 
-Consider using pip-tools to manage dependencies.
+Consider using uv to manage dependencies.
 
-* add your dependencies in ``setup.py`` for general dependencies, ``dev-requirements.in`` for dev dependencies, then run:
+* add your dependencies in ``setup.py`` for general dependencies, ``requirements-dev.in`` for dev dependencies, then run:
 
 .. md-tab-set::
     :name: upgrade-dependencies-tabs
@@ -55,8 +55,8 @@ Consider using pip-tools to manage dependencies.
 
          .. code-block:: python
     
-                docker compose run --rm web pip-compile
-                docker compose run --rm web pip-compile dev-requirements.in
+                docker compose run --rm web uv pip compile setup.py -o requirements.txt
+                docker compose run --rm web pip-compile requirements-dev.in -o requirements-dev.txt
 
 Model modification
 ==================
