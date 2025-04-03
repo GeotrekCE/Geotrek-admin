@@ -60,13 +60,15 @@ release:
 	docker rm geotrek_release
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
+	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
 
 format:
-	$(docker_compose) run --rm web ruff format geotrek
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff format geotrek
 
 lint:
-	$(docker_compose) run --rm web ruff check --fix geotrek
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff check --fix geotrek
+
+quality: lint format
 
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
@@ -117,7 +119,6 @@ clean_data:
 	rm -rf var/tmp/*
 	rm -rf var/log/*
 	rm -rf var/mobile/*
-
 
 flush: clean_data update load_data
 

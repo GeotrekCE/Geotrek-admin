@@ -45,7 +45,7 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
         constraints = [
             models.CheckConstraint(
                 check=models.Q(geom__isvalid=True),
-                name="%(app_label)s_%(class)s_geom_is_valid"
+                name="%(app_label)s_%(class)s_geom_is_valid",
             ),
         ]
 
@@ -73,7 +73,7 @@ class City(TimeStampedModelMixin, models.Model):
         constraints = [
             models.CheckConstraint(
                 check=models.Q(geom__isvalid=True),
-                name="%(app_label)s_%(class)s_geom_is_valid"
+                name="%(app_label)s_%(class)s_geom_is_valid",
             ),
         ]
 
@@ -100,7 +100,7 @@ class District(TimeStampedModelMixin, models.Model):
         constraints = [
             models.CheckConstraint(
                 check=models.Q(geom__isvalid=True),
-                name="%(app_label)s_%(class)s_geom_is_valid"
+                name="%(app_label)s_%(class)s_geom_is_valid",
             ),
         ]
 

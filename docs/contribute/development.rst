@@ -139,7 +139,7 @@ Check quality
 
             .. code-block::
     
-                make lint
+                make quality
 
     .. md-tab-item:: With Docker
 

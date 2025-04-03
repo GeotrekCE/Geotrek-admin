@@ -4,9 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0103_alter_restrictedarea_area_type'),
+        ("zoning", "0103_alter_restrictedarea_area_type"),
     ]
 
     operations = [
