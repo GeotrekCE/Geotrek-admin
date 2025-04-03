@@ -21,10 +21,11 @@ from geotrek.common.parsers import (AttachmentParserMixin, DownloadImportError,
                                     ExcelParser, GeotrekAggregatorParser,
                                     GeotrekParser, OpenSystemParser,
                                     TourInSoftParser, TourismSystemParser,
-                                    ValueImportError, XmlParser)
+                                    ValueImportError, XmlParser, OpenStreetMapParser)
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
+from geotrek.tourism.models import InformationDesk
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
@@ -66,6 +67,19 @@ class OrganismNoMappingPartialParser(StructureExcelParser):
     natural_keys = {
         "structure": "name"
     }
+
+
+class RecordSourceFlexibleFieldsParser(ExcelParser):
+    model = RecordSource
+    flexible_fields = True
+    fields = {
+        'name': 'name',
+        'website': 'website',
+    }
+    eid = 'name'
+
+    def filter_website(self, src, val):
+        return "website test"
 
 
 class OrganismNoNaturalKeysParser(StructureExcelParser):
@@ -194,6 +208,13 @@ class ParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism5.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser', filename, verbosity=2, stdout=output)
         self.assertIn("Bad value 'Structure' for field STRUCTURE. Should contain ['foo']", output.getvalue())
+
+    def test_flexible_fields(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.RecordSourceFlexibleFieldsParser', filename,
+                     verbosity=0)
+        websites = RecordSource.objects.order_by('pk')
+        self.assertEqual(websites[0].website, "website test")
 
     def test_default_fields_values_without_flexible_fields(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'recordSource2.xls')
@@ -1041,3 +1062,14 @@ class GeotrekAggregatorSourcesTests(TestCase):
         # Test bad response status
         GeotrekTrekTestSourcesParser()
         mocked_add_warning.assert_called_with("Failed to download 'https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerroragain.png'")
+
+
+class OpenStreetMapInitialisationTest(OpenStreetMapParser):
+    model = InformationDesk
+
+
+class OpenStreetMapTestParser(TestCase):
+
+    def test_improperly_configurated_categories(self):
+        with self.assertRaisesRegex(ImproperlyConfigured, 'Tags must be defined'):
+            call_command('import', 'geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest', verbosity=2)

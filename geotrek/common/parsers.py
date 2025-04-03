@@ -42,6 +42,7 @@ from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
+from geotrek.settings.base import api_bbox
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
@@ -79,6 +80,7 @@ class Parser:
     provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
     delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
     update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
+    flexible_fields: If set to True, all fields in the API response are flexible, meaning no error is thrown if a mapped field is missing. The default is False.
     """
     label = None
     model = None
@@ -94,6 +96,7 @@ class Parser:
     separator = '+'
     eid = None
     provider = None
+    flexible_fields = False
     fields = None
     m2m_fields = {}
     constant_fields = {}
@@ -160,7 +163,10 @@ class Parser:
             if part == '*':
                 return [self.get_part(dst, left, subval) for subval in val]
             else:
-                return self.get_part(dst, left, val[part])
+                if self.flexible_fields:
+                    return self.get_part(dst, left, val.get(part))
+                else:
+                    return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
         if isinstance(src, Iterable) and not isinstance(src, str):
@@ -1555,6 +1561,64 @@ class ApidaeBaseParser(Parser):
             self.skip += self.size
             if self.skip >= self.nb:
                 return
+
+    def normalize_field_name(self, name):
+        return name
+
+
+class OpenStreetMapParser(Parser):
+    """Parser to import "anything" from OpenStreetMap"""
+    delete = True
+    flexible_fields = True
+    url = 'https://overpass-api.de/api/interpreter/'
+    bbox = None
+    tags = None
+    query = ""
+    osm_srid = 4326
+    bbox_margin = 0.0
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.tags is None:
+            raise ImproperlyConfigured("Tags must be defined")
+
+        bbox_str = self.get_bbox_str()
+        for tag, value in self.tags.items():
+            self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+
+    def get_bbox_str(self):
+        bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
+        return '{1},{0},{3},{2}'.format(*bbox)
+
+    def get_tag_info(self, osm_tags):
+        for tag in osm_tags:
+            if tag or tag == 0:
+                return tag
+        return None
+
+    def get_centroid_from_way(self, geometries):
+        polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
+        polygon.srid = self.osm_srid
+        polygon.transform(settings.SRID)
+        centroid = polygon.centroid
+        return centroid
+
+    def get_centroid_from_relation(self, bbox):
+        polygon = Polygon.from_bbox((bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"]))
+        polygon.srid = self.osm_srid
+        polygon.transform(settings.SRID)
+        centroid = polygon.centroid
+        return centroid
+
+    def next_row(self):
+        params = {
+            'data': f"[out:json];{self.query}out geom;",
+        }
+        response = self.request_or_retry(self.url, params=params)
+        self.root = response.json()
+        self.nb = len(self.root['elements'])
+        for row in self.root['elements']:
+            yield row
 
     def normalize_field_name(self, name):
         return name
