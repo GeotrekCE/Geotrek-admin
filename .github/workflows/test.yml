@@ -123,7 +123,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        uv pip sync requirements.txt requirements-dev.txt
+        UV_PYTHON=/home/runner/work/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
