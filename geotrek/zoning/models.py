@@ -35,6 +35,12 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
         indexes = [
             GistIndex(name='restrictedarea_geom_gist_idx', fields=['geom']),
         ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid"
+            ),
+        ]
 
     def __str__(self):
         return "{} - {}".format(self.area_type.name, self.name)
@@ -53,6 +59,12 @@ class City(TimeStampedModelMixin, models.Model):
         indexes = [
             GistIndex(name='city_geom_gist_idx', fields=['geom']),
         ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid"
+            ),
+        ]
 
     def __str__(self):
         return self.name
@@ -69,6 +81,12 @@ class District(TimeStampedModelMixin, models.Model):
         ordering = ['name']
         indexes = [
             GistIndex(name='district_geom_gist_idx', fields=['geom']),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid"
+            ),
         ]
 
     def __str__(self):
