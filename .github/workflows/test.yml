@@ -82,10 +82,10 @@ jobs:
         path: |
           ./venv
 
-        key: uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
+        key: uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
         restore-keys: |
-          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}
+          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
+          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}
           uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
           uv-${{ matrix.os }}
 

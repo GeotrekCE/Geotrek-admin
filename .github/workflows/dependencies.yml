@@ -49,4 +49,4 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')

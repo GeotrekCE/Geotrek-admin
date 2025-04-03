@@ -5,7 +5,7 @@ on:
     paths:
       - 'geotrek/**'  # if geotrek code change
       - '.github/workflows/lint.yml'  # if lint workflow change
-      - 'dev-requirements.txt'  # if dev-requirements.txt change
+      - 'requirements-dev.txt'  # if requirements-dev.txt change
       - 'ruff.toml'   # if lint tools configuration change
 
 env:
