@@ -6,7 +6,7 @@ on:
       - 'geotrek/**'  # if geotrek code change
       - '.github/workflows/lint.yml'  # if lint workflow change
       - 'dev-requirements.txt'  # if dev-requirements.txt change
-      - 'setup.cfg'   # if lint tools configuration change
+      - 'ruff.toml'   # if lint tools configuration change
 
 env:
   DEBIAN_FRONTEND: noninteractive
@@ -21,7 +21,7 @@ jobs:
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
   flake8:
-    name: Checking Flake8 rules
+    name: Checking lint rules
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,8 +31,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install -c dev-requirements.txt flake8
+          pip3 install -c dev-requirements.txt ruff
 
-      - name: Flake8
+      - name: Check linting
         run: |
-          flake8 geotrek
+          ruff check geotrek
+
+      - name: Check format
+        run: |
+          ruff format --check geotrek

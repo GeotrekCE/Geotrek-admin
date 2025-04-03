@@ -18,42 +18,40 @@ class DiveViewsTests(CommonTest):
     modelfactory = DiveWithLevelsFactory
     userfactory = DivingManagerFactory
     expected_json_geom = {
-        'type': 'Point',
-        'coordinates': [-1.3630812, -5.9838563],
+        "type": "Point",
+        "coordinates": [-1.3630812, -5.9838563],
     }
-    extra_column_list = ['depth', 'advice']
-    expected_column_list_extra = ['id', 'name', 'depth', 'advice']
-    expected_column_formatlist_extra = ['id', 'depth', 'advice']
+    extra_column_list = ["depth", "advice"]
+    expected_column_list_extra = ["id", "name", "depth", "advice"]
+    expected_column_formatlist_extra = ["id", "depth", "advice"]
 
     def get_expected_geojson_geom(self):
         return self.expected_json_geom
 
     def get_expected_geojson_attrs(self):
         return {
-            'id': self.obj.pk,
-            'name': self.obj.name,
-            'published': True,
+            "id": self.obj.pk,
+            "name": self.obj.name,
+            "published": True,
         }
 
     def get_expected_datatables_attrs(self):
         return {
-            'id': self.obj.pk,
-            'levels': self.obj.levels_display,
-            'name': self.obj.name_display,
-            'thumbnail': 'None',
+            "id": self.obj.pk,
+            "levels": self.obj.levels_display,
+            "name": self.obj.name_display,
+            "thumbnail": "None",
         }
 
     def get_bad_data(self):
-        return {
-            'geom': 'doh!'
-        }, _('Invalid geometry value.')
+        return {"geom": "doh!"}, _("Invalid geometry value.")
 
     def get_good_data(self):
         return {
-            'structure': StructureFactory.create().pk,
-            'name_en': 'test',
-            'practice': PracticeFactory.create().pk,
-            'geom': '{"type": "Point", "coordinates":[0, 0]}',
+            "structure": StructureFactory.create().pk,
+            "name_en": "test",
+            "practice": PracticeFactory.create().pk,
+            "geom": '{"type": "Point", "coordinates":[0, 0]}',
         }
 
 

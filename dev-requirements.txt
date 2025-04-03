@@ -29,26 +29,18 @@ factory-boy==3.3.3
     # via -r dev-requirements.in
 faker==19.3.1
     # via factory-boy
-flake8==7.2.0
-    # via -r dev-requirements.in
 freezegun==1.5.1
     # via -r dev-requirements.in
 lxml==4.9.3
     # via
     #   -c requirements.txt
     #   -r dev-requirements.in
-mccabe==0.7.0
-    # via flake8
 packaging==24.2
     # via
     #   -c requirements.txt
     #   build
 pip-tools==7.4.1
     # via -r dev-requirements.in
-pycodestyle==2.13.0
-    # via flake8
-pyflakes==3.3.1
-    # via flake8
 pyproject-hooks==1.0.0
     # via
     #   build
@@ -58,6 +50,8 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
+ruff==0.11.2
+    # via -r dev-requirements.in
 six==1.17.0
     # via
     #   -c requirements.txt

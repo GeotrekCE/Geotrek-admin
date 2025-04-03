@@ -5,12 +5,11 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations
 
-
 FIELDS = (
-    ('flatpage', 'titre', 'title'),
-    ('flatpage', 'contenu', 'content'),
-    ('flatpage', 'url_externe', 'external_url'),
-    ('flatpage', 'public', 'published'),
+    ("flatpage", "titre", "title"),
+    ("flatpage", "contenu", "content"),
+    ("flatpage", "url_externe", "external_url"),
+    ("flatpage", "public", "published"),
 )
 
 
@@ -19,16 +18,25 @@ def forward(apps, schema_editor):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             for model, old, new in FIELDS:
                 cursor.execute(
-                    "SELECT 1 FROM information_schema.columns WHERE table_name='flatpages_{}' AND column_name='{}_{}'".format(model, old, lang.replace('-', '_'))
+                    "SELECT 1 FROM information_schema.columns WHERE table_name='flatpages_{}' AND column_name='{}_{}'".format(
+                        model, old, lang.replace("-", "_")
+                    )
                 )
                 if cursor.fetchone():
-                    cursor.execute('ALTER TABLE flatpages_{} RENAME {}_{} TO {}_{}'.format(model, old, lang.replace('-', '_'), new, lang.replace('-', '_')))
+                    cursor.execute(
+                        "ALTER TABLE flatpages_{} RENAME {}_{} TO {}_{}".format(
+                            model,
+                            old,
+                            lang.replace("-", "_"),
+                            new,
+                            lang.replace("-", "_"),
+                        )
+                    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0004_auto_20200228_1755'),
+        ("flatpages", "0004_auto_20200228_1755"),
     ]
 
     operations = [

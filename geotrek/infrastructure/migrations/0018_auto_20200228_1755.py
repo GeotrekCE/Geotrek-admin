@@ -6,25 +6,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0017_auto_20200211_1011'),
+        ("infrastructure", "0017_auto_20200211_1011"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='infrastructure',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Publication date'),
+            model_name="infrastructure",
+            name="publication_date",
+            field=models.DateField(
+                blank=True, editable=False, null=True, verbose_name="Publication date"
+            ),
         ),
         migrations.AlterField(
-            model_name='infrastructure',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Online', verbose_name='Published'),
+            model_name="infrastructure",
+            name="published",
+            field=models.BooleanField(
+                default=False, help_text="Online", verbose_name="Published"
+            ),
         ),
         migrations.AlterField(
-            model_name='infrastructuretype',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="infrastructuretype",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogram",
+            ),
         ),
     ]

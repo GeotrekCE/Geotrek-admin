@@ -11,18 +11,21 @@ def forward(apps, schema_editor):
                 f"SELECT 1 FROM information_schema.columns WHERE table_name='trekking_trek' AND column_name='disabled_infrastructure_{lang}'"
             )
             if cursor.fetchone():
-                cursor.execute(f"ALTER TABLE trekking_trek DROP COLUMN disabled_infrastructure_{lang};")
+                cursor.execute(
+                    f"ALTER TABLE trekking_trek DROP COLUMN disabled_infrastructure_{lang};"
+                )
             cursor.execute(
                 f"SELECT 1 FROM information_schema.columns WHERE table_name='trekking_trek' AND column_name='equipment_{lang}'"
             )
             if cursor.fetchone():
-                cursor.execute(f"ALTER TABLE trekking_trek DROP COLUMN equipment_{lang}; ")
+                cursor.execute(
+                    f"ALTER TABLE trekking_trek DROP COLUMN equipment_{lang}; "
+                )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0039_move_traduction_disabled_infrastructure_equipment'),
+        ("trekking", "0039_move_traduction_disabled_infrastructure_equipment"),
     ]
 
     operations = [

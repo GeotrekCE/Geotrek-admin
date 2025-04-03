@@ -6,25 +6,37 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.gis.geos import (LineString, MultiLineString, MultiPoint,
-                                     MultiPolygon, Point, Polygon)
+from django.contrib.gis.geos import (
+    LineString,
+    MultiLineString,
+    MultiPoint,
+    MultiPolygon,
+    Point,
+    Polygon,
+)
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 from easy_thumbnails.files import ThumbnailFile
 
-from geotrek.common.tests.factories import LabelFactory, AttachmentImageFactory, AttachmentPictoSVGFactory
-
+from geotrek.common.tests.factories import (
+    AttachmentImageFactory,
+    AttachmentPictoSVGFactory,
+    LabelFactory,
+)
 from geotrek.core.tests.factories import PathFactory
-from geotrek.trekking.models import (OrderedTrekChild, Rating, RatingScale,
-                                     Trek)
-from geotrek.trekking.tests.factories import (POIFactory, PracticeFactory,
-                                              RatingFactory,
-                                              RatingScaleFactory,
-                                              ServiceFactory, TrekFactory,
-                                              TrekWithPOIsFactory,
-                                              WebLinkCategoryFactory,
-                                              WebLinkFactory)
+from geotrek.trekking.models import OrderedTrekChild, Rating, RatingScale, Trek
+from geotrek.trekking.tests.factories import (
+    POIFactory,
+    PracticeFactory,
+    RatingFactory,
+    RatingScaleFactory,
+    ServiceFactory,
+    TrekFactory,
+    TrekWithPOIsFactory,
+    WebLinkCategoryFactory,
+    WebLinkFactory,
+)
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 
@@ -40,16 +52,18 @@ class TrekTest(TestCase):
         t.geom = LineString((0, 0), (1, 1))
         self.assertTrue(t.has_geom_valid())
 
-        t.description_teaser = ''
+        t.description_teaser = ""
         self.assertFalse(t.is_complete())
         self.assertFalse(t.is_publishable())
-        t.description_teaser = 'ba'
-        t.departure = 'zin'
-        t.arrival = 'ga'
+        t.description_teaser = "ba"
+        t.departure = "zin"
+        t.arrival = "ga"
         self.assertTrue(t.is_complete())
         self.assertTrue(t.is_publishable())
 
-        t.geom = MultiLineString([LineString((0, 0), (1, 1)), LineString((2, 2), (3, 3))])
+        t.geom = MultiLineString(
+            [LineString((0, 0), (1, 1)), LineString((2, 2), (3, 3))]
+        )
         self.assertFalse(t.has_geom_valid())
         self.assertFalse(t.is_publishable())
 
@@ -75,11 +89,15 @@ class TrekTest(TestCase):
         t.published_fr = False
         t.published_it = True
         t.save()
-        self.assertEqual(t.published_status, [
-            {'lang': 'en', 'language': 'English', 'status': False},
-            {'lang': 'es', 'language': 'Spanish', 'status': False},
-            {'lang': 'fr', 'language': 'French', 'status': False},
-            {'lang': 'it', 'language': 'Italian', 'status': True}])
+        self.assertEqual(
+            t.published_status,
+            [
+                {"lang": "en", "language": "English", "status": False},
+                {"lang": "es", "language": "Spanish", "status": False},
+                {"lang": "fr", "language": "French", "status": False},
+                {"lang": "it", "language": "Italian", "status": True},
+            ],
+        )
 
     @override_settings(PUBLISHED_BY_LANG=False)
     def test_published_status_without_published_by_lang(self):
@@ -87,11 +105,15 @@ class TrekTest(TestCase):
         t.published_fr = False
         t.published_it = False
         t.save()
-        self.assertEqual(t.published_status, [
-            {'lang': 'en', 'language': 'English', 'status': True},
-            {'lang': 'es', 'language': 'Spanish', 'status': True},
-            {'lang': 'fr', 'language': 'French', 'status': True},
-            {'lang': 'it', 'language': 'Italian', 'status': True}])
+        self.assertEqual(
+            t.published_status,
+            [
+                {"lang": "en", "language": "English", "status": True},
+                {"lang": "es", "language": "Spanish", "status": True},
+                {"lang": "fr", "language": "French", "status": True},
+                {"lang": "it", "language": "Italian", "status": True},
+            ],
+        )
 
     @override_settings(PUBLISHED_BY_LANG=False)
     def test_published_langs_without_published_by_lang_not_published(self):
@@ -101,14 +123,16 @@ class TrekTest(TestCase):
         t.save()
         self.assertEqual(t.published_langs, [])
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml, features='xml')
-        for placemark in parsed.findAll('placemark'):
-            coordinates = placemark.find('coordinates')
-            tuples = [s.split(',') for s in coordinates.string.split(' ')]
+        parsed = BeautifulSoup(kml, features="xml")
+        for placemark in parsed.findAll("placemark"):
+            coordinates = placemark.find("coordinates")
+            tuples = [s.split(",") for s in coordinates.string.split(" ")]
             self.assertTrue(all([len(i) == 3 for i in tuples]))
 
     def test_pois_types(self):
@@ -119,7 +143,9 @@ class TrekTest(TestCase):
         self.assertIn(type0, trek.poi_types)
         self.assertIn(type1, trek.poi_types)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_delete_cascade(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -149,22 +175,24 @@ class TrekTest(TestCase):
         self.assertEqual(t.aggregations.count(), 0)
 
     def test_treks_are_sorted_by_name(self):
-        TrekFactory.create(name='Cb')
-        TrekFactory.create(name='Ca')
-        TrekFactory.create(name='A')
-        TrekFactory.create(name='B')
-        self.assertListEqual(list(Trek.objects.all().values_list('name', flat=True)),
-                             ['A', 'B', 'Ca', 'Cb'])
+        TrekFactory.create(name="Cb")
+        TrekFactory.create(name="Ca")
+        TrekFactory.create(name="A")
+        TrekFactory.create(name="B")
+        self.assertListEqual(
+            list(Trek.objects.all().values_list("name", flat=True)),
+            ["A", "B", "Ca", "Cb"],
+        )
 
     def test_trek_itself_as_parent(self):
         """
         Test if a trek it is its own parent
         """
-        trek1 = TrekFactory.create(name='trek1')
+        trek1 = TrekFactory.create(name="trek1")
         OrderedTrekChild.objects.create(parent=trek1, child=trek1)
-        self.assertRaisesMessage(ValidationError,
-                                 "Cannot use itself as child trek.",
-                                 trek1.full_clean)
+        self.assertRaisesMessage(
+            ValidationError, "Cannot use itself as child trek.", trek1.full_clean
+        )
 
     def test_pictures_print_thumbnail_correct_picture(self):
         trek = TrekFactory()
@@ -218,9 +246,10 @@ class TrekPublicationDateTest(TestCase):
 
 
 class RelatedObjectsTest(TestCase):
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_helpers(self):
-
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
         trek = TrekFactory.create(paths=[(p1, 0.5, 1), (p2, 0, 1)])
@@ -231,8 +260,9 @@ class RelatedObjectsTest(TestCase):
         trek.pois_excluded.add(poi2.pk)
 
         # /!\ District are automatically linked to paths at DB level
-        d1 = DistrictFactory.create(geom=MultiPolygon(
-            Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
+        d1 = DistrictFactory.create(
+            geom=MultiPolygon(Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2))))
+        )
         # Ensure related objects are accessible
         self.assertCountEqual(trek.pois_excluded.all(), [poi2])
         self.assertCountEqual(trek.all_pois, [poi, poi2])
@@ -251,11 +281,14 @@ class RelatedObjectsTest(TestCase):
         self.assertCountEqual(poi.treks, [trek])
         self.assertCountEqual(service.treks, [trek])
 
-        d2 = DistrictFactory.create(geom=MultiPolygon(
-            Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
+        d2 = DistrictFactory.create(
+            geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
+        )
         self.assertCountEqual(trek.districts, [d1, d2])
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_helpers_nds(self):
         trek = TrekFactory.create(geom=LineString((2, 2), (8, 8)))
         poi = POIFactory.create(geom=Point(2.4, 2.4))
@@ -265,8 +298,9 @@ class RelatedObjectsTest(TestCase):
         trek.pois_excluded.add(poi2.pk)
 
         # /!\ District are automatically linked to paths at DB level
-        d1 = DistrictFactory.create(geom=MultiPolygon(
-            Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
+        d1 = DistrictFactory.create(
+            geom=MultiPolygon(Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2))))
+        )
         # Ensure related objects are accessible
         self.assertCountEqual(trek.pois_excluded.all(), [poi2])
         self.assertCountEqual(trek.all_pois, [poi, poi2])
@@ -276,7 +310,9 @@ class RelatedObjectsTest(TestCase):
         self.assertCountEqual(service.treks, [trek])
         self.assertCountEqual(trek.districts, [d1])
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_deleted_pois_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         poi = POIFactory.create(geom=Point(2.4, 2.4))
@@ -284,7 +320,9 @@ class RelatedObjectsTest(TestCase):
         poi.delete()
         self.assertCountEqual(trek.pois, [])
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_deleted_services_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         service = ServiceFactory.create(geom=Point(2.4, 2.4))
@@ -293,7 +331,9 @@ class RelatedObjectsTest(TestCase):
         service.delete()
         self.assertCountEqual(trek.services, [])
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_deleted_pois(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(paths=[p1])
@@ -302,7 +342,9 @@ class RelatedObjectsTest(TestCase):
         poi.delete()
         self.assertCountEqual(trek.pois, [])
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_deleted_services(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(paths=[p1])
@@ -312,7 +354,9 @@ class RelatedObjectsTest(TestCase):
         service.delete()
         self.assertCountEqual(trek.services, [])
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
@@ -329,7 +373,9 @@ class RelatedObjectsTest(TestCase):
         pois = self.trek_reverse.pois
         self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_pois_is_not_ordered_by_progression(self):
         self.trek = TrekFactory.create(geom=LineString((0, 0), (8, 8)))
 
@@ -344,29 +390,36 @@ class RelatedObjectsTest(TestCase):
         pois = self.trek_reverse.pois
         self.assertCountEqual([self.poi1, self.poi2, self.poi3], pois)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_city_departure(self):
-
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
         trek = TrekFactory.create(paths=[p1])
-        self.assertEqual(trek.city_departure, '')
+        self.assertEqual(trek.city_departure, "")
 
-        city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),
-                                                              (-1, 3), (-1, -1)))))
-        city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
-                                                              (3, 9), (3, 3)))))
+        city1 = CityFactory.create(
+            geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3), (-1, 3), (-1, -1))))
+        )
+        city2 = CityFactory.create(
+            geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
+        )
         self.assertEqual([city for city in trek.cities], [city1, city2])
         self.assertEqual(trek.city_departure, str(city1))
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_city_departure_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
-        self.assertEqual(trek.city_departure, '')
+        self.assertEqual(trek.city_departure, "")
 
-        city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),
-                                                              (-1, 3), (-1, -1)))))
-        city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
-                                                              (3, 9), (3, 3)))))
+        city1 = CityFactory.create(
+            geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3), (-1, 3), (-1, -1))))
+        )
+        city2 = CityFactory.create(
+            geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
+        )
         self.assertEqual([city for city in trek.cities], [city1, city2])
         self.assertEqual(trek.city_departure, str(city1))
 
@@ -374,7 +427,10 @@ class RelatedObjectsTest(TestCase):
 class TrekUpdateGeomTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.trek = TrekFactory.create(published=True, geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154))
+        cls.trek = TrekFactory.create(
+            published=True,
+            geom=LineString(((700000, 6600000), (700100, 6600100)), srid=2154),
+        )
 
     def test_save_with_same_geom(self):
         geom = LineString(((700000, 6600000), (700100, 6600100)), srid=2154)
@@ -394,26 +450,30 @@ class TrekUpdateGeomTest(TestCase):
             self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
 
     def test_save_with_provided_one_field_exclusion(self):
-        self.trek.save(update_fields=['geom'])
+        self.trek.save(update_fields=["geom"])
         self.assertTrue(self.trek.pk)
 
     def test_save_with_multiple_fields_exclusion(self):
         new_trek = TrekFactory.create()
 
-        new_trek.description_en = 'Description Test update'
-        new_trek.ambiance = 'Very special ambiance, for test purposes.'
+        new_trek.description_en = "Description Test update"
+        new_trek.ambiance = "Very special ambiance, for test purposes."
 
-        new_trek.save(update_fields=['description_en'])
+        new_trek.save(update_fields=["description_en"])
         db_trek = Trek.objects.get(pk=new_trek.pk)
 
         self.assertTrue(db_trek.pk)
-        self.assertEqual(db_trek.description_en, 'Description Test update')
-        self.assertNotEqual(db_trek.ambiance, 'Very special ambiance, for test purposes.')
+        self.assertEqual(db_trek.description_en, "Description Test update")
+        self.assertNotEqual(
+            db_trek.ambiance, "Very special ambiance, for test purposes."
+        )
 
-        new_trek.save(update_fields=['ambiance_en'])
+        new_trek.save(update_fields=["ambiance_en"])
         db_trek = Trek.objects.get(pk=new_trek.pk)
 
-        self.assertEqual(db_trek.ambiance_en, 'Very special ambiance, for test purposes.')
+        self.assertEqual(
+            db_trek.ambiance_en, "Very special ambiance, for test purposes."
+        )
 
 
 class TrekItinerancyTest(TestCase):
@@ -445,9 +505,11 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekA, child=trekB, order=1).save()
         OrderedTrekChild(parent=trekA, child=trekC, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['B', 'C'])
-        self.assertListEqual(list(trekB.parents.values_list('name', flat=True)), ['A'])
-        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(
+            list(trekA.children.values_list("name", flat=True)), ["B", "C"]
+        )
+        self.assertListEqual(list(trekB.parents.values_list("name", flat=True)), ["A"])
+        self.assertListEqual(list(trekC.parents.values_list("name", flat=True)), ["A"])
         self.assertEqual(list(trekA.children_id), [trekB.id, trekC.id])
         self.assertEqual(trekB.parents_id, [trekA.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
@@ -457,8 +519,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekC.next_id, {trekA.id: None})
         self.assertEqual(trekC.previous_id, {trekA.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(child=trekB).exists())
-        self.assertListEqual(list(trekA.children.values_list('name', flat=True)), ['C'])
-        self.assertListEqual(list(trekC.parents.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekA.children.values_list("name", flat=True)), ["C"])
+        self.assertListEqual(list(trekC.parents.values_list("name", flat=True)), ["A"])
         self.assertEqual(list(trekA.children_id), [trekC.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
 
@@ -469,9 +531,11 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['B', 'C'])
-        self.assertListEqual(list(trekB.children.values_list('name', flat=True)), ['A'])
-        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(
+            list(trekA.parents.values_list("name", flat=True)), ["B", "C"]
+        )
+        self.assertListEqual(list(trekB.children.values_list("name", flat=True)), ["A"])
+        self.assertListEqual(list(trekC.children.values_list("name", flat=True)), ["A"])
         self.assertEqual(trekA.parents_id, [trekB.id, trekC.id])
         self.assertEqual(list(trekB.children_id), [trekA.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
@@ -481,8 +545,8 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekA.next_id, {trekC.id: None})
         self.assertEqual(trekA.previous_id, {trekC.id: None})
         self.assertFalse(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertListEqual(list(trekA.parents.values_list('name', flat=True)), ['C'])
-        self.assertListEqual(list(trekC.children.values_list('name', flat=True)), ['A'])
+        self.assertListEqual(list(trekA.parents.values_list("name", flat=True)), ["C"])
+        self.assertListEqual(list(trekC.children.values_list("name", flat=True)), ["A"])
         self.assertEqual(trekA.parents_id, [trekC.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
 
@@ -506,14 +570,14 @@ class MapImageExtentTest(TestCase):
 
 class RatingScaleTest(TestCase):
     def test_ratingscale_str(self):
-        scale = RatingScaleFactory.create(name='Bar', practice__name='Foo')
-        self.assertEqual(str(scale), 'Bar (Foo)')
+        scale = RatingScaleFactory.create(name="Bar", practice__name="Foo")
+        self.assertEqual(str(scale), "Bar (Foo)")
 
 
 class RatingTest(TestCase):
     def test_rating_str(self):
-        scale = RatingFactory.create(name='Bar')
-        self.assertEqual(str(scale), 'RatingScale : Bar')
+        scale = RatingFactory.create(name="Bar")
+        self.assertEqual(str(scale), "RatingScale : Bar")
 
 
 class CascadedDeletionLoggingTest(TestCase):
@@ -530,11 +594,21 @@ class CascadedDeletionLoggingTest(TestCase):
         self.practice.delete()
         rating_model_num = ContentType.objects.get_for_model(Rating).pk
         scale_model_num = ContentType.objects.get_for_model(RatingScale).pk
-        scale_entry = LogEntry.objects.get(content_type=scale_model_num, object_id=self.scale.pk)
-        rating_entry = LogEntry.objects.get(content_type=rating_model_num, object_id=self.rating.pk)
-        self.assertEqual(scale_entry.change_message, f"Deleted by cascade from Practice {practice_pk} - Pratice A")
+        scale_entry = LogEntry.objects.get(
+            content_type=scale_model_num, object_id=self.scale.pk
+        )
+        rating_entry = LogEntry.objects.get(
+            content_type=rating_model_num, object_id=self.rating.pk
+        )
+        self.assertEqual(
+            scale_entry.change_message,
+            f"Deleted by cascade from Practice {practice_pk} - Pratice A",
+        )
         self.assertEqual(scale_entry.action_flag, DELETION)
-        self.assertEqual(rating_entry.change_message, f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)")
+        self.assertEqual(
+            rating_entry.change_message,
+            f"Deleted by cascade from RatingScale {self.scale.pk} - Scale A (Pratice A)",
+        )
         self.assertEqual(rating_entry.action_flag, DELETION)
 
 

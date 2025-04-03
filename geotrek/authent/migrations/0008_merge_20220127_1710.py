@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('authent', '0007_delete_selectableuser'),
-        ('authent', '0006_auto_20220127_0944'),
+        ("authent", "0007_delete_selectableuser"),
+        ("authent", "0006_auto_20220127_0944"),
     ]
 
-    operations = [
-    ]
+    operations = []

@@ -1,11 +1,10 @@
-from django.test.runner import DiscoverRunner
-
-from unittest.runner import TextTestRunner, TextTestResult
 from time import time
+from unittest.runner import TextTestResult, TextTestRunner
+
+from django.test.runner import DiscoverRunner
 
 
 class TimedTextTestResult(TextTestResult):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.clocks = dict()
@@ -22,7 +21,7 @@ class TimedTextTestResult(TextTestResult):
             self.stream.writeln("ok (%.6fs)" % (duration))
             self.sheeps[test] = duration
         elif self.dots:
-            self.stream.write('.')
+            self.stream.write(".")
             self.stream.flush()
 
 
@@ -32,7 +31,10 @@ class TimedTextTestRunner(TextTestRunner):
     def run(self, test):
         result = super().run(test)
         if result.showAll:
-            black_sheeps = [[k, v] for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])][-10:]
+            black_sheeps = [
+                [k, v]
+                for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])
+            ][-10:]
             self.stream.writeln("Top 10 : \n")
             for black_sheep in black_sheeps[::-1]:
                 self.stream.writeln("%s : %s s" % (str(black_sheep[0]), black_sheep[1]))

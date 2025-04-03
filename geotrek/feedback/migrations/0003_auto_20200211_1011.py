@@ -6,26 +6,29 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0002_auto_20190306_1417'),
+        ("feedback", "0002_auto_20190306_1417"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='reportcategory',
-            options={'ordering': ('category',), 'verbose_name': 'Category', 'verbose_name_plural': 'Categories'},
+            name="reportcategory",
+            options={
+                "ordering": ("category",),
+                "verbose_name": "Category",
+                "verbose_name_plural": "Categories",
+            },
         ),
         migrations.AlterModelTable(
-            name='report',
+            name="report",
             table=None,
         ),
         migrations.AlterModelTable(
-            name='reportcategory',
+            name="reportcategory",
             table=None,
         ),
         migrations.AlterModelTable(
-            name='reportstatus',
+            name="reportstatus",
             table=None,
         ),
     ]

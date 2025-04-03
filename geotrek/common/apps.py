@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CommonConfig(AppConfig):
-    name = 'geotrek.common'
+    name = "geotrek.common"
     verbose_name = _("Common")
 
     def ready(self):
@@ -16,11 +16,11 @@ class CommonConfig(AppConfig):
 
 @register()
 def srid_check(app_configs, **kwargs):
-    if SpatialReference(settings.SRID).units[1] != 'metre':
+    if SpatialReference(settings.SRID).units[1] != "metre":
         return [
             Error(
-                'Unit of SRID EPSG:%s is not meter.' % settings.SRID,
-                id='geotrek.E001',
+                "Unit of SRID EPSG:%s is not meter." % settings.SRID,
+                id="geotrek.E001",
             )
         ]
     return []

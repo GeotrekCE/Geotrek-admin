@@ -9,7 +9,7 @@ class Command(BaseCommand):
     """Do not remove path with topology."""
 
     def handle(self, *args, **options):
-        verbosity = options['verbosity']
+        verbosity = options["verbosity"]
         cursor = connection.cursor()
         query = """with relations as (SELECT t1.id as t1_id,
                                              t2.id as t2_id
@@ -42,4 +42,8 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR("{}".format(exc)))
 
         if verbosity > 0:
-            self.stdout.write(self.style.SUCCESS("{} duplicate paths have been deleted".format(len(path_deleted))))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "{} duplicate paths have been deleted".format(len(path_deleted))
+                )
+            )

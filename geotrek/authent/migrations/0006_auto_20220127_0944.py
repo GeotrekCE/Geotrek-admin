@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('authent', '0005_remove_userprofile_language'),
+        ("authent", "0005_remove_userprofile_language"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='structure',
-            name='name',
-            field=models.CharField(db_index=True, max_length=256, verbose_name='Nom'),
+            model_name="structure",
+            name="name",
+            field=models.CharField(db_index=True, max_length=256, verbose_name="Nom"),
         ),
     ]

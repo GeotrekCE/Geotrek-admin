@@ -1,15 +1,15 @@
 from django.conf import settings
-from django.urls import path, converters, register_converter, re_path
+from django.urls import converters, path, re_path, register_converter
 from mapentity.registry import MapEntityOptions, registry
 from mapentity.urls import _MEDIA_URL
 from rest_framework.routers import DefaultRouter
 
-from .models import HDViewPoint
 from . import views
+from .models import HDViewPoint
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}(-[a-z]{2,4})?"   # noqa
+    regex = "[a-z]{2}(-[a-z]{2,4})?"  # noqa
 
 
 register_converter(LangConverter, "lang")

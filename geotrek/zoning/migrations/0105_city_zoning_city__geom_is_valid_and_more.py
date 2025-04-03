@@ -4,22 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0104_auto_20250402_1530'),
+        ("zoning", "0104_auto_20250402_1530"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='city',
-            constraint=models.CheckConstraint(check=models.Q(('geom__isvalid', True)), name='zoning_city_geom_is_valid'),
+            model_name="city",
+            constraint=models.CheckConstraint(
+                check=models.Q(("geom__isvalid", True)),
+                name="zoning_city_geom_is_valid",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='district',
-            constraint=models.CheckConstraint(check=models.Q(('geom__isvalid', True)), name='zoning_district_geom_is_valid'),
+            model_name="district",
+            constraint=models.CheckConstraint(
+                check=models.Q(("geom__isvalid", True)),
+                name="zoning_district_geom_is_valid",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='restrictedarea',
-            constraint=models.CheckConstraint(check=models.Q(('geom__isvalid', True)), name='zoning_restrictedarea_geom_is_valid'),
+            model_name="restrictedarea",
+            constraint=models.CheckConstraint(
+                check=models.Q(("geom__isvalid", True)),
+                name="zoning_restrictedarea_geom_is_valid",
+            ),
         ),
     ]

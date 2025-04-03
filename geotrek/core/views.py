@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Sum, Prefetch
+from django.db.models import Prefetch, Sum
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
@@ -15,8 +15,17 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityList, MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, LastModifiedMixin, MapEntityFilter)
+from mapentity.views import (
+    LastModifiedMixin,
+    MapEntityCreate,
+    MapEntityDelete,
+    MapEntityDetail,
+    MapEntityDocument,
+    MapEntityFilter,
+    MapEntityFormat,
+    MapEntityList,
+    MapEntityUpdate,
+)
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
@@ -24,22 +33,28 @@ from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
-from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.mixins.forms import FormsetMixin
+from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from .path_router import PathRouter
+
 from .filters import PathFilterSet, TrailFilterSet
-from .forms import PathForm, TrailForm, CertificationTrailFormSet
-from .models import AltimetryMixin, Path, Trail, Topology, CertificationTrail
-from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
+from .forms import CertificationTrailFormSet, PathForm, TrailForm
+from .models import AltimetryMixin, CertificationTrail, Path, Topology, Trail
+from .path_router import PathRouter
+from .serializers import (
+    PathGeojsonSerializer,
+    PathSerializer,
+    TrailGeojsonSerializer,
+    TrailSerializer,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class CreateFromTopologyMixin:
     def on_topology(self):
-        pk = self.request.GET.get('topology')
+        pk = self.request.GET.get("topology")
         if pk:
             try:
                 return Topology.objects.existing().get(pk=pk)
@@ -52,16 +67,16 @@ class CreateFromTopologyMixin:
         # Create intervention with an existing topology as initial data
         topology = self.on_topology()
         if topology:
-            initial['topology'] = topology.serialize(with_pk=False)
+            initial["topology"] = topology.serialize(with_pk=False)
         return initial
 
 
 class PathList(CustomColumnsMixin, MapEntityList):
     queryset = Path.objects.all()
-    mandatory_columns = ['id', 'checkbox', 'name', 'length']
-    default_extra_columns = ['length_2d']
-    unorderable_columns = ['checkbox']
-    searchable_columns = ['id', 'name']
+    mandatory_columns = ["id", "checkbox", "name", "length"]
+    default_extra_columns = ["length_2d"]
+    unorderable_columns = ["checkbox"]
+    searchable_columns = ["id", "name"]
 
 
 class PathFilter(MapEntityFilter):
@@ -71,17 +86,33 @@ class PathFilter(MapEntityFilter):
 
 class PathFormatList(MapEntityFormat, PathList):
     filterset_class = PathFilterSet
-    mandatory_columns = ['id']
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
-        'comfort', 'source', 'stake', 'usages', 'networks',
-        'date_insert', 'date_update', 'length_2d', 'uuid',
+        "structure",
+        "valid",
+        "visible",
+        "name",
+        "comments",
+        "departure",
+        "arrival",
+        "comfort",
+        "source",
+        "stake",
+        "usages",
+        "networks",
+        "date_insert",
+        "date_update",
+        "length_2d",
+        "uuid",
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
-        return super().get_queryset() \
-            .select_related('structure', 'comfort', 'source', 'stake') \
-            .prefetch_related('usages', 'networks')
+        return (
+            super()
+            .get_queryset()
+            .select_related("structure", "comfort", "source", "stake")
+            .prefetch_related("usages", "networks")
+        )
 
 
 class PathDetail(MapEntityDetail):
@@ -89,7 +120,7 @@ class PathDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -98,9 +129,9 @@ class PathGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context):
         gpx_serializer = GPXSerializer()
-        response = HttpResponse(content_type='application/gpx+xml')
-        response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
-        gpx_serializer.serialize([self.object], stream=response, gpx_field='geom_3d')
+        response = HttpResponse(content_type="application/gpx+xml")
+        response["Content-Disposition"] = 'attachment; filename="%s.gpx"' % self.object
+        gpx_serializer.serialize([self.object], stream=response, gpx_field="geom_3d")
         return response
 
 
@@ -108,9 +139,10 @@ class PathKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     queryset = Path.objects.all()
 
     def render_to_response(self, context):
-        response = HttpResponse(self.object.kml(),
-                                content_type='application/vnd.google-earth.kml+xml')
-        response['Content-Disposition'] = 'attachment; filename="%s.kml"' % self.object
+        response = HttpResponse(
+            self.object.kml(), content_type="application/vnd.google-earth.kml+xml"
+        )
+        response["Content-Disposition"] = 'attachment; filename="%s.kml"' % self.object
         return response
 
 
@@ -128,7 +160,9 @@ class PathCreate(MapEntityCreate):
     form_class = PathForm
 
     def dispatch(self, *args, **kwargs):
-        if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
+        if self.request.user.has_perm("core.add_path") or self.request.user.has_perm(
+            "core.add_draft_path"
+        ):
             return super(MapEntityCreate, self).dispatch(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
@@ -137,27 +171,35 @@ class PathUpdate(MapEntityUpdate):
     model = Path
     form_class = PathForm
 
-    @same_structure_required('core:path_detail')
+    @same_structure_required("core:path_detail")
     def dispatch(self, *args, **kwargs):
         path = self.get_object()
-        if path.draft and not self.request.user.has_perm('core.change_draft_path'):
-            messages.warning(self.request, _(
-                'Access to the requested resource is restricted. You have been redirected.'))
-            return redirect('core:path_detail', **kwargs)
-        if not path.draft and not self.request.user.has_perm('core.change_path'):
-            messages.warning(self.request, _(
-                'Access to the requested resource is restricted. You have been redirected.'))
-            return redirect('core:path_detail', **kwargs)
-        if path.draft and self.request.user.has_perm('core.change_draft_path'):
+        if path.draft and not self.request.user.has_perm("core.change_draft_path"):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_detail", **kwargs)
+        if not path.draft and not self.request.user.has_perm("core.change_path"):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_detail", **kwargs)
+        if path.draft and self.request.user.has_perm("core.change_draft_path"):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         path = self.get_object()
-        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
-            kwargs['can_delete'] = True
+        if path.draft and self.request.user.has_perm("core.delete_draft_path"):
+            kwargs["can_delete"] = True
         return kwargs
 
 
@@ -167,23 +209,36 @@ class MultiplePathDelete(TemplateView):
     success_url = "core:path_list"
 
     def dispatch(self, *args, **kwargs):
-        self.paths_pk = self.kwargs['pk'].split(',')
+        self.paths_pk = self.kwargs["pk"].split(",")
         self.paths = []
         for pk in self.paths_pk:
             path = Path.objects.get(pk=pk)
             self.paths.append(path)
-            if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
-                messages.warning(self.request, _(
-                    'Access to the requested resource is restricted. You have been redirected.'))
-                return redirect('core:path_list')
-            if not path.draft and not self.request.user.has_perm('core.delete_path'):
-                messages.warning(self.request, _(
-                    'Access to the requested resource is restricted. You have been redirected.'))
-                return redirect('core:path_list')
+            if path.draft and not self.request.user.has_perm("core.delete_draft_path"):
+                messages.warning(
+                    self.request,
+                    _(
+                        "Access to the requested resource is restricted. You have been redirected."
+                    ),
+                )
+                return redirect("core:path_list")
+            if not path.draft and not self.request.user.has_perm("core.delete_path"):
+                messages.warning(
+                    self.request,
+                    _(
+                        "Access to the requested resource is restricted. You have been redirected."
+                    ),
+                )
+                return redirect("core:path_list")
             if not path.same_structure(self.request.user):
-                messages.warning(self.request, _('Access to the requested resource is restricted by structure. '
-                                                 'You have been redirected.'))
-                return redirect('core:path_list')
+                messages.warning(
+                    self.request,
+                    _(
+                        "Access to the requested resource is restricted by structure. "
+                        "You have been redirected."
+                    ),
+                )
+                return redirect("core:path_list")
         return super().dispatch(*args, **kwargs)
 
     # Add support for browsers which only accept GET and POST for now.
@@ -200,25 +255,33 @@ class MultiplePathDelete(TemplateView):
         topologies_by_model = defaultdict(list)
         for path in self.paths:
             path.topologies_by_path(topologies_by_model)
-        context['topologies_by_model'] = dict(topologies_by_model)
+        context["topologies_by_model"] = dict(topologies_by_model)
         return context
 
 
 class PathDelete(MapEntityDelete):
     model = Path
 
-    @same_structure_required('core:path_detail')
+    @same_structure_required("core:path_detail")
     def dispatch(self, *args, **kwargs):
         path = self.get_object()
-        if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
-            messages.warning(self.request, _(
-                'Access to the requested resource is restricted. You have been redirected.'))
-            return redirect('core:path_detail', **kwargs)
-        if not path.draft and not self.request.user.has_perm('core.delete_path'):
-            messages.warning(self.request, _(
-                'Access to the requested resource is restricted. You have been redirected.'))
-            return redirect('core:path_detail', **kwargs)
-        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
+        if path.draft and not self.request.user.has_perm("core.delete_draft_path"):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_detail", **kwargs)
+        if not path.draft and not self.request.user.has_perm("core.delete_path"):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_detail", **kwargs)
+        if path.draft and self.request.user.has_perm("core.delete_draft_path"):
             return super(MapEntityDelete, self).dispatch(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
@@ -226,7 +289,7 @@ class PathDelete(MapEntityDelete):
         context = super().get_context_data(**kwargs)
         topologies_by_model = defaultdict(list)
         self.object.topologies_by_path(topologies_by_model)
-        context['topologies_by_model'] = dict(topologies_by_model)
+        context["topologies_by_model"] = dict(topologies_by_model)
         return context
 
 
@@ -238,14 +301,14 @@ class PathViewSet(GeotrekMapentityViewSet):
     mapentity_list_class = PathList
 
     def get_permissions(self):
-        if self.action == 'route_geometry':
+        if self.action == "route_geometry":
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
         language = self.request.LANGUAGE_CODE
-        no_draft = self.request.GET.get('_no_draft')
+        no_draft = self.request.GET.get("_no_draft")
         if no_draft:
             latest_saved = Path.no_draft_latest_updated()
         else:
@@ -253,43 +316,45 @@ class PathViewSet(GeotrekMapentityViewSet):
         geojson_lookup = None
 
         if latest_saved:
-            geojson_lookup = '%s_path_%s%s_json_layer' % (
+            geojson_lookup = "%s_path_%s%s_json_layer" % (
                 language,
-                latest_saved.strftime('%y%m%d%H%M%S%f'),
-                '_nodraft' if no_draft else ''
+                latest_saved.strftime("%y%m%d%H%M%S%f"),
+                "_nodraft" if no_draft else "",
             )
         return geojson_lookup
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        if self.format_kwarg == 'geojson':
-            if self.request.GET.get('_no_draft'):
+        if self.format_kwarg == "geojson":
+            if self.request.GET.get("_no_draft"):
                 qs = qs.exclude(draft=True)
             # get display name if name is undefined to display tooltip on map feature hover
             # Can't use annotate because it doesn't allow to use a model field name
             # Can't use Case(When) in qs.extra
             qs = qs.extra(
-                select={'name': "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"},
-                select_params=(_("path"),)
+                select={
+                    "name": "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"
+                },
+                select_params=(_("path"),),
             )
 
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "name", "draft")
 
         else:
-            qs = qs.defer('geom', 'geom_cadastre', 'geom_3d')
+            qs = qs.defer("geom", "geom_cadastre", "geom_3d")
         return qs
 
     def get_filter_count_infos(self, qs):
-        """ Add total path length to count infos in List dropdown menu """
+        """Add total path length to count infos in List dropdown menu"""
         data = super().get_filter_count_infos(qs)
         return f"{data} ({round(qs.aggregate(sumPath=Sum(Length('geom') / 1000)).get('sumPath') or 0, 1)} km)"
 
-    @method_decorator(permission_required('core.change_path'))
-    @action(methods=['POST'], detail=False, renderer_classes=[JSONRenderer])
+    @method_decorator(permission_required("core.change_path"))
+    @action(methods=["POST"], detail=False, renderer_classes=[JSONRenderer])
     def merge_path(self, request, *args, **kwargs):
         try:
-            ids_path_merge = request.POST.getlist('path[]')
+            ids_path_merge = request.POST.getlist("path[]")
 
             if len(ids_path_merge) != 2:
                 raise Exception(_("You should select two paths"))
@@ -297,7 +362,9 @@ class PathViewSet(GeotrekMapentityViewSet):
             path_a = Path.objects.get(pk=min(paths))
             path_b = Path.objects.get(pk=max(paths))
 
-            if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+            if not path_a.same_structure(request.user) or not path_b.same_structure(
+                request.user
+            ):
                 raise Exception(_("You don't have the right to change these paths"))
 
             if path_a.draft != path_b.draft:
@@ -306,40 +373,65 @@ class PathViewSet(GeotrekMapentityViewSet):
             result = path_a.merge_path(path_b)
 
             if result == 2:
-                raise Exception(_("You can't merge 2 paths with a 3rd path in the intersection"))
+                raise Exception(
+                    _("You can't merge 2 paths with a 3rd path in the intersection")
+                )
 
             elif result == 0:
                 raise Exception(_("No matching points to merge paths found"))
 
             else:
-                response = {'success': _("Paths merged successfully")}
-                messages.success(request, response['success'])
+                response = {"success": _("Paths merged successfully")}
+                messages.success(request, response["success"])
 
         except Exception as exc:
-            response = {'error': '%s' % exc, }
+            response = {
+                "error": "%s" % exc,
+            }
 
         return Response(response)
 
-    @action(methods=['POST'], detail=False, url_path="route-geometry",
-            renderer_classes=[JSONRenderer])
+    @action(
+        methods=["POST"],
+        detail=False,
+        url_path="route-geometry",
+        renderer_classes=[JSONRenderer],
+    )
     def route_geometry(self, request, *args, **kwargs):
         try:
             params = request.data
-            steps = params.get('steps')
+            steps = params.get("steps")
             if steps is None:
                 raise Exception("Request parameters should contain a 'steps' array")
             if len(steps) < 2:
                 raise Exception("There must be at least 2 steps")
             for step in steps:
-                lat = step.get('lat')
-                lng = step.get('lng')
-                if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)) or lat < 0 or 90 < lat or lng < -180 or 180 < lng:
-                    raise Exception("Each step should contain a valid latitude and longitude")
-                path_id = step.get('path_id')
-                if not isinstance(path_id, int) or Path.objects.filter(pk=path_id).first() is None:
+                lat = step.get("lat")
+                lng = step.get("lng")
+                if (
+                    not isinstance(lat, (int, float))
+                    or not isinstance(lng, (int, float))
+                    or lat < 0
+                    or 90 < lat
+                    or lng < -180
+                    or 180 < lng
+                ):
+                    raise Exception(
+                        "Each step should contain a valid latitude and longitude"
+                    )
+                path_id = step.get("path_id")
+                if (
+                    not isinstance(path_id, int)
+                    or Path.objects.filter(pk=path_id).first() is None
+                ):
                     raise Exception("Each step should contain a valid path id")
         except Exception as exc:
-            return Response({'error': '%s' % exc, }, 400)
+            return Response(
+                {
+                    "error": "%s" % exc,
+                },
+                400,
+            )
 
         try:
             path_router = PathRouter()
@@ -347,23 +439,33 @@ class PathViewSet(GeotrekMapentityViewSet):
             if response is not None:
                 status = 200
             else:
-                response = {'error': 'No path between the given points'}
+                response = {"error": "No path between the given points"}
                 status = 400
         except Exception as exc:
-            response, status = {'error': '%s' % exc, }, 500
+            response, status = (
+                {
+                    "error": "%s" % exc,
+                },
+                500,
+            )
         return Response(response, status)
 
 
 class CertificationTrailMixin(FormsetMixin):
-    context_name = 'certificationtrail_formset'
+    context_name = "certificationtrail_formset"
     formset_class = CertificationTrailFormSet
 
 
 class TrailList(CustomColumnsMixin, MapEntityList):
     queryset = Trail.objects.existing()
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['departure', 'arrival', 'length']
-    searchable_columns = ['id', 'name', 'departure', 'arrival', ]
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["departure", "arrival", "length"]
+    searchable_columns = [
+        "id",
+        "name",
+        "departure",
+        "arrival",
+    ]
 
 
 class TrailFilter(MapEntityFilter):
@@ -373,22 +475,37 @@ class TrailFilter(MapEntityFilter):
 
 class TrailFormatList(MapEntityFormat, TrailList):
     filterset_class = TrailFilterSet
-    mandatory_columns = ['id']
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'structure', 'name', 'comments',
-        'departure', 'arrival', 'category',
-        'certifications', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'uuid',
+        "structure",
+        "name",
+        "comments",
+        "departure",
+        "arrival",
+        "category",
+        "certifications",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "uuid",
     ] + AltimetryMixin.COLUMNS
 
     def get_queryset(self):
-        return super().get_queryset() \
-            .select_related('category__structure') \
-            .prefetch_related(Prefetch('certifications',
-                                       queryset=CertificationTrail.objects.select_related(
-                                           'certification_label',
-                                           'certification_status'
-                                       )))
+        return (
+            super()
+            .get_queryset()
+            .select_related("category__structure")
+            .prefetch_related(
+                Prefetch(
+                    "certifications",
+                    queryset=CertificationTrail.objects.select_related(
+                        "certification_label", "certification_status"
+                    ),
+                )
+            )
+        )
 
 
 class TrailDetail(MapEntityDetail):
@@ -396,7 +513,7 @@ class TrailDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -405,9 +522,9 @@ class TrailGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context):
         gpx_serializer = GPXSerializer()
-        response = HttpResponse(content_type='application/gpx+xml')
-        response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
-        gpx_serializer.serialize([self.object], stream=response, gpx_field='geom_3d')
+        response = HttpResponse(content_type="application/gpx+xml")
+        response["Content-Disposition"] = 'attachment; filename="%s.gpx"' % self.object
+        gpx_serializer.serialize([self.object], stream=response, gpx_field="geom_3d")
         return response
 
 
@@ -415,9 +532,10 @@ class TrailKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     queryset = Trail.objects.existing()
 
     def render_to_response(self, context):
-        response = HttpResponse(self.object.kml(),
-                                content_type='application/vnd.google-earth.kml+xml')
-        response['Content-Disposition'] = 'attachment; filename="%s.kml"' % self.object
+        response = HttpResponse(
+            self.object.kml(), content_type="application/vnd.google-earth.kml+xml"
+        )
+        response["Content-Disposition"] = 'attachment; filename="%s.kml"' % self.object
         return response
 
 
@@ -434,7 +552,7 @@ class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
     form_class = TrailForm
 
-    @same_structure_required('core:trail_detail')
+    @same_structure_required("core:trail_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -442,7 +560,7 @@ class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
 class TrailDelete(MapEntityDelete):
     queryset = Trail.objects.existing()
 
-    @same_structure_required('core:trail_detail')
+    @same_structure_required("core:trail_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -456,9 +574,9 @@ class TrailViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == 'geojson':
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'name')
+        if self.format_kwarg == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = qs.only("id", "name")
         else:
-            qs = qs.defer('geom', 'geom_3d')
+            qs = qs.defer("geom", "geom_3d")
         return qs

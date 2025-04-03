@@ -1,12 +1,12 @@
 import factory
-
 from django.conf import settings
 
-from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
+
 from .. import models
 
 
@@ -59,7 +59,7 @@ class LightInterventionFactory(factory.django.DjangoModelFactory):
 
 
 class InterventionFactory(LightInterventionFactory):
-    begin_date = '2022-03-30'
+    begin_date = "2022-03-30"
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
@@ -82,10 +82,14 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(paths=[(PathFactory.create(), 0.5, 0.5)])
+            infra = InfrastructureFactory.create(
+                paths=[(PathFactory.create(), 0.5, 0.5)]
+            )
 
         else:
-            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            infra = InfrastructureFactory.create(
+                geom="SRID=2154;POINT (700040 6600040)"
+            )
         obj.target = infra
         if create:
             obj.save()

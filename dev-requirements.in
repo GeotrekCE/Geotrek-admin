@@ -3,7 +3,7 @@
 pip-tools
 lxml
 tblib
-flake8
+ruff
 freezegun
 coverage
 factory_boy

@@ -2,13 +2,13 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
-from geotrek.common.models import FileType, Attachment
+from mapentity.tests.factories import SuperUserFactory
+
+from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.flatpages.models import FlatPage, MenuItem
-
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
-from mapentity.tests.factories import SuperUserFactory
 
 
 def _flatten(fieldsets):
@@ -28,16 +28,18 @@ class AdminSiteTest(TestCase):
         self.client.force_login(self.user)
 
     def test_flatpages_are_registered(self):
-        response = self.client.get('/admin/flatpages/flatpage/')
+        response = self.client.get("/admin/flatpages/flatpage/")
         self.assertEqual(response.status_code, 200)
 
     def test_flatpages_are_translatable(self):
-        response = self.client.get('/admin/flatpages/flatpage/add/')
-        self.assertContains(response, 'published_en')
+        response = self.client.get("/admin/flatpages/flatpage/add/")
+        self.assertContains(response, "published_en")
 
     def test_flatpages_are_updatable(self):
         page = FlatPageFactory(content="One looove")
-        response = self.client.get('/admin/flatpages/flatpage/{0}/change/'.format(page.pk))
+        response = self.client.get(
+            "/admin/flatpages/flatpage/{0}/change/".format(page.pk)
+        )
         self.assertContains(response, "One looove")
 
 
@@ -52,14 +54,14 @@ class FlatPageAdminFormViewsTestCase(TestCase):
         portal2 = TargetPortalFactory(name="Portal2")
         FlatPageFactory(title="A flat page with portals", portals=[portal1, portal2])
 
-        url = reverse('admin:flatpages_flatpage_changelist')
+        url = reverse("admin:flatpages_flatpage_changelist")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Portal1, Portal2", response.content)
 
     def test_retrieve_expected_form_fields(self):
-        url = reverse('admin:flatpages_flatpage_add')
+        url = reverse("admin:flatpages_flatpage_add")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -89,27 +91,27 @@ class FlatPageAdminFormViewsTestCase(TestCase):
 
     def test_save_without_cover_image(self):
         data = {
-            'title_en': 'Title',
-            '_position': 'first-child',
+            "title_en": "Title",
+            "_position": "first-child",
         }
 
-        url = reverse('admin:flatpages_flatpage_add')
+        url = reverse("admin:flatpages_flatpage_add")
         response = self.client.post(url, data=data)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(FlatPage.objects.count(), 1)
         page = FlatPage.objects.get()
-        self.assertEqual(page.title, 'Title')
+        self.assertEqual(page.title, "Title")
 
     def test_save_with_cover_image(self):
         data = {
-            'title_en': 'Title',
-            '_position': 'first-child',
-            'cover_image_author': 'Someone',
-            'cover_image': get_dummy_uploaded_image("flatpage_cover.png"),
+            "title_en": "Title",
+            "_position": "first-child",
+            "cover_image_author": "Someone",
+            "cover_image": get_dummy_uploaded_image("flatpage_cover.png"),
         }
 
-        url = reverse('admin:flatpages_flatpage_add')
+        url = reverse("admin:flatpages_flatpage_add")
         response = self.client.post(url, data=data)
 
         self.assertEqual(response.status_code, 302)
@@ -118,7 +120,7 @@ class FlatPageAdminFormViewsTestCase(TestCase):
         self.assertEqual(Attachment.objects.count(), 1)
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, page)
-        self.assertEqual(attachment.author, 'Someone')
+        self.assertEqual(attachment.author, "Someone")
 
     def test_save_delete_cover_image(self):
         page = FlatPage.add_root(title="Title")
@@ -126,18 +128,18 @@ class FlatPageAdminFormViewsTestCase(TestCase):
         Attachment.objects.create(
             content_object=page,
             attachment_file=get_dummy_uploaded_image(),
-            author='Someone',
+            author="Someone",
             filetype=filetype,
-            creator=self.user
+            creator=self.user,
         )
 
         data = {
-            'title_en': 'Title',
-            'cover_image_author': '',
-            'cover_image-clear': 'on',
-            '_position': 'first-child',
+            "title_en": "Title",
+            "cover_image_author": "",
+            "cover_image-clear": "on",
+            "_position": "first-child",
         }
-        url = reverse('admin:flatpages_flatpage_change', args=[page.pk])
+        url = reverse("admin:flatpages_flatpage_change", args=[page.pk])
         response = self.client.post(url, data=data)
 
         self.assertEqual(response.status_code, 302)
@@ -145,7 +147,6 @@ class FlatPageAdminFormViewsTestCase(TestCase):
 
 
 class MenuItemAdminFormViewsTestCase(TestCase):
-
     def setUp(self) -> None:
         user = SuperUserFactory()
         self.client.force_login(user)
@@ -156,14 +157,14 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         portal2 = TargetPortalFactory(name="Portal2")
         MenuItemFactory(title="A menu item with portals", portals=[portal1, portal2])
 
-        url = reverse('admin:flatpages_menuitem_changelist')
+        url = reverse("admin:flatpages_menuitem_changelist")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Portal1, Portal2", response.content)
 
     def test_retrieve_expected_form_fields(self):
-        url = reverse('admin:flatpages_menuitem_add')
+        url = reverse("admin:flatpages_menuitem_add")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -201,7 +202,9 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "_position": "first-child",
         }
 
-        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+        response = self.client.post(
+            "/admin/flatpages/menuitem/add/", data=add_data, follow=False
+        )
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(MenuItem.objects.filter(title_en="Hello World!").count(), 1)
@@ -218,7 +221,11 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "_position": "first-child",
         }
 
-        response = self.client.post(f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data, follow=False)
+        response = self.client.post(
+            f"/admin/flatpages/menuitem/{menu_item.id}/change/",
+            data=change_data,
+            follow=False,
+        )
 
         self.assertEqual(response.status_code, 302)
         changed_menu_item = MenuItem.objects.get(pk=menu_item.id)
@@ -234,7 +241,9 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "page": "",
         }
 
-        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+        response = self.client.post(
+            "/admin/flatpages/menuitem/add/", data=add_data, follow=False
+        )
 
         self.assertEqual(response.status_code, 200)
         adminform_errors = response.context["adminform"].errors
@@ -242,7 +251,9 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         self.assertTrue("required" in adminform_errors["page"][0])
 
     def test_save_with_link_url_is_required_error(self):
-        link_url_loc_fieldname = "link_url_" + settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        link_url_loc_fieldname = (
+            "link_url_" + settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+        )
         add_data = {
             "title_en": "Hello World!",
             "platform": "all",
@@ -251,7 +262,9 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             link_url_loc_fieldname: "",
         }
 
-        response = self.client.post("/admin/flatpages/menuitem/add/", data=add_data, follow=False)
+        response = self.client.post(
+            "/admin/flatpages/menuitem/add/", data=add_data, follow=False
+        )
 
         self.assertEqual(response.status_code, 200)
         adminform_errors = response.context["adminform"].errors
@@ -298,11 +311,15 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "thumbnail": img,
         }
 
-        response = self.client.post(f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data)
+        response = self.client.post(
+            f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data
+        )
 
         self.assertEqual(response.status_code, 302)
 
-        qs = Attachment.objects.filter(object_id=menu_item.id, content_type=menu_item_content_type).all()
+        qs = Attachment.objects.filter(
+            object_id=menu_item.id, content_type=menu_item_content_type
+        ).all()
         self.assertEqual(len(qs), 1)
         thumbnail = qs.first()
         self.assertIn("new_thumbnail", thumbnail.filename)
@@ -328,9 +345,13 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "thumbnail-clear": "on",
         }
 
-        response = self.client.post(f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data)
+        response = self.client.post(
+            f"/admin/flatpages/menuitem/{menu_item.id}/change/", data=change_data
+        )
 
         self.assertEqual(response.status_code, 302)
 
-        qs = Attachment.objects.filter(object_id=menu_item.id, content_type=menu_item_content_type).all()
+        qs = Attachment.objects.filter(
+            object_id=menu_item.id, content_type=menu_item_content_type
+        ).all()
         self.assertEqual(len(qs), 0)

@@ -1,26 +1,40 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Prefetch
-from geotrek.common.models import HDViewPoint
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityList, MapEntityFilter, MapEntityDetail, MapEntityDocument, MapEntityCreate,
-                             MapEntityUpdate, MapEntityDelete, MapEntityFormat)
+from mapentity.views import (
+    MapEntityCreate,
+    MapEntityDelete,
+    MapEntityDetail,
+    MapEntityDocument,
+    MapEntityFilter,
+    MapEntityFormat,
+    MapEntityList,
+    MapEntityUpdate,
+)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.models import HDViewPoint
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from .filters import SiteFilterSet, CourseFilterSet
-from .forms import SiteForm, CourseForm
-from .models import Site, Course
-from .serializers import SiteSerializer, CourseSerializer, SiteGeojsonSerializer, CourseGeojsonSerializer
+
+from .filters import CourseFilterSet, SiteFilterSet
+from .forms import CourseForm, SiteForm
+from .models import Course, Site
+from .serializers import (
+    CourseGeojsonSerializer,
+    CourseSerializer,
+    SiteGeojsonSerializer,
+    SiteSerializer,
+)
 
 
 class SiteList(CustomColumnsMixin, MapEntityList):
     queryset = Site.objects.all()
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['super_practices', 'date_update']
-    searchable_columns = ['id', 'name']
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["super_practices", "date_update"]
+    searchable_columns = ["id", "name"]
 
 
 class SiteFilter(MapEntityFilter):
@@ -30,13 +44,15 @@ class SiteFilter(MapEntityFilter):
 
 class SiteDetail(CompletenessMixin, MapEntityDetail):
     queryset = Site.objects.all().prefetch_related(
-        Prefetch('view_points',
-                 queryset=HDViewPoint.objects.select_related('content_type', 'license'))
+        Prefetch(
+            "view_points",
+            queryset=HDViewPoint.objects.select_related("content_type", "license"),
+        )
     )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -46,7 +62,7 @@ class SiteCreate(MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['site'] = self.request.GET.get('parent_sites')
+        kwargs["site"] = self.request.GET.get("parent_sites")
         return kwargs
 
 
@@ -54,7 +70,7 @@ class SiteUpdate(MapEntityUpdate):
     queryset = Site.objects.all()
     form_class = SiteForm
 
-    @same_structure_required('outdoor:site_detail')
+    @same_structure_required("outdoor:site_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -63,7 +79,7 @@ class SiteDelete(MapEntityDelete):
     template_name = "outdoor/site_confirm_delete.html"
     model = Site
 
-    @same_structure_required('outdoor:site_detail')
+    @same_structure_required("outdoor:site_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -79,15 +95,15 @@ class SiteDocumentPublicMixin:
         context = super().get_context_data(**kwargs)
         site = self.get_object()
 
-        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['site']
-        context['object'] = context['content'] = site
+        context["headerimage_ratio"] = settings.EXPORT_HEADER_IMAGE_SIZE["site"]
+        context["object"] = context["content"] = site
         pois = list(site.all_pois.filter(published=True))
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
-            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+            pois = pois[: settings.TREK_EXPORT_POI_LIST_LIMIT]
         letters = alphabet_enumeration(len(pois))
         for i, poi in enumerate(pois):
             poi.letter = letters[i]
-        context['pois'] = pois
+        context["pois"] = pois
         return context
 
 
@@ -109,12 +125,29 @@ class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
 
 class SiteFormatList(MapEntityFormat, SiteList):
     filterset_class = SiteFilterSet
-    mandatory_columns = ['id']
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'structure', 'name', 'practice', 'description',
-        'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-        'portal', 'source', 'information_desks', 'web_links', 'accessibility', 'eid',
-        'orientation', 'wind', 'ratings', 'managers', 'uuid',
+        "structure",
+        "name",
+        "practice",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "advice",
+        "period",
+        "labels",
+        "themes",
+        "portal",
+        "source",
+        "information_desks",
+        "web_links",
+        "accessibility",
+        "eid",
+        "orientation",
+        "wind",
+        "ratings",
+        "managers",
+        "uuid",
     ]
 
 
@@ -127,17 +160,19 @@ class SiteViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        if self.format_kwarg == 'geojson':
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'name')
+        if self.format_kwarg == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = qs.only("id", "name")
         return qs
 
 
 class CourseList(CustomColumnsMixin, MapEntityList):
-    queryset = Course.objects.select_related('type').prefetch_related('parent_sites').all()
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['parent_sites', 'date_update']
-    searchable_columns = ['id', 'name']
+    queryset = (
+        Course.objects.select_related("type").prefetch_related("parent_sites").all()
+    )
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["parent_sites", "date_update"]
+    searchable_columns = ["id", "name"]
 
 
 class CourseFilter(MapEntityFilter):
@@ -146,11 +181,11 @@ class CourseFilter(MapEntityFilter):
 
 
 class CourseDetail(CompletenessMixin, MapEntityDetail):
-    queryset = Course.objects.prefetch_related('type').all()
+    queryset = Course.objects.prefetch_related("type").all()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -160,7 +195,7 @@ class CourseCreate(MapEntityCreate):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['parent_sites'] = self.request.GET.get('parent_sites')
+        kwargs["parent_sites"] = self.request.GET.get("parent_sites")
         return kwargs
 
 
@@ -168,7 +203,7 @@ class CourseUpdate(MapEntityUpdate):
     queryset = Course.objects.all()
     form_class = CourseForm
 
-    @same_structure_required('outdoor:course_detail')
+    @same_structure_required("outdoor:course_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -176,7 +211,7 @@ class CourseUpdate(MapEntityUpdate):
 class CourseDelete(MapEntityDelete):
     model = Course
 
-    @same_structure_required('outdoor:course_detail')
+    @same_structure_required("outdoor:course_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -188,15 +223,15 @@ class CourseDocumentPublicMixin:
         context = super().get_context_data(**kwargs)
         course = self.get_object()
 
-        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['course']
-        context['object'] = context['content'] = course
+        context["headerimage_ratio"] = settings.EXPORT_HEADER_IMAGE_SIZE["course"]
+        context["object"] = context["content"] = course
         pois = list(course.all_pois.filter(published=True))
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
-            pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+            pois = pois[: settings.TREK_EXPORT_POI_LIST_LIMIT]
         letters = alphabet_enumeration(len(pois))
         for i, poi in enumerate(pois):
             poi.letter = letters[i]
-        context['pois'] = pois
+        context["pois"] = pois
         return context
 
 
@@ -218,10 +253,21 @@ class CourseMarkupPublic(CourseDocumentPublicMixin, MarkupPublic):
 
 class CourseFormatList(MapEntityFormat, CourseList):
     filterset_class = CourseFilterSet
-    mandatory_columns = ['id']
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'structure', 'name', 'parent_sites', 'description', 'advice', 'equipment', 'accessibility',
-        'eid', 'height', 'ratings', 'ratings_description', 'points_reference', 'uuid',
+        "structure",
+        "name",
+        "parent_sites",
+        "description",
+        "advice",
+        "equipment",
+        "accessibility",
+        "eid",
+        "height",
+        "ratings",
+        "ratings_description",
+        "points_reference",
+        "uuid",
     ]
 
 
@@ -234,9 +280,9 @@ class CourseViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.all()
-        if self.format_kwarg == 'geojson':
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'name')
+        if self.format_kwarg == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = qs.only("id", "name")
         else:
-            qs = qs.prefetch_related('parent_sites')
+            qs = qs.prefetch_related("parent_sites")
         return qs

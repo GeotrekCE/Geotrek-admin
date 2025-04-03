@@ -1,15 +1,14 @@
 import xml.etree.ElementTree as ET
 
 from django.conf import settings
-from django.contrib.gis.geos import Point, MultiPoint, GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, MultiPoint, Point
 from django.utils.translation import gettext as _
 
-from geotrek.common.utils.parsers import get_geom_from_gpx
-from geotrek.trekking.models import DifficultyLevel
 from geotrek.cirkwi.models import CirkwiLocomotion
 from geotrek.common.parsers import AttachmentParserMixin, Parser, RowImportError
+from geotrek.common.utils.parsers import get_geom_from_gpx
 from geotrek.tourism.models import TouristicContent, TouristicContentType1
-from geotrek.trekking.models import Trek, Practice
+from geotrek.trekking.models import DifficultyLevel, Practice, Trek
 
 
 class CirkwiParser(AttachmentParserMixin, Parser):
@@ -23,11 +22,12 @@ class CirkwiParser(AttachmentParserMixin, Parser):
     rows: Quantity of objects to load per page (Cirkwi pagination)
     update_only: Do not delete previous objects, and query Cirkwi API with most recent date_update
     """
+
     auth = ()
     create = False
     delete = False
     default_language = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
-    eid = 'eid'
+    eid = "eid"
     provider = "Cirkwi"
     rows = 10
     update_only = False
@@ -37,18 +37,24 @@ class CirkwiParser(AttachmentParserMixin, Parser):
         "name": {"required": True},
     }
     constant_fields = {
-        'published': True,
+        "published": True,
     }
     non_fields = {
-        'attachments': "informations/information[@langue='<LANG>']/medias/images/image/*"
+        "attachments": "informations/information[@langue='<LANG>']/medias/images/image/*"
     }
 
     def __init__(self, *args, **kwargs):
         # Extract URL parameter to use to retrieve updates only (will be used in 'next_row' method)
         self.updated_after = None
-        if self.update_only and self.model.objects.filter(provider__exact=self.provider).exists():
-            last_update_timestamp = self.model.objects.filter(provider__exact=self.provider).latest(
-                'date_update').date_update.timestamp()
+        if (
+            self.update_only
+            and self.model.objects.filter(provider__exact=self.provider).exists()
+        ):
+            last_update_timestamp = (
+                self.model.objects.filter(provider__exact=self.provider)
+                .latest("date_update")
+                .date_update.timestamp()
+            )
             self.updated_after = str(int(last_update_timestamp))
         super().__init__(*args, **kwargs)
 
@@ -71,21 +77,27 @@ class CirkwiParser(AttachmentParserMixin, Parser):
             # Make first query to retrieve objects count
             # We don't need the objects yet, just need to access 'nb_objects', so set params to 0
             params = {
-                'first': 0,
-                'rows': 0,
+                "first": 0,
+                "rows": 0,
             }
             if self.updated_after:
-                params['end-time'] = self.updated_after
+                params["end-time"] = self.updated_after
             response = self.request_or_retry(self.url, params=params, auth=self.auth)
             # Save objects count
-            self.nb = int(ET.fromstring(response.content).find("listing_ids", {}).attrib['nb_objects'])
+            self.nb = int(
+                ET.fromstring(response.content)
+                .find("listing_ids", {})
+                .attrib["nb_objects"]
+            )
 
             # Make several requests, using Cirkwi pagination parameters, until all objects are downloaded
             first = 0
             while first <= self.nb:
-                params['first'] = first
-                params['rows'] = self.rows
-                response = self.request_or_retry(self.url, params=params, auth=self.auth)
+                params["first"] = first
+                params["rows"] = self.rows
+                response = self.request_or_retry(
+                    self.url, params=params, auth=self.auth
+                )
                 xml_root = ET.fromstring(response.content)
                 # Yield objects given XML path in 'results_path'
                 entries = xml_root.findall(self.results_path)
@@ -105,18 +117,18 @@ class CirkwiParser(AttachmentParserMixin, Parser):
         - finally the '/*' sequence at the end of a `src` value indicates a list of all XML elements matching the path should be returned (so "locomotions/locomotion/*" has the same meaning than "locomotions.*.locomotion" from the base Parser class)
         """
         # Recursively extract XML attributes
-        if '@@' in src and src[:2] != '@@':
-            part, attrib = src.split('@@', 1)
+        if "@@" in src and src[:2] != "@@":
+            part, attrib = src.split("@@", 1)
             return self.get_part(dst, f"@@{attrib}", val.find(part))
         # Extract XML attributes
-        elif src.startswith('@@'):
+        elif src.startswith("@@"):
             return val.attrib[src[2:]]
         else:
             # Replace language attribute
             if "'<LANG>'" in src:
                 src = src.replace("<LANG>", self.default_language)
             # Return a list of XML elements
-            if src.endswith('/*'):
+            if src.endswith("/*"):
                 return val.findall(src[:-2])
             # Return inner text if XML element exists
             if val.find(src) is None:
@@ -126,11 +138,11 @@ class CirkwiParser(AttachmentParserMixin, Parser):
     def filter_attachments(self, src, val):
         attachments = []
         for attachment in val:
-            legend = attachment.find('legende')
+            legend = attachment.find("legende")
             if legend is not None:
                 legend = legend.text
-            url = attachment.find('url').text
-            author = attachment.find('credit')
+            url = attachment.find("url").text
+            author = attachment.find("credit")
             if author is not None:
                 author = author.text
             attachments.append([url, legend, author])
@@ -139,18 +151,25 @@ class CirkwiParser(AttachmentParserMixin, Parser):
 
 class CirkwiTrekParser(CirkwiParser):
     model = Trek
-    results_path = 'circuit'
+    results_path = "circuit"
     fields = {
         "eid": "@@id_circuit",
         "name": "informations/information[@langue='<LANG>']/titre",
         "description_teaser": "informations/information[@langue='<LANG>']/description",
-        "description": ("informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/titre",
-                        "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/description",
-                        "infos_parcours/info_parcours/informations/information[@langue='<LANG>']/description/*"),
-        "points_reference": ("infos_parcours/info_parcours/adresse/position/lat/*",
-                             "infos_parcours/info_parcours/adresse/position/lng/*"),
+        "description": (
+            "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/titre",
+            "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/description",
+            "infos_parcours/info_parcours/informations/information[@langue='<LANG>']/description/*",
+        ),
+        "points_reference": (
+            "infos_parcours/info_parcours/adresse/position/lat/*",
+            "infos_parcours/info_parcours/adresse/position/lng/*",
+        ),
         "geom": "fichier_trace@@url",
-        "practice": ("locomotions/locomotion@@type", "locomotions/locomotion@@id_locomotion"),
+        "practice": (
+            "locomotions/locomotion@@type",
+            "locomotions/locomotion@@id_locomotion",
+        ),
         "difficulty": "locomotions/locomotion@@difficulte",
         "duration": "locomotions/locomotion@@duree",
     }
@@ -172,11 +191,16 @@ class CirkwiTrekParser(CirkwiParser):
             if self.create:
                 cirkwi_locomotion = CirkwiLocomotion.objects.create(name=label, eid=eid)
                 self.add_warning(
-                    _("{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(
-                        model='Cirkwi Locomotion', val=label))
+                    _(
+                        "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                    ).format(model="Cirkwi Locomotion", val=label)
+                )
             else:
-                self.add_warning(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(
-                    model='Cirkwi Locomotion', val=val))
+                self.add_warning(
+                    _(
+                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                    ).format(model="Cirkwi Locomotion", val=val)
+                )
                 raise RowImportError
         try:
             practice = Practice.objects.get(cirkwi=cirkwi_locomotion)
@@ -187,10 +211,9 @@ class CirkwiTrekParser(CirkwiParser):
                 practice.save()
             except Practice.DoesNotExist:
                 self.add_warning(
-                    _("No Practice matching Cirkwi Locomotion '{type}' (id: '{id}') was found. Please add it").format(
-                        type=label,
-                        id=eid
-                    )
+                    _(
+                        "No Practice matching Cirkwi Locomotion '{type}' (id: '{id}') was found. Please add it"
+                    ).format(type=label, id=eid)
                 )
                 raise RowImportError
         return practice
@@ -206,12 +229,15 @@ class CirkwiTrekParser(CirkwiParser):
         We do not create extra Difficulty Levels automatically.
         """
         difficulty = None
-        if val != '0':
+        if val != "0":
             try:
                 difficulty = DifficultyLevel.objects.get(cirkwi_level=int(val))
             except DifficultyLevel.DoesNotExist:
-                self.add_warning(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(
-                    model=_('Difficulty Level with Cirkwi Level'), val=val))
+                self.add_warning(
+                    _(
+                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                    ).format(model=_("Difficulty Level with Cirkwi Level"), val=val)
+                )
         return difficulty
 
     def filter_description(self, src, val):
@@ -232,20 +258,28 @@ class CirkwiTrekParser(CirkwiParser):
         step_lats, step_longs = val
         step_lats = list(map(lambda x: float(x.text), step_lats))
         step_longs = list(map(lambda x: float(x.text), step_longs))
-        steps = MultiPoint([Point(x, y, srid=4326) for x, y in zip(step_longs, step_lats)])
+        steps = MultiPoint(
+            [Point(x, y, srid=4326) for x, y in zip(step_longs, step_lats)]
+        )
         geom = GEOSGeometry(steps, srid=4326)
         return geom.transform(settings.SRID, clone=True)
 
 
 class CirkwiTouristicContentParser(CirkwiParser):
     model = TouristicContent
-    results_path = 'poi'
+    results_path = "poi"
     fields = {
         "eid": "@@id_poi",
         "name": "informations/information[@langue='<LANG>']/titre",
         "description": "informations/information[@langue='<LANG>']/description",
         "geom": ("adresse/position/lng", "adresse/position/lat"),
-        "practical_info": ("adresse/num", "adresse/rue", "adresse/cp", "adresse/ville", "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/*"),
+        "practical_info": (
+            "adresse/num",
+            "adresse/rue",
+            "adresse/cp",
+            "adresse/ville",
+            "informations/information[@langue='<LANG>']/informations_complementaires/information_complementaire/*",
+        ),
         "category": "categories/categorie/*",
     }
     m2m_fields = {
@@ -254,20 +288,20 @@ class CirkwiTouristicContentParser(CirkwiParser):
     field_options = {
         "geom": {"required": True},
         "name": {"required": True},
-        'category': {'create': True},
-        'type1': {'create': True},
+        "category": {"create": True},
+        "type1": {"create": True},
     }
     natural_keys = {
-        'category': 'label',
-        'type1': 'label',
+        "category": "label",
+        "type1": "label",
     }
 
     def filter_practical_info(self, src, val):
         num, street, code, city, other_infos = val
-        infos = ''
+        infos = ""
         if (num and street) or (code and city):
             address = _("Address")
-            infos += f'<strong>{address} : </strong><br>'
+            infos += f"<strong>{address} : </strong><br>"
         if num and street:
             infos += f"{num} {street}<br>"
         if code and city:
@@ -281,7 +315,7 @@ class CirkwiTouristicContentParser(CirkwiParser):
         # val[0] is category
         # val[1] is type1
         name = val[0].attrib["nom"]
-        return self.apply_filter('category', src, name)
+        return self.apply_filter("category", src, name)
 
     def filter_type1(self, src, val):
         """
@@ -294,14 +328,20 @@ class CirkwiTouristicContentParser(CirkwiParser):
             return []
         label = val[1].attrib["nom"]
         if self.field_options.get("type1", {}).get("create", False):
-            type1, __ = TouristicContentType1.objects.get_or_create(category=self.obj.category, label=label)
+            type1, __ = TouristicContentType1.objects.get_or_create(
+                category=self.obj.category, label=label
+            )
         else:
             try:
-                type1 = TouristicContentType1.objects.get(category=self.obj.category, label=label)
+                type1 = TouristicContentType1.objects.get(
+                    category=self.obj.category, label=label
+                )
             except TouristicContentType1.DoesNotExist:
                 self.add_warning(
-                    _("Type 1 '{type}' does not exist for category '{cat}'. Please add it").format(
-                        type=label, cat=self.obj.category.label))
+                    _(
+                        "Type 1 '{type}' does not exist for category '{cat}'. Please add it"
+                    ).format(type=label, cat=self.obj.category.label)
+                )
                 return []
         return [type1]
 

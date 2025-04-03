@@ -4,20 +4,22 @@ from django.db import migrations
 
 
 def attachment_infrastructure(apps, schema_editor):
-    AttachmentModel = apps.get_model('common', 'Attachment')
-    InfrastructureModel = apps.get_model('infrastructure', 'Infrastructure')
+    AttachmentModel = apps.get_model("common", "Attachment")
+    InfrastructureModel = apps.get_model("infrastructure", "Infrastructure")
     ContentTypeModel = apps.get_model("contenttypes", "ContentType")
-    infrastructure = ContentTypeModel.objects.get(app_label='infrastructure', model='infrastructure')
+    infrastructure = ContentTypeModel.objects.get(
+        app_label="infrastructure", model="infrastructure"
+    )
     attachments = AttachmentModel.objects.filter(
-        content_type__model='baseinfrastructure',
-        object_id__in=InfrastructureModel.objects.all().values_list("pk", flat=True))
+        content_type__model="baseinfrastructure",
+        object_id__in=InfrastructureModel.objects.all().values_list("pk", flat=True),
+    )
     attachments.update(content_type=infrastructure)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0012_remove_signagetype_rename_infrastructure_type'),
+        ("infrastructure", "0012_remove_signagetype_rename_infrastructure_type"),
     ]
 
     operations = [

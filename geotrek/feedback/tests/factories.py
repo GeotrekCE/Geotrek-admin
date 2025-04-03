@@ -67,6 +67,5 @@ class ReportFactory(factory.django.DjangoModelFactory):
 
 
 class TimerEventFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = feedback_models.TimerEvent

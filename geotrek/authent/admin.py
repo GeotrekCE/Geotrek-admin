@@ -1,32 +1,33 @@
 """
-    Administration of authentication
+Administration of authentication
 """
+
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from geotrek.authent.models import Structure
-from geotrek.authent.models import UserProfile
+from geotrek.authent.models import Structure, UserProfile
 from geotrek.common.mixins.actions import MergeActionMixin
-
 
 admin.site.unregister(User)
 
 
 class UserProfileInline(admin.StackedInline):
-    """ Custom form """
+    """Custom form"""
+
     model = UserProfile
 
 
 class UserProfileAdmin(UserAdmin):
-    """ Custom adminsite """
+    """Custom adminsite"""
+
     inlines = [UserProfileInline]
 
 
 class StructureAdmin(MergeActionMixin, admin.ModelAdmin):
-    list_display = ('name', )
-    search_fields = ('name', )
+    list_display = ("name",)
+    search_fields = ("name",)
     merge_field = "name"
 
 

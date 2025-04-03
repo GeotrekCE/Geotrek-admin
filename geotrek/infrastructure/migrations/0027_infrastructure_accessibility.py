@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0026_auto_20210908_1337'),
+        ("infrastructure", "0026_auto_20210908_1337"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='infrastructure',
-            name='accessibility',
-            field=models.TextField(blank=True, verbose_name='Accessibility'),
+            model_name="infrastructure",
+            name="accessibility",
+            field=models.TextField(blank=True, verbose_name="Accessibility"),
         ),
     ]

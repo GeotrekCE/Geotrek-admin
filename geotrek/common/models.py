@@ -24,8 +24,7 @@ from PIL import Image
 from geotrek.authent.models import StructureOrNoneRelated
 
 from .managers import AccessibilityAttachmentManager
-from .mixins.models import (OptionalPictogramMixin, PictogramMixin,
-                            TimeStampedModelMixin)
+from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
 
 
 def attachment_accessibility_upload(instance, filename):
@@ -33,70 +32,98 @@ def attachment_accessibility_upload(instance, filename):
     _, name = os.path.split(filename)
     name, ext = os.path.splitext(name)
     renamed = slugify(name) + ext
-    return 'attachments_accessibility/%s/%s/%s' % (
-        '%s_%s' % (instance.content_object._meta.app_label,
-                   instance.content_object._meta.model_name),
+    return "attachments_accessibility/%s/%s/%s" % (
+        "%s_%s"
+        % (
+            instance.content_object._meta.app_label,
+            instance.content_object._meta.model_name,
+        ),
         instance.content_object.pk,
-        renamed)
+        renamed,
+    )
 
 
 class License(StructureOrNoneRelated, BaseLicense):
     class Meta(BaseLicense.Meta):
         verbose_name = _("Attachment license")
         verbose_name_plural = _("Attachment licenses")
-        ordering = ['label']
+        ordering = ["label"]
 
 
 class AccessibilityAttachment(TimeStampedModelMixin):
     # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
-        SLOPE = 'slope', _('Slope')
-        WIDTH = 'width', _('Width')
-        SIGNAGE = 'signage', _('Signage')
+        SLOPE = "slope", _("Slope")
+        WIDTH = "width", _("Width")
+        SIGNAGE = "signage", _("Signage")
 
     objects = AccessibilityAttachmentManager()
 
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
-    attachment_accessibility_file = models.ImageField(_('Image'), blank=True,
-                                                      upload_to=attachment_accessibility_upload,
-                                                      max_length=512, null=False, validators=[FileMimetypeValidator()])
-    info_accessibility = models.CharField(verbose_name=_("Information accessibility"),
-                                          max_length=7,
-                                          choices=InfoAccessibilityChoices.choices,
-                                          default=InfoAccessibilityChoices.SLOPE)
-    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
-                                verbose_name=_("License"),
-                                null=True, blank=True,
-                                on_delete=models.PROTECT)
+    attachment_accessibility_file = models.ImageField(
+        _("Image"),
+        blank=True,
+        upload_to=attachment_accessibility_upload,
+        max_length=512,
+        null=False,
+        validators=[FileMimetypeValidator()],
+    )
+    info_accessibility = models.CharField(
+        verbose_name=_("Information accessibility"),
+        max_length=7,
+        choices=InfoAccessibilityChoices.choices,
+        default=InfoAccessibilityChoices.SLOPE,
+    )
+    license = models.ForeignKey(
+        settings.PAPERCLIP_LICENSE_MODEL,
+        verbose_name=_("License"),
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                related_name="created_attachments_accessibility",
-                                verbose_name=_('Creator'),
-                                help_text=_("User that uploaded"), on_delete=models.PROTECT)
-    author = models.CharField(blank=True, default='', max_length=128,
-                              verbose_name=_('Author'),
-                              help_text=_("Original creator"))
-    title = models.CharField(blank=True, default='', max_length=128,
-                             verbose_name=_("Filename"),
-                             help_text=_("Renames the file"))
-    legend = models.CharField(blank=True, default='', max_length=128,
-                              verbose_name=_("Legend"),
-                              help_text=_("Details displayed"))
-    random_suffix = models.CharField(null=False, blank=True, default='', max_length=128)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="created_attachments_accessibility",
+        verbose_name=_("Creator"),
+        help_text=_("User that uploaded"),
+        on_delete=models.PROTECT,
+    )
+    author = models.CharField(
+        blank=True,
+        default="",
+        max_length=128,
+        verbose_name=_("Author"),
+        help_text=_("Original creator"),
+    )
+    title = models.CharField(
+        blank=True,
+        default="",
+        max_length=128,
+        verbose_name=_("Filename"),
+        help_text=_("Renames the file"),
+    )
+    legend = models.CharField(
+        blank=True,
+        default="",
+        max_length=128,
+        verbose_name=_("Legend"),
+        help_text=_("Details displayed"),
+    )
+    random_suffix = models.CharField(null=False, blank=True, default="", max_length=128)
 
     class Meta:
-        ordering = ['-date_insert']
+        ordering = ["-date_insert"]
         verbose_name = _("Attachment accessibility")
         verbose_name_plural = _("Attachments accessibility")
         default_permissions = ()
 
     def __str__(self):
-        return '{} attached {}'.format(
-            self.creator.username,
-            self.attachment_accessibility_file.name
+        return "{} attached {}".format(
+            self.creator.username, self.attachment_accessibility_file.name
         )
 
     def save(self, *args, **kwargs):
@@ -105,7 +132,9 @@ class AccessibilityAttachment(TimeStampedModelMixin):
             if self.pk is None or force_refresh_suffix:
                 self.random_suffix = None
                 name = self.prepare_file_suffix()
-                self.attachment_accessibility_file.name = attachment_accessibility_upload(self, name)
+                self.attachment_accessibility_file.name = (
+                    attachment_accessibility_upload(self, name)
+                )
         super().save(*args, **kwargs)
 
     @property
@@ -117,13 +146,17 @@ class AccessibilityAttachment(TimeStampedModelMixin):
         return os.path.split(self.attachment_accessibility_file.name)[1]
 
     def prepare_file_suffix(self, basename=None):
-        """ Add random file suffix and return new filename to use in attachment_accessibility_file.save
-        """
+        """Add random file suffix and return new filename to use in attachment_accessibility_file.save"""
         if self.attachment_accessibility_file or basename:
             if not self.random_suffix:
                 # Create random suffix
                 # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
-                self.random_suffix = '-' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=settings.PAPERCLIP_RANDOM_SUFFIX_SIZE))
+                self.random_suffix = "-" + "".join(
+                    random.choices(
+                        string.ascii_lowercase + string.digits,
+                        k=settings.PAPERCLIP_RANDOM_SUFFIX_SIZE,
+                    )
+                )
                 # #### /!\ If you change this line, make sure to update 'random_suffix_regexp' method above
                 if basename:
                     _, basename = os.path.split(basename)
@@ -131,12 +164,23 @@ class AccessibilityAttachment(TimeStampedModelMixin):
                 else:
                     _, name = os.path.split(self.attachment_accessibility_file.name)
                     name, ext = os.path.splitext(name)
-                subfolder = '%s/%s' % (
-                    '%s_%s' % (self.content_object._meta.app_label,
-                               self.content_object._meta.model_name),
-                    self.content_object.pk)
+                subfolder = "%s/%s" % (
+                    "%s_%s"
+                    % (
+                        self.content_object._meta.app_label,
+                        self.content_object._meta.model_name,
+                    ),
+                    self.content_object.pk,
+                )
                 # Compute maximum size left for filename
-                max_filename_size = self._meta.get_field('attachment_accessibility_file').max_length - len('attachments_accessibility/') - settings.PAPERCLIP_RANDOM_SUFFIX_SIZE - len(subfolder) - len(ext) - 1
+                max_filename_size = (
+                    self._meta.get_field("attachment_accessibility_file").max_length
+                    - len("attachments_accessibility/")
+                    - settings.PAPERCLIP_RANDOM_SUFFIX_SIZE
+                    - len(subfolder)
+                    - len(ext)
+                    - 1
+                )
                 # In case PAPERCLIP_RANDOM_SUFFIX_SIZE is too big
                 max_filename_size = max(0, max_filename_size)
                 # Create new name with suffix and proper size
@@ -153,7 +197,7 @@ class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Organism")
         verbose_name_plural = _("Organisms")
-        ordering = ['organism']
+        ordering = ["organism"]
 
     def __str__(self):
         if self.structure:
@@ -162,14 +206,17 @@ class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
 
 
 class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
-    """ Attachment FileTypes, related to structure and with custom table name."""
+    """Attachment FileTypes, related to structure and with custom table name."""
+
     class Meta(BaseFileType.Meta):
         pass
 
     @classmethod
     def objects_for(cls, request):
-        """ Override this method to filter form choices depending on structure."""
-        return cls.objects.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
+        """Override this method to filter form choices depending on structure."""
+        return cls.objects.filter(
+            Q(structure=request.user.profile.structure) | Q(structure=None)
+        )
 
     def __str__(self):
         if self.structure:
@@ -183,12 +230,18 @@ class Attachment(BaseAttachment):
 
 class Theme(TimeStampedModelMixin, PictogramMixin):
     label = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.SET_NULL)
+    cirkwi = models.ForeignKey(
+        "cirkwi.CirkwiTag",
+        verbose_name=_("Cirkwi tag"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         verbose_name = _("Theme")
         verbose_name_plural = _("Themes")
-        ordering = ['label']
+        ordering = ["label"]
 
     def __str__(self):
         return self.label
@@ -202,7 +255,7 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
         """
         pictogram, ext = os.path.splitext(self.pictogram.name)
         pictopath = os.path.join(settings.MEDIA_ROOT, self.pictogram.name)
-        output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
+        output = os.path.join(settings.MEDIA_ROOT, pictogram + "_off" + ext)
 
         # Recreate only if necessary !
         # is_empty = os.path.getsize(output) == 0
@@ -214,53 +267,78 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
             if w > h:
                 image = image.crop(box=(0, 0, w / 2, h))
             image.save(output)
-        return open(output, 'rb')
+        return open(output, "rb")
 
 
 class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=80)
-    website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
+    website = models.URLField(
+        verbose_name=_("Website"), max_length=256, blank=True, null=True
+    )
 
     class Meta:
         verbose_name = _("Record source")
         verbose_name_plural = _("Record sources")
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
 
 
 class TargetPortal(TimeStampedModelMixin, models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
+    name = models.CharField(
+        verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync")
+    )
     website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
-    title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"),
-                             default='')
-    description = models.TextField(verbose_name=_("Description"), help_text=_("Description on Geotrek Rando"),
-                                   default='')
-    facebook_id = models.CharField(verbose_name=_("Facebook ID"), max_length=20,
-                                   help_text=_("Facebook ID for Geotrek Rando"), null=True, blank=True,
-                                   default=settings.FACEBOOK_APP_ID)
-    facebook_image_url = models.CharField(verbose_name=_("Facebook image url"), max_length=256,
-                                          help_text=_("Url of the facebook image"), default=settings.FACEBOOK_IMAGE)
-    facebook_image_width = models.IntegerField(verbose_name=_("Facebook image width"),
-                                               help_text=_("Facebook image's width"),
-                                               default=settings.FACEBOOK_IMAGE_WIDTH)
-    facebook_image_height = models.IntegerField(verbose_name=_("Facebook image height"),
-                                                help_text=_("Facebook image's height"),
-                                                default=settings.FACEBOOK_IMAGE_HEIGHT)
+    title = models.CharField(
+        verbose_name=_("Title Rando"),
+        max_length=50,
+        help_text=_("Title on Geotrek Rando"),
+        default="",
+    )
+    description = models.TextField(
+        verbose_name=_("Description"),
+        help_text=_("Description on Geotrek Rando"),
+        default="",
+    )
+    facebook_id = models.CharField(
+        verbose_name=_("Facebook ID"),
+        max_length=20,
+        help_text=_("Facebook ID for Geotrek Rando"),
+        null=True,
+        blank=True,
+        default=settings.FACEBOOK_APP_ID,
+    )
+    facebook_image_url = models.CharField(
+        verbose_name=_("Facebook image url"),
+        max_length=256,
+        help_text=_("Url of the facebook image"),
+        default=settings.FACEBOOK_IMAGE,
+    )
+    facebook_image_width = models.IntegerField(
+        verbose_name=_("Facebook image width"),
+        help_text=_("Facebook image's width"),
+        default=settings.FACEBOOK_IMAGE_WIDTH,
+    )
+    facebook_image_height = models.IntegerField(
+        verbose_name=_("Facebook image height"),
+        help_text=_("Facebook image's height"),
+        default=settings.FACEBOOK_IMAGE_HEIGHT,
+    )
 
     class Meta:
         verbose_name = _("Target portal")
         verbose_name_plural = _("Target portals")
-        ordering = ('name',)
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
 
 
 class ReservationSystem(TimeStampedModelMixin, models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=256,
-                            blank=False, null=False, unique=True)
+    name = models.CharField(
+        verbose_name=_("Name"), max_length=256, blank=False, null=False, unique=True
+    )
 
     def __str__(self):
         return self.name
@@ -268,21 +346,27 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
     class Meta:
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
-        ordering = ('name',)
+        ordering = ("name",)
 
 
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advice"), blank=True)
-    published = models.BooleanField(verbose_name=_("Published"), default=False,
-                                    help_text=_("Visible on Geotrek-rando"))
-    filter = models.BooleanField(verbose_name=_("Filter"), default=False,
-                                 help_text=_("Show this label as a filter in public portal"))
+    published = models.BooleanField(
+        verbose_name=_("Published"),
+        default=False,
+        help_text=_("Visible on Geotrek-rando"),
+    )
+    filter = models.BooleanField(
+        verbose_name=_("Filter"),
+        default=False,
+        help_text=_("Show this label as a filter in public portal"),
+    )
 
     class Meta:
         verbose_name = _("Label")
         verbose_name_plural = _("Labels")
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -290,8 +374,12 @@ class Label(TimeStampedModelMixin, OptionalPictogramMixin):
 
 class RatingScaleMixin(TimeStampedModelMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Within a practice. Alphabetical order if blank"))
+    order = models.IntegerField(
+        verbose_name=_("Order"),
+        null=True,
+        blank=True,
+        help_text=_("Within a practice. Alphabetical order if blank"),
+    )
 
     def __str__(self):
         return "{} ({})".format(self.name, self.practice.name)
@@ -303,8 +391,12 @@ class RatingScaleMixin(TimeStampedModelMixin, models.Model):
 class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
-                                help_text=_("Alphabetical order if blank"))
+    order = models.IntegerField(
+        verbose_name=_("Order"),
+        null=True,
+        blank=True,
+        help_text=_("Alphabetical order if blank"),
+    )
     color = ColorField(verbose_name=_("Color"), blank=True)
 
     def __str__(self):
@@ -316,65 +408,84 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
 
 class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):
     picture = models.FileField(verbose_name=_("Picture"), upload_to="hdviewpoints/")
-    geom = gis_models.PointField(verbose_name=_("Location"),
-                                 srid=settings.SRID)
+    geom = gis_models.PointField(verbose_name=_("Location"), srid=settings.SRID)
     object_id = models.PositiveIntegerField()
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
-    content_object = GenericForeignKey('content_type', 'object_id')
-    annotations = models.JSONField(verbose_name=_("Annotations"), blank=True, default=dict)
+    content_object = GenericForeignKey("content_type", "object_id")
+    annotations = models.JSONField(
+        verbose_name=_("Annotations"), blank=True, default=dict
+    )
     annotations_categories = models.JSONField(blank=True, default=dict)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    author = models.CharField(blank=True, default='', max_length=128,
-                              verbose_name=_('Author'),
-                              help_text=_("Original creator"))
-    title = models.CharField(max_length=1024,
-                             verbose_name=_("Title"),
-                             help_text=_("Title for this view point"))
-    legend = models.CharField(blank=True, default='', max_length=1024,
-                              verbose_name=_("Legend"),
-                              help_text=_("Details about this view"))
-    license = models.ForeignKey(settings.PAPERCLIP_LICENSE_MODEL,
-                                verbose_name=_("License"),
-                                null=True, blank=True,
-                                on_delete=models.PROTECT)
+    author = models.CharField(
+        blank=True,
+        default="",
+        max_length=128,
+        verbose_name=_("Author"),
+        help_text=_("Original creator"),
+    )
+    title = models.CharField(
+        max_length=1024,
+        verbose_name=_("Title"),
+        help_text=_("Title for this view point"),
+    )
+    legend = models.CharField(
+        blank=True,
+        default="",
+        max_length=1024,
+        verbose_name=_("Legend"),
+        help_text=_("Details about this view"),
+    )
+    license = models.ForeignKey(
+        settings.PAPERCLIP_LICENSE_MODEL,
+        verbose_name=_("License"),
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
 
     class Meta:
         verbose_name = _("HD View")
         verbose_name_plural = _("HD Views")
-        permissions = (
-            ("read_hdviewpoint", "Can read hd view point"),
-        )
+        permissions = (("read_hdviewpoint", "Can read hd view point"),)
 
     def __str__(self):
         return self.title
 
     @property
     def full_url(self):
-        return reverse('common:hdviewpoint_detail', kwargs={'pk': self.pk})
+        return reverse("common:hdviewpoint_detail", kwargs={"pk": self.pk})
 
     @property
     def metadata_url(self):
-        return reverse('common:hdviewpoint-metadata', kwargs={'pk': self.pk})
+        return reverse("common:hdviewpoint-metadata", kwargs={"pk": self.pk})
 
     @classmethod
     def get_list_url(cls):
-        return reverse('admin:common_hdviewpoint_changelist')
+        return reverse("admin:common_hdviewpoint_changelist")
 
     def get_picture_tile_url(self, x, y, z):
-        url = reverse("common:hdviewpoint-tile", kwargs={'pk': self.pk, 'x': x, 'y': y, 'z': z, 'fmt': 'png'})
+        url = reverse(
+            "common:hdviewpoint-tile",
+            kwargs={"pk": self.pk, "x": x, "y": y, "z": z, "fmt": "png"},
+        )
         return f"{url}?{urlencode({'source': 'vips'})}"
 
     def get_generic_picture_tile_url(self):
-        url = self.get_picture_tile_url(0, 0, 0).replace("/0/0/0.png", "/{z}/{x}/{y}.png")
+        url = self.get_picture_tile_url(0, 0, 0).replace(
+            "/0/0/0.png", "/{z}/{x}/{y}.png"
+        )
         return url
 
     @property
     def thumbnail_url(self):
-        url = reverse('common:hdviewpoint-thumbnail', kwargs={'pk': self.pk, 'fmt': 'png'})
+        url = reverse(
+            "common:hdviewpoint-thumbnail", kwargs={"pk": self.pk, "fmt": "png"}
+        )
         return f"{url}?{urlencode({'source': 'vips'})}"
 
     def get_annotate_url(self):
-        return reverse('common:hdviewpoint_annotate', args=[self.pk])
+        return reverse("common:hdviewpoint_annotate", args=[self.pk])
 
 
 class AnnotationCategory(TimeStampedModelMixin, PictogramMixin):
@@ -383,7 +494,7 @@ class AnnotationCategory(TimeStampedModelMixin, PictogramMixin):
     class Meta:
         verbose_name = _("Annotation category")
         verbose_name_plural = _("Annotation categories")
-        ordering = ['label']
+        ordering = ["label"]
 
     def __str__(self):
         return self.label
@@ -395,7 +506,7 @@ class AccessMean(TimeStampedModelMixin):
     class Meta:
         verbose_name = _("Access mean")
         verbose_name_plural = _("Access means")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         return self.label

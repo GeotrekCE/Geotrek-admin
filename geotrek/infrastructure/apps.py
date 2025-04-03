@@ -1,10 +1,10 @@
 from django.apps import AppConfig
-from django.core.checks import register, Tags
+from django.core.checks import Tags, register
 from django.utils.translation import gettext_lazy as _
 
 
 class InfrastructureConfig(AppConfig):
-    name = 'geotrek.infrastructure'
+    name = "geotrek.infrastructure"
     verbose_name = _("Infrastructure")
 
     def ready(self):

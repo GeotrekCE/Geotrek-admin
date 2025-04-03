@@ -1,6 +1,6 @@
 import factory
-from geotrek.common.tests.factories import OrganismFactory
 
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PointTopologyFactory
 
@@ -12,7 +12,7 @@ class SignageTypeFactory(factory.django.DjangoModelFactory):
         model = models.SignageType
 
     label = "Signage type"
-    pictogram = get_dummy_uploaded_image('signage_type.png')
+    pictogram = get_dummy_uploaded_image("signage_type.png")
 
 
 class SignageTypeNoPictogramFactory(factory.django.DjangoModelFactory):

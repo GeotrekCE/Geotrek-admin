@@ -5,29 +5,28 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations
 
-
 FIELDS = (
-    ('trek', 'nom', 'name'),
-    ('trek', 'depart', 'departure'),
-    ('trek', 'arrivee', 'arrival'),
-    ('trek', 'chapeau', 'description_teaser'),
-    ('trek', 'acces', 'access'),
-    ('trek', 'handicap', 'disabled_infrastructure'),
-    ('trek', 'recommandation', 'advice'),
-    ('trek', 'parking', 'advised_parking'),
-    ('trek', 'transport', 'public_transport'),
-    ('trek', 'public', 'published'),
-    ('poi', 'nom', 'name'),
-    ('poi', 'public', 'published'),
-    ('poitype', 'nom', 'label'),
-    ('treknetwork', 'reseau', 'network'),
-    ('practice', 'nom', 'name'),
-    ('accessibility', 'nom', 'name'),
-    ('route', 'parcours', 'route'),
-    ('difficultylevel', 'difficulte', 'difficulty'),
-    ('weblink', 'nom', 'name'),
-    ('weblinkcategory', 'nom', 'label'),
-    ('servicetype', 'nom', 'name'),
+    ("trek", "nom", "name"),
+    ("trek", "depart", "departure"),
+    ("trek", "arrivee", "arrival"),
+    ("trek", "chapeau", "description_teaser"),
+    ("trek", "acces", "access"),
+    ("trek", "handicap", "disabled_infrastructure"),
+    ("trek", "recommandation", "advice"),
+    ("trek", "parking", "advised_parking"),
+    ("trek", "transport", "public_transport"),
+    ("trek", "public", "published"),
+    ("poi", "nom", "name"),
+    ("poi", "public", "published"),
+    ("poitype", "nom", "label"),
+    ("treknetwork", "reseau", "network"),
+    ("practice", "nom", "name"),
+    ("accessibility", "nom", "name"),
+    ("route", "parcours", "route"),
+    ("difficultylevel", "difficulte", "difficulty"),
+    ("weblink", "nom", "name"),
+    ("weblinkcategory", "nom", "label"),
+    ("servicetype", "nom", "name"),
 )
 
 
@@ -36,16 +35,25 @@ def forward(apps, schema_editor):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             for model, old, new in FIELDS:
                 cursor.execute(
-                    "SELECT 1 FROM information_schema.columns WHERE table_name='trekking_{}' AND column_name='{}_{}'".format(model, old, lang.replace('-', '_'))
+                    "SELECT 1 FROM information_schema.columns WHERE table_name='trekking_{}' AND column_name='{}_{}'".format(
+                        model, old, lang.replace("-", "_")
+                    )
                 )
                 if cursor.fetchone():
-                    cursor.execute('ALTER TABLE trekking_{} RENAME {}_{} TO {}_{}'.format(model, old, lang.replace('-', '_'), new, lang.replace('-', '_')))
+                    cursor.execute(
+                        "ALTER TABLE trekking_{} RENAME {}_{} TO {}_{}".format(
+                            model,
+                            old,
+                            lang.replace("-", "_"),
+                            new,
+                            lang.replace("-", "_"),
+                        )
+                    )
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0013_auto_20200228_1755'),
+        ("trekking", "0013_auto_20200228_1755"),
     ]
 
     operations = [

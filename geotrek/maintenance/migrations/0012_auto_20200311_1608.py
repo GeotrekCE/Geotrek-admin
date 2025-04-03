@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0011_auto_20200305_1037'),
+        ("maintenance", "0011_auto_20200305_1037"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='funding',
-            name='amount',
-            field=models.FloatField(verbose_name='Amount'),
+            model_name="funding",
+            name="amount",
+            field=models.FloatField(verbose_name="Amount"),
         ),
     ]

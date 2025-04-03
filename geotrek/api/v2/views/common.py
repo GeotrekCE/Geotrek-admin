@@ -5,10 +5,11 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils import translation
-
 from rest_framework.response import Response
 
-from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets, filters as api_filters
+from geotrek.api.v2 import filters as api_filters
+from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.cache import ListCacheResponseMixin
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common import models as common_models
@@ -22,28 +23,39 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesAndTourismRelatedPortalThemeFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.TreksAndSitesAndTourismRelatedPortalThemeFilter,
+    )
     serializer_class = api_serializers.ThemeSerializer
     queryset = common_models.Theme.objects.all()
 
     def get_list_cache_key(self):
-        """ return specific list cache key based on list last_update object """
-        last_update = self.get_queryset().model.last_update_and_count.get('last_update')
-        last_update_trek = Trek.last_update_and_count.get('last_update')
-        last_update_touristic_content = TouristicContent.last_update_and_count.get('last_update')
-        last_update_touristic_event = TouristicEvent.last_update_and_count.get('last_update')
+        """return specific list cache key based on list last_update object"""
+        last_update = self.get_queryset().model.last_update_and_count.get("last_update")
+        last_update_trek = Trek.last_update_and_count.get("last_update")
+        last_update_touristic_content = TouristicContent.last_update_and_count.get(
+            "last_update"
+        )
+        last_update_touristic_event = TouristicEvent.last_update_and_count.get(
+            "last_update"
+        )
 
         last_updates = [
-            last_update.isoformat() if last_update else '0000-00-00',
-            last_update_trek.isoformat() if last_update_trek else '0000-00-00',
-            last_update_touristic_content.isoformat() if last_update_touristic_content else '0000-00-00',
-            last_update_touristic_event.isoformat() if last_update_touristic_event else '0000-00-00',
+            last_update.isoformat() if last_update else "0000-00-00",
+            last_update_trek.isoformat() if last_update_trek else "0000-00-00",
+            last_update_touristic_content.isoformat()
+            if last_update_touristic_content
+            else "0000-00-00",
+            last_update_touristic_event.isoformat()
+            if last_update_touristic_event
+            else "0000-00-00",
         ]
-        if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+        if "geotrek.outdoor" in settings.INSTALLED_APPS:
             from geotrek.outdoor.models import Site
-            list_update_site = Site.last_update_and_count.get('last_update')
+
+            list_update_site = Site.last_update_and_count.get("last_update")
             last_updates.append(
-                list_update_site.isoformat() if list_update_site else '0000-00-00',
+                list_update_site.isoformat() if list_update_site else "0000-00-00",
             )
 
         last_update = max(*last_updates)
@@ -51,19 +63,23 @@ class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
         return f"{self.get_base_cache_string()}:{last_update}"
 
     def list_cache_key_func(self, **kwargs):
-        """ cache key md5 for list viewset action """
+        """cache key md5 for list viewset action"""
         return md5(self.get_list_cache_key().encode("utf-8")).hexdigest()
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(common_models.Theme, pk=pk)
-        serializer = api_serializers.ThemeSerializer(elem, many=False, context={'request': request})
+        serializer = api_serializers.ThemeSerializer(
+            elem, many=False, context={"request": request}
+        )
         return Response(serializer.data)
 
 
 class SourceViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter,
+    )
     serializer_class = api_serializers.RecordSourceSerializer
     queryset = common_models.RecordSource.objects.all()
 
@@ -71,12 +87,16 @@ class SourceViewSet(api_viewsets.GeotrekViewSet):
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(common_models.RecordSource, pk=pk)
-        serializer = api_serializers.RecordSourceSerializer(elem, many=False, context={'request': request})
+        serializer = api_serializers.RecordSourceSerializer(
+            elem, many=False, context={"request": request}
+        )
         return Response(serializer.data)
 
 
 class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.RelatedPortalStructureOrReservationSystemFilter,)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.RelatedPortalStructureOrReservationSystemFilter,
+    )
     serializer_class = api_serializers.ReservationSystemSerializer
     queryset = common_models.ReservationSystem.objects.all()
 
@@ -84,13 +104,17 @@ class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(common_models.ReservationSystem, pk=pk)
-        serializer = api_serializers.ReservationSystemSerializer(elem, many=False, context={'request': request})
+        serializer = api_serializers.ReservationSystemSerializer(
+            elem, many=False, context={"request": request}
+        )
         return Response(serializer.data)
 
 
 class LabelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (api_filters.TreksAndSitesRelatedPortalFilter,
-                                                                     api_filters.GeotrekLabelFilter)
+    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+        api_filters.TreksAndSitesRelatedPortalFilter,
+        api_filters.GeotrekLabelFilter,
+    )
     serializer_class = api_serializers.LabelSerializer
     queryset = common_models.Label.objects.all()
 
@@ -98,7 +122,9 @@ class LabelViewSet(api_viewsets.GeotrekViewSet):
     def retrieve(self, request, pk=None, format=None):
         # Allow to retrieve objects even if not visible in list view
         elem = get_object_or_404(common_models.Label, pk=pk)
-        serializer = api_serializers.LabelSerializer(elem, many=False, context={'request': request})
+        serializer = api_serializers.LabelSerializer(
+            elem, many=False, context={"request": request}
+        )
         return Response(serializer.data)
 
 
@@ -114,14 +140,17 @@ class FileTypeViewSet(api_viewsets.GeotrekViewSet):
 
 class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.HDViewPointSerializer
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.HDViewPointPublishedByPortalFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+        api_filters.HDViewPointPublishedByPortalFilter,
+    )
 
     def get_queryset(self):
-        with translation.override(self.request.GET.get('language'), deactivate=True):
-            return common_models.HDViewPoint.objects \
-                .prefetch_related('content_object') \
-                .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
-                .order_by('title')  # Required for reliable pagination
+        with translation.override(self.request.GET.get("language"), deactivate=True):
+            return (
+                common_models.HDViewPoint.objects.prefetch_related("content_object")
+                .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
+                .order_by("title")
+            )  # Required for reliable pagination
 
 
 class AnnotationCategoryViewSet(api_viewsets.GeotrekViewSet):

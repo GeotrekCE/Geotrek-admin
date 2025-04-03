@@ -1,6 +1,6 @@
-from geotrek.diving.tests.factories import DiveFactory, LevelFactory
-
 from django.test import TestCase
+
+from geotrek.diving.tests.factories import DiveFactory, LevelFactory
 
 
 class DiveModelTest(TestCase):

@@ -6,44 +6,70 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0002_auto_20190306_1417'),
+        ("flatpages", "0002_auto_20190306_1417"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='flatpage',
-            name='content',
-            field=models.TextField(blank=True, help_text='HTML content', null=True, verbose_name='Content'),
+            model_name="flatpage",
+            name="content",
+            field=models.TextField(
+                blank=True, help_text="HTML content", null=True, verbose_name="Content"
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='external_url',
-            field=models.URLField(blank=True, default='', help_text='Link to external website instead of HTML content', verbose_name='External URL'),
+            model_name="flatpage",
+            name="external_url",
+            field=models.URLField(
+                blank=True,
+                default="",
+                help_text="Link to external website instead of HTML content",
+                verbose_name="External URL",
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='portal',
-            field=models.ManyToManyField(blank=True, related_name='flatpages', to='common.TargetPortal', verbose_name='Portal'),
+            model_name="flatpage",
+            name="portal",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="flatpages",
+                to="common.TargetPortal",
+                verbose_name="Portal",
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='source',
-            field=models.ManyToManyField(blank=True, related_name='flatpages', to='common.RecordSource', verbose_name='Source'),
+            model_name="flatpage",
+            name="source",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="flatpages",
+                to="common.RecordSource",
+                verbose_name="Source",
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='target',
-            field=models.CharField(choices=[('all', 'All'), ('mobile', 'Mobile'), ('hidden', 'Hidden'), ('web', 'Web')], default='all', max_length=12, verbose_name='Target'),
+            model_name="flatpage",
+            name="target",
+            field=models.CharField(
+                choices=[
+                    ("all", "All"),
+                    ("mobile", "Mobile"),
+                    ("hidden", "Hidden"),
+                    ("web", "Web"),
+                ],
+                default="all",
+                max_length=12,
+                verbose_name="Target",
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='title',
-            field=models.CharField(max_length=200, verbose_name='Title'),
+            model_name="flatpage",
+            name="title",
+            field=models.CharField(max_length=200, verbose_name="Title"),
         ),
         migrations.AlterModelTable(
-            name='flatpage',
+            name="flatpage",
             table=None,
         ),
     ]

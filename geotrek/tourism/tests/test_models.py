@@ -10,11 +10,13 @@ from django.test.utils import override_settings
 from geotrek.core.tests import factories as core_factories
 from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
 from geotrek.tourism.tests import factories as tourism_factories
-from geotrek.tourism.tests.factories import (InformationDeskFactory,
-                                             InformationDeskTypeFactory,
-                                             TouristicContentCategoryFactory,
-                                             TouristicContentType1Factory,
-                                             TouristicEventPlaceFactory)
+from geotrek.tourism.tests.factories import (
+    InformationDeskFactory,
+    InformationDeskTypeFactory,
+    TouristicContentCategoryFactory,
+    TouristicContentType1Factory,
+    TouristicEventPlaceFactory,
+)
 from geotrek.trekking.tests import factories as trekking_factories
 
 
@@ -30,7 +32,9 @@ class InformationDeskTypeTest(TestCase):
 class InformationDeskTest(TestCase):
     def setUp(self):
         self.type_informationdesk = InformationDeskTypeFactory(label="Office")
-        self.information_desk = InformationDeskFactory(name="Test", type=self.type_informationdesk)
+        self.information_desk = InformationDeskFactory(
+            name="Test", type=self.type_informationdesk
+        )
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
@@ -56,28 +60,45 @@ class InformationDeskTest(TestCase):
         categ.delete()
         model_num = ContentType.objects.get_for_model(TouristicContentType).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=contenttype_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from TouristicContentCategory {caregory_pk} - {category_repr}")
+        self.assertEqual(
+            entry.change_message,
+            f"Deleted by cascade from TouristicContentCategory {caregory_pk} - {category_repr}",
+        )
         self.assertEqual(entry.action_flag, DELETION)
 
 
 class TourismRelations(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        cls.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, name="ZZZ")
-        cls.event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(50 50)' % settings.SRID)
-        cls.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID, name="ZZZ")
+        cls.content = tourism_factories.TouristicContentFactory(
+            geom="SRID=%s;POINT(1 1)" % settings.SRID
+        )
+        cls.content2 = tourism_factories.TouristicContentFactory(
+            geom="SRID=%s;POINT(2 2)" % settings.SRID, name="ZZZ"
+        )
+        cls.event = tourism_factories.TouristicEventFactory(
+            geom="SRID=%s;POINT(50 50)" % settings.SRID
+        )
+        cls.event2 = tourism_factories.TouristicEventFactory(
+            geom="SRID=%s;POINT(60 60)" % settings.SRID, name="ZZZ"
+        )
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
+            cls.path = core_factories.PathFactory(
+                geom="SRID=%s;LINESTRING(0 100, 100 100)" % settings.SRID
+            )
             cls.poi = trekking_factories.POIFactory(paths=[(cls.path, 0.5, 0.5)])
         else:
-            cls.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(50 100)' % settings.SRID)
+            cls.poi = trekking_factories.POIFactory(
+                geom="SRID=%s;POINT(50 100)" % settings.SRID
+            )
 
     def setUp(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             self.trek = trekking_factories.TrekFactory(paths=[self.path])
         else:
-            self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
+            self.trek = trekking_factories.TrekFactory(
+                geom="SRID=%s;LINESTRING(0 100, 100 100)" % settings.SRID
+            )
 
     def test_spatial_link_with_tourism(self):
         self.assertIn(self.content2, self.content.touristic_contents.all())
@@ -136,7 +157,7 @@ class TourismRelations(TestCase):
         self.assertEqual(self.trek.touristic_contents.all()[0], self.content)
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content2)
 
-    @override_settings(TOURISTIC_CONTENTS_API_ORDER=('-name', ))
+    @override_settings(TOURISTIC_CONTENTS_API_ORDER=("-name",))
     def test_spatial_link_settings_ordering(self):
         self.assertEqual(self.trek.touristic_contents.all()[0], self.content2)
         self.assertEqual(self.trek.touristic_contents.all()[1], self.content)
@@ -145,7 +166,7 @@ class TourismRelations(TestCase):
 class OrganizerModelTest(TestCase):
     def test_str(self):
         organizer = tourism_factories.TouristicEventOrganizerFactory(label="foo bar")
-        self.assertEqual('foo bar', str(organizer))
+        self.assertEqual("foo bar", str(organizer))
 
     def test_get_add_url(self):
         url = TouristicEventOrganizer.get_add_url()
@@ -156,25 +177,28 @@ class TouristicEventModelTest(TestCase):
     def test_dates_display_no_end_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
-        self.assertEqual('starting from 01/12/2000', event.dates_display)
+        self.assertEqual("starting from 01/12/2000", event.dates_display)
 
     def test_dates_display_same_date(self):
         date = datetime.datetime(year=2000, month=1, day=12)
         event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)
-        self.assertEqual('01/12/2000', event.dates_display)
+        self.assertEqual("01/12/2000", event.dates_display)
 
     def test_dates_display_end_begin_date_different(self):
         date_1 = datetime.datetime(year=2000, month=1, day=12)
         date_2 = datetime.datetime(year=2001, month=1, day=12)
-        event = tourism_factories.TouristicEventFactory(begin_date=date_1, end_date=date_2)
-        self.assertEqual('from 01/12/2000 to 01/12/2001', event.dates_display)
+        event = tourism_factories.TouristicEventFactory(
+            begin_date=date_1, end_date=date_2
+        )
+        self.assertEqual("from 01/12/2000 to 01/12/2001", event.dates_display)
 
 
 class TouristicContentModelTest(TestCase):
     def tests_type_poi_mobilev1(self):
         self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
-        self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
-                                                                 category=self.category)
+        self.content = tourism_factories.TouristicContentFactory(
+            geom="SRID=%s;POINT(1 1)" % settings.SRID, category=self.category
+        )
 
         self.assertEqual(str(self.content.type), "Test")
 
@@ -182,7 +206,9 @@ class TouristicContentModelTest(TestCase):
 class TouristicEventCancellationReasonModelTest(TestCase):
     def tests_cancellation_reason_label(self):
         reason = tourism_factories.CancellationReasonFactory(label="Arson")
-        event = tourism_factories.TouristicEventFactory(cancelled=True, cancellation_reason=reason)
+        event = tourism_factories.TouristicEventFactory(
+            cancelled=True, cancellation_reason=reason
+        )
         self.assertEqual(str(event.cancellation_reason), "Arson")
 
 
