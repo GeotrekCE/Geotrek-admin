@@ -108,9 +108,18 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
+    - name: Install python venv for focal
+      if: ${{ matrix.os == 'focal-3.10'}}
+      run: |
+          uv venv -p python3.10 venv
+
+    - name: Install python venv
+      if: ${{ matrix.os != 'focal-3.10'}}
+      run: |
+          uv venv venv
+
     - name: Install python dependencies
       run: |
-        uv venv venv
         UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
