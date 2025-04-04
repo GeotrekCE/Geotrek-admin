@@ -110,7 +110,7 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        uv pip sync requirements.txt requirements-dev.txt
+        uv pip sync --system requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
