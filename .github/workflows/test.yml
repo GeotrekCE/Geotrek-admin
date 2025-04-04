@@ -77,17 +77,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/cache@v4
+    - uses: astral-sh/setup-uv@v5
       with:
-        path: |
-          ./venv
-
-        key: uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-        restore-keys: |
-          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./requirements-dev.txt') }}
-          uv-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
-          uv-${{ matrix.os }}
+        version: "latest"
 
     - name: Prepare test env
       run: |
@@ -116,19 +108,9 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install uv venv for focal
-      if: ${{ matrix.os == 'focal-3.10'}}
-      run: |
-          uv venv -p python3.10 ./venv
-
-    - name: Install uv venv
-      if: ${{ matrix.os != 'focal-3.10'}}
-      run: |
-          uv venv ./venv
-
     - name: Install python dependencies
       run: |
-        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
+        uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
