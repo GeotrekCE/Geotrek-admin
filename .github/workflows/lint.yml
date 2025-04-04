@@ -5,7 +5,7 @@ on:
     paths:
       - 'geotrek/**'  # if geotrek code change
       - '.github/workflows/lint.yml'  # if lint workflow change
-      - 'dev-requirements.txt'  # if dev-requirements.txt change
+      - 'requirements-dev.txt'  # if requirements-dev.txt change
       - 'ruff.toml'   # if lint tools configuration change
 
 env:
@@ -25,13 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/python-cache-requirements
+      - uses: astral-sh/setup-uv@v5
         with:
-          requirements: dev-requirements.txt
+          version: "latest"
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
-          pip3 install -c dev-requirements.txt ruff
+          uv pip install -c requirements-dev.txt ruff
 
       - name: Check linting
         run: |

@@ -22,11 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/python-cache-requirements
+      - uses: astral-sh/setup-uv@v5
         with:
-          requirements: docs/requirements.txt
+          version: "latest"
+          python-version: "3.10"
 
       - name: Build doc
         run: |
           cd docs/
+          uv pip install -r requirements.txt
           make html SPHINXOPTS="-W"
