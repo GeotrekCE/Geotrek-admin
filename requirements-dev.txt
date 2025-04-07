@@ -41,7 +41,7 @@ sqlparse==0.5.3
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
-tblib==3.0.0
+tblib==3.1.0
     # via -r requirements-dev.in
 typing-extensions==4.12.2
     # via
