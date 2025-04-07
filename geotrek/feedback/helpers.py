@@ -135,19 +135,18 @@ class SuricateRequestManager:
 
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
-            logger.warning(f"KO - Status code: {response.status_code}")
+            return f"KO - Status code: {response.status_code}"
         else:
             data = json.loads(response.content.decode())
+
             if "code_ok" in data and (data["code_ok"] == "false"):
-                logger.warning(
-                    f"KO:   [{data['error']['code']} - {data['error']['message']}]"
-                )
+                return f"KO:   [{data['error']['code']} - {data['error']['message']}]"
             elif "code_ok" in data and (data["code_ok"] == "true"):
-                logger.warning("OK")
+                return "OK"
 
     def test_suricate_connection(self):
         response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities")
-        self.print_response_OK_or_KO(response)
+        return self.print_response_OK_or_KO(response)
 
 
 class SuricateStandardRequestManager(SuricateRequestManager):
