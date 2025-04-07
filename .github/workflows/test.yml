@@ -77,17 +77,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/cache@v4
+    - uses: astral-sh/setup-uv@v5
       with:
-        path: |
-          ./venv
-
-        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-        restore-keys: |
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
-          pip-${{ matrix.os }}
+        version: "latest"
 
     - name: Prepare test env
       run: |
@@ -119,17 +111,16 @@ jobs:
     - name: Install python venv for focal
       if: ${{ matrix.os == 'focal-3.10'}}
       run: |
-          python3.10 -m venv ./venv
+          uv venv -p python3.10 venv
 
     - name: Install python venv
       if: ${{ matrix.os != 'focal-3.10'}}
       run: |
-          python3 -m venv ./venv
+          uv venv venv
 
     - name: Install python dependencies
       run: |
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools pip-tools -c requirements.txt -c dev-requirements.txt
-        ./venv/bin/pip-sync requirements.txt dev-requirements.txt
+        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
@@ -138,16 +129,16 @@ jobs:
     - name: Prepare environment
       run: |
         mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
+        ./venv/bin/python ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python ./manage.py compilemessages
 
     - name: Check missing migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=dev ./venv/bin/python ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py migrate
+        ENV=dev ./venv/bin/python ./manage.py migrate
 
     - name: Launch Celery
       run: |
