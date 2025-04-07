@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -8,6 +9,8 @@ from dotenv import load_dotenv
 from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
+
+logger = logging.getLogger(__name__)
 
 
 def _(s):
@@ -995,14 +998,14 @@ ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
 env_settings_file = os.path.join(os.path.dirname(__file__), "env_{}.py".format(ENV))
 with open(env_settings_file, "r") as f:
-    print("Read env configuration from {}".format(env_settings_file))
+    logger.warning("Read env configuration from {}".format(env_settings_file))
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
 if custom_settings_file and "tests" not in ENV:
     with open(custom_settings_file, "r") as f:
-        print("Read custom configuration from {}".format(custom_settings_file))
+        logger.warning("Read custom configuration from {}".format(custom_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]

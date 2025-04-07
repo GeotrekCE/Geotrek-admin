@@ -1,3 +1,4 @@
+import logging
 import os
 
 from celery import current_task, shared_task
@@ -6,6 +7,8 @@ from django.core.management import call_command
 from django.utils.translation import gettext as _
 
 from geotrek.common.tasks import GeotrekImportTask
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task(base=GeotrekImportTask, name="geotrek.api.mobile.sync-mobile")
@@ -16,7 +19,7 @@ def launch_sync_mobile(*args, **kwargs):
     if not os.path.exists(settings.SYNC_MOBILE_ROOT):
         os.mkdir(settings.SYNC_MOBILE_ROOT)
 
-    print("Sync mobile started")
+    logger.info("Sync mobile started")
 
     try:
         current_task.update_state(
@@ -43,7 +46,7 @@ def launch_sync_mobile(*args, **kwargs):
     except Exception:
         raise
 
-    print("Sync mobile ended")
+    logger.info("Sync mobile ended")
 
     return {
         "name": current_task.name,

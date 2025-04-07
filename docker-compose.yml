@@ -22,6 +22,12 @@ services:
       - "${POSTGRES_LOCAL_PORT:-5432}:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-geotrek}", "-d", "${POSTGRES_DB:-geotrekdb}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
 
   redis:
     image: redis:5.0-alpine
@@ -37,8 +43,11 @@ services:
   celery:
     <<: [ *django ]
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
     command: celery -A geotrek worker -c 1
 
   web:
@@ -48,11 +57,12 @@ services:
       - "${WEB_PORT:-8000}:8000"
 
     depends_on:
-      - postgres
-      - redis
-      - screamshotter
-      - convertit
-      - celery
+      screamshotter:
+        condition: service_started
+      convertit:
+        condition: service_started
+      celery:
+        condition: service_started
 
     networks:
       default:
