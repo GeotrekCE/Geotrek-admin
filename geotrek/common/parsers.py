@@ -21,7 +21,7 @@ import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, Point, Polygon, WKBWriter
+from django.contrib.gis.geos import GEOSGeometry, Point, LineString, Polygon, WKBWriter
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
@@ -1907,8 +1907,12 @@ class OpenStreetMapParser(Parser):
             raise ImproperlyConfigured("Tags must be defined")
 
         bbox_str = self.get_bbox_str()
-        for tag, value in self.tags.items():
-            self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+        for tag, values in self.tags.items():
+            if isinstance(values, list):
+                for value in values:
+                    self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+            else:
+                self.query += f"nwr['{tag}'='{values}']({bbox_str});"
 
     def get_bbox_str(self):
         bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
@@ -1921,11 +1925,17 @@ class OpenStreetMapParser(Parser):
         return None
 
     def get_centroid_from_way(self, geometries):
-        polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
-        polygon.srid = self.osm_srid
-        polygon.transform(settings.SRID)
-        centroid = polygon.centroid
-        return centroid
+        if geometries[0] != geometries[-1]:
+            line = LineString([[point["lon"], point["lat"]] for point in geometries])
+            line.srid = self.osm_srid
+            line.transform(settings.SRID)
+            point = line.point_on_surface
+        else:
+            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
+            polygon.srid = self.osm_srid
+            polygon.transform(settings.SRID)
+            point = polygon.centroid
+        return point
 
     def get_centroid_from_relation(self, bbox):
         polygon = Polygon.from_bbox(
@@ -1938,7 +1948,7 @@ class OpenStreetMapParser(Parser):
 
     def next_row(self):
         params = {
-            "data": f"[out:json];{self.query}out geom;",
+            "data": f"[out:json];({self.query});out geom;",
         }
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
