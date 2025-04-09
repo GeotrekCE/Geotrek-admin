@@ -95,7 +95,6 @@ class SyncMobileViewTest(TestCase):
         task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
-        self.assertIn("Sync mobile ended", log)
         self.assertEqual(task.status, "SUCCESS")
 
     @patch(

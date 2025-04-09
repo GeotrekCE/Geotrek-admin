@@ -814,12 +814,8 @@ class Command(BaseCommand):
                 )
             self.rename_root()
 
-        done_message = "Done"
-        if self.successfull:
-            done_message = self.style.SUCCESS(done_message)
-
-        if self.verbosity >= 1:
-            self.stdout.write(done_message)
+        if self.verbosity >= 1 and self.successfull:
+            self.stdout.write(self.style.SUCCESS("Done"))
 
         if not self.successfull:
             raise CommandError("Some errors raised during synchronization.")

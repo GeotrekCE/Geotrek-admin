@@ -81,6 +81,10 @@ class Command(BaseCommand):
 
     def test_suricate_connection(self):
         self.stdout.write("API Standard :")
-        SuricateStandardRequestManager().test_suricate_connection()
+        self.stdout.write(
+            f"{SuricateStandardRequestManager().test_suricate_connection()}"
+        )
         self.stdout.write("API Gestion :")
-        SuricateGestionRequestManager().test_suricate_connection()
+        self.stdout.write(
+            f"{SuricateGestionRequestManager().test_suricate_connection()}"
+        )

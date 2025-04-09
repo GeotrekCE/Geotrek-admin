@@ -16,8 +16,6 @@ def launch_sync_mobile(*args, **kwargs):
     if not os.path.exists(settings.SYNC_MOBILE_ROOT):
         os.mkdir(settings.SYNC_MOBILE_ROOT)
 
-    print("Sync mobile started")
-
     try:
         current_task.update_state(
             state="PROGRESS",
@@ -42,8 +40,6 @@ def launch_sync_mobile(*args, **kwargs):
 
     except Exception:
         raise
-
-    print("Sync mobile ended")
 
     return {
         "name": current_task.name,
