@@ -1680,9 +1680,6 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
 
         # create topology
         self.topology = Topology.objects.none()
-        if geom is None:
-            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
-            raise RowImportError(_("Invalid geometry"))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
