@@ -21,7 +21,7 @@ import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, Point, LineString, Polygon, WKBWriter
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models

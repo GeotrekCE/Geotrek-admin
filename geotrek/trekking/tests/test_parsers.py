@@ -43,6 +43,7 @@ from geotrek.trekking.parsers import (
     GeotrekPOIParser,
     GeotrekServiceParser,
     GeotrekTrekParser,
+    OpenStreetMapPOIParser,
     RowImportError,
     SchemaRandonneeParser,
     TrekParser,
@@ -2367,3 +2368,131 @@ class SchemaRandonneeParserTests(TestCase):
             trek2.description,
             "Instructions 2\n\n<a href=https://test2.com>https://test2.com</a>",
         )
+
+
+class TestPOIOpenStreetMapParser(OpenStreetMapPOIParser):
+    provider = "OpenStreetMap"
+    tags = {
+        "natural": ["peak", "arete", "saddle"],
+        "tourism": "alpine_hut",
+        "mountain_pass": "yes",
+    }
+    default_fields_values = {"name": "Test"}
+    type = "Test"
+
+
+class OpenStreetMapPOIParser(TestCase):
+    @classmethod
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def import_POI(cls, mocked):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "osm_poi_parser", "POI_OSM.json"
+            )
+            with open(filename, "r") as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+        )
+
+        cls.objects = POI.objects
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.type = POIType.objects.create(label="Test")
+        cls.path = PathFactory.create(
+            geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
+        )
+        cls.import_POI()
+
+    def test_create_POI_OSM(self):
+        self.assertEqual(self.objects.count(), 3)
+
+    def test_default_name(self):
+        self.assertEqual(self.objects.get(pk=3).name, "Test")
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_point(self):
+        point_topology = self.objects.get(pk=1).topo_object
+        self.assertAlmostEqual(point_topology.offset, 6437.493262796821)
+        self.assertEqual(point_topology.paths.get(pk=1), self.path)
+        self.assertEqual(point_topology.kind, "POI")
+
+    def test_topology_point_no_dynamic_segmentation(self):
+        point_geom = self.objects.get(pk=1).geom
+        self.assertAlmostEqual(point_geom.x, 924596.692586552)
+        self.assertAlmostEqual(point_geom.y, 6412498.122749874)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_way(self):
+        point_topology = self.objects.get(pk=2).topo_object
+        self.assertAlmostEqual(point_topology.offset, -1401.0373646193946)
+        self.assertEqual(point_topology.paths.get(pk=1), self.path)
+        self.assertEqual(point_topology.kind, "POI")
+
+    def test_topology_way_no_dynamic_segmentation(self):
+        point_geom = self.objects.get(pk=2).geom
+        self.assertAlmostEqual(point_geom.x, 926882.1207550302)
+        self.assertAlmostEqual(point_geom.y, 6403317.111114113)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_polygon(self):
+        point_topology = self.objects.get(pk=3).topo_object
+        self.assertAlmostEqual(point_topology.offset, -1398.870241563602)
+        self.assertEqual(point_topology.paths.get(pk=1), self.path)
+        self.assertEqual(point_topology.kind, "POI")
+
+    def test_topology_polygon_no_dynamic_segmentation(self):
+        point_geom = self.objects.get(pk=3).geom
+        self.assertAlmostEqual(point_geom.x, 933501.2402840604)
+        self.assertAlmostEqual(point_geom.y, 6410680.482150642)
+
+
+class OpenStreetMapPOIParserMissingDataTests(TestCase):
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_import_cmd_raises_error_when_no_path(self):
+        with self.assertRaisesRegex(
+            CommandError, "You need to add a network of paths before importing POIs"
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+                verbosity=0,
+            )
+
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def test_missing_type(self, mocked):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "osm_poi_parser", "POI_OSM.json"
+            )
+            with open(filename, "r") as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        PathFactory.create(
+            geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
+        )
+
+        with self.assertRaisesMessage(
+            ValueError, "Cannot force an update in save() with no primary key."
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+            )

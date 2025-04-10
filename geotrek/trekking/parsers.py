@@ -24,11 +24,11 @@ from geotrek.common.parsers import (
     DownloadImportError,
     GeotrekParser,
     GlobalImportError,
+    OpenStreetMapParser,
     Parser,
     RowImportError,
     ShapeParser,
     ValueImportError,
-    OpenStreetMapParser,
 )
 from geotrek.common.utils.parsers import (
     GeomValueError,
@@ -1630,8 +1630,10 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                 order += 1
         super().end()
 
+
 class OpenStreetMapPOIParser(OpenStreetMapParser):
     """Parser to import POI from OpenStreetMap"""
+
     label = "Import  OpenStreetMap POI"
     type = None
     model = POI
