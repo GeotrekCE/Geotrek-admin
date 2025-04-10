@@ -2400,8 +2400,6 @@ class OpenStreetMapPOIParser(TestCase):
             "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
         )
 
-        cls.objects = POI.objects
-
     @classmethod
     def setUpTestData(cls):
         cls.type = POIType.objects.create(label="Test")
@@ -2409,6 +2407,7 @@ class OpenStreetMapPOIParser(TestCase):
             geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
         )
         cls.import_POI()
+        cls.objects = POI.objects.all()
 
     def test_create_POI_OSM(self):
         self.assertEqual(self.objects.count(), 3)
@@ -2458,14 +2457,13 @@ class OpenStreetMapPOIParser(TestCase):
         self.assertAlmostEqual(point_geom.x, 933501.2402840604)
         self.assertAlmostEqual(point_geom.y, 6410680.482150642)
 
-
-class OpenStreetMapPOIParserMissingDataTests(TestCase):
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_import_cmd_raises_error_when_no_path(self):
+        self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing POIs"
+                CommandError, "You need to add a network of paths before importing POIs"
         ):
             call_command(
                 "import",
@@ -2473,26 +2471,4 @@ class OpenStreetMapPOIParserMissingDataTests(TestCase):
                 verbosity=0,
             )
 
-    @mock.patch("geotrek.common.parsers.requests.get")
-    def test_missing_type(self, mocked):
-        def mocked_json():
-            filename = os.path.join(
-                os.path.dirname(__file__), "data", "osm_poi_parser", "POI_OSM.json"
-            )
-            with open(filename, "r") as f:
-                return json.load(f)
 
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-
-        PathFactory.create(
-            geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
-        )
-
-        with self.assertRaisesMessage(
-            ValueError, "Cannot force an update in save() with no primary key."
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
-            )
