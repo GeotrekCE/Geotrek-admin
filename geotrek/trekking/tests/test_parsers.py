@@ -2409,6 +2409,20 @@ class OpenStreetMapPOIParser(TestCase):
         cls.import_POI()
         cls.objects = POI.objects.all()
 
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_import_cmd_raises_error_when_no_path(self):
+        self.path.delete()
+        with self.assertRaisesRegex(
+                CommandError, "You need to add a network of paths before importing POIs"
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+                verbosity=0,
+            )
+
     def test_create_POI_OSM(self):
         self.assertEqual(self.objects.count(), 3)
 
@@ -2456,19 +2470,3 @@ class OpenStreetMapPOIParser(TestCase):
         point_geom = self.objects.get(pk=3).geom
         self.assertAlmostEqual(point_geom.x, 933501.2402840604)
         self.assertAlmostEqual(point_geom.y, 6410680.482150642)
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-                CommandError, "You need to add a network of paths before importing POIs"
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
-                verbosity=0,
-            )
-
-
