@@ -2415,7 +2415,7 @@ class OpenStreetMapPOIParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-                CommandError, "You need to add a network of paths before importing POIs"
+            CommandError, "You need to add a network of paths before importing POIs"
         ):
             call_command(
                 "import",
@@ -2427,46 +2427,54 @@ class OpenStreetMapPOIParser(TestCase):
         self.assertEqual(self.objects.count(), 3)
 
     def test_default_name(self):
-        self.assertEqual(self.objects.get(pk=3).name, "Test")
+        poi1 = self.objects.get(eid=1)
+        self.assertEqual(poi1.name, "Grande Tête de l'Obiou")
+
+        poi3 = self.objects.get(eid=3)
+        self.assertEqual(poi3.name, "Test")
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_point(self):
-        point_topology = self.objects.get(pk=1).topo_object
-        self.assertAlmostEqual(point_topology.offset, 6437.493262796821)
-        self.assertEqual(point_topology.paths.get(pk=1), self.path)
-        self.assertEqual(point_topology.kind, "POI")
+        poi = self.objects.get(eid=1)
+        self.assertAlmostEqual(poi.topo_object.offset, 6437.493262796821)
+        self.assertEqual(poi.topo_object.paths.count(), 1)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_point_no_dynamic_segmentation(self):
-        point_geom = self.objects.get(pk=1).geom
-        self.assertAlmostEqual(point_geom.x, 924596.692586552)
-        self.assertAlmostEqual(point_geom.y, 6412498.122749874)
+        poi = self.objects.get(eid=1)
+        self.assertAlmostEqual(poi.geom.x, 924596.692586552)
+        self.assertAlmostEqual(poi.geom.y, 6412498.122749874)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_way(self):
-        point_topology = self.objects.get(pk=2).topo_object
-        self.assertAlmostEqual(point_topology.offset, -1401.0373646193946)
-        self.assertEqual(point_topology.paths.get(pk=1), self.path)
-        self.assertEqual(point_topology.kind, "POI")
+        poi = self.objects.get(eid=2)
+        self.assertAlmostEqual(poi.topo_object.offset, -1401.0373646193946)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_way_no_dynamic_segmentation(self):
-        point_geom = self.objects.get(pk=2).geom
-        self.assertAlmostEqual(point_geom.x, 926882.1207550302)
-        self.assertAlmostEqual(point_geom.y, 6403317.111114113)
+        poi = self.objects.get(eid=2)
+        self.assertAlmostEqual(poi.geom.x, 926882.1207550302)
+        self.assertAlmostEqual(poi.geom.y, 6403317.111114113)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_polygon(self):
-        point_topology = self.objects.get(pk=3).topo_object
-        self.assertAlmostEqual(point_topology.offset, -1398.870241563602)
-        self.assertEqual(point_topology.paths.get(pk=1), self.path)
-        self.assertEqual(point_topology.kind, "POI")
+        poi = self.objects.get(eid=3)
+        self.assertAlmostEqual(poi.topo_object.offset, -1398.870241563602)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_polygon_no_dynamic_segmentation(self):
-        point_geom = self.objects.get(pk=3).geom
-        self.assertAlmostEqual(point_geom.x, 933501.2402840604)
-        self.assertAlmostEqual(point_geom.y, 6410680.482150642)
+        poi = self.objects.get(eid=3)
+        self.assertAlmostEqual(poi.geom.x, 933501.2402840604)
+        self.assertAlmostEqual(poi.geom.y, 6410680.482150642)
