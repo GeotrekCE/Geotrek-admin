@@ -2034,3 +2034,45 @@ class OpenStreetMapParser(Parser):
     def filter_eid(self, src, val):
         type, id = val
         return f"{type[0].upper()}{id}"
+
+    def translation_fields(self):
+        if not self.model:
+            raise ImproperlyConfigured("model argument should be configured")
+
+        translated_fields = get_translated_fields(self.model)
+
+        for translated_field in translated_fields:
+            translated_tags = self.fields.get(translated_field)
+            if not translated_tags:
+                continue
+
+            is_str = isinstance(translated_tags, str)
+            tags = [translated_tags] if is_str else list(translated_tags)
+
+            # Add translation fields for all languages
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field_geotrek = f"{translated_field}_{lang}"
+                field_osm = [f"{tag}:{lang}" for tag in tags]
+                self.fields[field_geotrek] = (
+                    field_osm[0] if is_str else tuple(field_osm)
+                )
+
+            # Add default language field
+            default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+            field_geotrek = f"{translated_field}_{default_lang}"
+            field_osm = [f"{tag}:{default_lang}" for tag in tags]
+
+            if is_str:
+                self.fields[field_geotrek] = (field_osm[0], translated_tags)
+            else:
+                self.fields[field_geotrek] = tuple(field_osm + tags)
+
+            self.fields.pop(translated_field)
+
+    def get_val(self, row, dst, src):
+        val = super().get_val(row, dst, src)
+        if not hasattr(self, f"filter_{dst}") and isinstance(val, list):
+            for tag in val:
+                if tag or tag == 0:
+                    return tag
+        return val

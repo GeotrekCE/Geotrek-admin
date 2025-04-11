@@ -1414,6 +1414,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
         super().__init__(*args, **kwargs)
         if self.type:
             self.constant_fields["type"] = self.type
+        self.translation_fields()
 
     def filter_street(self, src, val):
         housenumber, street = val
@@ -1423,6 +1424,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
             return street
         return None
 
+    """
     def filter_postal_code(self, src, val):
         return self.get_tag_info(val)
 
@@ -1437,6 +1439,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
 
     def filter_website(self, src, val):
         return self.get_tag_info(val)
+    """
 
     def filter_geom(self, src, val):
         type, lng, lat, area, bbox = val
