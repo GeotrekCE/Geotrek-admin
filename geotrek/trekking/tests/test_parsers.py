@@ -43,6 +43,7 @@ from geotrek.trekking.parsers import (
     GeotrekPOIParser,
     GeotrekServiceParser,
     GeotrekTrekParser,
+    OpenStreetMapPOIParser,
     RowImportError,
     SchemaRandonneeParser,
     TrekParser,
@@ -2367,3 +2368,128 @@ class SchemaRandonneeParserTests(TestCase):
             trek2.description,
             "Instructions 2\n\n<a href=https://test2.com>https://test2.com</a>",
         )
+
+
+class TestPOIOpenStreetMapParser(OpenStreetMapPOIParser):
+    provider = "OpenStreetMap"
+    tags = {
+        "natural": ["peak", "arete", "saddle", "wood"],
+        "tourism": "alpine_hut",
+        "mountain_pass": "yes",
+    }
+    default_fields_values = {"name": "Test"}
+    type = "Test"
+
+
+class OpenStreetMapPOIParser(TestCase):
+    @classmethod
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def import_POI(cls, mocked):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "osm_poi_parser", "POI_OSM.json"
+            )
+            with open(filename, "r") as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+        )
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.type = POIType.objects.create(label="Test")
+        cls.path = PathFactory.create(
+            geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
+        )
+        cls.import_POI()
+        cls.objects = POI.objects.all()
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_import_cmd_raises_error_when_no_path(self):
+        self.path.delete()
+        with self.assertRaisesRegex(
+            CommandError, "You need to add a network of paths before importing POIs"
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+                verbosity=0,
+            )
+
+    def test_create_POI_OSM(self):
+        self.assertEqual(self.objects.count(), 4)
+
+    def test_default_name(self):
+        poi1 = self.objects.get(eid=1)
+        self.assertEqual(poi1.name, "Grande Tête de l'Obiou")
+
+        poi3 = self.objects.get(eid=3)
+        self.assertEqual(poi3.name, "Test")
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_point(self):
+        poi = self.objects.get(eid=1)
+        self.assertAlmostEqual(poi.topo_object.offset, 6437.493262796821)
+        self.assertEqual(poi.topo_object.paths.count(), 1)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+
+    def test_topology_point_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid=1)
+        self.assertAlmostEqual(poi.geom.x, 924596.692586552)
+        self.assertAlmostEqual(poi.geom.y, 6412498.122749874)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_way(self):
+        poi = self.objects.get(eid=2)
+        self.assertAlmostEqual(poi.topo_object.offset, -1401.0373646193946)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+
+    def test_topology_way_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid=2)
+        self.assertAlmostEqual(poi.geom.x, 926882.1207550302)
+        self.assertAlmostEqual(poi.geom.y, 6403317.111114113)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_polygon(self):
+        poi = self.objects.get(eid=3)
+        self.assertAlmostEqual(poi.topo_object.offset, -1398.870241563602)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+
+    def test_topology_polygon_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid=3)
+        self.assertAlmostEqual(poi.geom.x, 933501.2402840604)
+        self.assertAlmostEqual(poi.geom.y, 6410680.482150642)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_relation(self):
+        poi = self.objects.get(eid=4)
+        self.assertAlmostEqual(poi.topo_object.offset, 2589.2357898722626)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+
+    def test_topology_relation_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid=4)
+        self.assertAlmostEqual(poi.geom.x, 930902.9339307954)
+        self.assertAlmostEqual(poi.geom.y, 6406011.138417606)
