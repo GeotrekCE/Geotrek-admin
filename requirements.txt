@@ -371,7 +371,7 @@ tinyhtml5==2.0.0
     # via weasyprint
 transaction==5.0
     # via zodb
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   asgiref
     #   beautifulsoup4
