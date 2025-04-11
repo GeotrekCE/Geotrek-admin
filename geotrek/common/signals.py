@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
-from mapentity.middleware import get_internal_user
+from mapentity.utils import get_internal_user
 
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 
