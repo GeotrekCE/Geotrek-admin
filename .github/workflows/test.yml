@@ -7,12 +7,14 @@ on:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   push:
     branches:
       - master
 
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   release:
     types:
       - created
