@@ -13,7 +13,7 @@ django==4.2.20
     #   django-extensions
 django-debug-toolbar==5.1.0
     # via -r requirements-dev.in
-django-extensions==3.2.3
+django-extensions==4.1
     # via -r requirements-dev.in
 factory-boy==3.3.3
     # via -r requirements-dev.in
