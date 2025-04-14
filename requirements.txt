@@ -120,7 +120,7 @@ django-appconf==1.1.0
     # via django-compressor
 django-appypod==2.0.7
     # via mapentity
-django-celery-results==2.5.1
+django-celery-results==2.6.0
     # via geotrek (setup.py)
 django-clearcache==1.2.1
     # via geotrek (setup.py)
