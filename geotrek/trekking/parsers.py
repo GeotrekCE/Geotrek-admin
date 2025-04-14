@@ -1634,7 +1634,6 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
 class OpenStreetMapPOIParser(OpenStreetMapParser):
     """Parser to import POI from OpenStreetMap"""
 
-    label = "Import  OpenStreetMap POI"
     type = None
     model = POI
     eid = "eid"
