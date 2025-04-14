@@ -128,7 +128,7 @@ django-colorfield==0.13.0
     # via geotrek (setup.py)
 django-compressor==4.5.1
     # via mapentity
-django-crispy-forms==2.3
+django-crispy-forms==2.4
     # via
     #   crispy-bootstrap4
     #   mapentity
