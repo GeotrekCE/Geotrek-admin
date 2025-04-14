@@ -302,7 +302,7 @@ You can duplicate the class to import different types of information desks. In t
 Import POI
 ----------
 
-To import Point of interest (POI) from OpenStreetMap, edit the ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
 ::
 
