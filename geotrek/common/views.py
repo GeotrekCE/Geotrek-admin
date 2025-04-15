@@ -1,6 +1,5 @@
 import ast
 import json
-import logging
 import mimetypes
 import os
 import re
@@ -76,12 +75,9 @@ from .utils import leaflet_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
 
-logger = logging.getLogger(__name__)
-
 
 def handler404(request, exception, template_name="404.html"):
     if "api/v2" in request.get_full_path():
-        logger.warning(f"{request.get_full_path()} has been tried")
         return JsonResponse({"page": "does not exist"}, status=404)
     return page_not_found(request, exception, template_name="404.html")
 

@@ -129,7 +129,8 @@ class SuricateRequestManager:
             )
         if response.status_code not in [200, 201]:
             logger.warning(
-                f"Failed to access Suricate attachment - Status code: {response.status_code}"
+                "Failed to access Suricate attachment - Status code: %s",
+                response.status_code,
             )
         return response
 

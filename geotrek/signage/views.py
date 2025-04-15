@@ -209,8 +209,9 @@ class BladeList(CustomColumnsMixin, MapEntityList):
         columns.remove("direction")
         if "direction" in cls.get_custom_columns():
             logger.warning(
-                f"Ignoring entry 'direction' in COLUMNS_LISTS for view {cls.__name__} because the setting "
-                "DIRECTION_ON_LINES is enabled."
+                "Ignoring entry 'direction' in COLUMNS_LISTS for view %s because the setting "
+                "DIRECTION_ON_LINES is enabled.",
+                cls.__name__,
             )
         return columns
 

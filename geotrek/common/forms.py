@@ -147,11 +147,15 @@ class CommonForm(MapEntityForm):
                 # Hide only if optional
                 if self.fields[field_to_hide].required:
                     logger.warning(
-                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                        "Ignoring entry in HIDDEN_FORM_FIELDS: field '%s' is required on form %s.",
+                        field_to_hide,
+                        self.__class__.__name__,
                     )
                 elif field_to_hide in self.not_hideable_fields:
                     logger.warning(
-                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' cannot be hidden on form {self.__class__.__name__}."
+                        "Ignoring entry in HIDDEN_FORM_FIELDS: field '%s' cannot be hidden on form %s.",
+                        field_to_hide,
+                        self.__class__.__name__,
                     )
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()

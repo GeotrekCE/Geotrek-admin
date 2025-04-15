@@ -329,7 +329,7 @@ class Path(
                 mail_managers(subject, message, fail_silently=False)
             except Exception as exc:
                 msg = f"Caught {exc.__class__.__name__}: {exc}"
-                logger.warning(f"Error mail managers didn't work ({msg})")
+                logger.warning("Error mail managers didn't work (%s)", msg)
         super().save(*args, **kwargs)
         self.reload()
 

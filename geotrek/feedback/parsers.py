@@ -58,7 +58,9 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(
-                    f"New activity - id: {activity['id']}, label: {activity['libelle']}"
+                    "New activity - id: %s, label: %s",
+                    activity["id"],
+                    activity["libelle"],
                 )
 
     def get_statuses(self):
@@ -73,7 +75,7 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(
-                    f"New status - id: {status['id']}, label: {status['libelle']}"
+                    "New status - id: %s, label: %s", status["id"], status["libelle"]
                 )
 
     def send_workflow_manager_new_reports_email(self, reports):
@@ -118,7 +120,7 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(
-                    f"Created new feedback magnitude - label: {report['ampleur']}"
+                    "Created new feedback magnitude - label: %s", report["ampleur"]
                 )
 
             # Parse category
@@ -126,7 +128,7 @@ class SuricateParser(SuricateGestionRequestManager):
                 label=report["type"]
             )
             if created:
-                logger.info(f"Created new feedback category - label: {report['type']}")
+                logger.info("Created new feedback category - label: %s", report["type"])
 
             # Parse activity
             rep_activity = ReportActivity.objects.get(identifier=report["idactivite"])
@@ -156,7 +158,7 @@ class SuricateParser(SuricateGestionRequestManager):
 
             if created:
                 logger.info(
-                    f"New report - id: {report['uid']}, location: {report_obj.geom}"
+                    "New report - id: %s, location: %s", report["uid"], report_obj.geom
                 )
             else:
                 self.to_delete.discard(report_obj.pk)
@@ -205,12 +207,12 @@ class SuricateParser(SuricateGestionRequestManager):
         else:
             report = data["alertes"][0]
         if verbosity >= 2:
-            logger.info(f"Processing report {report['uid']}\n")
+            logger.info("Processing report %s\n", report["uid"])
         self.before_get_alerts(verbosity)
         self.to_delete = set()
         report_created = self.parse_report(report)
         if verbosity >= 1:
-            logger.info(f"Created : {report_created}")
+            logger.info("Created : %s", report_created)
 
     def get_alerts(self, verbosity=1, should_notify=True):
         """
@@ -226,14 +228,17 @@ class SuricateParser(SuricateGestionRequestManager):
         for report in data["alertes"]:
             if verbosity == 2:
                 logger.info(
-                    f"Processing report {report['uid']} - {current_report}/{total_reports} \n"
+                    "Processing report %s - %s/%s \n",
+                    report["uid"],
+                    current_report,
+                    total_reports,
                 )
             report_created = self.parse_report(report)
             if report_created:
                 reports_created.add(report_created)
             current_report += 1
         if verbosity >= 1:
-            logger.info(f"Parsed {total_reports} reports from Suricate\n")
+            logger.info("Parsed %s reports from Suricate\n", total_reports)
         if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
             should_notify = False
         self.after_get_alerts(reports_created, should_notify)
@@ -272,7 +277,10 @@ class SuricateParser(SuricateGestionRequestManager):
                     attachment.save(**{"skip_file_save": True})
                 except Exception as e:
                     logger.error(
-                        f"Could not download image : {file_url} \n{e}\n{traceback.format_exc()}"
+                        "Could not download image : %s \n%s\n%s",
+                        file_url,
+                        e,
+                        traceback.format_exc(),
                     )
 
     def create_messages(self, messages, parent):
@@ -297,7 +305,9 @@ class SuricateParser(SuricateGestionRequestManager):
             )
             if created:
                 logger.info(
-                    f"New Message - id: {message['id']}, parent: {parent.external_uuid}"
+                    "New Message - id: %s, parent: %s",
+                    message["id"],
+                    parent.external_uuid,
                 )
 
             # Parse documents attached to message
