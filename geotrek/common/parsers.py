@@ -1908,11 +1908,10 @@ class OpenStreetMapParser(Parser):
 
         bbox_str = self.get_bbox_str()
         for tag, values in self.tags.items():
-            if isinstance(values, list):
+            if not isinstance(values, list):
+                values = list(values)
                 for value in values:
                     self.query += f"nwr['{tag}'='{value}']({bbox_str});"
-            else:
-                self.query += f"nwr['{tag}'='{values}']({bbox_str});"
 
     def get_bbox_str(self):
         bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
