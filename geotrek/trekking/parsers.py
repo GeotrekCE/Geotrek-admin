@@ -301,8 +301,9 @@ class GeotrekTrekParser(GeotrekParser):
                     if not trek_parent_instance:
                         self.add_warning(
                             _(
-                                f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"
+                                "Trying to retrieve children for missing trek : could not find trek with UUID %(key)s"
                             )
+                            % {"key": key}
                         )
                         continue
                     order = 0
@@ -324,9 +325,8 @@ class GeotrekTrekParser(GeotrekParser):
                         order += 1
         except Exception as e:
             self.add_warning(
-                _(
-                    f"An error occured in children generation : {getattr(e, 'message', repr(e))}"
-                )
+                _("An error occurred in children generation: %(message)s")
+                % {"message": getattr(e, "message", repr(e))}
             )
         super().end()
 

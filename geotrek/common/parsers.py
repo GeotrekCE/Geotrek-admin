@@ -943,9 +943,12 @@ class AttachmentParserMixin:
                 and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size
             ):
                 self.add_warning(
-                    _(
-                        f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large"
-                    )
+                    _("%(class)s #%(pk)s - %(url)s: downloaded file is too large")
+                    % {
+                        "url": url,
+                        "pk": self.obj.pk,
+                        "class": self.obj.__class__.__name__,
+                    }
                 )
                 return False, updated
             try:
@@ -956,8 +959,13 @@ class AttachmentParserMixin:
                 ):
                     self.add_warning(
                         _(
-                            f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"
+                            "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
                         )
+                        % {
+                            "url": url,
+                            "pk": self.obj.pk,
+                            "class": self.obj.__class__.__name__,
+                        }
                     )
                     return False, updated
                 if (
@@ -966,8 +974,13 @@ class AttachmentParserMixin:
                 ):
                     self.add_warning(
                         _(
-                            f"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"
+                            "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
                         )
+                        % {
+                            "url": url,
+                            "pk": self.obj.pk,
+                            "class": self.obj.__class__.__name__,
+                        }
                     )
                     return False, updated
                 if settings.PAPERCLIP_ALLOWED_EXTENSIONS is not None:
@@ -975,9 +988,15 @@ class AttachmentParserMixin:
                     if extension not in settings.PAPERCLIP_ALLOWED_EXTENSIONS:
                         self.add_warning(
                             _(
-                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}: "
-                                f"File type '{extension}' is not allowed. "
+                                "Invalid attachment file %(url)s for %(class)s #%(pk)s: "
+                                "File type '%(ext)s' is not allowed."
                             )
+                            % {
+                                "url": url,
+                                "ext": extension,
+                                "pk": self.obj.pk,
+                                "class": self.obj.__class__.__name__,
+                            }
                         )
                         return False, updated
                     f.seek(0)
@@ -996,9 +1015,16 @@ class AttachmentParserMixin:
                     if not file_mimetype_allowed:
                         self.add_warning(
                             _(
-                                f"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj.pk}: "
-                                f"File mime type '{file_mimetype}' is not allowed for {extension}."
+                                "Invalid attachment file %(url)s for %(class)s #%(pk)s: "
+                                "File mime type '%(mimetype)s' is not allowed for %(ext)s."
                             )
+                            % {
+                                "url": url,
+                                "ext": extension,
+                                "mimetype": file_mimetype,
+                                "pk": self.obj.pk,
+                                "class": self.obj.__class__.__name__,
+                            }
                         )
                         return False, updated
             except UnidentifiedImageError:
@@ -1445,7 +1471,9 @@ class GeotrekAggregatorParser:
     def parse(self, filename=None, limit=None):
         filename = filename if filename else self.filename
         if not os.path.exists(filename):
-            raise GlobalImportError(_(f"File does not exists at: {filename}"))
+            raise GlobalImportError(
+                _("File does not exists at: %(filename)s") % {"filename": filename}
+            )
         with open(filename, mode="r") as f:
             json_aggregator = json.load(f)
 
@@ -1462,7 +1490,7 @@ class GeotrekAggregatorParser:
                             f"{model}s can't be imported with dynamic segmentation"
                         )
                         logger.warning(warning)
-                        key_warning = _(f"Model {model}")
+                        key_warning = _("Model %(model)s") % {"model": model}
                         self.add_warning(key_warning, warning)
                         self.report_by_api_v2_by_type[key][model] = {
                             "nb_lines": 0,
@@ -1807,8 +1835,9 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 if created:
                     self.add_warning(
                         _(
-                            f"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
+                            "Source '%(name)s' did not exist in Geotrek-Admin and was automatically created"
                         )
+                        % {"name": name}
                     )
                 if not pictogram_url and source.pictogram:
                     source.pictogram.delete()

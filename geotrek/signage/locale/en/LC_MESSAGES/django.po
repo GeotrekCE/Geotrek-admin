@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-04-15 17:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,9 @@ msgid "Signage"
 msgstr ""
 
 msgid "Name"
+msgstr ""
+
+msgid "Code"
 msgstr ""
 
 msgid "Description"
@@ -66,9 +69,6 @@ msgid "Signage Types"
 msgstr ""
 
 msgid "Label"
-msgstr ""
-
-msgid "Code"
 msgstr ""
 
 msgid "Complete description"

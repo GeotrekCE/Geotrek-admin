@@ -273,7 +273,8 @@ class TrekForm(BaseTrekForm):
         for child in children:
             if child.trek_children.exists():
                 raise ValidationError(
-                    _(f"Cannot use parent trek {child.name} as a child trek.")
+                    _("Cannot use parent trek %(name)s as a child trek.")
+                    % {"name": child.name}
                 )
         return children
 
