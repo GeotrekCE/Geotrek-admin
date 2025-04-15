@@ -380,7 +380,6 @@ typing-extensions==4.12.2
     #   referencing
 tzdata==2025.2
     # via
-    #   celery
     #   kombu
     #   mapentity
 uritemplate==4.1.1
