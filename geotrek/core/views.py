@@ -59,7 +59,7 @@ class CreateFromTopologyMixin:
             try:
                 return Topology.objects.existing().get(pk=pk)
             except Topology.DoesNotExist:
-                logger.warning("Intervention on unknown topology %s" % pk)
+                logger.warning("Intervention on unknown topology %s", pk)
         return None
 
     def get_initial(self):

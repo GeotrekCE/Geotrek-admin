@@ -51,6 +51,6 @@ class ZipTilesBuilder:
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
-                logger.warning("Failed to download tile %s" % name)
+                logger.warning("Failed to download tile %s", name)
             else:
                 self.zipfile.writestr(name, data)

@@ -686,7 +686,7 @@ class Command(BaseCommand):
 
         global_extent = settings.LEAFLET_CONFIG["SPATIAL_EXTENT"]
 
-        logger.info("Global extent is %s" % str(global_extent))
+        logger.info("Global extent is %s", global_extent)
         logger.info("Build global tiles file...")
 
         tiles = ZipTilesBuilder(zipfile, prefix="tiles/", **self.builder_args)

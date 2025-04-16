@@ -683,7 +683,7 @@ class Parser:
             action = getattr(requests, verb)
             response = action(url, headers=self.headers, allow_redirects=True, **kwargs)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
-                logger.info("Failed to fetch url {}. Retrying ...".format(url))
+                logger.info("Failed to fetch url %s. Retrying ...", url)
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)
                 try_get -= 1
             elif response.status_code == 200:
@@ -691,9 +691,10 @@ class Parser:
             else:
                 break
         logger.warning(
-            "Failed to fetch {} after {} times. Status code : {}.".format(
-                url, settings.PARSER_NUMBER_OF_TRIES, response.status_code
-            )
+            "Failed to fetch %s after %s times. Status code : %s.",
+            url,
+            settings.PARSER_NUMBER_OF_TRIES,
+            response.status_code,
         )
         raise DownloadImportError(
             _("Failed to download {url}. HTTP status code {status_code}").format(

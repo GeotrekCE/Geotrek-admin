@@ -38,7 +38,7 @@ class TopologyField(forms.CharField):
         except Topology.DoesNotExist:
             raise ValidationError(self.error_messages["unknown_topology"] % value)
         except ValueError as e:
-            logger.warning("User input error: %s" % e)
+            logger.warning("User input error: %s", e)
             raise ValidationError(self.error_messages["invalid_topology"])
 
 
@@ -94,5 +94,5 @@ class SnappedLineStringField(LineStringField):
                     coords[i] = snap.coords
             return LineString(*coords, srid=settings.SRID)
         except (TypeError, Path.DoesNotExist, ValueError) as e:
-            logger.warning("User input error: %s" % e)
+            logger.warning("User input error: %s", e)
             raise ValidationError(self.error_messages["invalid_snap_line"])

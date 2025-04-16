@@ -159,7 +159,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
             try:
                 return Signage.objects.existing().get(pk=pk_infra)
             except Signage.DoesNotExist:
-                logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
+                logger.warning("Intervention on unknown infrastructure %s", pk_infra)
         return None
 
     def get_initial(self):

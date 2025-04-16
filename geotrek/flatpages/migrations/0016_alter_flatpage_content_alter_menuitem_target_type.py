@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0015_set_open_in_new_tab_false_for_page_target'),
+        ("flatpages", "0015_set_open_in_new_tab_false_for_page_target"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='flatpage',
-            name='content',
-            field=models.TextField(blank=True, default='', help_text='HTML content', verbose_name='Content'),
+            model_name="flatpage",
+            name="content",
+            field=models.TextField(
+                blank=True, default="", help_text="HTML content", verbose_name="Content"
+            ),
         ),
         migrations.AlterField(
-            model_name='menuitem',
-            name='target_type',
-            field=models.CharField(blank=True, choices=[('', 'Empty'), ('page', 'Page'), ('link', 'Link')], default='', max_length=10, verbose_name='Target type'),
+            model_name="menuitem",
+            name="target_type",
+            field=models.CharField(
+                blank=True,
+                choices=[("", "Empty"), ("page", "Page"), ("link", "Link")],
+                default="",
+                max_length=10,
+                verbose_name="Target type",
+            ),
         ),
     ]

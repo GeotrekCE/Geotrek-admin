@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0042_rename_access_tmp_signage_access'),
+        ("signage", "0042_rename_access_tmp_signage_access"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='signage',
-            name='eid',
-            field=models.CharField(blank=True, default='', max_length=1024, verbose_name='External id'),
+            model_name="signage",
+            name="eid",
+            field=models.CharField(
+                blank=True, default="", max_length=1024, verbose_name="External id"
+            ),
         ),
     ]

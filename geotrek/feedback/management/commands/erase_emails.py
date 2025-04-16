@@ -36,10 +36,9 @@ class Command(BaseCommand):
 
         if not options["dry_run"]:
             updated_reports = older_reports.update(email="")
-            logger.info("{0} email(s) anonymised".format(updated_reports))
+            logger.info("%s email(s) anonymised", updated_reports)
         else:
             logger.info(
-                "Dry run mode,{0} report(s) should be modified".format(
-                    older_reports.count(),
-                )
+                "Dry run mode,{0} report(s) should be modified",
+                older_reports.count(),
             )

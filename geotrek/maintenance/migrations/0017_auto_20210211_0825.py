@@ -22,9 +22,8 @@ def fix_topology_kind(apps, schema_editor):
     n = topos.update(kind="INTERVENTION")
     if n:
         logger.info(
-            "\n  WARNING! Updated {} topologies directly linked to interventions with a wrong kind".format(
-                n
-            )
+            "\n  WARNING! Updated %s topologies directly linked to interventions with a wrong kind",
+            n,
         )
 
 

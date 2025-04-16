@@ -166,7 +166,7 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
         try:
             return thumbnailer.get_thumbnail(aliases.get("thumbnail"))
         except (IOError, InvalidImageFormatError):
-            logger.warning(_("Image %s invalid or missing from disk.") % self.photo)
+            logger.warning("Image %s invalid or missing from disk.", self.photo)
             return None
 
     @property
@@ -177,7 +177,7 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
         try:
             return thumbnailer.get_thumbnail(aliases.get("medium"))
         except (IOError, InvalidImageFormatError):
-            logger.warning(_("Image %s invalid or missing from disk.") % self.photo)
+            logger.warning("Image %s invalid or missing from disk.", self.photo)
             return None
 
     @property

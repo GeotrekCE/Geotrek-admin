@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0038_remove_accessibilityattachment_creation_date_and_more'),
+        ("common", "0038_remove_accessibilityattachment_creation_date_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recordsource',
-            name='website',
-            field=models.URLField(blank=True, default='', max_length=256, verbose_name='Website'),
+            model_name="recordsource",
+            name="website",
+            field=models.URLField(
+                blank=True, default="", max_length=256, verbose_name="Website"
+            ),
         ),
         migrations.AlterField(
-            model_name='targetportal',
-            name='facebook_id',
-            field=models.CharField(blank=True, default='', help_text='Facebook ID for Geotrek Rando', max_length=20, verbose_name='Facebook ID'),
+            model_name="targetportal",
+            name="facebook_id",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Facebook ID for Geotrek Rando",
+                max_length=20,
+                verbose_name="Facebook ID",
+            ),
         ),
     ]

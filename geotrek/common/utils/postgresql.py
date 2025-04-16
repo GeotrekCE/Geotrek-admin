@@ -48,7 +48,7 @@ def load_sql_files(app, stage):
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
-            logger.info("Loading initial SQL data from '%s'" % sql_file)
+            logger.info("Loading initial SQL data from '%s'", sql_file)
             template = get_template(sql_file)
             context_settings = settings.__dict__["_wrapped"].__dict__
             # fix languages in sql TEMPLATES
@@ -67,9 +67,7 @@ def load_sql_files(app, stage):
 
             cursor.execute(rendered_sql)
         except Exception as e:
-            logger.critical(
-                "Failed to install custom SQL file '%s': %s\n" % (sql_file, e)
-            )
+            logger.critical("Failed to install custom SQL file '%s': %s\n", sql_file, e)
             traceback.print_exc()
             raise
 
@@ -111,7 +109,7 @@ def move_models_to_schemas(app):
     for schema_name in table_schemas.keys():
         sql = "CREATE SCHEMA IF NOT EXISTS %s;" % model_schema
         cursor.execute(sql)
-        logger.info("Created schema %s" % model_schema)
+        logger.info("Created schema %s", model_schema)
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:
@@ -120,7 +118,7 @@ def move_models_to_schemas(app):
             if cursor.fetchone():
                 sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
                 cursor.execute(sql)
-                logger.info("Moved %s to schema %s" % (table_name, schema_name))
+                logger.info("Moved %s to schema %s", table_name, schema_name)
 
     # For Django, search_path is set in connection options.
     # But when accessing the database using QGis or ETL, search_path must be

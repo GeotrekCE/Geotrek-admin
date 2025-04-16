@@ -122,8 +122,8 @@ class CommonForm(MapEntityForm):
         settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, None)
         if settings_key is None:
             logger.warning(
-                "No value set in MAP_SETTINGS dictonary for form class "
-                + self.__class__.__name__
+                "No value set in MAP_SETTINGS dictionary for form class %s",
+                self.__class__.__name__,
             )
         self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
 
