@@ -493,6 +493,11 @@ class Line(models.Model):
     time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
 
+    class Meta:
+        unique_together = (("blade", "number"),)
+        verbose_name = _("Line")
+        verbose_name_plural = _("Lines")
+
     def __str__(self):
         return self.linecode
 
@@ -520,11 +525,6 @@ class Line(models.Model):
         return settings.LINE_TIME_FORMAT.format(
             hours=hours, minutes=minutes, seconds=seconds
         )
-
-    class Meta:
-        unique_together = (("blade", "number"),)
-        verbose_name = _("Line")
-        verbose_name_plural = _("Lines")
 
 
 @receiver(pre_delete, sender=Blade)

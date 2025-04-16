@@ -140,7 +140,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         verbose_name=_("Implantation year"), null=True
     )
     eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
+        verbose_name=_("External id"), max_length=1024, blank=True, default=""
     )
     provider = models.CharField(
         verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True

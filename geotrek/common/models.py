@@ -273,7 +273,7 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
 class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=80)
     website = models.URLField(
-        verbose_name=_("Website"), max_length=256, blank=True, null=True
+        verbose_name=_("Website"), max_length=256, blank=True, default=""
     )
 
     class Meta:
@@ -305,7 +305,6 @@ class TargetPortal(TimeStampedModelMixin, models.Model):
         verbose_name=_("Facebook ID"),
         max_length=20,
         help_text=_("Facebook ID for Geotrek Rando"),
-        null=True,
         blank=True,
         default=settings.FACEBOOK_APP_ID,
     )
@@ -340,13 +339,13 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
         verbose_name=_("Name"), max_length=256, blank=False, null=False, unique=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
         ordering = ("name",)
+
+    def __str__(self):
+        return self.name
 
 
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
@@ -381,11 +380,11 @@ class RatingScaleMixin(TimeStampedModelMixin, models.Model):
         help_text=_("Within a practice. Alphabetical order if blank"),
     )
 
-    def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
-
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice.name)
 
 
 class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
@@ -399,11 +398,11 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     )
     color = ColorField(verbose_name=_("Color"), blank=True)
 
-    def __str__(self):
-        return "{} : {}".format(self.scale.name, self.name)
-
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return "{} : {}".format(self.scale.name, self.name)
 
 
 class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):

@@ -83,15 +83,15 @@ class NoDeleteMixin(models.Model):
     )
     objects = NoDeleteManager()
 
+    class Meta:
+        abstract = True
+
     def delete(self, force=False, using=None, **kwargs):
         if force:
             super().delete(using, **kwargs)
         else:
             self.deleted = True
             self.save(using=using)
-
-    class Meta:
-        abstract = True
 
     def reload(self, fromdb):
         """Reload fields computed at DB-level (triggers)"""
