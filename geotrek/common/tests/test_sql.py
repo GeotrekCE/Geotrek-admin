@@ -131,26 +131,27 @@ class ExtraSQLTest(TestCase):
         tmp_file.close()
         self.assertEqual(result[0][0], "test")
 
-    @mock.patch("geotrek.common.utils.postgresql.logger")
     @mock.patch("traceback.print_exc")
-    def test_failed_custom_sql(self, mock_traceback, mocked):
-        tmp_file = NamedTemporaryFile(
-            suffix=".sql",
-            prefix="test_",
-            mode="w+",
-            dir=os.path.join(settings.VAR_DIR, "conf", "extra_sql", "common"),
-        )
-        tmp_file.write("""
-        ERROR SQL
-        """)
-        tmp_file.flush()
-        common = apps.get_app_config("common")
-        with self.assertRaisesRegex(Exception, 'syntax error at or near "ERROR"'):
-            load_sql_files(common, "test")
-        mocked.critical.assert_called_once_with(
-            f"""Failed to install custom SQL file '{tmp_file.name}': syntax error at or near "ERROR"\nLINE 2:         ERROR SQL\n                ^\n\n"""
-        )
-        tmp_file.close()
+    def test_failed_custom_sql(self, mock_traceback):
+        with self.assertLogs("geotrek.common.utils.postgresql", "CRITICAL") as cm:
+            tmp_file = NamedTemporaryFile(
+                suffix=".sql",
+                prefix="test_",
+                mode="w+",
+                dir=os.path.join(settings.VAR_DIR, "conf", "extra_sql", "common"),
+            )
+            tmp_file.write("""
+            ERROR SQL
+            """)
+            tmp_file.flush()
+            common = apps.get_app_config("common")
+            with self.assertRaisesRegex(Exception, 'syntax error at or near "ERROR"'):
+                load_sql_files(common, "test")
+            self.assertTrue(
+                f"Failed to install custom SQL file '{tmp_file.name}': syntax error at or near \"ERROR\""
+                in cm.output[0]
+            )
+            tmp_file.close()
 
     @classmethod
     def tearDownClass(cls):

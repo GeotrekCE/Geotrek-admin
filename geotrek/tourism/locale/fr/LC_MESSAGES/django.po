@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-13 14:21+0000\n"
+"POT-Creation-Date: 2025-04-16 18:12+0200\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -128,10 +128,6 @@ msgstr "Lieux de renseignement"
 
 msgid "Information desks"
 msgstr "Lieux de renseignement"
-
-#, python-format
-msgid "Image %s invalid or missing from disk."
-msgstr "L'image %s est invalide ou absente sur le disque."
 
 msgid "Point"
 msgstr "Point"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-13 14:20+0000\n"
+"POT-Creation-Date: 2025-04-16 18:12+0200\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -125,10 +125,6 @@ msgstr "Informationspunkte"
 
 msgid "Information desks"
 msgstr "Informationspunkte"
-
-#, python-format
-msgid "Image %s invalid or missing from disk."
-msgstr "Das %s Image ist ungültig oder fehlt auf der Festplatte."
 
 msgid "Point"
 msgstr "Punkt"

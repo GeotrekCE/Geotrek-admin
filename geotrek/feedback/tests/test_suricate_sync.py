@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import uuid
 from unittest import mock
@@ -148,28 +149,30 @@ class SuricateTests(TestCase):
 
 class SuricateAPITests(SuricateTests):
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
-    @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_statuses(self, mocked_get, mocked_logger):
+    def test_get_statuses(self, mocked_get):
         """Test GET requests on Statuses endpoint creates statuses objects"""
-        self.build_get_request_patch(mocked_get)
-        call_command("sync_suricate", statuses=True)
-        self.assertEqual(ReportStatus.objects.count(), 6)
-        mocked_logger.info.assert_called_with(
-            "New status - id: classified, label: Classé sans suite"
-        )
+        with self.assertLogs("geotrek.feedback.parsers", level=logging.INFO) as logger:
+            self.build_get_request_patch(mocked_get)
+            call_command("sync_suricate", statuses=True)
+            self.assertEqual(ReportStatus.objects.count(), 6)
+            self.assertTrue(
+                "INFO:geotrek.feedback.parsers:New status - id: classified, label: Classé sans suite"
+                in logger.output[-1]
+            )
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
-    @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_activities(self, mocked_get, mocked_logger):
+    def test_get_activities(self, mocked_get):
         """Test GET requests on Activities endpoint creates statuses objects"""
-        self.build_get_request_patch(mocked_get)
-        call_command("sync_suricate", activities=True)
-        self.assertEqual(ReportActivity.objects.count(), 32)
-        mocked_logger.info.assert_called_with(
-            "New activity - id: 51, label: Roller, Skateboard"
-        )
+        with self.assertLogs("geotrek.feedback.parsers", "INFO") as logger:
+            self.build_get_request_patch(mocked_get)
+            call_command("sync_suricate", activities=True)
+            self.assertEqual(ReportActivity.objects.count(), 32)
+            self.assertTrue(
+                "NFO:geotrek.feedback.parsers:New activity - id: 51, label: Roller, Skateboard"
+                in logger.output[-1]
+            )
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.helpers.requests.get")

@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from functools import partial
-from unittest import mock, skipIf
+from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -3655,7 +3655,7 @@ class FlatPageTestCase(TestCase):
             {
                 "id": self.page1.pk,
                 "title": {"en": "AAA", "es": None, "fr": None, "it": None},
-                "content": {"en": "Blah", "es": None, "fr": None, "it": None},
+                "content": {"en": "Blah", "es": "", "fr": "", "it": ""},
                 "portals": [self.portal.pk],
                 "published": {"en": True, "es": False, "fr": True, "it": False},
                 "source": [self.source.pk],
@@ -3669,7 +3669,7 @@ class FlatPageTestCase(TestCase):
             {
                 "id": self.page2.pk,
                 "title": {"en": "BBB", "es": None, "fr": None, "it": None},
-                "content": {"en": "Blbh", "es": None, "fr": None, "it": None},
+                "content": {"en": "Blbh", "es": "", "fr": "", "it": ""},
                 "portals": [],
                 "published": {"en": True, "es": False, "fr": False, "it": False},
                 "source": [],
@@ -3966,7 +3966,7 @@ class FlatPageTestCase(TestCase):
             {
                 "id": self.page1.pk,
                 "title": {"en": "AAA", "es": None, "fr": None, "it": None},
-                "content": {"en": "Blah", "es": None, "fr": None, "it": None},
+                "content": {"en": "Blah", "es": "", "fr": "", "it": ""},
                 "portals": [self.portal.pk],
                 "published": {"en": True, "es": False, "fr": True, "it": False},
                 "source": [self.source.pk],
@@ -4104,7 +4104,6 @@ class MenuItemTestCase(TestCase):
             published_en=True,
             published_fr=True,
             pictogram=get_dummy_uploaded_image("menu_item_picto.png"),
-            target_type=None,
         )
         menu_item.portals.add(portal1, portal2)
         user = authent_models.User.objects.create(username="test_user")
@@ -4386,7 +4385,7 @@ class MenuItemTestCase(TestCase):
                     "es": None,
                     "it": None,
                 },
-                "target_type": None,
+                "target_type": "",
                 "published": {
                     "en": True,
                     "fr": False,
@@ -6648,34 +6647,43 @@ class CreateReportsAPITest(TestCase):
         self.assertRegex(report.attachments.first().attachment_file.name, regexp)
         self.assertTrue(report.attachments.first().is_image)
 
-    @mock.patch("geotrek.api.v2.views.feedback.logger")
-    def test_reports_with_failed_image(self, mock_logger):
-        self.data["image"] = get_dummy_uploaded_image_svg()
-        self.data["comment"] = "We have a problem"
-        new_report_id = self.post_report_data(self.data).data.get("id")
-        self.assertTrue(
-            feedback_models.Report.objects.filter(email="yeah@you.com").exists()
-        )
-        report = feedback_models.Report.objects.get(pk=new_report_id)
-        self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(
-            f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>"
-        )
-        self.assertEqual(report.attachments.count(), 0)
+    def test_reports_with_failed_image(self):
+        with self.assertLogs(
+            logger="geotrek.api.v2.views.feedback", level="ERROR"
+        ) as cm:
+            self.data["image"] = get_dummy_uploaded_image_svg()
+            self.data["comment"] = "We have a problem"
+            new_report_id = self.post_report_data(self.data).data.get("id")
+            self.assertTrue(
+                feedback_models.Report.objects.filter(email="yeah@you.com").exists()
+            )
+            report = feedback_models.Report.objects.get(pk=new_report_id)
+            self.assertEqual(report.comment, "We have a problem")
+            self.assertTrue(
+                cm.output[0].endswith(
+                    f"Failed to convert attachment dummy_img.svg for report {new_report_id}: cannot identify image file <InMemoryUploadedFile: dummy_img.svg (image/svg+xml)>"
+                )
+            )
+            self.assertEqual(report.attachments.count(), 0)
 
-    @mock.patch("geotrek.api.v2.views.feedback.logger")
-    def test_reports_with_bad_file_format(self, mock_logger):
-        self.data["image"] = get_dummy_uploaded_document()
-        self.data["comment"] = "We have a problem"
-        new_report_id = self.post_report_data(self.data).data.get("id")
-        self.assertTrue(
-            feedback_models.Report.objects.filter(email="yeah@you.com").exists()
-        )
-        report = feedback_models.Report.objects.get(pk=new_report_id)
-        self.assertEqual(report.comment, "We have a problem")
-        mock_logger.error.assert_called_with(
-            f"Invalid attachment dummy_file.odt for report {new_report_id} : {{'attachment_file': ['File mime type “text/plain” is not allowed for “odt”.']}}"
-        )
+    def test_reports_with_bad_file_format(self):
+        with self.assertLogs(
+            logger="geotrek.api.v2.views.feedback", level="ERROR"
+        ) as cm:
+            self.data["image"] = get_dummy_uploaded_document()
+            self.data["comment"] = "We have a problem"
+            new_report_id = self.post_report_data(self.data).data.get("id")
+            self.assertTrue(
+                feedback_models.Report.objects.filter(email="yeah@you.com").exists()
+            )
+            report = feedback_models.Report.objects.get(pk=new_report_id)
+            self.assertEqual(report.comment, "We have a problem")
+            self.assertTrue(
+                cm.output[0].endswith(
+                    f"Invalid attachment dummy_file.odt for report {new_report_id}: {{'attachment_file': ['File mime type “text/plain” is not allowed for “odt”.']}}"
+                )
+            )
+
         self.assertEqual(report.attachments.count(), 0)
 
 

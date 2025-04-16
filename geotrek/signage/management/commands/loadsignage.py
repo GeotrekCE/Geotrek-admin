@@ -402,9 +402,7 @@ class Command(BaseCommand):
                         year = None
 
                     eid = (
-                        feature.get(field_eid)
-                        if field_eid in available_fields
-                        else None
+                        feature.get(field_eid) if field_eid in available_fields else ""
                     )
                     code = (
                         feature.get(field_code)
