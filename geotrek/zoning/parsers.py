@@ -1,8 +1,10 @@
-from django.contrib.gis.geos import MultiPolygon
+from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.utils.translation import gettext as _
+from django.contrib.gis.geos import fromstr
+from django.conf import settings
 
-from geotrek.common.parsers import GlobalImportError, ShapeParser
-from geotrek.zoning.models import City
+from geotrek.common.parsers import GlobalImportError, ShapeParser, OpenStreetMapParser
+from geotrek.zoning.models import City, District
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -37,3 +39,46 @@ class CityParser(ShapeParser):
                 "Should be (Multi)Polygon, not {geom_type}"
             ).format(src=src, geom_type=val.geom_type)
         )
+
+
+class OpenStreetMapDistrictParser(OpenStreetMapParser):
+    """Parser to import district from OpenStreetMap"""
+    osm_element_type = "relation"
+
+    model = District
+    fields = {
+        "name": "tags.name",
+        "geom": ("type", "id"),
+    }
+    constant_fields = {
+        "published": True,
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def filter_geom(self, src, val):
+        element_type, id = val
+
+        osm_id = element_type[0].upper() + str(id)
+
+        url = "https://nominatim.openstreetmap.org/lookup"
+        params = {
+            "osm_ids": osm_id,
+            "polygon_text": 1,
+            "format": "json",
+            "polygon_threshold": 0.0001
+        }
+        response = self.request_or_retry(url, params=params)
+        root = response.json()[0]
+
+        wkt = root["geotext"]
+        geom = fromstr(wkt, srid=self.osm_srid)
+
+        geom.srid = self.osm_srid
+        geom.transform(settings.SRID)
+
+        if type(geom) == Polygon:
+            geom = MultiPolygon(geom)
+
+        return geom
