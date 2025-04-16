@@ -887,7 +887,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             stdout=output,
         )
         self.assertIn(
-            "An error occured in children generation : DownloadImportError",
+            "An error occured in children generation: DownloadImportError",
             output.getvalue(),
         )
 
