@@ -227,9 +227,7 @@ class Command(BaseCommand):
                 available_fields = layer.fields
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 if not self.check_fields_available_with_default(
                     available_fields,
@@ -265,13 +263,11 @@ class Command(BaseCommand):
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
                             self.stdout.write(
-                                "Signages will be linked to {}".format(structure)
+                                f"Signages will be linked to {structure}"
                             )
                     except Structure.DoesNotExist:
                         self.stdout.write(
-                            "Structure {} set in options doesn't exist".format(
-                                structure_default
-                            )
+                            f"Structure {structure_default} set in options doesn't exist"
                         )
                         break
 
@@ -321,7 +317,7 @@ class Command(BaseCommand):
                     )
                     if created and verbosity:
                         self.stdout.write(
-                            "- SignageType '{}' created".format(signage_type)
+                            f"- SignageType '{signage_type}' created"
                         )
 
                     condition = (
@@ -338,9 +334,7 @@ class Command(BaseCommand):
                         )
                         if created and verbosity:
                             self.stdout.write(
-                                "- Condition Type '{}' created".format(
-                                    signage_condition
-                                )
+                                f"- Condition Type '{signage_condition}' created"
                             )
                     else:
                         signage_condition = None
@@ -356,7 +350,7 @@ class Command(BaseCommand):
                             structure=structure if use_structure else None,
                         )
                         if created and verbosity:
-                            self.stdout.write("- Sealing '{}' created".format(sealing))
+                            self.stdout.write(f"- Sealing '{sealing}' created")
                     else:
                         sealing = None
 
@@ -371,7 +365,7 @@ class Command(BaseCommand):
                             structure=structure if use_structure else None,
                         )
                         if created and verbosity:
-                            self.stdout.write("- Organism '{}' created".format(manager))
+                            self.stdout.write(f"- Organism '{manager}' created")
                     else:
                         manager = None
 
@@ -427,7 +421,7 @@ class Command(BaseCommand):
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
                 self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
+                    self.style.NOTICE(f"{self.counter} objects created.")
                 )
 
         except Exception:

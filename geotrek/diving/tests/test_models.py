@@ -15,4 +15,4 @@ class DiveModelTest(TestCase):
         l2 = LevelFactory.create()
         d = DiveFactory()
         d.levels.set([l1, l2])
-        self.assertEqual(d.levels_display, "{0}, {1}".format(l1, l2))
+        self.assertEqual(d.levels_display, f"{l1}, {l2}")

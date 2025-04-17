@@ -258,9 +258,7 @@ class ReportViewsTest(CommonTest):
     def test_api_datatables_list_for_model_in_suricate_mode(self):
         self.report = feedback_factories.ReportFactory()
         with override_settings(SURICATE_WORKFLOW_ENABLED=True):
-            list_url = "/api/{modelname}/drf/{modelname}s.datatables".format(
-                modelname=self.model._meta.model_name
-            )
+            list_url = f"/api/{self.model._meta.model_name}/drf/{self.model._meta.model_name}s.datatables"
             response = self.client.get(list_url)
             self.assertEqual(response.status_code, 200, f"{list_url} not found")
             content_json = response.json()

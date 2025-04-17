@@ -458,7 +458,7 @@ class Path(
         if (self.pk and path_to_merge) and (self.pk != path_to_merge.pk):
             conn = connections[DEFAULT_DB_ALIAS]
             cursor = conn.cursor()
-            sql = "SELECT ft_merge_path({}, {});".format(self.pk, path_to_merge.pk)
+            sql = f"SELECT ft_merge_path({self.pk}, {path_to_merge.pk});"
             cursor.execute(sql)
 
             result = cursor.fetchall()[0][0]
@@ -1036,7 +1036,7 @@ class PathSource(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.source, self.structure.name)
+            return f"{self.source} ({self.structure.name})"
         return self.source
 
 
@@ -1062,7 +1062,7 @@ class Stake(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.stake, self.structure.name)
+            return f"{self.stake} ({self.structure.name})"
         return self.stake
 
 
@@ -1076,7 +1076,7 @@ class Comfort(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.comfort, self.structure.name)
+            return f"{self.comfort} ({self.structure.name})"
         return self.comfort
 
 
@@ -1090,7 +1090,7 @@ class Usage(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.usage, self.structure.name)
+            return f"{self.usage} ({self.structure.name})"
         return self.usage
 
 
@@ -1104,7 +1104,7 @@ class Network(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.network, self.structure.name)
+            return f"{self.network} ({self.structure.name})"
         return self.network
 
 
@@ -1190,7 +1190,7 @@ class TrailCategory(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:
@@ -1207,7 +1207,7 @@ class CertificationLabel(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:
@@ -1224,7 +1224,7 @@ class CertificationStatus(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:

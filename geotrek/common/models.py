@@ -122,9 +122,7 @@ class AccessibilityAttachment(TimeStampedModelMixin):
         default_permissions = ()
 
     def __str__(self):
-        return "{} attached {}".format(
-            self.creator.username, self.attachment_accessibility_file.name
-        )
+        return f"{self.creator.username} attached {self.attachment_accessibility_file.name}"
 
     def save(self, *args, **kwargs):
         force_refresh_suffix = kwargs.pop("force_refresh_suffix", False)
@@ -201,7 +199,7 @@ class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.organism, self.structure.name)
+            return f"{self.organism} ({self.structure.name})"
         return self.organism
 
 
@@ -220,7 +218,7 @@ class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.type, self.structure.name)
+            return f"{self.type} ({self.structure.name})"
         return self.type
 
 
@@ -384,7 +382,7 @@ class RatingScaleMixin(TimeStampedModelMixin, models.Model):
         abstract = True
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
+        return f"{self.name} ({self.practice.name})"
 
 
 class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
@@ -402,7 +400,7 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
         abstract = True
 
     def __str__(self):
-        return "{} : {}".format(self.scale.name, self.name)
+        return f"{self.scale.name} : {self.name}"
 
 
 class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):

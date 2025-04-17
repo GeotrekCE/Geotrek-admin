@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 17:59+0200\n"
+"POT-Creation-Date: 2025-04-16 18:22+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -357,9 +357,9 @@ msgstr "Moyen d'accès"
 msgid "Access means"
 msgstr "Moyens d'accès"
 
-#, python-brace-format
-msgid "Line {line}"
-msgstr "Ligne {line}"
+#, python-format
+msgid "Line %(line)s"
+msgstr "Ligne %(line)s"
 
 #, python-brace-format
 msgid "Missing {required}field '{src}'"
@@ -369,13 +369,13 @@ msgstr "Le champ {required}'{src}' est manquant"
 msgid "Destination field '{dst}' not in natural keys configuration"
 msgstr "Le champ de destination '{dst}' n'est pas dans les clés naturelles"
 
-#, python-brace-format
-msgid "Null value not allowed for field '{src}'"
-msgstr "La valeur null n'est pas autorisée pour le champ '{src}'"
+#, python-format
+msgid "Null value not allowed for field '%(src)s'"
+msgstr "La valeur null n'est pas autorisée pour le champ '%(src)s'"
 
-#, python-brace-format
-msgid "Blank value not allowed for field '{src}'"
-msgstr "La valeur blank n'est pas autorisée pour le champ '{src}'"
+#, python-format
+msgid "Blank value not allowed for field '%(src)s'"
+msgstr "La valeur blank n'est pas autorisée pour le champ '%(src)s'"
 
 #, python-brace-format
 msgid "Eid field '{eid_dst}' missing in parser configuration"
@@ -689,12 +689,16 @@ msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr "%(obj)s a changé d'état, et a besoin d'être validé pour être publié."
 
 #, python-format
-msgid "%s days"
-msgstr "%s jours"
+msgid "%(nb)s days"
+msgstr "%(nb)s jours"
 
 #, python-format
 msgid "%s day"
 msgstr "%s jour"
+
+#, python-format
+msgid "%s days"
+msgstr "%s jours"
 
 #, python-format
 msgid "%(hour)s h %(min)s"

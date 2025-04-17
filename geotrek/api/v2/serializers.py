@@ -285,12 +285,7 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
             return ""
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get("apiv2"))
-        except (
-            IOError,
-            InvalidImageFormatError,
-            DecompressionBombError,
-            NoSourceGenerator,
-        ):
+        except (OSError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
             return ""
         thumbnail.author = obj.author
         thumbnail.legend = obj.legend
@@ -474,7 +469,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 {
                     "id": obj.id * 100 + i,
                     "label": get_translation_or_dict(
-                        "type{}_label".format(i), self, obj
+                        f"type{i}_label", self, obj
                     ),
                     "values": [
                         {
@@ -588,7 +583,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         def get_types(self, obj):
             return {
                 obj.category.id * 100 + i: [
-                    t.id for t in getattr(obj, "type{}".format(i)).all()
+                    t.id for t in getattr(obj, f"type{i}").all()
                 ]
                 for i in (1, 2)
             }
@@ -1268,7 +1263,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
             return get_translation_or_dict("description", self, obj)
 
         def get_period(self, obj):
-            return [getattr(obj.species, "period{:02}".format(p)) for p in range(1, 13)]
+            return [getattr(obj.species, f"period{p:02}") for p in range(1, 13)]
 
         def get_elevation(self, obj):
             return obj.species.radius

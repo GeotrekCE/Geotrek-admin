@@ -154,24 +154,18 @@ class CommandAttachmentsTests(TestCase):
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertTrue(
             os.path.exists(
-                "{path}.120x120_q85_crop.png".format(
-                    path=self.picture.attachment_file.path
-                )
+                f"{self.picture.attachment_file.path}.120x120_q85_crop.png"
             )
         )
         self.assertEqual(
             Thumbnail.objects.first().name,
-            "{name}.120x120_q85_crop.png".format(
-                name=self.picture.attachment_file.name
-            ),
+            f"{self.picture.attachment_file.name}.120x120_q85_crop.png",
         )
         call_command("remove_thumbnails", stdout=output)
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertFalse(
             os.path.exists(
-                "{name}.120x120_q85_crop.png".format(
-                    name=self.picture.attachment_file.path
-                )
+                f"{self.picture.attachment_file.path}.120x120_q85_crop.png"
             )
         )
         self.assertEqual(Thumbnail.objects.count(), 0)

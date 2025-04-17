@@ -38,7 +38,7 @@ class AdminSiteTest(TestCase):
     def test_flatpages_are_updatable(self):
         page = FlatPageFactory(content="One looove")
         response = self.client.get(
-            "/admin/flatpages/flatpage/{0}/change/".format(page.pk)
+            f"/admin/flatpages/flatpage/{page.pk}/change/"
         )
         self.assertContains(response, "One looove")
 

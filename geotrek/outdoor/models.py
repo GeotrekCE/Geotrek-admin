@@ -389,7 +389,7 @@ class Site(
         verbose = [
             str(practice)
             if practice == self.practice
-            else "<i>{}</i>".format(escape(practice))
+            else f"<i>{escape(practice)}</i>"
             for practice in practices
         ]
         return ", ".join(verbose)

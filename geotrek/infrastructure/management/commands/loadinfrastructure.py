@@ -172,9 +172,7 @@ class Command(BaseCommand):
             for layer in data_source:
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 available_fields = layer.fields
                 if (
@@ -185,9 +183,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_infrastructure_type
-                            )
+                            f"Field '{field_infrastructure_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -205,9 +201,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_infrastructure_category
-                            )
+                            f"Field '{field_infrastructure_category}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -219,7 +213,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_name)
+                            f"Field '{field_name}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -234,9 +228,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_condition_type
-                            )
+                            f"Field '{field_condition_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -249,9 +241,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_structure_type
-                            )
+                            f"Field '{field_structure_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -265,21 +255,17 @@ class Command(BaseCommand):
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
                             self.stdout.write(
-                                "Infrastructures will be linked to {}".format(structure)
+                                f"Infrastructures will be linked to {structure}"
                             )
                     except Structure.DoesNotExist:
                         self.stdout.write(
-                            "Structure {} set in options doesn't exist".format(
-                                structure_default
-                            )
+                            f"Structure {structure_default} set in options doesn't exist"
                         )
                         break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_description
-                            )
+                            f"Field '{field_description}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -293,9 +279,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_implantation_year
-                            )
+                            f"Field '{field_implantation_year}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -306,7 +290,7 @@ class Command(BaseCommand):
                 if field_eid and field_eid not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_eid)
+                            f"Field '{field_eid}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -384,7 +368,7 @@ class Command(BaseCommand):
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
                 self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
+                    self.style.NOTICE(f"{self.counter} objects created.")
                 )
 
         except Exception:
@@ -412,7 +396,7 @@ class Command(BaseCommand):
             label=type, type=category, structure=structure if use_structure else None
         )
         if created and verbosity:
-            self.stdout.write("- InfrastructureType '{}' created".format(infra_type))
+            self.stdout.write(f"- InfrastructureType '{infra_type}' created")
 
         if condition:
             condition_type, created = InfrastructureCondition.objects.get_or_create(
@@ -420,7 +404,7 @@ class Command(BaseCommand):
             )
             if created and verbosity:
                 self.stdout.write(
-                    "- Condition Type '{}' created".format(condition_type)
+                    f"- Condition Type '{condition_type}' created"
                 )
         else:
             condition_type = None

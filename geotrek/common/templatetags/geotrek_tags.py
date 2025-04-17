@@ -55,7 +55,7 @@ def duration(value):
 
     if duration.day > 1:
         if duration.hour > 0 or duration.minute > 0:
-            final_duration = _("%s days" % duration.day)
+            final_duration = _("%(nb)s days") % {"nb": duration.day}
 
         else:
             if duration.day - 1 == 1:

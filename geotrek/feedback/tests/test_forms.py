@@ -510,8 +510,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
-        long_txt = "{0:.6f}".format(long)
-        lat_txt = "{0:.6f}".format(lat)
+        long_txt = f"{long:.6f}"
+        lat_txt = f"{lat:.6f}"
         check = md5(
             (
                 SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
@@ -536,8 +536,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
-        long_txt = "{0:.6f}".format(long)
-        lat_txt = "{0:.6f}".format(lat)
+        long_txt = f"{long:.6f}"
+        lat_txt = f"{lat:.6f}"
         check = md5(
             (
                 SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER

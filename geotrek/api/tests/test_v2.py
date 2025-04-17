@@ -2726,18 +2726,16 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(response.json()["results"]), 1)
         response = self.get_touristiccontent_list(
             {
-                "types": "{},{}".format(
-                    self.content.type1.all()[0].pk, self.content.type2.all()[0].pk
-                )
+                "types": f"{self.content.type1.all()[0].pk},{self.content.type2.all()[0].pk}"
             }
         )
         self.assertEqual(len(response.json()["results"]), 1)
         response = self.get_touristiccontent_list(
-            {"types": "{},{}".format(self.content.type1.all()[0].pk, tct1.pk)}
+            {"types": f"{self.content.type1.all()[0].pk},{tct1.pk}"}
         )
         self.assertEqual(len(response.json()["results"]), 1)
         response = self.get_touristiccontent_list(
-            {"types": "{},{}".format(self.content.type2.all()[0].pk, tct1.pk)}
+            {"types": f"{self.content.type2.all()[0].pk},{tct1.pk}"}
         )
         self.assertEqual(len(response.json()["results"]), 0)
 
@@ -3342,7 +3340,7 @@ class TrekRatingScaleTestCase(TestCase):
 
     def test_detail(self):
         response = self.client.get(
-            "/api/v2/trek_ratingscale/{}/".format(self.scale1.pk)
+            f"/api/v2/trek_ratingscale/{self.scale1.pk}/"
         )
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
@@ -3419,7 +3417,7 @@ class OutdoorRatingScaleTestCase(TestCase):
 
     def test_detail(self):
         response = self.client.get(
-            "/api/v2/outdoor_ratingscale/{}/".format(self.scale1.pk)
+            f"/api/v2/outdoor_ratingscale/{self.scale1.pk}/"
         )
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
@@ -3499,7 +3497,7 @@ class TrekRatingTestCase(TestCase):
         )
 
     def test_detail(self):
-        response = self.client.get("/api/v2/trek_rating/{}/".format(self.rating2.pk))
+        response = self.client.get(f"/api/v2/trek_rating/{self.rating2.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
@@ -3581,7 +3579,7 @@ class OutdoorRatingTestCase(TestCase):
         )
 
     def test_detail(self):
-        response = self.client.get("/api/v2/outdoor_rating/{}/".format(self.rating1.pk))
+        response = self.client.get(f"/api/v2/outdoor_rating/{self.rating1.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
@@ -3959,7 +3957,7 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(parent_page_repr["children"], [visible_child_page.id])
 
     def test_detail(self):
-        response = self.client.get("/api/v2/flatpage/{}/".format(self.page1.pk))
+        response = self.client.get(f"/api/v2/flatpage/{self.page1.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
@@ -6706,12 +6704,8 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
             "elevation": None,
             "attachments": [],
             "contact": '<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            "kml_url": "http://testserver/api/en/sensitiveareas/{pk}.kml".format(
-                pk=self.pk
-            ),
-            "openair_url": "http://testserver/api/en/sensitiveareas/{pk}/openair".format(
-                pk=self.pk
-            ),
+            "kml_url": f"http://testserver/api/en/sensitiveareas/{self.pk}.kml",
+            "openair_url": f"http://testserver/api/en/sensitiveareas/{self.pk}/openair",
             "info_url": self.species.url,
             "species_id": self.species.id,
             "name": self.species.name,
@@ -6768,7 +6762,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
         self.expected_result["id"] = self.pk
         self.expected_result["geometry"] = self.expected_geom
         self.expected_result["url"] = (
-            "http://testserver/api/v2/sensitivearea/{}/?format=json".format(self.pk)
+            f"http://testserver/api/v2/sensitivearea/{self.pk}/?format=json"
         )
         self.expected_geo_result = {
             "bbox": [3.0, 46.5, 3.0000391, 46.500027],
@@ -6778,7 +6772,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
             "properties": dict(self.expected_properties),
         }
         self.expected_geo_result["properties"]["url"] = (
-            "http://testserver/api/v2/sensitivearea/{}/?format=geojson".format(self.pk)
+            f"http://testserver/api/v2/sensitivearea/{self.pk}/?format=geojson"
         )
 
     @override_settings(

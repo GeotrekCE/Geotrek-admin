@@ -58,9 +58,7 @@ def discover_available_parsers(request):
                 label = cls.label
             if not label or not cls.model:
                 continue
-            codename = "{}.import_{}".format(
-                cls.model._meta.app_label, cls.model._meta.model_name
-            )
+            codename = f"{cls.model._meta.app_label}.import_{cls.model._meta.model_name}"
             if not request.user.has_perm(codename):
                 continue
             if not getattr(cls, "url", None) and not getattr(cls, "base_url", None):

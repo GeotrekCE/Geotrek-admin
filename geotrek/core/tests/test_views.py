@@ -331,7 +331,7 @@ class PathViewsTest(CommonTest):
 
     def test_elevation_area_json(self):
         path = self.modelfactory.create()
-        url = "/api/en/paths/{pk}/dem.json".format(pk=path.pk)
+        url = f"/api/en/paths/{path.pk}/dem.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
@@ -706,7 +706,7 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_detail_url())
         self.assertNotContains(
             response,
-            "/api/restrictedarea/type/{}/restrictedarea.geojson".format(area_type.pk),
+            f"/api/restrictedarea/type/{area_type.pk}/restrictedarea.geojson",
         )
 
         self.restricted_area = RestrictedAreaFactory(
@@ -722,7 +722,7 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_detail_url())
         self.assertContains(
             response,
-            "/api/restrictedarea/type/{}/restrictedarea.geojson".format(area_type.pk),
+            f"/api/restrictedarea/type/{area_type.pk}/restrictedarea.geojson",
         )
 
     def test_draft_path_layer(self):

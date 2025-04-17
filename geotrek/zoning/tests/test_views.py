@@ -25,7 +25,7 @@ class LandLayersViewsTest(APITestCase):
 
     def test_views_status(self):
         for layer in ["city", "restrictedarea", "district"]:
-            url = reverse("zoning:%s_layer" % layer)
+            url = reverse(f"zoning:{layer}_layer")
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, response.json())
 

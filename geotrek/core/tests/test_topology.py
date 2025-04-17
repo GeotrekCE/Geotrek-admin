@@ -98,27 +98,27 @@ class TopologyTest(TestCase):
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute(
-            """
+            f"""
             SELECT t.id as id_path,
                    et.topo_object_id as id_topology,
                    t.visible as visible
             FROM core_pathaggregation et
             JOIN core_path t ON et.path_id=t.id
-            WHERE et.topo_object_id={topo_id}
-            """.format(topo_id=topology.pk)
+            WHERE et.topo_object_id={topology.pk}
+            """
         )
 
         datas = dictfetchall(cur)
 
         # topo must be linked to visible path
         self.assertIn(
-            topology.pk, [ele["id_topology"] for ele in datas], "{}".format(datas)
+            topology.pk, [ele["id_topology"] for ele in datas], f"{datas}"
         )
         self.assertIn(
-            path_visible.pk, [ele["id_path"] for ele in datas], "{}".format(datas)
+            path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
         self.assertNotIn(
-            path_unvisible.pk, [ele["id_path"] for ele in datas], "{}".format(datas)
+            path_unvisible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
 
         # new topo on invible path
@@ -126,26 +126,26 @@ class TopologyTest(TestCase):
         topology.save()
 
         cur.execute(
-            """
+            f"""
             SELECT t.id as id_path,
                    et.topo_object_id as id_topology,
                    t.visible as visible
             FROM core_pathaggregation et
             JOIN core_path t ON et.path_id=t.id
-            WHERE et.topo_object_id={topo_id}
-            """.format(topo_id=topology.pk)
+            WHERE et.topo_object_id={topology.pk}
+            """
         )
 
         datas = dictfetchall(cur)
 
         self.assertIn(
-            topology.pk, [ele["id_topology"] for ele in datas], "{}".format(datas)
+            topology.pk, [ele["id_topology"] for ele in datas], f"{datas}"
         )
         self.assertIn(
-            path_visible.pk, [ele["id_path"] for ele in datas], "{}".format(datas)
+            path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
         self.assertNotIn(
-            path_unvisible.pk, [ele["id_path"] for ele in datas], "{}".format(datas)
+            path_unvisible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
         cur.close()
 

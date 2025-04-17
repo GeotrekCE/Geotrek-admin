@@ -275,8 +275,8 @@ class SuricateMessenger:
         """Update report GPS coordinates on Suricate Rest API"""
         url_params = {
             "uid_alerte": id_alert,
-            "gpslatitude": "{0:.6f}".format(gps_lat),
-            "gpslongitude": "{0:.6f}".format(gps_long),
+            "gpslatitude": f"{gps_lat:.6f}",
+            "gpslongitude": f"{gps_long:.6f}",
         }
         if force:
             url_params["force_update"] = 1

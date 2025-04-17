@@ -22,7 +22,7 @@ def load_sql_files(app, stage):
     sql_dir = os.path.normpath(os.path.join(app.path, "templates", app.label, "sql"))
     custom_sql_dir = os.path.join(settings.VAR_DIR, "conf", "extra_sql", app.label)
     sql_files = []
-    r = re.compile(r"^{}_.*\.sql$".format(stage))
+    r = re.compile(rf"^{stage}_.*\.sql$")
     if os.path.exists(sql_dir):
         sql_files += [
             os.path.join(sql_dir, f)

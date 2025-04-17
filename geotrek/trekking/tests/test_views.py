@@ -438,7 +438,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         infra.save()
         self.assertEqual(len(trek.infrastructures), 2)
 
-        url = "/api/en/treks/{pk}/infrastructures.geojson".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/infrastructures.geojson"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         infrastructureslayer = response.json()
@@ -459,7 +459,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.user.groups.clear()
         self.user = get_object_or_404(User, pk=self.user.pk)
         self.client.login(username=self.user.username, password="booh")
-        url = "/api/en/treks/{pk}/infrastructures.geojson".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/infrastructures.geojson"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
@@ -471,7 +471,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         signa.save()
         self.assertEqual(len(trek.signages), 2)
 
-        url = "/api/en/treks/{pk}/signages.geojson".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/signages.geojson"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         signageslayer = response.json()
@@ -493,7 +493,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertNotEqual(poi.thumbnail, None)
         self.assertEqual(len(trek.pois), 1)
 
-        url = "/api/en/treks/{pk}/pois.geojson".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/pois.geojson"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         poislayer = response.json()
@@ -524,7 +524,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         service.save()
         self.assertEqual(len(trek.services), 2)
 
-        url = "/api/en/treks/{pk}/services.geojson".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/services.geojson"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         serviceslayer = response.json()
@@ -533,7 +533,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_kml(self):
         trek = TrekWithPOIsFactory.create()
-        url = "/api/en/treks/{pk}/slug.kml".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/slug.kml"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -541,27 +541,27 @@ class TrekCustomViewTests(TrekkingManagerTest):
         )
 
     def test_kml_do_not_exist(self):
-        url = "/api/en/treks/{pk}/slug.kml".format(pk=999)
+        url = f"/api/en/treks/{999}/slug.kml"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)
-        url = "/api/en/treks/{pk}/profile.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/profile.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_not_published_elevation_area_json(self):
         trek = TrekFactory.create(published=False)
-        url = "/api/en/treks/{pk}/dem.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/dem.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_profile_svg(self):
         trek = TrekFactory.create()
-        url = "/api/en/treks/{pk}/profile.svg".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/profile.svg"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "image/svg+xml")
@@ -605,27 +605,27 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
 
     def test_profile_json(self):
         trek = TrekFactory.create(published=True)
-        url = "/api/en/treks/{pk}/profile.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/profile.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)
-        url = "/api/en/treks/{pk}/profile.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/profile.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_elevation_area_json(self):
         trek = TrekFactory.create(published=True)
-        url = "/api/en/treks/{pk}/dem.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/dem.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_not_published_elevation_area_json(self):
         trek = TrekFactory.create(published=False)
-        url = "/api/en/treks/{pk}/dem.json".format(pk=trek.pk)
+        url = f"/api/en/treks/{trek.pk}/dem.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -687,7 +687,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
     def setUp(self):
         self.login()
-        url = "/api/it/treks/{pk}/slug.gpx".format(pk=self.trek.pk)
+        url = f"/api/it/treks/{self.trek.pk}/slug.gpx"
         self.response = self.client.get(url)
         self.parsed = BeautifulSoup(self.response.content, features="xml")
 
@@ -783,7 +783,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
         for lang, expected in [("fr", poi.name_fr), ("it", poi.name_it)]:
-            url = "/api/{lang}/treks/{pk}/pois.geojson".format(lang=lang, pk=trek.pk)
+            url = f"/api/{lang}/treks/{trek.pk}/pois.geojson"
             self.login()
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
@@ -813,19 +813,19 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.user.user_permissions.add(perm)
 
     def test_edit_button_same_structure(self):
-        url = "/trek/{pk}/".format(pk=self.content1.pk)
+        url = f"/trek/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertContains(
             response,
             '<a class="btn btn-primary ml-auto" '
-            'href="/trek/edit/{pk}/">'
+            f'href="/trek/edit/{self.content1.pk}/">'
             '<i class="bi bi-pencil-square"></i> '
-            "Update</a>".format(pk=self.content1.pk),
+            "Update</a>",
             html=True,
         )
 
     def test_edit_button_other_structure(self):
-        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
         self.assertContains(
             response,
@@ -836,46 +836,46 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
-        url = "/trek/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
         self.assertContains(
             response,
             '<a class="btn btn-primary ml-auto" '
-            'href="/trek/edit/{pk}/">'
+            f'href="/trek/edit/{self.content2.pk}/">'
             '<i class="bi bi-pencil-square"></i> '
-            "Update</a>".format(pk=self.content2.pk),
+            "Update</a>",
             html=True,
         )
 
     def test_can_edit_same_structure(self):
-        url = "/trek/edit/{pk}/".format(pk=self.content1.pk)
+        url = f"/trek/edit/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/edit/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/trek/{self.content2.pk}/")
 
     def test_can_edit_bypass_structure(self):
         self.add_bypass_perm()
-        url = "/trek/edit/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/edit/{self.content2.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_can_delete_same_structure(self):
-        url = "/trek/delete/{pk}/".format(pk=self.content1.pk)
+        url = f"/trek/delete/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/delete/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/trek/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/trek/{self.content2.pk}/")
 
     def test_can_delete_bypass_structure(self):
         self.add_bypass_perm()
-        url = "/trek/delete/{pk}/".format(pk=self.content2.pk)
+        url = f"/trek/delete/{self.content2.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -899,24 +899,24 @@ class POIViewsSameStructureTests(AuthentFixturesTest):
         self.client.logout()
 
     def test_can_edit_same_structure(self):
-        url = "/poi/edit/{pk}/".format(pk=self.content1.pk)
+        url = f"/poi/edit/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/poi/edit/{pk}/".format(pk=self.content2.pk)
+        url = f"/poi/edit/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/poi/{self.content2.pk}/")
 
     def test_can_delete_same_structure(self):
-        url = "/poi/delete/{pk}/".format(pk=self.content1.pk)
+        url = f"/poi/delete/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/poi/delete/{pk}/".format(pk=self.content2.pk)
+        url = f"/poi/delete/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/poi/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/poi/{self.content2.pk}/")
 
 
 class TrekWorkflowTest(TestCase):

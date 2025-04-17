@@ -103,9 +103,9 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
     def pretty_period(self):
         return ", ".join(
             [
-                str(self._meta.get_field("period{:02}".format(p)).verbose_name)
+                str(self._meta.get_field(f"period{p:02}").verbose_name)
                 for p in range(1, 13)
-                if getattr(self, "period{:02}".format(p))
+                if getattr(self, f"period{p:02}")
             ]
         )
 

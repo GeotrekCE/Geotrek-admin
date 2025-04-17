@@ -141,7 +141,7 @@ class Parser:
             return self.normalize_field_name(src)
 
     def add_warning(self, msg):
-        key = _("Line {line}".format(line=self.line))
+        key = _("Line %(line)s") % {"line": self.line}
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
@@ -214,8 +214,8 @@ class Parser:
 
     def parse_non_field(self, dst, src, val):
         """Returns True if modified"""
-        if hasattr(self, "save_{0}".format(dst)):
-            return getattr(self, "save_{0}".format(dst))(src, val)
+        if hasattr(self, f"save_{dst}"):
+            return getattr(self, f"save_{dst}")(src, val)
 
     def set_value(self, dst, src, val):
         field = self.model._meta.get_field(dst)
@@ -227,11 +227,11 @@ class Parser:
                 val = ""
             else:
                 raise RowImportError(
-                    _("Null value not allowed for field '{src}'".format(src=src))
+                    _("Null value not allowed for field '%(src)s'") % {"src": src}
                 )
         if val == "" and not field.blank:
             raise RowImportError(
-                _("Blank value not allowed for field '{src}'".format(src=src))
+                _("Blank value not allowed for field '%(src)s'") % {"src": src}
             )
         if isinstance(field, models.CharField):
             val = str(val)[:256]
@@ -253,8 +253,8 @@ class Parser:
         if dst in self.default_fields_values and not val:
             val = self.default_fields_values[dst]
 
-        if hasattr(self, "filter_{0}".format(dst)):
-            val = getattr(self, "filter_{0}".format(dst))(src, val)
+        if hasattr(self, f"filter_{dst}"):
+            val = getattr(self, f"filter_{dst}")(src, val)
         else:
             val = self.apply_filter(dst, src, val)
         if hasattr(self.obj, dst):
@@ -294,8 +294,8 @@ class Parser:
             old_values[lang] = getattr(self.obj, dst_field_lang)
         # If during filter, the traduction of the field has been changed
         # we can still check if this value has been changed
-        if hasattr(self, "filter_{0}".format(dst)):
-            val_default_language = getattr(self, "filter_{0}".format(dst))(src, val)
+        if hasattr(self, f"filter_{dst}"):
+            val_default_language = getattr(self, f"filter_{dst}")(src, val)
         else:
             val_default_language = self.apply_filter(dst, src, val)
 
@@ -398,8 +398,8 @@ class Parser:
             raise GlobalImportError(
                 _("Missing id field '{eid_src}'").format(eid_src=eid_src)
             )
-        if hasattr(self, "filter_{0}".format(self.eid)):
-            eid_val = getattr(self, "filter_{0}".format(self.eid))(eid_src, eid_val)
+        if hasattr(self, f"filter_{self.eid}"):
+            eid_val = getattr(self, f"filter_{self.eid}")(eid_src, eid_val)
         self.eid_src = eid_src
         self.eid_val = eid_val
         return {self.eid: eid_val}
@@ -477,7 +477,7 @@ class Parser:
             "warnings": self.warnings,
         }
         return render_to_string(
-            "common/parser_report.{output_format}".format(output_format=output_format),
+            f"common/parser_report.{output_format}",
             context,
         )
 
@@ -868,7 +868,7 @@ class AttachmentParserMixin:
             try:
                 response = self.request_or_retry(url, verb="head")
             except (requests.exceptions.ConnectionError, DownloadImportError) as e:
-                raise ValueImportError("Failed to load attachment: {exc}".format(exc=e))
+                raise ValueImportError(f"Failed to load attachment: {e}")
             size = response.headers.get("content-length")
             try:
                 return size is not None and int(size) != attachment.attachment_file.size
@@ -883,7 +883,7 @@ class AttachmentParserMixin:
             try:
                 response = self.request_or_retry(url)
             except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                raise ValueImportError("Failed to load attachment: {exc}".format(exc=e))
+                raise ValueImportError(f"Failed to load attachment: {e}")
             return response.read()
         else:
             if self.download_attachments:
@@ -891,7 +891,7 @@ class AttachmentParserMixin:
                     response = self.request_or_retry(url)
                 except (DownloadImportError, requests.exceptions.ConnectionError) as e:
                     raise ValueImportError(
-                        "Failed to load attachment: {exc}".format(exc=e)
+                        f"Failed to load attachment: {e}"
                     )
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_("Failed to download '{url}'").format(url=url))
@@ -910,7 +910,7 @@ class AttachmentParserMixin:
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
             if re.search(
-                r"^{regexp}$".format(regexp=regexp), existing_name
+                rf"^{regexp}$", existing_name
             ) and not self.has_size_changed(kwargs.get("url"), attachment):
                 found = True
                 attachments_to_delete.remove(attachment)
@@ -1164,7 +1164,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             try:
                 key, value = subval.split(self.separator2)
             except ValueError as e:
-                raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
+                raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
             if key in ("Mél", "Mail"):
                 return value
 
@@ -1179,7 +1179,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             try:
                 key, value = subval.split(self.separator2)
             except ValueError as e:
-                raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
+                raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
             if key in ("Site web", "Site web (URL)"):
                 return value
 
@@ -1208,10 +1208,10 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 try:
                     key, value = subval.split(self.separator2)
                 except ValueError as e:
-                    raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
+                    raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
                 if key in ("Mél", "Mail", "Site web", "Site web (URL)"):
                     continue
-                infos.append("<strong>{} :</strong><br>{}".format(key, value))
+                infos.append(f"<strong>{key} :</strong><br>{value}")
 
         return "<br><br>".join(infos)
 
@@ -1323,7 +1323,7 @@ class LEIParser(AttachmentParserMixin, XmlParser):
         crit_value = self.get_crit_value(crit)
         # If value is available for crit, add it to result
         if crit.text is not None and crit_value != "Photos":
-            crit_value = "{0} : {1}".format(crit_value, crit.text)
+            crit_value = f"{crit_value} : {crit.text}"
         return crit_name, crit_value
 
     def get_crit_value(self, crit):
@@ -1475,7 +1475,7 @@ class GeotrekAggregatorParser:
             raise GlobalImportError(
                 _("File does not exists at: %(filename)s") % {"filename": filename}
             )
-        with open(filename, mode="r") as f:
+        with open(filename) as f:
             json_aggregator = json.load(f)
 
         for key, datas in json_aggregator.items():
@@ -1540,9 +1540,7 @@ class GeotrekAggregatorParser:
     def report(self, output_format="txt"):
         context = {"report": self.report_by_api_v2_by_type}
         return render_to_string(
-            "common/parser_report_aggregator.{output_format}".format(
-                output_format=output_format
-            ),
+            f"common/parser_report_aggregator.{output_format}",
             context,
         )
 

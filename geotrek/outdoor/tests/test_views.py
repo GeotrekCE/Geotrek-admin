@@ -16,7 +16,7 @@ class SiteCustomViewTests(TestCase):
     @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         site = SiteFactory.create(published=True)
-        url = "/api/en/sites/{pk}/slug.pdf".format(pk=site.pk)
+        url = f"/api/en/sites/{site.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
@@ -55,7 +55,7 @@ class CourseCustomViewTests(TestCase):
     @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         course = CourseFactory.create(published=True)
-        url = "/api/en/courses/{pk}/slug.pdf".format(pk=course.pk)
+        url = f"/api/en/courses/{course.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)

@@ -375,8 +375,8 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response_real.status_code, 200)
         self.assertNotContains(
             response_real,
-            "Select a valid choice. {real_key} "
-            "is not one of the available choices.".format(real_key=real_key),
+            f"Select a valid choice. {real_key} "
+            "is not one of the available choices.",
         )
 
 

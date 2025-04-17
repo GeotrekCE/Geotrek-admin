@@ -51,7 +51,7 @@ class Command(BaseCommand):
     def handle_related_model(self, RelatedModel, subitems):
         if self.options["verbosity"] > 0:
             self.stdout.write(
-                "Handle related model {}".format(RelatedModel._meta.model_name)
+                f"Handle related model {RelatedModel._meta.model_name}"
             )
 
         # Create related objects with structure=None
@@ -67,15 +67,13 @@ class Command(BaseCommand):
             kwargs["structure"] = None
             new_obj, created = RelatedModel.objects.get_or_create(**kwargs)
             if created and self.options["verbosity"] > 0:
-                self.stdout.write("  Create {}".format(new_obj))
+                self.stdout.write(f"  Create {new_obj}")
 
         # Update foreign keys
         for Model, fk_name, m2m in subitems:
             if self.options["verbosity"] > 0:
                 self.stdout.write(
-                    "  Handle field {} of model {}".format(
-                        fk_name, Model._meta.model_name
-                    )
+                    f"  Handle field {fk_name} of model {Model._meta.model_name}"
                 )
             related_fields = [
                 field
@@ -95,7 +93,7 @@ class Command(BaseCommand):
                     setattr(obj, fk_name, new_fk)
                 obj.save()
                 if self.options["verbosity"] > 0:
-                    self.stdout.write("    Update {}".format(obj))
+                    self.stdout.write(f"    Update {obj}")
 
         # Remove related objects with structure!=None
         related_objs = RelatedModel.objects.exclude(structure=None)
@@ -112,7 +110,7 @@ class Command(BaseCommand):
         if options["list"]:
             for m in self.items.keys():
                 self.stdout.write(
-                    "{} : {}".format(m._meta.model_name, m._meta.verbose_name)
+                    f"{m._meta.model_name} : {m._meta.verbose_name}"
                 )
             return
 

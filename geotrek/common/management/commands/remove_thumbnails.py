@@ -17,4 +17,4 @@ class Command(BaseCommand):
                 os.remove(path)
             thumbnail.delete()
             if options["verbosity"] > 0:
-                self.stdout.write("{pict} deleted".format(pict=thumbnail.name))
+                self.stdout.write(f"{thumbnail.name} deleted")

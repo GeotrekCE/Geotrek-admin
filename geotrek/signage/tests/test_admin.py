@@ -322,9 +322,7 @@ class SignageConditionAdminTest(TestCase):
         self.assertContains(response, '<select name="structure" ')
         self.assertContains(
             response,
-            '<input type="text" name="label" value="{}" class="vTextField" maxlength="250" required id="id_label">'.format(
-                signagecondition.label
-            ),
+            f'<input type="text" name="label" value="{signagecondition.label}" class="vTextField" maxlength="250" required id="id_label">',
         )
 
     def test_formfield_for_foreignkey_signage_conditions_withoutpermission(self):
@@ -374,9 +372,7 @@ class SignageConditionAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<a href="/admin/signage/signagecondition/{}/change/">{}</a>'.format(
-                self.signage_condition.pk, self.signage_condition.label
-            ),
+            f'<a href="/admin/signage/signagecondition/{self.signage_condition.pk}/change/">{self.signage_condition.label}</a>',
         )
 
     def test_get_list_display_signage_conditions_withoutpermission(self):
@@ -387,7 +383,5 @@ class SignageConditionAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            '<a href="/admin/signage/signagecondition/{}/change/">{}</a>'.format(
-                self.signage_condition.pk, self.signage_condition.label
-            ),
+            f'<a href="/admin/signage/signagecondition/{self.signage_condition.pk}/change/">{self.signage_condition.label}</a>',
         )

@@ -450,7 +450,7 @@ class ServeAttachmentAccessibility(View):
             ):
                 raise PermissionDenied
             if not request.user.has_perm(
-                "{}.read_{}".format(obj._meta.app_label, obj._meta.model_name)
+                f"{obj._meta.app_label}.read_{obj._meta.model_name}"
             ):
                 raise PermissionDenied
 
@@ -465,9 +465,7 @@ class ServeAttachmentAccessibility(View):
             )
         response["Content-Type"] = content_type or "application/octet-stream"
         if app_settings["SERVE_MEDIA_AS_ATTACHMENT"]:
-            response["Content-Disposition"] = "attachment; filename={0}".format(
-                os.path.basename(path)
-            )
+            response["Content-Disposition"] = f"attachment; filename={os.path.basename(path)}"
         return response
 
 

@@ -29,9 +29,7 @@ from geotrek.common.utils import classproperty, logger
 class CheckBoxActionMixin:
     @property
     def checkbox(self):
-        return '<input type="checkbox" name="{}[]" value="{}" />'.format(
-            self._meta.model_name, self.pk
-        )
+        return f'<input type="checkbox" name="{self._meta.model_name}[]" value="{self.pk}" />'
 
     @classproperty
     def checkbox_verbose_name(cls):
@@ -171,12 +169,7 @@ class PicturesMixin:
                 )
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (
-                IOError,
-                InvalidImageFormatError,
-                DecompressionBombError,
-                NoSourceGenerator,
-            ) as e:
+            except (OSError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
                 logger.warning(
                     _("Image {} invalid or missing from disk: {}.").format(
                         picture.attachment_file, e
@@ -191,7 +184,7 @@ class PicturesMixin:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
-            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+            except (OSError, InvalidImageFormatError, DecompressionBombError) as e:
                 logger.info(
                     _("Image {} invalid or missing from disk: {}.").format(
                         picture.attachment_file, e

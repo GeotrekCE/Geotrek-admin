@@ -65,7 +65,7 @@ def import_datas(**kwargs):
                 "name": current_task.name,
             },
         )
-        sys.stdout.write("{progress:02d}%".format(progress=int(100 * progress)))
+        sys.stdout.write(f"{int(100 * progress):02d}%")
 
     user = user_pk and User.objects.get(pk=user_pk)
 
@@ -106,7 +106,7 @@ def import_datas_from_web(**kwargs):
                 "name": current_task.name,
             },
         )
-        sys.stdout.write("{progress:02d}%".format(progress=int(100 * progress)))
+        sys.stdout.write(f"{int(100 * progress):02d}%")
 
     user = user_pk and User.objects.get(pk=user_pk)
 

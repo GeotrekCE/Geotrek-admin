@@ -43,7 +43,7 @@ class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -61,7 +61,7 @@ class SignageType(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
@@ -100,7 +100,7 @@ class SignageCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -184,7 +184,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def coordinates(self):
-        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
+        return f"{format_coordinates(self.geom)} ({spatial_reference()})"
 
     @property
     def geomtransform(self):
@@ -270,7 +270,7 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -284,7 +284,7 @@ class BladeCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 

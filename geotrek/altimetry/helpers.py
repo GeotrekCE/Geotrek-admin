@@ -143,7 +143,7 @@ class AltimetryHelper:
         if height < precision or width < precision:
             precision = min([height, width])
 
-        sql = """
+        sql = f"""
             -- Author: Celian Garcia
             WITH columns AS (
                     SELECT generate_series({xmin}::int, {xmax}::int, {precision}) AS x
@@ -158,8 +158,8 @@ class AltimetryHelper:
                 ),
                 points2d AS (
                     SELECT row_number() OVER (ORDER BY lines.y, columns.x) AS id,
-                           ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
-                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
+                           ST_SetSRID(ST_MakePoint(x, y), {settings.SRID}) AS geom,
+                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {settings.SRID}), 4326) AS geomll
                     FROM columns, lines
                 ),
                 draped AS (
@@ -188,14 +188,7 @@ class AltimetryHelper:
                    resolution.y AS resolution_h,
                    altitude
             FROM extent_latlng, resolution, all_draped;
-        """.format(
-            xmin=xmin,
-            ymin=ymin,
-            xmax=xmax,
-            ymax=ymax,
-            srid=settings.SRID,
-            precision=precision,
-        )
+        """
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()

@@ -104,10 +104,10 @@ def intersecting(qs, obj, distance=None, ordering=True, field="geom", defer=None
         distance = obj.distance(qs.model)
     if distance:
         qs = qs.filter(
-            **{"{}__dwithin".format(field): (obj.geom, Distance(m=distance))}
+            **{f"{field}__dwithin": (obj.geom, Distance(m=distance))}
         )
     else:
-        qs = qs.filter(**{"{}__intersects".format(field): obj.geom})
+        qs = qs.filter(**{f"{field}__intersects": obj.geom})
         if obj.geom.geom_type == "LineString" and ordering:
             qs = qs.order_by(
                 LineLocatePoint(
@@ -160,10 +160,7 @@ def format_coordinates(geom):
             )
     else:
         location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
-        result = "X : {lat:07d} / Y : {lng:07d}".format(
-            lat=round(location.x),
-            lng=round(location.y),
-        )
+        result = f"X : {round(location.x):07d} / Y : {round(location.y):07d}"
     return result
 
 
@@ -175,7 +172,7 @@ def collate_c(field):
 
 
 def spatial_reference():
-    return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
+    return f"{SpatialReference(settings.DISPLAY_SRID).name}"
 
 
 def simplify_coords(coords):
@@ -184,7 +181,7 @@ def simplify_coords(coords):
     elif isinstance(coords, float):
         return round(coords, 7)
     raise Exception(
-        "Param is {}. Should be <list>, <tuple> or <float>".format(type(coords))
+        f"Param is {type(coords)}. Should be <list>, <tuple> or <float>"
     )
 
 

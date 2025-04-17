@@ -17,7 +17,7 @@ from .models import (
 
 class TypeField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        return "{} ({})".format(str(obj), str(obj.category))
+        return f"{str(obj)} ({str(obj.category)})"
 
 
 class TypeFilter(ModelMultipleChoiceFilter):

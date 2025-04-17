@@ -79,7 +79,7 @@ class BladeModelTest(TestCase):
     def test_str_bladecondition_with_structure(self):
         structure = StructureFactory(name="This")
         bladecondition = BladeConditionFactory(label="condition", structure=structure)
-        self.assertEqual(str(bladecondition), "condition ({})".format(structure.name))
+        self.assertEqual(str(bladecondition), f"condition ({structure.name})")
 
     def test_str_bladecondition_without_structure(self):
         bladecondition = BladeConditionFactory(label="condition", structure=None)
@@ -98,7 +98,7 @@ class SignageModelTest(TestCase):
         signagecondition = SignageConditionFactory(
             label="condition", structure=structure
         )
-        self.assertEqual(str(signagecondition), "condition ({})".format(structure.name))
+        self.assertEqual(str(signagecondition), f"condition ({structure.name})")
 
     def test_str_signagecondition_without_structure(self):
         signagecondition = SignageConditionFactory(label="condition", structure=None)

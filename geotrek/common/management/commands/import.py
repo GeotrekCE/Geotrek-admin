@@ -43,11 +43,11 @@ class Command(BaseCommand):
         try:
             spec.loader.exec_module(module)
         except FileNotFoundError:
-            raise CommandError("Failed to import parser file '{0}'".format(module_path))
+            raise CommandError(f"Failed to import parser file '{module_path}'")
         try:
             Parser = getattr(module, class_name)
         except AttributeError:
-            raise CommandError("Failed to import parser class '{0}'".format(class_name))
+            raise CommandError(f"Failed to import parser class '{class_name}'")
         if not Parser.filename and not Parser.url and not options["filename"]:
             raise CommandError("File path missing")
 

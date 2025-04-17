@@ -87,12 +87,12 @@ class CirkwiParserTests(TestCase):
                 rv.content = copy(testdata.IMG_FILE)
             elif ".gpx" in url:
                 filename = "geotrek/cirkwi/tests/data/trek.gpx"
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     geodata = f.read()
                 rv.content = bytes(geodata, "utf-8")
             else:
                 filename = os.path.join("geotrek/cirkwi/tests/data/", data_filename)
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     rv.content = f.read()
             return rv
 

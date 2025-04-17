@@ -50,7 +50,7 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
         ]
 
     def __str__(self):
-        return "{} - {}".format(self.area_type.name, self.name)
+        return f"{self.area_type.name} - {self.name}"
 
 
 class City(TimeStampedModelMixin, models.Model):

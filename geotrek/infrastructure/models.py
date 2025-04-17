@@ -46,7 +46,7 @@ class InfrastructureType(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
@@ -80,7 +80,7 @@ class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -97,7 +97,7 @@ class InfrastructureMaintenanceDifficultyLevel(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -112,7 +112,7 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -154,7 +154,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def implantation_year_display(self):
-        return "{}".format(self.implantation_year) if self.implantation_year else ""
+        return f"{self.implantation_year}" if self.implantation_year else ""
 
     @property
     def name_display(self):

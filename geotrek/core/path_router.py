@@ -136,7 +136,7 @@ class PathRouter:
         fraction_start = self._fix_fraction(from_step.get("fraction"))
         fraction_end = self._fix_fraction(to_step.get("fraction"))
 
-        query = """
+        query = f"""
             DO $$
             DECLARE
                 max_edge_id integer;
@@ -187,10 +187,10 @@ class PathRouter:
                                 END AS target_geom
                         FROM (
                             VALUES
-                                (1, '{}'::int, 0, '{}'::float),
-                                (2, '{}'::int, '{}'::float, 1),
-                                (3, '{}'::int, 0, '{}'::float),
-                                (4, '{}'::int, '{}'::float, 1)
+                                (1, '{start_edge}'::int, 0, '{fraction_start}'::float),
+                                (2, '{start_edge}'::int, '{fraction_start}'::float, 1),
+                                (3, '{end_edge}'::int, 0, '{fraction_end}'::float),
+                                (4, '{end_edge}'::int, '{fraction_end}'::float, 1)
                         ) AS tmp_edges_info (index, path_id, fraction_start, fraction_end)
                         JOIN core_path ON core_path.id = tmp_edges_info.path_id
                     )
@@ -254,12 +254,12 @@ class PathRouter:
                         END AS edge_geom,
                     edge,
                     CASE
-                        WHEN node = max_vertex_id + 1 THEN '{}'::float
+                        WHEN node = max_vertex_id + 1 THEN '{fraction_start}'::float
                         WHEN node = source THEN 0
                         ELSE 1  -- node = target
                         END AS fraction_start,
                     CASE
-                        WHEN next_node IS NULL THEN '{}'::float
+                        WHEN next_node IS NULL THEN '{fraction_end}'::float
                         WHEN next_node = source THEN 0
                         ELSE 1  -- next_node = target
                         END AS fraction_end
@@ -273,18 +273,7 @@ class PathRouter:
                 fraction_start,
                 fraction_end
             FROM route
-        """.format(
-            start_edge,
-            fraction_start,
-            start_edge,
-            fraction_start,
-            end_edge,
-            fraction_end,
-            end_edge,
-            fraction_end,
-            fraction_start,
-            fraction_end,
-        )
+        """
 
         with connection.cursor() as cursor:
             cursor.execute(query)
@@ -331,9 +320,9 @@ class PathRouter:
         end_fraction.
         """
         path = Path.objects.get(pk=path_id)
-        sql = """
-        SELECT ST_AsText(ST_SmartLineSubstring('{}'::geometry, {}, {}))
-        """.format(path.geom, start_fraction, end_fraction)
+        sql = f"""
+        SELECT ST_AsText(ST_SmartLineSubstring('{path.geom}'::geometry, {start_fraction}, {end_fraction}))
+        """
 
         cursor = connection.cursor()
         cursor.execute(sql)

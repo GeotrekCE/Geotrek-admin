@@ -109,7 +109,8 @@ class BaseBladeForm(CommonForm):
         )
         if blades.filter(number=self.cleaned_data["number"]).exists():
             raise forms.ValidationError(
-                _("Number already exists, numbers already used : %s" % already_used)
+                _("Number already exists, numbers already used: %(number)s")
+                % {"number": already_used}
             )
         return self.cleaned_data["number"]
 

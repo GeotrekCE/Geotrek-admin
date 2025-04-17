@@ -35,7 +35,7 @@ class PhysicalType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.name, self.structure.name)
+            return f"{self.name} ({self.structure.name})"
         return self.name
 
 
@@ -138,7 +138,7 @@ class LandType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.name, self.structure.name)
+            return f"{self.name} ({self.structure.name})"
         return self.name
 
 
@@ -514,7 +514,7 @@ class CirculationType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.name, self.structure.name)
+            return f"{self.name} ({self.structure.name})"
         return self.name
 
 
@@ -528,7 +528,7 @@ class AuthorizationType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.name, self.structure.name)
+            return f"{self.name} ({self.structure.name})"
         return self.name
 
 

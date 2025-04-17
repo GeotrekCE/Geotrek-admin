@@ -224,7 +224,7 @@ class TouristicEventForm(CommonForm):
             )
         else:
             for category in categories:
-                field_id = "participant_count_{}".format(category.id)
+                field_id = f"participant_count_{category.id}"
                 self.fields[field_id] = TouristicEventParticipantCount._meta.get_field(
                     "count"
                 ).formfield(required=False)
@@ -261,7 +261,7 @@ class TouristicEventForm(CommonForm):
     def _save_m2m(self):
         super()._save_m2m()
         for category in TouristicEventParticipantCategory.objects.all():
-            count = self.cleaned_data["participant_count_{}".format(category.id)]
+            count = self.cleaned_data[f"participant_count_{category.id}"]
             if count is not None:
                 TouristicEventParticipantCount.objects.update_or_create(
                     event=self.instance, category=category, defaults={"count": count}

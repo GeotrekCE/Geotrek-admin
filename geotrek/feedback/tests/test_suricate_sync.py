@@ -55,7 +55,7 @@ SURICATE_WORKFLOW_SETTINGS_NO_MODERATION = {
 
 def mocked_json(file_name):
     filename = os.path.join(os.path.dirname(__file__), "data", file_name)
-    with open(filename, "r") as f:
+    with open(filename) as f:
         return bytes(f.read(), encoding="UTF-8")
 
 

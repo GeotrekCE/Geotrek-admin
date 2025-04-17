@@ -78,7 +78,7 @@ class TasksTest(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200

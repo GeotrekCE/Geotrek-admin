@@ -211,9 +211,7 @@ class SignageCommandTest(TestCase):
         )
         for element in elements_to_check:
             self.assertIn(
-                "Set it with --{0}-field, or set a default value with --{0}-default".format(
-                    element
-                ),
+                f"Set it with --{element}-field, or set a default value with --{element}-default",
                 output.getvalue(),
             )
 
@@ -311,7 +309,7 @@ class SignageCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your"), 8)
         for element in elements_to_check:
             self.assertIn(
-                "Field '{}' not found in data source".format(element), output.getvalue()
+                f"Field '{element}' not found in data source", output.getvalue()
             )
 
     def test_no_line_fail_rolling_back(self):

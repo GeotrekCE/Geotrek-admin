@@ -96,7 +96,7 @@ class OutdoorManagerFactory(UserFactory):
         for model in (Site, Course):
             content_type = ContentType.objects.get_for_model(model)
             for action in ("add", "change", "delete", "read", "export"):
-                codename = "{}_{}".format(action, model.__name__.lower())
+                codename = f"{action}_{model.__name__.lower()}"
                 permission = Permission.objects.get(
                     content_type=content_type, codename=codename
                 )

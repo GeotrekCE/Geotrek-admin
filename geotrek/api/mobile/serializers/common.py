@@ -35,7 +35,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -53,7 +53,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -71,7 +71,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -89,7 +89,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -110,7 +110,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -127,7 +127,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -144,7 +144,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -166,7 +166,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -188,7 +188,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -206,7 +206,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )
@@ -223,7 +223,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
             return (
-                "{file}.png".format(file=file_name)
+                f"{file_name}.png"
                 if file_extension == ".svg"
                 else obj.pictogram.url
             )

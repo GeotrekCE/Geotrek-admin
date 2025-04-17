@@ -213,5 +213,5 @@ class DiveCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your --eid-field option"), 1)
         for element in elements_to_check:
             self.assertIn(
-                "Field '{}' not found in data source".format(element), output.getvalue()
+                f"Field '{element}' not found in data source", output.getvalue()
             )

@@ -158,9 +158,7 @@ class BladeViewsTest(CommonTest):
     def _check_update_geom_permission(self, response):
         if (
             self.user.has_perm(
-                "{app}.change_geom_{model}".format(
-                    app=self.model._meta.app_label, model=self.model._meta.model_name
-                )
+                f"{self.model._meta.app_label}.change_geom_{self.model._meta.model_name}"
             )
             and settings.TREKKING_TOPOLOGY_ENABLED
         ):

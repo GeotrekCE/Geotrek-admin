@@ -252,7 +252,7 @@ class Report(
     @property
     def full_url(self):
         try:
-            return "{}{}".format(settings.ALLOWED_HOSTS[0], self.get_detail_url())
+            return f"{settings.ALLOWED_HOSTS[0]}{self.get_detail_url()}"
         except KeyError:
             # Do not display url if there is no ALLOWED_HOSTS
             return ""

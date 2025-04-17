@@ -202,7 +202,7 @@ COMPRESS_PARSER = "compressor.parser.HtmlParser"
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     try:
-        with open(os.path.join(VAR_DIR, "conf/secret_key"), "r") as f:
+        with open(os.path.join(VAR_DIR, "conf/secret_key")) as f:
             SECRET_KEY = f.read()
     except FileNotFoundError:
         pass
@@ -996,15 +996,15 @@ SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
-env_settings_file = os.path.join(os.path.dirname(__file__), "env_{}.py".format(ENV))
-with open(env_settings_file, "r") as f:
+env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
+with open(env_settings_file) as f:
     logger.warning("Read env configuration from %s", env_settings_file)
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
 if custom_settings_file and "tests" not in ENV:
-    with open(custom_settings_file, "r") as f:
+    with open(custom_settings_file) as f:
         logger.warning("Read custom configuration from %s", custom_settings_file)
         exec(f.read())
 

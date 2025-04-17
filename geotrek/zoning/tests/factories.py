@@ -54,7 +54,7 @@ class CityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.City
 
-    code = factory.Sequence(lambda n: "#%s" % n)  # id (!) with max_length=6
+    code = factory.Sequence(lambda n: f"#{n}")  # id (!) with max_length=6
     name = factory.Faker("city")
     geom = factory.Sequence(
         lambda _: MultiPolygon(
@@ -79,14 +79,14 @@ class RestrictedAreaTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RestrictedAreaType
 
-    name = factory.Sequence(lambda n: "Restricted name %s" % n)
+    name = factory.Sequence(lambda n: f"Restricted area name {n}")
 
 
 class RestrictedAreaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RestrictedArea
 
-    name = factory.Sequence(lambda n: "Restricted area name %s" % n)
+    name = factory.Sequence(lambda n: f"Restricted area name {n}")
     geom = factory.Sequence(
         lambda _: MultiPolygon(
             Polygon.from_bbox(next(geom_area_iter)), srid=settings.SRID

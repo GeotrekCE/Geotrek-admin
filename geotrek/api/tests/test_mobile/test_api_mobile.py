@@ -589,7 +589,7 @@ class APIAccessTestCase(BaseApiTest):
                 SENSITIVE_AREA_LIST_PROPERTIES_GEOJSON_STRUCTURE,
             )
             sensitive_area_obj = SensitiveArea.objects.get(pk=feature.get("id"))
-            for i, month in enumerate(["period{:02}".format(p) for p in range(1, 13)]):
+            for i, month in enumerate([f"period{p:02}" for p in range(1, 13)]):
                 self.assertEqual(
                     getattr(sensitive_area_obj.species, month),
                     feature.get("properties").get("period")[i],

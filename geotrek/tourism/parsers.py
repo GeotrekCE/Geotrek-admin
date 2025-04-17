@@ -134,7 +134,7 @@ class ApidaeParser(AttachmentParserMixin, ApidaeBaseParser):
         return None
 
 
-class AttachmentApidaeParserMixin(object):
+class AttachmentApidaeParserMixin:
     def filter_attachments(self, src, val):
         result = []
         for subval in val or []:
@@ -708,7 +708,7 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
         return name
 
     def filter_eid(self, src, val):
-        return "{}".format(val)
+        return f"{val}"
 
     def filter_contact(self, src, val):
         (address, zipCode, commune, telephone, gsm, fax, facebook, twitter) = val
@@ -992,9 +992,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                         continue
                 if values and values[0]:
                     day, month, year = values[0].split("/")
-                    return "{year}-{month}-{day}".format(
-                        year=year, month=month, day=day
-                    )
+                    return f"{year}-{month}-{day}"
 
     def filter_end_date(self, src, val):
         if val:
@@ -1007,9 +1005,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                         < datetime.date.today()
                     ):
                         continue
-                    return "{year}-{month}-{day}".format(
-                        year=year, month=month, day=day
-                    )
+                    return f"{year}-{month}-{day}"
 
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
@@ -1134,7 +1130,7 @@ class LEITouristicEventParser(LEIParser):
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val
-        return "{civ} {pre} {nom}".format(civ=civilite, pre=prenom, nom=nom)
+        return f"{civilite} {prenom} {nom}"
 
     def filter_begin_date(self, src, val):
         values_tab = val.split("/")

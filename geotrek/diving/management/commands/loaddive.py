@@ -57,17 +57,17 @@ class Command(BaseCommand):
         try:
             structure = Structure.objects.get(name=structure_default)
             if verbosity > 0:
-                self.stdout.write("Dives will be linked to {}".format(structure))
+                self.stdout.write(f"Dives will be linked to {structure}")
         except Structure.DoesNotExist:
             self.stdout.write(
-                "Structure {} set in options doesn't exist".format(structure_default)
+                f"Structure {structure_default} set in options doesn't exist"
             )
             return
         practice_default = options.get("practice_default")
         if practice_default:
             practice, created = Practice.objects.get_or_create(name=practice_default)
             if created and verbosity:
-                self.stdout.write("- Practice '{}' created".format(practice))
+                self.stdout.write(f"- Practice '{practice}' created")
         else:
             practice = None
 
@@ -75,15 +75,13 @@ class Command(BaseCommand):
             for layer in data_source:
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 available_fields = layer.fields
                 if field_name not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_name)
+                            f"Field '{field_name}' not found in data source."
                         )
                     )
                     self.stdout.write(self.style.ERROR("Set it with --name-field"))
@@ -92,7 +90,7 @@ class Command(BaseCommand):
                 if field_depth and field_depth not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_depth)
+                            f"Field '{field_depth}' not found in data source."
                         )
                     )
                     self.stdout.write(self.style.ERROR("Set it with --depth-field"))
@@ -101,7 +99,7 @@ class Command(BaseCommand):
                 if field_eid and field_eid not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_eid)
+                            f"Field '{field_eid}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -140,7 +138,7 @@ class Command(BaseCommand):
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
                 self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
+                    self.style.NOTICE(f"{self.counter} objects created.")
                 )
 
         except Exception:

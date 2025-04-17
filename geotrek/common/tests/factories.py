@@ -86,7 +86,7 @@ class TargetPortalFactory(factory.django.DjangoModelFactory):
         model = models.TargetPortal
 
     name = factory.Sequence(lambda n: "Target Portal %s" % n)
-    website = factory.Sequence(lambda n: "http://geotrek-rando-{}.fr".format(n))
+    website = factory.Sequence(lambda n: f"http://geotrek-rando-{n}.fr")
 
 
 class ReservationSystemFactory(factory.django.DjangoModelFactory):

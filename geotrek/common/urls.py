@@ -72,23 +72,17 @@ class PublishableEntityOptions(MapEntityOptions):
         mapentity_views = super().scan_views()
         publishable_views = [
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>_booklet.pdf".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>_booklet.pdf",
                 self.document_public_booklet_view.as_view(model=self.model),
                 name="%s_booklet_printable" % self.modelname,
             ),
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>.pdf".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.pdf",
                 self.document_public_view.as_view(model=self.model),
                 name="%s_printable" % self.modelname,
             ),
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>.html".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.html",
                 self.markup_public_view.as_view(model=self.model),
                 name="%s_markup_html" % self.modelname,
             ),

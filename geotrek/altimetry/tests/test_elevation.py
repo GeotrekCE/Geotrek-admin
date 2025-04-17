@@ -154,7 +154,7 @@ class ElevationProfileTest(TestCase):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10), srid=settings.SRID)
         profile = AltimetryHelper.elevation_profile(geom)
         svg = AltimetryHelper.profile_svg(profile, "en")
-        self.assertIn("Generated with pygal".encode(), svg)
+        self.assertIn(b"Generated with pygal", svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND.encode(), svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR.encode(), svg)
 

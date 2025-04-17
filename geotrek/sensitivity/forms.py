@@ -71,7 +71,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
                 "practices",
                 "rules",
             ]
-            + ["period{:02}".format(p) for p in range(1, 13)]
+            + [f"period{p:02}" for p in range(1, 13)]
             + ["url", "geom"]
         )
         model = SensitiveArea
@@ -89,7 +89,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
                 "url": species.url,
             }
             for p in range(1, 13):
-                name = "period{:02}".format(p)
+                name = f"period{p:02}"
                 kwargs["initial"][name] = getattr(species, name)
 
         super().__init__(*args, **kwargs)
@@ -106,7 +106,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         species.pictogram = self.cleaned_data["pictogram"]
         species.url = self.cleaned_data["url"]
         for p in range(1, 13):
-            fieldname = "period{:02}".format(p)
+            fieldname = f"period{p:02}"
             setattr(species, fieldname, self.cleaned_data[fieldname])
         species.save()
         species.practices.set(self.cleaned_data["practices"])

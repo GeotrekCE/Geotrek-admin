@@ -200,9 +200,7 @@ class RestaurantBLEIParser(LEITouristicContentParser):
                 formatted_value = elt[1]
             elif isinstance(elt[1], list):
                 formatted_value = "<br>".join(elt[1])
-            result += "<p><strong>{0}</strong> : {1}</p>".format(
-                elt[0], formatted_value
-            )
+            result += f"<p><strong>{elt[0]}</strong> : {formatted_value}</p>"
         return result
 
 
@@ -226,7 +224,7 @@ class ParserNoStructureTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -298,14 +296,14 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         def mocked_json2():
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent2.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -334,7 +332,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         def side_effect(url, params, auth, code):
@@ -365,7 +363,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         def side_effect(url, allow_redirects, headers, params):
@@ -395,7 +393,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "espritparc.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), "data", "espritparc.json")
@@ -438,7 +436,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "espritparc.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), "data", "espritparc.json")
@@ -479,7 +477,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -534,7 +532,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeNoEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -556,7 +554,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -624,7 +622,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -662,7 +660,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "apidaeContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -707,7 +705,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "espritparc.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), "data", "espritparc.json")
@@ -797,7 +795,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "tourinsoftContent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -846,7 +844,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "tourinsoftContentV3.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -909,7 +907,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "tourinsoftEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -962,7 +960,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "tourinsoftEvent.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -1002,7 +1000,7 @@ class ParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "information_desk.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
@@ -1090,7 +1088,7 @@ class LEIParserTest(TestCase):
                 filename = os.path.join(
                     os.path.dirname(__file__), "data", "LEIContent.xml"
                 )
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     self.x_time += 1
                     response._content = f.read()
                     return response
@@ -1130,7 +1128,7 @@ class LEIParserTest(TestCase):
             response = requests.Response()
             response.status_code = 200
             filename = os.path.join(os.path.dirname(__file__), "data", "LEIContent.xml")
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 response._content = f.read()
                 return response
 
@@ -1163,7 +1161,7 @@ class LEIParserTest(TestCase):
                 filename = os.path.join(
                     os.path.dirname(__file__), "data", "LEIEvent.xml"
                 )
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     self.x_time += 1
                     response._content = f.read()
                     return response
@@ -1421,7 +1419,7 @@ class OpenStreetMapParserTests(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "information_desk_OSM.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200

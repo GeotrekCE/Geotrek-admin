@@ -150,7 +150,7 @@ class Command(BaseCommand):
                         counter += 1
                         if verbosity > 0:
                             self.stdout.write(
-                                "Create path with pk : {}".format(path.pk)
+                                f"Create path with pk : {path.pk}"
                             )
                         if verbosity > 1:
                             self.stdout.write(
@@ -160,7 +160,7 @@ class Command(BaseCommand):
                         if fail:
                             counter_fail += 1
                             self.stdout.write(
-                                "Integrity Error on path : {}, {}".format(name, geom)
+                                f"Integrity Error on path : {name}, {geom}"
                             )
                         else:
                             raise
@@ -169,18 +169,14 @@ class Command(BaseCommand):
             if verbosity >= 2:
                 self.stdout.write(
                     self.style.NOTICE(
-                        "{0} objects created, {1} objects failed".format(
-                            counter, counter_fail
-                        )
+                        f"{counter} objects created, {counter_fail} objects failed"
                     )
                 )
         else:
             transaction.savepoint_rollback(sid)
             self.stdout.write(
                 self.style.NOTICE(
-                    "{0} objects will be create, {1} objects failed;".format(
-                        counter, counter_fail
-                    )
+                    f"{counter} objects will be create, {counter_fail} objects failed;"
                 )
             )
 

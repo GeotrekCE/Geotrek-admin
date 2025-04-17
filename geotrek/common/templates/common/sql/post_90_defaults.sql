@@ -60,7 +60,7 @@ ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();
 -- TargetPortal
 ---------------
 -- name
--- website
+ALTER TABLE common_targetportal ALTER COLUMN website SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN facebook_id SET DEFAULT '{{ FACEBOOK_ID }}';

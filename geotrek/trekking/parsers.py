@@ -65,10 +65,9 @@ class DurationParserMixin:
         except (TypeError, ValueError):
             self.add_warning(
                 _(
-                    "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(
-                        val=val, src=src
-                    )
+                    "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
                 )
+                % {"val": val, "src": src}
             )
             return None
 
@@ -1402,7 +1401,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
     def parse(self, filename=None, limit=None):
         if filename:
             self.filename = filename
-            with open(self.filename, mode="r") as f:
+            with open(self.filename) as f:
                 self.root = json.load(f)
                 self.items = self.root["features"]
                 self.nb = len(self.items)
@@ -1551,7 +1550,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
             if re.search(
-                r"^{regexp}$".format(regexp=regexp), existing_name
+                rf"^{regexp}$", existing_name
             ) and not self.has_size_changed(kwargs.get("url"), attachment):
                 found = True
                 attachments_to_delete.remove(attachment)
