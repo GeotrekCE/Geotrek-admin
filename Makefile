@@ -68,6 +68,9 @@ format:
 lint:
 	$(docker_compose) run --remove-orphans --no-deps --rm web ruff check --fix geotrek
 
+force_lint:
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff check --fix --unsafe-fixes geotrek
+
 quality: lint format
 
 messages:

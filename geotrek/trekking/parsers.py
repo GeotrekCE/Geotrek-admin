@@ -1682,7 +1682,7 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
             # to a path aggregation (topology)
             geometry = geom.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
         return geom

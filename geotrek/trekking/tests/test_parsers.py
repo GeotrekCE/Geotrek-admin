@@ -2390,7 +2390,7 @@ class OpenStreetMapPOIParser(TestCase):
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "osm_poi_parser", "POI_OSM.json"
             )
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
