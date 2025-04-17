@@ -11,7 +11,7 @@ from geotrek.trekking.tests.factories import TrekFactory
 class AltimetryMixinTest(TestCase):
     def test_get_elevation_chart_none(self):
         trek = TrekFactory.create(published=True)
-        response = self.client.get("/media/profiles/trek-%s.png" % trek.pk)
+        response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
         self.assertEqual(response.status_code, 200)
         # In PDF
         trek.get_elevation_chart_path()
@@ -19,6 +19,6 @@ class AltimetryMixinTest(TestCase):
         self.assertTrue(os.listdir(basefolder))
         directory = os.listdir(basefolder)
         self.assertIn(
-            "%s-%s-%s.png" % (Trek._meta.model_name, str(trek.pk), get_language()),
+            f"{Trek._meta.model_name}-{str(trek.pk)}-{get_language()}.png",
             directory,
         )

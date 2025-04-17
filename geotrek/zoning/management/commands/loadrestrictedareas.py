@@ -66,9 +66,9 @@ class Command(BaseCommand):
         )
         if verbosity > 0:
             self.stdout.write(
-                "RestrictedArea Type's %s created" % area_type_name
+                f"RestrictedArea Type's {area_type_name} created"
                 if created
-                else "Get %s" % area_type_name
+                else f"Get {area_type_name}"
             )
 
         for layer in ds:
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                     ):
                         if verbosity > 0:
                             self.stdout.write(
-                                "%s's geometry is not a polygon" % feat.get(name_column)
+                                f"{feat.get(name_column)}'s geometry is not a polygon"
                             )
                         break
                     elif isinstance(geom, Polygon):
@@ -101,8 +101,7 @@ class Command(BaseCommand):
                             )
                             if verbosity > 0:
                                 self.stdout.write(
-                                    "%s %s"
-                                    % (
+                                    "{} {}".format(
                                         "Created" if created else "Updated",
                                         feat.get(name_column),
                                     )
@@ -110,14 +109,16 @@ class Command(BaseCommand):
                     else:
                         if verbosity > 0:
                             self.stdout.write(
-                                "%s's geometry is not valid" % feat.get(name_column)
+                                f"{feat.get(name_column)}'s geometry is not valid"
                             )
                 except IndexError:
                     if count_error == 0:
                         self.stdout.write(
                             "Name's attribute do not correspond with options\n"
                             "Please, use --name to fix it.\n"
-                            "Fields in your file are : %s" % ", ".join(layer.fields)
+                            "Fields in your file are : {}".format(
+                                ", ".join(layer.fields)
+                            )
                         )
                     count_error += 1
 

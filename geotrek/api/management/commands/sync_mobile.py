@@ -193,9 +193,7 @@ class Command(BaseCommand):
         for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(
             geom_type="LINESTRING"
         ):
-            name = os.path.join(
-                lang, str(trek.pk), "pois", f"{child.pk}.geojson"
-            )
+            name = os.path.join(lang, str(trek.pk), "pois", f"{child.pk}.geojson")
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
     def sync_trek_touristic_contents(self, lang, trek):
@@ -261,7 +259,7 @@ class Command(BaseCommand):
     def sync_media_file(self, field, prefix=None, directory="", zipfile=None):
         if field and field.name:
             url_media = (
-                "/%s%s" % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
+                f"/{prefix}{settings.MEDIA_URL}" if prefix else settings.MEDIA_URL
             )
             self.sync_file(
                 field.name,
@@ -277,7 +275,7 @@ class Command(BaseCommand):
                 continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == ".svg":
-                name = os.path.join(settings.MEDIA_URL.strip("/"), "%s.png" % file_name)
+                name = os.path.join(settings.MEDIA_URL.strip("/"), f"{file_name}.png")
             else:
                 name = os.path.join(settings.MEDIA_URL.strip("/"), obj.pictogram.name)
             dst = os.path.join(self.tmp_root, directory, name)

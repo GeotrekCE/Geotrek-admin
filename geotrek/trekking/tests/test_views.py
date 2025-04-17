@@ -305,7 +305,7 @@ class TrekViewsTest(CommonTest):
             "information_desks": tourism_factories.InformationDeskFactory.create().pk,
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            good_data["topology"] = '{"paths": [%s]}' % self.path.pk
+            good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
             good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
         else:
             good_data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
@@ -369,7 +369,7 @@ class TrekViewsTest(CommonTest):
         if self.model is None:
             return  # Abstract test should not run
 
-        polygon = "SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))" % settings.SRID
+        polygon = f"SRID={settings.SRID};MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))"
         self.city = CityFactory(geom=polygon, name="Trifouilli")
         self.city_2 = CityFactory(geom=polygon, name="Refouilli")
         self.district = DistrictFactory(geom=polygon, name="District")
@@ -383,12 +383,12 @@ class TrekViewsTest(CommonTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path1 = PathFactory.create(
-                geom="SRID=%s;LINESTRING(0 0, 1 0)" % settings.SRID
+                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)"
             )
             self.trek = TrekFactory.create(paths=[path1], **trek_args)
         else:
             self.trek = TrekFactory.create(
-                geom="SRID=%s;LINESTRING(0 0, 1 0)" % settings.SRID, **trek_args
+                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)", **trek_args
             )
         fmt = "csv"
         response = self.client.get(self.model.get_format_list_url() + "?format=" + fmt)
@@ -714,7 +714,7 @@ class TrekGPXTest(TrekkingManagerTest):
         name = waypoint.find("name").string
         description = waypoint.find("desc").string
         elevation = waypoint.find("ele").string
-        self.assertEqual(name, "%s: %s" % (pois[0].type, pois[0].name))
+        self.assertEqual(name, f"{pois[0].type}: {pois[0].name}")
         self.assertEqual(description, pois[0].description)
         # POI order follows trek direction
         self.assertAlmostEqual(float(waypoint["lat"]), 46.5003602)
@@ -937,14 +937,14 @@ class TrekWorkflowTest(TestCase):
     def test_cannot_publish(self):
         response = self.client.get("/trek/add/")
         self.assertNotContains(response, "Published")
-        response = self.client.get("/trek/edit/%u/" % self.trek.pk)
+        response = self.client.get(f"/trek/edit/{self.trek.pk}/")
         self.assertNotContains(response, "Published")
 
     def test_can_publish(self):
         self.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
         response = self.client.get("/trek/add/")
         self.assertContains(response, "Published")
-        response = self.client.get("/trek/edit/%u/" % self.trek.pk)
+        response = self.client.get(f"/trek/edit/{self.trek.pk}/")
         self.assertContains(response, "Published")
 
 

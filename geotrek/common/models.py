@@ -32,12 +32,8 @@ def attachment_accessibility_upload(instance, filename):
     _, name = os.path.split(filename)
     name, ext = os.path.splitext(name)
     renamed = slugify(name) + ext
-    return "attachments_accessibility/%s/%s/%s" % (
-        "%s_%s"
-        % (
-            instance.content_object._meta.app_label,
-            instance.content_object._meta.model_name,
-        ),
+    return "attachments_accessibility/{}/{}/{}".format(
+        f"{instance.content_object._meta.app_label}_{instance.content_object._meta.model_name}",
         instance.content_object.pk,
         renamed,
     )
@@ -162,12 +158,8 @@ class AccessibilityAttachment(TimeStampedModelMixin):
                 else:
                     _, name = os.path.split(self.attachment_accessibility_file.name)
                     name, ext = os.path.splitext(name)
-                subfolder = "%s/%s" % (
-                    "%s_%s"
-                    % (
-                        self.content_object._meta.app_label,
-                        self.content_object._meta.model_name,
-                    ),
+                subfolder = "{}/{}".format(
+                    f"{self.content_object._meta.app_label}_{self.content_object._meta.model_name}",
                     self.content_object.pk,
                 )
                 # Compute maximum size left for filename

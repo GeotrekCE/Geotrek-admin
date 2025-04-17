@@ -50,9 +50,7 @@ class Command(BaseCommand):
 
     def handle_related_model(self, RelatedModel, subitems):
         if self.options["verbosity"] > 0:
-            self.stdout.write(
-                f"Handle related model {RelatedModel._meta.model_name}"
-            )
+            self.stdout.write(f"Handle related model {RelatedModel._meta.model_name}")
 
         # Create related objects with structure=None
         related_fields = [
@@ -109,9 +107,7 @@ class Command(BaseCommand):
 
         if options["list"]:
             for m in self.items.keys():
-                self.stdout.write(
-                    f"{m._meta.model_name} : {m._meta.verbose_name}"
-                )
+                self.stdout.write(f"{m._meta.model_name} : {m._meta.verbose_name}")
             return
 
         if not options["all"] and not options["model"]:

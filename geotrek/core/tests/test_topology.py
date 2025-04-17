@@ -111,12 +111,8 @@ class TopologyTest(TestCase):
         datas = dictfetchall(cur)
 
         # topo must be linked to visible path
-        self.assertIn(
-            topology.pk, [ele["id_topology"] for ele in datas], f"{datas}"
-        )
-        self.assertIn(
-            path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}"
-        )
+        self.assertIn(topology.pk, [ele["id_topology"] for ele in datas], f"{datas}")
+        self.assertIn(path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}")
         self.assertNotIn(
             path_unvisible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
@@ -138,12 +134,8 @@ class TopologyTest(TestCase):
 
         datas = dictfetchall(cur)
 
-        self.assertIn(
-            topology.pk, [ele["id_topology"] for ele in datas], f"{datas}"
-        )
-        self.assertIn(
-            path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}"
-        )
+        self.assertIn(topology.pk, [ele["id_topology"] for ele in datas], f"{datas}")
+        self.assertIn(path_visible.pk, [ele["id_path"] for ele in datas], f"{datas}")
         self.assertNotIn(
             path_unvisible.pk, [ele["id_path"] for ele in datas], f"{datas}"
         )
@@ -169,8 +161,7 @@ class TopologyTest(TestCase):
         p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
         pks = [p.pk for p in [p1, p2, p3]]
         Topology.deserialize(
-            '{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}'
-            % pks
+            f'{{"paths": {pks}, "positions": {{"0": [0.3, 1.0], "2": [0.0, 0.7]}}, "offset": 1}}'
         )
         self.assertEqual(Path.objects.count(), 3)
 
@@ -184,7 +175,7 @@ class TopologyTest(TestCase):
 
     def test_topology_deserialize_point_with_snap(self):
         path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
-        topology = Topology.deserialize('{"lat": 46.5, "lng": 3, "snap": %s}' % path.pk)
+        topology = Topology.deserialize(f'{{"lat": 46.5, "lng": 3, "snap": {path.pk}}}')
         self.assertEqual(topology.offset, 0)
         self.assertEqual(topology.aggregations.count(), 1)
         self.assertEqual(topology.aggregations.get().start_position, 0.5)
@@ -201,8 +192,7 @@ class TopologyTest(TestCase):
     def test_topology_deserialize_inexistant_line(self):
         path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
         Topology.deserialize(
-            '[{"pk": 4012999999, "paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]'
-            % path.pk
+            f'[{{"pk": 4012999999, "paths": [{path.pk}], "positions": {{"0": [0.0, 1.0]}}, "offset": 1}}]'
         )
 
     def test_topology_deserialize_invalid(self):
@@ -643,20 +633,19 @@ class TopologyCornerCases(TestCase):
         p2 = PathFactory.create(geom=LineString((5, 0), (5, 10), (10, 10)))
         p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
         topo = Topology.deserialize(
-            """
-           [{"offset":0,
-             "positions":{"0":[0.5,1],
-                          "1":[0.0, 0.8]},
-             "paths":[%(p1)s,%(p2)s]
-            },
-            {"offset":0,
-             "positions":{"0":[0.8,0.0],
-                          "1":[0.0, 0.5]},
-             "paths":[%(p2)s,%(p3)s]
-            }
+            f"""
+           [{{"offset":0,
+             "positions":{{"0":[0.5,1],
+                          "1":[0.0, 0.8]}},
+             "paths":[{p1.pk},{p2.pk}]
+            }},
+            {{"offset":0,
+             "positions":{{"0":[0.8,0.0],
+                          "1":[0.0, 0.5]}},
+             "paths":[{p2.pk},{p3.pk}]
+            }}
            ]
         """
-            % {"p1": p1.pk, "p2": p2.pk, "p3": p3.pk}
         )
         topo.kind = "TOPOLOGY"
         topo.save()
@@ -765,11 +754,10 @@ class TopologyLoopTests(TestCase):
 
         # Deserializing should work too
         topod = Topology.deserialize(
-            """
-           [{"positions":{"0":[0.3,1],"1":[1, 0.4]},"paths":[%(pk1)s,%(pk2)s]},
-            {"positions":{"0":[0.4, 0.2]},"paths":[%(pk2)s]},
-            {"positions":{"0":[0.2,0],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s]}]"""
-            % {"pk1": p1.pk, "pk2": p2.pk}
+            f"""
+           [{{"positions":{{"0":[0.3,1],"1":[1, 0.4]}},"paths":[{p1.pk},{p2.pk}]}},
+            {{"positions":{{"0":[0.4, 0.2]}},"paths":[{p2.pk}]}},
+            {{"positions":{{"0":[0.2,0],"1":[1,0.3]}},"paths":[{p2.pk},{p1.pk}]}}]"""
         )
         topod.kind = "TOPOLOGY"
         topod.save()
@@ -814,14 +802,10 @@ class TopologyLoopTests(TestCase):
         )
 
         # De/Serializing should work too
-        serialized = """
-           [{"kind": "TOPOLOGY","positions":{"0":[0.3,1],"1":[0, 0.4]},"paths":[%(pk1)s,%(pk2)s],"offset": 0.0,"pk": %(topo)s},
-            {"kind": "TOPOLOGY","positions":{"0":[0.4, 0.8]},"paths":[%(pk2)s],"offset": 0.0,"pk": %(topo)s},
-            {"kind": "TOPOLOGY","positions":{"0":[0.8,1],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s],"offset": 0.0,"pk": %(topo)s}]""" % {
-            "topo": topo.pk,
-            "pk1": p1.pk,
-            "pk2": p2.pk,
-        }
+        serialized = f"""
+           [{{"kind": "TOPOLOGY","positions":{{"0":[0.3,1],"1":[0, 0.4]}},"paths":[{p1.pk},{p2.pk}],"offset": 0.0,"pk": {topo.pk}}},
+            {{"kind": "TOPOLOGY","positions":{{"0":[0.4, 0.8]}},"paths":[{p2.pk}],"offset": 0.0,"pk": {topo.pk}}},
+            {{"kind": "TOPOLOGY","positions":{{"0":[0.8,1],"1":[1,0.3]}},"paths":[{p2.pk},{p1.pk}],"offset": 0.0,"pk": {topo.pk}}}]"""
 
         self.assertEqual(json.loads(serialized), json.loads(topo.serialize()))
         topod = Topology.deserialize(serialized)
@@ -931,7 +915,7 @@ class TopologyDerialization(TestCase):
     def test_deserialize_line(self):
         path = PathFactory.create()
         topology = Topology.deserialize(
-            '[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk)
+            f'[{{"paths": [{path.pk}], "positions": {{"0": [0.0, 1.0]}}, "offset": 1}}]'
         )
         topology.save()
         self.assertEqual(topology.offset, 1)
@@ -948,16 +932,14 @@ class TopologyDerialization(TestCase):
         p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
         pks = [p.pk for p in [p1, p2, p3]]
         topology = Topology.deserialize(
-            '{"paths": %s, "positions": {"0": [0.0, 1.0], "2": [0.0, 1.0]}, "offset": 1}'
-            % (pks)
+            f'{{"paths": {pks}, "positions": {{"0": [0.0, 1.0], "2": [0.0, 1.0]}}, "offset": 1}}'
         )
         for i in range(3):
             self.assertEqual(topology.aggregations.all()[i].start_position, 0.0)
             self.assertEqual(topology.aggregations.all()[i].end_position, 1.0)
 
         topology = Topology.deserialize(
-            '{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}'
-            % (pks)
+            f'{{"paths": {pks}, "positions": {{"0": [0.3, 1.0], "2": [0.0, 0.7]}}, "offset": 1}}'
         )
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.3)
         self.assertEqual(topology.aggregations.all()[0].end_position, 1.0)
@@ -975,7 +957,7 @@ class TopologyDerialization(TestCase):
         # Check closest path
         self.assertEqual(closest.geom.coords, ((700000, 6600000), (700100, 6600100)))
         # The point has same x as first point of path, and y to 0 :
-        topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
+        topology = Topology.deserialize(f'{{"lng": {p.x}, "lat": {p.y}}}')
         topology.save()
         self.assertAlmostEqual(topology.offset, -70.7106781, places=6)
         self.assertEqual(topology.paths.all().count(), 1)

@@ -44,7 +44,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def tearDown(self):
         if not self.deleted:
-            query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
+            query_db(f"DROP TABLE IF EXISTS {settings.AUTHENT_TABLENAME}")
 
     @override_settings(AUTHENT_DATABASE=None)
     def test_base_missing(self):
@@ -59,7 +59,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         )
 
     def test_raises_improperly_configured_when_tablemissing(self):
-        query_db("DROP TABLE IF EXISTS %s" % settings.AUTHENT_TABLENAME)
+        query_db(f"DROP TABLE IF EXISTS {settings.AUTHENT_TABLENAME}")
         self.assertRaises(
             ImproperlyConfigured, self.backend.authenticate, ("toto", "totopwd")
         )
@@ -75,8 +75,9 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
             None, self.backend.authenticate(username="toto", password="totopwd")
         )
         query_db(
-            "INSERT INTO %s (username, password) VALUES ('toto', '%s')"
-            % (settings.AUTHENT_TABLENAME, make_password("totopwd"))
+            "INSERT INTO {} (username, password) VALUES ('toto', '{}')".format(
+                settings.AUTHENT_TABLENAME, make_password("totopwd")
+            )
         )
         # Valid returns a user
         self.assertNotEqual(
@@ -89,8 +90,9 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_login(self):
         query_db(
-            "INSERT INTO %s (username, password) VALUES ('harold', '%s')"
-            % (settings.AUTHENT_TABLENAME, make_password("kumar"))
+            "INSERT INTO {} (username, password) VALUES ('harold', '{}')".format(
+                settings.AUTHENT_TABLENAME, make_password("kumar")
+            )
         )
         success = self.client.login(username="harold", password="kumar")
         self.assertTrue(success)
@@ -99,15 +101,17 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_update(self):
         query_db(
-            "INSERT INTO %s (username, password) VALUES ('marc', '%s')"
-            % (settings.AUTHENT_TABLENAME, make_password("maronnier"))
+            "INSERT INTO {} (username, password) VALUES ('marc', '{}')".format(
+                settings.AUTHENT_TABLENAME, make_password("maronnier")
+            )
         )
         success = self.client.login(username="marc", password="maronnier")
         self.assertTrue(success)
         self.client.logout()
         query_db(
-            "UPDATE %s SET password = '%s' WHERE username = 'marc'"
-            % (settings.AUTHENT_TABLENAME, make_password("maronier"))
+            "UPDATE {} SET password = '{}' WHERE username = 'marc'".format(
+                settings.AUTHENT_TABLENAME, make_password("maronier")
+            )
         )
         success = self.client.login(username="marc", password="maronnier")
         self.assertFalse(success)
@@ -116,8 +120,9 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_userprofile(self):
         query_db(
-            "INSERT INTO %s (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '%s', 'Ala', 'Deen', 'Walydia', 'ar')"
-            % (settings.AUTHENT_TABLENAME, make_password("aladeen"))
+            "INSERT INTO {} (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '{}', 'Ala', 'Deen', 'Walydia', 'ar')".format(
+                settings.AUTHENT_TABLENAME, make_password("aladeen")
+            )
         )
         user = self.backend.authenticate(username="aladeen", password="aladeen")
         self.assertEqual(user.first_name, "Ala")
@@ -127,16 +132,16 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_usergroups(self):
         query_db(
-            "INSERT INTO %s (username, password) VALUES ('a', '%s')"
-            % (settings.AUTHENT_TABLENAME, make_password("a"))
+            "INSERT INTO {} (username, password) VALUES ('a', '{}')".format(
+                settings.AUTHENT_TABLENAME, make_password("a")
+            )
         )
         user = self.backend.authenticate(username="a", password="a")
         self.assertFalse(user.is_superuser)
 
         def test_level(username, level, groups):
             query_db(
-                "UPDATE %s SET level = %s WHERE username = '%s'"
-                % (settings.AUTHENT_TABLENAME, level, username)
+                f"UPDATE {settings.AUTHENT_TABLENAME} SET level = {level} WHERE username = '{username}'"
             )
             user = self.backend.authenticate(username="a", password="a")
             if user:

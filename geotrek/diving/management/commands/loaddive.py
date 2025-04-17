@@ -44,7 +44,7 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            raise CommandError(f"File does not exists at: {filename}")
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -113,7 +113,7 @@ class Command(BaseCommand):
                     name = feature.get(field_name)
                     if feature_geom.geom_type == "MultiPoint":
                         self.stdout.write(
-                            self.style.NOTICE("This object is a MultiPoint : %s" % name)
+                            self.style.NOTICE(f"This object is a MultiPoint : {name}")
                         )
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
@@ -137,9 +137,7 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE(f"{self.counter} objects created.")
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -163,7 +161,7 @@ class Command(BaseCommand):
                     eid=eid, defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
-                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+                    self.stdout.write(f"Update : {name} with eid {eid}")
             else:
                 dive = Dive.objects.create(**fields_without_eid)
         self.counter += 1

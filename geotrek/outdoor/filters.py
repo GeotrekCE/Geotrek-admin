@@ -60,9 +60,7 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     def filter_super(self, qs, name, values):
         if not values:
             return qs
-        return qs.filter(**{f"{name}__in": values}).get_ancestors(
-            include_self=True
-        )
+        return qs.filter(**{f"{name}__in": values}).get_ancestors(include_self=True)
 
     def filter_sector(self, qs, name, values):
         if not values:

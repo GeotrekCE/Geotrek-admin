@@ -724,8 +724,7 @@ class XmlParser(Parser):
             self.root = ET.fromstring(response.content)
         entries = self.root.findall(self.results_path, self.ns)
         self.nb = len(entries)
-        for row in entries:
-            yield row
+        yield from entries
 
     def get_part(self, dst, src, val):
         return val.findtext(src, None, self.ns)
@@ -890,9 +889,7 @@ class AttachmentParserMixin:
                 try:
                     response = self.request_or_retry(url)
                 except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                    raise ValueImportError(
-                        f"Failed to load attachment: {e}"
-                    )
+                    raise ValueImportError(f"Failed to load attachment: {e}")
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_("Failed to download '{url}'").format(url=url))
                     return None
@@ -909,9 +906,9 @@ class AttachmentParserMixin:
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
-            if re.search(
-                rf"^{regexp}$", existing_name
-            ) and not self.has_size_changed(kwargs.get("url"), attachment):
+            if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
+                kwargs.get("url"), attachment
+            ):
                 found = True
                 attachments_to_delete.remove(attachment)
                 if (
@@ -1062,7 +1059,7 @@ class AttachmentParserMixin:
             author = attachment_data[2] or ""
             title = attachment_data[3] if len(attachment_data) > 3 else ""
             basename, ext = os.path.splitext(os.path.basename(url))
-            name = "%s%s" % (basename[:128], ext)
+            name = f"{basename[:128]}{ext}"
             found, updated = self.check_attachment_updated(
                 attachments_to_delete,
                 updated,
@@ -1674,7 +1671,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 License.objects.get_or_create(label=license)[0] if license else None
             )
             basename, ext = os.path.splitext(os.path.basename(url))
-            name = "%s%s" % (basename[:128], ext)
+            name = f"{basename[:128]}{ext}"
             found, updated = self.check_attachment_updated(
                 attachments_to_delete,
                 updated,
@@ -1907,8 +1904,7 @@ class ApidaeBaseParser(Parser):
             )
             self.root = response.json()
             self.nb = int(self.root["numFound"])
-            for row in self.items:
-                yield row
+            yield from self.items
             self.skip += self.size
             if self.skip >= self.nb:
                 return
@@ -1971,8 +1967,7 @@ class OpenStreetMapParser(Parser):
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
         self.nb = len(self.root["elements"])
-        for row in self.root["elements"]:
-            yield row
+        yield from self.root["elements"]
 
     def normalize_field_name(self, name):
         return name

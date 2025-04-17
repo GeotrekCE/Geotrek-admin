@@ -221,16 +221,12 @@ class SensitiveArea(
 
     @property
     def species_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.species.name,
-            self.species.name,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.species.name}">{self.species.name}</a>'
         if self.published:
             s = (
-                '<span class="badge badge-success" title="%s">&#x2606;</span> '
-                % _("Published")
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
                 + s
             )
         return s

@@ -377,9 +377,7 @@ class Blade(
 
     @property
     def signage_display(self):
-        return (
-            '<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
-        )
+        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
 
     @property
     def order_lines(self):
@@ -387,22 +385,12 @@ class Blade(
 
     @property
     def number_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
         return s
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}">{self}</a>'
         return s
 
     @property

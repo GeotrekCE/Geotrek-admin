@@ -18,7 +18,7 @@ class TimedTextTestResult(TextTestResult):
         super(TextTestResult, self).addSuccess(test)
         if self.showAll:
             duration = time() - self.clocks[test]
-            self.stream.writeln("ok (%.6fs)" % (duration))
+            self.stream.writeln(f"ok ({duration:.6f}s)")
             self.sheeps[test] = duration
         elif self.dots:
             self.stream.write(".")
@@ -37,7 +37,7 @@ class TimedTextTestRunner(TextTestRunner):
             ][-10:]
             self.stream.writeln("Top 10 : \n")
             for black_sheep in black_sheeps[::-1]:
-                self.stream.writeln("%s : %s s" % (str(black_sheep[0]), black_sheep[1]))
+                self.stream.writeln(f"{str(black_sheep[0])} : {black_sheep[1]} s")
         return result
 
 

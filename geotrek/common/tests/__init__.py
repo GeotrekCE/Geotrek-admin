@@ -287,7 +287,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
 
         obj = self.modelfactory()
 
-        response = self.client.get("%s?lang=fr" % obj.get_detail_url())
+        response = self.client.get(f"{obj.get_detail_url()}?lang=fr")
         self.assertEqual(response.status_code, 200)
 
     def test_detail_with_context(self):
@@ -297,7 +297,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
         obj = self.modelfactory()
 
         response = self.client.get(
-            '%s?context={"mapsize":{"width":5,"height":6}}' % obj.get_detail_url()
+            f'{obj.get_detail_url()}?context={{"mapsize":{{"width":5,"height":6}}}}'
         )
         self.assertEqual(response.status_code, 200)
 
@@ -307,7 +307,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
         if "published" not in [field.name for field in self.model._meta.get_fields()]:
             return
         self.user = self.userfactory(password="booh")
-        codename = "publish_%s" % self.model._meta.model_name
+        codename = f"publish_{self.model._meta.model_name}"
         if not Permission.objects.filter(codename=codename).count():
             return
         perm = Permission.objects.get(codename=codename)
@@ -328,7 +328,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
         if "published" not in [field.name for field in self.model._meta.get_fields()]:
             return
         self.user = self.userfactory(password="booh")
-        codename = "publish_%s" % self.model._meta.model_name
+        codename = f"publish_{self.model._meta.model_name}"
         if not Permission.objects.filter(codename=codename).count():
             return
         perm = Permission.objects.get(codename=codename)
@@ -403,19 +403,13 @@ class CommonLiveTest(MapEntityLiveTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
 
-        mapimage_url = "%s%s?context&lang=fr" % (
-            self.live_server_url,
-            obj.get_detail_url(),
-        )
-        screenshot_url = "http://0.0.0.0:8001/?url=%s" % mapimage_url
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context&lang=fr"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
 
-        mapimage_url = "%s%s?context&lang=en" % (
-            self.live_server_url,
-            obj.get_detail_url(),
-        )
-        screenshot_url = "http://0.0.0.0:8001/?url=%s" % mapimage_url
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context&lang=en"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
 
@@ -443,8 +437,8 @@ class CommonLiveTest(MapEntityLiveTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
 
-        mapimage_url = "%s%s?context" % (self.live_server_url, obj.get_detail_url())
-        screenshot_url = "http://0.0.0.0:8001/?url=%s" % mapimage_url
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
 

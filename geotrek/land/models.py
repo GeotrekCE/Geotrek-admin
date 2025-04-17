@@ -57,7 +57,7 @@ class PhysicalEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Physical edges")
 
     def __str__(self):
-        return _("Physical edge") + ": %s" % self.physical_type
+        return _("Physical edge") + f": {self.physical_type}"
 
     @property
     def color_index(self):
@@ -73,11 +73,7 @@ class PhysicalEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def physical_type_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.physical_type,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.physical_type}</a>'
 
     @property
     def physical_type_csv_display(self):
@@ -162,7 +158,7 @@ class LandEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Land edges")
 
     def __str__(self):
-        return _("Land edge") + ": %s" % self.land_type
+        return _("Land edge") + f": {self.land_type}"
 
     @property
     def color_index(self):
@@ -178,11 +174,7 @@ class LandEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def land_type_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.land_type,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.land_type}</a>'
 
     @property
     def land_type_csv_display(self):
@@ -244,7 +236,7 @@ class CompetenceEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Competence edges")
 
     def __str__(self):
-        return _("Competence edge") + ": %s" % self.organization
+        return _("Competence edge") + f": {self.organization}"
 
     @property
     def color_index(self):
@@ -260,11 +252,7 @@ class CompetenceEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.organization,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.organization}</a>'
 
     @property
     def organization_csv_display(self):
@@ -338,7 +326,7 @@ class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Work management edges")
 
     def __str__(self):
-        return _("Work management edge") + ": %s" % self.organization
+        return _("Work management edge") + f": {self.organization}"
 
     @property
     def color_index(self):
@@ -354,11 +342,7 @@ class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.organization,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.organization}</a>'
 
     @property
     def organization_csv_display(self):
@@ -428,7 +412,7 @@ class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Signage management edges")
 
     def __str__(self):
-        return _("Signage management edge") + ": %s" % self.organization
+        return _("Signage management edge") + f": {self.organization}"
 
     @property
     def color_index(self):
@@ -444,11 +428,7 @@ class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def organization_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.organization,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.organization}</a>'
 
     @property
     def organization_csv_display(self):
@@ -553,7 +533,7 @@ class CirculationEdge(GeotrekMapEntityMixin, Topology):
         verbose_name_plural = _("Circulation edges")
 
     def __str__(self):
-        return _("Circulation edge") + ": %s" % self.circulation_type
+        return _("Circulation edge") + f": {self.circulation_type}"
 
     @property
     def color_index(self):
@@ -569,19 +549,11 @@ class CirculationEdge(GeotrekMapEntityMixin, Topology):
 
     @property
     def circulation_type_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.circulation_type,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.circulation_type}</a>'
 
     @property
     def authorization_type_display(self):
-        return '<a data-pk="%s" href="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.authorization_type,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" >{self.authorization_type}</a>'
 
     @property
     def circulation_type_csv_display(self):

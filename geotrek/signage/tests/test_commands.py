@@ -40,7 +40,7 @@ class SignageCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("3 objects created.", output.getvalue())
         qs_signages = Signage.objects.filter(name="name")
         self.assertEqual(2010, qs_signages[0].implantation_year)
@@ -71,7 +71,7 @@ class SignageCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("1 objects created.", output.getvalue())
         value = Signage.objects.first()
         self.assertEqual("name", value.name)
@@ -174,7 +174,7 @@ class SignageCommandTest(TestCase):
             verbosity=1,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
         self.assertIn("Organism 'manager' created", output.getvalue())

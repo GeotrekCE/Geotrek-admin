@@ -143,7 +143,9 @@ class InterventionForm(CommonForm):
                 ct = ContentType.objects.get_for_id(target_type)
                 self.instance.target = ct.get_object_for_this_type(id=target_id)
                 # Set POST URL
-                self.helper.form_action += f"?target_type={target_type}&target_id={target_id}"
+                self.helper.form_action += (
+                    f"?target_type={target_type}&target_id={target_id}"
+                )
             else:
                 # Point target to a new topology
                 self.instance.target = Topology(kind="INTERVENTION")

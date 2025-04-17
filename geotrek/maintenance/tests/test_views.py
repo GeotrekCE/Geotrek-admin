@@ -136,7 +136,7 @@ class InterventionViewsTest(CommonTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
-            good_data["topology"] = ('{"paths": [%s]}' % path.pk,)
+            good_data["topology"] = (f'{{"paths": [{path.pk}]}}',)
         else:
             good_data["topology"] = "SRID=4326;POINT (5.1 6.6)"
         return good_data
@@ -158,27 +158,17 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create()
         else:
             signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
-        signage = "%s" % signa
+        signage = f"{signa}"
 
         response = self.client.get(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                signa.pk,
-                ContentType.objects.get_for_model(Signage).pk,
-            )
+            f"{Intervention.get_add_url()}?target_id={signa.pk}&target_type={ContentType.objects.get_for_model(Signage).pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
         # Should be able to save form successfully
         data = self.get_good_data()
         response = self.client.post(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                signa.pk,
-                ContentType.objects.get_for_model(Signage).pk,
-            ),
+            f"{Intervention.get_add_url()}?target_id={signa.pk}&target_type={ContentType.objects.get_for_model(Signage).pk}",
             data,
         )
         self.assertEqual(response.status_code, 302)
@@ -262,15 +252,10 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create()
         else:
             signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
-        signage = "%s" % signa
+        signage = f"{signa}"
 
         response = self.client.get(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                signa.pk,
-                ContentType.objects.get_for_model(Signage).pk,
-            )
+            f"{Intervention.get_add_url()}?target_id={signa.pk}&target_type={ContentType.objects.get_for_model(Signage).pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
@@ -279,12 +264,7 @@ class InterventionViewsTest(CommonTest):
         # If form invalid, it should not fail
         data.pop("status")
         response = self.client.post(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                signa.pk,
-                ContentType.objects.get_for_model(Signage).pk,
-            ),
+            f"{Intervention.get_add_url()}?target_id={signa.pk}&target_type={ContentType.objects.get_for_model(Signage).pk}",
             data,
         )
         self.assertEqual(response.status_code, 200)
@@ -295,7 +275,7 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create()
         else:
             signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
-        signage = "%s" % signa
+        signage = f"{signa}"
 
         intervention = InterventionFactory.create(target=signa)
         response = self.client.get(intervention.get_update_url())
@@ -317,11 +297,7 @@ class InterventionViewsTest(CommonTest):
         access_mean = AccessMeanFactory()
         data["access"] = access_mean.pk
         # Form URL is modified in form init
-        formurl = "%s?target_id=%s&target_type=%s" % (
-            intervention.get_update_url(),
-            signa.pk,
-            ContentType.objects.get_for_model(Signage).pk,
-        )
+        formurl = f"{intervention.get_update_url()}?target_id={signa.pk}&target_type={ContentType.objects.get_for_model(Signage).pk}"
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
@@ -346,7 +322,7 @@ class InterventionViewsTest(CommonTest):
             "manager": OrganismFactory.create().pk,
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = '{"paths": [%s]}' % PathFactory.create().pk
+            data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
         else:
             data["geom"] = "SRID=4326;POINT (2.0 6.6)"
         self.super_user = SuperUserFactory.create()
@@ -370,23 +346,13 @@ class InterventionViewsTest(CommonTest):
             )
 
         response = self.client.get(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                infra.pk,
-                ContentType.objects.get_for_model(Infrastructure).pk,
-            )
+            f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}"
         )
         self.assertEqual(response.status_code, 200)
         # Should be able to save form successfully
         data = self.get_good_data()
         response = self.client.post(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                infra.pk,
-                ContentType.objects.get_for_model(Infrastructure).pk,
-            ),
+            f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}",
             data,
         )
         self.assertEqual(response.status_code, 302)
@@ -400,12 +366,7 @@ class InterventionViewsTest(CommonTest):
             )
 
         response = self.client.get(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                infra.pk,
-                ContentType.objects.get_for_model(Infrastructure).pk,
-            )
+            f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}"
         )
         self.assertEqual(response.status_code, 200)
         data = self.get_good_data()
@@ -413,12 +374,7 @@ class InterventionViewsTest(CommonTest):
         # If form invalid, it should not fail
         data.pop("status")
         response = self.client.post(
-            "%s?target_id=%s&target_type=%s"
-            % (
-                Intervention.get_add_url(),
-                infra.pk,
-                ContentType.objects.get_for_model(Infrastructure).pk,
-            ),
+            f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}",
             data,
         )
         self.assertEqual(response.status_code, 200)
@@ -450,11 +406,7 @@ class InterventionViewsTest(CommonTest):
             }
         )
         # Form URL is modified in form init
-        formurl = "%s?target_id=%s&target_type=%s" % (
-            Intervention.get_add_url(),
-            infra.pk,
-            ContentType.objects.get_for_model(Infrastructure).pk,
-        )
+        formurl = f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}"
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
@@ -483,7 +435,7 @@ class InterventionViewsTest(CommonTest):
         data["access"] = ""
         data["conditions"] = list(form.instance.conditions.values_list("pk", flat=True))
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = '{"paths": [%s]}' % PathFactory.create().pk
+            data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
         else:
             data["geom"] = "SRID=4326;POINT (2.0 6.6)"
         response = self.client.post(infra.get_update_url(), data)
@@ -502,13 +454,9 @@ class InterventionViewsTest(CommonTest):
         """
         good_data = self.get_good_data()
         good_data["stake"] = ""
-        good_data["topology"] = """
-        {"offset":0,"positions":{"0":[0.8298653170816073,1],"2":[0,0.04593024777973237]},"paths":[%s,%s,%s]}
-        """ % (
-            PathFactory.create().pk,
-            PathFactory.create().pk,
-            PathFactory.create().pk,
-        )
+        good_data["topology"] = f"""
+        {{"offset":0,"positions":{{"0":[0.8298653170816073,1],"2":[0,0.04593024777973237]}},"paths":[{PathFactory.create().pk},{PathFactory.create().pk},{PathFactory.create().pk}]}}
+        """
         response = self.client.post(Intervention.get_add_url(), good_data)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(response.headers["location"])
@@ -592,8 +540,8 @@ class InterventionViewsTest(CommonTest):
         self.client.login(username="admin", password="super")
         data = self.get_good_data()
         data["structure"] = StructureFactory.create().pk
-        data["topology"] = ('{"paths": [%s], "positions":{"0":[0,1]}}' % path.pk,)
-        response = self.client.post("%s" % (Intervention.get_add_url()), data)
+        data["topology"] = (f'{{"paths": [{path.pk}], "positions":{{"0":[0,1]}}}}',)
+        response = self.client.post(f"{Intervention.get_add_url()}", data)
         self.assertEqual(PathAggregation.objects.count(), 1)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Intervention.objects.first().geom, path.geom)

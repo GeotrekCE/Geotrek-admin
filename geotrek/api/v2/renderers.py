@@ -25,7 +25,7 @@ class SVGProfileRenderer(BaseRenderer):
             print_values=False,
             show_dots=False,
             zero=floor_elevation,
-            value_formatter=lambda v: "%d" % v,
+            value_formatter=lambda v: f"{v}",
             margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
             width=settings.ALTIMETRIC_PROFILE_WIDTH,
             height=settings.ALTIMETRIC_PROFILE_HEIGHT,

@@ -10,10 +10,10 @@ class AltimetryPointFilterSet(FilterSet):
     def filter_elevation(self, qs, name, value):
         # TODO: Remove, when min_elevation and max_elevation use DecimalRangeField
         if value.start is not None:
-            lookup_start = "%s__%s" % ("min_elevation", "gte")
+            lookup_start = "{}__{}".format("min_elevation", "gte")
             qs = qs.filter(**{lookup_start: value.start})
         if value.stop is not None:
-            lookup_stop = "%s__%s" % ("max_elevation", "lte")
+            lookup_stop = "{}__{}".format("max_elevation", "lte")
             qs = qs.filter(**{lookup_stop: value.stop})
         return qs
 

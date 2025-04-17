@@ -37,7 +37,7 @@ class DiveCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Dives will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Dives will be linked to {structure}", output.getvalue())
         self.assertIn("2 objects created.", output.getvalue())
         value = Dive.objects.filter(name="name")
         self.assertEqual(
@@ -64,7 +64,7 @@ class DiveCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Dives will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Dives will be linked to {structure}", output.getvalue())
         self.assertIn("2 objects created.", output.getvalue())
         value = Dive.objects.filter(name="name")
         self.assertEqual(10, value[0].depth)  # The dive was not updated
@@ -88,7 +88,7 @@ class DiveCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Dives will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Dives will be linked to {structure}", output.getvalue())
         self.assertIn("2 objects created.", output.getvalue())
         value = Dive.objects.get(name="name")
         self.assertIsNone(value.practice)
@@ -151,7 +151,7 @@ class DiveCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Dives will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Dives will be linked to {structure}", output.getvalue())
         self.assertIn("1 objects created.", output.getvalue())
         value = Dive.objects.get(name="name")
         self.assertEqual(10, value.depth)

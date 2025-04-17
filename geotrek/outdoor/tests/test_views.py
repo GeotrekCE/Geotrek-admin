@@ -90,24 +90,23 @@ class SiteDeleteTest(TestCase):
     def test_view_delete_site(self):
         self.site_1 = SiteFactory.create(name="site_1")
         response = self.client.get(
-            reverse("outdoor:site_delete", args=["%s" % self.site_1.pk])
+            reverse("outdoor:site_delete", args=[f"{self.site_1.pk}"])
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            "Do you really wish to delete <strong>%s</strong> ?" % (self.site_1.name),
+            f"Do you really wish to delete <strong>{self.site_1.name}</strong> ?",
         )
 
         self.site_2 = SiteFactory.create(name="site_2")
         self.site_3 = SiteFactory.create(name="site_3", parent=self.site_2)
         response = self.client.get(
-            reverse("outdoor:site_delete", args=["%s" % self.site_2.pk])
+            reverse("outdoor:site_delete", args=[f"{self.site_2.pk}"])
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            "You can't delete <strong>%s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding."
-            % (self.site_2.name),
+            f"You can't delete <strong>{self.site_2.name}</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding.",
         )
 
     def test_delete_site(self):
@@ -115,7 +114,7 @@ class SiteDeleteTest(TestCase):
         site_2 = SiteFactory.create(name="site_2")
         self.assertEqual(Site.objects.count(), 2)
         response = self.client.post(
-            reverse("outdoor:site_delete", args=["%s" % site_2.pk])
+            reverse("outdoor:site_delete", args=[f"{site_2.pk}"])
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Site.objects.count(), 1)

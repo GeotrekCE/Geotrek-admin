@@ -465,7 +465,9 @@ class ServeAttachmentAccessibility(View):
             )
         response["Content-Type"] = content_type or "application/octet-stream"
         if app_settings["SERVE_MEDIA_AS_ATTACHMENT"]:
-            response["Content-Disposition"] = f"attachment; filename={os.path.basename(path)}"
+            response["Content-Disposition"] = (
+                f"attachment; filename={os.path.basename(path)}"
+            )
         return response
 
 

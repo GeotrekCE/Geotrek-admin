@@ -285,7 +285,12 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
             return ""
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get("apiv2"))
-        except (OSError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator):
+        except (
+            OSError,
+            InvalidImageFormatError,
+            DecompressionBombError,
+            NoSourceGenerator,
+        ):
             return ""
         thumbnail.author = obj.author
         thumbnail.legend = obj.legend
@@ -468,9 +473,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             return [
                 {
                     "id": obj.id * 100 + i,
-                    "label": get_translation_or_dict(
-                        f"type{i}_label", self, obj
-                    ),
+                    "label": get_translation_or_dict(f"type{i}_label", self, obj),
                     "values": [
                         {
                             "id": t.id,

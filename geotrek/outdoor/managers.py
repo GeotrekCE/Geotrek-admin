@@ -14,11 +14,7 @@ class CourseOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        return (
-            super(CourseOrderedChildManager, self)
-            .get_queryset()
-            .select_related("parent", "child")
-        )
+        return super().get_queryset().select_related("parent", "child")
 
 
 class CourseManager(Manager, ProviderChoicesMixin):

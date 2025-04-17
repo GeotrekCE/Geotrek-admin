@@ -51,7 +51,7 @@ urlpatterns = [
 if settings.DEBUG or settings.MAPENTITY_CONFIG["SENDFILE_HTTP_HEADER"]:
     urlpatterns += [
         re_path(
-            r"^%s/(?P<path>attachments_accessibility/.*)$" % _MEDIA_URL,
+            rf"^{_MEDIA_URL}/(?P<path>attachments_accessibility/.*)$",
             views.ServeAttachmentAccessibility.as_view(),
         ),
     ]
@@ -74,17 +74,17 @@ class PublishableEntityOptions(MapEntityOptions):
             path(
                 f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>_booklet.pdf",
                 self.document_public_booklet_view.as_view(model=self.model),
-                name="%s_booklet_printable" % self.modelname,
+                name=f"{self.modelname}_booklet_printable",
             ),
             path(
                 f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.pdf",
                 self.document_public_view.as_view(model=self.model),
-                name="%s_printable" % self.modelname,
+                name=f"{self.modelname}_printable",
             ),
             path(
                 f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.html",
                 self.markup_public_view.as_view(model=self.model),
-                name="%s_markup_html" % self.modelname,
+                name=f"{self.modelname}_markup_html",
             ),
         ]
         return publishable_views + mapentity_views

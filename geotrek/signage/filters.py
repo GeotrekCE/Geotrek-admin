@@ -25,8 +25,8 @@ class PolygonTopologyFilter(PolygonFilter):
         if not value:
             return qs
         lookup = self.lookup_expr
-        inner_qs = Topology.objects.filter(**{"geom__%s" % lookup: value})
-        return qs.filter(**{"%s__in" % self.field_name: inner_qs})
+        inner_qs = Topology.objects.filter(**{f"geom__{lookup}": value})
+        return qs.filter(**{f"{self.field_name}__in": inner_qs})
 
 
 class SignageFilterSet(

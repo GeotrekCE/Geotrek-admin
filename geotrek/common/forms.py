@@ -83,7 +83,7 @@ class CommonForm(MapEntityForm):
 
     def replace_orig_fields(self):
         model = self._meta.model
-        codeperm = "%s.publish_%s" % (model._meta.app_label, model._meta.model_name)
+        codeperm = f"{model._meta.app_label}.publish_{model._meta.model_name}"
         if (
             "published" in self.fields
             and self.user
@@ -102,7 +102,7 @@ class CommonForm(MapEntityForm):
         except FieldDoesNotExist:
             # be careful but custom form fields, not in model
             modelfield = None
-        if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+        if not isinstance(modelfield, ForeignKey | ManyToManyField):
             return
         model = modelfield.remote_field.model
         # Filter structured choice fields according to user's structure
@@ -172,10 +172,10 @@ class CommonForm(MapEntityForm):
                     modelfield = self.instance._meta.get_field(name)
                 except FieldDoesNotExist:
                     continue
-                if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                if not isinstance(modelfield, ForeignKey | ManyToManyField):
                     continue
                 model = modelfield.remote_field.model
-                if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
+                if not issubclass(model, StructureRelated | StructureOrNoneRelated):
                     continue
                 if not model.check_structure_in_forms:
                     continue

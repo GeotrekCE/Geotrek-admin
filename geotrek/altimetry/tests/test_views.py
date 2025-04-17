@@ -20,19 +20,19 @@ class ProfileViewsTest(TestCase):
 
     def test_profile_object_not_public_not_connected(self):
         trek = TrekFactory.create(name="Trek", published=False)
-        response = self.client.get("/media/profiles/trek-%s.png" % trek.pk)
+        response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
         self.assertEqual(response.status_code, 403)
 
     def test_profile_object_not_public_connected(self):
         self.client.force_login(user=self.user)
         trek = TrekFactory.create(name="Trek", published=False)
-        response = self.client.get("/media/profiles/trek-%s.png" % trek.pk)
+        response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
         self.assertEqual(response.status_code, 403)
 
     def test_profile_object_public_fail_no_profile(self):
         self.client.force_login(user=self.user)
         trek = TrekFactory.create(name="Trek", published=True)
-        response = self.client.get("/media/profiles/trek-%s.png" % trek.pk)
+        response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
         self.assertEqual(response.status_code, 200)
 
 

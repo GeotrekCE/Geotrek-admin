@@ -63,7 +63,7 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            raise CommandError(f"File does not exists at: {filename}")
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -130,15 +130,11 @@ class Command(BaseCommand):
                     )
                     self.create_poi(feature_geom, name, poitype, description)
                     if verbosity >= 2:
-                        self.stdout.write(
-                            self.style.NOTICE(f"{name} POI created.")
-                        )
+                        self.stdout.write(self.style.NOTICE(f"{name} POI created."))
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE(f"{self.counter} objects created.")
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -155,7 +151,7 @@ class Command(BaseCommand):
             # to a path aggregation (topology)
             geometry = geometry.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
             poi.mutate(topology)

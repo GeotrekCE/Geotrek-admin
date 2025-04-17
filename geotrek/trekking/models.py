@@ -431,9 +431,7 @@ class Trek(
 
     def get_map_image_path(self, language=None):
         lang = language or get_language()
-        return os.path.join(
-            "maps", "%s-%s-%s.png" % (self._meta.model_name, self.pk, lang)
-        )
+        return os.path.join("maps", f"{self._meta.model_name}-{self.pk}-{lang}.png")
 
     def get_map_image_extent(self, srid=settings.API_SRID):
         extent = list(super().get_map_image_extent(srid))
@@ -893,8 +891,8 @@ class WebLink(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        category = "%s - " % self.category.label if self.category else ""
-        return "%s%s" % (category, self.name)
+        category = f"{self.category.label} - " if self.category else ""
+        return f"{category}{self.name}"
 
     @classmethod
     def get_add_url(cls):
@@ -910,7 +908,7 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
         ordering = ["label"]
 
     def __str__(self):
-        return "%s" % self.label
+        return f"{self.label}"
 
 
 class POI(
@@ -946,7 +944,7 @@ class POI(
     check_structure_in_forms = False
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.type)
+        return f"{self.name} ({self.type})"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -1133,16 +1131,12 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.name,
-            self.name,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.name}">{self.name}</a>'
         if self.type.published:
             s = (
-                '<span class="badge badge-success" title="%s">&#x2606;</span> '
-                % _("Published")
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
                 + s
             )
         return s

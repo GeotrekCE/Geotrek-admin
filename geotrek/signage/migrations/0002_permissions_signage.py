@@ -28,19 +28,19 @@ def add_permissions_signage(apps, schema_editor):
 
     for user in UserModel.objects.all():
         for type_perm in type_permissions:
-            if user.user_permissions.filter(codename="%s_signage" % type_perm).exists():
+            if user.user_permissions.filter(codename=f"{type_perm}_signage").exists():
                 user.user_permissions.add(
                     PermissionModel.objects.get(
-                        codename="%s_signage" % type_perm,
+                        codename=f"{type_perm}_signage",
                         content_type=content_type_signage,
                     )
                 )
     for group in GroupModel.objects.all():
         for type_perm in type_permissions:
-            if group.permissions.filter(codename="%s_signage" % type_perm).exists():
+            if group.permissions.filter(codename=f"{type_perm}_signage").exists():
                 group.permissions.add(
                     PermissionModel.objects.get(
-                        codename="%s_signage" % type_perm,
+                        codename=f"{type_perm}_signage",
                         content_type=content_type_signage,
                     )
                 )
@@ -53,11 +53,11 @@ def add_permissions_signage(apps, schema_editor):
     for user in UserModel.objects.all():
         for type_perm in type_permissions_type:
             if user.user_permissions.filter(
-                codename="%s_infrastructuretype" % type_perm
+                codename=f"{type_perm}_infrastructuretype"
             ).exists():
                 user.user_permissions.add(
                     PermissionModel.objects.get(
-                        codename="%s_signagetype" % type_perm,
+                        codename=f"{type_perm}_signagetype",
                         content_type=content_type_signage_type,
                     )
                 )

@@ -21,12 +21,12 @@ def login_from_cred(client, cred):
 
 def admin_add_url_from_model(model):
     info = model._meta.app_label, model._meta.model_name
-    return reverse("admin:%s_%s_add" % info)
+    return reverse("admin:{}_{}_add".format(*info))
 
 
 def admin_list_url_from_model(model):
     info = model._meta.app_label, model._meta.model_name
-    return reverse("admin:%s_%s_changelist" % info)
+    return reverse("admin:{}_{}_changelist".format(*info))
 
 
 class TraductionTestCase(TestCase):
@@ -86,7 +86,7 @@ class TraductionTestCase(TestCase):
 
         for language in ("fr", "it", "en"):
             with translation.override(language):
-                translated_difficulty = difficulty_trad["difficulty_%s" % language]
+                translated_difficulty = difficulty_trad[f"difficulty_{language}"]
                 self.assertEqual(
                     intervention_difficulty.difficulty, translated_difficulty
                 )

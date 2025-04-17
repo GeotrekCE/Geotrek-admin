@@ -387,9 +387,7 @@ class Site(
         if not practices:
             return ""
         verbose = [
-            str(practice)
-            if practice == self.practice
-            else f"<i>{escape(practice)}</i>"
+            str(practice) if practice == self.practice else f"<i>{escape(practice)}</i>"
             for practice in practices
         ]
         return ", ".join(verbose)

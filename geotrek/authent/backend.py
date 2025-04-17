@@ -125,7 +125,7 @@ class DatabaseBackend(ModelBackend):
                         "Database backend is used, and AUTHENT_TABLENAME does not exists."
                     )
 
-                sqlquery = "SELECT %s FROM %s WHERE username = " % (
+                sqlquery = "SELECT {} FROM {} WHERE username = ".format(
                     ", ".join(FIELDS),
                     settings.AUTHENT_TABLENAME,
                 )

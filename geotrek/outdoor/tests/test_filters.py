@@ -43,9 +43,7 @@ class SiteFilterSetTest(TestCase):
         )
 
     def test_sector_filter(self):
-        filterset = SiteFilterSet(
-            QueryDict(f"sector={self.practice.sector.pk}")
-        )
+        filterset = SiteFilterSet(QueryDict(f"sector={self.practice.sector.pk}"))
         self.assertTrue(filterset.is_valid(), filterset.errors)
         self.assertEqual(len(filterset.qs), 2)
         self.assertListEqual(

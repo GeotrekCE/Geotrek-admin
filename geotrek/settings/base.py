@@ -256,7 +256,7 @@ MIDDLEWARE = (
     "mapentity.middleware.AutoLoginMiddleware",
 )
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != "" else None
-ADMIN_MEDIA_PREFIX = "%s/static/admin/" % ROOT_URL
+ADMIN_MEDIA_PREFIX = f"{ROOT_URL}/static/admin/"
 
 ROOT_URLCONF = "geotrek.urls"
 
@@ -809,7 +809,7 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
 ]
 
-EMAIL_SUBJECT_PREFIX = "[%s] " % TITLE
+EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
 
 FACEBOOK_APP_ID = ""
 FACEBOOK_IMAGE = "/images/logo-geotrek.png"

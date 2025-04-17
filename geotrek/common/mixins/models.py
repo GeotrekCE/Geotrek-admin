@@ -169,7 +169,12 @@ class PicturesMixin:
                 )
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (OSError, InvalidImageFormatError, DecompressionBombError, NoSourceGenerator) as e:
+            except (
+                OSError,
+                InvalidImageFormatError,
+                DecompressionBombError,
+                NoSourceGenerator,
+            ) as e:
                 logger.warning(
                     _("Image {} invalid or missing from disk: {}.").format(
                         picture.attachment_file, e
@@ -219,9 +224,7 @@ class PicturesMixin:
         thumbnail = self.thumbnail
         if thumbnail is None:
             return _("None")
-        return '<img height="20" width="20" src="%s"/>' % os.path.join(
-            settings.MEDIA_URL, thumbnail.name
-        )
+        return f'<img height="20" width="20" src="{os.path.join(settings.MEDIA_URL, thumbnail.name)}"/>'
 
     @property
     def sorted_attachments(self):
@@ -350,22 +353,19 @@ class PublishableMixin(BasePublishableMixin):
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.name,
-            self.name,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.name}">{self.name}</a>'
         if self.published:
             s = (
-                '<span class="badge badge-success" title="%s">&#x2606;</span> '
-                % _("Published")
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
                 + s
             )
         elif self.review:
             s = (
-                '<span class="badge badge-warning" title="%s">&#x2606;</span> '
-                % _("Waiting for publication")
+                '<span class="badge badge-warning" title="{}">&#x2606;</span> '.format(
+                    _("Waiting for publication")
+                )
                 + s
             )
         return s
@@ -419,8 +419,7 @@ class PictogramMixin(models.Model):
 
     def pictogram_img(self):
         return mark_safe(
-            '<img src="%s" class="pictogram_%s"/>'
-            % (self.pictogram.url, os.path.splitext(self.pictogram.name)[1][1:])
+            f'<img src="{self.pictogram.url}" class="pictogram_{os.path.splitext(self.pictogram.name)[1][1:]}"/>'
             if self.pictogram
             else "No pictogram"
         )
@@ -448,9 +447,9 @@ class AddPropertyMixin:
     @classmethod
     def add_property(cls, name, func, verbose_name):
         if hasattr(cls, name):
-            raise AttributeError("%s has already an attribute %s" % (cls, name))
+            raise AttributeError(f"{cls} has already an attribute {name}")
         setattr(cls, name, property(func))
-        setattr(cls, "%s_verbose_name" % name, verbose_name)
+        setattr(cls, f"{name}_verbose_name", verbose_name)
 
 
 def get_uuid_duplication(uid_field):

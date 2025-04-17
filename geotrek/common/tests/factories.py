@@ -14,21 +14,21 @@ class OrganismFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Organism
 
-    organism = factory.Sequence(lambda n: "Organism %s" % n)
+    organism = factory.Sequence(lambda n: f"Organism {n}")
 
 
 class FileTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FileType
 
-    type = factory.Sequence(lambda n: "FileType %s" % n)
+    type = factory.Sequence(lambda n: f"FileType {n}")
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.License
 
-    label = factory.Sequence(lambda n: "License %s" % n)
+    label = factory.Sequence(lambda n: f"License {n}")
 
 
 class AttachmentFactory(factory.django.DjangoModelFactory):
@@ -68,7 +68,7 @@ class ThemeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Theme
 
-    label = factory.Sequence(lambda n: "Theme %s" % n)
+    label = factory.Sequence(lambda n: f"Theme {n}")
     pictogram = factory.django.ImageField()
 
 
@@ -76,7 +76,7 @@ class RecordSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RecordSource
 
-    name = factory.Sequence(lambda n: "Record source %s" % n)
+    name = factory.Sequence(lambda n: f"Record source {n}")
     website = "http://geotrek.fr"
     pictogram = factory.django.ImageField()
 
@@ -85,7 +85,7 @@ class TargetPortalFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TargetPortal
 
-    name = factory.Sequence(lambda n: "Target Portal %s" % n)
+    name = factory.Sequence(lambda n: f"Target Portal {n}")
     website = factory.Sequence(lambda n: f"http://geotrek-rando-{n}.fr")
 
 
@@ -93,7 +93,7 @@ class ReservationSystemFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ReservationSystem
 
-    name = factory.Sequence(lambda n: "Reservation system %s" % n)
+    name = factory.Sequence(lambda n: f"Reservation system {n}")
 
 
 class LabelFactory(factory.django.DjangoModelFactory):
@@ -163,12 +163,12 @@ class AccessMeanFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.AccessMean
 
-    label = factory.Sequence(lambda n: "Acces mean %s" % n)
+    label = factory.Sequence(lambda n: f"Acces mean {n}")
 
 
 class AnnotationCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.AnnotationCategory
 
-    label = factory.Sequence(lambda n: "Annotation Type %s" % n)
+    label = factory.Sequence(lambda n: f"Annotation Type {n}")
     pictogram = factory.django.ImageField()

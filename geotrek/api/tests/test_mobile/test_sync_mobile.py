@@ -212,16 +212,12 @@ class SyncMobileTilesTest(VarTmpTestCase):
         )
         self.assertFalse(
             os.path.exists(
-                os.path.join(
-                    self.sync_directory, "nolang", f"{trek_multi.pk}.zip"
-                )
+                os.path.join(self.sync_directory, "nolang", f"{trek_multi.pk}.zip")
             )
         )
         self.assertFalse(
             os.path.exists(
-                os.path.join(
-                    self.sync_directory, "nolang", f"{trek_point.pk}.zip"
-                )
+                os.path.join(self.sync_directory, "nolang", f"{trek_point.pk}.zip")
             )
         )
 
@@ -408,9 +404,7 @@ class SyncMobileFlatpageTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "flatpages.json")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "flatpages.json")) as f:
                 flatpages = json.load(f)
                 self.assertEqual(
                     len(flatpages),
@@ -434,14 +428,10 @@ class SyncMobileFlatpageTest(VarTmpTestCase):
             verbosity=2,
             stdout=output,
         )
-        with open(
-            os.path.join(self.sync_directory, "fr", "flatpages.json")
-        ) as f_file:
+        with open(os.path.join(self.sync_directory, "fr", "flatpages.json")) as f_file:
             flatpages = json.load(f_file)
             self.assertEqual(len(flatpages), 0)
-        with open(
-            os.path.join(self.sync_directory, "en", "flatpages.json")
-        ) as f_file:
+        with open(os.path.join(self.sync_directory, "en", "flatpages.json")) as f_file:
             flatpages = json.load(f_file)
             self.assertEqual(len(flatpages), 3)
         self.assertIn("en/flatpages.json", output.getvalue())
@@ -460,9 +450,7 @@ class SyncMobileFlatpageTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "flatpages.json")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "flatpages.json")) as f:
                 flatpages = json.load(f)
                 self.assertEqual(
                     len(flatpages),
@@ -483,9 +471,7 @@ class SyncMobileFlatpageTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "flatpages.json")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "flatpages.json")) as f:
                 flatpages = json.load(f)
                 self.assertEqual(
                     len(flatpages),
@@ -512,9 +498,7 @@ class SyncMobileSettingsTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "settings.json")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "settings.json")) as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json["data"]), 17)
@@ -544,9 +528,7 @@ class SyncMobileSettingsTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "settings.json")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "settings.json")) as f:
                 settings_json = json.load(f)
                 self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json["data"]), 17)
@@ -604,28 +586,28 @@ class SyncMobileTreksTest(VarTmpTestCase):
         )
 
         cls.touristic_content = TouristicContentFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID, published=True
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)", published=True
         )
         cls.touristic_event = TouristicEventFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID, published=True
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)", published=True
         )
         cls.touristic_content_portal_a = TouristicContentFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID,
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
             portals=[cls.portal_a],
         )
         cls.touristic_event_portal_a = TouristicEventFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID,
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
             portals=[cls.portal_a],
         )
         cls.touristic_content_portal_b = TouristicContentFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID,
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
             portals=[cls.portal_b],
         )
         cls.touristic_event_portal_b = TouristicEventFactory(
-            geom="SRID=%s;POINT(700001 6600001)" % settings.SRID,
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
             portals=[cls.portal_b],
         )
@@ -656,9 +638,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             stdout=output,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "treks.geojson")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "treks.geojson")) as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(
                     len(trek_geojson["features"]),
@@ -686,9 +666,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             trek_geojson = json.load(f)
             self.assertEqual(len(trek_geojson["properties"]), 34)
 
-        self.assertIn(
-            f"en/{str(self.trek_1.pk)}/trek.geojson", output.getvalue()
-        )
+        self.assertIn(f"en/{str(self.trek_1.pk)}/trek.geojson", output.getvalue())
         self.assertIn(
             f"en/{self.trek_1.pk}/treks/{self.trek_4.pk}.geojson",
             output.getvalue(),
@@ -713,9 +691,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             )
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "treks.geojson")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "treks.geojson")) as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(
                     len(trek_geojson["features"]),
@@ -770,9 +746,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
                 # Without dynamic segmentation it used a buffer so we get all the pois normally linked
                 # with the other treks.
                 self.assertEqual(len(trek_geojson["features"]), 6)
-        self.assertIn(
-            f"en/{str(self.trek_1.pk)}/pois.geojson", output.getvalue()
-        )
+        self.assertIn(f"en/{str(self.trek_1.pk)}/pois.geojson", output.getvalue())
 
     def test_sync_sensitive_areas_by_treks(self):
         output = StringIO()
@@ -799,9 +773,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             "sensitive_areas",
             f"{str(self.trek_4.pk)}.geojson",
         )
-        with open(
-            os.path.join(self.sync_directory, filepath_child_trek_data)
-        ) as f:
+        with open(os.path.join(self.sync_directory, filepath_child_trek_data)) as f:
             sensitive_areas_geojson = json.load(f)
             self.assertEqual(len(sensitive_areas_geojson["features"]), 2)
         self.assertIn(filepath_child_trek_data, output.getvalue())
@@ -1129,9 +1101,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             verbosity=0,
         )
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(
-                os.path.join(self.sync_directory, lang, "treks.geojson")
-            ) as f:
+            with open(os.path.join(self.sync_directory, lang, "treks.geojson")) as f:
                 trek_geojson = json.load(f)
                 self.assertEqual(
                     len(trek_geojson["features"]),

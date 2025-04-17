@@ -40,7 +40,7 @@ class DifficultyTest(AuthentFixturesTest):
 
         response = self.client.post(reverse("admin:diving_difficulty_add"), post_data)
         error_msg = (
-            "Difficulty with id &#x27;%s&#x27; already exists" % self.difficulty.pk
+            f"Difficulty with id &#x27;{self.difficulty.pk}&#x27; already exists"
         )
         self.assertContains(response, error_msg)
 
@@ -92,7 +92,7 @@ class DifficultyTest(AuthentFixturesTest):
         }
 
         response = self.client.post(reverse("admin:diving_level_add"), post_data)
-        error_msg = "Level with id &#x27;%s&#x27; already exists" % self.level.pk
+        error_msg = f"Level with id &#x27;{self.level.pk}&#x27; already exists"
         self.assertContains(response, error_msg)
 
     def test_migrate_dive_level(self):

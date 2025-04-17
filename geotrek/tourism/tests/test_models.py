@@ -71,25 +71,25 @@ class TourismRelations(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.content = tourism_factories.TouristicContentFactory(
-            geom="SRID=%s;POINT(1 1)" % settings.SRID
+            geom=f"SRID={settings.SRID};POINT(1 1)"
         )
         cls.content2 = tourism_factories.TouristicContentFactory(
-            geom="SRID=%s;POINT(2 2)" % settings.SRID, name="ZZZ"
+            geom=f"SRID={settings.SRID};POINT(2 2)", name="ZZZ"
         )
         cls.event = tourism_factories.TouristicEventFactory(
-            geom="SRID=%s;POINT(50 50)" % settings.SRID
+            geom=f"SRID={settings.SRID};POINT(50 50)"
         )
         cls.event2 = tourism_factories.TouristicEventFactory(
-            geom="SRID=%s;POINT(60 60)" % settings.SRID, name="ZZZ"
+            geom=f"SRID={settings.SRID};POINT(60 60)", name="ZZZ"
         )
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = core_factories.PathFactory(
-                geom="SRID=%s;LINESTRING(0 100, 100 100)" % settings.SRID
+                geom=f"SRID={settings.SRID};LINESTRING(0 100, 100 100)"
             )
             cls.poi = trekking_factories.POIFactory(paths=[(cls.path, 0.5, 0.5)])
         else:
             cls.poi = trekking_factories.POIFactory(
-                geom="SRID=%s;POINT(50 100)" % settings.SRID
+                geom=f"SRID={settings.SRID};POINT(50 100)"
             )
 
     def setUp(self):
@@ -97,7 +97,7 @@ class TourismRelations(TestCase):
             self.trek = trekking_factories.TrekFactory(paths=[self.path])
         else:
             self.trek = trekking_factories.TrekFactory(
-                geom="SRID=%s;LINESTRING(0 100, 100 100)" % settings.SRID
+                geom=f"SRID={settings.SRID};LINESTRING(0 100, 100 100)"
             )
 
     def test_spatial_link_with_tourism(self):
@@ -197,7 +197,7 @@ class TouristicContentModelTest(TestCase):
     def tests_type_poi_mobilev1(self):
         self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
         self.content = tourism_factories.TouristicContentFactory(
-            geom="SRID=%s;POINT(1 1)" % settings.SRID, category=self.category
+            geom=f"SRID={settings.SRID};POINT(1 1)", category=self.category
         )
 
         self.assertEqual(str(self.content.type), "Test")

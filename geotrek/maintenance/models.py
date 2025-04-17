@@ -213,18 +213,12 @@ class Intervention(
                 return (
                     "<i>"
                     + _("Deleted")
-                    + ' :</i><img src="%simages/%s-16.png" alt="%s"> <i>%s<i/>'
-                    % (settings.STATIC_URL, icon, model_name, title)
+                    + f' :</i><img src="{settings.STATIC_URL}images/{icon}-16.png" alt="{model_name}"> <i>{title}<i/>'
                 )
             if not model._meta.model_name == "topology":
                 title = self.target.name_display
                 icon = model._meta.model_name
-            return '<img src="%simages/%s-16.png" alt="%s"/> %s' % (
-                settings.STATIC_URL,
-                icon,
-                model_name,
-                title,
-            )
+            return f'<img src="{settings.STATIC_URL}images/{icon}-16.png" alt="{model_name}"/> {title}'
         return "-"
 
     @property
@@ -238,14 +232,12 @@ class Intervention(
                 title = _("Path")
                 return ", ".join(
                     [
-                        "%s: %s (%s)" % (title, path, path.pk)
+                        f"{title}: {path} ({path.pk})"
                         for path in self.target.paths.all().order_by("id")
                     ]
                 )
-            return "%s: %s (%s)" % (
-                _(self.target._meta.verbose_name),
-                self.target,
-                self.target.pk,
+            return (
+                f"{_(self.target._meta.verbose_name)}: {self.target} ({self.target.pk})"
             )
         return "-"
 
@@ -331,19 +323,14 @@ class Intervention(
 
     @property
     def name_display(self):
-        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.name,
-            self.name,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.name}" >{self.name}</a>'
 
     @property
     def name_csv_display(self):
         return self.name
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.begin_date)
+        return f"{self.name} ({self.begin_date})"
 
     @classmethod
     def get_interventions(cls, obj):
@@ -701,12 +688,7 @@ class Project(
 
     @property
     def name_display(self):
-        return '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.name,
-            self.name,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.name}">{self.name}</a>'
 
     @property
     def name_csv_display(self):
@@ -737,7 +719,7 @@ class Project(
 
     @property
     def period(self):
-        return "%s - %s" % (self.begin_year, self.end_year or "")
+        return "{} - {}".format(self.begin_year, self.end_year or "")
 
     @property
     def period_display(self):
@@ -760,7 +742,7 @@ class Project(
         return _("Interventions total cost")
 
     def __str__(self):
-        return "%s - %s" % (self.begin_year, self.name)
+        return f"{self.begin_year} - {self.name}"
 
     @classmethod
     def path_projects(cls, path):
@@ -863,7 +845,7 @@ class Funding(DuplicateMixin, models.Model):
         verbose_name_plural = _("Fundings")
 
     def __str__(self):
-        return "%s : %s" % (self.project, self.amount)
+        return f"{self.project} : {self.amount}"
 
 
 @receiver(pre_delete, sender=Project)

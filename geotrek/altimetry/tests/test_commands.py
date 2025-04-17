@@ -133,7 +133,7 @@ class CommandLoadDemTest(TransactionTestCase):
     def test_fail_no_file(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "no.tif")
         with self.assertRaisesRegex(
-            CommandError, "DEM file does not exists at: %s" % filename
+            CommandError, f"DEM file does not exists at: {filename}"
         ):
             call_command("loaddem", filename, verbosity=0)
 

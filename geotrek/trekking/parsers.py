@@ -112,7 +112,7 @@ class POIParser(AttachmentParserMixin, ShapeParser):
             # to a path aggregation (topology)
             geometry = val.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
         return val
@@ -1211,8 +1211,7 @@ class ApidaeReferenceElementParser(Parser):
         response = self.request_or_retry(self.url, params={"query": json.dumps(params)})
         self.root = response.json()
         self.nb = len(self.root)
-        for row in self.items:
-            yield row
+        yield from self.items
 
     def normalize_field_name(self, name):
         return name
@@ -1497,7 +1496,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
             title = title or ""
             license = self.get_or_create_license(license_label)
             basename, ext = os.path.splitext(os.path.basename(url))
-            name = "%s%s" % (basename[:128], ext)
+            name = f"{basename[:128]}{ext}"
             found, updated = self.check_attachment_updated(
                 attachments_to_delete,
                 updated,
@@ -1549,9 +1548,9 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
-            if re.search(
-                rf"^{regexp}$", existing_name
-            ) and not self.has_size_changed(kwargs.get("url"), attachment):
+            if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
+                kwargs.get("url"), attachment
+            ):
                 found = True
                 attachments_to_delete.remove(attachment)
                 if (

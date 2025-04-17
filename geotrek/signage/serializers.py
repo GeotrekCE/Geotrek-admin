@@ -123,9 +123,7 @@ class CSVBladeSerializer(CSVSerializer):
         header_line = self.get_csv_header(columns_lines, model_line)
 
         for i in range(max_lines):
-            numbered_header_lines = [
-                "%s %s" % (header, i + 1) for header in header_line
-            ]
+            numbered_header_lines = [f"{header} {i + 1}" for header in header_line]
             header.extend(numbered_header_lines)
 
         getters = self.getters_csv(columns, model_blade, ascii)

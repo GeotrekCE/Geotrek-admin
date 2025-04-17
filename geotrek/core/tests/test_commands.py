@@ -157,9 +157,7 @@ class LoadPathsCommandTest(TestCase):
         self.assertEqual(value.name, "lulu")
         self.assertEqual(value.comments, "Comment 2</br>foo2")
         self.assertEqual(value.structure, self.structure)
-        self.assertIn(
-            "The comment %s was added on %s" % (value.comments, value.name), output
-        )
+        self.assertIn(f"The comment {value.comments} was added on {value.name}", output)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_intersect_spatial_extent(self):
@@ -169,13 +167,12 @@ class LoadPathsCommandTest(TestCase):
         )
         output = output.getvalue()
         self.assertIn(
-            "All paths in DataSource will be linked to the structure : %s"
-            % self.structure.name,
+            f"All paths in DataSource will be linked to the structure : {self.structure.name}",
             output,
         )
         self.assertEqual(Path.objects.count(), 1)
         path = Path.objects.first()
-        self.assertIn("Create path with pk : %s" % path.pk, output)
+        self.assertIn(f"Create path with pk : {path.pk}", output)
         value = Path.objects.first()
         self.assertEqual(value.name, "lulu")
         self.assertEqual(value.structure, self.structure)
@@ -188,14 +185,13 @@ class LoadPathsCommandTest(TestCase):
         )
         output = output.getvalue()
         self.assertIn(
-            "All paths in DataSource will be linked to the structure : %s"
-            % self.structure.name,
+            f"All paths in DataSource will be linked to the structure : {self.structure.name}",
             output,
         )
         self.assertEqual(Path.objects.count(), 2)
         paths = Path.objects.all()
-        self.assertIn("Create path with pk : %s" % paths[0].pk, output)
-        self.assertIn("Create path with pk : %s" % paths[1].pk, output)
+        self.assertIn(f"Create path with pk : {paths[0].pk}", output)
+        self.assertIn(f"Create path with pk : {paths[1].pk}", output)
         value = Path.objects.first()
         self.assertEqual(value.name, "lulu")
         self.assertEqual(value.structure, self.structure)

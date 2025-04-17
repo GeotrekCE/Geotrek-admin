@@ -111,8 +111,7 @@ class Command(BaseCommand):
             )
         if verbosity > 0:
             self.stdout.write(
-                "All paths in DataSource will be linked to the structure : %s"
-                % structure
+                f"All paths in DataSource will be linked to the structure : {structure}"
             )
 
         ds = DataSource(file_path, encoding=encoding)
@@ -133,7 +132,7 @@ class Command(BaseCommand):
                 geom = feat.geom.geos
                 if not isinstance(geom, LineString):
                     if verbosity > 0:
-                        self.stdout.write("%s's geometry is not a Linestring" % feat)
+                        self.stdout.write(f"{feat}'s geometry is not a Linestring")
                     break
                 self.check_srid(srid, geom)
                 geom.dim = 2
@@ -149,12 +148,10 @@ class Command(BaseCommand):
                             )
                         counter += 1
                         if verbosity > 0:
-                            self.stdout.write(
-                                f"Create path with pk : {path.pk}"
-                            )
+                            self.stdout.write(f"Create path with pk : {path.pk}")
                         if verbosity > 1:
                             self.stdout.write(
-                                "The comment %s was added on %s" % (comment_final, name)
+                                f"The comment {comment_final} was added on {name}"
                             )
                     except (IntegrityError, InternalError):
                         if fail:

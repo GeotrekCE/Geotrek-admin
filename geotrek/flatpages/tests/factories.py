@@ -7,8 +7,8 @@ class FlatPageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = flatpages_models.FlatPage
 
-    title = factory.Sequence(lambda n: "Page %s" % n)
-    content = factory.Sequence(lambda n: "<h1>Titre %s</h1>" % n)
+    title = factory.Sequence(lambda n: f"Page {n}")
+    content = factory.Sequence(lambda n: f"<h1>Titre {n}</h1>")
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
@@ -33,7 +33,7 @@ class MenuItemFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = flatpages_models.MenuItem
 
-    title = factory.Sequence(lambda n: "Menu Item %s" % n)
+    title = factory.Sequence(lambda n: f"Menu Item {n}")
 
     @factory.post_generation
     def portals(obj, create, extracted=None, **kwargs):

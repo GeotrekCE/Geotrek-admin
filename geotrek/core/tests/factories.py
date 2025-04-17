@@ -15,35 +15,35 @@ class PathSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PathSource
 
-    source = factory.Sequence(lambda n: "PathSource %s" % n)
+    source = factory.Sequence(lambda n: f"PathSource {n}")
 
 
 class StakeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Stake
 
-    stake = factory.Sequence(lambda n: "Stake %s" % n)
+    stake = factory.Sequence(lambda n: f"Stake {n}")
 
 
 class UsageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Usage
 
-    usage = factory.Sequence(lambda n: "Usage %s" % n)
+    usage = factory.Sequence(lambda n: f"Usage {n}")
 
 
 class NetworkFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Network
 
-    network = factory.Sequence(lambda n: "Network %s" % n)
+    network = factory.Sequence(lambda n: f"Network {n}")
 
 
 class ComfortFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Comfort
 
-    comfort = factory.Sequence(lambda n: "Comfort %s" % n)
+    comfort = factory.Sequence(lambda n: f"Comfort {n}")
 
 
 class PathFactory(StructureRelatedDefaultFactory):
@@ -56,8 +56,8 @@ class PathFactory(StructureRelatedDefaultFactory):
     )
     geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
-    name = factory.Sequence(lambda n: "name %s" % n)
-    comments = factory.Sequence(lambda n: "comment %s" % n)
+    name = factory.Sequence(lambda n: f"name {n}")
+    comments = factory.Sequence(lambda n: f"comment {n}")
 
     # Trigger will override :
     date_insert = dbnow()
@@ -184,31 +184,31 @@ class TrailFactory(TopologyFactory):
     class Meta:
         model = models.Trail
 
-    name = factory.Sequence(lambda n: "Name %s" % n)
-    departure = factory.Sequence(lambda n: "Departure %s" % n)
-    arrival = factory.Sequence(lambda n: "Arrival %s" % n)
-    comments = factory.Sequence(lambda n: "Comments %s" % n)
+    name = factory.Sequence(lambda n: f"Name {n}")
+    departure = factory.Sequence(lambda n: f"Departure {n}")
+    arrival = factory.Sequence(lambda n: f"Arrival {n}")
+    comments = factory.Sequence(lambda n: f"Comments {n}")
 
 
 class TrailCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TrailCategory
 
-    label = factory.Sequence(lambda n: "Trail category %s" % n)
+    label = factory.Sequence(lambda n: f"Trail category {n}")
 
 
 class CertificationLabelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationLabel
 
-    label = factory.Sequence(lambda n: "My certification label %s" % n)
+    label = factory.Sequence(lambda n: f"My certification label {n}")
 
 
 class CertificationStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CertificationStatus
 
-    label = factory.Sequence(lambda n: "My certification status %s" % n)
+    label = factory.Sequence(lambda n: f"My certification status {n}")
 
 
 class CertificationTrailFactory(factory.django.DjangoModelFactory):

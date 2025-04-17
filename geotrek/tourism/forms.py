@@ -90,10 +90,10 @@ class TouristicEventForm(CommonForm):
             HTML(
                 """<ul class="nav nav-tabs">
     <li id="tab-event" class="nav-item">
-        <a class="nav-link active" href="#event" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+        <a class="nav-link active" href="#event" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
     </li>
     <li id="tab-assessment" class="nav-item">
-        <a class="nav-link" href="#assessment" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+        <a class="nav-link" href="#assessment" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
     </li>
 </ul>""".format(_("Event"), _("Assessment"))
             ),

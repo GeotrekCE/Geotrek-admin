@@ -80,9 +80,7 @@ class SnappedLineStringField(LineStringField):
             # geometry vertices
             snaplist = value.get("snap", [])
             if geom.num_coords != len(snaplist):
-                raise ValueError(
-                    "Snap list length != %s (%s)" % (geom.num_coords, snaplist)
-                )
+                raise ValueError(f"Snap list length != {geom.num_coords} ({snaplist})")
             paths = [
                 Path.objects.get(pk=pk) if pk is not None else None for pk in snaplist
             ]

@@ -24,10 +24,10 @@ class AttachmentAdminTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
-        cls.poi = POIFactory.create(geom="SRID=%s;POINT(1 1)" % settings.SRID)
+        cls.poi = POIFactory.create(geom=f"SRID={settings.SRID};POINT(1 1)")
         cls.picture = AttachmentImageFactory(content_object=cls.poi, title="img1")
         cls.trek = TrekFactory.create(
-            geom="SRID=%s;LINESTRING(0 0, 1 0, 2 0)" % settings.SRID
+            geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0, 2 0)"
         )
         cls.picture_2 = AttachmentImageFactory(content_object=cls.trek, title="img2")
         cls.theme = ThemeFactory.create(label="Theme 1")
@@ -84,7 +84,7 @@ class MergeActionAdminTest(TestCase):
         cls.difficulty_2 = DifficultyLevelFactory.create(difficulty="Dif 2")
         cls.difficulty_3 = DifficultyLevelFactory.create(difficulty="Dif 3")
         cls.trek = TrekFactory.create(
-            geom="SRID=%s;LINESTRING(0 0, 1 0, 2 0)" % settings.SRID,
+            geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0, 2 0)",
             difficulty=cls.difficulty_2,
         )
         cls.trek.themes.add(cls.theme, cls.theme_2)

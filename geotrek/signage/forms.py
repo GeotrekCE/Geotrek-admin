@@ -87,7 +87,7 @@ class BaseBladeForm(CommonForm):
         self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get("initial", {}).get("signage")
-            self.helper.form_action += "?signage=%s" % self.signage.pk
+            self.helper.form_action += f"?signage={self.signage.pk}"
         else:
             self.signage = self.instance.signage
         self._set_number_field_initial_value()
@@ -142,11 +142,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
             self.fields["topology"].initial = self.signage
             self.fields["topology"].widget.modifiable = True
-            self.fields["topology"].label = "%s%s %s" % (
+            self.fields["topology"].label = "{}{} {}".format(
                 self.instance.signage_display,
                 _("On %s") % _(self.signage.kind.lower()),
-                '<a href="%s">%s</a>'
-                % (self.signage.get_detail_url(), str(self.signage)),
+                f'<a href="{self.signage.get_detail_url()}">{str(self.signage)}</a>',
             )
 
 else:
@@ -160,11 +159,10 @@ else:
             self.fields["topology"].initial = self.signage.geom
             self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
             self.fields["topology"].widget.modifiable = False
-            self.fields["topology"].label = "%s%s %s" % (
+            self.fields["topology"].label = "{}{} {}".format(
                 self.instance.signage_display,
                 _("On %s") % _(self.signage.kind.lower()),
-                '<a href="%s">%s</a>'
-                % (self.signage.get_detail_url(), str(self.signage)),
+                f'<a href="{self.signage.get_detail_url()}">{str(self.signage)}</a>',
             )
 
 

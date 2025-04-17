@@ -107,7 +107,7 @@ def move_models_to_schemas(app):
     cursor = connection.cursor()
 
     for schema_name in table_schemas.keys():
-        sql = "CREATE SCHEMA IF NOT EXISTS %s;" % model_schema
+        sql = f"CREATE SCHEMA IF NOT EXISTS {model_schema};"
         cursor.execute(sql)
         logger.info("Created schema %s", model_schema)
 
@@ -116,7 +116,7 @@ def move_models_to_schemas(app):
             sql = "SELECT 1 FROM information_schema.tables WHERE table_name=%s AND table_schema!=%s"
             cursor.execute(sql, [table_name, schema_name])
             if cursor.fetchone():
-                sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
+                sql = f"ALTER TABLE {table_name} SET SCHEMA {schema_name};"
                 cursor.execute(sql)
                 logger.info("Moved %s to schema %s", table_name, schema_name)
 
@@ -129,9 +129,5 @@ def move_models_to_schemas(app):
         search_path = ", ".join(
             ("public",) + tuple(set(settings.DATABASE_SCHEMAS.values()))
         )
-        sql = 'ALTER ROLE "%s" IN DATABASE "%s" SET search_path=%s;' % (
-            dbuser,
-            dbname,
-            search_path,
-        )
+        sql = f'ALTER ROLE "{dbuser}" IN DATABASE "{dbname}" SET search_path={search_path};'
         cursor.execute(sql)

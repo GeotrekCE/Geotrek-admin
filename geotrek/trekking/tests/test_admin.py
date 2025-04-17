@@ -39,7 +39,7 @@ class DifficultyLevelTest(AuthentFixturesTest):
             reverse("admin:trekking_difficultylevel_add"), post_data
         )
         error_msg = (
-            "Difficulty with id &#x27;%s&#x27; already exists" % self.difficulty.pk
+            f"Difficulty with id &#x27;{self.difficulty.pk}&#x27; already exists"
         )
         self.assertContains(response, error_msg)
 

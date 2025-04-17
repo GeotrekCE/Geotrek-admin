@@ -54,7 +54,7 @@ def dbnow():
 
 def sqlfunction(function, *args):
     """Executes the SQL function with the specified args, and returns the result."""
-    sql = "%s(%s)" % (function, ",".join(args))
+    sql = "{}({})".format(function, ",".join(args))
     logger.debug(sql)
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -103,9 +103,7 @@ def intersecting(qs, obj, distance=None, ordering=True, field="geom", defer=None
     if distance is None:
         distance = obj.distance(qs.model)
     if distance:
-        qs = qs.filter(
-            **{f"{field}__dwithin": (obj.geom, Distance(m=distance))}
-        )
+        qs = qs.filter(**{f"{field}__dwithin": (obj.geom, Distance(m=distance))})
     else:
         qs = qs.filter(**{f"{field}__intersects": obj.geom})
         if obj.geom.geom_type == "LineString" and ordering:
@@ -129,14 +127,14 @@ def format_coordinates(geom):
         location = geom.centroid.transform(4326, clone=True)
         if settings.DISPLAY_COORDS_AS_DECIMALS:
             if location.y > 0:
-                degreelong = "%0.6f°N" % location.y
+                degreelong = f"{location.y:0.6f}°N"
             else:
                 degreelong = "%0.6f°S" % -location.y
             if location.x > 0:
-                degreelat = "%0.6f°E" % location.x
+                degreelat = f"{location.x:0.6f}°E"
             else:
                 degreelat = "%0.6f°W" % -location.x
-            result = "%s, %s" % (degreelong, degreelat)
+            result = f"{degreelong}, {degreelat}"
 
         else:
             rounded_lat_sec = round(abs(location.y) * 3600)
@@ -176,13 +174,11 @@ def spatial_reference():
 
 
 def simplify_coords(coords):
-    if isinstance(coords, (list, tuple)):
+    if isinstance(coords, list | tuple):
         return [simplify_coords(coord) for coord in coords]
     elif isinstance(coords, float):
         return round(coords, 7)
-    raise Exception(
-        f"Param is {type(coords)}. Should be <list>, <tuple> or <float>"
-    )
+    raise Exception(f"Param is {type(coords)}. Should be <list>, <tuple> or <float>")
 
 
 def leaflet_bounds(bbox):

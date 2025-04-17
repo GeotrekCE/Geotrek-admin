@@ -84,13 +84,13 @@ class TrekForm(BaseTrekForm):
             HTML(
                 """<ul class="nav nav-tabs">
     <li id="tab-main" class="nav-item">
-        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
     </li>
     <li id="tab-advanced" class="nav-item">
-        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
     </li>
     <li id="tab-accessibility" class="nav-item">
-        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {2}</a>
+        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {}</a>
     </li>
 </ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))
             ),
@@ -500,8 +500,9 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
             "category",
             FormActions(
                 HTML(
-                    '<a href="#" class="btn" onclick="javascript:window.close();">%s</a>'
-                    % _("Cancel")
+                    '<a href="#" class="btn" onclick="javascript:window.close();">{}</a>'.format(
+                        _("Cancel")
+                    )
                 ),
                 Submit("save_changes", _("Create"), css_class="btn-primary"),
                 css_class="form-actions",

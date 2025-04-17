@@ -574,7 +574,7 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertEqual(attachment.legend, "{0}".format(("Legend " * 18).rstrip()))
+        self.assertEqual(attachment.legend, "{}".format(("Legend " * 18).rstrip()))
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 

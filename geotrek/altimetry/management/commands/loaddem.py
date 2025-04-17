@@ -45,12 +45,9 @@ class Command(BaseCommand):
             kwargs_raster = {"shell": True}
             ret = self.call_command_system(cmd, **kwargs_raster)
             if ret != 0:
-                raise Exception("raster2pgsql failed with exit code %d" % ret)
+                raise Exception(f"raster2pgsql failed with exit code {ret}")
         except Exception as e:
-            msg = "Caught %s: %s" % (
-                e.__class__.__name__,
-                e,
-            )
+            msg = f"Caught {e.__class__.__name__}: {e}"
             raise CommandError(msg)
         if verbose:
             self.stdout.write("-- Checking input DEM ------------------\n")
@@ -59,7 +56,7 @@ class Command(BaseCommand):
 
         # Open GDAL dataset
         if not os.path.exists(dem_path):
-            raise CommandError("DEM file does not exists at: %s" % dem_path)
+            raise CommandError(f"DEM file does not exists at: {dem_path}")
         try:
             rst = GDALRaster(dem_path, write=False)
         except GDALException:
@@ -88,7 +85,7 @@ class Command(BaseCommand):
             self.stdout.write("Everything looks fine, we can start loading DEM\n")
 
         output = tempfile.NamedTemporaryFile()  # SQL code for raster creation
-        cmd = "raster2pgsql -a -M -t 100x100 %s altimetry_dem %s" % (
+        cmd = "raster2pgsql -a -M -t 100x100 {} altimetry_dem {}".format(
             rst.name,
             "" if verbose else "2>/dev/null",
         )
@@ -99,13 +96,10 @@ class Command(BaseCommand):
             kwargs_raster2 = {"shell": True, "stdout": output.file, "stderr": PIPE}
             ret = self.call_command_system(cmd, **kwargs_raster2)
             if ret != 0:
-                raise Exception("raster2pgsql failed with exit code %d" % ret)
+                raise Exception(f"raster2pgsql failed with exit code {ret}")
         except Exception as e:
             output.close()
-            msg = "Caught %s: %s" % (
-                e.__class__.__name__,
-                e,
-            )
+            msg = f"Caught {e.__class__.__name__}: {e}"
             raise CommandError(msg)
 
         if verbose:

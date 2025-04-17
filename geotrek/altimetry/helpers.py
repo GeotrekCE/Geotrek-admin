@@ -37,12 +37,12 @@ class AltimetryHelper:
 
         # Add measure to 2D version of geometry3d
         # Get distance from origin for each vertex
-        sql = """
-        WITH line2d AS (SELECT ST_Force2D('%(ewkt)s'::geometry) AS geom),
+        sql = f"""
+        WITH line2d AS (SELECT ST_Force2D('{geometry3d.ewkt}'::geometry) AS geom),
              line_measure AS (SELECT ST_Addmeasure(geom, 0, ST_length(geom)) AS geom FROM line2d),
              points2dm AS (SELECT (ST_DumpPoints(geom)).geom AS point FROM line_measure)
-        SELECT (%(offset)s + ST_M(point)) FROM points2dm;
-        """ % {"offset": offset, "ewkt": geometry3d.ewkt}
+        SELECT ({offset} + ST_M(point)) FROM points2dm;
+        """
         cursor = connection.cursor()
         cursor.execute(sql)
         pointsm = cursor.fetchall()
@@ -78,7 +78,7 @@ class AltimetryHelper:
             print_values=False,
             show_dots=False,
             zero=floor_elevation,
-            value_formatter=lambda v: "%d" % v,
+            value_formatter=lambda v: f"{v}",
             margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
             width=settings.ALTIMETRIC_PROFILE_WIDTH,
             height=settings.ALTIMETRIC_PROFILE_HEIGHT,

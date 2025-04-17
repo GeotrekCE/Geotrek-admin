@@ -379,7 +379,7 @@ class ParserTests(TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to download %s. HTTP status code 503" % EauViveParser.url,
+            f"Failed to download {EauViveParser.url}. HTTP status code 503",
         ):
             call_command("import", "geotrek.tourism.tests.test_parsers.EauViveParser")
             self.assertTrue(mocked.called)
@@ -1068,7 +1068,7 @@ class LEIParserTest(TestCase):
         mocked.side_effect = mocked_requests_get
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to download %s. HTTP status code 404" % RestaurantALEIParser.url,
+            f"Failed to download {RestaurantALEIParser.url}. HTTP status code 404",
         ):
             call_command(
                 "import",

@@ -152,7 +152,7 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            raise CommandError(f"File does not exists at: {filename}")
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
         use_structure = options.get("use_structure")
@@ -307,7 +307,7 @@ class Command(BaseCommand):
                     )
                     if feature_geom.geom_type == "MultiPoint":
                         self.stdout.write(
-                            self.style.NOTICE("This object is a MultiPoint : %s" % name)
+                            self.style.NOTICE(f"This object is a MultiPoint : {name}")
                         )
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
@@ -367,9 +367,7 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE(f"{self.counter} objects created.")
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -403,9 +401,7 @@ class Command(BaseCommand):
                 label=condition, structure=structure if use_structure else None
             )
             if created and verbosity:
-                self.stdout.write(
-                    f"- Condition Type '{condition_type}' created"
-                )
+                self.stdout.write(f"- Condition Type '{condition_type}' created")
         else:
             condition_type = None
 
@@ -424,7 +420,7 @@ class Command(BaseCommand):
                 if condition_type:
                     infra.conditions.add(condition_type)
                 if verbosity > 0 and not created:
-                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+                    self.stdout.write(f"Update : {name} with eid {eid}")
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
                 if condition_type:
@@ -433,7 +429,7 @@ class Command(BaseCommand):
             try:
                 geometry.coord_dim = 2
                 geometry = geometry.transform(settings.API_SRID, clone=True)
-                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
                 topology = Topology.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:

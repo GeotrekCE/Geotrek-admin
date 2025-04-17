@@ -9,7 +9,7 @@ class PublicOrReadPermMixin:
             if not self.request.user.is_authenticated:
                 raise PermissionDenied
             if not self.request.user.has_perm(
-                "%s.read_%s" % (obj._meta.app_label, obj._meta.model_name)
+                f"{obj._meta.app_label}.read_{obj._meta.model_name}"
             ):
                 raise PermissionDenied
         return obj

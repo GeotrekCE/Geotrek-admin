@@ -75,8 +75,7 @@ class BiodivParser(Parser):
             self.root = response.json()
             self.nb = int(self.root["count"])
 
-            for row in self.items:
-                yield row
+            yield from self.items
             self.next_url = self.root["next"]
 
     def normalize_field_name(self, name):

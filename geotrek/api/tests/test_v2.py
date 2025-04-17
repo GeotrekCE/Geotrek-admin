@@ -3339,9 +3339,7 @@ class TrekRatingScaleTestCase(TestCase):
         )
 
     def test_detail(self):
-        response = self.client.get(
-            f"/api/v2/trek_ratingscale/{self.scale1.pk}/"
-        )
+        response = self.client.get(f"/api/v2/trek_ratingscale/{self.scale1.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,
@@ -3416,9 +3414,7 @@ class OutdoorRatingScaleTestCase(TestCase):
         )
 
     def test_detail(self):
-        response = self.client.get(
-            f"/api/v2/outdoor_ratingscale/{self.scale1.pk}/"
-        )
+        response = self.client.get(f"/api/v2/outdoor_ratingscale/{self.scale1.pk}/")
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content,

@@ -22,7 +22,7 @@ class TrekGPXSerializer(GPXSerializer):
             wpt = gpxpy.gpx.GPXWaypoint(
                 latitude=geom_3d.y, longitude=geom_3d.x, elevation=geom_3d.z
             )
-            wpt.name = "%s: %s" % (poi.type, poi.name)
+            wpt.name = f"{poi.type}: {poi.name}"
             wpt.description = poi.description
             self.gpx.waypoints.append(wpt)
 

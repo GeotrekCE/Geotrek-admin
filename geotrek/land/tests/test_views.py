@@ -106,7 +106,7 @@ class PhysicalEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             "physical_type": PhysicalTypeFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
@@ -145,7 +145,7 @@ class LandEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             "land_type": LandTypeFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
@@ -185,7 +185,7 @@ class CirculationEdgeViewsTest(CommonTest):
         return {
             "circulation_type": CirculationTypeFactory.create().pk,
             "authorization_type": AuthorizationTypeFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
@@ -225,7 +225,7 @@ class CompetenceEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             "organization": OrganismFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
@@ -264,7 +264,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             "organization": OrganismFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
@@ -303,7 +303,7 @@ class SignageManagementEdgeViewsTest(CommonTest):
         path = PathFactory.create()
         return {
             "organization": OrganismFactory.create().pk,
-            "topology": '{"paths": [%s]}' % path.pk,
+            "topology": f'{{"paths": [{path.pk}]}}',
         }
 
     def get_expected_datatables_attrs(self):
