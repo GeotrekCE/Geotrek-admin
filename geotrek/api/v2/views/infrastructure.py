@@ -11,7 +11,8 @@ from geotrek.infrastructure import models as infra_models
 
 
 class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
     )
@@ -38,7 +39,8 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InfrastructureTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.InfrastructureRelatedPortalFilter,
     )
     serializer_class = api_serializers.InfrastructureTypeSerializer

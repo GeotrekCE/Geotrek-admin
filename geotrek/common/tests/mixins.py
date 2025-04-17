@@ -25,6 +25,7 @@ class GeotrekParserTestMixin:
             "trek_not_found" in filename
             or "trek_unpublished_practice_not_found" in filename
         ):
-            raise DownloadImportError("404 Does not exist")
+            msg = "404 Does not exist"
+            raise DownloadImportError(msg)
         with open(filename) as f:
             return json.load(f)

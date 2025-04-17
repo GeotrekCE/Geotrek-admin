@@ -37,9 +37,16 @@ class TimedTextTestRunner(TextTestRunner):
             ][-10:]
             self.stream.writeln("Top 10 : \n")
             for black_sheep in black_sheeps[::-1]:
-                self.stream.writeln(f"{str(black_sheep[0])} : {black_sheep[1]} s")
+                self.stream.writeln(f"{black_sheep[0]!s} : {black_sheep[1]} s")
         return result
 
 
 class TestRunner(DiscoverRunner):
     test_runner = TimedTextTestRunner
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the test runner with parallel execution enabled by default."""
+        # Enable parallel execution by default if not explicitly set
+        if "parallel" not in kwargs:
+            kwargs["parallel"] = True
+        super().__init__(*args, **kwargs)

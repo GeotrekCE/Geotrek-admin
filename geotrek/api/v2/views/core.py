@@ -15,7 +15,8 @@ class PathViewSet(api_viewsets.GeotrekGeometricViewset):
     Use HTTP basic authentication to access this endpoint.
     """
 
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.UpdateOrCreateDateFilter,
     )
     permission_classes = [IsAuthenticated]

@@ -27,7 +27,8 @@ class TrekFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trek
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "difficulty",
             "duration",
@@ -65,7 +66,8 @@ class POIFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = POI
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "type",
             "trek",
@@ -88,4 +90,4 @@ class ServiceFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Service
-        fields = StructureRelatedFilterSet.Meta.fields + ["type", "provider"]
+        fields = [*StructureRelatedFilterSet.Meta.fields, "type", "provider"]

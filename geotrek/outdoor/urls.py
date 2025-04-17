@@ -3,7 +3,7 @@ from mapentity.registry import registry
 
 from geotrek.common.urls import PublishableEntityOptions
 from geotrek.outdoor import models as outdoor_models
-from geotrek.outdoor import views as outdoor_views  # noqa Fix an import loop
+from geotrek.outdoor import views as outdoor_views
 
 app_name = "outdoor"
 

@@ -45,7 +45,8 @@ def build_url(serializer, url):
     if request is not None and url[0] == "/":
         url = request.build_absolute_uri(url)
     else:
-        raise Exception("Bad context. No server variable found in the request !")
+        msg = "Bad context. No server variable found in the request !"
+        raise Exception(msg)
     return url
 
 

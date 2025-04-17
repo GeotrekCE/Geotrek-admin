@@ -2070,7 +2070,8 @@ class SchemaRandonneeParserTests(TestCase):
         elif url and "none" in url:
             return Mock(status_code=200, content=None, headers={"content-length": 0})
         elif url and "404" in url:
-            raise DownloadImportError("mock error message")
+            msg = "mock error message"
+            raise DownloadImportError(msg)
         response = {
             "type": "FeatureCollection",
             "name": "sql_statement",

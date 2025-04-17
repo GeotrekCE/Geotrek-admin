@@ -178,7 +178,8 @@ def simplify_coords(coords):
         return [simplify_coords(coord) for coord in coords]
     elif isinstance(coords, float):
         return round(coords, 7)
-    raise Exception(f"Param is {type(coords)}. Should be <list>, <tuple> or <float>")
+    msg = f"Param is {type(coords)}. Should be <list>, <tuple> or <float>"
+    raise Exception(msg)
 
 
 def leaflet_bounds(bbox):

@@ -23,15 +23,13 @@ class SuricateRequestManager:
 
     def check_response_integrity(self, response):
         if response.status_code not in [200, 201]:
-            raise Exception(
-                f"Failed to access Suricate API - Status code: {response.status_code}"
-            )
+            msg = f"Failed to access Suricate API - Status code: {response.status_code}"
+            raise Exception(msg)
         else:
             data = json.loads(response.content.decode())
             if ("code_ok" in data) and (data["code_ok"] == "false"):
-                raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
-                )
+                msg = f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
+                raise Exception(msg)
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
         #         else:

@@ -1,3 +1,5 @@
+import functools
+import operator
 import uuid
 
 from django.conf import settings
@@ -423,7 +425,8 @@ class Site(
     def super_orientation(self):
         """Return orientation of itself and its descendants"""
         orientation = set(
-            sum(
+            functools.reduce(
+                operator.iadd,
                 self.get_descendants(include_self=True).values_list(
                     "orientation", flat=True
                 ),
@@ -436,7 +439,8 @@ class Site(
     def super_wind(self):
         """Return wind of itself and its descendants"""
         wind = set(
-            sum(
+            functools.reduce(
+                operator.iadd,
                 self.get_descendants(include_self=True).values_list("wind", flat=True),
                 [],
             )

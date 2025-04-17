@@ -62,7 +62,8 @@ class SignageAPISerializer(BasePublishableSerializerMixin):
             "conditions",
             "manager",
             "sealing",
-        ) + BasePublishableSerializerMixin.Meta.fields
+            *BasePublishableSerializerMixin.Meta.fields,
+        )
 
 
 class SignageAPIGeojsonSerializer(GeoFeatureModelSerializer, SignageAPISerializer):
@@ -71,7 +72,7 @@ class SignageAPIGeojsonSerializer(GeoFeatureModelSerializer, SignageAPISerialize
 
     class Meta(SignageAPISerializer.Meta):
         geo_field = "api_geom"
-        fields = SignageAPISerializer.Meta.fields + ("api_geom",)
+        fields = (*SignageAPISerializer.Meta.fields, "api_geom")
 
 
 class BladeTypeSerializer(serializers.ModelSerializer):

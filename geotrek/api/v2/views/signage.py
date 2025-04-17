@@ -11,7 +11,8 @@ from geotrek.signage import models as signage_models
 
 
 class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
     )
@@ -37,7 +38,8 @@ class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class SignageTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.SignageRelatedPortalFilter,
     )
     serializer_class = api_serializers.SignageTypeSerializer

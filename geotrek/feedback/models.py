@@ -477,7 +477,7 @@ class Report(
         """
         Displayed on linked interventions' pages
         """
-        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{str(self)}">{str(self)}</a>'
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self!s}">{self!s}</a>'
         return s
 
     @property

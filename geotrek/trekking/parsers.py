@@ -1015,19 +1015,19 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     def _find_first_plan_with_supported_file_extension(items, supported_extensions):
         plans = [item for item in items if item["type"] == "PLAN"]
         if not plans:
-            raise RowImportError(
-                'The trek from APIDAE has no attachment with the type "PLAN"'
-            )
+            msg = 'The trek from APIDAE has no attachment with the type "PLAN"'
+            raise RowImportError(msg)
         supported_plans = [
             plan
             for plan in plans
             if ApidaeTrekParser._get_plan_extension(plan) in supported_extensions
         ]
         if not supported_plans:
-            raise RowImportError(
+            msg = (
                 'The trek from APIDAE has no attached "PLAN" in a supported format. '
                 f"Supported formats are : {', '.join(supported_extensions)}"
             )
+            raise RowImportError(msg)
         return supported_plans[0]
 
     @staticmethod

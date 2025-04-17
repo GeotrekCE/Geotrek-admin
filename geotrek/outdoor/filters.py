@@ -35,7 +35,8 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Site
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "sector",
             "practice",
@@ -91,7 +92,8 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "parent_sites",
             "parent_sites__practice__sector",

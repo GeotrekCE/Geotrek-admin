@@ -349,7 +349,8 @@ class Blade(
     def set_topology(self, topology):
         self.topology = topology
         if not self.is_signage:
-            raise ValueError("Expecting a signage")
+            msg = "Expecting a signage"
+            raise ValueError(msg)
 
     @property
     def conditions_display(self):

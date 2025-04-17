@@ -885,7 +885,7 @@ class TouristicContentTourInSoftParserV3withMedias(TouristicContentTourInSoftPar
     }
 
     def get_nb(self):
-        return int(len(self.root["value"]))
+        return len(self.root["value"])
 
     def filter_attachments(self, src, val):
         if not val:

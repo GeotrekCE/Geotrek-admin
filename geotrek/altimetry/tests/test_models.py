@@ -19,6 +19,6 @@ class AltimetryMixinTest(TestCase):
         self.assertTrue(os.listdir(basefolder))
         directory = os.listdir(basefolder)
         self.assertIn(
-            f"{Trek._meta.model_name}-{str(trek.pk)}-{get_language()}.png",
+            f"{Trek._meta.model_name}-{trek.pk!s}-{get_language()}.png",
             directory,
         )

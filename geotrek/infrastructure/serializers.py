@@ -52,7 +52,8 @@ class InfrastructureAPISerializer(BasePublishableSerializerMixin):
             "name",
             "type",
             "accessibility",
-        ) + BasePublishableSerializerMixin.Meta.fields
+            *BasePublishableSerializerMixin.Meta.fields,
+        )
 
 
 class InfrastructureAPIGeojsonSerializer(
@@ -63,4 +64,4 @@ class InfrastructureAPIGeojsonSerializer(
 
     class Meta(InfrastructureAPISerializer.Meta):
         geo_field = "api_geom"
-        fields = InfrastructureAPISerializer.Meta.fields + ("api_geom",)
+        fields = (*InfrastructureAPISerializer.Meta.fields, "api_geom")

@@ -84,11 +84,8 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if geom.valid:
-                        if (
-                            do_intersect
-                            and bbox.intersects(geom)
-                            or not do_intersect
-                            and geom.within(bbox)
+                        if (do_intersect and bbox.intersects(geom)) or (
+                            not do_intersect and geom.within(bbox)
                         ):
                             instance, created = City.objects.update_or_create(
                                 code=feat.get(code_column),
@@ -125,6 +122,5 @@ class Command(BaseCommand):
             try:
                 geom.transform(settings.SRID)
             except GDALException:
-                raise CommandError(
-                    "SRID is not well configurate, change/add option srid"
-                )
+                msg = "SRID is not well configurate, change/add option srid"
+                raise CommandError(msg)

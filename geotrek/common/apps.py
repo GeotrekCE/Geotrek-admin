@@ -10,7 +10,7 @@ class CommonConfig(AppConfig):
     verbose_name = _("Common")
 
     def ready(self):
-        import geotrek.common.lookups  # NOQA
+        import geotrek.common.lookups
         import geotrek.common.signals  # NOQA
 
 

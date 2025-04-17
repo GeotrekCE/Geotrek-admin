@@ -75,7 +75,8 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class GeotrekGeometricViewset(GeotrekViewSet):
-    filter_backends = GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *GeotrekViewSet.filter_backends,
         api_filters.GeotrekQueryParamsDimensionFilter,
         api_filters.GeotrekInBBoxFilter,
         api_filters.GeotrekDistanceToPointFilter,
@@ -83,9 +84,7 @@ class GeotrekGeometricViewset(GeotrekViewSet):
     distance_filter_field = "geom"
     bbox_filter_field = "geom"
     bbox_filter_include_overlapping = True
-    renderer_classes = GeotrekViewSet.renderer_classes + [
-        GeoJSONRenderer,
-    ]
+    renderer_classes = [*GeotrekViewSet.renderer_classes, GeoJSONRenderer]
 
     def get_serializer_class(self):
         base_serializer_class = super().get_serializer_class()

@@ -24,6 +24,7 @@ class DailymotionBackend(VideoBackend):
     def get_code(self):
         code = super().get_code()
         if not code:
-            raise UnknownIdException(f"Cannot get ID from `{self._url}`")
+            msg = f"Cannot get ID from `{self._url}`"
+            raise UnknownIdException(msg)
 
         return code

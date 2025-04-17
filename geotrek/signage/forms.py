@@ -145,7 +145,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields["topology"].label = "{}{} {}".format(
                 self.instance.signage_display,
                 _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{str(self.signage)}</a>',
+                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
             )
 
 else:
@@ -162,7 +162,7 @@ else:
             self.fields["topology"].label = "{}{} {}".format(
                 self.instance.signage_display,
                 _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{str(self.signage)}</a>',
+                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
             )
 
 
@@ -206,7 +206,8 @@ class SignageForm(BaseSignageForm):
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
-        fields = BaseInfrastructureForm.Meta.fields + [
+        fields = [
+            *BaseInfrastructureForm.Meta.fields,
             "code",
             "conditions",
             "printed_elevation",

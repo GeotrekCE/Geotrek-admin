@@ -149,7 +149,8 @@ class InterventionFormatList(MapEntityFormat, InterventionList):
         "cities",
         "districts",
         "areas",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class InterventionDetail(MapEntityDetail):

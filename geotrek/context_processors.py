@@ -13,11 +13,11 @@ def forced_layers(request):
             response.append(
                 Polygon(
                     [forced_layer[1]],
-                    layer=[
+                    layer=next(
                         layer[0]
                         for layer in settings.LEAFLET_CONFIG["TILES"]
                         if layer[0] == forced_layer[0]
-                    ][0],
+                    ),
                 )
             )
     return {

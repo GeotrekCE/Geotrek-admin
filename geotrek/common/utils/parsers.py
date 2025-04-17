@@ -109,9 +109,8 @@ def get_geom_from_gpx(data):
             if geos:
                 break
         else:
-            raise GeomValueError(
-                "No LineString feature found in GPX layers tracks or routes"
-            )
+            msg = "No LineString feature found in GPX layers tracks or routes"
+            raise GeomValueError(msg)
         geos.transform(settings.SRID)
         return geos
 
@@ -143,9 +142,8 @@ def get_geom_from_kml(data):
             for t in types:
                 if g.geom_type.name.startswith(t):
                     return g
-        raise GeomValueError(
-            "The attached KML geometry does not have any LineString or MultiLineString data"
-        )
+        msg = "The attached KML geometry does not have any LineString or MultiLineString data"
+        raise GeomValueError(msg)
 
     with NamedTemporaryFile(mode="w+b", dir=settings.TMP_DIR) as ntf:
         ntf.write(data)

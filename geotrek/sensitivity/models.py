@@ -274,9 +274,7 @@ class SensitiveArea(
         geom = geom.transform(4326, clone=True)
         geom = geom.simplify(0.001, preserve_topology=True)
         other = {}
-        other["*AUID"] = (
-            f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {str(self.pk)}"
-        )
+        other["*AUID"] = f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {self.pk!s}"
         adescr = (self.species.name,)
         if self.publication_date:
             adescr += (f"(published on {self.publication_date.strftime('%d/%m/%Y')})",)

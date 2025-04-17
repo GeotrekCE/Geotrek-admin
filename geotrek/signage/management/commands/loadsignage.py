@@ -195,7 +195,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError(f"File does not exists at: {filename}")
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -300,9 +301,8 @@ class Command(BaseCommand):
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
 
                     tmp_signage_type = (
                         feature.get(field_infrastructure_type)
@@ -385,9 +385,8 @@ class Command(BaseCommand):
                         if str(year).isdigit():
                             year = int(year)
                         else:
-                            raise CommandError(
-                                f'Invalid year: "{year}" is not a number.'
-                            )
+                            msg = f'Invalid year: "{year}" is not a number.'
+                            raise CommandError(msg)
                     else:
                         year = None
 
@@ -453,10 +452,12 @@ class Command(BaseCommand):
                 topology = Topology.deserialize(serialized)
                 signage.mutate(topology)
             except IndexError:
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
         else:
             if geometry.geom_type != "Point":
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
             geometry = geometry.transform(settings.SRID, clone=True)
             signage.geom = Point(geometry.x, geometry.y)
             signage.save()

@@ -61,7 +61,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Trek
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class TrekForm(BaseTrekForm):
@@ -341,7 +341,8 @@ class TrekForm(BaseTrekForm):
             raise exc
 
     class Meta(BaseTrekForm.Meta):
-        fields = BaseTrekForm.Meta.fields + [
+        fields = [
+            *BaseTrekForm.Meta.fields,
             "structure",
             "name",
             "review",
@@ -414,7 +415,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = POI
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class POIForm(BasePOIForm):
@@ -431,7 +432,8 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + [
+        fields = [
+            *BasePOIForm.Meta.fields,
             "structure",
             "name",
             "description",
@@ -467,7 +469,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Service
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class ServiceForm(BaseServiceForm):
@@ -480,7 +482,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ["structure", "type", "eid"]
+        fields = [*BaseServiceForm.Meta.fields, "structure", "type", "eid"]
 
 
 class WebLinkCreateFormPopup(TranslatedModelForm):

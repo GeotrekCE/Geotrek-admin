@@ -98,17 +98,19 @@ class Command(BaseCommand):
             try:
                 structure = Structure.objects.get(name=structure)
             except Structure.DoesNotExist:
-                raise CommandError(
+                msg = (
                     "Structure does not match with instance's structures\n"
                     "Change your option --structure"
                 )
+                raise CommandError(msg)
         elif Structure.objects.count() == 1:
             structure = Structure.objects.first()
         else:
-            raise CommandError(
+            msg = (
                 "There are more than 1 structure and you didn't define the option structure\n"
                 "Use --structure to define it"
             )
+            raise CommandError(msg)
         if verbosity > 0:
             self.stdout.write(
                 f"All paths in DataSource will be linked to the structure : {structure}"
@@ -184,14 +186,10 @@ class Command(BaseCommand):
             try:
                 geom.transform(settings.SRID)
             except GDALException:
-                raise CommandError(
-                    "SRID is not well configurate, change/add option srid"
-                )
+                msg = "SRID is not well configurate, change/add option srid"
+                raise CommandError(msg)
 
     def should_import(self, feature, geom):
-        return (
-            self.do_intersect
-            and self.bbox.intersects(geom)
-            or not self.do_intersect
-            and geom.within(self.bbox)
+        return (self.do_intersect and self.bbox.intersects(geom)) or (
+            not self.do_intersect and geom.within(self.bbox)
         )

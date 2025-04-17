@@ -148,7 +148,8 @@ class TrekFormatList(MapEntityFormat, TrekList):
         "portal",
         "length_2d",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
@@ -355,7 +356,8 @@ class POIFormatList(MapEntityFormat, POIList):
         "districts",
         "areas",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -537,12 +539,7 @@ class ServiceFilter(MapEntityFilter):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     filterset_class = ServiceFilterSet
     mandatory_columns = ["id"]
-    default_extra_columns = [
-        "id",
-        "eid",
-        "type",
-        "uuid",
-    ] + AltimetryMixin.COLUMNS
+    default_extra_columns = ["id", "eid", "type", "uuid", *AltimetryMixin.COLUMNS]
 
 
 class ServiceDetail(MapEntityDetail):

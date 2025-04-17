@@ -17,7 +17,7 @@ class LandLayerSerializerMixin(geo_serializers.GeoFeatureModelSerializer):
 class CitySerializer(LandLayerSerializerMixin):
     class Meta(LandLayerSerializerMixin.Meta):
         model = zoning_models.City
-        fields = LandLayerSerializerMixin.Meta.fields + ["name"]
+        fields = [*LandLayerSerializerMixin.Meta.fields, "name"]
 
 
 class CityAPISerializer(serializers.ModelSerializer):

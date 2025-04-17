@@ -10,7 +10,8 @@ class DiveFilterSet(
 ):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Dive
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "difficulty",
             "levels",

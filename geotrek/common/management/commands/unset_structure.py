@@ -111,9 +111,8 @@ class Command(BaseCommand):
             return
 
         if not options["all"] and not options["model"]:
-            raise CommandError(
-                "You should specify model(s) or --all. Use --list to list all possibilities."
-            )
+            msg = "You should specify model(s) or --all. Use --list to list all possibilities."
+            raise CommandError(msg)
 
         for RelatedModel, subitems in self.items.items():
             if options["all"] or RelatedModel._meta.model_name in options["model"]:

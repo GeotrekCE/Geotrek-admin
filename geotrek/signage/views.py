@@ -77,7 +77,8 @@ class SignageFormatList(MapEntityFormat, SignageList):
         "access",
         "manager",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class SignageDetail(MapEntityDetail):

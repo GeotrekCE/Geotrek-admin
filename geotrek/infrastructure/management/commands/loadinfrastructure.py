@@ -152,7 +152,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError(f"File does not exists at: {filename}")
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
         use_structure = options.get("use_structure")
@@ -312,9 +313,8 @@ class Command(BaseCommand):
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
                     type = (
                         feature.get(field_infrastructure_type)
                         if field_infrastructure_type in available_fields
@@ -433,10 +433,12 @@ class Command(BaseCommand):
                 topology = Topology.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:
-                raise GEOSException("Invalid Geometry type. You need 1 path")
+                msg = "Invalid Geometry type. You need 1 path"
+                raise GEOSException(msg)
         else:
             if geometry.geom_type != "Point":
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
             geometry = geometry.transform(settings.SRID, clone=True)
             infra.geom = Point(geometry.x, geometry.y)
             infra.save()

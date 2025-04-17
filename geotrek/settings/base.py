@@ -87,7 +87,7 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
         "OPTIONS": {
             "options": "-c search_path={}".format(
-                ",".join(("public",) + tuple(set(DATABASE_SCHEMAS.values())))
+                ",".join(("public", *tuple(set(DATABASE_SCHEMAS.values()))))
             )
         },
     }
@@ -305,7 +305,8 @@ PROJECT_APPS += (
     "treebeard",
 )
 
-INSTALLED_APPS = PROJECT_APPS + (
+INSTALLED_APPS = (
+    *PROJECT_APPS,
     "geotrek.cirkwi",
     "geotrek.authent",
     "geotrek.common",
@@ -360,7 +361,8 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-THUMBNAIL_PROCESSORS = easy_thumbnails_defaults.THUMBNAIL_PROCESSORS + (
+THUMBNAIL_PROCESSORS = (
+    *easy_thumbnails_defaults.THUMBNAIL_PROCESSORS,
     "geotrek.common.thumbnail_processors.add_watermark",
 )
 

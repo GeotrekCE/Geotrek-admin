@@ -95,9 +95,8 @@ class BiodivParser(Parser):
                 polygons.append(Polygon(*polygon, srid=4326))
             geom = MultiPolygon(polygons, srid=4326)
         else:
-            raise ValueImportError(
-                "This object is neither a point, nor a polygon, nor a multipolygon"
-            )
+            msg = "This object is neither a point, nor a polygon, nor a multipolygon"
+            raise ValueImportError(msg)
         geom.transform(settings.SRID)
         return geom
 

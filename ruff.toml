@@ -38,7 +38,7 @@ target-version = "py310"
 
 [lint]
 
-select = ["G", "INT", "E4", "E7", "E9", "F", 'I001', "DJ", "LOG", "UP"]
+select = ["G", "INT", "E4", "E7", "E9", "F", "DJ", "LOG", "UP", "I", "T10", "EM"]
 ignore = []
 
 
@@ -61,3 +61,5 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

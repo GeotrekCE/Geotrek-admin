@@ -117,7 +117,7 @@ class Parser:
         self.nb_unmodified = 0
         self.progress_cb = progress_cb
         self.user = user
-        self.structure = user and user.profile.structure or default_structure()
+        self.structure = (user and user.profile.structure) or default_structure()
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
 
@@ -820,9 +820,8 @@ class AttachmentParserMixin:
             settings.PAPERCLIP_ENABLE_LINK is False
             and self.download_attachments is False
         ):
-            raise Exception(
-                "You need to enable PAPERCLIP_ENABLE_LINK to use this function"
-            )
+            msg = "You need to enable PAPERCLIP_ENABLE_LINK to use this function"
+            raise Exception(msg)
         try:
             self.filetype = FileType.objects.get(
                 type=self.filetype_name, structure=None
@@ -867,7 +866,8 @@ class AttachmentParserMixin:
             try:
                 response = self.request_or_retry(url, verb="head")
             except (requests.exceptions.ConnectionError, DownloadImportError) as e:
-                raise ValueImportError(f"Failed to load attachment: {e}")
+                msg = f"Failed to load attachment: {e}"
+                raise ValueImportError(msg)
             size = response.headers.get("content-length")
             try:
                 return size is not None and int(size) != attachment.attachment_file.size
@@ -882,14 +882,16 @@ class AttachmentParserMixin:
             try:
                 response = self.request_or_retry(url)
             except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                raise ValueImportError(f"Failed to load attachment: {e}")
+                msg = f"Failed to load attachment: {e}"
+                raise ValueImportError(msg)
             return response.read()
         else:
             if self.download_attachments:
                 try:
                     response = self.request_or_retry(url)
                 except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                    raise ValueImportError(f"Failed to load attachment: {e}")
+                    msg = f"Failed to load attachment: {e}"
+                    raise ValueImportError(msg)
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_("Failed to download '{url}'").format(url=url))
                     return None
@@ -1002,11 +1004,8 @@ class AttachmentParserMixin:
                     file_mimetype_allowed = (
                         f".{extension}" in mimetypes.guess_all_extensions(file_mimetype)
                     )
-                    file_mimetype_allowed = (
-                        file_mimetype_allowed
-                        or settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(
-                            extension, False
-                        )
+                    file_mimetype_allowed = file_mimetype_allowed or (
+                        settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension, False)
                         and file_mimetype
                         in settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension)
                     )
@@ -1147,7 +1146,8 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
     def filter_geom(self, src, val):
         lng, lat = val
         if not lng or not lat:
-            raise ValueImportError("Empty geometry")
+            msg = "Empty geometry"
+            raise ValueImportError(msg)
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
@@ -1161,7 +1161,8 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             try:
                 key, value = subval.split(self.separator2)
             except ValueError as e:
-                raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
+                msg = f"Fail to split <MoyenDeCom>: {e}"
+                raise ValueImportError(msg)
             if key in ("Mél", "Mail"):
                 return value
 
@@ -1176,7 +1177,8 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             try:
                 key, value = subval.split(self.separator2)
             except ValueError as e:
-                raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
+                msg = f"Fail to split <MoyenDeCom>: {e}"
+                raise ValueImportError(msg)
             if key in ("Site web", "Site web (URL)"):
                 return value
 
@@ -1205,7 +1207,8 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 try:
                     key, value = subval.split(self.separator2)
                 except ValueError as e:
-                    raise ValueImportError(f"Fail to split <MoyenDeCom>: {e}")
+                    msg = f"Fail to split <MoyenDeCom>: {e}"
+                    raise ValueImportError(msg)
                 if key in ("Mél", "Mail", "Site web", "Site web (URL)"):
                     continue
                 infos.append(f"<strong>{key} :</strong><br>{value}")
@@ -1380,13 +1383,15 @@ class LEIParser(AttachmentParserMixin, XmlParser):
     def filter_geom(self, src, val):
         lat, lng = val
         if lat is None or lng is None:
-            raise ValueImportError("Empty geometry")
+            msg = "Empty geometry"
+            raise ValueImportError(msg)
         lat = lat.replace(",", ".")
         lng = lng.replace(",", ".")
         try:
             geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         except ValueError:
-            raise ValueImportError("Empty geometry")
+            msg = "Empty geometry"
+            raise ValueImportError(msg)
 
         try:
             geom.transform(settings.SRID)
@@ -1644,9 +1649,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                                 self.replace_mapping(label, category)
                             )
             else:
-                raise ImproperlyConfigured(
-                    f"{category} is not configured in categories_keys_api_v2"
-                )
+                msg = f"{category} is not configured in categories_keys_api_v2"
+                raise ImproperlyConfigured(msg)
         self.creator, created = get_user_model().objects.get_or_create(
             username="import", defaults={"is_active": False}
         )
@@ -1928,7 +1932,8 @@ class OpenStreetMapParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.tags is None:
-            raise ImproperlyConfigured("Tags must be defined")
+            msg = "Tags must be defined"
+            raise ImproperlyConfigured(msg)
 
         bbox_str = self.get_bbox_str()
         for tag, value in self.tags.items():

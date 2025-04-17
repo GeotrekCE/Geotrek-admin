@@ -488,7 +488,8 @@ class NearbyContentFilter(BaseFilterBackend):
             ),
         )
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            fields = fields + (
+            fields = (
+                *fields,
                 Field(
                     name="near_outdoorsite",
                     required=False,
@@ -687,7 +688,8 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="categories",
                 required=False,
@@ -1274,7 +1276,8 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="root_sites_only",
                 required=False,
@@ -1355,7 +1358,8 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="practices",
                 required=False,

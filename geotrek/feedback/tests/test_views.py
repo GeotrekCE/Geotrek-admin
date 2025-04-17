@@ -424,7 +424,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(
             StringIO(response.content.decode("utf-8")), delimiter=","
         )
-        dict_from_csv = dict(list(reader)[0])
+        dict_from_csv = dict(next(iter(reader)))
         column_names = list(dict_from_csv.keys())
         self.assertIn("Email", column_names)
 
@@ -438,7 +438,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(
             StringIO(response.content.decode("utf-8")), delimiter=","
         )
-        dict_from_csv = dict(list(reader)[0])
+        dict_from_csv = dict(next(iter(reader)))
         column_names = list(dict_from_csv.keys())
         self.assertNotIn("Email", column_names)
 
@@ -452,7 +452,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(
             StringIO(response.content.decode("utf-8")), delimiter=","
         )
-        dict_from_csv = dict(list(reader)[0])
+        dict_from_csv = dict(next(iter(reader)))
         column_names = list(dict_from_csv.keys())
         self.assertIn("Email", column_names)
 
@@ -487,6 +487,6 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         reader = csv.DictReader(
             StringIO(response.content.decode("utf-8")), delimiter=","
         )
-        dict_from_csv = dict(list(reader)[0])
+        dict_from_csv = dict(next(iter(reader)))
         column_names = list(dict_from_csv.keys())
         self.assertIn("Email", column_names)

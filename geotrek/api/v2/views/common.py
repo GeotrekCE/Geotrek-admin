@@ -23,7 +23,8 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TreksAndSitesAndTourismRelatedPortalThemeFilter,
     )
     serializer_class = api_serializers.ThemeSerializer
@@ -77,7 +78,8 @@ class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
 
 
 class SourceViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter,
     )
     serializer_class = api_serializers.RecordSourceSerializer
@@ -94,7 +96,8 @@ class SourceViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.RelatedPortalStructureOrReservationSystemFilter,
     )
     serializer_class = api_serializers.ReservationSystemSerializer
@@ -111,7 +114,8 @@ class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
 
 
 class LabelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TreksAndSitesRelatedPortalFilter,
         api_filters.GeotrekLabelFilter,
     )
@@ -140,7 +144,8 @@ class FileTypeViewSet(api_viewsets.GeotrekViewSet):
 
 class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.HDViewPointSerializer
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.HDViewPointPublishedByPortalFilter,
     )
 

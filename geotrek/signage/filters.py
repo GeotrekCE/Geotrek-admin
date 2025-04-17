@@ -56,7 +56,8 @@ class SignageFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "type",
             "conditions",
             "implantation_year",
@@ -103,7 +104,8 @@ class BladeFilterSet(MapEntityFilterSet):
 
     class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = MapEntityFilterSet.Meta.fields + [
+        fields = [
+            *MapEntityFilterSet.Meta.fields,
             "structure",
             "number",
             "direction",

@@ -434,7 +434,8 @@ class ServeAttachmentAccessibility(View):
         if not AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path
         ):
-            raise Http404("No attachments for accessibility matches the given query.")
+            msg = "No attachments for accessibility matches the given query."
+            raise Http404(msg)
 
         attachments = AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path

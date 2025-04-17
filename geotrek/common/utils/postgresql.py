@@ -80,7 +80,7 @@ def set_search_path():
     search_path |= set(settings.DATABASE_SCHEMAS.values())
     search_path.discard("public")
     search_path.discard("information_schema")
-    search_path = ("public",) + tuple(search_path)
+    search_path = ("public", *tuple(search_path))
     cursor.execute("SET search_path TO {}".format(", ".join(search_path)))
 
 
@@ -127,7 +127,7 @@ def move_models_to_schemas(app):
         dbname = settings.DATABASES["default"]["NAME"]
         dbuser = settings.DATABASES["default"]["USER"]
         search_path = ", ".join(
-            ("public",) + tuple(set(settings.DATABASE_SCHEMAS.values()))
+            ("public", *tuple(set(settings.DATABASE_SCHEMAS.values())))
         )
         sql = f'ALTER ROLE "{dbuser}" IN DATABASE "{dbname}" SET search_path={search_path};'
         cursor.execute(sql)

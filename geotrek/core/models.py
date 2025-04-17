@@ -200,7 +200,8 @@ class Path(
     class Meta:
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
-        permissions = GeotrekMapEntityMixin._meta.permissions + [
+        permissions = [
+            *GeotrekMapEntityMixin._meta.permissions,
             ("add_draft_path", "Can add draft Path"),
             ("change_draft_path", "Can change draft Path"),
             ("delete_draft_path", "Can delete draft Path"),
@@ -267,7 +268,8 @@ class Path(
         along this path.
         """
         if not self.pk:
-            raise ValueError("Cannot compute interpolation on unsaved path")
+            msg = "Cannot compute interpolation on unsaved path"
+            raise ValueError(msg)
         if point.srid != self.geom.srid:
             point.transform(self.geom.srid)
         cursor = connection.cursor()
@@ -285,7 +287,8 @@ class Path(
         Returns the point snapped (i.e closest) to the path line geometry.
         """
         if not self.pk:
-            raise ValueError("Cannot compute snap on unsaved path")
+            msg = "Cannot compute snap on unsaved path"
+            raise ValueError(msg)
         if point.srid != self.geom.srid:
             point.transform(self.geom.srid)
         cursor = connection.cursor()
@@ -704,7 +707,8 @@ class Topology(
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
-                raise Exception("Cannot save abstract topologies")
+                msg = "Cannot save abstract topologies"
+                raise Exception(msg)
             self.kind = self.__class__.KIND
 
         # Static value for Topology offset, if any
@@ -832,7 +836,8 @@ class Topology(
             try:
                 objdict = json.loads(serialized)
             except ValueError as e:
-                raise ValueError(f"Invalid serialization: {e}")
+                msg = f"Invalid serialization: {e}"
+                raise ValueError(msg)
 
         if objdict and not isinstance(objdict, list):
             lat = objdict.get("lat")
@@ -852,7 +857,8 @@ class Topology(
                 objdict = [objdict]
 
         if not objdict:
-            raise ValueError("Invalid serialized topology : empty list found")
+            msg = "Invalid serialized topology : empty list found"
+            raise ValueError(msg)
 
         # If pk is still here, the user did not edit it.
         # Return existing topology instead
@@ -923,7 +929,8 @@ class Topology(
                     counter += 1
                 topology.aggregations.add(*aggrs)
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
-            raise ValueError(f"Invalid serialized topology : {e}")
+            msg = f"Invalid serialized topology : {e}"
+            raise ValueError(msg)
         return topology
 
     def distance(self, to_cls):
@@ -992,11 +999,8 @@ class PathAggregation(models.Model):
 
     @property
     def is_full(self):
-        return (
-            self.start_position == 0.0
-            and self.end_position == 1.0
-            or self.start_position == 1.0
-            and self.end_position == 0.0
+        return (self.start_position == 0.0 and self.end_position == 1.0) or (
+            self.start_position == 1.0 and self.end_position == 0.0
         )
 
     class Meta:

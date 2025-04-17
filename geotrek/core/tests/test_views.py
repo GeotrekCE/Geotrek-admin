@@ -114,7 +114,8 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
 
 
 def get_route_exception_mock(arg1, arg2):
-    raise Exception("This is an error message")
+    msg = "This is an error message"
+    raise Exception(msg)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")

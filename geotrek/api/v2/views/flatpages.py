@@ -17,7 +17,8 @@ from geotrek.flatpages.models import MenuItem
 
 
 class FlatPageViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.FlatPageFilter,
         api_filters.UpdateOrCreateDateFilter,
     )

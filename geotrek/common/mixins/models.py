@@ -447,7 +447,8 @@ class AddPropertyMixin:
     @classmethod
     def add_property(cls, name, func, verbose_name):
         if hasattr(cls, name):
-            raise AttributeError(f"{cls} has already an attribute {name}")
+            msg = f"{cls} has already an attribute {name}"
+            raise AttributeError(msg)
         setattr(cls, name, property(func))
         setattr(cls, f"{name}_verbose_name", verbose_name)
 

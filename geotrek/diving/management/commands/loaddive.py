@@ -44,7 +44,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError(f"File does not exists at: {filename}")
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -118,9 +119,8 @@ class Command(BaseCommand):
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
                     depth = (
                         feature.get(field_depth)
                         if field_depth in available_fields
@@ -148,7 +148,8 @@ class Command(BaseCommand):
 
     def create_dive(self, geometry, name, depth, practice, structure, verbosity, eid):
         if geometry.geom_type != "Point":
-            raise GEOSException("Invalid Geometry type.")
+            msg = "Invalid Geometry type."
+            raise GEOSException(msg)
         with transaction.atomic():
             fields_without_eid = {
                 "name": name,

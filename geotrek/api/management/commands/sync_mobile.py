@@ -29,7 +29,7 @@ from geotrek.common.helpers_sync import ZipTilesBuilder
 from geotrek.common.models import FileType  # NOQA
 from geotrek.flatpages.models import MenuItem
 from geotrek.tourism import models as tourism_models
-from geotrek.tourism import urls  # NOQA
+from geotrek.tourism import urls
 
 # Register mapentity models
 from geotrek.trekking import models as trekking_models
@@ -715,7 +715,8 @@ class Command(BaseCommand):
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
         remaining = existing - {"nolang"} - set(settings.MODELTRANSLATION_LANGUAGES)
         if remaining:
-            raise CommandError("Destination directory contains extra data")
+            msg = "Destination directory contains extra data"
+            raise CommandError(msg)
 
     def rename_root(self):
         if os.path.exists(self.dst_root):
@@ -747,9 +748,8 @@ class Command(BaseCommand):
         if options["languages"]:
             for language in options["languages"].split(","):
                 if language not in settings.MODELTRANSLATION_LANGUAGES:
-                    raise CommandError(
-                        f"Language {language} doesn't exist. Select in these one : {tuple(settings.MODELTRANSLATION_LANGUAGES)}"
-                    )
+                    msg = f"Language {language} doesn't exist. Select in these one : {tuple(settings.MODELTRANSLATION_LANGUAGES)}"
+                    raise CommandError(msg)
             self.languages = options["languages"].split(",")
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
@@ -761,7 +761,8 @@ class Command(BaseCommand):
             self.portal = []
         url = options["url"]
         if not re.search("http[s]?://", url):
-            raise CommandError("url parameter should start with http:// or https://")
+            msg = "url parameter should start with http:// or https://"
+            raise CommandError(msg)
         self.referer = options["url"]
         if isinstance(settings.MOBILE_TILES_URL, str):
             tiles_url = settings.MOBILE_TILES_URL
@@ -801,6 +802,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Done"))
 
         if not self.successfull:
-            raise CommandError("Some errors raised during synchronization.")
+            msg = "Some errors raised during synchronization."
+            raise CommandError(msg)
 
         sleep(2)  # end sleep to ensure sync page get result

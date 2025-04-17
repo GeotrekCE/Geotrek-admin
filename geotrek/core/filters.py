@@ -144,7 +144,8 @@ class PathFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "valid",
             "networks",
             "usages",
@@ -181,7 +182,8 @@ class TrailFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "name",
             "category",
             "departure",

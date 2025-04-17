@@ -9,7 +9,7 @@ from .models import HDViewPoint
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}(-[a-z]{2,4})?"  # noqa
+    regex = "[a-z]{2}(-[a-z]{2,4})?"
 
 
 register_converter(LangConverter, "lang")

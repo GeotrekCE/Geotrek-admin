@@ -235,7 +235,7 @@ class HDViewPointAdminTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(
             response,
-            f'<a data-pk="{self.trek.pk}" href="{self.trek.get_detail_url()}" >{str(self.trek)}</a>',
+            f'<a data-pk="{self.trek.pk}" href="{self.trek.get_detail_url()}" >{self.trek!s}</a>',
         )
         self.assertContains(
             response,

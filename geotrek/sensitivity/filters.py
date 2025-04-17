@@ -25,7 +25,8 @@ class SensitiveAreaFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = SensitiveArea
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "species",
             "species__category",
             "provider",

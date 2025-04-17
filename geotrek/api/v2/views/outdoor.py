@@ -12,7 +12,8 @@ from geotrek.outdoor import models as outdoor_models
 
 
 class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekSiteFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
@@ -57,7 +58,8 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.SiteRelatedPortalFilter,
     )
     serializer_class = api_serializers.OutdoorPracticeSerializer
@@ -74,7 +76,8 @@ class SectorViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.SiteRelatedPortalFilter,
     )
     serializer_class = api_serializers.SiteTypeSerializer
@@ -84,7 +87,8 @@ class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.CourseRelatedFilter,
     )
     serializer_class = api_serializers.CourseTypeSerializer
@@ -94,7 +98,8 @@ class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingScaleFilter,
     )
     serializer_class = api_serializers.OutdoorRatingScaleSerializer
@@ -104,7 +109,8 @@ class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
 
 
 class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingFilter,
         api_filters.SitesRelatedPortalAndCourseRelatedFilter,
     )
@@ -115,7 +121,8 @@ class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
 
 
 class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekCourseFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,

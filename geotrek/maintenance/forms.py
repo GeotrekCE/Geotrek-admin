@@ -110,7 +110,8 @@ class InterventionForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Intervention
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "begin_date",
@@ -284,7 +285,8 @@ class ProjectForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Project
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "type",
