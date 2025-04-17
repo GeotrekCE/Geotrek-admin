@@ -2,6 +2,7 @@
 from pathlib import Path
 
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.db import migrations
 
 from geotrek.common.utils.file_infos import is_a_non_svg_image
@@ -26,7 +27,11 @@ def remove_information_desk_incorrect_photos(apps, schema_editor):
 
     for info_desk in InformationDesk.objects.all():
         # ImageField does not support svg files
-        if info_desk.photo and not is_a_non_svg_image(info_desk.photo):
+        if (
+            info_desk.photo
+            and default_storage.exists(info_desk.photo.name)
+            and not is_a_non_svg_image(info_desk.photo)
+        ):
             if not file_type:
                 file_type, created = FileType.objects.get_or_create(
                     type="InformationDesk file backup"
