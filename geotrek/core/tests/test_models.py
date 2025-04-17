@@ -79,7 +79,7 @@ class PathTest(TestCase):
         t2 = dbnow()
         self.assertTrue(
             t1 < p.date_insert < t2,
-            msg="Date interval failed: %s < %s < %s" % (t1, p.date_insert, t2),
+            msg=f"Date interval failed: {t1} < {p.date_insert} < {t2}",
         )
 
         p.name = "Foo"
@@ -87,7 +87,7 @@ class PathTest(TestCase):
         t3 = dbnow()
         self.assertTrue(
             t2 < p.date_update < t3,
-            msg="Date interval failed: %s < %s < %s" % (t2, p.date_update, t3),
+            msg=f"Date interval failed: {t2} < {p.date_update} < {t3}",
         )
 
     def test_latestupdate_delete(self):

@@ -66,10 +66,9 @@ class DurationParserMixin:
         except (TypeError, ValueError):
             self.add_warning(
                 _(
-                    "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(
-                        val=val, src=src
-                    )
+                    "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
                 )
+                % {"val": val, "src": src}
             )
             return None
 
@@ -114,7 +113,7 @@ class POIParser(AttachmentParserMixin, ShapeParser):
             # to a path aggregation (topology)
             geometry = val.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
         return val
@@ -302,8 +301,9 @@ class GeotrekTrekParser(GeotrekParser):
                     if not trek_parent_instance:
                         self.add_warning(
                             _(
-                                f"Trying to retrieve children for missing trek : could not find trek with UUID {key}"
+                                "Trying to retrieve children for missing trek : could not find trek with UUID %(key)s"
                             )
+                            % {"key": key}
                         )
                         continue
                     order = 0
@@ -325,9 +325,8 @@ class GeotrekTrekParser(GeotrekParser):
                         order += 1
         except Exception as e:
             self.add_warning(
-                _(
-                    f"An error occured in children generation : {getattr(e, 'message', repr(e))}"
-                )
+                _("An error occurred in children generation: %(message)s")
+                % {"message": getattr(e, "message", repr(e))}
             )
         super().end()
 
@@ -1017,19 +1016,19 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     def _find_first_plan_with_supported_file_extension(items, supported_extensions):
         plans = [item for item in items if item["type"] == "PLAN"]
         if not plans:
-            raise RowImportError(
-                'The trek from APIDAE has no attachment with the type "PLAN"'
-            )
+            msg = 'The trek from APIDAE has no attachment with the type "PLAN"'
+            raise RowImportError(msg)
         supported_plans = [
             plan
             for plan in plans
             if ApidaeTrekParser._get_plan_extension(plan) in supported_extensions
         ]
         if not supported_plans:
-            raise RowImportError(
+            msg = (
                 'The trek from APIDAE has no attached "PLAN" in a supported format. '
                 f"Supported formats are : {', '.join(supported_extensions)}"
             )
+            raise RowImportError(msg)
         return supported_plans[0]
 
     @staticmethod
@@ -1213,8 +1212,7 @@ class ApidaeReferenceElementParser(Parser):
         response = self.request_or_retry(self.url, params={"query": json.dumps(params)})
         self.root = response.json()
         self.nb = len(self.root)
-        for row in self.items:
-            yield row
+        yield from self.items
 
     def normalize_field_name(self, name):
         return name
@@ -1403,7 +1401,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
     def parse(self, filename=None, limit=None):
         if filename:
             self.filename = filename
-            with open(self.filename, mode="r") as f:
+            with open(self.filename) as f:
                 self.root = json.load(f)
                 self.items = self.root["features"]
                 self.nb = len(self.items)
@@ -1499,7 +1497,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
             title = title or ""
             license = self.get_or_create_license(license_label)
             basename, ext = os.path.splitext(os.path.basename(url))
-            name = "%s%s" % (basename[:128], ext)
+            name = f"{basename[:128]}{ext}"
             found, updated = self.check_attachment_updated(
                 attachments_to_delete,
                 updated,
@@ -1551,9 +1549,9 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
-            if re.search(
-                r"^{regexp}$".format(regexp=regexp), existing_name
-            ) and not self.has_size_changed(kwargs.get("url"), attachment):
+            if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
+                kwargs.get("url"), attachment
+            ):
                 found = True
                 attachments_to_delete.remove(attachment)
                 if (

@@ -10,7 +10,7 @@ from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoi
 
 def log_cascade_deletion(sender, instance, related_model, cascading_field):
     related_objects = related_model.objects.filter(
-        **{"{}".format(cascading_field): instance}
+        **{f"{cascading_field}": instance}
     ).all()
     if related_objects:
         user = get_internal_user()

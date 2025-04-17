@@ -375,8 +375,7 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response_real.status_code, 200)
         self.assertNotContains(
             response_real,
-            "Select a valid choice. {real_key} "
-            "is not one of the available choices.".format(real_key=real_key),
+            f"Select a valid choice. {real_key} is not one of the available choices.",
         )
 
 
@@ -411,12 +410,7 @@ class HDViewPointViewTest(TestCase):
         self.client.force_login(user=self.user_perm)
         # Test create view
         response = self.client.get(
-            "%s?object_id=%s&content_type=%s"
-            % (
-                HDViewPoint.get_add_url(),
-                self.trek.pk,
-                ContentType.objects.get_for_model(Trek).pk,
-            )
+            f"{HDViewPoint.get_add_url()}?object_id={self.trek.pk}&content_type={ContentType.objects.get_for_model(Trek).pk}"
         )
         self.assertEqual(response.status_code, 200)
         img = get_dummy_uploaded_image()
@@ -429,12 +423,7 @@ class HDViewPointViewTest(TestCase):
             "license": self.license.pk,
         }
         response = self.client.post(
-            "%s?object_id=%s&content_type=%s"
-            % (
-                HDViewPoint.get_add_url(),
-                self.trek.pk,
-                ContentType.objects.get_for_model(Trek).pk,
-            ),
+            f"{HDViewPoint.get_add_url()}?object_id={self.trek.pk}&content_type={ContentType.objects.get_for_model(Trek).pk}",
             data,
         )
         vp = HDViewPoint.objects.first()

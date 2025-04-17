@@ -1,6 +1,5 @@
 from datetime import date, datetime
 from distutils.util import strtobool
-from typing import Optional, Type
 
 import coreschema
 from coreapi.document import Field
@@ -32,7 +31,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
 
 
-def get_published_filter_expression(model: Type[Model], language: Optional[str] = None):
+def get_published_filter_expression(model: type[Model], language: str | None = None):
     """Given a model with a `published` field and a language string
     this function returns a query expression to filter on.
 
@@ -226,18 +225,18 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(structure__in=structures.split(","))
         period = request.GET.get("period")
         if not period:
-            qs = qs.filter(**{"species__period{:02}".format(date.today().month): True})
+            qs = qs.filter(**{f"species__period{date.today().month:02}": True})
         elif period == "any":
             q = Q()
             for m in range(1, 13):
-                q |= Q(**{"species__period{:02}".format(m): True})
+                q |= Q(**{f"species__period{m:02}": True})
             qs = qs.filter(q)
         elif period == "ignore":
             pass
         else:
             q = Q()
             for m in [int(m) for m in period.split(",")]:
-                q |= Q(**{"species__period{:02}".format(m): True})
+                q |= Q(**{f"species__period{m:02}": True})
             qs = qs.filter(q)
         trek_id = request.GET.get("trek")
         if trek_id:
@@ -489,7 +488,8 @@ class NearbyContentFilter(BaseFilterBackend):
             ),
         )
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            fields = fields + (
+            fields = (
+                *fields,
                 Field(
                     name="near_outdoorsite",
                     required=False,
@@ -688,7 +688,8 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, qs, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="categories",
                 required=False,
@@ -1275,7 +1276,8 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="root_sites_only",
                 required=False,
@@ -1356,7 +1358,8 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
         return self._filter_queryset(request, queryset, view)
 
     def get_schema_fields(self, view):
-        return self._get_schema_fields(view) + (
+        return (
+            *self._get_schema_fields(view),
             Field(
                 name="practices",
                 required=False,
@@ -1386,9 +1389,9 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
     def filter_queryset_related_objects_published_not_deleted(
         self, qs, request, related_name, optional_query=Q()
     ):
-        qs = qs.exclude(**{"{}".format(related_name): None})
+        qs = qs.exclude(**{f"{related_name}": None})
         # Ensure no deleted content is taken in consideration in the filter
-        related_field_name = "{}__deleted".format(related_name)
+        related_field_name = f"{related_name}__deleted"
         optional_query &= Q(**{related_field_name: False})
         return self.filter_queryset_related_objects_published(
             qs, request, related_name, optional_query
@@ -1441,7 +1444,7 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(
         portals = request.GET.get("portals")
         query = Q()
         if portals:
-            related_portal_in = "{}__portal__in".format(related_name)
+            related_portal_in = f"{related_name}__portal__in"
             query = Q(**{related_portal_in: portals.split(",")})
         return query
 
@@ -1449,7 +1452,7 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(
         self, qs, request, related_name
     ):
         # Exclude if no related objects exist
-        qs = qs.exclude(**{"{}".format(related_name): None})
+        qs = qs.exclude(**{f"{related_name}": None})
         portal_query = self.filter_queryset_related_objects_by_portal(
             request, related_name
         )
@@ -1461,7 +1464,7 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(
         self, qs, request, related_name
     ):
         # Exclude if no related objects exist
-        qs = qs.exclude(**{"{}".format(related_name): None})
+        qs = qs.exclude(**{f"{related_name}": None})
         portal_query = self.filter_queryset_related_objects_by_portal(
             request, related_name
         )
@@ -1580,13 +1583,13 @@ class HDViewPointPublishedByPortalFilter(
         #       qs = qs.exclude(**{'{}'.format(related_name): None})
         # But we need to bypass this bug : https://code.djangoproject.com/ticket/26261
         # TODO Revert when using Django > 4.2
-        qs = qs.filter(**{"{}__isnull".format(related_name): False})
+        qs = qs.filter(**{f"{related_name}__isnull": False})
         # ####################################
         # Ensure no deleted content is taken in consideration in the filter
         portal_query = self.filter_queryset_related_objects_by_portal(
             request, related_name
         )
-        related_field_name = "{}__deleted".format(related_name)
+        related_field_name = f"{related_name}__deleted"
         portal_query &= Q(**{related_field_name: False})
         return self.filter_queryset_related_objects_published(
             qs, request, related_name, portal_query
@@ -1602,7 +1605,7 @@ class HDViewPointPublishedByPortalFilter(
         set_3 = qs.none()
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
             related_name = "site"
-            qs = qs.filter(**{"{}__isnull".format(related_name): False})
+            qs = qs.filter(**{f"{related_name}__isnull": False})
             portal_query = self.filter_queryset_related_objects_by_portal(
                 request, related_name
             )

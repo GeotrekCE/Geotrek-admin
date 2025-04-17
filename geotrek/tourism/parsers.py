@@ -134,7 +134,7 @@ class ApidaeParser(AttachmentParserMixin, ApidaeBaseParser):
         return None
 
 
-class AttachmentApidaeParserMixin(object):
+class AttachmentApidaeParserMixin:
     def filter_attachments(self, src, val):
         result = []
         for subval in val or []:
@@ -223,7 +223,7 @@ class InformationDeskApidaeParser(ApidaeParser):
                 if content is not None:
                     f = ContentFile(content)
                     basename, ext = os.path.splitext(os.path.basename(url))
-                    name = "%s%s" % (basename[:128], ext)
+                    name = f"{basename[:128]}{ext}"
                     file = UploadedFile(f, name=name)
                     if file and self.obj.photo:
                         if os.path.exists(self.obj.photo.path):
@@ -701,14 +701,13 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
         self.root = response.json()
         self.nb = int(self.root["numFound"])
 
-        for row in self.items:
-            yield row
+        yield from self.items
 
     def normalize_field_name(self, name):
         return name
 
     def filter_eid(self, src, val):
-        return "{}".format(val)
+        return f"{val}"
 
     def filter_contact(self, src, val):
         (address, zipCode, commune, telephone, gsm, fax, facebook, twitter) = val
@@ -864,7 +863,7 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
             for periode in periodes.split(self.separator):
                 items = periode.split(self.separator2)
                 if len(items) >= 2 and items[0] and items[1]:
-                    periode_infos.append("du %s au %s" % (items[0], items[1]))
+                    periode_infos.append(f"du {items[0]} au {items[1]}")
             infos.append("<br>".join(periode_infos))
 
         if equipements:
@@ -886,7 +885,7 @@ class TouristicContentTourInSoftParserV3withMedias(TouristicContentTourInSoftPar
     }
 
     def get_nb(self):
-        return int(len(self.root["value"]))
+        return len(self.root["value"])
 
     def filter_attachments(self, src, val):
         if not val:
@@ -992,9 +991,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                         continue
                 if values and values[0]:
                     day, month, year = values[0].split("/")
-                    return "{year}-{month}-{day}".format(
-                        year=year, month=month, day=day
-                    )
+                    return f"{year}-{month}-{day}"
 
     def filter_end_date(self, src, val):
         if val:
@@ -1007,9 +1004,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                         < datetime.date.today()
                     ):
                         continue
-                    return "{year}-{month}-{day}".format(
-                        year=year, month=month, day=day
-                    )
+                    return f"{year}-{month}-{day}"
 
 
 class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
@@ -1134,7 +1129,7 @@ class LEITouristicEventParser(LEIParser):
 
     def filter_speaker(self, src, val):
         (civilite, nom, prenom) = val
-        return "{civ} {pre} {nom}".format(civ=civilite, pre=prenom, nom=nom)
+        return f"{civilite} {prenom} {nom}"
 
     def filter_begin_date(self, src, val):
         values_tab = val.split("/")
@@ -1326,7 +1321,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
             return None
         f = ContentFile(content)
         basename, ext = os.path.splitext(os.path.basename(val))
-        name = "%s%s" % (basename[:128], ext)
+        name = f"{basename[:128]}{ext}"
         file = UploadedFile(f, name=name)
         return file
 

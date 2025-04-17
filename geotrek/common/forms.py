@@ -83,7 +83,7 @@ class CommonForm(MapEntityForm):
 
     def replace_orig_fields(self):
         model = self._meta.model
-        codeperm = "%s.publish_%s" % (model._meta.app_label, model._meta.model_name)
+        codeperm = f"{model._meta.app_label}.publish_{model._meta.model_name}"
         if (
             "published" in self.fields
             and self.user
@@ -102,7 +102,7 @@ class CommonForm(MapEntityForm):
         except FieldDoesNotExist:
             # be careful but custom form fields, not in model
             modelfield = None
-        if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+        if not isinstance(modelfield, ForeignKey | ManyToManyField):
             return
         model = modelfield.remote_field.model
         # Filter structured choice fields according to user's structure
@@ -122,8 +122,8 @@ class CommonForm(MapEntityForm):
         settings_key = self.MAP_SETTINGS.get(self.__class__.__name__, None)
         if settings_key is None:
             logger.warning(
-                "No value set in MAP_SETTINGS dictonary for form class "
-                + self.__class__.__name__
+                "No value set in MAP_SETTINGS dictionary for form class %s",
+                self.__class__.__name__,
             )
         self.hidden_fields = settings.HIDDEN_FORM_FIELDS.get(settings_key, [])
 
@@ -147,11 +147,15 @@ class CommonForm(MapEntityForm):
                 # Hide only if optional
                 if self.fields[field_to_hide].required:
                     logger.warning(
-                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' is required on form {self.__class__.__name__}."
+                        "Ignoring entry in HIDDEN_FORM_FIELDS: field '%s' is required on form %s.",
+                        field_to_hide,
+                        self.__class__.__name__,
                     )
                 elif field_to_hide in self.not_hideable_fields:
                     logger.warning(
-                        f"Ignoring entry in HIDDEN_FORM_FIELDS: field '{field_to_hide}' cannot be hidden on form {self.__class__.__name__}."
+                        "Ignoring entry in HIDDEN_FORM_FIELDS: field '%s' cannot be hidden on form %s.",
+                        field_to_hide,
+                        self.__class__.__name__,
                     )
                 else:
                     self.fields[field_to_hide].widget = HiddenInput()
@@ -168,10 +172,10 @@ class CommonForm(MapEntityForm):
                     modelfield = self.instance._meta.get_field(name)
                 except FieldDoesNotExist:
                     continue
-                if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
+                if not isinstance(modelfield, ForeignKey | ManyToManyField):
                     continue
                 model = modelfield.remote_field.model
-                if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
+                if not issubclass(model, StructureRelated | StructureOrNoneRelated):
                     continue
                 if not model.check_structure_in_forms:
                     continue

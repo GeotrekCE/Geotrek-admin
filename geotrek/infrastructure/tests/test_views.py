@@ -56,7 +56,7 @@ class InfrastructureViewsTest(CommonTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
-            good_data["topology"] = '{"paths": [%s]}' % path.pk
+            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
         else:
             good_data["geom"] = "LINESTRING (0.0 0.0, 1.0 1.0)"
         return good_data
@@ -98,7 +98,7 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
-            good_data["topology"] = '{"paths": [%s]}' % path.pk
+            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
         else:
             good_data["geom"] = "POINT(0.42 0.666)"
         return good_data

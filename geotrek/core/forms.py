@@ -27,7 +27,7 @@ class TopologyForm(CommonForm):
     geomfields = ["topology"]
 
     class Meta(CommonForm.Meta):
-        fields = CommonForm.Meta.fields + ["topology"]
+        fields = [*CommonForm.Meta.fields, "topology"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,7 +63,8 @@ class PathForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Path
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "stake",
@@ -145,7 +146,8 @@ class TrailForm(TopologyForm):
 
     class Meta(CommonForm.Meta):
         model = Trail
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "category",

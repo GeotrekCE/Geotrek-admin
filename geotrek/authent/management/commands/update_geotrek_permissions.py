@@ -47,9 +47,9 @@ class Command(BaseCommand):
                 and not model._meta.abstract
             ):
                 Permission.objects.get_or_create(
-                    codename="publish_%s" % content_type.model,
+                    codename=f"publish_{content_type.model}",
                     content_type=content_type,
-                    defaults={"name": "Can publish %s" % content_type.name},
+                    defaults={"name": f"Can publish {content_type.name}"},
                 )
 
         logger.info("Done.")

@@ -23,15 +23,13 @@ class SuricateRequestManager:
 
     def check_response_integrity(self, response):
         if response.status_code not in [200, 201]:
-            raise Exception(
-                f"Failed to access Suricate API - Status code: {response.status_code}"
-            )
+            msg = f"Failed to access Suricate API - Status code: {response.status_code}"
+            raise Exception(msg)
         else:
             data = json.loads(response.content.decode())
             if ("code_ok" in data) and (data["code_ok"] == "false"):
-                raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
-                )
+                msg = f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
+                raise Exception(msg)
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
         #         else:
@@ -129,7 +127,8 @@ class SuricateRequestManager:
             )
         if response.status_code not in [200, 201]:
             logger.warning(
-                f"Failed to access Suricate attachment - Status code: {response.status_code}"
+                "Failed to access Suricate attachment - Status code: %s",
+                response.status_code,
             )
         return response
 
@@ -274,8 +273,8 @@ class SuricateMessenger:
         """Update report GPS coordinates on Suricate Rest API"""
         url_params = {
             "uid_alerte": id_alert,
-            "gpslatitude": "{0:.6f}".format(gps_lat),
-            "gpslongitude": "{0:.6f}".format(gps_long),
+            "gpslatitude": f"{gps_lat:.6f}",
+            "gpslongitude": f"{gps_long:.6f}",
         }
         if force:
             url_params["force_update"] = 1

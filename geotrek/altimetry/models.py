@@ -110,7 +110,7 @@ class AltimetryMixin(models.Model):
         if not language:
             language = get_language()
         return reverse(
-            "%s:%s_profile_svg" % (app_label, model_name),
+            f"{app_label}:{model_name}_profile_svg",
             kwargs={"lang": language, "pk": self.pk},
         )
 
@@ -119,7 +119,7 @@ class AltimetryMixin(models.Model):
         if not language:
             language = get_language()
         return os.path.join(
-            "profiles", "%s-%s-%s.png" % (self._meta.model_name, self.pk, language)
+            "profiles", f"{self._meta.model_name}-{self.pk}-{language}.png"
         )
 
     def get_elevation_chart_path(self, language=None):
@@ -130,7 +130,7 @@ class AltimetryMixin(models.Model):
         if not os.path.exists(basefolder):
             os.mkdir(basefolder)
         return os.path.join(
-            basefolder, "%s-%s-%s.png" % (self._meta.model_name, self.pk, language)
+            basefolder, f"{self._meta.model_name}-{self.pk}-{language}.png"
         )
 
     def prepare_elevation_chart(self, language):

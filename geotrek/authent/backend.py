@@ -99,13 +99,11 @@ class DatabaseBackend(ModelBackend):
 
     def query_credentials(self, username):
         if not settings.AUTHENT_DATABASE:
-            raise ImproperlyConfigured(
-                "Database backend is used, without AUTHENT_DATABASE setting."
-            )
+            msg = "Database backend is used, without AUTHENT_DATABASE setting."
+            raise ImproperlyConfigured(msg)
         if not settings.AUTHENT_TABLENAME:
-            raise ImproperlyConfigured(
-                "Database backend is used, without AUTHENT_TABLENAME setting."
-            )
+            msg = "Database backend is used, without AUTHENT_TABLENAME setting."
+            raise ImproperlyConfigured(msg)
         try:
             result = None
             with connections[settings.AUTHENT_DATABASE].cursor() as cursor:
@@ -121,11 +119,10 @@ class DatabaseBackend(ModelBackend):
                     else settings.AUTHENT_TABLENAME.split(".", 1)[1]
                 )
                 if tablename not in table_list:
-                    raise ImproperlyConfigured(
-                        "Database backend is used, and AUTHENT_TABLENAME does not exists."
-                    )
+                    msg = "Database backend is used, and AUTHENT_TABLENAME does not exists."
+                    raise ImproperlyConfigured(msg)
 
-                sqlquery = "SELECT %s FROM %s WHERE username = " % (
+                sqlquery = "SELECT {} FROM {} WHERE username = ".format(
                     ", ".join(FIELDS),
                     settings.AUTHENT_TABLENAME,
                 )

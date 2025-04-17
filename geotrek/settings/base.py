@@ -87,7 +87,7 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
         "OPTIONS": {
             "options": "-c search_path={}".format(
-                ",".join(("public",) + tuple(set(DATABASE_SCHEMAS.values())))
+                ",".join(("public", *tuple(set(DATABASE_SCHEMAS.values()))))
             )
         },
     }
@@ -202,7 +202,7 @@ COMPRESS_PARSER = "compressor.parser.HtmlParser"
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     try:
-        with open(os.path.join(VAR_DIR, "conf/secret_key"), "r") as f:
+        with open(os.path.join(VAR_DIR, "conf/secret_key")) as f:
             SECRET_KEY = f.read()
     except FileNotFoundError:
         pass
@@ -256,7 +256,7 @@ MIDDLEWARE = (
     "mapentity.middleware.AutoLoginMiddleware",
 )
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != "" else None
-ADMIN_MEDIA_PREFIX = "%s/static/admin/" % ROOT_URL
+ADMIN_MEDIA_PREFIX = f"{ROOT_URL}/static/admin/"
 
 ROOT_URLCONF = "geotrek.urls"
 
@@ -305,7 +305,8 @@ PROJECT_APPS += (
     "treebeard",
 )
 
-INSTALLED_APPS = PROJECT_APPS + (
+INSTALLED_APPS = (
+    *PROJECT_APPS,
     "geotrek.cirkwi",
     "geotrek.authent",
     "geotrek.common",
@@ -360,7 +361,8 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-THUMBNAIL_PROCESSORS = easy_thumbnails_defaults.THUMBNAIL_PROCESSORS + (
+THUMBNAIL_PROCESSORS = (
+    *easy_thumbnails_defaults.THUMBNAIL_PROCESSORS,
     "geotrek.common.thumbnail_processors.add_watermark",
 )
 
@@ -809,7 +811,7 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
 ]
 
-EMAIL_SUBJECT_PREFIX = "[%s] " % TITLE
+EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
 
 FACEBOOK_APP_ID = ""
 FACEBOOK_IMAGE = "/images/logo-geotrek.png"
@@ -996,16 +998,16 @@ SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
-env_settings_file = os.path.join(os.path.dirname(__file__), "env_{}.py".format(ENV))
-with open(env_settings_file, "r") as f:
-    logger.warning("Read env configuration from {}".format(env_settings_file))
+env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
+with open(env_settings_file) as f:
+    logger.warning("Read env configuration from %s", env_settings_file)
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
 if custom_settings_file and "tests" not in ENV:
-    with open(custom_settings_file, "r") as f:
-        logger.warning("Read custom configuration from {}".format(custom_settings_file))
+    with open(custom_settings_file) as f:
+        logger.warning("Read custom configuration from %s", custom_settings_file)
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]

@@ -17,7 +17,7 @@ from .models import (
 
 class TypeField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
-        return "{} ({})".format(str(obj), str(obj.category))
+        return f"{obj!s} ({obj.category!s})"
 
 
 class TypeFilter(ModelMultipleChoiceFilter):
@@ -40,7 +40,8 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "category",
             "type1",
@@ -94,7 +95,8 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "type",
             "themes",

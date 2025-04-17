@@ -36,14 +36,14 @@ class Command(BaseCommand):
                         path2.delete()
                         path_deleted.append(path2)
                     if verbosity > 1:
-                        self.stdout.write("Deleting path %s" % path_deleted[-1])
+                        self.stdout.write(f"Deleting path {path_deleted[-1]}")
 
             except Exception as exc:
-                self.stdout.write(self.style.ERROR("{}".format(exc)))
+                self.stdout.write(self.style.ERROR(f"{exc}"))
 
         if verbosity > 0:
             self.stdout.write(
                 self.style.SUCCESS(
-                    "{} duplicate paths have been deleted".format(len(path_deleted))
+                    f"{len(path_deleted)} duplicate paths have been deleted"
                 )
             )

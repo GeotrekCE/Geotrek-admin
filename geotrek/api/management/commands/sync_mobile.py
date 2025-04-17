@@ -29,7 +29,7 @@ from geotrek.common.helpers_sync import ZipTilesBuilder
 from geotrek.common.models import FileType  # NOQA
 from geotrek.flatpages.models import MenuItem
 from geotrek.tourism import models as tourism_models
-from geotrek.tourism import urls  # NOQA
+from geotrek.tourism import urls
 
 # Register mapentity models
 from geotrek.trekking import models as trekking_models
@@ -89,9 +89,7 @@ class Command(BaseCommand):
     ):
         if self.verbosity == 2:
             self.stdout.write(
-                "\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(
-                    lang=lang, name=name
-                ),
+                f"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...",
                 ending="",
             )
             self.stdout._out.flush()
@@ -107,15 +105,13 @@ class Command(BaseCommand):
         except Exception as e:
             self.successfull = False
             if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+                self.stdout.write(f"\x1b[3D\x1b[31mfailed ({e})\x1b[0m")
             return
         if response.status_code != 200:
             self.successfull = False
             if self.verbosity == 2:
                 self.stdout.write(
-                    "\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(
-                        code=response.status_code
-                    )
+                    f"\x1b[3D\x1b[31;1mfailed (HTTP {response.status_code})\x1b[0m"
                 )
             return
         f = open(fullname, "wb")
@@ -144,13 +140,13 @@ class Command(BaseCommand):
         self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs
     ):
         view = viewset.as_view(*as_view_args)
-        name = os.path.join(lang, "{name}.json".format(name=name))
+        name = os.path.join(lang, f"{name}.json")
         params = params.copy()
         if self.portal:
             params["portal"] = ",".join(self.portal)
         headers = {}
         if self.indent:
-            headers["HTTP_ACCEPT"] = "application/json; indent={}".format(self.indent)
+            headers["HTTP_ACCEPT"] = f"application/json; indent={self.indent}"
         self.sync_view(
             lang,
             view,
@@ -175,9 +171,7 @@ class Command(BaseCommand):
 
         headers = {}
         if self.indent:
-            headers["HTTP_ACCEPT"] = "application/geo+json; indent={}".format(
-                self.indent
-            )
+            headers["HTTP_ACCEPT"] = f"application/geo+json; indent={self.indent}"
 
         self.sync_view(
             lang,
@@ -199,9 +193,7 @@ class Command(BaseCommand):
         for child in trek.children.annotate(geom_type=GeometryType("geom")).filter(
             geom_type="LINESTRING"
         ):
-            name = os.path.join(
-                lang, str(trek.pk), "pois", "{}.geojson".format(child.pk)
-            )
+            name = os.path.join(lang, str(trek.pk), "pois", f"{child.pk}.geojson")
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
     def sync_trek_touristic_contents(self, lang, trek):
@@ -216,7 +208,7 @@ class Command(BaseCommand):
             geom_type="LINESTRING"
         ):
             name = os.path.join(
-                lang, str(trek.pk), "touristic_contents", "{}.geojson".format(child.pk)
+                lang, str(trek.pk), "touristic_contents", f"{child.pk}.geojson"
             )
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -232,7 +224,7 @@ class Command(BaseCommand):
             geom_type="LINESTRING"
         ):
             name = os.path.join(
-                lang, str(trek.pk), "touristic_events", "{}.geojson".format(child.pk)
+                lang, str(trek.pk), "touristic_events", f"{child.pk}.geojson"
             )
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -246,7 +238,7 @@ class Command(BaseCommand):
             geom_type="LINESTRING"
         ):
             name = os.path.join(
-                lang, str(trek.pk), "sensitive_areas", "{}.geojson".format(child.pk)
+                lang, str(trek.pk), "sensitive_areas", f"{child.pk}.geojson"
             )
             self.sync_view(lang, view, name, params=params, pk=child.pk)
 
@@ -261,15 +253,13 @@ class Command(BaseCommand):
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
-                "\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                    directory=directory, url=url, name=name
-                )
+                f"\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m"
             )
 
     def sync_media_file(self, field, prefix=None, directory="", zipfile=None):
         if field and field.name:
             url_media = (
-                "/%s%s" % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
+                f"/{prefix}{settings.MEDIA_URL}" if prefix else settings.MEDIA_URL
             )
             self.sync_file(
                 field.name,
@@ -285,7 +275,7 @@ class Command(BaseCommand):
                 continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == ".svg":
-                name = os.path.join(settings.MEDIA_URL.strip("/"), "%s.png" % file_name)
+                name = os.path.join(settings.MEDIA_URL.strip("/"), f"{file_name}.png")
             else:
                 name = os.path.join(settings.MEDIA_URL.strip("/"), obj.pictogram.name)
             dst = os.path.join(self.tmp_root, directory, name)
@@ -305,15 +295,13 @@ class Command(BaseCommand):
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                        directory=directory, url=obj.pictogram.url
-                    )
+                    f"\x1b[36m**\x1b[0m \x1b[1m{directory}{obj.pictogram.url}\x1b[0m \x1b[32mcopied\x1b[0m"
                 )
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
             self.stdout.write(
-                "\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name),
+                f"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...",
                 ending="",
             )
             self.stdout._out.flush()
@@ -322,7 +310,7 @@ class Command(BaseCommand):
         zipfilename = os.path.join(self.tmp_root, name)
         try:
             oldzipfile = ZipFile(oldzipfilename, "r")
-        except IOError:
+        except OSError:
             uptodate = False
         else:
             old = set([(zi.filename, zi.CRC) for zi in oldzipfile.infolist()])
@@ -381,7 +369,7 @@ class Command(BaseCommand):
             self.sync_json(
                 lang,
                 FlatPageViewSet,
-                "flatpages/{pk}".format(pk=menu_item.pk),
+                f"flatpages/{menu_item.pk}",
                 pk=menu_item.pk,
                 as_view_args=[{"get": "retrieve"}],
             )
@@ -403,7 +391,7 @@ class Command(BaseCommand):
             self.sync_geojson(
                 lang,
                 TrekViewSet,
-                "{pk}/trek.geojson".format(pk=trek.pk),
+                f"{trek.pk}/trek.geojson",
                 pk=trek.pk,
                 type_view={"get": "retrieve"},
             )
@@ -418,9 +406,7 @@ class Command(BaseCommand):
                 self.sync_geojson(
                     lang,
                     TrekViewSet,
-                    "{pk}/treks/{child_pk}.geojson".format(
-                        pk=trek.pk, child_pk=child.pk
-                    ),
+                    f"{trek.pk}/treks/{child.pk}.geojson",
                     pk=child.pk,
                     type_view={"get": "retrieve"},
                     params={"root_pk": trek.pk},
@@ -445,7 +431,7 @@ class Command(BaseCommand):
 
     def sync_trek_by_pk_media(self, trek):
         url_trek = os.path.join("nolang")
-        zipname_trekid = os.path.join(url_trek, "{}.zip".format(trek.pk))
+        zipname_trekid = os.path.join(url_trek, f"{trek.pk}.zip")
         zipfullname_trekid = os.path.join(self.tmp_root, zipname_trekid)
         self.mkdirs(zipfullname_trekid)
         trekid_zipfile = ZipFile(zipfullname_trekid, "w")
@@ -515,7 +501,7 @@ class Command(BaseCommand):
                 )
         for lang in self.languages:
             trek.prepare_elevation_chart(lang)
-            url_media = "/{}{}".format(trek.pk, settings.MEDIA_URL)
+            url_media = f"/{trek.pk}{settings.MEDIA_URL}"
             self.sync_file(
                 trek.get_elevation_chart_url_png(lang),
                 settings.MEDIA_ROOT,
@@ -544,7 +530,7 @@ class Command(BaseCommand):
                 )
             for lang in self.languages:
                 child.prepare_elevation_chart(lang)
-                url_media = "/{}{}".format(trek.pk, settings.MEDIA_URL)
+                url_media = f"/{trek.pk}{settings.MEDIA_URL}"
                 self.sync_file(
                     child.get_elevation_chart_url_png(lang),
                     settings.MEDIA_ROOT,
@@ -650,7 +636,7 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             self.stdout.write(
-                "\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk),
+                f"\x1b[36m**\x1b[0m \x1b[1mnolang/{trek.pk}/tiles/\x1b[0m ...",
                 ending="",
             )
             self.stdout._out.flush()
@@ -659,7 +645,7 @@ class Command(BaseCommand):
             return (lng - radius, lat - radius, lng + radius, lat + radius)
 
         tiles = ZipTilesBuilder(
-            zipfile, prefix="/{}/tiles/".format(trek.pk), **self.builder_args
+            zipfile, prefix=f"/{trek.pk}/tiles/", **self.builder_args
         )
 
         geom = trek.geom
@@ -686,7 +672,7 @@ class Command(BaseCommand):
 
         global_extent = settings.LEAFLET_CONFIG["SPATIAL_EXTENT"]
 
-        logger.info("Global extent is %s" % str(global_extent))
+        logger.info("Global extent is %s", global_extent)
         logger.info("Build global tiles file...")
 
         tiles = ZipTilesBuilder(zipfile, prefix="tiles/", **self.builder_args)
@@ -729,7 +715,8 @@ class Command(BaseCommand):
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
         remaining = existing - {"nolang"} - set(settings.MODELTRANSLATION_LANGUAGES)
         if remaining:
-            raise CommandError("Destination directory contains extra data")
+            msg = "Destination directory contains extra data"
+            raise CommandError(msg)
 
     def rename_root(self):
         if os.path.exists(self.dst_root):
@@ -761,12 +748,8 @@ class Command(BaseCommand):
         if options["languages"]:
             for language in options["languages"].split(","):
                 if language not in settings.MODELTRANSLATION_LANGUAGES:
-                    raise CommandError(
-                        "Language {lang_n} doesn't exist. Select in these one : {langs}".format(
-                            lang_n=language,
-                            langs=tuple(settings.MODELTRANSLATION_LANGUAGES),
-                        )
-                    )
+                    msg = f"Language {language} doesn't exist. Select in these one : {tuple(settings.MODELTRANSLATION_LANGUAGES)}"
+                    raise CommandError(msg)
             self.languages = options["languages"].split(",")
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
@@ -778,7 +761,8 @@ class Command(BaseCommand):
             self.portal = []
         url = options["url"]
         if not re.search("http[s]?://", url):
-            raise CommandError("url parameter should start with http:// or https://")
+            msg = "url parameter should start with http:// or https://"
+            raise CommandError(msg)
         self.referer = options["url"]
         if isinstance(settings.MOBILE_TILES_URL, str):
             tiles_url = settings.MOBILE_TILES_URL
@@ -818,6 +802,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Done"))
 
         if not self.successfull:
-            raise CommandError("Some errors raised during synchronization.")
+            msg = "Some errors raised during synchronization."
+            raise CommandError(msg)
 
         sleep(2)  # end sleep to ensure sync page get result

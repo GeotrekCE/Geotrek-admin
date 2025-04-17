@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2025-04-16 18:22+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -71,8 +71,9 @@ msgstr ""
 "Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind "
 "ist."
 
-#, python-brace-format
-msgid "Cannot use parent trek {child.name} as a child trek."
+#, fuzzy, python-format
+#| msgid "Cannot use parent trek {child.name} as a child trek."
+msgid "Cannot use parent trek %(name)s as a child trek."
 msgstr ""
 "Die übergeordnete Route {child.name} kann nicht als Unterroute verwendet "
 "werden."
@@ -435,9 +436,11 @@ msgstr "Publiziert"
 msgid "Published Services"
 msgstr "Dienstleistungen Publiziert"
 
-#, python-brace-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
 msgid ""
-"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+"Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 "Falscher Wert'{val}' für das Feld {src}. Sollte ähnlich sein wie'2h30', "
 "'2,5' oder '2.5'"
@@ -470,14 +473,14 @@ msgstr ""
 "Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte sein LineString, "
 "nicht {geom_type}"
 
-#, python-brace-format
+#, python-format
 msgid ""
 "Trying to retrieve children for missing trek : could not find trek with UUID "
-"{key}"
+"%(key)s"
 msgstr ""
 
-msgid ""
-"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+#, python-format
+msgid "An error occurred in children generation: %(message)s"
 msgstr ""
 
 #, python-format

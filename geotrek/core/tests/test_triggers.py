@@ -11,12 +11,12 @@ class SmartMakelineTest(TestCase):
     def smart_makeline(self, lines):
         assert lines
         if isinstance(lines[0], str):
-            lines = ["ST_GeomFromText('%s')" % line for line in lines]
+            lines = [f"ST_GeomFromText('{line}')" for line in lines]
         else:
-            lines = ["ST_GeomFromText('%s')" % line.wkt for line in lines]
+            lines = [f"ST_GeomFromText('{line.wkt}')" for line in lines]
         conn = connections[DEFAULT_DB_ALIAS]
         cursor = conn.cursor()
-        sql = "SELECT ft_Smart_MakeLine(ARRAY[%s]);" % ",".join(lines)
+        sql = "SELECT ft_Smart_MakeLine(ARRAY[{}]);".format(",".join(lines))
         cursor.execute(sql)
         result = cursor.fetchall()
         return GEOSGeometry(result[0][0][1:].split(",")[0])

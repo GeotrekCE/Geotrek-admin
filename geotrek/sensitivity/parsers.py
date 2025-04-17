@@ -75,8 +75,7 @@ class BiodivParser(Parser):
             self.root = response.json()
             self.nb = int(self.root["count"])
 
-            for row in self.items:
-                yield row
+            yield from self.items
             self.next_url = self.root["next"]
 
     def normalize_field_name(self, name):
@@ -96,9 +95,8 @@ class BiodivParser(Parser):
                 polygons.append(Polygon(*polygon, srid=4326))
             geom = MultiPolygon(polygons, srid=4326)
         else:
-            raise ValueImportError(
-                "This object is neither a point, nor a polygon, nor a multipolygon"
-            )
+            msg = "This object is neither a point, nor a polygon, nor a multipolygon"
+            raise ValueImportError(msg)
         geom.transform(settings.SRID)
         return geom
 
@@ -122,8 +120,8 @@ class BiodivParser(Parser):
                 setattr(species, "name_" + lang, translation)
                 need_save = True
         for i in range(12):
-            if period[i] != getattr(species, "period{:02}".format(i + 1)):
-                setattr(species, "period{:02}".format(i + 1), period[i])
+            if period[i] != getattr(species, f"period{i + 1:02}"):
+                setattr(species, f"period{i + 1:02}", period[i])
                 need_save = True
         practices = [SportPractice.objects.get(id=id) for id in practice_ids]
         if url != species.url:
@@ -162,9 +160,7 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
         try:
             species = Species.objects.get(category=Species.SPECIES, name=val)
         except Species.DoesNotExist:
-            msg = "L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(
-                val
-            )
+            msg = f"L'espèce {val} n'existe pas dans Geotrek. Merci de la créer."
             raise RowImportError(msg)
         return species
 
@@ -201,7 +197,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
             period = period.split(self.separator)
             for i in range(1, 13):
                 if str(i) in period:
-                    setattr(species, "period{:02}".format(i), True)
+                    setattr(species, f"period{i:02}", True)
         species.url = url
         species.radius = elevation
         practices = []
@@ -210,9 +206,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
                 try:
                     practice = SportPractice.objects.get(name=practice_name)
                 except SportPractice.DoesNotExist:
-                    msg = "La pratique sportive {} n'existe pas dans Geotrek. Merci de l'ajouter.".format(
-                        practice_name
-                    )
+                    msg = f"La pratique sportive {practice_name} n'existe pas dans Geotrek. Merci de l'ajouter."
                     raise RowImportError(msg)
                 practices.append(practice)
         species.save()

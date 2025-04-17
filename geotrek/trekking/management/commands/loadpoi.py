@@ -63,7 +63,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -78,9 +79,7 @@ class Command(BaseCommand):
             for layer in data_source:
                 if verbosity >= 1:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 available_fields = layer.fields
 
@@ -89,7 +88,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_name)
+                            f"Field '{field_name}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -103,7 +102,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_poitype)
+                            f"Field '{field_poitype}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -132,15 +131,11 @@ class Command(BaseCommand):
                     )
                     self.create_poi(feature_geom, name, poitype, description)
                     if verbosity >= 2:
-                        self.stdout.write(
-                            self.style.NOTICE("{} POI created.".format(name))
-                        )
+                        self.stdout.write(self.style.NOTICE(f"{name} POI created."))
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -157,7 +152,7 @@ class Command(BaseCommand):
             # to a path aggregation (topology)
             geometry = geometry.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
             poi.mutate(topology)

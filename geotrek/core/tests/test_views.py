@@ -64,9 +64,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
         response = self.client.get(
-            reverse(
-                "core:multiple_path_delete", args=["%s,%s" % (path_1.pk, path_2.pk)]
-            )
+            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Do you really wish to delete")
@@ -79,9 +77,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         )
         POIFactory.create(paths=[(path_1, 0, 0)])
         response = self.client.get(
-            reverse(
-                "core:multiple_path_delete", args=["%s,%s" % (path_1.pk, path_2.pk)]
-            )
+            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("core:path_list"))
@@ -101,9 +97,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         ServiceFactory.create(paths=[(path_2, 0, 1)])
         InterventionFactory.create(target=signage, name="INTER_1")
         response = self.client.get(
-            reverse(
-                "core:multiple_path_delete", args=["%s,%s" % (path_1.pk, path_2.pk)]
-            )
+            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
         )
         self.assertContains(response, "POI_1")
         self.assertContains(response, "INFRA_1")
@@ -112,9 +106,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertContains(response, "Service type")
         self.assertContains(response, "INTER_1")
         response = self.client.post(
-            reverse(
-                "core:multiple_path_delete", args=["%s,%s" % (path_1.pk, path_2.pk)]
-            )
+            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Path.objects.count(), 2)
@@ -122,7 +114,8 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
 
 
 def get_route_exception_mock(arg1, arg2):
-    raise Exception("This is an error message")
+    msg = "This is an error message"
+    raise Exception(msg)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -311,27 +304,27 @@ class PathViewsTest(CommonTest):
         response = self.client.get(path.get_delete_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Different topologies are linked with this path")
-        self.assertContains(response, '<a href="/poi/%d/">POI</a>' % poi.pk)
-        self.assertContains(response, '<a href="/trail/%d/">Trail</a>' % trail.pk)
-        self.assertContains(response, '<a href="/trek/%d/">Trek</a>' % trek.pk)
+        self.assertContains(response, f'<a href="/poi/{poi.pk}/">POI</a>')
+        self.assertContains(response, f'<a href="/trail/{trail.pk}/">Trail</a>')
+        self.assertContains(response, f'<a href="/trek/{trek.pk}/">Trek</a>')
         self.assertContains(
-            response, '<a href="/service/%d/">ServiceType</a>' % service.pk
+            response, f'<a href="/service/{service.pk}/">ServiceType</a>'
         )
-        self.assertContains(response, '<a href="/signage/%d/">Signage</a>' % signage.pk)
+        self.assertContains(response, f'<a href="/signage/{signage.pk}/">Signage</a>')
         self.assertContains(
             response,
-            '<a href="/infrastructure/%d/">Infrastructure</a>' % infrastructure.pk,
+            f'<a href="/infrastructure/{infrastructure.pk}/">Infrastructure</a>',
         )
         self.assertContains(
-            response, '<a href="/intervention/%d/">Intervention1</a>' % intervention1.pk
+            response, f'<a href="/intervention/{intervention1.pk}/">Intervention1</a>'
         )
         self.assertContains(
-            response, '<a href="/intervention/%d/">Intervention2</a>' % intervention2.pk
+            response, f'<a href="/intervention/{intervention2.pk}/">Intervention2</a>'
         )
 
     def test_elevation_area_json(self):
         path = self.modelfactory.create()
-        url = "/api/en/paths/{pk}/dem.json".format(pk=path.pk)
+        url = f"/api/en/paths/{path.pk}/dem.json"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
@@ -370,12 +363,12 @@ class PathViewsTest(CommonTest):
         )
         self.assertEqual(len(p1.cities), 1)
         response = self.client.get(
-            "/api/path/drf/paths/filter_infos.json?city=%s" % city.code
+            f"/api/path/drf/paths/filter_infos.json?city={city.code}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "0 (0 km)")
         response = self.client.get(
-            "/api/path/drf/paths/filter_infos.json?city=%s" % city2.code
+            f"/api/path/drf/paths/filter_infos.json?city={city2.code}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "1 (1.0 km)")
@@ -400,12 +393,12 @@ class PathViewsTest(CommonTest):
         )
         self.assertEqual(len(p1.districts), 1)
         response = self.client.get(
-            "/api/path/drf/paths/filter_infos.json?district=%s" % district.pk
+            f"/api/path/drf/paths/filter_infos.json?district={district.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "0 (0 km)")
         response = self.client.get(
-            "/api/path/drf/paths/filter_infos.json?district=%s" % district2.pk
+            f"/api/path/drf/paths/filter_infos.json?district={district2.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "1 (1.0 km)")
@@ -706,7 +699,7 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_detail_url())
         self.assertNotContains(
             response,
-            "/api/restrictedarea/type/{}/restrictedarea.geojson".format(area_type.pk),
+            f"/api/restrictedarea/type/{area_type.pk}/restrictedarea.geojson",
         )
 
         self.restricted_area = RestrictedAreaFactory(
@@ -722,7 +715,7 @@ class PathViewsTest(CommonTest):
         response = self.client.get(obj.get_detail_url())
         self.assertContains(
             response,
-            "/api/restrictedarea/type/{}/restrictedarea.geojson".format(area_type.pk),
+            f"/api/restrictedarea/type/{area_type.pk}/restrictedarea.geojson",
         )
 
     def test_draft_path_layer(self):
@@ -750,11 +743,11 @@ class PathViewsTest(CommonTest):
         # We check that any cached content can be found with no_draft (we still didn't ask for it)
         last_update = Path.no_draft_latest_updated()
         last_update_draft = Path.latest_updated()
-        geojson_lookup = "en_path_%s_nodraft_json_layer" % last_update.strftime(
-            "%y%m%d%H%M%S%f"
+        geojson_lookup = "en_path_{}_nodraft_json_layer".format(
+            last_update.strftime("%y%m%d%H%M%S%f")
         )
-        geojson_lookup_last_update_draft = (
-            "en_path_%s_json_layer" % last_update_draft.strftime("%y%m%d%H%M%S%f")
+        geojson_lookup_last_update_draft = "en_path_{}_json_layer".format(
+            last_update_draft.strftime("%y%m%d%H%M%S%f")
         )
         content = cache.get(geojson_lookup)
         content_draft = cache.get(geojson_lookup_last_update_draft)
@@ -796,12 +789,11 @@ class PathViewsTest(CommonTest):
         # We check that any cached content can be found without no_draft (we still didn't ask for it)
         last_update_no_draft = Path.no_draft_latest_updated()
         last_update = Path.latest_updated()
-        geojson_lookup_no_draft = (
-            "en_path_%s_nodraft_json_layer"
-            % last_update_no_draft.strftime("%y%m%d%H%M%S%f")
+        geojson_lookup_no_draft = "en_path_{}_nodraft_json_layer".format(
+            last_update_no_draft.strftime("%y%m%d%H%M%S%f")
         )
-        geojson_lookup = "en_path_%s_json_layer" % last_update.strftime(
-            "%y%m%d%H%M%S%f"
+        geojson_lookup = "en_path_{}_json_layer".format(
+            last_update.strftime("%y%m%d%H%M%S%f")
         )
         content_no_draft = cache.get(geojson_lookup_no_draft)
         content = cache.get(geojson_lookup)
@@ -2220,7 +2212,7 @@ class TrailViewsTest(CommonTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
-            good_data["topology"] = '{"paths": [%s]}' % path.pk
+            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
         else:
             good_data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
         return good_data
@@ -2254,12 +2246,12 @@ class TrailViewsTest(CommonTest):
         import bs4
 
         trail = TrailFactory(offset=3.14)
-        response = self.client.get(Trail.get_add_url() + "?topology=%s" % trail.pk)
+        response = self.client.get(Trail.get_add_url() + f"?topology={trail.pk}")
         soup = bs4.BeautifulSoup(response.content, features="html.parser")
         textarea_field = soup.find(id="id_topology")
         self.assertIn('"kind": "TMP"', textarea_field.text)
         self.assertIn('"offset": 3.14', textarea_field.text)
-        self.assertNotIn('"pk": %s' % trail.pk, textarea_field.text)
+        self.assertNotIn(f'"pk": {trail.pk}', textarea_field.text)
 
     def test_add_trail_from_existing_topology(self):
         trail = TrailFactory()

@@ -43,7 +43,7 @@ class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -61,7 +61,7 @@ class SignageType(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
@@ -100,7 +100,7 @@ class SignageCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -184,7 +184,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def coordinates(self):
-        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
+        return f"{format_coordinates(self.geom)} ({spatial_reference()})"
 
     @property
     def geomtransform(self):
@@ -270,7 +270,7 @@ class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -284,7 +284,7 @@ class BladeCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -349,7 +349,8 @@ class Blade(
     def set_topology(self, topology):
         self.topology = topology
         if not self.is_signage:
-            raise ValueError("Expecting a signage")
+            msg = "Expecting a signage"
+            raise ValueError(msg)
 
     @property
     def conditions_display(self):
@@ -377,9 +378,7 @@ class Blade(
 
     @property
     def signage_display(self):
-        return (
-            '<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
-        )
+        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
 
     @property
     def order_lines(self):
@@ -387,22 +386,12 @@ class Blade(
 
     @property
     def number_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
         return s
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}">{self}</a>'
         return s
 
     @property
@@ -493,6 +482,11 @@ class Line(models.Model):
     time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
 
+    class Meta:
+        unique_together = (("blade", "number"),)
+        verbose_name = _("Line")
+        verbose_name_plural = _("Lines")
+
     def __str__(self):
         return self.linecode
 
@@ -520,11 +514,6 @@ class Line(models.Model):
         return settings.LINE_TIME_FORMAT.format(
             hours=hours, minutes=minutes, seconds=seconds
         )
-
-    class Meta:
-        unique_together = (("blade", "number"),)
-        verbose_name = _("Line")
-        verbose_name_plural = _("Lines")
 
 
 @receiver(pre_delete, sender=Blade)

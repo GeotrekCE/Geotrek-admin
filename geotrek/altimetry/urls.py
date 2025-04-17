@@ -12,7 +12,9 @@ from geotrek.altimetry.views import (
 app_name = "altimetry"
 urlpatterns = [
     path(
-        "%s/profiles/<path:model_name>-<int:pk>.png" % settings.MEDIA_URL.strip("/"),
+        "{}/profiles/<path:model_name>-<int:pk>.png".format(
+            settings.MEDIA_URL.strip("/")
+        ),
         serve_elevation_chart,
     ),
 ]
@@ -28,25 +30,19 @@ class AltimetryEntityOptions(MapEntityOptions):
         views = super().scan_views(*args, **kwargs)
         altimetry_views = [
             path(
-                "api/<lang:lang>/{modelname}s/<int:pk>/profile.json".format(
-                    modelname=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/profile.json",
                 self.elevation_profile_view.as_view(model=self.model),
-                name="%s_profile" % self.modelname,
+                name=f"{self.modelname}_profile",
             ),
             path(
-                "api/<lang:lang>/{modelname}s/<int:pk>/dem.json".format(
-                    modelname=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/dem.json",
                 self.elevation_area_view.as_view(model=self.model),
-                name="%s_elevation_area" % self.modelname,
+                name=f"{self.modelname}_elevation_area",
             ),
             path(
-                "api/<lang:lang>/{modelname}s/<int:pk>/profile.svg".format(
-                    modelname=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/profile.svg",
                 self.elevation_chart_view.as_view(model=self.model),
-                name="%s_profile_svg" % self.modelname,
+                name=f"{self.modelname}_profile_svg",
             ),
         ]
         return views + altimetry_views

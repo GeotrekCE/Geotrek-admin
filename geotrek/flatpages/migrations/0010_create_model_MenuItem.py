@@ -38,7 +38,7 @@ def get_sync_sql(field_name, missing_langs, model):
         col_type = f.db_type(connection=connection)
         field_sql = [style.SQL_FIELD(qn(f.column)), style.SQL_COLTYPE(col_type)]
         # column creation
-        stmt = "ALTER TABLE %s ADD COLUMN %s" % (qn(db_table), " ".join(field_sql))
+        stmt = "ALTER TABLE {} ADD COLUMN {}".format(qn(db_table), " ".join(field_sql))
         if not f.null:
             stmt += " " + "NOT NULL"
         sql_output.append(stmt + ";")

@@ -10,7 +10,7 @@ class CommonConfig(AppConfig):
     verbose_name = _("Common")
 
     def ready(self):
-        import geotrek.common.lookups  # NOQA
+        import geotrek.common.lookups
         import geotrek.common.signals  # NOQA
 
 
@@ -19,7 +19,7 @@ def srid_check(app_configs, **kwargs):
     if SpatialReference(settings.SRID).units[1] != "metre":
         return [
             Error(
-                "Unit of SRID EPSG:%s is not meter." % settings.SRID,
+                f"Unit of SRID EPSG:{settings.SRID} is not meter.",
                 id="geotrek.E001",
             )
         ]

@@ -37,12 +37,12 @@ class AltimetryHelper:
 
         # Add measure to 2D version of geometry3d
         # Get distance from origin for each vertex
-        sql = """
-        WITH line2d AS (SELECT ST_Force2D('%(ewkt)s'::geometry) AS geom),
+        sql = f"""
+        WITH line2d AS (SELECT ST_Force2D('{geometry3d.ewkt}'::geometry) AS geom),
              line_measure AS (SELECT ST_Addmeasure(geom, 0, ST_length(geom)) AS geom FROM line2d),
              points2dm AS (SELECT (ST_DumpPoints(geom)).geom AS point FROM line_measure)
-        SELECT (%(offset)s + ST_M(point)) FROM points2dm;
-        """ % {"offset": offset, "ewkt": geometry3d.ewkt}
+        SELECT ({offset} + ST_M(point)) FROM points2dm;
+        """
         cursor = connection.cursor()
         cursor.execute(sql)
         pointsm = cursor.fetchall()
@@ -78,7 +78,7 @@ class AltimetryHelper:
             print_values=False,
             show_dots=False,
             zero=floor_elevation,
-            value_formatter=lambda v: "%d" % v,
+            value_formatter=lambda v: f"{v}",
             margin=settings.ALTIMETRIC_PROFILE_FONTSIZE,
             width=settings.ALTIMETRIC_PROFILE_WIDTH,
             height=settings.ALTIMETRIC_PROFILE_HEIGHT,
@@ -143,7 +143,7 @@ class AltimetryHelper:
         if height < precision or width < precision:
             precision = min([height, width])
 
-        sql = """
+        sql = f"""
             -- Author: Celian Garcia
             WITH columns AS (
                     SELECT generate_series({xmin}::int, {xmax}::int, {precision}) AS x
@@ -158,8 +158,8 @@ class AltimetryHelper:
                 ),
                 points2d AS (
                     SELECT row_number() OVER (ORDER BY lines.y, columns.x) AS id,
-                           ST_SetSRID(ST_MakePoint(x, y), {srid}) AS geom,
-                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {srid}), 4326) AS geomll
+                           ST_SetSRID(ST_MakePoint(x, y), {settings.SRID}) AS geom,
+                           ST_Transform(ST_SetSRID(ST_MakePoint(x, y), {settings.SRID}), 4326) AS geomll
                     FROM columns, lines
                 ),
                 draped AS (
@@ -188,14 +188,7 @@ class AltimetryHelper:
                    resolution.y AS resolution_h,
                    altitude
             FROM extent_latlng, resolution, all_draped;
-        """.format(
-            xmin=xmin,
-            ymin=ymin,
-            xmax=xmax,
-            ymax=ymax,
-            srid=settings.SRID,
-            precision=precision,
-        )
+        """
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()

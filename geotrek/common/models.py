@@ -32,12 +32,8 @@ def attachment_accessibility_upload(instance, filename):
     _, name = os.path.split(filename)
     name, ext = os.path.splitext(name)
     renamed = slugify(name) + ext
-    return "attachments_accessibility/%s/%s/%s" % (
-        "%s_%s"
-        % (
-            instance.content_object._meta.app_label,
-            instance.content_object._meta.model_name,
-        ),
+    return "attachments_accessibility/{}/{}/{}".format(
+        f"{instance.content_object._meta.app_label}_{instance.content_object._meta.model_name}",
         instance.content_object.pk,
         renamed,
     )
@@ -122,9 +118,7 @@ class AccessibilityAttachment(TimeStampedModelMixin):
         default_permissions = ()
 
     def __str__(self):
-        return "{} attached {}".format(
-            self.creator.username, self.attachment_accessibility_file.name
-        )
+        return f"{self.creator.username} attached {self.attachment_accessibility_file.name}"
 
     def save(self, *args, **kwargs):
         force_refresh_suffix = kwargs.pop("force_refresh_suffix", False)
@@ -164,12 +158,8 @@ class AccessibilityAttachment(TimeStampedModelMixin):
                 else:
                     _, name = os.path.split(self.attachment_accessibility_file.name)
                     name, ext = os.path.splitext(name)
-                subfolder = "%s/%s" % (
-                    "%s_%s"
-                    % (
-                        self.content_object._meta.app_label,
-                        self.content_object._meta.model_name,
-                    ),
+                subfolder = "{}/{}".format(
+                    f"{self.content_object._meta.app_label}_{self.content_object._meta.model_name}",
                     self.content_object.pk,
                 )
                 # Compute maximum size left for filename
@@ -201,7 +191,7 @@ class Organism(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.organism, self.structure.name)
+            return f"{self.organism} ({self.structure.name})"
         return self.organism
 
 
@@ -220,7 +210,7 @@ class FileType(StructureOrNoneRelated, TimeStampedModelMixin, BaseFileType):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.type, self.structure.name)
+            return f"{self.type} ({self.structure.name})"
         return self.type
 
 
@@ -273,7 +263,7 @@ class Theme(TimeStampedModelMixin, PictogramMixin):
 class RecordSource(TimeStampedModelMixin, OptionalPictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=80)
     website = models.URLField(
-        verbose_name=_("Website"), max_length=256, blank=True, null=True
+        verbose_name=_("Website"), max_length=256, blank=True, default=""
     )
 
     class Meta:
@@ -305,7 +295,6 @@ class TargetPortal(TimeStampedModelMixin, models.Model):
         verbose_name=_("Facebook ID"),
         max_length=20,
         help_text=_("Facebook ID for Geotrek Rando"),
-        null=True,
         blank=True,
         default=settings.FACEBOOK_APP_ID,
     )
@@ -340,13 +329,13 @@ class ReservationSystem(TimeStampedModelMixin, models.Model):
         verbose_name=_("Name"), max_length=256, blank=False, null=False, unique=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
         ordering = ("name",)
+
+    def __str__(self):
+        return self.name
 
 
 class Label(TimeStampedModelMixin, OptionalPictogramMixin):
@@ -381,11 +370,11 @@ class RatingScaleMixin(TimeStampedModelMixin, models.Model):
         help_text=_("Within a practice. Alphabetical order if blank"),
     )
 
-    def __str__(self):
-        return "{} ({})".format(self.name, self.practice.name)
-
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return f"{self.name} ({self.practice.name})"
 
 
 class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
@@ -399,11 +388,11 @@ class RatingMixin(TimeStampedModelMixin, OptionalPictogramMixin, models.Model):
     )
     color = ColorField(verbose_name=_("Color"), blank=True)
 
-    def __str__(self):
-        return "{} : {}".format(self.scale.name, self.name)
-
     class Meta:
         abstract = True
+
+    def __str__(self):
+        return f"{self.scale.name} : {self.name}"
 
 
 class HDViewPoint(TimeStampedModelMixin, MapEntityMixin):

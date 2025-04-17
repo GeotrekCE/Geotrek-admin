@@ -148,7 +148,8 @@ class TrekFormatList(MapEntityFormat, TrekList):
         "portal",
         "length_2d",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
@@ -158,7 +159,7 @@ class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         gpx_serializer = TrekGPXSerializer()
         response = HttpResponse(content_type="application/gpx+xml")
         response["Content-Disposition"] = (
-            "attachment; filename=%s.gpx" % self.get_object().slug
+            f"attachment; filename={self.get_object().slug}.gpx"
         )
         gpx_serializer.serialize(
             [self.get_object()], stream=response, gpx_field="geom_3d"
@@ -355,7 +356,8 @@ class POIFormatList(MapEntityFormat, POIList):
         "districts",
         "areas",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -384,7 +386,7 @@ class POIFormatList(MapEntityFormat, POIList):
             # Put denormalized in specific attribute used in serializers
             for attrname in denormalized.keys():
                 overlapping = denormalized[attrname].get(poi.id, [])
-                setattr(poi, "%s_csv_display" % attrname, ", ".join(overlapping))
+                setattr(poi, f"{attrname}_csv_display", ", ".join(overlapping))
             yield poi
 
 
@@ -443,10 +445,9 @@ class WebLinkCreatePopup(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         return HttpResponse(
-            """
-            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
+            f"""
+            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "{escape(form.instance._get_pk_val())}", "{escape(form.instance)}");</script>
         """
-            % (escape(form.instance._get_pk_val()), escape(form.instance))
         )
 
 
@@ -538,12 +539,7 @@ class ServiceFilter(MapEntityFilter):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     filterset_class = ServiceFilterSet
     mandatory_columns = ["id"]
-    default_extra_columns = [
-        "id",
-        "eid",
-        "type",
-        "uuid",
-    ] + AltimetryMixin.COLUMNS
+    default_extra_columns = ["id", "eid", "type", "uuid", *AltimetryMixin.COLUMNS]
 
 
 class ServiceDetail(MapEntityDetail):

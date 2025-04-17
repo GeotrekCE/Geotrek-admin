@@ -61,7 +61,8 @@ class InfrastructureFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "category",
             "type",
             "conditions",

@@ -116,7 +116,7 @@ class TopologyFilter(RightFilter):
 
         else:
             assert issubclass(qs.model, Topology), (
-                "%s is not a Topology as expected" % qs.model
+                f"{qs.model} is not a Topology as expected"
             )
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
@@ -144,7 +144,8 @@ class PathFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "valid",
             "networks",
             "usages",
@@ -181,7 +182,8 @@ class TrailFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "name",
             "category",
             "departure",

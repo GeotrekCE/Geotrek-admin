@@ -22,7 +22,7 @@ def load_sql_files(app, stage):
     sql_dir = os.path.normpath(os.path.join(app.path, "templates", app.label, "sql"))
     custom_sql_dir = os.path.join(settings.VAR_DIR, "conf", "extra_sql", app.label)
     sql_files = []
-    r = re.compile(r"^{}_.*\.sql$".format(stage))
+    r = re.compile(rf"^{stage}_.*\.sql$")
     if os.path.exists(sql_dir):
         sql_files += [
             os.path.join(sql_dir, f)
@@ -48,7 +48,7 @@ def load_sql_files(app, stage):
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
-            logger.info("Loading initial SQL data from '%s'" % sql_file)
+            logger.info("Loading initial SQL data from '%s'", sql_file)
             template = get_template(sql_file)
             context_settings = settings.__dict__["_wrapped"].__dict__
             # fix languages in sql TEMPLATES
@@ -67,9 +67,7 @@ def load_sql_files(app, stage):
 
             cursor.execute(rendered_sql)
         except Exception as e:
-            logger.critical(
-                "Failed to install custom SQL file '%s': %s\n" % (sql_file, e)
-            )
+            logger.critical("Failed to install custom SQL file '%s': %s\n", sql_file, e)
             traceback.print_exc()
             raise
 
@@ -82,7 +80,7 @@ def set_search_path():
     search_path |= set(settings.DATABASE_SCHEMAS.values())
     search_path.discard("public")
     search_path.discard("information_schema")
-    search_path = ("public",) + tuple(search_path)
+    search_path = ("public", *tuple(search_path))
     cursor.execute("SET search_path TO {}".format(", ".join(search_path)))
 
 
@@ -109,18 +107,18 @@ def move_models_to_schemas(app):
     cursor = connection.cursor()
 
     for schema_name in table_schemas.keys():
-        sql = "CREATE SCHEMA IF NOT EXISTS %s;" % model_schema
+        sql = f"CREATE SCHEMA IF NOT EXISTS {model_schema};"
         cursor.execute(sql)
-        logger.info("Created schema %s" % model_schema)
+        logger.info("Created schema %s", model_schema)
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:
             sql = "SELECT 1 FROM information_schema.tables WHERE table_name=%s AND table_schema!=%s"
             cursor.execute(sql, [table_name, schema_name])
             if cursor.fetchone():
-                sql = "ALTER TABLE %s SET SCHEMA %s;" % (table_name, schema_name)
+                sql = f"ALTER TABLE {table_name} SET SCHEMA {schema_name};"
                 cursor.execute(sql)
-                logger.info("Moved %s to schema %s" % (table_name, schema_name))
+                logger.info("Moved %s to schema %s", table_name, schema_name)
 
     # For Django, search_path is set in connection options.
     # But when accessing the database using QGis or ETL, search_path must be
@@ -129,11 +127,7 @@ def move_models_to_schemas(app):
         dbname = settings.DATABASES["default"]["NAME"]
         dbuser = settings.DATABASES["default"]["USER"]
         search_path = ", ".join(
-            ("public",) + tuple(set(settings.DATABASE_SCHEMAS.values()))
+            ("public", *tuple(set(settings.DATABASE_SCHEMAS.values())))
         )
-        sql = 'ALTER ROLE "%s" IN DATABASE "%s" SET search_path=%s;' % (
-            dbuser,
-            dbname,
-            search_path,
-        )
+        sql = f'ALTER ROLE "{dbuser}" IN DATABASE "{dbname}" SET search_path={search_path};'
         cursor.execute(sql)

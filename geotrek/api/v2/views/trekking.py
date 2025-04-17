@@ -24,7 +24,8 @@ class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekTrekQueryParamsFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
@@ -121,8 +122,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     @action(
         detail=True,
         url_name="profile",
-        renderer_classes=api_viewsets.GeotrekGeometricViewset.renderer_classes
-        + [
+        renderer_classes=[
+            *api_viewsets.GeotrekGeometricViewset.renderer_classes,
             SVGProfileRenderer,
         ],
     )
@@ -148,7 +149,8 @@ class TourViewSet(TrekViewSet):
 
 
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.PracticeSerializer
@@ -165,7 +167,8 @@ class PracticeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TrekRatingScaleViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingScaleFilter,
     )
     serializer_class = api_serializers.TrekRatingScaleSerializer
@@ -184,7 +187,8 @@ class TrekRatingScaleViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TrekRatingViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingFilter,
         api_filters.TrekRelatedPortalFilter,
     )
@@ -204,7 +208,8 @@ class TrekRatingViewSet(api_viewsets.GeotrekViewSet):
 
 
 class NetworkViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.NetworkSerializer
@@ -221,7 +226,8 @@ class NetworkViewSet(api_viewsets.GeotrekViewSet):
 
 
 class DifficultyViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.TrekDifficultySerializer
@@ -238,7 +244,8 @@ class DifficultyViewSet(api_viewsets.GeotrekViewSet):
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekPOIFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
@@ -276,7 +283,8 @@ class POITypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.AccessibilitySerializer
@@ -293,7 +301,8 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
 
 
 class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.AccessibilityLevelSerializer
@@ -310,7 +319,8 @@ class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
 
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.RouteSerializer
@@ -341,7 +351,8 @@ class ServiceTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
         api_filters.GeotrekServiceFilter,

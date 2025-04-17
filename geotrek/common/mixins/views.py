@@ -209,7 +209,7 @@ class DocumentPublicMixin:
                 settings.MEDIA_URL_SECURE, path
             )
         response["Content-Type"] = "application/pdf"
-        response["Content-Disposition"] = "attachment; filename={0}.pdf".format(slug)
+        response["Content-Disposition"] = f"attachment; filename={slug}.pdf"
         return response
 
     def get_context_data(self, **kwargs):

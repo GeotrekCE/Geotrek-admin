@@ -18,7 +18,7 @@ class Command(BaseCommand):
     def execute(self, *args, **options):
         self.stdout.write("Update objects translation after migration from .po files")
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            self.stdout.write("Lang : {lang}".format(lang=lang))
+            self.stdout.write(f"Lang : {lang}")
             with translation.override(lang, deactivate=True):
                 self.stdout.write("TargetPortal")
                 # 'Geotrek Rando' => TargetPortal title

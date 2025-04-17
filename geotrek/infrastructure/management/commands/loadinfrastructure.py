@@ -152,7 +152,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
         use_structure = options.get("use_structure")
@@ -172,9 +173,7 @@ class Command(BaseCommand):
             for layer in data_source:
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 available_fields = layer.fields
                 if (
@@ -185,9 +184,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_infrastructure_type
-                            )
+                            f"Field '{field_infrastructure_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -205,9 +202,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_infrastructure_category
-                            )
+                            f"Field '{field_infrastructure_category}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -219,7 +214,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_name)
+                            f"Field '{field_name}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -234,9 +229,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_condition_type
-                            )
+                            f"Field '{field_condition_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -249,9 +242,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_structure_type
-                            )
+                            f"Field '{field_structure_type}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -265,21 +256,17 @@ class Command(BaseCommand):
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
                             self.stdout.write(
-                                "Infrastructures will be linked to {}".format(structure)
+                                f"Infrastructures will be linked to {structure}"
                             )
                     except Structure.DoesNotExist:
                         self.stdout.write(
-                            "Structure {} set in options doesn't exist".format(
-                                structure_default
-                            )
+                            f"Structure {structure_default} set in options doesn't exist"
                         )
                         break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_description
-                            )
+                            f"Field '{field_description}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -293,9 +280,7 @@ class Command(BaseCommand):
                 ):
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(
-                                field_implantation_year
-                            )
+                            f"Field '{field_implantation_year}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -306,7 +291,7 @@ class Command(BaseCommand):
                 if field_eid and field_eid not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_eid)
+                            f"Field '{field_eid}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -323,14 +308,13 @@ class Command(BaseCommand):
                     )
                     if feature_geom.geom_type == "MultiPoint":
                         self.stdout.write(
-                            self.style.NOTICE("This object is a MultiPoint : %s" % name)
+                            self.style.NOTICE(f"This object is a MultiPoint : {name}")
                         )
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
                     type = (
                         feature.get(field_infrastructure_type)
                         if field_infrastructure_type in available_fields
@@ -383,9 +367,7 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -412,16 +394,14 @@ class Command(BaseCommand):
             label=type, type=category, structure=structure if use_structure else None
         )
         if created and verbosity:
-            self.stdout.write("- InfrastructureType '{}' created".format(infra_type))
+            self.stdout.write(f"- InfrastructureType '{infra_type}' created")
 
         if condition:
             condition_type, created = InfrastructureCondition.objects.get_or_create(
                 label=condition, structure=structure if use_structure else None
             )
             if created and verbosity:
-                self.stdout.write(
-                    "- Condition Type '{}' created".format(condition_type)
-                )
+                self.stdout.write(f"- Condition Type '{condition_type}' created")
         else:
             condition_type = None
 
@@ -440,7 +420,7 @@ class Command(BaseCommand):
                 if condition_type:
                     infra.conditions.add(condition_type)
                 if verbosity > 0 and not created:
-                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+                    self.stdout.write(f"Update : {name} with eid {eid}")
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
                 if condition_type:
@@ -449,14 +429,16 @@ class Command(BaseCommand):
             try:
                 geometry.coord_dim = 2
                 geometry = geometry.transform(settings.API_SRID, clone=True)
-                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
                 topology = Topology.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:
-                raise GEOSException("Invalid Geometry type. You need 1 path")
+                msg = "Invalid Geometry type. You need 1 path"
+                raise GEOSException(msg)
         else:
             if geometry.geom_type != "Point":
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
             geometry = geometry.transform(settings.SRID, clone=True)
             infra.geom = Point(geometry.x, geometry.y)
             infra.save()

@@ -12,7 +12,7 @@ class StartupCheckTest(TestCase):
                 srid_check(CommonConfig),
                 [
                     Error(
-                        "Unit of SRID EPSG:%s is not meter." % settings.SRID,
+                        f"Unit of SRID EPSG:{settings.SRID} is not meter.",
                         id="geotrek.E001",
                     )
                 ],

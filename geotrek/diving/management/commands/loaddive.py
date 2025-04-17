@@ -44,7 +44,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -57,17 +58,17 @@ class Command(BaseCommand):
         try:
             structure = Structure.objects.get(name=structure_default)
             if verbosity > 0:
-                self.stdout.write("Dives will be linked to {}".format(structure))
+                self.stdout.write(f"Dives will be linked to {structure}")
         except Structure.DoesNotExist:
             self.stdout.write(
-                "Structure {} set in options doesn't exist".format(structure_default)
+                f"Structure {structure_default} set in options doesn't exist"
             )
             return
         practice_default = options.get("practice_default")
         if practice_default:
             practice, created = Practice.objects.get_or_create(name=practice_default)
             if created and verbosity:
-                self.stdout.write("- Practice '{}' created".format(practice))
+                self.stdout.write(f"- Practice '{practice}' created")
         else:
             practice = None
 
@@ -75,15 +76,13 @@ class Command(BaseCommand):
             for layer in data_source:
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 available_fields = layer.fields
                 if field_name not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_name)
+                            f"Field '{field_name}' not found in data source."
                         )
                     )
                     self.stdout.write(self.style.ERROR("Set it with --name-field"))
@@ -92,7 +91,7 @@ class Command(BaseCommand):
                 if field_depth and field_depth not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_depth)
+                            f"Field '{field_depth}' not found in data source."
                         )
                     )
                     self.stdout.write(self.style.ERROR("Set it with --depth-field"))
@@ -101,7 +100,7 @@ class Command(BaseCommand):
                 if field_eid and field_eid not in available_fields:
                     self.stdout.write(
                         self.style.ERROR(
-                            "Field '{}' not found in data source.".format(field_eid)
+                            f"Field '{field_eid}' not found in data source."
                         )
                     )
                     self.stdout.write(
@@ -115,14 +114,13 @@ class Command(BaseCommand):
                     name = feature.get(field_name)
                     if feature_geom.geom_type == "MultiPoint":
                         self.stdout.write(
-                            self.style.NOTICE("This object is a MultiPoint : %s" % name)
+                            self.style.NOTICE(f"This object is a MultiPoint : {name}")
                         )
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
                     depth = (
                         feature.get(field_depth)
                         if field_depth in available_fields
@@ -139,9 +137,7 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -152,7 +148,8 @@ class Command(BaseCommand):
 
     def create_dive(self, geometry, name, depth, practice, structure, verbosity, eid):
         if geometry.geom_type != "Point":
-            raise GEOSException("Invalid Geometry type.")
+            msg = "Invalid Geometry type."
+            raise GEOSException(msg)
         with transaction.atomic():
             fields_without_eid = {
                 "name": name,
@@ -165,7 +162,7 @@ class Command(BaseCommand):
                     eid=eid, defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
-                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+                    self.stdout.write(f"Update : {name} with eid {eid}")
             else:
                 dive = Dive.objects.create(**fields_without_eid)
         self.counter += 1

@@ -16,9 +16,7 @@ class Command(BaseCommand):
         thumbnails = set(Thumbnail.objects.values_list("name", flat=True))
         if options["verbosity"] >= 1:
             self.stdout.write(
-                "Attachments: {} / Thumbnails: {}".format(
-                    len(attachments), len(thumbnails)
-                )
+                f"Attachments: {len(attachments)} / Thumbnails: {len(thumbnails)}"
             )
         total = 0
         deleted = 0
@@ -29,15 +27,15 @@ class Command(BaseCommand):
             relative = str(path.relative_to(settings.MEDIA_ROOT))
             if relative in attachments:
                 if options["verbosity"] >= 2:
-                    self.stdout.write("{}... Found".format(relative))
+                    self.stdout.write(f"{relative}... Found")
                 continue
             if relative in thumbnails:
                 if options["verbosity"] >= 2:
-                    self.stdout.write("{}... Thumbnail".format(relative))
+                    self.stdout.write(f"{relative}... Thumbnail")
                 continue
             deleted += 1
             path.unlink()
             if options["verbosity"] >= 1:
-                self.stdout.write("{}... DELETED".format(relative))
+                self.stdout.write(f"{relative}... DELETED")
         if options["verbosity"] >= 1:
-            self.stdout.write("Files: {} / Deleted: {}".format(total, deleted))
+            self.stdout.write(f"Files: {total} / Deleted: {deleted}")

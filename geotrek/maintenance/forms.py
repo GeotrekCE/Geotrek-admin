@@ -110,7 +110,8 @@ class InterventionForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Intervention
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "begin_date",
@@ -143,8 +144,8 @@ class InterventionForm(CommonForm):
                 ct = ContentType.objects.get_for_id(target_type)
                 self.instance.target = ct.get_object_for_this_type(id=target_id)
                 # Set POST URL
-                self.helper.form_action += "?target_type={}&target_id={}".format(
-                    target_type, target_id
+                self.helper.form_action += (
+                    f"?target_type={target_type}&target_id={target_id}"
                 )
             else:
                 # Point target to a new topology
@@ -284,7 +285,8 @@ class ProjectForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Project
-        fields = CommonForm.Meta.fields + [
+        fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "type",

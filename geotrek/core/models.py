@@ -200,7 +200,8 @@ class Path(
     class Meta:
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
-        permissions = GeotrekMapEntityMixin._meta.permissions + [
+        permissions = [
+            *GeotrekMapEntityMixin._meta.permissions,
             ("add_draft_path", "Can add draft Path"),
             ("change_draft_path", "Can change draft Path"),
             ("delete_draft_path", "Can delete draft Path"),
@@ -247,7 +248,7 @@ class Path(
         TODO: this could be a constraint at DB-level. But this would mean that
         path never ever overlap, even during trigger computation, like path splitting...
         """
-        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        wkt = f"ST_GeomFromText('{geom}', {settings.SRID})"
         disjoint = sqlfunction("SELECT * FROM check_path_not_overlap", str(pk), wkt)
         return disjoint[0]
 
@@ -267,15 +268,16 @@ class Path(
         along this path.
         """
         if not self.pk:
-            raise ValueError("Cannot compute interpolation on unsaved path")
+            msg = "Cannot compute interpolation on unsaved path"
+            raise ValueError(msg)
         if point.srid != self.geom.srid:
             point.transform(self.geom.srid)
         cursor = connection.cursor()
-        sql = """
+        sql = f"""
         SELECT position, distance
-        FROM ft_path_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
+        FROM ft_path_interpolate({self.pk}, ST_GeomFromText('POINT({point.x} {point.y})',{self.geom.srid}))
              AS (position FLOAT, distance FLOAT)
-        """ % {"pk": self.pk, "x": point.x, "y": point.y, "srid": self.geom.srid}
+        """
         cursor.execute(sql)
         result = cursor.fetchall()
         return result[0]
@@ -285,16 +287,17 @@ class Path(
         Returns the point snapped (i.e closest) to the path line geometry.
         """
         if not self.pk:
-            raise ValueError("Cannot compute snap on unsaved path")
+            msg = "Cannot compute snap on unsaved path"
+            raise ValueError(msg)
         if point.srid != self.geom.srid:
             point.transform(self.geom.srid)
         cursor = connection.cursor()
-        sql = """
-        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
-                   FROM %(table)s
-                   WHERE id = '%(pk)s')
+        sql = f"""
+        WITH p AS (SELECT ST_ClosestPoint(geom, '{point.ewkt}'::geometry) AS geom
+                   FROM {self._meta.db_table}
+                   WHERE id = '{self.pk}')
         SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
-        """ % {"ewkt": point.ewkt, "table": self._meta.db_table, "pk": self.pk}
+        """
         cursor.execute(sql)
         result = cursor.fetchall()
         return Point(*result[0], srid=self.geom.srid)
@@ -329,7 +332,7 @@ class Path(
                 mail_managers(subject, message, fail_silently=False)
             except Exception as exc:
                 msg = f"Caught {exc.__class__.__name__}: {exc}"
-                logger.warning(f"Error mail managers didn't work ({msg})")
+                logger.warning("Error mail managers didn't work (%s)", msg)
         super().save(*args, **kwargs)
         self.reload()
 
@@ -370,12 +373,7 @@ class Path(
 
     @property
     def name_display(self):
-        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
 
     @property
     def name_csv_display(self):
@@ -458,7 +456,7 @@ class Path(
         if (self.pk and path_to_merge) and (self.pk != path_to_merge.pk):
             conn = connections[DEFAULT_DB_ALIAS]
             cursor = conn.cursor()
-            sql = "SELECT ft_merge_path({}, {});".format(self.pk, path_to_merge.pk)
+            sql = f"SELECT ft_merge_path({self.pk}, {path_to_merge.pk});"
             cursor.execute(sql)
 
             result = cursor.fetchall()[0][0]
@@ -542,7 +540,7 @@ class Topology(
         return cls._meta.object_name.upper()
 
     def __str__(self):
-        return "%s (%s)" % (_("Topology"), self.pk)
+        return "{} ({})".format(_("Topology"), self.pk)
 
     def ispoint(self):
         if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
@@ -589,32 +587,32 @@ class Topology(
             return all_objects.filter(pk__in=[])
 
         sql = """
-        WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
+        WITH topologies AS (SELECT id FROM {topology_table} WHERE id IN ({topology_list})),
         -- Concerned aggregations
-             aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
+             aggregations AS (SELECT * FROM {aggregations_table} a, topologies t
                               WHERE a.topo_object_id = t.id),
         -- Concerned paths along with (start, end)
              paths_aggr AS (SELECT a.start_position AS start, a.end_position AS end, p.id, a.order AS order
-                            FROM %(paths_table)s p, aggregations a
+                            FROM {paths_table} p, aggregations a
                             WHERE a.path_id = p.id
                             ORDER BY a.order)
         -- Retrieve primary keys
         SELECT t.id
-        FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
+        FROM {topology_table} t, {aggregations_table} a, paths_aggr pa
         WHERE a.path_id = pa.id AND a.topo_object_id = t.id
           AND least(a.start_position, a.end_position) <= greatest(pa.start, pa.end)
           AND greatest(a.start_position, a.end_position) >= least(pa.start, pa.end)
-          AND %(extra_condition)s
+          AND {extra_condition}
         ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.start_position) ELSE a.start_position END);
-        """ % {
-            "topology_table": Topology._meta.db_table,
-            "aggregations_table": PathAggregation._meta.db_table,
-            "paths_table": Path._meta.db_table,
-            "topology_list": ",".join(topology_pks),
-            "extra_condition": "true"
+        """.format(
+            topology_table=Topology._meta.db_table,
+            aggregations_table=PathAggregation._meta.db_table,
+            paths_table=Path._meta.db_table,
+            topology_list=",".join(topology_pks),
+            extra_condition="true"
             if is_generic
-            else "kind = '%s'" % all_objects.model.KIND,
-        }
+            else f"kind = '{all_objects.model.KIND}'",
+        )
 
         cursor = connection.cursor()
         cursor.execute(sql)
@@ -623,11 +621,13 @@ class Topology(
 
         # Return a QuerySet and preserve pk list order
         # http://stackoverflow.com/a/1310188/141895
-        ordering = "CASE %s END" % " ".join(
-            [
-                "WHEN %s.id=%s THEN %s" % (Topology._meta.db_table, id_, i)
-                for i, id_ in enumerate(pk_list)
-            ]
+        ordering = "CASE {} END".format(
+            " ".join(
+                [
+                    f"WHEN {Topology._meta.db_table}.id={id_} THEN {i}"
+                    for i, id_ in enumerate(pk_list)
+                ]
+            )
         )
         queryset = all_objects.filter(pk__in=pk_list).extra(
             select={"ordering": ordering}, order_by=("ordering",)
@@ -707,7 +707,8 @@ class Topology(
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
-                raise Exception("Cannot save abstract topologies")
+                msg = "Cannot save abstract topologies"
+                raise Exception(msg)
             self.kind = self.__class__.KIND
 
         # Static value for Topology offset, if any
@@ -835,7 +836,8 @@ class Topology(
             try:
                 objdict = json.loads(serialized)
             except ValueError as e:
-                raise ValueError("Invalid serialization: %s" % e)
+                msg = f"Invalid serialization: {e}"
+                raise ValueError(msg)
 
         if objdict and not isinstance(objdict, list):
             lat = objdict.get("lat")
@@ -855,7 +857,8 @@ class Topology(
                 objdict = [objdict]
 
         if not objdict:
-            raise ValueError("Invalid serialized topology : empty list found")
+            msg = "Invalid serialized topology : empty list found"
+            raise ValueError(msg)
 
         # If pk is still here, the user did not edit it.
         # Return existing topology instead
@@ -911,9 +914,8 @@ class Topology(
                             pos = start_position
                         elif len(paths) == 1:
                             pos = end_position
-                        assert pos >= 0, "Invalid position (%s, %s)." % (
-                            start_position,
-                            end_position,
+                        assert pos >= 0, (
+                            f"Invalid position ({start_position}, {end_position})."
                         )
                         aggr = PathAggregation(
                             path=path,
@@ -927,7 +929,8 @@ class Topology(
                     counter += 1
                 topology.aggregations.add(*aggrs)
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
-            raise ValueError("Invalid serialized topology : %s" % e)
+            msg = f"Invalid serialized topology : {e}"
+            raise ValueError(msg)
         return topology
 
     def distance(self, to_cls):
@@ -964,7 +967,7 @@ class PathAggregation(models.Model):
     objects = PathAggregationManager()
 
     def __str__(self):
-        return "%s (%s-%s: %s - %s)" % (
+        return "{} ({}-{}: {} - {})".format(
             _("Path aggregation"),
             self.path.pk,
             self.path.name,
@@ -996,11 +999,8 @@ class PathAggregation(models.Model):
 
     @property
     def is_full(self):
-        return (
-            self.start_position == 0.0
-            and self.end_position == 1.0
-            or self.start_position == 1.0
-            and self.end_position == 0.0
+        return (self.start_position == 0.0 and self.end_position == 1.0) or (
+            self.start_position == 1.0 and self.end_position == 0.0
         )
 
     class Meta:
@@ -1036,7 +1036,7 @@ class PathSource(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.source, self.structure.name)
+            return f"{self.source} ({self.structure.name})"
         return self.source
 
 
@@ -1062,7 +1062,7 @@ class Stake(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.stake, self.structure.name)
+            return f"{self.stake} ({self.structure.name})"
         return self.stake
 
 
@@ -1076,7 +1076,7 @@ class Comfort(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.comfort, self.structure.name)
+            return f"{self.comfort} ({self.structure.name})"
         return self.comfort
 
 
@@ -1090,7 +1090,7 @@ class Usage(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.usage, self.structure.name)
+            return f"{self.usage} ({self.structure.name})"
         return self.usage
 
 
@@ -1104,7 +1104,7 @@ class Network(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.network, self.structure.name)
+            return f"{self.network} ({self.structure.name})"
         return self.network
 
 
@@ -1145,12 +1145,7 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
 
     @property
     def name_display(self):
-        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        return f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
 
     @property
     def certifications_display(self):
@@ -1190,7 +1185,7 @@ class TrailCategory(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:
@@ -1207,7 +1202,7 @@ class CertificationLabel(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:
@@ -1224,7 +1219,7 @@ class CertificationStatus(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     class Meta:

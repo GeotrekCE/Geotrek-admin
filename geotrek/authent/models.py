@@ -19,14 +19,14 @@ class Structure(TimeStampedModelMixin, models.Model):
 
     name = models.CharField(max_length=256, verbose_name=_("Nom"), db_index=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = _("Structure")
         verbose_name_plural = _("Structures")
         ordering = ["name"]
         permissions = (("can_bypass_structure", _("Can bypass structure")),)
+
+    def __str__(self):
+        return self.name
 
 
 def default_structure():
@@ -61,6 +61,11 @@ class StructureRelated(models.Model):
 
     check_structure_in_forms = True
 
+    class Meta:
+        abstract = True
+        verbose_name = _("Related structures")
+        verbose_name_plural = _("Related structure")
+
     def same_structure(self, user):
         """Returns True if the user is in the same structure or has
         bypass_structure permission, False otherwise."""
@@ -69,11 +74,6 @@ class StructureRelated(models.Model):
             or user.is_superuser
             or user.has_perm("authent.can_bypass_structure")
         )
-
-    class Meta:
-        abstract = True
-        verbose_name = _("Related structures")
-        verbose_name_plural = _("Related structure")
 
 
 class StructureOrNoneRelated(models.Model):

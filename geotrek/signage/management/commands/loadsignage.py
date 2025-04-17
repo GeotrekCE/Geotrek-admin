@@ -195,7 +195,8 @@ class Command(BaseCommand):
         filename = options["point_layer"]
 
         if not os.path.exists(filename):
-            raise CommandError("File does not exists at: %s" % filename)
+            msg = f"File does not exists at: {filename}"
+            raise CommandError(msg)
 
         data_source = DataSource(filename, encoding=options.get("encoding"))
 
@@ -227,9 +228,7 @@ class Command(BaseCommand):
                 available_fields = layer.fields
                 if verbosity >= 2:
                     self.stdout.write(
-                        "- Layer '{}' with {} objects found".format(
-                            layer.name, layer.num_feat
-                        )
+                        f"- Layer '{layer.name}' with {layer.num_feat} objects found"
                     )
                 if not self.check_fields_available_with_default(
                     available_fields,
@@ -264,14 +263,10 @@ class Command(BaseCommand):
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
-                            self.stdout.write(
-                                "Signages will be linked to {}".format(structure)
-                            )
+                            self.stdout.write(f"Signages will be linked to {structure}")
                     except Structure.DoesNotExist:
                         self.stdout.write(
-                            "Structure {} set in options doesn't exist".format(
-                                structure_default
-                            )
+                            f"Structure {structure_default} set in options doesn't exist"
                         )
                         break
 
@@ -301,14 +296,13 @@ class Command(BaseCommand):
                     )
                     if feature_geom.geom_type == "MultiPoint":
                         self.stdout.write(
-                            self.style.NOTICE("This object is a MultiPoint : %s" % name)
+                            self.style.NOTICE(f"This object is a MultiPoint : {name}")
                         )
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
-                            raise CommandError(
-                                "One of your geometry is a MultiPoint object with multiple points"
-                            )
+                            msg = "One of your geometry is a MultiPoint object with multiple points"
+                            raise CommandError(msg)
 
                     tmp_signage_type = (
                         feature.get(field_infrastructure_type)
@@ -320,9 +314,7 @@ class Command(BaseCommand):
                         structure=structure if use_structure else None,
                     )
                     if created and verbosity:
-                        self.stdout.write(
-                            "- SignageType '{}' created".format(signage_type)
-                        )
+                        self.stdout.write(f"- SignageType '{signage_type}' created")
 
                     condition = (
                         feature.get(field_condition_type)
@@ -338,9 +330,7 @@ class Command(BaseCommand):
                         )
                         if created and verbosity:
                             self.stdout.write(
-                                "- Condition Type '{}' created".format(
-                                    signage_condition
-                                )
+                                f"- Condition Type '{signage_condition}' created"
                             )
                     else:
                         signage_condition = None
@@ -356,7 +346,7 @@ class Command(BaseCommand):
                             structure=structure if use_structure else None,
                         )
                         if created and verbosity:
-                            self.stdout.write("- Sealing '{}' created".format(sealing))
+                            self.stdout.write(f"- Sealing '{sealing}' created")
                     else:
                         sealing = None
 
@@ -371,7 +361,7 @@ class Command(BaseCommand):
                             structure=structure if use_structure else None,
                         )
                         if created and verbosity:
-                            self.stdout.write("- Organism '{}' created".format(manager))
+                            self.stdout.write(f"- Organism '{manager}' created")
                     else:
                         manager = None
 
@@ -395,16 +385,13 @@ class Command(BaseCommand):
                         if str(year).isdigit():
                             year = int(year)
                         else:
-                            raise CommandError(
-                                'Invalid year: "%s" is not a number.' % year
-                            )
+                            msg = f'Invalid year: "{year}" is not a number.'
+                            raise CommandError(msg)
                     else:
                         year = None
 
                     eid = (
-                        feature.get(field_eid)
-                        if field_eid in available_fields
-                        else None
+                        feature.get(field_eid) if field_eid in available_fields else ""
                     )
                     code = (
                         feature.get(field_code)
@@ -428,9 +415,7 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(
-                    self.style.NOTICE("{} objects created.".format(self.counter))
-                )
+                self.stdout.write(self.style.NOTICE(f"{self.counter} objects created."))
 
         except Exception:
             self.stdout.write(
@@ -451,7 +436,9 @@ class Command(BaseCommand):
                     signage.conditions.set(conditions)
                 if verbosity > 0 and not created:
                     self.stdout.write(
-                        "Update : %s with eid %s" % (fields_to_integrate["name"], eid)
+                        "Update : {} with eid {}".format(
+                            fields_to_integrate["name"], eid
+                        )
                     )
             else:
                 signage = Signage.objects.create(**fields_to_integrate)
@@ -461,14 +448,16 @@ class Command(BaseCommand):
             try:
                 geometry = geometry.transform(settings.API_SRID, clone=True)
                 geometry.coord_dim = 2
-                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
                 topology = Topology.deserialize(serialized)
                 signage.mutate(topology)
             except IndexError:
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
         else:
             if geometry.geom_type != "Point":
-                raise GEOSException("Invalid Geometry type.")
+                msg = "Invalid Geometry type."
+                raise GEOSException(msg)
             geometry = geometry.transform(settings.SRID, clone=True)
             signage.geom = Point(geometry.x, geometry.y)
             signage.save()

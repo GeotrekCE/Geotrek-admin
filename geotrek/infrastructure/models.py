@@ -46,7 +46,7 @@ class InfrastructureType(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
@@ -80,7 +80,7 @@ class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -97,7 +97,7 @@ class InfrastructureMaintenanceDifficultyLevel(
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -112,7 +112,7 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -140,7 +140,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         verbose_name=_("Implantation year"), null=True
     )
     eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
+        verbose_name=_("External id"), max_length=1024, blank=True, default=""
     )
     provider = models.CharField(
         verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
@@ -154,20 +154,16 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def implantation_year_display(self):
-        return "{}".format(self.implantation_year) if self.implantation_year else ""
+        return f"{self.implantation_year}" if self.implantation_year else ""
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self,
-            self,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
         if self.published:
             s = (
-                '<span class="badge badge-success" title="%s">&#x2606;</span> '
-                % _("Published")
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
                 + s
             )
         return s

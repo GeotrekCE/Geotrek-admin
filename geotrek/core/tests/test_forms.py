@@ -1,5 +1,4 @@
 from unittest import skipIf
-from unittest.mock import patch
 
 from django.conf import settings
 from django.core.checks import Error
@@ -63,14 +62,15 @@ class PathFormTest(TestCase):
         ]
         self.assertEqual(errors, expected_errors)
 
-    @patch("geotrek.common.forms.logger")
     @override_settings(HIDDEN_FORM_FIELDS={"path": ["geom", "departure"]})
-    def test_hidden_fields_configuration_required_fields(self, fake_log):
-        user = UserFactory()
-        PathForm(user=user)
-        fake_log.warning.assert_called_with(
-            "Ignoring entry in HIDDEN_FORM_FIELDS: field 'geom' is required on form PathForm."
-        )
+    def test_hidden_fields_configuration_required_fields(self):
+        with self.assertLogs("geotrek.common.forms", level="WARNING") as log:
+            user = UserFactory()
+            PathForm(user=user)
+            self.assertTrue(
+                "Ignoring entry in HIDDEN_FORM_FIELDS: field 'geom' is required on form PathForm."
+                in log.output[0]
+            )
 
     @override_settings(HIDDEN_FORM_FIELDS={"path": ["name", "departure"]})
     def test_hidden_fields(self):

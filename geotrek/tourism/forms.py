@@ -90,10 +90,10 @@ class TouristicEventForm(CommonForm):
             HTML(
                 """<ul class="nav nav-tabs">
     <li id="tab-event" class="nav-item">
-        <a class="nav-link active" href="#event" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+        <a class="nav-link active" href="#event" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
     </li>
     <li id="tab-assessment" class="nav-item">
-        <a class="nav-link" href="#assessment" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+        <a class="nav-link" href="#assessment" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
     </li>
 </ul>""".format(_("Event"), _("Assessment"))
             ),
@@ -224,7 +224,7 @@ class TouristicEventForm(CommonForm):
             )
         else:
             for category in categories:
-                field_id = "participant_count_{}".format(category.id)
+                field_id = f"participant_count_{category.id}"
                 self.fields[field_id] = TouristicEventParticipantCount._meta.get_field(
                     "count"
                 ).formfield(required=False)
@@ -261,7 +261,7 @@ class TouristicEventForm(CommonForm):
     def _save_m2m(self):
         super()._save_m2m()
         for category in TouristicEventParticipantCategory.objects.all():
-            count = self.cleaned_data["participant_count_{}".format(category.id)]
+            count = self.cleaned_data[f"participant_count_{category.id}"]
             if count is not None:
                 TouristicEventParticipantCount.objects.update_or_create(
                     event=self.instance, category=category, defaults={"count": count}

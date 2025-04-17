@@ -34,7 +34,7 @@ class SiteFilterSetTest(TestCase):
         SiteFactory.create(orientation=[], name="Alone site")
 
     def test_practice_filter(self):
-        filterset = SiteFilterSet(QueryDict("practice={}".format(self.practice.pk)))
+        filterset = SiteFilterSet(QueryDict(f"practice={self.practice.pk}"))
         self.assertTrue(filterset.is_valid(), filterset.errors)
         self.assertEqual(len(filterset.qs), 2)
         self.assertListEqual(
@@ -43,9 +43,7 @@ class SiteFilterSetTest(TestCase):
         )
 
     def test_sector_filter(self):
-        filterset = SiteFilterSet(
-            QueryDict("sector={}".format(self.practice.sector.pk))
-        )
+        filterset = SiteFilterSet(QueryDict(f"sector={self.practice.sector.pk}"))
         self.assertTrue(filterset.is_valid(), filterset.errors)
         self.assertEqual(len(filterset.qs), 2)
         self.assertListEqual(
@@ -71,7 +69,7 @@ class SiteFilterSetTest(TestCase):
         )
 
     def test_managers_filter(self):
-        filterset = SiteFilterSet(QueryDict("managers={}".format(self.org_a.pk)))
+        filterset = SiteFilterSet(QueryDict(f"managers={self.org_a.pk}"))
         self.assertTrue(filterset.is_valid(), filterset.errors)
         queryset = filterset.qs
         self.assertEqual(len(queryset), 1)
@@ -81,7 +79,7 @@ class SiteFilterSetTest(TestCase):
 
     def test_managers_filter_or(self):
         filterset = SiteFilterSet(
-            QueryDict("managers={}&managers={}".format(self.org_b.pk, self.org_d.pk))
+            QueryDict(f"managers={self.org_b.pk}&managers={self.org_d.pk}")
         )
         self.assertTrue(filterset.is_valid(), filterset.errors)
         self.assertEqual(len(filterset.qs), 2)

@@ -98,21 +98,22 @@ class Command(BaseCommand):
             try:
                 structure = Structure.objects.get(name=structure)
             except Structure.DoesNotExist:
-                raise CommandError(
+                msg = (
                     "Structure does not match with instance's structures\n"
                     "Change your option --structure"
                 )
+                raise CommandError(msg)
         elif Structure.objects.count() == 1:
             structure = Structure.objects.first()
         else:
-            raise CommandError(
+            msg = (
                 "There are more than 1 structure and you didn't define the option structure\n"
                 "Use --structure to define it"
             )
+            raise CommandError(msg)
         if verbosity > 0:
             self.stdout.write(
-                "All paths in DataSource will be linked to the structure : %s"
-                % structure
+                f"All paths in DataSource will be linked to the structure : {structure}"
             )
 
         ds = DataSource(file_path, encoding=encoding)
@@ -133,7 +134,7 @@ class Command(BaseCommand):
                 geom = feat.geom.geos
                 if not isinstance(geom, LineString):
                     if verbosity > 0:
-                        self.stdout.write("%s's geometry is not a Linestring" % feat)
+                        self.stdout.write(f"{feat}'s geometry is not a Linestring")
                     break
                 self.check_srid(srid, geom)
                 geom.dim = 2
@@ -149,18 +150,16 @@ class Command(BaseCommand):
                             )
                         counter += 1
                         if verbosity > 0:
-                            self.stdout.write(
-                                "Create path with pk : {}".format(path.pk)
-                            )
+                            self.stdout.write(f"Create path with pk : {path.pk}")
                         if verbosity > 1:
                             self.stdout.write(
-                                "The comment %s was added on %s" % (comment_final, name)
+                                f"The comment {comment_final} was added on {name}"
                             )
                     except (IntegrityError, InternalError):
                         if fail:
                             counter_fail += 1
                             self.stdout.write(
-                                "Integrity Error on path : {}, {}".format(name, geom)
+                                f"Integrity Error on path : {name}, {geom}"
                             )
                         else:
                             raise
@@ -169,18 +168,14 @@ class Command(BaseCommand):
             if verbosity >= 2:
                 self.stdout.write(
                     self.style.NOTICE(
-                        "{0} objects created, {1} objects failed".format(
-                            counter, counter_fail
-                        )
+                        f"{counter} objects created, {counter_fail} objects failed"
                     )
                 )
         else:
             transaction.savepoint_rollback(sid)
             self.stdout.write(
                 self.style.NOTICE(
-                    "{0} objects will be create, {1} objects failed;".format(
-                        counter, counter_fail
-                    )
+                    f"{counter} objects will be create, {counter_fail} objects failed;"
                 )
             )
 
@@ -191,14 +186,10 @@ class Command(BaseCommand):
             try:
                 geom.transform(settings.SRID)
             except GDALException:
-                raise CommandError(
-                    "SRID is not well configurate, change/add option srid"
-                )
+                msg = "SRID is not well configurate, change/add option srid"
+                raise CommandError(msg)
 
     def should_import(self, feature, geom):
-        return (
-            self.do_intersect
-            and self.bbox.intersects(geom)
-            or not self.do_intersect
-            and geom.within(self.bbox)
+        return (self.do_intersect and self.bbox.intersects(geom)) or (
+            not self.do_intersect and geom.within(self.bbox)
         )

@@ -1,9 +1,7 @@
-from typing import Dict
-
 import fiona
 
 
-def update_gis(input_file_path: str, output_file_path: str, new_properties: Dict):
+def update_gis(input_file_path: str, output_file_path: str, new_properties: dict):
     """
     Utility function that reads a GIS file (GeoPackage or Shapefile), update some properties,
     then write a new shapefile (typically in /tmp). Useful to test specific property values.

@@ -34,4 +34,4 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
             )
 
         def get_period(self, obj):
-            return [getattr(obj.species, "period{:02}".format(p)) for p in range(1, 13)]
+            return [getattr(obj.species, f"period{p:02}") for p in range(1, 13)]

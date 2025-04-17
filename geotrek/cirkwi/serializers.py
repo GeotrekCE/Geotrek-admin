@@ -28,7 +28,7 @@ class CirkwiPOISerializer:
         value = str(value)
         self.xml.startElement(name, attrs)
         if "<" in value or ">" in value or "&" in value:
-            self.stream.write("<![CDATA[%s]]>" % value)
+            self.stream.write(f"<![CDATA[{value}]]>")
         else:
             self.xml.characters(value)
         self.xml.endElement(name)

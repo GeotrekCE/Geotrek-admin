@@ -153,14 +153,12 @@ class BladeViewsTest(CommonTest):
 
     def _post_add_form(self):
         signa = SignageFactory.create()
-        self._post_form(self._get_add_url() + "?signage=%s" % signa.pk)
+        self._post_form(self._get_add_url() + f"?signage={signa.pk}")
 
     def _check_update_geom_permission(self, response):
         if (
             self.user.has_perm(
-                "{app}.change_geom_{model}".format(
-                    app=self.model._meta.app_label, model=self.model._meta.model_name
-                )
+                f"{self.model._meta.app_label}.change_geom_{self.model._meta.model_name}"
             )
             and settings.TREKKING_TOPOLOGY_ENABLED
         ):
@@ -170,9 +168,9 @@ class BladeViewsTest(CommonTest):
 
     def test_creation_form_on_signage(self):
         signa = SignageFactory.create()
-        signage = "%s" % signa
+        signage = f"{signa}"
 
-        response = self.client.get(Blade.get_add_url() + "?signage=%s" % signa.pk)
+        response = self.client.get(Blade.get_add_url() + f"?signage={signa.pk}")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
         form = response.context["form"]
@@ -180,9 +178,7 @@ class BladeViewsTest(CommonTest):
         # Should be able to save form successfully
         data = self.get_good_data()
         data["signage"] = signa.pk
-        response = self.client.post(
-            Blade.get_add_url() + "?signage=%s" % signa.pk, data
-        )
+        response = self.client.post(Blade.get_add_url() + f"?signage={signa.pk}", data)
         self.assertEqual(response.status_code, 302)
 
     def test_delete_redirection(self):
@@ -197,7 +193,7 @@ class BladeViewsTest(CommonTest):
         signa = SignageFactory.create()
 
         response = self.client.post(
-            self._get_add_url() + "?signage=%s" % signa.pk, self.get_good_data()
+            self._get_add_url() + f"?signage={signa.pk}", self.get_good_data()
         )
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -242,9 +238,7 @@ class BladeViewsTest(CommonTest):
         data = self.get_good_data()
         data["signage"] = signage.pk
         data["structure"] = self.user.profile.structure.pk
-        response = self.client.post(
-            "%s?signage=%s" % (Blade.get_add_url(), signage.pk), data
-        )
+        response = self.client.post(f"{Blade.get_add_url()}?signage={signage.pk}", data)
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.signage.structure, structure)
@@ -400,7 +394,7 @@ class SignageViewsTest(CommonTest):
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
-            good_data["topology"] = '{"paths": [%s]}' % path.pk
+            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
         else:
             good_data["geom"] = "POINT(0.42 0.666)"
         return good_data

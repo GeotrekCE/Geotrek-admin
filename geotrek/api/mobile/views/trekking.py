@@ -52,12 +52,10 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                 end_point=Transform(EndPoint("geom"), settings.API_SRID),
             )
             .filter(
-                Q(**{"published_{lang}".format(lang=lang): True})
+                Q(**{f"published_{lang}": True})
                 | Q(
                     **{
-                        "trek_parents__parent__published_{lang}".format(
-                            lang=lang
-                        ): True,
+                        f"trek_parents__parent__published_{lang}": True,
                         "trek_parents__parent__deleted": False,
                     }
                 )

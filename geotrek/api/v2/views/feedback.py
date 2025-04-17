@@ -77,8 +77,11 @@ class ReportViewSet(GenericViewSet, CreateModelMixin):
                 attachment.full_clean()  # Check that file extension and mimetypes are allowed
             except ValidationError as e:
                 logger.error(
-                    f"Invalid attachment {name}{extension} for report {response.data.get('id')} : "
-                    + str(e)
+                    "Invalid attachment %s%s for report %s: %s",
+                    name,
+                    extension,
+                    response.data.get("id"),
+                    str(e),
                 )
             else:
                 try:
@@ -102,8 +105,11 @@ class ReportViewSet(GenericViewSet, CreateModelMixin):
                     os.remove(tmp_jpeg_path)
                 except Exception as e:
                     logger.error(
-                        f"Failed to convert attachment {name}{extension} for report {response.data.get('id')}: "
-                        + str(e)
+                        "Failed to convert attachment %s%s for report %s: %s",
+                        name,
+                        extension,
+                        response.data.get("id"),
+                        str(e),
                     )
 
         if settings.SEND_REPORT_ACK and response.status_code == 201:

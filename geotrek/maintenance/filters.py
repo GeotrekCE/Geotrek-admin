@@ -232,7 +232,8 @@ class InterventionFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "status",
             "type",
             "stake",
@@ -286,7 +287,8 @@ class ProjectFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "year",
             "type",
             "domain",

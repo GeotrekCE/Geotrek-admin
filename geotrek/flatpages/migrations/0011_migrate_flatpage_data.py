@@ -23,7 +23,7 @@ def get_treenode_kwargs(position):
     """Support function to initialize DB fields from django-treebeard package's model MP_Node"""
     numconv = NumConv(len(MP_Node.alphabet), MP_Node.alphabet)
     key = numconv.int2str(position)
-    path = "{0}{1}".format(MP_Node.alphabet[0] * (MP_Node.steplen - len(key)), key)
+    path = f"{MP_Node.alphabet[0] * (MP_Node.steplen - len(key))}{key}"
     return {
         "depth": 1,
         "path": path,

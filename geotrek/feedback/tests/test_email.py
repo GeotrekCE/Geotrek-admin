@@ -17,7 +17,8 @@ class FailingEmailBackend(BaseEmailBackend):
     """
 
     def send_messages(self, email_messages):
-        raise Exception("Fake problem")
+        msg = "Fake problem"
+        raise Exception(msg)
 
 
 class FailingEmailBackend2(BaseEmailBackend):
@@ -26,7 +27,8 @@ class FailingEmailBackend2(BaseEmailBackend):
     """
 
     def send_messages(self, email_messages):
-        raise Exception("Fake problem 2")
+        msg = "Fake problem 2"
+        raise Exception(msg)
 
 
 class EmailSendingTest(SuricateTests):

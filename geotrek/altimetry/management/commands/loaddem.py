@@ -45,12 +45,10 @@ class Command(BaseCommand):
             kwargs_raster = {"shell": True}
             ret = self.call_command_system(cmd, **kwargs_raster)
             if ret != 0:
-                raise Exception("raster2pgsql failed with exit code %d" % ret)
+                msg = f"raster2pgsql failed with exit code {ret}"
+                raise Exception(msg)
         except Exception as e:
-            msg = "Caught %s: %s" % (
-                e.__class__.__name__,
-                e,
-            )
+            msg = f"Caught {e.__class__.__name__}: {e}"
             raise CommandError(msg)
         if verbose:
             self.stdout.write("-- Checking input DEM ------------------\n")
@@ -59,15 +57,18 @@ class Command(BaseCommand):
 
         # Open GDAL dataset
         if not os.path.exists(dem_path):
-            raise CommandError("DEM file does not exists at: %s" % dem_path)
+            msg = f"DEM file does not exists at: {dem_path}"
+            raise CommandError(msg)
         try:
             rst = GDALRaster(dem_path, write=False)
         except GDALException:
-            raise CommandError("DEM format is not recognized by GDAL.")
+            msg = "DEM format is not recognized by GDAL."
+            raise CommandError(msg)
 
         # GDAL dataset check 1: ensure dataset has a known SRS
         if not rst.srs:
-            raise CommandError("DEM coordinate system is unknown.")
+            msg = "DEM coordinate system is unknown."
+            raise CommandError(msg)
         # Obtain dataset SRS
         if settings.SRID != rst.srs.srid:
             rst = rst.transform(settings.SRID)
@@ -82,13 +83,14 @@ class Command(BaseCommand):
             # Drop table content
             Dem.objects.all().delete()
         elif dem_exists and not replace:
-            raise CommandError("DEM file exists, use --replace to overwrite")
+            msg = "DEM file exists, use --replace to overwrite"
+            raise CommandError(msg)
 
         if verbose:
             self.stdout.write("Everything looks fine, we can start loading DEM\n")
 
         output = tempfile.NamedTemporaryFile()  # SQL code for raster creation
-        cmd = "raster2pgsql -a -M -t 100x100 %s altimetry_dem %s" % (
+        cmd = "raster2pgsql -a -M -t 100x100 {} altimetry_dem {}".format(
             rst.name,
             "" if verbose else "2>/dev/null",
         )
@@ -99,13 +101,11 @@ class Command(BaseCommand):
             kwargs_raster2 = {"shell": True, "stdout": output.file, "stderr": PIPE}
             ret = self.call_command_system(cmd, **kwargs_raster2)
             if ret != 0:
-                raise Exception("raster2pgsql failed with exit code %d" % ret)
+                msg = f"raster2pgsql failed with exit code {ret}"
+                raise Exception(msg)
         except Exception as e:
             output.close()
-            msg = "Caught %s: %s" % (
-                e.__class__.__name__,
-                e,
-            )
+            msg = f"Caught {e.__class__.__name__}: {e}"
             raise CommandError(msg)
 
         if verbose:

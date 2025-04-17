@@ -47,28 +47,24 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         self.client.logout()
 
     def test_can_edit_same_structure(self):
-        url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
+        url = f"/touristiccontent/edit/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/touristiccontent/edit/{pk}/".format(pk=self.content2.pk)
+        url = f"/touristiccontent/edit/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(
-            response, "/touristiccontent/{pk}/".format(pk=self.content2.pk)
-        )
+        self.assertRedirects(response, f"/touristiccontent/{self.content2.pk}/")
 
     def test_can_delete_same_structure(self):
-        url = "/touristiccontent/delete/{pk}/".format(pk=self.content1.pk)
+        url = f"/touristiccontent/delete/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/touristiccontent/delete/{pk}/".format(pk=self.content2.pk)
+        url = f"/touristiccontent/delete/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(
-            response, "/touristiccontent/{pk}/".format(pk=self.content2.pk)
-        )
+        self.assertRedirects(response, f"/touristiccontent/{self.content2.pk}/")
 
     def test_contents_on_treks_do_not_exist(self):
         response = self.client.get("api/en/treks/0/touristiccontents.geojson")
@@ -76,9 +72,7 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
 
     def test_contents_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get(
-            "api/en/treks/{}/touristiccontents.geojson".format(trek.pk)
-        )
+        response = self.client.get(f"api/en/treks/{trek.pk}/touristiccontents.geojson")
         self.assertEqual(response.status_code, 404)
 
 
@@ -105,7 +99,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         self.assertNotContains(response, 'title="Another category"')
 
     def test_shown_in_details_when_enabled(self):
-        url = "/touristiccontent/%s/" % self.content.pk
+        url = f"/touristiccontent/{self.content.pk}/"
         response = self.client.get(url)
         self.assertContains(response, "Tourism")
 
@@ -113,12 +107,12 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
     def test_not_tourism_detail_fragment_displayed(self):
         """Test in other module, if tourism_detail_fragment.html is not displayed."""
         trek = trekking_factories.TrekFactory.create()
-        url = "/trek/%s/" % trek.pk
+        url = f"/trek/{trek.pk}/"
         response = self.client.get(url)
         self.assertNotContains(response, "Tourism")
 
     def test_type_label_shown_in_detail_page(self):
-        url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
+        url = f"/touristiccontent/{self.content.pk}/"
         response = self.client.get(url)
         self.assertContains(response, "Michelin")
 
@@ -135,12 +129,12 @@ class TouristicContentFormTest(TrekkingManagerTest):
     def test_no_category_selected_by_default(self):
         url = "/touristiccontent/add/"
         response = self.client.get(url)
-        self.assertNotContains(response, 'value="%s" selected' % self.category.pk)
+        self.assertNotContains(response, f'value="{self.category.pk}" selected')
 
     def test_default_category_is_taken_from_url_params(self):
-        url = "/touristiccontent/add/?category=%s" % self.category.pk
+        url = f"/touristiccontent/add/?category={self.category.pk}"
         response = self.client.get(url)
-        self.assertContains(response, 'value="%s" selected' % self.category.pk)
+        self.assertContains(response, f'value="{self.category.pk}" selected')
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
@@ -160,28 +154,24 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         self.client.force_login(user=self.user)
 
     def test_can_edit_same_structure(self):
-        url = "/touristicevent/edit/{pk}/".format(pk=self.event1.pk)
+        url = f"/touristicevent/edit/{self.event1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/touristicevent/edit/{pk}/".format(pk=self.event2.pk)
+        url = f"/touristicevent/edit/{self.event2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(
-            response, "/touristicevent/{pk}/".format(pk=self.event2.pk)
-        )
+        self.assertRedirects(response, f"/touristicevent/{self.event2.pk}/")
 
     def test_can_delete_same_structure(self):
-        url = "/touristicevent/delete/{pk}/".format(pk=self.event1.pk)
+        url = f"/touristicevent/delete/{self.event1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/touristicevent/delete/{pk}/".format(pk=self.event2.pk)
+        url = f"/touristicevent/delete/{self.event2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(
-            response, "/touristicevent/{pk}/".format(pk=self.event2.pk)
-        )
+        self.assertRedirects(response, f"/touristicevent/{self.event2.pk}/")
 
     def test_events_on_treks_do_not_exist(self):
         response = self.client.get("/api/en/treks/0/touristicevents.geojson")
@@ -189,9 +179,7 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
     def test_events_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get(
-            "/api/en/treks/{}/touristicevents.geojson".format(trek.pk)
-        )
+        response = self.client.get(f"/api/en/treks/{trek.pk}/touristicevents.geojson")
         self.assertEqual(response.status_code, 404)
 
 
@@ -199,7 +187,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
     @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = "/api/en/touristiccontents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
@@ -213,7 +201,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
             creator=UserFactory.create(),
             attachment_file=SimpleUploadedFile("external.pdf", b"External PDF"),
         )
-        url = "/api/en/touristiccontents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         regexp = f"/media_secure/paperclip/tourism_touristiccontent/{content.pk}/external{random_suffix_regexp()}.pdf"
@@ -222,13 +210,13 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_only_external_public_document_pdf(self):
         content = TouristicContentFactory.create(published=True)
-        url = "/api/en/touristiccontents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)
-        url = "/api/en/touristiccontents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -262,7 +250,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = "/api/en/touristicevents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristicevents/{content.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
@@ -270,7 +258,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
 
     def test_not_published_document_pdf(self):
         content = TouristicEventFactory.create(published=False)
-        url = "/api/en/touristicevents/{pk}/slug.pdf".format(pk=content.pk)
+        url = f"/api/en/touristicevents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -282,9 +270,7 @@ class TrekInformationDeskAPITest(TestCase):
         InformationDeskFactory.create()
         trek.information_desks.add(desk)
         trek.save()
-        response = self.client.get(
-            "/api/en/treks/{}/information_desks.geojson".format(trek.pk)
-        )
+        response = self.client.get(f"/api/en/treks/{trek.pk}/information_desks.geojson")
         self.assertEqual(response.status_code, 200)
         result = response.json()
         self.assertEqual(len(result["features"]), 1)

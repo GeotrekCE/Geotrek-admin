@@ -429,7 +429,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                     "geotrek_parser_v2",
                     self.mock_json_order[self.mock_time][1],
                 )
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     data_json = json.load(f)
                     if self.mock_json_order[self.mock_time] == "trek.json":
                         data_json["count"] = 10
@@ -552,7 +552,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
                 )
 
                 self.mock_time += 1
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     return json.load(f)
 
             @property
@@ -888,7 +888,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             stdout=output,
         )
         self.assertIn(
-            "An error occured in children generation : DownloadImportError",
+            "An error occurred in children generation: DownloadImportError",
             output.getvalue(),
         )
 
@@ -1073,7 +1073,7 @@ def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
         rv.status_code = 200
         if url == parser_class.url:
             filename = os.path.join(test_data_dir, data_filename)
-            with open(filename, "r") as f:
+            with open(filename) as f:
                 json_payload = f.read()
             data = json.loads(json_payload)
             rv.json = lambda: data
@@ -1085,7 +1085,7 @@ def make_dummy_apidae_get(parser_class, test_data_dir, data_filename):
                 rv.content = copy(testdata.IMG_FILE)
             elif extension in ["gpx", "kml"]:
                 filename = os.path.join(test_data_dir, url_path.lstrip("/"))
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     geodata = f.read()
                 rv.content = bytes(geodata, "utf-8")
             elif extension == "kmz":
@@ -1615,7 +1615,7 @@ class ApidaeTrekThemeParserTests(TestCase):
         rv = Mock()
         rv.status_code = 200
         with open(
-            "geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json", "r"
+            "geotrek/trekking/tests/data/apidae_trek_parser/trek_theme.json"
         ) as f:
             json_payload = f.read()
         data = json.loads(json_payload)
@@ -2071,7 +2071,8 @@ class SchemaRandonneeParserTests(TestCase):
         elif url and "none" in url:
             return Mock(status_code=200, content=None, headers={"content-length": 0})
         elif url and "404" in url:
-            raise DownloadImportError("mock error message")
+            msg = "mock error message"
+            raise DownloadImportError(msg)
         response = {
             "type": "FeatureCollection",
             "name": "sql_statement",

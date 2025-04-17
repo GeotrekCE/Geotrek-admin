@@ -56,10 +56,7 @@ class InterventionFormTest(TestCase):
         cls.user = UserFactory()
         topo = TopologyFactory()
         path = PathFactory()
-        cls.topology = (
-            '[{"pk": %d, "paths": [%d], "positions": {"0": [0.674882030756843, 0.110030805790642]}}]'
-            % (topo.pk, path.pk)
-        )
+        cls.topology = f'[{{"pk": {topo.pk}, "paths": [{path.pk}], "positions": {{"0": [0.674882030756843, 0.110030805790642]}}}}]'
         cls.target = (SignageFactory(),)
         cls.interv_status = InterventionStatusFactory(order=30)
 

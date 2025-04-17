@@ -40,7 +40,7 @@ class SignageCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("3 objects created.", output.getvalue())
         qs_signages = Signage.objects.filter(name="name")
         self.assertEqual(2010, qs_signages[0].implantation_year)
@@ -71,7 +71,7 @@ class SignageCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("1 objects created.", output.getvalue())
         value = Signage.objects.first()
         self.assertEqual("name", value.name)
@@ -174,7 +174,7 @@ class SignageCommandTest(TestCase):
             verbosity=1,
             stdout=output,
         )
-        self.assertIn("Signages will be linked to %s" % structure, output.getvalue())
+        self.assertIn(f"Signages will be linked to {structure}", output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
         self.assertIn("Organism 'manager' created", output.getvalue())
@@ -211,9 +211,7 @@ class SignageCommandTest(TestCase):
         )
         for element in elements_to_check:
             self.assertIn(
-                "Set it with --{0}-field, or set a default value with --{0}-default".format(
-                    element
-                ),
+                f"Set it with --{element}-field, or set a default value with --{element}-default",
                 output.getvalue(),
             )
 
@@ -311,7 +309,7 @@ class SignageCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your"), 8)
         for element in elements_to_check:
             self.assertIn(
-                "Field '{}' not found in data source".format(element), output.getvalue()
+                f"Field '{element}' not found in data source", output.getvalue()
             )
 
     def test_no_line_fail_rolling_back(self):

@@ -35,7 +35,8 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Site
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "sector",
             "practice",
@@ -54,15 +55,13 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     def filter_orientation(self, qs, name, values):
         q = Q()
         for value in values:
-            q |= Q(**{"{}__contains".format(name): value})
+            q |= Q(**{f"{name}__contains": value})
         return qs.filter(q).get_ancestors(include_self=True)
 
     def filter_super(self, qs, name, values):
         if not values:
             return qs
-        return qs.filter(**{"{}__in".format(name): values}).get_ancestors(
-            include_self=True
-        )
+        return qs.filter(**{f"{name}__in": values}).get_ancestors(include_self=True)
 
     def filter_sector(self, qs, name, values):
         if not values:
@@ -93,7 +92,8 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
-        fields = StructureRelatedFilterSet.Meta.fields + [
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
             "published",
             "parent_sites",
             "parent_sites__practice__sector",
@@ -112,5 +112,5 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     def filter_orientation(self, qs, name, values):
         q = Q()
         for value in values:
-            q |= Q(**{"parent_sites__{}__contains".format(name): value})
+            q |= Q(**{f"parent_sites__{name}__contains": value})
         return qs.filter(q)

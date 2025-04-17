@@ -43,13 +43,16 @@ class Command(BaseCommand):
         try:
             spec.loader.exec_module(module)
         except FileNotFoundError:
-            raise CommandError("Failed to import parser file '{0}'".format(module_path))
+            msg = f"Failed to import parser file '{module_path}'"
+            raise CommandError(msg)
         try:
             Parser = getattr(module, class_name)
         except AttributeError:
-            raise CommandError("Failed to import parser class '{0}'".format(class_name))
+            msg = f"Failed to import parser class '{class_name}'"
+            raise CommandError(msg)
         if not Parser.filename and not Parser.url and not options["filename"]:
-            raise CommandError("File path missing")
+            msg = "File path missing"
+            raise CommandError(msg)
 
         def progress_cb(progress, line, eid):
             if verbosity >= 2:
@@ -66,5 +69,5 @@ class Command(BaseCommand):
         except ImportError as e:
             raise CommandError(e)
 
-        if verbosity >= 1 and parser.warnings or verbosity >= 2:
+        if (verbosity >= 1 and parser.warnings) or verbosity >= 2:
             self.stdout.write(parser.report())

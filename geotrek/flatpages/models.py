@@ -15,7 +15,7 @@ from geotrek.common.mixins.models import (
 class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     title = models.CharField(verbose_name=_("Title"), max_length=200)
     content = models.TextField(
-        verbose_name=_("Content"), null=True, blank=True, help_text=_("HTML content")
+        verbose_name=_("Content"), blank=True, help_text=_("HTML content"), default=""
     )
     source = models.ManyToManyField(
         "common.RecordSource",
@@ -44,6 +44,7 @@ class MenuItem(
     OptionalPictogramMixin, BasePublishableMixin, TimeStampedModelMixin, MP_Node
 ):
     class TargetTypeChoices(TextChoices):
+        EMPTY = "", _("Empty")
         PAGE = "page", _("Page")
         LINK = "link", _("Link")
 
@@ -56,9 +57,9 @@ class MenuItem(
     target_type = models.CharField(
         max_length=10,
         verbose_name=_("Target type"),
-        null=True,
         blank=True,
         choices=TargetTypeChoices.choices,
+        default=TargetTypeChoices.EMPTY,
     )
     link_url = models.CharField(
         max_length=200, verbose_name=_("Link URL"), blank=True, default=""

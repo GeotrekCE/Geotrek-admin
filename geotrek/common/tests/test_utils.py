@@ -117,7 +117,7 @@ class UtilsParsersTest(SimpleTestCase):
 class GpxToGeomTests(SimpleTestCase):
     @staticmethod
     def _get_gpx_from(filename):
-        with open(filename, "r") as f:
+        with open(filename) as f:
             gpx = f.read()
         return bytes(gpx, "utf-8")
 
@@ -219,7 +219,7 @@ class GpxToGeomTests(SimpleTestCase):
 class KmlToGeomTests(SimpleTestCase):
     @staticmethod
     def _get_kml_from(filename):
-        with open(filename, "r") as f:
+        with open(filename) as f:
             kml = f.read()
         return bytes(kml, "utf-8")
 

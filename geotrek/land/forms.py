@@ -22,24 +22,24 @@ class EdgeForm(TopologyForm):
 class PhysicalEdgeForm(EdgeForm):
     class Meta(EdgeForm.Meta):
         model = PhysicalEdge
-        fields = EdgeForm.Meta.fields + ["physical_type"]
+        fields = [*EdgeForm.Meta.fields, "physical_type"]
 
 
 class LandEdgeForm(EdgeForm):
     class Meta(EdgeForm.Meta):
         model = LandEdge
-        fields = EdgeForm.Meta.fields + ["land_type", "owner", "agreement"]
+        fields = [*EdgeForm.Meta.fields, "land_type", "owner", "agreement"]
 
 
 class CirculationEdgeForm(EdgeForm):
     class Meta(EdgeForm.Meta):
         model = CirculationEdge
-        fields = EdgeForm.Meta.fields + ["circulation_type", "authorization_type"]
+        fields = [*EdgeForm.Meta.fields, "circulation_type", "authorization_type"]
 
 
 class OrganismForm(EdgeForm):
     class Meta(EdgeForm.Meta):
-        fields = EdgeForm.Meta.fields + ["organization"]
+        fields = [*EdgeForm.Meta.fields, "organization"]
 
 
 class CompetenceEdgeForm(OrganismForm):

@@ -210,7 +210,7 @@ class TouristicEventViewsTests(CommonTest):
         data = self.get_good_data()
         data.update(
             {
-                "participant_count_{}".format(categories[0].pk): 10,
+                f"participant_count_{categories[0].pk}": 10,
             }
         )
         response = self.client.post(self._get_add_url(), data)
@@ -223,14 +223,14 @@ class TouristicEventViewsTests(CommonTest):
 
         data.update(
             {
-                "participant_count_{}".format(categories[1].pk): 20,
+                f"participant_count_{categories[1].pk}": 20,
             }
         )
         response = self.client.post(event.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(event.participants.count(), 2)
 
-        data.pop("participant_count_{}".format(categories[0].pk))
+        data.pop(f"participant_count_{categories[0].pk}")
         response = self.client.post(event.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(event.participants.count(), 1)

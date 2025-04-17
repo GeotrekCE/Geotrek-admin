@@ -17,7 +17,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         )
 
         class Meta(TopologyForm.Meta):
-            fields = TopologyForm.Meta.fields + [
+            fields = [
+                *TopologyForm.Meta.fields,
                 "structure",
                 "name",
                 "description",
@@ -42,7 +43,8 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Infrastructure
-            fields = CommonForm.Meta.fields + [
+            fields = [
+                *CommonForm.Meta.fields,
                 "geom",
                 "structure",
                 "name",
@@ -73,7 +75,8 @@ class InfrastructureForm(BaseInfrastructureForm):
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
-        fields = BaseInfrastructureForm.Meta.fields + [
+        fields = [
+            *BaseInfrastructureForm.Meta.fields,
             "accessibility",
             "maintenance_difficulty",
             "usage_difficulty",

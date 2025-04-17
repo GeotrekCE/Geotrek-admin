@@ -103,9 +103,9 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
     def pretty_period(self):
         return ", ".join(
             [
-                str(self._meta.get_field("period{:02}".format(p)).verbose_name)
+                str(self._meta.get_field(f"period{p:02}").verbose_name)
                 for p in range(1, 13)
-                if getattr(self, "period{:02}".format(p))
+                if getattr(self, f"period{p:02}")
             ]
         )
 
@@ -221,16 +221,12 @@ class SensitiveArea(
 
     @property
     def species_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            self.species.name,
-            self.species.name,
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.species.name}">{self.species.name}</a>'
         if self.published:
             s = (
-                '<span class="badge badge-success" title="%s">&#x2606;</span> '
-                % _("Published")
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
                 + s
             )
         return s
@@ -278,9 +274,7 @@ class SensitiveArea(
         geom = geom.transform(4326, clone=True)
         geom = geom.simplify(0.001, preserve_topology=True)
         other = {}
-        other["*AUID"] = (
-            f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {str(self.pk)}"
-        )
+        other["*AUID"] = f"GUId=! UId=! Id=(Identifiant-GeoTrek-sentivity) {self.pk!s}"
         adescr = (self.species.name,)
         if self.publication_date:
             adescr += (f"(published on {self.publication_date.strftime('%d/%m/%Y')})",)

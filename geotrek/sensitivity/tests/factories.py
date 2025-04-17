@@ -9,8 +9,8 @@ from .. import models
 
 
 class RuleFactory(factory.django.DjangoModelFactory):
-    name = factory.Sequence(lambda n: "Rule %s" % n)
-    code = factory.Sequence(lambda n: "CODE%s" % n)
+    name = factory.Sequence(lambda n: f"Rule {n}")
+    code = factory.Sequence(lambda n: f"CODE{n}")
     url = factory.faker.Faker("url")
     pictogram = factory.django.ImageField()
 

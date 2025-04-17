@@ -345,7 +345,7 @@ class MultilangFilterThemeParser(MultilangThemeParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
 
     def filter_label(self, src, val):
-        return "filtered {}".format(val)
+        return f"filtered {val}"
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
@@ -362,9 +362,7 @@ class MultilangParserTests(TestCase):
     def test_parser_fill_translated_fields_off(self):
         """Parser should not fill empty fields for all languages, only main language"""
         filename = os.path.join(os.path.dirname(__file__), "data", "themes.xls")
-        label_default_language = "label_{}".format(
-            settings.MODELTRANSLATION_DEFAULT_LANGUAGE
-        )
+        label_default_language = f"label_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}"
         other_languages = [
             lang
             for lang in settings.MODELTRANSLATION_LANGUAGES
@@ -380,7 +378,7 @@ class MultilangParserTests(TestCase):
         theme_imported = Theme.objects.get(label="Paysages")
         self.assertEqual(getattr(theme_imported, label_default_language), "Paysages")
         for language in other_languages:
-            label_language = "label_{}".format(language)
+            label_language = f"label_{language}"
             self.assertIsNone(getattr(theme_imported, label_language))
 
     def test_parser_fill_translated_fields_on(self):
@@ -443,7 +441,7 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.content_object, organism)
         self.assertEqual(
             attachment.attachment_file.name,
-            "paperclip/common_organism/{pk}/titi.png".format(pk=organism.pk),
+            f"paperclip/common_organism/{organism.pk}/titi.png",
         )
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(attachment.is_image)
@@ -576,7 +574,7 @@ class AttachmentParserTests(TestCase):
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.content_object, organism)
-        self.assertEqual(attachment.legend, "{0}".format(("Legend " * 18).rstrip()))
+        self.assertEqual(attachment.legend, "{}".format(("Legend " * 18).rstrip()))
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
@@ -616,7 +614,7 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.content_object, organism)
         self.assertEqual(
             attachment.attachment_file.name,
-            "paperclip/common_organism/{pk}/titi.png".format(pk=organism.pk),
+            f"paperclip/common_organism/{organism.pk}/titi.png",
         )
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertEqual(attachment.filetype.structure, None)
@@ -1457,7 +1455,7 @@ class GeotrekAggregatorSourcesTests(TestCase):
                     "geotrek_parser_v2",
                     self.mock_json_order[self.mock_time][1],
                 )
-                with open(filename, "r") as f:
+                with open(filename) as f:
                     return json.load(f)
 
         if self.mock_time == 6:

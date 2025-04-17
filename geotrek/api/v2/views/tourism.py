@@ -22,7 +22,8 @@ class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TouristicContentRelatedPortalFilter,
     )
     serializer_class = api_serializers.TouristicContentCategorySerializer
@@ -41,7 +42,8 @@ class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekTouristicContentFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
@@ -76,7 +78,8 @@ class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TreksAndSitesRelatedPortalFilter,
         api_filters.GeotrekInformationDeskFilter,
     )
@@ -99,7 +102,8 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.TouristicEventRelatedPortalFilter,
     )
     serializer_class = api_serializers.TouristicEventTypeSerializer
@@ -109,7 +113,8 @@ class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.GeotrekTouristicEventFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
@@ -140,7 +145,8 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.UpdateOrCreateDateFilter,
         api_filters.TouristicEventsRelatedPortalFilter,
     )
@@ -157,7 +163,8 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class TouristicEventOrganizerViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = api_viewsets.GeotrekViewSet.filter_backends + (
+    filter_backends = (
+        *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.UpdateOrCreateDateFilter,
         api_filters.TouristicEventRelatedPortalFilter,
     )

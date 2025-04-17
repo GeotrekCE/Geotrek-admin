@@ -1,6 +1,5 @@
 import ast
 import json
-import logging
 import mimetypes
 import os
 import re
@@ -76,12 +75,9 @@ from .utils import leaflet_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
 
-logger = logging.getLogger(__name__)
-
 
 def handler404(request, exception, template_name="404.html"):
     if "api/v2" in request.get_full_path():
-        logger.warning(f"{request.get_full_path()} has been tried")
         return JsonResponse({"page": "does not exist"}, status=404)
     return page_not_found(request, exception, template_name="404.html")
 
@@ -438,7 +434,8 @@ class ServeAttachmentAccessibility(View):
         if not AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path
         ):
-            raise Http404("No attachments for accessibility matches the given query.")
+            msg = "No attachments for accessibility matches the given query."
+            raise Http404(msg)
 
         attachments = AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path
@@ -454,7 +451,7 @@ class ServeAttachmentAccessibility(View):
             ):
                 raise PermissionDenied
             if not request.user.has_perm(
-                "{}.read_{}".format(obj._meta.app_label, obj._meta.model_name)
+                f"{obj._meta.app_label}.read_{obj._meta.model_name}"
             ):
                 raise PermissionDenied
 
@@ -469,8 +466,8 @@ class ServeAttachmentAccessibility(View):
             )
         response["Content-Type"] = content_type or "application/octet-stream"
         if app_settings["SERVE_MEDIA_AS_ATTACHMENT"]:
-            response["Content-Disposition"] = "attachment; filename={0}".format(
-                os.path.basename(path)
+            response["Content-Disposition"] = (
+                f"attachment; filename={os.path.basename(path)}"
             )
         return response
 

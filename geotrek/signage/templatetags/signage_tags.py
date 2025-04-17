@@ -10,7 +10,7 @@ register = template.Library()
 @register.filter
 def meters(value):
     if value:
-        return "%s %s" % (value, _("meters"))
+        return "{} {}".format(value, _("meters"))
     return value
 
 

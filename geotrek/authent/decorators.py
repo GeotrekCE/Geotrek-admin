@@ -21,10 +21,8 @@ def same_structure_required(redirect_to):
             if isinstance(result, HttpResponseRedirect):
                 return result
 
-            obj = (
-                hasattr(self, "get_object")
-                and self.get_object()
-                or getattr(self, "object", None)
+            obj = (hasattr(self, "get_object") and self.get_object()) or getattr(
+                self, "object", None
             )
             if obj.same_structure(request.user):
                 return result

@@ -20,7 +20,7 @@ class SiteFormTest(TestCase):
                 "name_en": "Site",
                 "geom": '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
                 "practice": str(rating.scale.practice.pk),
-                "rating_scale_{}".format(rating.scale.pk): [str(rating.pk)],
+                f"rating_scale_{rating.scale.pk}": [str(rating.pk)],
             },
         )
         self.assertTrue(form.is_valid())
@@ -41,7 +41,7 @@ class SiteFormTest(TestCase):
                 "name_en": "Site",
                 "geom": '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
                 "practice": str(rating.scale.practice.pk),
-                "rating_scale_{}".format(other_rating.scale.pk): [str(other_rating.pk)],
+                f"rating_scale_{other_rating.scale.pk}": [str(other_rating.pk)],
             },
         )
         self.assertFalse(form.is_valid())
@@ -69,7 +69,7 @@ class CourseFormTest(TestCase):
                 "name_en": "Course",
                 "geom": '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
                 "parent_sites": [str(self.course.parent_sites.first().pk)],
-                "rating_scale_{}".format(self.rating.scale.pk): str(self.rating.pk),
+                f"rating_scale_{self.rating.scale.pk}": str(self.rating.pk),
             },
         )
         self.assertTrue(form.is_valid())

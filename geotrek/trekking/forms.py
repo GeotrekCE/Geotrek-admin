@@ -61,7 +61,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Trek
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class TrekForm(BaseTrekForm):
@@ -84,13 +84,13 @@ class TrekForm(BaseTrekForm):
             HTML(
                 """<ul class="nav nav-tabs">
     <li id="tab-main" class="nav-item">
-        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
+        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
     </li>
     <li id="tab-advanced" class="nav-item">
-        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
+        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
     </li>
     <li id="tab-accessibility" class="nav-item">
-        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {2}</a>
+        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {}</a>
     </li>
 </ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))
             ),
@@ -273,7 +273,8 @@ class TrekForm(BaseTrekForm):
         for child in children:
             if child.trek_children.exists():
                 raise ValidationError(
-                    _(f"Cannot use parent trek {child.name} as a child trek.")
+                    _("Cannot use parent trek %(name)s as a child trek.")
+                    % {"name": child.name}
                 )
         return children
 
@@ -340,7 +341,8 @@ class TrekForm(BaseTrekForm):
             raise exc
 
     class Meta(BaseTrekForm.Meta):
-        fields = BaseTrekForm.Meta.fields + [
+        fields = [
+            *BaseTrekForm.Meta.fields,
             "structure",
             "name",
             "review",
@@ -413,7 +415,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = POI
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class POIForm(BasePOIForm):
@@ -430,7 +432,8 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + [
+        fields = [
+            *BasePOIForm.Meta.fields,
             "structure",
             "name",
             "description",
@@ -466,7 +469,7 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Service
-            fields = CommonForm.Meta.fields + ["geom"]
+            fields = [*CommonForm.Meta.fields, "geom"]
 
 
 class ServiceForm(BaseServiceForm):
@@ -479,7 +482,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ["structure", "type", "eid"]
+        fields = [*BaseServiceForm.Meta.fields, "structure", "type", "eid"]
 
 
 class WebLinkCreateFormPopup(TranslatedModelForm):
@@ -499,8 +502,9 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
             "category",
             FormActions(
                 HTML(
-                    '<a href="#" class="btn" onclick="javascript:window.close();">%s</a>'
-                    % _("Cancel")
+                    '<a href="#" class="btn" onclick="javascript:window.close();">{}</a>'.format(
+                        _("Cancel")
+                    )
                 ),
                 Submit("save_changes", _("Create"), css_class="btn-primary"),
                 css_class="form-actions",

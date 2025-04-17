@@ -38,7 +38,7 @@ class TopologyField(forms.CharField):
         except Topology.DoesNotExist:
             raise ValidationError(self.error_messages["unknown_topology"] % value)
         except ValueError as e:
-            logger.warning("User input error: %s" % e)
+            logger.warning("User input error: %s", e)
             raise ValidationError(self.error_messages["invalid_topology"])
 
 
@@ -64,7 +64,8 @@ class SnappedLineStringField(LineStringField):
             value = json.loads(value)
             geom = value.get("geom")
             if geom is None:
-                raise ValueError("No geom found in JSON")
+                msg = "No geom found in JSON"
+                raise ValueError(msg)
 
             if geom in validators.EMPTY_VALUES:
                 return super().clean(value)
@@ -72,7 +73,8 @@ class SnappedLineStringField(LineStringField):
             # Geometry is like usual
             geom = fromstr(geom)
             if geom is None:
-                raise ValueError("Invalid geometry in JSON")
+                msg = "Invalid geometry in JSON"
+                raise ValueError(msg)
             geom.srid = settings.API_SRID
             geom.transform(settings.SRID)
 
@@ -80,9 +82,8 @@ class SnappedLineStringField(LineStringField):
             # geometry vertices
             snaplist = value.get("snap", [])
             if geom.num_coords != len(snaplist):
-                raise ValueError(
-                    "Snap list length != %s (%s)" % (geom.num_coords, snaplist)
-                )
+                msg = f"Snap list length != {geom.num_coords} ({snaplist})"
+                raise ValueError(msg)
             paths = [
                 Path.objects.get(pk=pk) if pk is not None else None for pk in snaplist
             ]
@@ -94,5 +95,5 @@ class SnappedLineStringField(LineStringField):
                     coords[i] = snap.coords
             return LineString(*coords, srid=settings.SRID)
         except (TypeError, Path.DoesNotExist, ValueError) as e:
-            logger.warning("User input error: %s" % e)
+            logger.warning("User input error: %s", e)
             raise ValidationError(self.error_messages["invalid_snap_line"])

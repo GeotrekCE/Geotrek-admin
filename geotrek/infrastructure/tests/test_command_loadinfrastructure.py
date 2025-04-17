@@ -38,7 +38,7 @@ class InfrastructureCommandTest(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Infrastructures will be linked to %s" % structure, output.getvalue()
+            f"Infrastructures will be linked to {structure}", output.getvalue()
         )
         self.assertIn("2 objects created.", output.getvalue())
         value = Infrastructure.objects.filter(name="name").order_by("pk")
@@ -68,7 +68,7 @@ class InfrastructureCommandTest(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Infrastructures will be linked to %s" % structure, output.getvalue()
+            f"Infrastructures will be linked to {structure}", output.getvalue()
         )
         self.assertIn("1 objects created.", output.getvalue())
         value = Infrastructure.objects.first()
@@ -117,13 +117,13 @@ class InfrastructureCommandTest(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Infrastructures will be linked to %s" % structure, output.getvalue()
+            f"Infrastructures will be linked to {structure}", output.getvalue()
         )
         self.assertIn(
-            "InfrastructureType 'type (%s)' created" % structure, output.getvalue()
+            f"InfrastructureType 'type ({structure})' created", output.getvalue()
         )
         self.assertIn(
-            "Condition Type 'condition (%s)' created" % structure, output.getvalue()
+            f"Condition Type 'condition ({structure})' created", output.getvalue()
         )
         value = Infrastructure.objects.all()
         names = [val.name for val in value]
@@ -150,7 +150,7 @@ class InfrastructureCommandTest(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Infrastructures will be linked to %s" % structure, output.getvalue()
+            f"Infrastructures will be linked to {structure}", output.getvalue()
         )
         self.assertIn("InfrastructureType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
@@ -182,9 +182,7 @@ class InfrastructureCommandTest(TestCase):
         )
         for element in elements_to_check:
             self.assertIn(
-                "Set it with --{0}-field, or set a default value with --{0}-default".format(
-                    element
-                ),
+                f"Set it with --{element}-field, or set a default value with --{element}-default",
                 output.getvalue(),
             )
 
@@ -264,7 +262,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your"), 6)
         for element in elements_to_check:
             self.assertIn(
-                "Field '{}' not found in data source".format(element), output.getvalue()
+                f"Field '{element}' not found in data source", output.getvalue()
             )
 
     def test_line_fail_rolling_back(self):

@@ -28,16 +28,16 @@ def add_permissions(apps, schema_editor):
     ]
     for user in UserModel.objects.all():
         for perm in permissions:
-            if user.user_permissions.filter(codename="change_%s" % perm).exists():
+            if user.user_permissions.filter(codename=f"change_{perm}").exists():
                 user.user_permissions.add(
-                    PermissionModel.objects.get(codename="change_geom_%s" % perm)
+                    PermissionModel.objects.get(codename=f"change_geom_{perm}")
                 )
 
     for group in GroupModel.objects.all():
         for perm in permissions:
-            if group.permissions.filter(codename="change_%s" % perm).exists():
+            if group.permissions.filter(codename=f"change_{perm}").exists():
                 group.permissions.add(
-                    PermissionModel.objects.get(codename="change_geom_%s" % perm)
+                    PermissionModel.objects.get(codename=f"change_geom_{perm}")
                 )
 
 

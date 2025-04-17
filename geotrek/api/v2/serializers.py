@@ -286,7 +286,7 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get("apiv2"))
         except (
-            IOError,
+            OSError,
             InvalidImageFormatError,
             DecompressionBombError,
             NoSourceGenerator,
@@ -339,7 +339,8 @@ class AttachmentSerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
             "backend",
             "type",
             "filetype",
-        ) + AttachmentsSerializerMixin.Meta.fields
+            *AttachmentsSerializerMixin.Meta.fields,
+        )
 
 
 class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerializerMixin):
@@ -351,7 +352,7 @@ class AttachmentAccessibilitySerializer(DynamicFieldsMixin, AttachmentsSerialize
 
     class Meta:
         model = common_models.AccessibilityAttachment
-        fields = ("info_accessibility",) + AttachmentsSerializerMixin.Meta.fields
+        fields = ("info_accessibility", *AttachmentsSerializerMixin.Meta.fields)
 
 
 class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -424,7 +425,8 @@ class HDViewPointSerializer(TimeStampedSerializer):
 
     class Meta(TimeStampedSerializer.Meta):
         model = common_models.HDViewPoint
-        fields = TimeStampedSerializer.Meta.fields + (
+        fields = (
+            *TimeStampedSerializer.Meta.fields,
             "id",
             "annotations",
             "author",
@@ -473,9 +475,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             return [
                 {
                     "id": obj.id * 100 + i,
-                    "label": get_translation_or_dict(
-                        "type{}_label".format(i), self, obj
-                    ),
+                    "label": get_translation_or_dict(f"type{i}_label", self, obj),
                     "values": [
                         {
                             "id": t.id,
@@ -552,7 +552,8 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicContent
-            fields = TimeStampedSerializer.Meta.fields + (
+            fields = (
+                *TimeStampedSerializer.Meta.fields,
                 "id",
                 "accessibility",
                 "attachments",
@@ -588,7 +589,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         def get_types(self, obj):
             return {
                 obj.category.id * 100 + i: [
-                    t.id for t in getattr(obj, "type{}".format(i)).all()
+                    t.id for t in getattr(obj, f"type{i}").all()
                 ]
                 for i in (1, 2)
             }
@@ -651,7 +652,8 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicEvent
-            fields = TimeStampedSerializer.Meta.fields + (
+            fields = (
+                *TimeStampedSerializer.Meta.fields,
                 "id",
                 "accessibility",
                 "approved",
@@ -1122,7 +1124,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return FinalClass(qs, many=True, context=self.context).data
 
         class Meta(TrekSerializer.Meta):
-            fields = TrekSerializer.Meta.fields + ("count_children", "steps")
+            fields = (*TrekSerializer.Meta.fields, "count_children", "steps")
 
     class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField()
@@ -1268,7 +1270,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
             return get_translation_or_dict("description", self, obj)
 
         def get_period(self, obj):
-            return [getattr(obj.species, "period{:02}".format(p)) for p in range(1, 13)]
+            return [getattr(obj.species, f"period{p:02}") for p in range(1, 13)]
 
         def get_elevation(self, obj):
             return obj.species.radius
@@ -1300,7 +1302,8 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
 
         class Meta(TimeStampedSerializer.Meta):
             model = sensitivity_models.SensitiveArea
-            fields = TimeStampedSerializer.Meta.fields + (
+            fields = (
+                *TimeStampedSerializer.Meta.fields,
                 "id",
                 "contact",
                 "description",
@@ -1335,7 +1338,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
 
         class Meta:
             model = SensitiveAreaSerializer.Meta.model
-            fields = SensitiveAreaSerializer.Meta.fields + ("radius",)
+            fields = (*SensitiveAreaSerializer.Meta.fields, "radius")
 
     class SportPracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()
@@ -1937,10 +1940,7 @@ if "geotrek.flatpages" in settings.INSTALLED_APPS:
         parent = serializers.SerializerMethodField()
 
         class Meta(MenuItemSerializer.Meta):
-            fields = MenuItemSerializer.Meta.fields + (
-                "children",
-                "parent",
-            )
+            fields = (*MenuItemSerializer.Meta.fields, "children", "parent")
 
         def get_children(self, obj):
             language = self._context["request"].GET.get("language", "all")
@@ -2159,4 +2159,4 @@ class ReportAPIGeojsonSerializer(GeoFeatureModelSerializer, ReportAPISerializer)
 
     class Meta(ReportAPISerializer.Meta):
         geo_field = "api_geom"
-        fields = ReportAPISerializer.Meta.fields + ("api_geom",)
+        fields = (*ReportAPISerializer.Meta.fields, "api_geom")

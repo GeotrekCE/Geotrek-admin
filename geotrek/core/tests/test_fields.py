@@ -51,7 +51,7 @@ class SnappedLineStringFieldTest(TestCase):
 
     def test_geom_can_be_geojson(self):
         geojsonstr = self.geojson.replace('"', '\\"')
-        geom = self.f.clean('{"geom": "%s",  "snap": [null, null]}' % geojsonstr)
+        geom = self.f.clean(f'{{"geom": "{geojsonstr}",  "snap": [null, null]}}')
         self.assertTrue(
             geom.equals_exact(
                 LineString((100000, 100000), (200000, 200000), srid=settings.SRID), 0.1
@@ -59,7 +59,7 @@ class SnappedLineStringFieldTest(TestCase):
         )
 
     def test_geom_is_not_snapped_if_snap_is_null(self):
-        value = '{"geom": "%s", "snap": [null, null]}' % self.wktgeom
+        value = f'{{"geom": "{self.wktgeom}", "snap": [null, null]}}'
         self.assertTrue(
             self.f.clean(value).equals_exact(
                 LineString((100000, 100000), (200000, 200000), srid=settings.SRID), 0.1
@@ -68,7 +68,7 @@ class SnappedLineStringFieldTest(TestCase):
 
     def test_geom_is_snapped_if_path_pk_is_provided(self):
         path = PathFactory.create()
-        value = '{"geom": "%s", "snap": [null, %s]}' % (self.wktgeom, path.pk)
+        value = f'{{"geom": "{self.wktgeom}", "snap": [null, {path.pk}]}}'
         self.assertTrue(
             self.f.clean(value).equals_exact(
                 LineString((100000, 100000), (700000, 6600000), srid=settings.SRID), 0.1

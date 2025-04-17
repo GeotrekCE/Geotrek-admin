@@ -76,7 +76,7 @@ class Command(BaseCommand):
                     ):
                         if verbosity > 0:
                             self.stdout.write(
-                                "%s's geometry is not a polygon" % feat.get(name_column)
+                                f"{feat.get(name_column)}'s geometry is not a polygon"
                             )
                         break
                     elif isinstance(geom, Polygon):
@@ -84,11 +84,8 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if geom.valid:
-                        if (
-                            do_intersect
-                            and bbox.intersects(geom)
-                            or not do_intersect
-                            and geom.within(bbox)
+                        if (do_intersect and bbox.intersects(geom)) or (
+                            not do_intersect and geom.within(bbox)
                         ):
                             instance, created = City.objects.update_or_create(
                                 code=feat.get(code_column),
@@ -96,8 +93,7 @@ class Command(BaseCommand):
                             )
                             if verbosity > 0:
                                 self.stdout.write(
-                                    "%s %s"
-                                    % (
+                                    "{} {}".format(
                                         "Created" if created else "Updated",
                                         feat.get(name_column),
                                     )
@@ -105,14 +101,16 @@ class Command(BaseCommand):
                     else:
                         if verbosity > 0:
                             self.stdout.write(
-                                "%s's geometry is not valid" % feat.get(name_column)
+                                f"{feat.get(name_column)}'s geometry is not valid"
                             )
                 except IndexError:
                     if count_error == 0:
                         self.stdout.write(
                             "Code's attribute or Name's attribute do not correspond with options\n"
                             "Please, use --code and --name to fix it.\n"
-                            "Fields in your file are : %s" % ", ".join(layer.fields)
+                            "Fields in your file are : {}".format(
+                                ", ".join(layer.fields)
+                            )
                         )
                     count_error += 1
 
@@ -124,6 +122,5 @@ class Command(BaseCommand):
             try:
                 geom.transform(settings.SRID)
             except GDALException:
-                raise CommandError(
-                    "SRID is not well configurate, change/add option srid"
-                )
+                msg = "SRID is not well configurate, change/add option srid"
+                raise CommandError(msg)

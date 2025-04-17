@@ -252,7 +252,7 @@ class Report(
     @property
     def full_url(self):
         try:
-            return "{}{}".format(settings.ALLOWED_HOSTS[0], self.get_detail_url())
+            return f"{settings.ALLOWED_HOSTS[0]}{self.get_detail_url()}"
         except KeyError:
             # Do not display url if there is no ALLOWED_HOSTS
             return ""
@@ -477,12 +477,7 @@ class Report(
         """
         Displayed on linked interventions' pages
         """
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (
-            self.pk,
-            self.get_detail_url(),
-            str(self),
-            str(self),
-        )
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self!s}">{self!s}</a>'
         return s
 
     @property

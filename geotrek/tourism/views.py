@@ -363,10 +363,9 @@ class TouristicEventOrganizerCreatePopup(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         return HttpResponse(
-            """
-            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>
+            f"""
+            <script type="text/javascript">opener.dismissAddAnotherPopup(window, "{escape(form.instance._get_pk_val())}", "{escape(form.instance)}");</script>
         """
-            % (escape(form.instance._get_pk_val()), escape(form.instance))
         )
 
 

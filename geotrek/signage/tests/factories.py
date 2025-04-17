@@ -61,7 +61,7 @@ class SignageConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SignageCondition
 
-    label = factory.Sequence(lambda n: "Condition %s" % n)
+    label = factory.Sequence(lambda n: f"Condition {n}")
 
 
 class SignageFactory(PointTopologyFactory):
@@ -95,14 +95,14 @@ class BladeConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BladeCondition
 
-    label = factory.Sequence(lambda n: "Condition %s" % n)
+    label = factory.Sequence(lambda n: f"Condition {n}")
 
 
 class BladeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
-    number = factory.Sequence(lambda n: "%s" % n)
+    number = factory.Sequence(lambda n: f"{n}")
     type = factory.SubFactory(BladeTypeFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
     color = factory.SubFactory(BladeColorFactory)
@@ -124,9 +124,9 @@ class LinePictogramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LinePictogram
 
-    label = factory.Sequence(lambda n: "Label %s" % n)
-    code = factory.Sequence(lambda n: "Code %s" % n)
-    description = factory.Sequence(lambda n: "Description %s" % n)
+    label = factory.Sequence(lambda n: f"Label {n}")
+    code = factory.Sequence(lambda n: f"Code {n}")
+    description = factory.Sequence(lambda n: f"Description {n}")
 
 
 class LineFactory(factory.django.DjangoModelFactory):

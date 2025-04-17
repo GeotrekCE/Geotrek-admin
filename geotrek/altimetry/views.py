@@ -88,9 +88,7 @@ def serve_elevation_chart(request, model_name, pk, from_command=False):
     if not obj.is_public():
         if not request.user.is_authenticated:
             raise PermissionDenied
-        if not request.user.has_perm(
-            "%s.read_%s" % (model._meta.app_label, model_name)
-        ):
+        if not request.user.has_perm(f"{model._meta.app_label}.read_{model_name}"):
             raise PermissionDenied
     language = request.LANGUAGE_CODE
     obj.prepare_elevation_chart(language)

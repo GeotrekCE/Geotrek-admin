@@ -273,7 +273,8 @@ class CourseForm(CommonForm):
         for child in children:
             if child.course_children.exists():
                 raise ValidationError(
-                    _(f"Cannot use parent course {child.name} as a child course.")
+                    _("Cannot use parent course %(name)s as a child course.")
+                    % {"name": child.name}
                 )
         return children
 

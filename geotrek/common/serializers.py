@@ -11,7 +11,7 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
         kwargs = {}
         if issubclass(
             model_field.__class__,
-            (django_db_models.CharField, django_db_models.TextField),
+            django_db_models.CharField | django_db_models.TextField,
         ):
             if model_field.null:
                 kwargs["allow_none"] = True

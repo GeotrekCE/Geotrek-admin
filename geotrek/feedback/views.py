@@ -178,7 +178,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
         geojson_lookup = None
         latest_saved = feedback_models.Report.latest_updated()
         if latest_saved:
-            geojson_lookup = "%s_report_%s_%s_geojson_layer" % (
+            geojson_lookup = "{}_report_{}_{}_geojson_layer".format(
                 language,
                 latest_saved.isoformat(),
                 self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",

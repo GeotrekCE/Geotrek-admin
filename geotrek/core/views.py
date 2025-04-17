@@ -59,7 +59,7 @@ class CreateFromTopologyMixin:
             try:
                 return Topology.objects.existing().get(pk=pk)
             except Topology.DoesNotExist:
-                logger.warning("Intervention on unknown topology %s" % pk)
+                logger.warning("Intervention on unknown topology %s", pk)
         return None
 
     def get_initial(self):
@@ -104,7 +104,8 @@ class PathFormatList(MapEntityFormat, PathList):
         "date_update",
         "length_2d",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
     def get_queryset(self):
         return (
@@ -130,7 +131,7 @@ class PathGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     def render_to_response(self, context):
         gpx_serializer = GPXSerializer()
         response = HttpResponse(content_type="application/gpx+xml")
-        response["Content-Disposition"] = 'attachment; filename="%s.gpx"' % self.object
+        response["Content-Disposition"] = f'attachment; filename="{self.object}.gpx"'
         gpx_serializer.serialize([self.object], stream=response, gpx_field="geom_3d")
         return response
 
@@ -142,7 +143,7 @@ class PathKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         response = HttpResponse(
             self.object.kml(), content_type="application/vnd.google-earth.kml+xml"
         )
-        response["Content-Disposition"] = 'attachment; filename="%s.kml"' % self.object
+        response["Content-Disposition"] = f'attachment; filename="{self.object}.kml"'
         return response
 
 
@@ -316,7 +317,7 @@ class PathViewSet(GeotrekMapentityViewSet):
         geojson_lookup = None
 
         if latest_saved:
-            geojson_lookup = "%s_path_%s%s_json_layer" % (
+            geojson_lookup = "{}_path_{}{}_json_layer".format(
                 language,
                 latest_saved.strftime("%y%m%d%H%M%S%f"),
                 "_nodraft" if no_draft else "",
@@ -386,7 +387,7 @@ class PathViewSet(GeotrekMapentityViewSet):
 
         except Exception as exc:
             response = {
-                "error": "%s" % exc,
+                "error": f"{exc}",
             }
 
         return Response(response)
@@ -402,33 +403,35 @@ class PathViewSet(GeotrekMapentityViewSet):
             params = request.data
             steps = params.get("steps")
             if steps is None:
-                raise Exception("Request parameters should contain a 'steps' array")
+                msg = "Request parameters should contain a 'steps' array"
+                raise Exception(msg)
             if len(steps) < 2:
-                raise Exception("There must be at least 2 steps")
+                msg = "There must be at least 2 steps"
+                raise Exception(msg)
             for step in steps:
                 lat = step.get("lat")
                 lng = step.get("lng")
                 if (
-                    not isinstance(lat, (int, float))
-                    or not isinstance(lng, (int, float))
+                    not isinstance(lat, int | float)
+                    or not isinstance(lng, int | float)
                     or lat < 0
                     or 90 < lat
                     or lng < -180
                     or 180 < lng
                 ):
-                    raise Exception(
-                        "Each step should contain a valid latitude and longitude"
-                    )
+                    msg = "Each step should contain a valid latitude and longitude"
+                    raise Exception(msg)
                 path_id = step.get("path_id")
                 if (
                     not isinstance(path_id, int)
                     or Path.objects.filter(pk=path_id).first() is None
                 ):
-                    raise Exception("Each step should contain a valid path id")
+                    msg = "Each step should contain a valid path id"
+                    raise Exception(msg)
         except Exception as exc:
             return Response(
                 {
-                    "error": "%s" % exc,
+                    "error": f"{exc}",
                 },
                 400,
             )
@@ -444,7 +447,7 @@ class PathViewSet(GeotrekMapentityViewSet):
         except Exception as exc:
             response, status = (
                 {
-                    "error": "%s" % exc,
+                    "error": f"{exc}",
                 },
                 500,
             )
@@ -490,7 +493,8 @@ class TrailFormatList(MapEntityFormat, TrailList):
         "districts",
         "areas",
         "uuid",
-    ] + AltimetryMixin.COLUMNS
+        *AltimetryMixin.COLUMNS,
+    ]
 
     def get_queryset(self):
         return (
@@ -523,7 +527,7 @@ class TrailGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     def render_to_response(self, context):
         gpx_serializer = GPXSerializer()
         response = HttpResponse(content_type="application/gpx+xml")
-        response["Content-Disposition"] = 'attachment; filename="%s.gpx"' % self.object
+        response["Content-Disposition"] = f'attachment; filename="{self.object}.gpx"'
         gpx_serializer.serialize([self.object], stream=response, gpx_field="geom_3d")
         return response
 
@@ -535,7 +539,7 @@ class TrailKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         response = HttpResponse(
             self.object.kml(), content_type="application/vnd.google-earth.kml+xml"
         )
-        response["Content-Disposition"] = 'attachment; filename="%s.kml"' % self.object
+        response["Content-Disposition"] = f'attachment; filename="{self.object}.kml"'
         return response
 
 

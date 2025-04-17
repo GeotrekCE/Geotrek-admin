@@ -125,9 +125,7 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(
-                self.object.pk
-            ).encode(),
+            f'<form  action="/add-accessibility-for/trekking/trek/{self.object.pk}/"'.encode(),
             html.content,
         )
 
@@ -140,15 +138,11 @@ class EntityAttachmentTestCase(TestCase):
         html = response.render()
         self.assertIn(b"Submit attachment", html.content)
         self.assertIn(
-            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(
-                self.object.pk
-            ).encode(),
+            f'<form  action="/add-accessibility-for/trekking/trek/{self.object.pk}/"'.encode(),
             html.content,
         )
         self.assertIn(
-            '<form  action="/paperclip/add-for/trekking/trek/{}/"'.format(
-                self.object.pk
-            ).encode(),
+            f'<form  action="/paperclip/add-for/trekking/trek/{self.object.pk}/"'.encode(),
             html.content,
         )
 
@@ -176,9 +170,7 @@ class EntityAttachmentTestCase(TestCase):
 
         self.assertNotIn(b"Submit attachment", html)
         self.assertNotIn(
-            '<form  action="/add-accessibility-for/trekking/trek/{}/"'.format(
-                self.object.pk
-            ).encode(),
+            f'<form  action="/add-accessibility-for/trekking/trek/{self.object.pk}/"'.encode(),
             html,
         )
         self.assertIn(
@@ -247,9 +239,7 @@ class EntityAttachmentTestCase(TestCase):
 
         self.assertNotIn(b"Submit attachment", html)
         self.assertNotIn(
-            '<form  action="/trekking/add-for/trekking/trek/{}/"'.format(
-                self.object.pk
-            ).encode(),
+            f'<form  action="/trekking/add-for/trekking/trek/{self.object.pk}/"'.encode(),
             html,
         )
         self.assertIn(

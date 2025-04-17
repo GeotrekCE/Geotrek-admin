@@ -141,7 +141,7 @@ class CommandUnsetStructureTests(TestCase):
 class CommandAttachmentsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.content = POIFactory(geom="SRID=%s;POINT(1 1)" % settings.SRID)
+        cls.content = POIFactory(geom=f"SRID={settings.SRID};POINT(1 1)")
 
     def setUp(self):
         self.picture = AttachmentFactory(
@@ -153,26 +153,16 @@ class CommandAttachmentsTests(TestCase):
         self.assertIsNotNone(self.content.thumbnail)
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertTrue(
-            os.path.exists(
-                "{path}.120x120_q85_crop.png".format(
-                    path=self.picture.attachment_file.path
-                )
-            )
+            os.path.exists(f"{self.picture.attachment_file.path}.120x120_q85_crop.png")
         )
         self.assertEqual(
             Thumbnail.objects.first().name,
-            "{name}.120x120_q85_crop.png".format(
-                name=self.picture.attachment_file.name
-            ),
+            f"{self.picture.attachment_file.name}.120x120_q85_crop.png",
         )
         call_command("remove_thumbnails", stdout=output)
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertFalse(
-            os.path.exists(
-                "{name}.120x120_q85_crop.png".format(
-                    name=self.picture.attachment_file.path
-                )
-            )
+            os.path.exists(f"{self.picture.attachment_file.path}.120x120_q85_crop.png")
         )
         self.assertEqual(Thumbnail.objects.count(), 0)
 
@@ -181,7 +171,7 @@ class CommandAttachmentsTests(TestCase):
         self.picture.delete()
         call_command("clean_attachments", stdout=output, verbosity=2)
         self.assertIn(
-            "%s... DELETED" % self.picture.attachment_file.name, output.getvalue()
+            f"{self.picture.attachment_file.name}... DELETED", output.getvalue()
         )
         self.assertFalse(os.path.exists(self.picture.attachment_file.path))
 
@@ -189,7 +179,7 @@ class CommandAttachmentsTests(TestCase):
         output = StringIO()
         call_command("clean_attachments", stdout=output, verbosity=2)
         self.assertIn(
-            "%s... Found" % self.picture.attachment_file.name, output.getvalue()
+            f"{self.picture.attachment_file.name}... Found", output.getvalue()
         )
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
 
@@ -197,9 +187,7 @@ class CommandAttachmentsTests(TestCase):
         output = StringIO()
         self.assertIsNotNone(self.content.thumbnail)
         call_command("clean_attachments", stdout=output, verbosity=2)
-        self.assertIn(
-            "%s... Thumbnail" % self.content.thumbnail.name, output.getvalue()
-        )
+        self.assertIn(f"{self.content.thumbnail.name}... Thumbnail", output.getvalue())
         self.assertTrue(os.path.exists(self.content.thumbnail.path))
 
 

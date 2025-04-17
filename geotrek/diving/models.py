@@ -194,7 +194,7 @@ class Dive(
 
     @property
     def display_geom(self):
-        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
+        return f"{format_coordinates(self.geom)} ({spatial_reference()})"
 
     def distance(self, to_cls):
         return settings.DIVING_INTERSECTION_MARGIN
