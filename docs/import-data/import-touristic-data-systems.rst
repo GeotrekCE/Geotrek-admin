@@ -286,11 +286,42 @@ To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/va
     class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
         provider = "OpenStreetMap"
         tags = {"amenity": "ranger_station"}
+        default_fields_values = {"name": "Maison du Parc"}
         type = "Maisons du parc"
 
 Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``type`` to specify the Geotrek type for imported objects
+* See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+Import POI
+----------
+
+To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.trekking.parsers import OpenStreetMapPOIParser
+
+    class HistoryParser(OpenStreetMapPOIParser):
+        provider = "OpenStreetMap"
+        tags = {
+            "historic": ["yes","castel","memorial","fort","bunker"],
+            "building": "church",
+        }
+        default_fields_values = {"name": "Historic spot"}
+        type = "Histoire"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+    * if there is multiple tags with the same key, groups the different attributs in a list
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
