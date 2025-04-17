@@ -111,6 +111,7 @@ django==4.2.20
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
+    #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
     #   easy-thumbnails
@@ -177,7 +178,7 @@ docutils==0.21.2
     # via geotrek (setup.py)
 drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
-drf-extensions==0.7.1
+drf-extensions==0.8.0
     # via geotrek (setup.py)
 drf-spectacular==0.28.0
     # via django-large-image
@@ -249,6 +250,7 @@ numpy==2.2.4
     #   shapely
 packaging==24.2
     # via
+    #   drf-extensions
     #   drf-yasg
     #   gunicorn
     #   large-image-source-vips
