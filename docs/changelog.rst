@@ -27,6 +27,7 @@ CHANGELOG
 
 - Update documentation about paths with docker commands (#4578)
 - Update instructions to regenerate UML diagrams of data model (#4594)
+- Update documentation about map settings and tourism/outdoor intersection margin 
 
 2.114.0     (2025-03-13)
 ----------------------------
