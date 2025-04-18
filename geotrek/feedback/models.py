@@ -790,7 +790,7 @@ class WorkflowManager(models.Model):
     def notify_new_reports(self, reports):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
-            reports_urls.append(f"https://{report.full_url}")
+            reports_urls.append(f"{report.full_url}")
         trad = _("New reports from Suricate")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
