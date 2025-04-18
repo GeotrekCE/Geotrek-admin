@@ -202,31 +202,62 @@ All layers colors can be customized from the settings. See `Leaflet reference <h
 
         .. code-block:: python
 
-    
                 MAPENTITY_CONFIG['MAP_STYLES'] = {
+                    # Path
                     'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+
+                    # Draft path
                     'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+
+                    # City
                     'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+
+                    # District
                     'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+
+                    # Restricted area
                     'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+
+                    # Land edge
                     'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Physical edge
                     'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+
+                    # Circulation edge
                     'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+
+                    # Competence edge
                     'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Work management edge
                     'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Signage management edge
                     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-    
+
+                    # File imported via FileLayer (e.g., GPX, KML, GeoJSON)
                     'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
-                    
+
+                    # Object detail (used to focus on a specific feature)
                     'detail': {'color': '#ffff00'},
+
+                    # Other objects
                     'others': {'color': '#ffff00'},
-    
+
+                    # Styles used for PDF printing
                     'print': {
+                        # Path
                         'path': {'weight': 1},
-                        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                                'arrowColor': 'black', 'arrowSize': 10},
+
+                        # Trek
+                        'trek': {
+                            'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                            'arrowColor': 'black', 'arrowSize': 10
+                        },
                     }
                 }
+
     .. md-tab-item:: Examples
 
             Example to override configuration for displaying ``Path`` objects::
