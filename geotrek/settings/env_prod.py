@@ -7,6 +7,8 @@ import os
 USE_X_FORWARDED_HOST = True
 COMPRESS_ENABLED = True
 
+USE_SSL = True
+
 
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.PyMemcacheCache'
 CACHES['default']['LOCATION'] = '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memcached'),
