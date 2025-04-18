@@ -39,7 +39,7 @@ if os.path.exists(DOT_ENV_FILE):
 
 # [Retrocompatibility] For prods where SERVER_NAME still contains several values:
 SERVER_NAMES = os.getenv("SERVER_NAME", "localhost").split(" ")
-ALLOWED_HOSTS = ["127.0.0.1", *SERVER_NAMES]  # allow "127.0.0.1" for docker healthcheck
+ALLOWED_HOSTS = ["127.0.0.1", *SERVER_NAMES]  # allow "127.0.0.1" for docker healthcheck
 ALLOWED_HOSTS = ["*" if host == "_" else host for host in ALLOWED_HOSTS]
 
 
