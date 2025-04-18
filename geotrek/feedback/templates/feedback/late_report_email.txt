@@ -4,8 +4,8 @@
 {% app_title as app_title %}
 {% trans "A report's processing is late on" %} {{ app_title }} :
 {% trans "Report" %} {% if report.eid|length %}{{report.eid}}{%else%}{{report.id}}{%endif%}
-    https://{{report.full_url}}
+    {{ report.full_url }}
 
-{% trans "Report has had status" %} '{{report.status.label}}' {% trans "for" %} {{report.status.timer_days}} {% trans "days." %} 
+{% trans "Report has had status" %} '{{report.status.label}}' {% trans "for" %} {{report.status.timer_days}} {% trans "days." %}
 
 {% endautoescape %}

@@ -116,4 +116,6 @@ RUN apt-get update -qq && apt-get -yqq full-upgrade && \
 
 USER geotrek
 
+HEALTHCHECK CMD curl --fail http://127.0.0.1:8000/api/settings.json
+
 CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]
