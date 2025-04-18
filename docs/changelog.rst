@@ -7,12 +7,13 @@ CHANGELOG
 
 **Warnings**
 
-- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
-- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
-- Attachment can now be managed for Information desks.
+- This release changes the Information desk `photo` attribute from `FileField` to `ImageField`.
+- All photos defined that are nor images nor SVGs are deleted from the `photo` attribute but backed up as attachments.
+- Attachments can now be managed for Information desks.
 
 **Bug fixes**
 
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
 - Fix log book filters by updating mapentity (#4576)
 - Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
