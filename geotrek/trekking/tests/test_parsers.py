@@ -228,7 +228,9 @@ class POIParserTests(TestCase):
     def test_import_cmd_raises_no_geom(self):
         with self.assertLogs(level="WARNING") as log:
             PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
-            filename = os.path.join(os.path.dirname(__file__), "data", "empty_geom.geojson")
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "empty_geom.geojson"
+            )
             output = StringIO()
             call_command(
                 "import",
