@@ -39,6 +39,7 @@ env:
   LANGUAGES: en fr
   LANGUAGE_CODE: en
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  PYTHONWARNINGS: ignore
 
 jobs:
   test:

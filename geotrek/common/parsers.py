@@ -748,7 +748,7 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except GDALException:
-                logger.warning(_("Invalid geometry pointer"), i)
+                logger.warning("Invalid geometry pointer")
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D

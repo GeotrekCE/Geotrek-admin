@@ -15,7 +15,6 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
 
 
-
 class Status(GeotrekMapEntityMixin):
     """
     Model with a verbose name to represent this module (meta-class)

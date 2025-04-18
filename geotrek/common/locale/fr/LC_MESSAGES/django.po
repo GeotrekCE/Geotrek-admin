@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:22+0200\n"
+"POT-Creation-Date: 2025-04-18 16:14+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -436,9 +436,6 @@ msgstr "Le fichier à l'emplacement {filename} n'existe pas"
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
-
-msgid "Invalid geometry pointer"
-msgstr "Pointeur de géométrie invalide"
 
 msgid "Attachments"
 msgstr "Pièce-jointes"
