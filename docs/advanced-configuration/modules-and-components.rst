@@ -348,13 +348,16 @@ You can define a buffer around treks to intersect POIs (works only without dynam
 Tourism
 -------
 
-.. _trek-tourism-intersection:
+The ``TOURISM_INTERSECTION_MARGIN`` and ``OUTDOOR_INTERSECTION_MARGIN`` settings define a radius (in meters) used to dynamically associate nearby content (POIs, services, events, tourism content, etc.) with other entities such as treks or outdoor sites. These parameters help control which elements are considered "nearby" and displayed in the public interface or included in print/PDF exports.
 
+.. _trek-tourism-intersection:
 
 Tourism intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Defines the distance within which tourist content, events, treks, POIs, and services are displayed.
+The ``TOURISM_INTERSECTION_MARGIN`` setting defines the maximum distance (in meters) within which tourism content and events are considered related to other objects (treks, POIs, services, etc.).
+
+This setting is especially useful to reduce the number of tourism contents displayed around a trek, in order to improve readability and performance in the map interface.
 
 .. md-tab-set::
     :name: tourism-intersection-margin-tabs
@@ -372,7 +375,34 @@ Defines the distance within which tourist content, events, treks, POIs, and serv
             TOURISM_INTERSECTION_MARGIN = 800  # meters
 
 .. note::
-  This distance can be customized per trek practice in the admin interface.
+   This distance can be customized **per trek practice** in the admin interface:
+   ``/admin/trekking/practice/<id>/change/``
+
+Outdoor intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``OUTDOOR_INTERSECTION_MARGIN`` setting defines the maximum distance (in meters) within which outdoor content (sites and courses) is considered related to other objects such as treks, POIs, services, or tourism content.
+
+Like the tourism intersection margin, it can help limit the number of associated elements shown around outdoor content, making the map and exports more readable.
+
+.. md-tab-set::
+    :name: outdoor-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+            OUTDOOR_INTERSECTION_MARGIN = 500  # meters
+
+    .. md-tab-item:: Example
+
+        .. code-block:: python
+
+            OUTDOOR_INTERSECTION_MARGIN = 800  # meters
+
+.. note::
+   - This setting applies **globally** to all outdoor objects (sites and courses) and **cannot be customized by activity**.
+   - Currently, adjusting the ``OUTDOOR_INTERSECTION_MARGIN`` also affects the distance used to associate outdoor content with treks. This side effect may lead to unintended behavior when trying to reduce only tourism content density around outdoor elements.
 
 Land
 -----
