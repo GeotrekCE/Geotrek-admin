@@ -226,18 +226,19 @@ class POIParserTests(TestCase):
         )
 
     def test_import_cmd_raises_no_geom(self):
-        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
-        filename = os.path.join(os.path.dirname(__file__), "data", "empty_geom.geojson")
-        output = StringIO()
-        call_command(
-            "import",
-            "geotrek.trekking.parsers.POIParser",
-            filename,
-            verbosity=2,
-            stdout=output,
-        )
-        self.assertEqual(POI.objects.count(), 0)
-        self.assertIn("Invalid geometry", output.getvalue())
+        with self.assertLogs(level="WARNING") as log:
+            PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+            filename = os.path.join(os.path.dirname(__file__), "data", "empty_geom.geojson")
+            output = StringIO()
+            call_command(
+                "import",
+                "geotrek.trekking.parsers.POIParser",
+                filename,
+                verbosity=2,
+                stdout=output,
+            )
+            self.assertEqual(POI.objects.count(), 0)
+            self.assertIn("Invalid geometry", log.output[-1])
 
     def test_create(self):
         PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))

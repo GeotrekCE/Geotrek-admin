@@ -65,9 +65,10 @@ os.makedirs(TMP_DIR)
 SESSION_FILE_PATH = os.path.join(TMP_DIR, 'sessions')
 os.makedirs(SESSION_FILE_PATH)
 
-LOGGING['loggers']['']['handlers'] = ('log_file', )
-LOGGING['handlers']['log_file']['level'] = 'INFO'
-LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,  # Disable all existing loggers
+}
 MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
 MAP_PATH = os.path.join(MEDIA_ROOT, 'maps')  # map files
 os.makedirs(MAP_PATH)
