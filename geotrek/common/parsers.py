@@ -1919,32 +1919,69 @@ class ApidaeBaseParser(Parser):
 
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
-
+    # parser settings
     delete = True
     flexible_fields = True
+
+    # query settings
     url = "https://overpass-api.de/api/interpreter/"
-    bbox = None
     tags = None
-    query = ""
+    query_settings = None
+
+    # OSM settings
     osm_srid = 4326
-    bbox_margin = 0.0
+
+    class QuerySettings:
+        bbox = None
+        bbox_margin = 0.0
+        osm_element_type = "nwr"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
 
-        bbox_str = self.get_bbox_str()
-        for tag, values in self.tags.items():
-            if not isinstance(values, list):
-                values = list(values)
-                for value in values:
-                    self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+        self.query_settings = self.QuerySettings()
+        self.query_settings.bbox = self.get_bbox_str()
+
+    def format_tags(self):
+        formated_tags = []
+        for tags in self.tags:
+            if isinstance(tags, dict):
+                tags = [tags]
+
+            list_tags = [f"['{key}'='{value}']" for tag in tags for key, value in tag.items()]
+            formated_tags.append(f"{self.query_settings.osm_element_type}{''.join(list_tags)};")
+
+        return formated_tags
 
     def get_bbox_str(self):
         bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
         return "{1},{0},{3},{2}".format(*bbox)
+
+    def build_query(self):
+        """
+        self.tags defines the set of tag filters to be used with the Overpass API.
+        It is a list, where each element is either:
+          - A dictionary: representing a single tag filter (e.g., {"boundary": "administrative"}), or
+          - A list of dictionaries: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+        The Overpass query will return the UNION of all top-level items.
+          For example:
+            self.tags = [
+                [{"boundary": "administrative"}, {"admin_level": "4"}],
+                {"highway": "bus_stop"}
+            ]
+          means: return objects that either have both `boundary=administrative` AND `admin_level=4`,
+          OR have `highway=bus_stop`.
+        Tag value lists and negations are not supported.
+        Conflicts between tags in the same sublist are not detected or handled.
+        """
+        tags_filters = self.format_tags()
+        query = f"[out:json][timeout:180][bbox:{self.query_settings.bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        return query
 
     def get_tag_info(self, osm_tags):
         for tag in osm_tags:
@@ -1976,7 +2013,7 @@ class OpenStreetMapParser(Parser):
 
     def next_row(self):
         params = {
-            "data": f"[out:json];({self.query});out geom;",
+            "data": self.build_query()
         }
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
@@ -1985,3 +2022,7 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+    def filter_eid(self, src, val):
+        type, id = val
+        return f"{type[0].upper()}{id}"
