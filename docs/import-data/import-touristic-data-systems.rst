@@ -286,6 +286,10 @@ Overpass queries are written in Overpass QL. Query configuration is handled thro
 
     * ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
 
+    * ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
+        * ``geom``: return the object type, the object ID, the tags and the geometry
+        * ``tags``: return the object type, the object ID and the tags
+
 The ``tags`` attribute defines filters for selecting OSM elements. It is a list where each item is either:
 
     * A **dictionary**, e.g., ``{"highway": "bus_stop"}``
