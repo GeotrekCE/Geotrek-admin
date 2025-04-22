@@ -1548,9 +1548,10 @@ class OpenStreetMapTestParser(TestCase):
         )
 
         osm_class.query_settings.osm_element_type = "relation"
+        osm_class.query_settings.output = "tags"
 
         # custom settings
         self.assertIn(
-            "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out geom;",
+            "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
             osm_class.build_query(),
         )
