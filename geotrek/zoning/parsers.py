@@ -74,7 +74,6 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
 
         wkt = root["geotext"]
         geom = fromstr(wkt, srid=self.osm_srid)
-
         geom.srid = self.osm_srid
         geom.transform(settings.SRID)
 

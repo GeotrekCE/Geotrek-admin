@@ -224,6 +224,10 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
 
     The ``--intersect`` option allows you to import features outside the spatial extent of the project.
 
+.. seealso::
+
+    Refer to :ref:`this section <../import-touristic-data-systems/import-district>` to import districts from OpenStreetMap.
+
 .. _import-restricted-areas:
 
 Load Restricted areas
