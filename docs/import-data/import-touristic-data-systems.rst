@@ -276,7 +276,7 @@ Import from OpenStreetMap
 
 OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
-By default, the parser uses the German Overpass server: 
+By default, the parser uses the German Overpass server:
 ``https://overpass-api.de/api/interpreter/``
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
 
