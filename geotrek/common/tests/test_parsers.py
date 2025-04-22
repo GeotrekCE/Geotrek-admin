@@ -1511,8 +1511,8 @@ class OpenStreetMapInitialisationTest(OpenStreetMapParser):
 class OpenStreetMapQueryTest(OpenStreetMapParser):
     model = InformationDesk
     tags = [
-        [{"boundary": "administrative"},{"admin_level": "4"}],
-        {"boundary": "protected_area"}
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"boundary": "protected_area"},
     ]
 
 
@@ -1542,9 +1542,15 @@ class OpenStreetMapTestParser(TestCase):
         )
 
         # default settings
-        self.assertIn("(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;", osm_class.build_query())
+        self.assertIn(
+            "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
+            osm_class.build_query(),
+        )
 
         osm_class.query_settings.osm_element_type = "relation"
 
         # custom settings
-        self.assertIn("(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out geom;", osm_class.build_query())
+        self.assertIn(
+            "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out geom;",
+            osm_class.build_query(),
+        )
