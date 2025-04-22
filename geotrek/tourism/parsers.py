@@ -1396,7 +1396,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
     eid = "eid"
 
     fields = {
-        "eid": "id",
+        "eid": ("type", "id"),  # ids are unique only for object of the same type,
         "phone": ("tags.contact:phone", "tags.phone"),
         "email": ("tags.contact:email", "tags.email"),
         "website": ("tags.contact:website", "tags.website"),
