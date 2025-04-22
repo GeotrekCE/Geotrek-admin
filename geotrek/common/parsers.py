@@ -1919,6 +1919,7 @@ class ApidaeBaseParser(Parser):
 
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
+
     # parser settings
     delete = True
     flexible_fields = True
@@ -1952,8 +1953,12 @@ class OpenStreetMapParser(Parser):
             if isinstance(tags, dict):
                 tags = [tags]
 
-            list_tags = [f"['{key}'='{value}']" for tag in tags for key, value in tag.items()]
-            formated_tags.append(f"{self.query_settings.osm_element_type}{''.join(list_tags)};")
+            list_tags = [
+                f"['{key}'='{value}']" for tag in tags for key, value in tag.items()
+            ]
+            formated_tags.append(
+                f"{self.query_settings.osm_element_type}{''.join(list_tags)};"
+            )
 
         return formated_tags
 
@@ -2012,9 +2017,7 @@ class OpenStreetMapParser(Parser):
         return centroid
 
     def next_row(self):
-        params = {
-            "data": self.build_query()
-        }
+        params = {"data": self.build_query()}
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
         self.nb = len(self.root["elements"])

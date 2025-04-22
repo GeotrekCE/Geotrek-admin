@@ -2382,7 +2382,7 @@ class TestPOIOpenStreetMapParser(OpenStreetMapPOIParser):
         {"natural": "saddle"},
         {"natural": "wood"},
         {"tourism": "alpine_hut"},
-        {"mountain_pass": "yes"}
+        {"mountain_pass": "yes"},
     ]
     default_fields_values = {"name": "Test"}
     type = "Test"
