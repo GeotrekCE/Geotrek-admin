@@ -1508,6 +1508,14 @@ class OpenStreetMapInitialisationTest(OpenStreetMapParser):
     model = InformationDesk
 
 
+class OpenStreetMapQueryTest(OpenStreetMapParser):
+    model = InformationDesk
+    tags = [
+        [{"boundary": "administrative"},{"admin_level": "4"}],
+        {"boundary": "protected_area"}
+    ]
+
+
 class OpenStreetMapTestParser(TestCase):
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
@@ -1516,3 +1524,27 @@ class OpenStreetMapTestParser(TestCase):
                 "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest",
                 verbosity=2,
             )
+
+    @mock.patch("requests.get")
+    def test_query(self, mocked):
+        def mocked_json():
+            return {"elements": {}}
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+
+        osm_class = OpenStreetMapQueryTest()
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.OpenStreetMapQueryTest",
+            verbosity=0,
+        )
+
+        # default settings
+        self.assertIn("(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;", osm_class.build_query())
+
+        osm_class.query_settings.osm_element_type = "relation"
+
+        # custom settings
+        self.assertIn("(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out geom;", osm_class.build_query())
