@@ -1958,7 +1958,7 @@ class OpenStreetMapParser(Parser):
         return formated_tags
 
     def get_bbox_str(self):
-        bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
+        bbox = api_bbox(settings.SPATIAL_EXTENT, self.query_settings.bbox_margin)
         return "{1},{0},{3},{2}".format(*bbox)
 
     def build_query(self):
@@ -1980,7 +1980,7 @@ class OpenStreetMapParser(Parser):
         Conflicts between tags in the same sublist are not detected or handled.
         """
         tags_filters = self.format_tags()
-        query = f"[out:json][timeout:180][bbox:{self.query_settings.bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        query = f"[out:json][timeout:180][bbox:{self.query_settings.bbox}];({''.join(tags_filters)});out geom;"
         return query
 
     def get_tag_info(self, osm_tags):
