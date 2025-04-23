@@ -2072,7 +2072,5 @@ class OpenStreetMapParser(Parser):
     def get_val(self, row, dst, src):
         val = super().get_val(row, dst, src)
         if not hasattr(self, f"filter_{dst}") and isinstance(val, list):
-            for tag in val:
-                if tag or tag == 0:
-                    return tag
+            return next((item for item in val if item is not None), None)
         return val
