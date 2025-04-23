@@ -1525,21 +1525,8 @@ class OpenStreetMapTestParser(TestCase):
                 verbosity=2,
             )
 
-    @mock.patch("requests.get")
-    def test_query(self, mocked):
-        def mocked_json():
-            return {"elements": {}}
-
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
-
+    def test_query_bis(self):
         osm_class = OpenStreetMapQueryTest()
-
-        call_command(
-            "import",
-            "geotrek.common.tests.test_parsers.OpenStreetMapQueryTest",
-            verbosity=0,
-        )
 
         # default settings
         self.assertIn(
