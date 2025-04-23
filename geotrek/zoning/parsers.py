@@ -79,7 +79,7 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
         geom.srid = self.osm_srid
         geom.transform(settings.SRID)
 
-        if geom is Polygon:
+        if isinstance(geom, Polygon):
             geom = MultiPolygon(geom)
 
         return geom
