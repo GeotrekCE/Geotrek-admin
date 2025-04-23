@@ -411,13 +411,17 @@ class PathViewSet(GeotrekMapentityViewSet):
             for step in steps:
                 lat = step.get("lat")
                 lng = step.get("lng")
+                pathPosition = step.get("positionOnPath")
                 if (
                     not isinstance(lat, int | float)
                     or not isinstance(lng, int | float)
+                    or not isinstance(pathPosition, int | float)
                     or lat < 0
                     or 90 < lat
                     or lng < -180
                     or 180 < lng
+                    or pathPosition < 0
+                    or pathPosition > 1
                 ):
                     msg = "Each step should contain a valid latitude and longitude"
                     raise Exception(msg)

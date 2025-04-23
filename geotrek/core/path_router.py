@@ -42,7 +42,7 @@ class PathRouter:
         """
         self.steps = steps
         self.steps_topo = [
-            {"edge_id": step.get("path_id"), "fraction": self.get_step_fraction(step)}
+            {"edge_id": step.get("path_id"), "fraction": step.get("positionOnPath")} # ex : 0.8596
             for step in steps
         ]
         line_strings, serialized_topology = self.compute_all_steps_routes()
@@ -51,26 +51,26 @@ class PathRouter:
 
         multi_line_string = GeometryCollection(line_strings, srid=settings.SRID)
         multi_line_string.transform(settings.API_SRID)
-        geojson = json.loads(multi_line_string.geojson)
+        geojson = json.loads(line_strings.geojson)
 
         return {"geojson": geojson, "serialized": serialized_topology}
 
-    def get_step_fraction(self, step):
-        """
-        For one step on a path, returns its position on the path.
-        """
-        # Transform the point to the right SRID
-        point = Point(step.get("lng"), step.get("lat"), srid=settings.API_SRID)
-        point.transform(settings.SRID)
-        # Get the closest path
-        closest_path = Path.objects.get(pk=step.get("path_id"))
-        # Get which fraction of the Path this point is on
-        closest_path_geom = f"'{closest_path.geom}'"
-        point_geom = f"'{point.ewkt}'"
-        fraction_of_distance = sqlfunction(
-            "SELECT ST_LineLocatePoint", closest_path_geom, point_geom
-        )[0]
-        return fraction_of_distance
+    # def get_step_fraction(self, step):
+    #     """
+    #     For one step on a path, returns its position on the path.
+    #     """
+    #     # Transform the point to the right SRID
+    #     point = Point(step.get("lng"), step.get("lat"), srid=settings.API_SRID)
+    #     point.transform(settings.SRID)
+    #     # Get the closest path
+    #     closest_path = Path.objects.get(pk=step.get("path_id"))
+    #     # Get which fraction of the Path this point is on
+    #     closest_path_geom = f"'{closest_path.geom}'"
+    #     point_geom = f"'{point.ewkt}'"
+    #     fraction_of_distance = sqlfunction(
+    #         "SELECT ST_LineLocatePoint", closest_path_geom, point_geom
+    #     )[0]
+    #     return fraction_of_distance
 
     def compute_all_steps_routes(self):
         """
