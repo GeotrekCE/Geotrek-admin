@@ -226,7 +226,7 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
 
 .. seealso::
 
-    Refer to :ref:`this section <../import-touristic-data-systems/import-district>` to import districts from OpenStreetMap.
+    Refer to :ref:`this section <./import-touristic-data-systems/import-district>` to import districts from OpenStreetMap.
 
 .. _import-restricted-areas:
 
