@@ -1,12 +1,9 @@
-from django.contrib.gis.geos import MultiPolygon, Polygon
-from django.utils.translation import gettext as _
-from django.contrib.gis.geos import fromstr
 from django.conf import settings
+from django.contrib.gis.geos import MultiPolygon, Polygon, fromstr
+from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import GlobalImportError, ShapeParser, OpenStreetMapParser
+from geotrek.common.parsers import GlobalImportError, OpenStreetMapParser, ShapeParser
 from geotrek.zoning.models import City, District
-
-import logging
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -45,6 +42,7 @@ class CityParser(ShapeParser):
 
 class OpenStreetMapDistrictParser(OpenStreetMapParser):
     """Parser to import district from OpenStreetMap"""
+
     model = District
     fields = {
         "name": "tags.name",
@@ -70,7 +68,7 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
             "osm_ids": osm_id,
             "polygon_text": 1,
             "format": "json",
-            "polygon_threshold": 0.0001
+            "polygon_threshold": 0.0001,
         }
         response = self.request_or_retry(url, params=params)
         root = response.json()[0]
@@ -81,7 +79,7 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
         geom.srid = self.osm_srid
         geom.transform(settings.SRID)
 
-        if type(geom) == Polygon:
+        if geom is Polygon:
             geom = MultiPolygon(geom)
 
         return geom

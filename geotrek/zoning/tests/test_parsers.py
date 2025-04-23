@@ -1,5 +1,6 @@
-import os
 import json
+import os
+from unittest import mock
 
 from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
 from django.core.management import CommandError, call_command
@@ -7,8 +8,6 @@ from django.test import TestCase
 
 from geotrek.zoning.models import City, District
 from geotrek.zoning.parsers import CityParser, OpenStreetMapDistrictParser
-
-from unittest import mock
 
 WKT = (
     b"MULTIPOLYGON (((309716.2814 6698350.2022, 330923.9024 6728938.1171, "
@@ -66,13 +65,10 @@ class FilterGeomTest(TestCase):
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
     provider = "OpenStreetMap"
-    tags = [
-        [{"boundary": "administrative"}, {"admin_level": "6"}]
-    ]
+    tags = [[{"boundary": "administrative"}, {"admin_level": "6"}]]
 
 
 class OpenStreetMapDistrictParser(TestCase):
-
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_district(self, nominatim_file, mocked):
         def mocked_json_overpass():
@@ -83,9 +79,7 @@ class OpenStreetMapDistrictParser(TestCase):
                 return json.load(f)
 
         def mocked_json_nominatim():
-            filename = os.path.join(
-                os.path.dirname(__file__), "data", nominatim_file
-            )
+            filename = os.path.join(os.path.dirname(__file__), "data", nominatim_file)
             with open(filename) as f:
                 return json.load(f)
 
@@ -109,10 +103,15 @@ class OpenStreetMapDistrictParser(TestCase):
     def test_query_OSM(self):
         query = TestDistrictOpenStreetMapParser().build_query()
 
-        self.assertIn("(relation['boundary'='administrative']['admin_level'='6'];);out tags;", query)
+        self.assertIn(
+            "(relation['boundary'='administrative']['admin_level'='6'];);out tags;",
+            query,
+        )
 
     def test_multipolygon_OSM(self):
-        nominatim_file = os.path.join(os.path.dirname(__file__), "data", "district_multipolygon.json")
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_multipolygon.json"
+        )
         self.import_district(nominatim_file)
 
         self.assertEqual(len(self.district), 1)
@@ -120,14 +119,24 @@ class OpenStreetMapDistrictParser(TestCase):
         self.assertEqual(len(self.district[0].geom), 2)
 
         # test the first point of each polygon
-        self.assertAlmostEqual(self.district[0].geom.coords[0][0][0][0], 869953.4333298746)
-        self.assertAlmostEqual(self.district[0].geom.coords[0][0][0][1], 6365109.915336954)
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[0][0][0][0], 869953.4333298746
+        )
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[0][0][0][1], 6365109.915336954
+        )
 
-        self.assertAlmostEqual(self.district[0].geom.coords[1][0][0][0], 872596.9093673624)
-        self.assertAlmostEqual(self.district[0].geom.coords[1][0][0][1], 6367024.025305742)
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[1][0][0][0], 872596.9093673624
+        )
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[1][0][0][1], 6367024.025305742
+        )
 
     def test_polygon_OSM(self):
-        nominatim_file = os.path.join(os.path.dirname(__file__), "data", "district_polygon.json")
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_polygon.json"
+        )
         self.import_district(nominatim_file)
 
         self.assertEqual(len(self.district), 1)
@@ -135,11 +144,17 @@ class OpenStreetMapDistrictParser(TestCase):
         self.assertEqual(len(self.district[0].geom), 1)
 
         # test the first point of each polygon
-        self.assertAlmostEqual(self.district[0].geom.coords[0][0][0][0], 872596.9093673624)
-        self.assertAlmostEqual(self.district[0].geom.coords[0][0][0][1], 6367024.025305742)
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[0][0][0][0], 872596.9093673624
+        )
+        self.assertAlmostEqual(
+            self.district[0].geom.coords[0][0][0][1], 6367024.025305742
+        )
 
     def test_name_OSM(self):
-        nominatim_file = os.path.join(os.path.dirname(__file__), "data", "district_polygon.json")
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_polygon.json"
+        )
         self.import_district(nominatim_file)
 
         self.assertEqual(self.district[0].name, "Venterol")

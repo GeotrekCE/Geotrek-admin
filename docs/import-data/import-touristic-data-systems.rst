@@ -371,7 +371,7 @@ The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bo
 You can duplicate the class to import different types of Point of interest. In that case, each class must have a unique name and provider label.
 
 Import District
-----------
+---------------
 
 To import District from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
