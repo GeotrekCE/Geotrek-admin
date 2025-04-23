@@ -312,6 +312,8 @@ For example:
 
 *means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
 
+.. _import-information-desk:
+
 Import information desks
 -------------------------
 
@@ -336,6 +338,8 @@ Then set up appropriate values:
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+.. _import-poi:
 
 Import POI
 ----------
@@ -369,6 +373,8 @@ Then set up appropriate values:
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of Point of interest. In that case, each class must have a unique name and provider label.
+
+.. _import-district:
 
 Import District
 ---------------
