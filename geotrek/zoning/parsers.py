@@ -6,6 +6,8 @@ from django.conf import settings
 from geotrek.common.parsers import GlobalImportError, ShapeParser, OpenStreetMapParser
 from geotrek.zoning.models import City, District
 
+import logging
+
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
 class CityParser(ShapeParser):
@@ -43,8 +45,6 @@ class CityParser(ShapeParser):
 
 class OpenStreetMapDistrictParser(OpenStreetMapParser):
     """Parser to import district from OpenStreetMap"""
-    osm_element_type = "relation"
-
     model = District
     fields = {
         "name": "tags.name",
@@ -56,6 +56,9 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.query_settings.osm_element_type = "relation"
+        self.query_settings.output = "tags"
 
     def filter_geom(self, src, val):
         element_type, id = val
@@ -73,6 +76,7 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
         root = response.json()[0]
 
         wkt = root["geotext"]
+
         geom = fromstr(wkt, srid=self.osm_srid)
         geom.srid = self.osm_srid
         geom.transform(settings.SRID)
