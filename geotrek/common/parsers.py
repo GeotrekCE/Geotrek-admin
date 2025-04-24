@@ -2037,10 +2037,6 @@ class OpenStreetMapParser(Parser):
         return f"{type[0].upper()}{id}"
 
     def translation_fields(self):
-        if not self.model:
-            msg = "Model argument should be configured"
-            raise ImproperlyConfigured(msg)
-
         default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
 
         for field in get_translated_fields(self.model):
