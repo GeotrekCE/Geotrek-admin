@@ -1508,6 +1508,13 @@ class OpenStreetMapInitialisationTest(OpenStreetMapParser):
     model = InformationDesk
 
 
+class OpenStreetMapInitialisationTranslationTest(OpenStreetMapParser):
+    tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"boundary": "protected_area"},
+    ]
+
+
 class OpenStreetMapQueryTest(OpenStreetMapParser):
     model = InformationDesk
     tags = [
@@ -1531,6 +1538,16 @@ class OpenStreetMapTestParser(TestCase):
             call_command(
                 "import",
                 "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest",
+                verbosity=2,
+            )
+
+    def test_model_improperly_configurated(self):
+        with self.assertRaisesRegex(
+            ImproperlyConfigured, "Model argument should be configured"
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTranslationTest",
                 verbosity=2,
             )
 
