@@ -357,7 +357,7 @@ Tourism intersection margin
 
 The ``TOURISM_INTERSECTION_MARGIN`` setting defines the maximum distance (in meters) within which touristic contents and events are considered related to other objects (treks, POIs, services, etc.).
 
-This setting is especially useful to reduce the number of tourism contents displayed around a trek, in order to improve readability and performance in the map interface.
+This setting is especially useful to reduce the number of tourism contents displayed around a trek, in order to improve readability and performance in the map interface (in the API, Geotrek-rando, Geotrek-widget...).
 
 .. md-tab-set::
     :name: tourism-intersection-margin-tabs
