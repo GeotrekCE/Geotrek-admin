@@ -23,6 +23,7 @@ CHANGELOG
 - Add OpenStreetMap parser for POI
 - Parsers accept default values for fields
 - Improve Overpass query for OpenStreetMap parsers
+- OpenSteetMap parsers accept translations from OSM
 
 **Documentation**
 
