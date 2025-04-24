@@ -1514,9 +1514,18 @@ class OpenStreetMapQueryTest(OpenStreetMapParser):
         [{"boundary": "administrative"}, {"admin_level": "4"}],
         {"boundary": "protected_area"},
     ]
+    fields = {
+        "name": "tags.name",
+        "description": "tags.description_fr",
+    }
 
 
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapTestParser(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.osm_parser = OpenStreetMapQueryTest()
+
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
@@ -1529,32 +1538,29 @@ class OpenStreetMapTestParser(TestCase):
         "geotrek.common.parsers.OpenStreetMapParser.get_bbox_str", return_value="test"
     )
     def test_query_settings(self, mocked):
-        osm_parser = OpenStreetMapQueryTest()
 
         # default settings
         self.assertEqual(
             "[out:json][timeout:180][bbox:test];(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
-            osm_parser.build_query(),
+            self.osm_parser.build_query(),
         )
 
-        osm_parser.query_settings = osm_parser.QuerySettings(
+        self.osm_parser.query_settings = self.osm_parser.QuerySettings(
             osm_element_type="relation", output="tags"
         )
 
         # custom settings
         self.assertEqual(
             "[out:json][timeout:180][bbox:test];(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
-            osm_parser.build_query(),
+            self.osm_parser.build_query(),
         )
 
     @override_settings(
         SPATIAL_EXTENT=(949226.1011, 6421548.4861, 966477.9123, 6432083.7731)
     )
     def test_bbox_str(self):
-        osm_parser = OpenStreetMapQueryTest()
-
         def test_coordinates(Wlon, Slat, Elon, Nlat):
-            bbox = osm_parser.get_bbox_str()
+            bbox = self.osm_parser.get_bbox_str()
             minlat, minlon, maxlat, maxlon = map(float, bbox.split(","))
 
             self.assertAlmostEqual(minlon, Wlon, places=2)
@@ -1564,6 +1570,43 @@ class OpenStreetMapTestParser(TestCase):
 
         test_coordinates(6.155090, 44.841868, 6.378937, 44.943065)
 
-        osm_parser.query_settings = osm_parser.QuerySettings(bbox_margin=0.5)
+        self.osm_parser.query_settings = self.osm_parser.QuerySettings(bbox_margin=0.5)
 
         test_coordinates(6.0434314, 44.729993, 6.4911242, 45.054940)
+
+    def test_translation_mapping(self):
+        # default language
+        self.assertIn("name", self.osm_parser.fields)
+        self.assertEqual(
+            self.osm_parser.fields.get("name"), ("tags.name:fr", "tags.name")
+        )
+
+        # translation language
+        self.assertIn("name_en", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_es"), "tags.name:es")
+
+    def test_double_translation_mapping_protection(self):
+        osm_parser = OpenStreetMapQueryTest()
+
+        # default language
+        self.assertIn("name", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name"), ("tags.name:fr", "tags.name"))
+
+        # translation language
+        self.assertIn("name_en", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", osm_parser.fields)
+        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+
+        # translate tags that contains the default language code
+        self.assertIn("description", osm_parser.fields)
+        self.assertEqual(
+            osm_parser.fields.get("description"),
+            ("tags.description_fr:fr", "tags.description_fr"),
+        )

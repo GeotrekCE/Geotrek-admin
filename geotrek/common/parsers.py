@@ -1941,6 +1941,7 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.translation_fields()
 
         if not self.query_settings:
             self.query_settings = self.QuerySettings()
@@ -2037,37 +2038,36 @@ class OpenStreetMapParser(Parser):
 
     def translation_fields(self):
         if not self.model:
-            raise ImproperlyConfigured("model argument should be configured")
+            msg = "model argument should be configured"
+            raise ImproperlyConfigured(msg)
 
-        translated_fields = get_translated_fields(self.model)
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
 
-        for translated_field in translated_fields:
-            translated_tags = self.fields.get(translated_field)
-            if not translated_tags:
+        for field in get_translated_fields(self.model):
+            tags = self.fields.get(field)
+            if not tags:
                 continue
 
-            is_str = isinstance(translated_tags, str)
-            tags = [translated_tags] if is_str else list(translated_tags)
+            is_str = isinstance(tags, str)
+            tags = [tags] if is_str else list(tags)
 
-            # Add translation fields for all languages
+            # Protect the class from multiple translation mappings as field is a static attribute
+            is_translated = [tag for tag in tags if f":{default_lang}" in tag]
+            if is_translated:
+                continue
+
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                field_geotrek = f"{translated_field}_{lang}"
-                field_osm = [f"{tag}:{lang}" for tag in tags]
-                self.fields[field_geotrek] = (
-                    field_osm[0] if is_str else tuple(field_osm)
-                )
+                if lang != default_lang:
+                    geotrek_field = f"{field}_{lang}"
+                    translated = [tag + ":" + lang for tag in tags]
+                    self.fields[geotrek_field] = (
+                        translated[0] if is_str else tuple(translated)
+                    )
 
-            # Add default language field
-            default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
-            field_geotrek = f"{translated_field}_{default_lang}"
-            field_osm = [f"{tag}:{default_lang}" for tag in tags]
-
-            if is_str:
-                self.fields[field_geotrek] = (field_osm[0], translated_tags)
-            else:
-                self.fields[field_geotrek] = tuple(field_osm + tags)
-
-            self.fields.pop(translated_field)
+            translated = [f"{tag}:{default_lang}" for tag in tags]
+            self.fields[field] = (
+                (translated[0], tags[0]) if is_str else tuple(translated + tags)
+            )
 
     def get_val(self, row, dst, src):
         val = super().get_val(row, dst, src)

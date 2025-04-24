@@ -1414,7 +1414,6 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
         super().__init__(*args, **kwargs)
         if self.type:
             self.constant_fields["type"] = self.type
-        self.translation_fields()
 
     def filter_street(self, src, val):
         housenumber, street = val
