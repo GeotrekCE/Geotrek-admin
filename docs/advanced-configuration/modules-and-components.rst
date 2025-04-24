@@ -348,7 +348,7 @@ You can define a buffer around treks to intersect POIs (works only without dynam
 Tourism
 -------
 
-The ``TOURISM_INTERSECTION_MARGIN`` and ``OUTDOOR_INTERSECTION_MARGIN`` settings define a radius (in meters) used to dynamically associate nearby content (POIs, services, events, tourism content, etc.) with other entities such as treks or outdoor sites. These parameters help control which elements are considered "nearby" and displayed in the public interface or included in print/PDF exports.
+The ``TOURISM_INTERSECTION_MARGIN`` and ``OUTDOOR_INTERSECTION_MARGIN`` settings define a buffer distance (in meters) used to dynamically associate nearby content (POIs, services, events, tourism content, etc.) with other entities such as treks or outdoor sites. These parameters help control which elements are considered "nearby" and displayed in the API and Geotrek-rando or included in print/PDF exports.
 
 .. _trek-tourism-intersection:
 
