@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Improve Overpass query for OpenStreetMap parsers
+- OpenSteetMap parsers accept translations from OSM
 
 **Bug fixes**
 
@@ -45,7 +46,6 @@ CHANGELOG
 - Update instructions to regenerate UML diagrams of data model (#4594)
 - Update documentation about map settings and tourism/outdoor intersection margin (#4654)
 - Update documentation with missing parameters from base.py (#4676)
-
 
 2.114.0     (2025-03-13)
 ----------------------------
