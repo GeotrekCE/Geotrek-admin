@@ -274,7 +274,7 @@ If you use an url that filters a unique category, you can change its name. Examp
 Import from OpenStreetMap
 ==========================
 
-OpenStreetMap (OSM) is a collaborative, open-source mapping platform that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the Overpass API.
+OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the Overpass API.
 
 By default, the parser uses the German Overpass server: 
 ``https://overpass-api.de/api/interpreter/``
