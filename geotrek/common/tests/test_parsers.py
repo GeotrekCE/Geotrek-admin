@@ -1514,9 +1514,18 @@ class OpenStreetMapQueryTest(OpenStreetMapParser):
         [{"boundary": "administrative"}, {"admin_level": "4"}],
         {"boundary": "protected_area"},
     ]
+    fields = {
+        "name": "tags.name",
+        "description": "tags.description_fr",
+    }
 
 
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapTestParser(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.osm_class = OpenStreetMapQueryTest()
+
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
@@ -1525,20 +1534,55 @@ class OpenStreetMapTestParser(TestCase):
                 verbosity=2,
             )
 
-    def test_query_bis(self):
-        osm_class = OpenStreetMapQueryTest()
-
+    def test_query(self):
         # default settings
         self.assertIn(
             "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
-            osm_class.build_query(),
+            self.osm_class.build_query(),
         )
 
-        osm_class.query_settings.osm_element_type = "relation"
-        osm_class.query_settings.output = "tags"
+        self.osm_class.query_settings.osm_element_type = "relation"
+        self.osm_class.query_settings.output = "tags"
 
         # custom settings
         self.assertIn(
             "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
-            osm_class.build_query(),
+            self.osm_class.build_query(),
+        )
+
+    def test_translation_mapping(self):
+        # default language
+        self.assertIn("name", self.osm_class.fields)
+        self.assertEqual(
+            self.osm_class.fields.get("name"), ("tags.name:fr", "tags.name")
+        )
+
+        # translation language
+        self.assertIn("name_en", self.osm_class.fields)
+        self.assertEqual(self.osm_class.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", self.osm_class.fields)
+        self.assertEqual(self.osm_class.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", self.osm_class.fields)
+        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+
+    def test_double_translation_mapping_protection(self):
+        osm_class = OpenStreetMapQueryTest()
+
+        # default language
+        self.assertIn("name", osm_class.fields)
+        self.assertEqual(osm_class.fields.get("name"), ("tags.name:fr", "tags.name"))
+
+        # translation language
+        self.assertIn("name_en", osm_class.fields)
+        self.assertEqual(osm_class.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", osm_class.fields)
+        self.assertEqual(osm_class.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", osm_class.fields)
+        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+
+        # translate tags that contains the default language code
+        self.assertIn("description", osm_class.fields)
+        self.assertEqual(
+            osm_class.fields.get("description"),
+            ("tags.description_fr:fr", "tags.description_fr"),
         )

@@ -1403,14 +1403,10 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser):
     type = "Foo"
     tags = [{"amenity": "ranger_station"}]
-
-    def filter_name(self, src, val):
-        if val:
-            return val
-        else:
-            return "test_flexible"
+    default_fields_values = {"name": "test_default"}
 
 
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
@@ -1442,8 +1438,10 @@ class OpenStreetMapParserTests(TestCase):
         self.assertEqual(self.objects.count(), 4)
 
     def test_InformationDesk_eid_filter_OSM(self):
-        information_desks_eid = self.objects.all().values_list("eid", flat=True)
-        self.assertListEqual(list(information_desks_eid), ["N1", "N2", "W3", "R4"])
+        information_desks_eid = (
+            self.objects.order_by("eid").all().values_list("eid", flat=True)
+        )
+        self.assertListEqual(list(information_desks_eid), ["N1", "N2", "R4", "W3"])
         self.assertNotEqual(information_desks_eid, ["1", "2", "3", "4"])
 
     def test_get_tag_info_existing_tag_OSM(self):
@@ -1484,9 +1482,22 @@ class OpenStreetMapParserTests(TestCase):
         self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
         self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
 
-    def test_flexible_fields(self):
+    def test_default_fields(self):
         information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.name, "test")
+        self.assertEqual(information_desk.name, "test:fr")
 
         information_desk2 = self.objects.get(eid="R4")
-        self.assertEqual(information_desk2.name, "test_flexible")
+        self.assertEqual(information_desk2.name, "test_default")
+
+    def test_translated_fields(self):
+        # default language
+        information_desk = self.objects.get(eid="N1")
+        self.assertEqual(information_desk.name, "test:fr")
+        information_desk2 = self.objects.get(eid="N2")
+        self.assertEqual(information_desk2.name, "test")
+
+        # translation language
+        information_desk = self.objects.get(eid="N1")
+        self.assertEqual(information_desk.name_en, "test:en")
+        information_desk2 = self.objects.get(eid="W3")
+        self.assertEqual(information_desk2.name_en, None)

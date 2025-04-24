@@ -2431,8 +2431,10 @@ class OpenStreetMapPOIParser(TestCase):
         self.assertEqual(self.objects.count(), 4)
 
     def test_InformationDesk_eid_filter_OSM(self):
-        information_desks_eid = self.objects.all().values_list("eid", flat=True)
-        self.assertListEqual(list(information_desks_eid), ["N1", "W2", "W3", "R4"])
+        information_desks_eid = (
+            self.objects.order_by("eid").all().values_list("eid", flat=True)
+        )
+        self.assertListEqual(list(information_desks_eid), ["N1", "R4", "W2", "W3"])
         self.assertNotEqual(information_desks_eid, ["1", "2", "3", "4"])
 
     def test_default_name(self):
