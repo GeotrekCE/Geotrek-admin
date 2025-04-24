@@ -2036,7 +2036,7 @@ class OpenStreetMapParser(Parser):
         type, id = val
         return f"{type[0].upper()}{id}"
 
-    def translation_fields(self): 
+    def translation_fields(self):
         default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
 
         for field in get_translated_fields(self.model):
