@@ -355,7 +355,7 @@ The ``TOURISM_INTERSECTION_MARGIN`` and ``OUTDOOR_INTERSECTION_MARGIN`` settings
 Tourism intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``TOURISM_INTERSECTION_MARGIN`` setting defines the maximum distance (in meters) within which tourism content and events are considered related to other objects (treks, POIs, services, etc.).
+The ``TOURISM_INTERSECTION_MARGIN`` setting defines the maximum distance (in meters) within which touristic contents and events are considered related to other objects (treks, POIs, services, etc.).
 
 This setting is especially useful to reduce the number of tourism contents displayed around a trek, in order to improve readability and performance in the map interface.
 
