@@ -274,13 +274,13 @@ If you use an url that filters a unique category, you can change its name. Examp
 Import from OpenStreetMap
 ==========================
 
-OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the Overpass API.
+OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API<https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
 By default, the parser uses the German Overpass server: 
 ``https://overpass-api.de/api/interpreter/``
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
 
-Overpass queries are written in Overpass QL. Query configuration is handled through the ``query_settings`` attribute, which includes:
+Overpass queries are written in `Overpass QL<https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
 
     * ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included.
 
