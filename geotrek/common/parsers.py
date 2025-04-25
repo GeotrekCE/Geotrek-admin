@@ -37,6 +37,7 @@ from PIL import Image, UnidentifiedImageError
 from requests.auth import HTTPBasicAuth
 
 from geotrek.authent.models import default_structure
+from geotrek.authent.tests.test_backend import query_db
 from geotrek.common.models import Attachment, FileType, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
@@ -1928,12 +1929,12 @@ class OpenStreetMapParser(Parser):
     url = "https://overpass-api.de/api/interpreter/"
     tags = None
     query_settings = None
+    bbox = None
 
     # OSM settings
     osm_srid = 4326
 
     class QuerySettings:
-        bbox = None
         bbox_margin = 0.0
         output = "geom"
         osm_element_type = "nwr"
@@ -1941,27 +1942,29 @@ class OpenStreetMapParser(Parser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        if not self.query_settings:
+            self.query_settings = self.QuerySettings()
+
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
 
-        self.query_settings = self.QuerySettings()
-        self.query_settings.bbox = self.get_bbox_str()
+        self.bbox = self.get_bbox_str()
 
     def format_tags(self):
-        formated_tags = []
-        for tags in self.tags:
-            if isinstance(tags, dict):
-                tags = [tags]
+        formatted_tags = []
+        for tags_filter in self.tags:
+            if isinstance(tags_filter, dict):
+                tags_filter = [tags_filter]
 
             list_tags = [
-                f"['{key}'='{value}']" for tag in tags for key, value in tag.items()
+                f"['{key}'='{value}']" for tag in tags_filter for key, value in tag.items()
             ]
-            formated_tags.append(
+            formatted_tags.append(
                 f"{self.query_settings.osm_element_type}{''.join(list_tags)};"
             )
 
-        return formated_tags
+        return formatted_tags
 
     def get_bbox_str(self):
         bbox = api_bbox(settings.SPATIAL_EXTENT, self.query_settings.bbox_margin)
@@ -1986,7 +1989,7 @@ class OpenStreetMapParser(Parser):
         Conflicts between tags in the same sublist are not detected or handled.
         """
         tags_filters = self.format_tags()
-        query = f"[out:json][timeout:180][bbox:{self.query_settings.bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        query = f"[out:json][timeout:180][bbox:{self.bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
         return query
 
     def get_tag_info(self, osm_tags):
@@ -2026,7 +2029,3 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
-
-    def filter_eid(self, src, val):
-        type, id = val
-        return f"{type[0].upper()}{id}"
