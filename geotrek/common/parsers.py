@@ -2032,3 +2032,7 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+    def filter_eid(self, src, val):
+        type, id = val
+        return f"{type[0].upper()}{id}"
