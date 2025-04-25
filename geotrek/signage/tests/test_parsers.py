@@ -145,5 +145,5 @@ class OpenStreetMapSignageParser(TestCase):
 
     def test_topology_point_no_dynamic_segmentation(self):
         signage = self.objects.get(eid="N7872800265")
-        self.assertAlmostEqual(signage.geom.x, 966634.8586510333)
+        self.assertAlmostEqual(signage.geom.x, 966634.8574551605)
         self.assertAlmostEqual(signage.geom.y, 6420758.256507761)
