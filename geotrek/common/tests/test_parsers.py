@@ -1534,7 +1534,9 @@ class OpenStreetMapTestParser(TestCase):
             osm_parser.build_query(),
         )
 
-        osm_parser.query_settings = osm_parser.QuerySettings(osm_element_type="relation", output="tags")
+        osm_parser.query_settings = osm_parser.QuerySettings(
+            osm_element_type="relation", output="tags"
+        )
 
         # custom settings
         self.assertIn(

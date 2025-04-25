@@ -7,6 +7,7 @@ import re
 import textwrap
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
+from dataclasses import dataclass
 from ftplib import FTP
 from functools import reduce
 from io import BytesIO
@@ -14,7 +15,6 @@ from os.path import dirname
 from pathlib import PurePath
 from time import sleep
 from urllib.parse import urlparse
-from dataclasses import dataclass
 
 import magic
 import requests
