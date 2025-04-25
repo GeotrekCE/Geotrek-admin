@@ -1637,7 +1637,7 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
     eid = "eid"
 
     fields = {
-        "eid": ("type", "id"),  # ids are unique only for object of the same type
+        "eid": "id",
         "name": "tags.name",
         "description": "tags.description",
         "geom": ("type", "lon", "lat", "geometry", "bounds"),

@@ -1525,20 +1525,20 @@ class OpenStreetMapTestParser(TestCase):
                 verbosity=2,
             )
 
-    def test_query_bis(self):
-        osm_class = OpenStreetMapQueryTest()
+    def test_query(self):
+        osm_parser = OpenStreetMapQueryTest()
 
         # default settings
         self.assertIn(
             "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
-            osm_class.build_query(),
+            osm_parser.build_query(),
         )
 
-        osm_class.query_settings.osm_element_type = "relation"
-        osm_class.query_settings.output = "tags"
+        osm_parser.query_settings.osm_element_type = "relation"
+        osm_parser.query_settings.output = "tags"
 
         # custom settings
         self.assertIn(
             "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
-            osm_class.build_query(),
+            osm_parser.build_query(),
         )
