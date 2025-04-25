@@ -1548,7 +1548,7 @@ class OpenStreetMapTestParser(TestCase):
         # custom settings
         self.assertIn(
             "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
-            self.osm_class.build_query(),
+            self.osm_parser.build_query(),
         )
 
     def test_translation_mapping(self):
@@ -1579,7 +1579,7 @@ class OpenStreetMapTestParser(TestCase):
         self.assertIn("name_it", osm_parser.fields)
         self.assertEqual(osm_parser.fields.get("name_it"), "tags.name:it")
         self.assertIn("name_es", osm_parser.fields)
-        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+        self.assertEqual(osm_parser.fields.get("name_es"), "tags.name:es")
 
         # translate tags that contains the default language code
         self.assertIn("description", osm_parser.fields)
