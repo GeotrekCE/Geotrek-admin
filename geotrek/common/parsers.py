@@ -14,6 +14,7 @@ from os.path import dirname
 from pathlib import PurePath
 from time import sleep
 from urllib.parse import urlparse
+from dataclasses import dataclass
 
 import magic
 import requests
@@ -1933,10 +1934,11 @@ class OpenStreetMapParser(Parser):
     # OSM settings
     osm_srid = 4326
 
+    @dataclass
     class QuerySettings:
-        bbox_margin = 0.0
-        output = "geom"
-        osm_element_type = "nwr"
+        bbox_margin: float = 0.0
+        output: str = "geom"
+        osm_element_type: str = "nwr"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
