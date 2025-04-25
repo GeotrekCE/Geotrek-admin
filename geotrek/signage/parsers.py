@@ -1,14 +1,14 @@
-from django.contrib.gis.geos import Point
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.utils.translation import gettext as _
 
-from geotrek.signage.models import Signage
-from geotrek.core.models import Path, Topology
 from geotrek.common.parsers import (
     GeotrekParser,
     GlobalImportError,
     OpenStreetMapParser,
 )
+from geotrek.core.models import Path, Topology
+from geotrek.signage.models import Signage
 
 
 class GeotrekSignageParser(GeotrekParser):
@@ -72,11 +72,6 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
     }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
     topology = Topology.objects.none()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.type:
-            self.constant_fields["type"] = self.type
 
     def start(self):
         super().start()
