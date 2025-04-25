@@ -44,7 +44,7 @@ class GeotrekSignageParser(GeotrekParser):
 
 
 class OpenStreetMapSignageParser(OpenStreetMapParser):
-    """Parser to import POI from OpenStreetMap"""
+    """Parser to import signage from OpenStreetMap"""
 
     type = None
     model = Signage
