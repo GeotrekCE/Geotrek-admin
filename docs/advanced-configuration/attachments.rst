@@ -100,6 +100,9 @@ If you want to prohibit the usage of heavy pictures:
     
                 PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000 # Bytes
 
+Paperclip min bytes size images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If you want to prohibit the usage of small pictures in pixels:
 
 .. md-tab-set::
@@ -121,6 +124,46 @@ If you want to prohibit the usage of small pictures in pixels:
 
 .. note:: 
   These three settings will also not allow downloading images from the parsers.
+
+Paperclip enable video 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To enable the addition of a link to a YouTube/video in the attached files of objects:
+
+.. md-tab-set::
+    :name: paperclip-enable-video-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PAPERCLIP_ENABLE_VIDEO = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PAPERCLIP_ENABLE_VIDEO = False
+
+Paperclip enable link 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To enable the addition of an external link in the attached files of objects:
+
+.. md-tab-set::
+    :name: paperclip-enable-link-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                PAPERCLIP_ENABLE_LINK = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PAPERCLIP_ENABLE_LINK = False
 
 Prohibit usage of certain file types
 -------------------------------------
@@ -183,7 +226,7 @@ Here is the default value for this setting, which you can extend if needed:
 
 It will verify that the mimetype of the file matches the extension. 
 
-Paperclip extra alloawed mimetypes 
+Paperclip extra allowed mimetypes 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can add extra allowed mimetypes for a given extension with the following syntax:

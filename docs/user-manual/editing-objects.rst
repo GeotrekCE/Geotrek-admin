@@ -141,6 +141,11 @@ La vue HD est également associée à une localisation correspondant à l'emplac
 
 	Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
 
+.. seealso::
+
+	Se référer à :ref:`cette section <hd-views>` pour savoir comment activer les vues HD dans l'interface
+
+
 Photos accessibilité
 ---------------------
 
