@@ -37,7 +37,6 @@ from PIL import Image, UnidentifiedImageError
 from requests.auth import HTTPBasicAuth
 
 from geotrek.authent.models import default_structure
-from geotrek.authent.tests.test_backend import query_db
 from geotrek.common.models import Attachment, FileType, License, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
@@ -1958,7 +1957,9 @@ class OpenStreetMapParser(Parser):
                 tags_filter = [tags_filter]
 
             list_tags = [
-                f"['{key}'='{value}']" for tag in tags_filter for key, value in tag.items()
+                f"['{key}'='{value}']"
+                for tag in tags_filter
+                for key, value in tag.items()
             ]
             formatted_tags.append(
                 f"{self.query_settings.osm_element_type}{''.join(list_tags)};"

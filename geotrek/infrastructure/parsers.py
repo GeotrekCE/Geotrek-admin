@@ -1,8 +1,5 @@
-from django.conf import settings
-
-from geotrek.common.parsers import GeotrekParser, OpenStreetMapParser, GlobalImportError
+from geotrek.common.parsers import GeotrekParser
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.core.models import Path, Topology
 
 
 class GeotrekInfrastructureParser(GeotrekParser):
@@ -28,67 +25,3 @@ class GeotrekInfrastructureParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/infrastructure"
-
-
-class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
-    """Parser to import infrastructures from OpenStreetMap"""
-
-    type = None
-    model = Infrastructure
-    eid = "eid"
-
-    fields = {
-        "eid": ("type", "id"),  # ids are unique only for object of the same type
-        "name": "tags.name",
-        "description": "tags.description",
-        "geom": ("type", "lon", "lat", "geometry", "bounds"),
-    }
-    constant_fields = {
-        "published": True,
-    }
-    natural_keys = {
-        "type": "label",
-    }
-    field_options = {"geom": {"required": True}, "type": {"required": True}}
-    topology = Topology.objects.none()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.type:
-            self.constant_fields["type"] = self.type
-
-    def start(self):
-        super().start()
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _("You need to add a network of paths before importing POIs")
-            )
-
-    def filter_geom(self, src, val):
-        # convert OSM geometry to point
-        type, lng, lat, area, bbox = val
-        geom = None
-        if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
-        elif type == "way":
-            geom = self.get_centroid_from_way(area)
-        elif type == "relation":
-            geom = self.get_centroid_from_relation(bbox)
-
-        # create topology
-        self.topology = Topology.objects.none()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
-            self.topology = Topology.deserialize(serialized)
-            # Move deserialization aggregations to the POI
-        return geom
-
-    def parse_obj(self, row, operation):
-        super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
-            self.obj.mutate(self.topology)
