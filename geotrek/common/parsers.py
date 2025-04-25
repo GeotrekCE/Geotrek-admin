@@ -242,7 +242,6 @@ class Parser:
         else:
             setattr(self.obj, dst, val)
 
-
     def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self.obj, dst):
