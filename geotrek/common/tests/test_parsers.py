@@ -1602,7 +1602,7 @@ class OpenStreetMapTestParser(TestCase):
         self.assertIn("name_it", osm_parser.fields)
         self.assertEqual(osm_parser.fields.get("name_it"), "tags.name:it")
         self.assertIn("name_es", osm_parser.fields)
-        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+        self.assertEqual(osm_parser.fields.get("name_es"), "tags.name:es")
 
         # translate tags that contains the default language code
         self.assertIn("description", osm_parser.fields)
