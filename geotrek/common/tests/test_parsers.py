@@ -1524,7 +1524,7 @@ class OpenStreetMapQueryTest(OpenStreetMapParser):
 class OpenStreetMapTestParser(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.osm_class = OpenStreetMapQueryTest()
+        cls.osm_parser = OpenStreetMapQueryTest()
 
     def test_tags_improperly_configurated(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
@@ -1535,16 +1535,13 @@ class OpenStreetMapTestParser(TestCase):
             )
 
     def test_query(self):
-
-        osm_parser = OpenStreetMapQueryTest()
-
         # default settings
         self.assertIn(
             "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
-            osm_parser.build_query(),
+            self.osm_parser.build_query(),
         )
 
-        osm_parser.query_settings = osm_parser.QuerySettings(
+        self.osm_parser.query_settings = self.osm_parser.QuerySettings(
             osm_element_type="relation", output="tags"
         )
 
@@ -1556,18 +1553,18 @@ class OpenStreetMapTestParser(TestCase):
 
     def test_translation_mapping(self):
         # default language
-        self.assertIn("name", self.osm_class.fields)
+        self.assertIn("name", self.osm_parser.fields)
         self.assertEqual(
-            self.osm_class.fields.get("name"), ("tags.name:fr", "tags.name")
+            self.osm_parser.fields.get("name"), ("tags.name:fr", "tags.name")
         )
 
         # translation language
-        self.assertIn("name_en", self.osm_class.fields)
-        self.assertEqual(self.osm_class.fields.get("name_en"), "tags.name:en")
-        self.assertIn("name_it", self.osm_class.fields)
-        self.assertEqual(self.osm_class.fields.get("name_it"), "tags.name:it")
-        self.assertIn("name_es", self.osm_class.fields)
-        self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
+        self.assertIn("name_en", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_es"), "tags.name:es")
 
     def test_double_translation_mapping_protection(self):
         osm_parser = OpenStreetMapQueryTest()
