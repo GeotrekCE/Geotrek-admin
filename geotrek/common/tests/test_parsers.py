@@ -1535,14 +1535,18 @@ class OpenStreetMapTestParser(TestCase):
             )
 
     def test_query(self):
+
+        osm_parser = OpenStreetMapQueryTest()
+
         # default settings
         self.assertIn(
             "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
-            self.osm_class.build_query(),
+            osm_parser.build_query(),
         )
 
-        self.osm_class.query_settings.osm_element_type = "relation"
-        self.osm_class.query_settings.output = "tags"
+        osm_parser.query_settings = osm_parser.QuerySettings(
+            osm_element_type="relation", output="tags"
+        )
 
         # custom settings
         self.assertIn(
@@ -1566,23 +1570,23 @@ class OpenStreetMapTestParser(TestCase):
         self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
 
     def test_double_translation_mapping_protection(self):
-        osm_class = OpenStreetMapQueryTest()
+        osm_parser = OpenStreetMapQueryTest()
 
         # default language
-        self.assertIn("name", osm_class.fields)
-        self.assertEqual(osm_class.fields.get("name"), ("tags.name:fr", "tags.name"))
+        self.assertIn("name", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name"), ("tags.name:fr", "tags.name"))
 
         # translation language
-        self.assertIn("name_en", osm_class.fields)
-        self.assertEqual(osm_class.fields.get("name_en"), "tags.name:en")
-        self.assertIn("name_it", osm_class.fields)
-        self.assertEqual(osm_class.fields.get("name_it"), "tags.name:it")
-        self.assertIn("name_es", osm_class.fields)
+        self.assertIn("name_en", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", osm_parser.fields)
         self.assertEqual(self.osm_class.fields.get("name_es"), "tags.name:es")
 
         # translate tags that contains the default language code
-        self.assertIn("description", osm_class.fields)
+        self.assertIn("description", osm_parser.fields)
         self.assertEqual(
-            osm_class.fields.get("description"),
+            osm_parser.fields.get("description"),
             ("tags.description_fr:fr", "tags.description_fr"),
         )
