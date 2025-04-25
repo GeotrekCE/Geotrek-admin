@@ -23,6 +23,7 @@ CHANGELOG
 
 - Fix log book filters by updating mapentity (#4576)
 - Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
+- Make OpenStreetMap eid as type+id
 
 **Improvements**
 
