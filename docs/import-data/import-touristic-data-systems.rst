@@ -396,7 +396,7 @@ Then set up appropriate values:
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-.. _import-signage:
+.. _import-signage-osm:
 
 Import Signage
 --------------
