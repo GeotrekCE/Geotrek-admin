@@ -34,5 +34,5 @@ jobs:
       - name: Build doc
         run: |
           cd docs/
-          uv pip install -r requirements.txt
+          uv pip install --system -r requirements.txt
           make html SPHINXOPTS="-W"
