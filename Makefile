@@ -60,7 +60,7 @@ release:
 	docker rm geotrek_release
 
 deps:
-	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "uv pip compile setup.py -o requirements.txt && uv pip compile requirements-dev.in -o requirements-dev.txt && uv pip compile docs/requirements.in -o docs/requirements.txt"
+	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "uv pip compile setup.py -o requirements.txt && uv pip compile requirements-dev.in -o requirements-dev.txt && cd docs/ && uv pip compile requirements.in -o requirements.txt"
 
 format:
 	$(docker_compose) run --remove-orphans --no-deps --rm web ruff format geotrek
