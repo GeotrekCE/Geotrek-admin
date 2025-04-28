@@ -288,8 +288,9 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
             thumbnail = thumbnailer.get_thumbnail(aliases.get("apiv2"))
         except Exception as exc:
             logger.warning(
-                "Error while generating thumbnail for %s: %s",
+                "Error while generating thumbnail for %s: %s %s",
                 self.get_attachment_file(obj),
+                type(exc),
                 exc,
             )
             return ""

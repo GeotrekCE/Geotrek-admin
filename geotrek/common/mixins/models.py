@@ -168,8 +168,9 @@ class PicturesMixin:
                 thdetail = thumbnailer.get_thumbnail(ali)
             except Exception as e:
                 logger.warning(
-                    "Image %s invalid or missing from disk: %s.",
+                    "Image %s invalid or missing from disk: %s %s.",
                     picture.attachment_file,
+                    type(e),
                     e,
                 )
             else:
@@ -183,8 +184,9 @@ class PicturesMixin:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
             except Exception as e:
                 logger.warning(
-                    "Image %s invalid or missing from disk: %s.",
+                    "Image %s invalid or missing from disk: %s %s.",
                     picture.attachment_file,
+                    type(e),
                     e,
                 )
                 continue
