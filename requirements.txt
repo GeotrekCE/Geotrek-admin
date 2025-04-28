@@ -278,7 +278,7 @@ pillow==11.2.1
     #   paperclip
     #   reportlab
     #   weasyprint
-prompt-toolkit==3.0.50
+prompt-toolkit==3.0.51
     # via click-repl
 psycopg2==2.9.10
     # via geotrek (setup.py)
