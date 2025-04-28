@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --system -c requirements-dev.txt ruff
+          uv pip install --python=3.10 -c requirements-dev.txt ruff
 
       - name: Check linting
         run: |
