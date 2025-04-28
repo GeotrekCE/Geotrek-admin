@@ -24,12 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
         with:
             version: "latest"
             python-version: "3.10"
             enable-cache: true
             cache-suffix: "sphinx"
+            activate-environment: true
 
       - name: Build doc
         run: |
