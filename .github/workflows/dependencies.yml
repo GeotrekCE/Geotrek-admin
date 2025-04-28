@@ -33,7 +33,7 @@ jobs:
         run: |
           uv pip compile setup.py -o requirements.txt
           uv pip compile requirements-dev.in -o requirements-dev.txt
-          uv pip compile docs/requirements.in -o docs/requirements.txt
+          cd docs/ && uv pip compile requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v20
