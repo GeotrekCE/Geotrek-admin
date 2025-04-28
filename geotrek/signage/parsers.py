@@ -85,7 +85,6 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
         lng, lat = val
 
         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-        geom.transform(settings.SRID)
 
         # create topology
         self.topology = Topology.objects.none()
@@ -97,6 +96,8 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
+
+        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):
