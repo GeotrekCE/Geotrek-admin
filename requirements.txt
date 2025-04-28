@@ -15,7 +15,7 @@ attrs==25.3.0
     #   fiona
     #   jsonschema
     #   referencing
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
     # via mapentity
 billiard==4.2.1
     # via celery
