@@ -14,7 +14,6 @@ from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
-from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from paperclip.validators import FileMimetypeValidator
 
@@ -165,8 +164,8 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
         thumbnailer = get_thumbnailer(self.photo)
         try:
             return thumbnailer.get_thumbnail(aliases.get("thumbnail"))
-        except (OSError, InvalidImageFormatError):
-            logger.warning("Image %s invalid or missing from disk.", self.photo)
+        except Exception as exc:
+            logger.warning("Image %s invalid or missing from disk: %s", self.photo, exc)
             return None
 
     @property
@@ -176,8 +175,8 @@ class InformationDesk(TimeStampedModelMixin, models.Model):
         thumbnailer = get_thumbnailer(self.photo)
         try:
             return thumbnailer.get_thumbnail(aliases.get("medium"))
-        except (OSError, InvalidImageFormatError):
-            logger.warning("Image %s invalid or missing from disk.", self.photo)
+        except Exception as exc:
+            logger.warning("Image %s invalid or missing from disk: %s", self.photo, exc)
             return None
 
     @property

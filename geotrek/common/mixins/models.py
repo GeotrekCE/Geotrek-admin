@@ -15,12 +15,9 @@ from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
-from easy_thumbnails.engine import NoSourceGenerator
-from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from mapentity.models import MapEntityMixin
 from modeltranslation.utils import build_localized_fieldname
-from PIL.Image import DecompressionBombError
 
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
@@ -169,16 +166,11 @@ class PicturesMixin:
                 )
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (
-                OSError,
-                InvalidImageFormatError,
-                DecompressionBombError,
-                NoSourceGenerator,
-            ) as e:
+            except Exception as e:
                 logger.warning(
-                    _("Image {} invalid or missing from disk: {}.").format(
-                        picture.attachment_file, e
-                    )
+                    "Image %s invalid or missing from disk: %s.",
+                    picture.attachment_file,
+                    e,
                 )
             else:
                 resized.append((picture, thdetail))
@@ -189,11 +181,11 @@ class PicturesMixin:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get(alias))
-            except (OSError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(
-                    _("Image {} invalid or missing from disk: {}.").format(
-                        picture.attachment_file, e
-                    )
+            except Exception as e:
+                logger.warning(
+                    "Image %s invalid or missing from disk: %s.",
+                    picture.attachment_file,
+                    e,
                 )
                 continue
             thumbnail.author = picture.author
