@@ -58,7 +58,6 @@ class UserAdminTestCase(TestCase):
 
     def test_cant_change_internal_user(self):
         """For internal user, all fields are readonly"""
-
         response = self.client.get(f"/admin/auth/user/{self.internal_user.pk}/change/")
         self.assertNotContains(response, "Save")
 
@@ -66,3 +65,9 @@ class UserAdminTestCase(TestCase):
         """Nobody, even superuser, can delete internal user"""
         response = self.client.post(f"/admin/auth/user/{self.internal_user.pk}/delete/")
         self.assertEqual(response.status_code, 403)
+
+    def test_super_user_can_change_user(self):
+        """Superuser can change any user else internal user"""
+        response = self.client.get(f"/admin/auth/user/{self.user.pk}/change/")
+        self.assertContains(response, "Save")
+        self.assertContains(response, "Delete")
