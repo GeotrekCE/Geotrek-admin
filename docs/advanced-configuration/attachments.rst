@@ -148,7 +148,7 @@ To enable the addition of a link to a YouTube/video in the attached files of obj
 Paperclip enable link 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To enable the addition of an external link in the attached files of objects:
+To enable adding external links to the attached files of objects:
 
 .. md-tab-set::
     :name: paperclip-enable-link-tabs
