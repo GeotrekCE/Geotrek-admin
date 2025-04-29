@@ -2,14 +2,14 @@
 CHANGELOG
 =========
 
-2.114.0+dev     (XXXX-XX-XX)
+2.115.0    (2025-04-29)
 ----------------------------
 
 **Warnings**
 
-- This release change Information desk `photo` attribute from `FileField` to `ÌmageField`.
-- All photo defined that are nor images nor SVG are deleted from photo attribute but backup as attachments.
-- Attachment can now be managed for Information desks.
+- This release changes the Information desk `photo` attribute from `FileField` to `ImageField`.
+- All photos defined that are nor images nor SVGs are deleted from the `photo` attribute but backed up as attachments.
+- Attachments can now be managed for Information desks.
 
 **Bug fixes**
 
@@ -28,6 +28,7 @@ CHANGELOG
 - Update documentation about paths with docker commands (#4578)
 - Update instructions to regenerate UML diagrams of data model (#4594)
 - Update documentation about map settings and tourism/outdoor intersection margin (#4654)
+
 
 2.114.0     (2025-03-13)
 ----------------------------
