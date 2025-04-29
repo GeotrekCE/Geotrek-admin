@@ -100,7 +100,7 @@ If you want to prohibit the usage of heavy pictures:
     
                 PAPERCLIP_MAX_BYTES_SIZE_IMAGE = 50000 # Bytes
 
-Paperclip min bytes size images
+Paperclip: min bytes size images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to prohibit the usage of small pictures in pixels:
