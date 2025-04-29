@@ -453,7 +453,7 @@ Minimum distance to merge two paths.
 Enable treks points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of treks.
+Points of reference can be enabled in the forms for treks.
 
 .. md-tab-set::
     :name: trek-points-of-reference-enabled-tabs
