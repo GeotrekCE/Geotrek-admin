@@ -494,7 +494,7 @@ Points of reference can be enabled in the forms for outdoor courses.
 Enable HD views
 ~~~~~~~~~~~~~~~~~
 
-Enable or disable high-definition views in the interface :
+Enable or disable high-definition views in the interface:
 
 .. md-tab-set::
     :name: enable-hd-views-tabs
