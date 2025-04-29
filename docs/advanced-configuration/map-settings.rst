@@ -472,7 +472,7 @@ Points of reference are enabled on form of treks.
 Enable outdoor course points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of outdoor courses.
+Points of reference can be enabled in the forms for outdoor courses.
 
 .. md-tab-set::
     :name: outdoor-course-of-reference-enabled-tabs
