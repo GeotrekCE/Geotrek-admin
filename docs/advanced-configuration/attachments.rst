@@ -226,7 +226,7 @@ Here is the default value for this setting, which you can extend if needed:
 
 It will verify that the mimetype of the file matches the extension. 
 
-Paperclip extra allowed mimetypes 
+Paperclip: extra allowed mimetypes 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can add extra allowed mimetypes for a given extension with the following syntax:
