@@ -1,4 +1,6 @@
+from django.test import TestCase
 from mapentity.tests.factories import SuperUserFactory
+from mapentity.utils import get_internal_user
 
 from . import factories
 from .base import AuthentFixturesTest
@@ -43,3 +45,24 @@ class AdminSiteTest(AuthentFixturesTest):
         self.assertNotContains(response, "Signage")
         self.assertNotContains(response, "Zoning")
         self.assertNotContains(response, "Land")
+
+
+class UserAdminTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory()
+        cls.internal_user = get_internal_user()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_cant_change_internal_user(self):
+        """For internal user, all fields are readonly"""
+
+        response = self.client.get(f"/admin/auth/user/{self.internal_user.pk}/change/")
+        self.assertNotContains(response, "Save")
+
+    def test_cant_delete_internal_user(self):
+        """Nobody, even superuser, can delete internal user"""
+        response = self.client.post(f"/admin/auth/user/{self.internal_user.pk}/delete/")
+        self.assertEqual(response.status_code, 403)
