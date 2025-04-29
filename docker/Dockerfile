@@ -74,15 +74,14 @@ USER root
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get -qq update && apt-get -qq install -y \
-        git \
-        python3-dev \
-        python3-venv \
-        build-essential \
-        graphviz \
-        libpq-dev
+RUN apt-get update -qq && apt-get install -y -qq  \
+    git \
+    python3-dev \
+    python3-venv \
+    build-essential \
+    graphviz \
+    libpq-dev &&\
+    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
 RUN uv venv /opt/venv
