@@ -128,7 +128,7 @@ If you want to prohibit the usage of small pictures in pixels:
 Paperclip enable video 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To enable the addition of a link to a YouTube/video in the attached files of objects:
+To enable adding YouTube or video links to the attached files of objects:
 
 .. md-tab-set::
     :name: paperclip-enable-video-tabs
