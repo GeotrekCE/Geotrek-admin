@@ -21,7 +21,6 @@ Geotrek-admin will send emails:
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
 recipients emails (``ADMINS``, ``MANAGERS``) and email server configuration.
 
-
 .. md-tab-set::
     :name: email-configuration-tabs
 
@@ -64,6 +63,25 @@ be sent to the managers:
     
                 docker compose run --rm web ./manage.py sendtestemail --managers
 
+You can prefix your email subject to easily identify messages related to your Geotrek instance :
+
+.. md-tab-set::
+    :name: email-subject-prefix-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                TITLE = "Geotrek-Admin"
+                EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TITLE = "Geotrek-admin manager"
+                EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
+
 .. _API:
 
 API
@@ -95,8 +113,8 @@ Set to ``True`` if you want the API V2 to be available for everyone without auth
   - This setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
 
 
-Swagger API documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Swagger API V2 
+~~~~~~~~~~~~~~~~
 
 In order to enable swagger module to auto-document API, add the following code in the ``custom.py`` file: 
 
@@ -123,6 +141,23 @@ Then run :
                 docker compose run --rm web update.sh 
 
 The API swagger documentation is now availaible at : ``<GEOTREK_ADMIN_URL>/api/v2``
+
+It is possible to edit the description displayed on the Swagger page of the API :
+
+.. md-tab-set::
+    :name: swagger-settings-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. code-block:: python
+
+            SWAGGER_SETTINGS = {"API_V2_DESCRIPTION": "New Geotrek API"}
+
+    .. md-tab-item:: Example
+
+        .. code-block:: python
+
+            SWAGGER_SETTINGS = {"API_V2_DESCRIPTION": "REST API of Geotrek-admin to access and filter data"}
 
 Share services between several Geotrek instances
 --------------------------------------------------

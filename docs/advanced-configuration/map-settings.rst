@@ -343,6 +343,8 @@ When you generate a PDF in Geotrek-admin, a screenshot of the map with the objec
 Display related objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Include objects in map screenshots:
+
 .. md-tab-set::
     :name: show-on-map-screenshot-tabs
 
@@ -451,7 +453,7 @@ Minimum distance to merge two paths.
 Enable treks points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of treks.
+Points of reference can be enabled in the forms for treks.
 
 .. md-tab-set::
     :name: trek-points-of-reference-enabled-tabs
@@ -472,7 +474,7 @@ Points of reference are enabled on form of treks.
 Enable outdoor course points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of otudoor courses.
+Points of reference can be enabled in the forms for outdoor courses.
 
 .. md-tab-set::
     :name: outdoor-course-of-reference-enabled-tabs
@@ -488,6 +490,28 @@ Points of reference are enabled on form of otudoor courses.
          .. code-block:: python
     
                 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False
+
+.. _hd-views:
+
+Enable HD views
+~~~~~~~~~~~~~~~~~
+
+Enable or disable high-definition views in the interface:
+
+.. md-tab-set::
+    :name: enable-hd-views-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+    
+                ENABLE_HD_VIEWS = True
+                
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                ENABLE_HD_VIEWS = False
 
 Topology static offset
 ~~~~~~~~~~~~~~~~~~~~~~~~

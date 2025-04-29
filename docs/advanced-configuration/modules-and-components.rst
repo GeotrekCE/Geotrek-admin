@@ -48,6 +48,25 @@ To disable specific modules, modify the custom settings file by adding the follo
                 'geotrek.api',
               )
 
+Path model enabled
+~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Path module:
+
+.. md-tab-set::
+    :name: path-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                PATH_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PATH_MODEL_ENABLED = False
+
 Trail model enabled
 ~~~~~~~~~~~~~~~~~~~~
 This parameter allows enabling or disabling the Trail module:
@@ -86,7 +105,159 @@ This parameter allows enabling or disabling the Landedge module:
          .. code-block:: python
     
                 LANDEDGE_MODEL_ENABLED = False
-                
+
+Signage model enabled
+~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Signage module:
+
+.. md-tab-set::
+    :name: signage-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                SIGNAGE_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SIGNAGE_MODEL_ENABLED = False
+
+Infrastructure model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Infrastructure module:
+
+.. md-tab-set::
+    :name: infrastructure-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                INFRASTRUCTURE_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                INFRASTRUCTURE_MODEL_ENABLED = False
+
+Project model enabled
+~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Project module:
+
+.. md-tab-set::
+    :name: project-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                PROJECT_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                PROJECT_MODEL_ENABLED = False
+
+Intervention model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Intervention module:
+
+.. md-tab-set::
+    :name: intervention-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                INTERVENTION_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                INTERVENTION_MODEL_ENABLED = False
+
+Report model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Report module:
+
+.. md-tab-set::
+    :name: report-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                REPORT_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                REPORT_MODEL_ENABLED = False
+
+Trekking model enabled
+~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Trekking module:
+
+.. md-tab-set::
+    :name: trekking-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                TREKKING_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TREKKING_MODEL_ENABLED = False
+
+Poi model enabled
+~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Poi module:
+
+.. md-tab-set::
+    :name: poi-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                POI_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                POI_MODEL_ENABLED = False
+
+Service model enabled
+~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Service module:
+
+.. md-tab-set::
+    :name: service-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                SERVICE_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SERVICE_MODEL_ENABLED = False
+
 Tourism enabled
 ~~~~~~~~~~~~~~~~~
 
@@ -107,6 +278,82 @@ This setting enables or disables tourism-related menus, such as touristic conten
     
                 TOURISM_ENABLED = False
 
+Touristic content model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Touristic content module:
+
+.. md-tab-set::
+    :name: touristiccontent-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                TOURISTICCONTENT_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TOURISTICCONTENT_MODEL_ENABLED = False
+
+Touristic event model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Touristic event module:
+
+.. md-tab-set::
+    :name: touristicevent-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                TOURISTICEVENT_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TOURISTICEVENT_MODEL_ENABLED = False
+
+Site model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Site module:
+
+.. md-tab-set::
+    :name: site-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                SITE_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SITE_MODEL_ENABLED = False
+
+Course model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This parameter allows enabling or disabling the Course module:
+
+.. md-tab-set::
+    :name: course-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                COURSE_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                COURSE_MODEL_ENABLED = False
+              
 Flatpages enabled
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -166,13 +413,33 @@ If set to ``False``, paths that are linked to at least one topology cannot be de
 
          .. code-block:: python
     
-                ALLOW_PATH_DELETION_TOPOLOGY = False
+                ALLOW_PATH_DELETION_TOPOLOGY = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
     
-                ALLOW_PATH_DELETION_TOPOLOGY = True
+                ALLOW_PATH_DELETION_TOPOLOGY = False
+
+Show extremities
+~~~~~~~~~~~~~~~~
+
+If set to ``True``, shows a bullet at path extremities :
+
+.. md-tab-set::
+    :name: show-extremities-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                SHOW_EXTREMITIES = False
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SHOW_EXTREMITIES = True
 
 Alert draft
 ~~~~~~~~~~~~~
@@ -319,6 +586,58 @@ You can modify the format of line codes. This setting is used in CSV exports for
           .. code-block:: python
       
                 LINE_CODE_FORMAT = "CD99.{signagecode}-{bladenumber}.{linenumber}"
+
+Line distance format
+~~~~~~~~~~~~~~~~~~~~
+
+You can modify the format of line distance. This setting is used in CSV exports for lines:
+
+.. md-tab-set::
+    :name: line-distance-format-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. info::
+            Example display: ``8.5 km``
+
+         .. code-block:: python
+    
+              LINE_DISTANCE_FORMAT = "{:0.1f} km"
+
+    .. md-tab-item:: Example
+
+        .. info::
+            Example display: ``8.5 mi``
+
+          .. code-block:: python
+      
+              LINE_DISTANCE_FORMAT = "{:0.1f} mi" # miles
+
+Line time format
+~~~~~~~~~~~~~~~~~~~~
+
+You can modify the format of line time. This setting is used in CSV exports for lines:
+
+.. md-tab-set::
+    :name: line-time-format-tabs
+
+    .. md-tab-item:: Default configuration
+
+        .. info::
+            Example display: ``3h05``
+
+         .. code-block:: python
+    
+              LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
+
+    .. md-tab-item:: Example
+
+        .. info::
+            Example display: ``3:05``
+
+          .. code-block:: python
+      
+              LINE_TIME_FORMAT = "{hours}:{minutes:02d}"
          
 .. _trek-poi-intersection:
 
@@ -423,6 +742,26 @@ You can insert circulation and authorization types using this command:
          .. code-block:: python
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
+
+Show labels
+~~~~~~~~~~~~~~~~
+
+Display labels on status elements on the map view:
+
+.. md-tab-set::
+    :name: show-labels-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                SHOW_LABELS = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                SHOW_LABELS = False
 
 .. _outdoor:
 
@@ -568,7 +907,7 @@ Defines the buffer around treks to intersect sensitive areas:
 Zoning
 --------
 
-These parameters enable or disable zoning combo-boxes in the list map view:
+These 3 parameters (`LAND_BBOX_CITIES_ENABLED`, `LAND_BBOX_DISTRICTS_ENABLED` and `LAND_BBOX_AREAS_ENABLED`) enable or disable zoning combo-boxes in the list map view:
 
 .. md-tab-set::
     :name: zoning-combo-boxes-tabs
@@ -587,7 +926,7 @@ These parameters enable or disable zoning combo-boxes in the list map view:
     
               LAND_BBOX_CITIES_ENABLED = False
               LAND_BBOX_DISTRICTS_ENABLED = False
-              LAND_BBOX_AREAS_ENABLED = False
+              LAND_BBOX_AREAS_ENABLED = True
 
 .. image:: ../images/advanced-configuration/zoning-combo-boxes.png
    :align: center
