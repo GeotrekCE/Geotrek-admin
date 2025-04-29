@@ -145,7 +145,7 @@ To enable adding YouTube or video links to the attached files of objects:
     
                 PAPERCLIP_ENABLE_VIDEO = False
 
-Paperclip enable link 
+Paperclip: enable external links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To enable adding external links to the attached files of objects:
