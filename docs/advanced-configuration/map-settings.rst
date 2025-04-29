@@ -343,6 +343,8 @@ When you generate a PDF in Geotrek-admin, a screenshot of the map with the objec
 Display related objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Show objects on map screenshot :
+
 .. md-tab-set::
     :name: show-on-map-screenshot-tabs
 
