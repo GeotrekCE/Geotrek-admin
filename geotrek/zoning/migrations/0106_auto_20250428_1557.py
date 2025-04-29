@@ -47,11 +47,11 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=6),
         ),
 
-        # Make code nullable
+        # Make code blank
         migrations.AlterField(
             model_name='city',
             name='code',
-            field=models.CharField(max_length=6, null=True),
+            field=models.CharField(max_length=256, unique=True, blank=True, null=True, verbose_name="Code"),
         ),
 
         # Drop zoning_city code index
