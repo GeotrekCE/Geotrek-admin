@@ -54,7 +54,7 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
 
 
 class City(TimeStampedModelMixin, models.Model):
-    code = models.CharField(primary_key=True, max_length=6)
+    code = models.CharField(max_length=6, null=True)
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     published = models.BooleanField(
