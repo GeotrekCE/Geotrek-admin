@@ -1,4 +1,5 @@
 import json
+import logging
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -11,11 +12,8 @@ from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
-from easy_thumbnails.engine import NoSourceGenerator
-from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from modeltranslation.utils import build_localized_fieldname
-from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework import serializers as rest_serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -55,6 +53,9 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
     from geotrek.infrastructure import models as infrastructure_models
 if "geotrek.signage" in settings.INSTALLED_APPS:
     from geotrek.signage import models as signage_models
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -285,12 +286,13 @@ class AttachmentsSerializerMixin(serializers.ModelSerializer):
             return ""
         try:
             thumbnail = thumbnailer.get_thumbnail(aliases.get("apiv2"))
-        except (
-            OSError,
-            InvalidImageFormatError,
-            DecompressionBombError,
-            NoSourceGenerator,
-        ):
+        except Exception as exc:
+            logger.warning(
+                "Error while generating thumbnail for %s: %s %s",
+                self.get_attachment_file(obj),
+                type(exc),
+                exc,
+            )
             return ""
         thumbnail.author = obj.author
         thumbnail.legend = obj.legend
