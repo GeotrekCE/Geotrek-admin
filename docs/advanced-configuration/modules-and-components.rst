@@ -746,7 +746,7 @@ You can insert circulation and authorization types using this command:
 Show labels
 ~~~~~~~~~~~~~~~~
 
-Display labels on status elements on the map view :
+Display labels on status elements on the map view:
 
 .. md-tab-set::
     :name: show-labels-tabs
