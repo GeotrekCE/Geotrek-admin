@@ -11,7 +11,7 @@ x-images:
 
 services:
   memcached:
-    image: memcached:1.5-alpine
+    image: memcached:alpine
 
   redis:
     image: redis:5.0-alpine

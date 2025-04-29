@@ -187,18 +187,18 @@ To remove dependencies (convertit, screamshooter…), run:
 Docker
 =======
 
-Docker is an alternative installation method, recommended for experts only.
-It allows to install several instances of Geotrek-admin on the same serveur,
+Docker installation allows to install several instances of Geotrek-admin on the same serveur,
 and to install it on other distributions than Ubuntu.
 
 
-1. Install Docker and Docker Compose, either from your distribution or `from upstream packages <https://docs.docker.com/install/>`_
-2. Download the code from `Geotrek-admin releases page <https://github.com/GeotrekCE/Geotrek-admin/releases>`_ or checkout it with git from `Geotrek-admin GitHub repository <https://github.com/GeotrekCE/Geotrek-admin/>`_
-3. Unzip the tarball
-4. Copy docker/install folder where you want
-5. Edit ``docker-compose.yml`` to feed your needs if necessary
-6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary. Leave the ``GUNICORN_CMD_ARGS`` variable only if you're not using any other scaling system.
-7. Create user and database, enable PostGIS extension
+1. Install Docker and Docker Compose, `from upstream packages <https://docs.docker.com/install/>`_
+2. Download `zip package <https://github.com/GeotrekCE/Geotrek-admin/releases/latest/download/install-docker.zip>`_
+3. Unzip the archive
+4. Copy geotrek folder where you want (to keep compatibility with all examples in this documentation you can use `/opt/geotrek-admin` folder)
+5. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary.
+6. We recommend to use a specific user to run geotrek. So created it (useradd -m geotrek) and change ownership of the folder to this user.
+   You should get UID and GID from this user and set them in .env file. With command ``id geotrek`` you should get uid and gid values.
+7. Create user and database, enable PostGIS, Postgid_raster and pgcrypto extensions
 8. Run ``docker compose run --rm web update.sh``
 9. Run ``docker compose up``
 10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
@@ -206,7 +206,7 @@ and to install it on other distributions than Ubuntu.
 Management commands
 ====================
 
-Replace ``sudo geotrek …`` commands by :
+In documentation, replace ``sudo geotrek …`` commands by :
 
 1. ``cd <install directory>``
 2. ``docker compose run --rm web ./manage.py …``

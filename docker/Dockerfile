@@ -29,38 +29,39 @@ ENV TZ=UTC
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
-RUN useradd -m -d /opt/geotrek-admin -s /bin/false geotrek && chown geotrek:geotrek -R /opt
+RUN useradd -m -d /opt/geotrek-admin -s /bin/false -u 1001 geotrek && chown geotrek:geotrek -R /opt
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
-RUN apt-get update -qq && apt-get install -y -qq  \
-    python3 \
-    ca-certificates \
-    gettext \
-    postgresql-client \
-    tzdata \
-    gdal-bin \
-    binutils \
-    libproj-dev \
-    unzip \
-    less \
-    iproute2 \
-    nano \
-    curl \
-    software-properties-common \
-    shared-mime-info \
-    libmagic1 \
-    fonts-liberation \
-    libssl-dev \
-    libfreetype6-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-dev \
-    libffi-dev \
-    fonts-dejavu-core \
-    libvips && \
-    apt-get install -y --no-install-recommends postgis && \
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get -qq update && apt-get -qq install -y \
+        python3 \
+        ca-certificates \
+        gettext \
+        postgresql-client \
+        tzdata \
+        gdal-bin \
+        binutils \
+        libproj-dev \
+        unzip \
+        less \
+        iproute2 \
+        nano \
+        curl \
+        software-properties-common \
+        shared-mime-info \
+        libmagic1 \
+        fonts-liberation \
+        libssl-dev \
+        libfreetype6-dev \
+        libxml2-dev \
+        libxslt-dev \
+        libpangocairo-1.0-0 \
+        libgdk-pixbuf2.0-dev \
+        libffi-dev \
+        fonts-dejavu-core \
+        libvips && \
+        apt-get install -y --no-install-recommends postgis
 
 USER geotrek
 COPY --chown=geotrek:geotrek docker/scripts/* /usr/local/bin/
@@ -73,33 +74,40 @@ USER root
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-RUN apt-get update -qq && apt-get install -y -qq  \
-    git \
-    python3-dev \
-    python3-venv \
-    build-essential \
-    graphviz \
-    libpq-dev &&\
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get -qq update && apt-get -qq install -y \
+        git \
+        python3-dev \
+        python3-venv \
+        build-essential \
+        graphviz \
+        libpq-dev
 
 USER geotrek
 RUN uv venv /opt/venv
-COPY requirements.txt requirements.txt
 ENV UV_PYTHON=/opt/venv/bin/python
+ENV UV_LINK_MODE=copy
+ENV UV_CACHE_DIR=/opt/geotrek-admin/var/cache/
 
-RUN uv pip install --no-cache-dir -r requirements.txt
+RUN --mount=type=bind,src=./requirements.txt,dst=/requirements.txt \
+    --mount=type=cache,target=/opt/geotrek-admin/var/cache/,sharing=locked,uid=1001,gid=1001 \
+    uv pip install -r /requirements.txt
 
 FROM build AS dev
 
 ENV ENV=dev
-COPY requirements-dev.txt requirements-dev.txt
-RUN uv pip install --no-cache-dir -r requirements-dev.txt
-COPY ./docs/requirements.txt doc-requirements.txt
-RUN uv pip install --no-cache-dir -r doc-requirements.txt
+
+RUN --mount=type=bind,src=./requirements-dev.txt,dst=/requirements-dev.txt \
+    --mount=type=bind,src=./docs/requirements.txt,dst=/requirements-doc.txt \
+    --mount=type=cache,target=/opt/geotrek-admin/var/cache/,sharing=locked,uid=1001,gid=1001 \
+    uv pip install -r /requirements-dev.txt -r /requirements-doc.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
 FROM base AS prod
+
+ENV GUNICORN_WORKERS=1
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
@@ -109,13 +117,8 @@ COPY --chown=geotrek:geotrek setup.cfg setup.cfg
 
 RUN CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ./manage.py compilemessages
 
-USER root
-
-RUN apt-get update -qq && apt-get -yqq full-upgrade && \
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
-
 USER geotrek
 
 HEALTHCHECK CMD curl --fail http://127.0.0.1:8000/api/settings.json
 
-CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]
+CMD ["sh", "-c", "gunicorn geotrek.wsgi:application --worker-class=gevent --workers=${GUNICORN_WORKERS} --bind=0.0.0.0:8000"]
