@@ -516,3 +516,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: '*.deb'
+
+      - name: Prepare install-docker.zip
+        run: |
+          cd docker/install
+          mkdir -p geotrek/var
+          cp * ./geotrek 2>/dev/null || :
+          zip -r ../install-docker.zip geotrek/
+
+      - name: Attach zip archive as release binary
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'install-docker.zip'
