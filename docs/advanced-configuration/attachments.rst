@@ -125,7 +125,7 @@ If you want to prohibit the usage of small pictures in pixels:
 .. note:: 
   These three settings will also not allow downloading images from the parsers.
 
-Paperclip enable video 
+Paperclip: enable video links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To enable adding YouTube or video links to the attached files of objects:
