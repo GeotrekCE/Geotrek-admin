@@ -651,7 +651,7 @@ Signage line enabled
 This parameter is used to manage lines by blades.
 
 .. md-tab-set::
-  :name: direction-on-lines-enabled-tabs
+  :name: signage-line-enabled-tabs
 
   .. md-tab-item:: Default configuration
 
