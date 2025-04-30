@@ -288,8 +288,8 @@ jobs:
           cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
-          echo 'UID=$UID' >> .env
-          echo 'GID=$GID' >> .env
+          sudo sed -i 's/UID=/UID="$UID"/' .env
+          sudo sed -i 's/GID=/GID="$GID"/' .env
           sudo sed -i 's/localhost/geotrek.local/' .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
