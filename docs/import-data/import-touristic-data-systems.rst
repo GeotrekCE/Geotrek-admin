@@ -282,19 +282,19 @@ You can override this by setting a custom URL in the ``url`` attribute of the ``
 
 Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
 
-    * ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
+* ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
 
-    * ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
+* ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
 
-    * ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
-        * ``geom``: return the object type, the object ID, the tags and the geometry
-        * ``tags``: return the object type, the object ID and the tags
+* ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
+    * ``geom``: return the object type, the object ID, the tags and the geometry
+    * ``tags``: return the object type, the object ID and the tags
 
 The ``tags`` attribute defines filters for selecting OSM elements. It is a list where each item is either:
 
-    * A **dictionary**, e.g., ``{"highway": "bus_stop"}``
+* A **dictionary**, e.g., ``{"highway": "bus_stop"}``
 
-    * A **list of dictionaries**, representing a logical **AND**, e.g., ``[{"boundary": "administrative"}, {"admin_level": "4"}]``.
+* A **list of dictionaries**, representing a logical **AND**, e.g., ``[{"boundary": "administrative"}, {"admin_level": "4"}]``.
 
 The parser builds a query that returns the **union** of all top-level filters.
 
