@@ -1949,8 +1949,6 @@ class OpenStreetMapParser(Parser):
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
 
-        self.bbox = self.get_bbox_str()
-
     def format_tags(self):
         formatted_tags = []
         for tags_filter in self.tags:
