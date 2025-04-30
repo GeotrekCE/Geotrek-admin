@@ -5,7 +5,9 @@ CHANGELOG
 2.115.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Documentation**
 
+- Add missing parameters from base.py (#4690)
 
 2.115.0    (2025-04-29)
 ----------------------------
