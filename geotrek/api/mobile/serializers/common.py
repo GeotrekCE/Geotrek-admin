@@ -16,11 +16,11 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             fields = ("id", "name")
 
     class CitySerializer(serializers.ModelSerializer):
-        id = serializers.ReadOnlyField(source="code")
 
         class Meta:
             model = zoning_models.City
-            fields = ("id", "name")
+            fields = ("id", "code", "name")
+            read_only_fields = ("id", "code")
 
 
 if "geotrek.tourism" in settings.INSTALLED_APPS:
