@@ -481,8 +481,129 @@ If set to ``True``, managers will receive an email notification whenever an obje
     
                 ALERT_REVIEW = True
 
-Signage and Blade
--------------------
+Treks
+------
+
+Trek signage intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting defines the maximum distance (in meters) within which signage are considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+
+.. md-tab-set::
+    :name: trek-signage-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                TREK_SIGNAGE_INTERSECTION_MARGIN = 500 # meters
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TREK_SIGNAGE_INTERSECTION_MARGIN = 800 # meters
+
+Trek infrastructure intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting defines the maximum distance (in meters) within which infrastructure are considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+
+.. md-tab-set::
+    :name: trek-infrastructure-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 500 # meters
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 800 # meters
+
+
+Interventions
+--------------
+
+Intervention intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting defines the maximum distance (in meters) within which intervention are considered related to other objects such as treks, POIs, services, or tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+
+.. md-tab-set::
+    :name: intervention-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                INTERVENTION_INTERSECTION_MARGIN = 500 # meters
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                INTERVENTION_INTERSECTION_MARGIN = 800 # meters
+
+Maintenance intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. ns-detail::
+
+    .. 
+
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+
+.. md-tab-set::
+    :name: maintenance-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                MAINTENANCE_INTERSECTION_MARGIN = 500 # meters
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                MAINTENANCE_INTERSECTION_MARGIN = 800 # meters
+
+Report
+-------
+
+Report intersection margin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. ns-detail::
+
+    .. 
+
+This setting defines the maximum distance (in meters) within which reports are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+
+.. md-tab-set::
+    :name: report-intersection-margin-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+    
+                REPORT_INTERSECTION_MARGIN = 500 # meters
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+    
+                REPORT_INTERSECTION_MARGIN = 800 # meters
+
+Signage, blades and lines
+--------------------------
+
+Blade and line enabled
+~~~~~~~~~~~~~~~~~~~~~~~
 
 These parameters enable or disable submodules for signage blades and lines:
 
@@ -503,7 +624,10 @@ These parameters enable or disable submodules for signage blades and lines:
                 BLADE_ENABLED = False
                 LINE_ENABLED = True
 
-These parameters are used to have ``direction`` field on lines instead of blades.
+Direction on lines enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This parameter is used to have ``direction`` field on lines instead of blades.
 
 .. md-tab-set::
   :name: direction-on-lines-enabled-tabs
@@ -519,6 +643,27 @@ These parameters are used to have ``direction`` field on lines instead of blades
       .. code-block:: python
 
               DIRECTION_ON_LINES_ENABLED = True
+
+
+Signage line enabled
+~~~~~~~~~~~~~~~~~~~~~
+
+This parameter is used to manage lines by blades.
+
+.. md-tab-set::
+  :name: direction-on-lines-enabled-tabs
+
+  .. md-tab-item:: Default configuration
+
+      .. code-block:: python
+
+              SIGNAGE_LINE_ENABLED = False
+
+  .. md-tab-item:: Example
+
+      .. code-block:: python
+
+              SIGNAGE_LINE_ENABLED = True
 
 Blade code type
 ~~~~~~~~~~~~~~~~
@@ -880,7 +1025,7 @@ Defines the radius of sensitivity areas when not specified for species:
 Sensitive area intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Defines the buffer around treks to intersect sensitive areas:
+This setting defines the maximum distance (in meters) within which sensitive areas are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
 
 .. md-tab-set::
     :name: sensitive-areas-intersection-margin-tabs
