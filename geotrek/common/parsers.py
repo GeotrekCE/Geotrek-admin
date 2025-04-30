@@ -1929,7 +1929,6 @@ class OpenStreetMapParser(Parser):
     url = "https://overpass-api.de/api/interpreter/"
     tags = None
     query_settings = None
-    bbox = None
 
     # OSM settings
     osm_srid = 4326
@@ -1992,7 +1991,8 @@ class OpenStreetMapParser(Parser):
         Conflicts between tags in the same sublist are not detected or handled.
         """
         tags_filters = self.format_tags()
-        query = f"[out:json][timeout:180][bbox:{self.bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        bbox = self.get_bbox_str()
+        query = f"[out:json][timeout:180][bbox:{bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
         return query
 
     def get_tag_info(self, osm_tags):

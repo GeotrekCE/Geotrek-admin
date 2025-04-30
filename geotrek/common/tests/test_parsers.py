@@ -1525,12 +1525,15 @@ class OpenStreetMapTestParser(TestCase):
                 verbosity=2,
             )
 
-    def test_query(self):
+    @mock.patch(
+        "geotrek.common.parsers.OpenStreetMapParser.get_bbox_str", return_value="test"
+    )
+    def test_query_settings(self, mocked):
         osm_parser = OpenStreetMapQueryTest()
 
         # default settings
-        self.assertIn(
-            "(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
+        self.assertEqual(
+            "[out:json][timeout:180][bbox:test];(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
             osm_parser.build_query(),
         )
 
@@ -1539,7 +1542,28 @@ class OpenStreetMapTestParser(TestCase):
         )
 
         # custom settings
-        self.assertIn(
-            "(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
+        self.assertEqual(
+            "[out:json][timeout:180][bbox:test];(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
             osm_parser.build_query(),
         )
+
+    @override_settings(
+        SPATIAL_EXTENT=(949226.1011, 6421548.4861, 966477.9123, 6432083.7731)
+    )
+    def test_bbox_str(self):
+        osm_parser = OpenStreetMapQueryTest()
+
+        def test_coordinates(Wlon, Slat, Elon, Nlat):
+            bbox = osm_parser.get_bbox_str()
+            minlat, minlon, maxlat, maxlon = map(float, bbox.split(","))
+
+            self.assertAlmostEqual(minlon, Wlon, places=2)
+            self.assertAlmostEqual(minlat, Slat, places=2)
+            self.assertAlmostEqual(maxlon, Elon, places=2)
+            self.assertAlmostEqual(maxlat, Nlat, places=2)
+
+        test_coordinates(6.155090, 44.841868, 6.378937, 44.943065)
+
+        osm_parser.query_settings = osm_parser.QuerySettings(bbox_margin=0.5)
+
+        test_coordinates(6.0434314, 44.729993, 6.4911242, 45.054940)
