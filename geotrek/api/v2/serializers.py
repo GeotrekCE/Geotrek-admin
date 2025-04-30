@@ -1405,11 +1405,11 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(
             read_only=True, source="geom", precision=7
         )
-        id = serializers.ReadOnlyField(source="code")
 
         class Meta:
             model = zoning_models.City
-            fields = ("id", "geometry", "name", "published")
+            fields = ("id", "code", "geometry", "name", "published")
+            read_only_fields = ("id", "code")
 
     class DistrictsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
