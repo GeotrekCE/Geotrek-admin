@@ -387,7 +387,8 @@ class SettingsMobileTest(TestCase):
         )
         self.assertEqual(len(city_item), City.objects.count())
         self.assertIn(city.name, [c.get("name") for c in city_item])
-        self.assertIn(city.code, [c.get("id") for c in city_item])
+        self.assertIn(city.code, [c.get("code") for c in city_item])
+        self.assertIn(city.id, [c.get("id") for c in city_item])
 
     def test_settings_district(self):
         district = zoning_factories.DistrictFactory()
