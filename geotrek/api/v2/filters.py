@@ -524,7 +524,7 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
             qs = qs.filter(
                 Exists(
                     City.objects.filter(
-                        code__in=cities.split(","), geom__intersects=OuterRef("geom")
+                        pk__in=cities.split(","), geom__intersects=OuterRef("geom")
                     )
                 )
             )
@@ -949,7 +949,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(
                 Exists(
                     City.objects.filter(
-                        code__in=cities.split(","), geom__intersects=OuterRef("geom")
+                        pk__in=cities.split(","), geom__intersects=OuterRef("geom")
                     )
                 )
             )
