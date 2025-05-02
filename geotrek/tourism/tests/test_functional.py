@@ -77,11 +77,11 @@ class TouristicContentViewsTests(CommonTest):
                 )
             ),
         )
-        params = "?city=09000"
+        params = "?city=1"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["recordsFiltered"], 1)
-        params = "?city=09001"
+        params = "?city=2"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["data"]), 0)

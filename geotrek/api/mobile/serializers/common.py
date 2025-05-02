@@ -16,7 +16,6 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             fields = ("id", "name")
 
     class CitySerializer(serializers.ModelSerializer):
-
         class Meta:
             model = zoning_models.City
             fields = ("id", "code", "name")

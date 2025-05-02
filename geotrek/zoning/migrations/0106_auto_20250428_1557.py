@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 def indent_id(apps, schema_editor):
-    City = apps.get_model('zoning', 'City')
+    City = apps.get_model("zoning", "City")
     for n, obj in enumerate(City.objects.all()):
-        obj.id = n + 1 # start ids by 1
+        obj.id = n + 1  # start ids by 1
         obj.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0105_city_zoning_city__geom_is_valid_and_more'),
+        ("zoning", "0105_city_zoning_city__geom_is_valid_and_more"),
     ]
 
     operations = [
@@ -21,55 +20,47 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="city",
             name="id",
-            field=models.IntegerField(
-                verbose_name="ID",
-                null=True,
-                blank=True
-            )
+            field=models.IntegerField(verbose_name="ID", null=True, blank=True),
         ),
-
         # Populate id field
         migrations.RunPython(indent_id, migrations.RunPython.noop),
-
         # Make id not nullable
         migrations.AlterField(
-            model_name='city',
-            name='id',
+            model_name="city",
+            name="id",
             field=models.IntegerField(
                 verbose_name="ID",
-            )
+            ),
         ),
-
         # Drop old primary key
         migrations.AlterField(
-            model_name='city',
-            name='code',
+            model_name="city",
+            name="code",
             field=models.CharField(max_length=6),
         ),
-
         # Make code blank
         migrations.AlterField(
-            model_name='city',
-            name='code',
-            field=models.CharField(max_length=256, unique=True, blank=True, null=True, verbose_name="Code"),
+            model_name="city",
+            name="code",
+            field=models.CharField(
+                max_length=256, unique=True, blank=True, null=True, verbose_name="Code"
+            ),
         ),
-
         # Drop zoning_city code index
         migrations.RunSQL(
-            "DROP INDEX IF EXISTS zoning_city_code_a10bd194_like;",
-            reverse_sql=""
+            "DROP INDEX IF EXISTS zoning_city_code_a10bd194_like;", reverse_sql=""
         ),
-
         # Create new primary key
         migrations.AlterField(
-            model_name='city',
-            name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="city",
+            name="id",
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
-
         # Update id increment value
         migrations.RunSQL(
             "SELECT setval('zoning_city_id_seq', (SELECT MAX(id) FROM zoning_city));",
             "SELECT setval('zoning_city_id_seq', 1);",
-        )
+        ),
     ]
