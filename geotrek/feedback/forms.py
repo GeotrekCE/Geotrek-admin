@@ -89,7 +89,7 @@ class ReportForm(CommonForm):
                 self.fields["category"].widget = HiddenInput()
                 self.fields["problem_magnitude"].widget = HiddenInput()
                 if settings.SURICATE_WORKFLOW_ENABLED:  # On Workflow
-                    self.old_supervisor = self.instance.current_user
+                    self.old_user = self.instance.current_user
                     # Add fields that are used only in Workflow mode
                     # status
                     next_statuses = suricate_workflow_steps.get(
@@ -164,7 +164,7 @@ class ReportForm(CommonForm):
                 self.fields["problem_magnitude"].required = True
                 if settings.SURICATE_WORKFLOW_ENABLED:
                     self.old_status = None
-                    self.old_supervisor = None
+                    self.old_user = None
                     self.fields["current_user"].widget = HiddenInput()
                     self.fields["uses_timers"].widget = HiddenInput()
         else:  # Do not use these fields outside of worflow
@@ -183,6 +183,7 @@ class ReportForm(CommonForm):
             ):
                 msg = self.cleaned_data.get("message_supervisor", "")
                 report.notify_current_user(msg)
+                report.assigned_handler = report.current_user
                 report.status = waiting_status
                 report.save()
                 report.lock_in_suricate()
@@ -194,11 +195,12 @@ class ReportForm(CommonForm):
                 and report.status.identifier in ["waiting"]
             ):
                 report.current_user = self.user
+                report.assigned_handler = self.user
                 report.save()
                 TimerEvent.objects.create(step=waiting_status, report=report)
             if (
                 self.old_status.identifier != report.status.identifier
-                or self.old_supervisor != report.current_user
+                or self.old_user != report.current_user
             ):
                 msg_sentinel = self.cleaned_data.get("message_sentinel", "")
                 msg_admins = self.cleaned_data.get("message_administrators", "")
