@@ -363,12 +363,12 @@ class PathViewsTest(CommonTest):
         )
         self.assertEqual(len(p1.cities), 1)
         response = self.client.get(
-            f"/api/path/drf/paths/filter_infos.json?city={city.code}"
+            f"/api/path/drf/paths/filter_infos.json?city={city.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "0 (0 km)")
         response = self.client.get(
-            f"/api/path/drf/paths/filter_infos.json?city={city2.code}"
+            f"/api/path/drf/paths/filter_infos.json?city={city2.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "1 (1.0 km)")

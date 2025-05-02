@@ -57,7 +57,7 @@ class TouristicContentViewsTests(CommonTest):
 
     def test_intersection_zoning(self):
         self.modelfactory.create()
-        CityFactory.create(
+        city1 = CityFactory.create(
             name="Are",
             code="09000",
             geom=MultiPolygon(
@@ -67,7 +67,7 @@ class TouristicContentViewsTests(CommonTest):
                 )
             ),
         )
-        CityFactory.create(
+        city2 = CityFactory.create(
             name="Nor",
             code="09001",
             geom=MultiPolygon(
@@ -77,11 +77,11 @@ class TouristicContentViewsTests(CommonTest):
                 )
             ),
         )
-        params = "?city=1"
+        params = f"?city={city1.pk}"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["recordsFiltered"], 1)
-        params = "?city=2"
+        params = f"?city={city2.pk}"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["data"]), 0)
