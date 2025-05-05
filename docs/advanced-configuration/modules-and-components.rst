@@ -645,7 +645,7 @@ This parameter is used to assign the ``direction`` field to lines rather than bl
               DIRECTION_ON_LINES_ENABLED = True
 
 
-Signage line enabled
+Enable signage lines
 ~~~~~~~~~~~~~~~~~~~~~
 
 This parameter is used to manage lines by blades.
