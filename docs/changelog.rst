@@ -5,6 +5,10 @@ CHANGELOG
 2.115.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Improve Overpass query for OpenStreetMap parsers
+
 **Documentation**
 
 - Add missing parameters from base.py (#4690)
