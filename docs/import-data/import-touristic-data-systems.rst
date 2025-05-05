@@ -372,7 +372,7 @@ Then set up appropriate values:
 * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
-You can duplicate the class to import different types of Point of interest. In that case, each class must have a unique name and provider label.
+You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
 
 .. _import-district:
 
