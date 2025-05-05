@@ -624,7 +624,7 @@ These parameters enable or disable submodules for signage blades and lines:
                 BLADE_ENABLED = False
                 LINE_ENABLED = True
 
-Direction on lines enabled
+Enable line direction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This parameter is used to have ``direction`` field on lines instead of blades.
