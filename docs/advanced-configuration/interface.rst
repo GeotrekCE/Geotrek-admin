@@ -1082,6 +1082,7 @@ A complete list of attributes that can be used for displaying or exporting colum
           "created_in_suricate",
           "last_updated_in_suricate",
           "current_user",
+          "assigned_handler",
           "uses_timers",
           "provider",
           "last_author",
