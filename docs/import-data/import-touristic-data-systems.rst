@@ -396,6 +396,36 @@ Then set up appropriate values:
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
+.. _import-infrastructures:
+
+Import Infrastructures
+----------------------
+
+To import infrastructures from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.infrastructure.parsers import OpenStreetMapInfrastructureParser
+
+    class TableParser(OpenStreetMapInfrastructureParser):
+    provider = "OpenStreetMap"
+    tags = [
+        {"leisure": "picnic_table"},
+        {"tourism": "picnic_table"}
+    ]
+    default_fields_values = {"name": "picnic table"}
+    type = "Table"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``type`` to specify the Geotrek type for imported objects
+* See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
+
+The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
 .. _multiple-imports:
 
 Multiple imports
