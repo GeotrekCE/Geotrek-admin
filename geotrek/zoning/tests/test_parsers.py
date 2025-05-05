@@ -98,7 +98,7 @@ class OpenStreetMapDistrictParserTests(TestCase):
             "geotrek.zoning.tests.test_parsers.TestDistrictOpenStreetMapParser",
         )
 
-        self.district = District.objects.order_by("pk").all()
+        self.districts = District.objects.order_by("pk").all()
 
     def test_query_OSM(self):
         query = TestDistrictOpenStreetMapParser().build_query()
@@ -114,23 +114,23 @@ class OpenStreetMapDistrictParserTests(TestCase):
         )
         self.import_district(nominatim_file)
 
-        self.assertEqual(len(self.district), 1)
-        self.assertEqual(type(self.district[0].geom), MultiPolygon)
-        self.assertEqual(len(self.district[0].geom), 2)
+        self.assertEqual(len(self.districts), 1)
+        self.assertEqual(type(self.districts[0].geom), MultiPolygon)
+        self.assertEqual(len(self.districts[0].geom), 2)
 
         # test the first point of each polygon
         self.assertAlmostEqual(
-            self.district[0].geom.coords[0][0][0][0], 869953.4333298746
+            self.districts[0].geom.coords[0][0][0][0], 869953.4333298746
         )
         self.assertAlmostEqual(
-            self.district[0].geom.coords[0][0][0][1], 6365109.915336954
+            self.districts[0].geom.coords[0][0][0][1], 6365109.915336954
         )
 
         self.assertAlmostEqual(
-            self.district[0].geom.coords[1][0][0][0], 872596.9093673624
+            self.districts[0].geom.coords[1][0][0][0], 872596.9093673624
         )
         self.assertAlmostEqual(
-            self.district[0].geom.coords[1][0][0][1], 6367024.025305742
+            self.districts[0].geom.coords[1][0][0][1], 6367024.025305742
         )
 
     def test_polygon_OSM(self):
@@ -139,16 +139,16 @@ class OpenStreetMapDistrictParserTests(TestCase):
         )
         self.import_district(nominatim_file)
 
-        self.assertEqual(len(self.district), 1)
-        self.assertEqual(type(self.district[0].geom), MultiPolygon)
-        self.assertEqual(len(self.district[0].geom), 1)
+        self.assertEqual(len(self.districts), 1)
+        self.assertEqual(type(self.districts[0].geom), MultiPolygon)
+        self.assertEqual(len(self.districts[0].geom), 1)
 
         # test the first point of each polygon
         self.assertAlmostEqual(
-            self.district[0].geom.coords[0][0][0][0], 872596.9093673624
+            self.districts[0].geom.coords[0][0][0][0], 872596.9093673624
         )
         self.assertAlmostEqual(
-            self.district[0].geom.coords[0][0][0][1], 6367024.025305742
+            self.districts[0].geom.coords[0][0][0][1], 6367024.025305742
         )
 
     def test_name_OSM(self):
@@ -157,4 +157,4 @@ class OpenStreetMapDistrictParserTests(TestCase):
         )
         self.import_district(nominatim_file)
 
-        self.assertEqual(self.district[0].name, "Venterol")
+        self.assertEqual(self.districts[0].name, "Venterol")
