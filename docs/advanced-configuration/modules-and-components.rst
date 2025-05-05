@@ -602,7 +602,7 @@ This setting defines the maximum distance (in meters) within which reports are c
 Signage, blades and lines
 --------------------------
 
-Blade and line enabled
+Enable blades and lines
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 These parameters enable or disable submodules for signage blades and lines:
