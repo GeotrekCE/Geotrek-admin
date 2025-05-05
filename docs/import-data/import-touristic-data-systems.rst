@@ -341,7 +341,7 @@ You can duplicate the class to import different types of information desks. In t
 
 .. _import-poi:
 
-Import POI
+Import points of interest (POIs)
 ----------
 
 To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
