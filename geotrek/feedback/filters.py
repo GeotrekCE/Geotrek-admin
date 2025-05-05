@@ -32,7 +32,7 @@ class ReportFilterSet(ZoningFilterSet, MapEntityFilterSet):
             "category",
             "status",
             "problem_magnitude",
-            "assigned_user",
+            "current_user",
             "provider",
         ]
 
@@ -46,6 +46,6 @@ class ReportEmailFilterSet(ReportFilterSet):
             "category",
             "status",
             "problem_magnitude",
-            "assigned_user",
+            "current_user",
             "provider",
         ]

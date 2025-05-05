@@ -307,10 +307,10 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
         cls.report = feedback_factories.ReportFactory(
-            assigned_user=cls.normal_user, status=cls.classified_status
+            current_user=cls.normal_user, status=cls.classified_status
         )
         cls.report = feedback_factories.ReportFactory(
-            assigned_user=cls.workflow_manager_user, status=cls.classified_status
+            current_user=cls.workflow_manager_user, status=cls.classified_status
         )
         cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains="Can read Report")

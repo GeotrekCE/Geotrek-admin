@@ -199,13 +199,21 @@ class Report(
     last_updated_in_suricate = models.DateTimeField(
         blank=True, null=True, verbose_name=_("Last updated in Suricate")
     )
-    assigned_user = models.ForeignKey(
+    # supervisor_user = models.ForeignKey(
+    #     SelectableUser,
+    #     blank=True,
+    #     on_delete=models.PROTECT,
+    #     null=True,
+    #     verbose_name=_("Supervisor"),
+    #     related_name="supervised_reports",
+    # )
+    current_user = models.ForeignKey(
         SelectableUser,
         blank=True,
         on_delete=models.PROTECT,
         null=True,
-        verbose_name=_("Supervisor"),
-        related_name="reports",
+        verbose_name=_("Current user"),
+        related_name="current_reports",
     )
     uses_timers = models.BooleanField(
         verbose_name=_("Use timers"),
@@ -333,7 +341,7 @@ class Report(
                 ] and not settings.SURICATE_WORKFLOW_SETTINGS.get(
                     "SKIP_MANAGER_MODERATION"
                 ):
-                    self.assigned_user = WorkflowManager.objects.first().user
+                    self.current_user = WorkflowManager.objects.first().user
                 super().save(*args, **kwargs)
         else:  # Report updates should do nothing more
             super().save(*args, **kwargs)
@@ -352,8 +360,8 @@ class Report(
     def try_send_email(self, subject, message):
         try:
             recipient = (
-                [self.assigned_user.email]
-                if self.assigned_user
+                [self.current_user.email]
+                if self.current_user
                 else [x[1] for x in settings.MANAGERS]
             )
             success = send_mail(
@@ -390,7 +398,7 @@ class Report(
         formatted_external_uuid = "".join(str(uuid).rsplit("-", 1))
         return formatted_external_uuid
 
-    def notify_assigned_user(self, message):
+    def notify_current_user(self, message):
         trad = _("New report to process")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
