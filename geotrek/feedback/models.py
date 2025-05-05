@@ -199,14 +199,21 @@ class Report(
     last_updated_in_suricate = models.DateTimeField(
         blank=True, null=True, verbose_name=_("Last updated in Suricate")
     )
-    # supervisor_user = models.ForeignKey(
-    #     SelectableUser,
-    #     blank=True,
-    #     on_delete=models.PROTECT,
-    #     null=True,
-    #     verbose_name=_("Supervisor"),
-    #     related_name="supervised_reports",
-    # )
+
+    # User to whom the report has been assigned by the manager.
+    # This field is useful for allowing non-managers to view the reports they have worked on
+    # even when they are resolved (at that point, their current user is the manager)
+    assigned_handler = models.ForeignKey(
+        SelectableUser,
+        editable=False,
+        blank=True,
+        on_delete=models.PROTECT,
+        null=True,
+        verbose_name=_("Assigned handler"),
+        related_name="assigned_reports",
+    )
+
+    # User currently in charge of the report (manager OR handler depending on the status)
     current_user = models.ForeignKey(
         SelectableUser,
         blank=True,
