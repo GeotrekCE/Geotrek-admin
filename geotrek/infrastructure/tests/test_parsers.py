@@ -119,8 +119,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing Infrastructures",
+            CommandError, "You need to add a network of paths before importing Infrastructures"
         ):
             call_command(
                 "import",
@@ -137,85 +136,73 @@ class OpenStreetMapInfrastructureParser(TestCase):
         self.assertNotEqual(infrastructure_eid, ["1", "2", "3", "4"])
 
     def test_default_name(self):
-        infrastructure1 = self.objects.get(eid="N1")
-        self.assertEqual(infrastructure1.name, "Abri de la Muande Bellone")
+        poi1 = self.objects.get(eid="N1")
+        self.assertEqual(poi1.name, "Abri de la Muande Bellone")
 
-        infrastructure3 = self.objects.get(eid="W2")
-        self.assertEqual(infrastructure3.name, "Test")
+        poi3 = self.objects.get(eid="W2")
+        self.assertEqual(poi3.name, "Test")
 
     def test_type(self):
-        infrastructure = self.objects.get(eid="N1")
-        self.assertEqual(infrastructure.type.label, "Test")
+        poi = self.objects.get(eid="N1")
+        self.assertEqual(poi.type.label, "Test")
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_point(self):
-        infrastructure = self.objects.get(eid="N1")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 27225.536, places=2)
-        self.assertEqual(infrastructure.topo_object.paths.count(), 1)
-        infrastructure_path = infrastructure.topo_object.paths.get()
-        self.assertEqual(infrastructure_path, self.path)
-        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        poi = self.objects.get(eid="N1")
+        self.assertAlmostEqual(poi.topo_object.offset, 27225.536, places=2)
+        self.assertEqual(poi.topo_object.paths.count(), 1)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "INFRASTRUCTURE")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_point_geom(self):
-        infrastructure = self.objects.get(eid="N1")
-        self.assertAlmostEqual(infrastructure.geom.x, 958978.005, places=2)
-        self.assertAlmostEqual(infrastructure.geom.y, 6422555.230, places=2)
+    def test_topology_point_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid="N1")
+        self.assertAlmostEqual(poi.geom.x, 958978.005, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6422555.230, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_way(self):
-        infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 31946.239, places=2)
-        infrastructure_path = infrastructure.topo_object.paths.get()
-        self.assertEqual(infrastructure_path, self.path)
-        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        poi = self.objects.get(eid="W2")
+        self.assertAlmostEqual(poi.topo_object.offset, 31946.239, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "INFRASTRUCTURE")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_way_geom(self):
-        infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.geom.x, 962843.506, places=2)
-        self.assertAlmostEqual(infrastructure.geom.y, 6425572.291, places=2)
+    def test_topology_way_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid="W2")
+        self.assertAlmostEqual(poi.geom.x, 962843.506, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6425572.291, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_polygon(self):
-        infrastructure = self.objects.get(eid="W3")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 48632.872, places=2)
-        infrastructure_path = infrastructure.topo_object.paths.get()
-        self.assertEqual(infrastructure_path, self.path)
-        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        poi = self.objects.get(eid="W3")
+        self.assertAlmostEqual(poi.topo_object.offset, 48632.872, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "INFRASTRUCTURE")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_polygon_geom(self):
-        infrastructure = self.objects.get(eid="W3")
-        self.assertAlmostEqual(infrastructure.geom.x, 917407.272, places=2)
-        self.assertAlmostEqual(infrastructure.geom.y, 6458702.232, places=2)
+    def test_topology_polygon_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid="W3")
+        self.assertAlmostEqual(poi.geom.x, 917407.272, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6458702.232, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_relation(self):
-        infrastructure = self.objects.get(eid="R4")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
-        infrastructure_path = infrastructure.topo_object.paths.get()
-        self.assertEqual(infrastructure_path, self.path)
-        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        poi = self.objects.get(eid="R4")
+        self.assertAlmostEqual(poi.topo_object.offset, 31942.149, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "INFRASTRUCTURE")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_relation_geom(self):
-        infrastructure = self.objects.get(eid="R4")
-        self.assertAlmostEqual(infrastructure.geom.x, 962840.506, places=2)
-        self.assertAlmostEqual(infrastructure.geom.y, 6425568.935, places=2)
+    def test_topology_relation_no_dynamic_segmentation(self):
+        poi = self.objects.get(eid="R4")
+        self.assertAlmostEqual(poi.geom.x, 962840.506, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6425568.935, places=2)
