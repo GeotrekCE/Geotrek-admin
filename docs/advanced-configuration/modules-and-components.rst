@@ -648,7 +648,7 @@ This parameter is used to assign the ``direction`` field to lines rather than bl
 Enable signage lines
 ~~~~~~~~~~~~~~~~~~~~~
 
-This parameter is used to manage lines by blades.
+This parameter is used to manage lines per blade.
 
 .. md-tab-set::
   :name: signage-line-enabled-tabs
