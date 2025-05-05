@@ -627,7 +627,7 @@ These parameters enable or disable submodules for signage blades and lines:
 Enable line direction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This parameter is used to have ``direction`` field on lines instead of blades.
+This parameter is used to assign the ``direction`` field to lines rather than blades.
 
 .. md-tab-set::
   :name: direction-on-lines-enabled-tabs
