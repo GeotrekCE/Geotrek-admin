@@ -68,7 +68,7 @@ class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
     tags = [[{"boundary": "administrative"}, {"admin_level": "6"}]]
 
 
-class OpenStreetMapDistrictParser(TestCase):
+class OpenStreetMapDistrictParserTests(TestCase):
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_district(self, nominatim_file, mocked):
         def mocked_json_overpass():
