@@ -376,7 +376,7 @@ You can duplicate the class to import different types of points of interest. In 
 
 .. _import-district:
 
-Import District
+Import districts
 ---------------
 
 To import District from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
