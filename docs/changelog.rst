@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Improve Overpass query for OpenStreetMap parsers
+- Add OpenStreetMap parser for Districts
 
 **Bug fixes**
 
