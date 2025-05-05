@@ -1441,6 +1441,11 @@ class OpenStreetMapParserTests(TestCase):
     def test_create_information_desk_OSM(self):
         self.assertEqual(self.objects.count(), 4)
 
+    def test_InformationDesk_eid_filter_OSM(self):
+        information_desks_eid = self.objects.all().values_list("eid", flat=True)
+        self.assertListEqual(list(information_desks_eid), ["N1", "N2", "W3", "R4"])
+        self.assertNotEqual(information_desks_eid, ["1", "2", "3", "4"])
+
     def test_get_tag_info_existing_tag_OSM(self):
         information_desk = self.objects.get(eid="N1")
         self.assertEqual(information_desk.phone, "0754347899")
