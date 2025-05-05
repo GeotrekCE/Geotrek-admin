@@ -277,7 +277,8 @@ Import from OpenStreetMap
 OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
 By default, the parser uses the German Overpass server:
-``https://overpass-api.de/api/interpreter/``
+``https://overpass-api.de/api/interpreter/``.
+
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
 
 Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
@@ -290,13 +291,24 @@ Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wik
     * ``geom``: return the object type, the object ID, the tags and the geometry
     * ``tags``: return the object type, the object ID and the tags
 
-The ``tags`` attribute defines filters for selecting OSM elements. It is a list where each item is either:
+The ``tags`` attribute defines the set of tag filters to be used with the Overpass API.
+It is a list where each element is either:
 
-* A **dictionary**, e.g., ``{"highway": "bus_stop"}``
+* A **dictionary**: representing a single tag filter (e.g., ``{"highway": "bus_stop"}``)
 
-* A **list of dictionaries**, representing a logical **AND**, e.g., ``[{"boundary": "administrative"}, {"admin_level": "4"}]``.
+* A **list of dictionaries**: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
 
-The parser builds a query that returns the **union** of all top-level filters.
+The Overpass query will return the UNION of all top-level items.
+
+For example:
+::
+    self.tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"highway": "bus_stop"}
+    ]
+
+*means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
 
 Import information desks
 -------------------------
