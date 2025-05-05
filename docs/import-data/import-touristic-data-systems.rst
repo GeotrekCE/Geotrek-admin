@@ -274,6 +274,44 @@ If you use an url that filters a unique category, you can change its name. Examp
 Import from OpenStreetMap
 ==========================
 
+OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
+
+By default, the parser uses the German Overpass server:
+``https://overpass-api.de/api/interpreter/``.
+
+You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
+
+Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
+
+* ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
+
+* ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
+
+* ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
+    * ``geom``: return the object type, the object ID, the tags and the geometry
+    * ``tags``: return the object type, the object ID and the tags
+
+The ``tags`` attribute defines the set of tag filters to be used with the Overpass API.
+It is a list where each element is either:
+
+* A **dictionary**: representing a single tag filter (e.g., ``{"highway": "bus_stop"}``)
+
+* A **list of dictionaries**: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+
+The Overpass query will return the UNION of all top-level items.
+
+For example:
+
+::
+
+    self.tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"highway": "bus_stop"}
+    ]
+
+*means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
+
 Import information desks
 -------------------------
 
@@ -285,7 +323,7 @@ To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/va
 
     class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
         provider = "OpenStreetMap"
-        tags = {"amenity": "ranger_station"}
+        tags = [{"amenity": "ranger_station"}]
         default_fields_values = {"name": "Maison du Parc"}
         type = "Maisons du parc"
 
@@ -310,17 +348,21 @@ To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parser
 
     class HistoryParser(OpenStreetMapPOIParser):
         provider = "OpenStreetMap"
-        tags = {
-            "historic": ["yes","castel","memorial","fort","bunker"],
-            "building": "church",
-        }
+        tags = [
+            {"historic": "yes"},
+            {"historic": "castel"},
+            {"historic": "memorial"},
+            {"historic": "fort"},
+            {"historic": "bunker"},
+            {"building": "chapel"},
+            {"building": "bunker"},
+        ]
         default_fields_values = {"name": "Historic spot"}
         type = "Histoire"
 
 Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-    * if there is multiple tags with the same key, groups the different attributs in a list
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers

@@ -5,6 +5,9 @@ CHANGELOG
 2.115.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Improve Overpass query for OpenStreetMap parsers
 
 
 2.115.0    (2025-04-29)
