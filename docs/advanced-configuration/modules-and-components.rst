@@ -531,7 +531,7 @@ Interventions
 Intervention intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which intervention are considered related to other objects such as treks, POIs, services, or tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
 
 .. md-tab-set::
     :name: intervention-intersection-margin-tabs
