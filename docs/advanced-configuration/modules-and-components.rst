@@ -555,7 +555,7 @@ Maintenance intersection margin
 
     .. 
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. 
 
 .. md-tab-set::
     :name: maintenance-intersection-margin-tabs
