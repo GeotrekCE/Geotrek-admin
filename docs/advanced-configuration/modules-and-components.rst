@@ -487,7 +487,7 @@ Treks
 Trek signage intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which signage are considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
 
 .. md-tab-set::
     :name: trek-signage-intersection-margin-tabs
