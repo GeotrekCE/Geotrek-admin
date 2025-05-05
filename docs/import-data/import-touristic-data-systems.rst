@@ -302,7 +302,9 @@ It is a list where each element is either:
 The Overpass query will return the UNION of all top-level items.
 
 For example:
+
 ::
+
     self.tags = [
         [{"boundary": "administrative"}, {"admin_level": "4"}],
         {"highway": "bus_stop"}
