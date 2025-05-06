@@ -325,18 +325,8 @@ When no translation exists for the default language, the base OpenStreetMap tag 
 
 Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
 
-
-OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
-
-During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
-
-For the default language (``settings.MODELTRANSLATION_DEFAULT_LANGUAGE``), a special mapping is applied: it includes a fallback to the base tag (e.g., ``name``) and maps it to the base Geotrek field name (e.g., ``name``). This allows for filtering operations without relying directly on the default language code.
-
-If a translation is missing, the field remains unset unless a fallback value is provided in ``default_fields_values`` using the pattern ``{field}_{lang}``.
-
-When no translation exists for the default language, the base OpenStreetMap tag (e.g., ``name``) is used. This can lead to incorrect language display if the OSM default does not match the Geotrek instance’s default language.
-
-Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
+Finally all the objects parsed by the OpenStreetMap parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can change the bounding box by overriding ``get_bbox_str()``.
 
 Import information desks
 -------------------------
@@ -360,11 +350,10 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
-The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-Import POI
-----------
+Import point of interest (POI)
+------------------------------
 
 To import point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -393,7 +382,6 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
 
-The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
 .. _import-signage-osm:
@@ -419,9 +407,6 @@ Then set up appropriate values:
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
-
-The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
-You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
 .. _multiple-imports:
 
