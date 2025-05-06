@@ -124,7 +124,7 @@ class OpenStreetMapSignageParserTests(TestCase):
                 verbosity=0,
             )
 
-    def test_create_Signage_OSM(self):
+    def test_create_signage_osm(self):
         self.assertEqual(self.objects.count(), 1)
 
     def test_signage_eid_filter_osm(self):
