@@ -1538,7 +1538,6 @@ class OpenStreetMapTestParser(TestCase):
         "geotrek.common.parsers.OpenStreetMapParser.get_bbox_str", return_value="test"
     )
     def test_query_settings(self, mocked):
-
         # default settings
         self.assertEqual(
             "[out:json][timeout:180][bbox:test];(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
