@@ -1423,21 +1423,6 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
             return street
         return None
 
-    def filter_postal_code(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_municipality(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_phone(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_email(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_website(self, src, val):
-        return self.get_tag_info(val)
-
     def filter_geom(self, src, val):
         type, lng, lat, area, bbox = val
         if type == "node":
