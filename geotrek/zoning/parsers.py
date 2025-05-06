@@ -63,14 +63,13 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
 
         osm_id = element_type[0].upper() + str(id)
 
-        url = "https://nominatim.openstreetmap.org/lookup"
         params = {
             "osm_ids": osm_id,
             "polygon_text": 1,
             "format": "json",
             "polygon_threshold": 0.0001,
         }
-        response = self.request_or_retry(url, params=params)
+        response = self.request_or_retry(self.url_nominatim, params=params)
         root = response.json()[0]
 
         wkt = root["geotext"]
