@@ -315,7 +315,7 @@ For example:
 .. _import-information-desk:
 
 Import information desks
---------------------------
+------------------------
 
 To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
