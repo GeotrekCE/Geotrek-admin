@@ -2505,3 +2505,19 @@ class OpenStreetMapPOIParser(TestCase):
         poi = self.objects.get(eid="R4")
         self.assertAlmostEqual(poi.geom.x, 930902.9339307954)
         self.assertAlmostEqual(poi.geom.y, 6406011.138417606)
+
+    def test_multiple_import(self):
+        poi1 = self.objects.get(eid="N1")
+        poi2 = self.objects.get(eid="W2")
+
+        id1 = poi1.id
+        id2 = poi2.id
+
+        self.import_POI()
+
+        poi1_bis = self.objects.get(eid="N1")
+        poi2_bis = self.objects.get(eid="W2")
+
+        self.assertEqual(poi1_bis.id, id1)
+        self.assertEqual(poi2_bis.id, id2)
+        self.assertEqual(self.objects.count(), 4)
