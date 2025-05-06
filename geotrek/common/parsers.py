@@ -1925,10 +1925,13 @@ class OpenStreetMapParser(Parser):
     delete = True
     flexible_fields = True
 
-    # query settings
+    # overpass query settings
     url = "https://overpass-api.de/api/interpreter/"
     tags = None
     query_settings = None
+
+    # nominatim query settings
+    url_nominatim = "https://nominatim.openstreetmap.org/lookup"
 
     # OSM settings
     osm_srid = 4326

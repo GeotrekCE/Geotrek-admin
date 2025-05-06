@@ -1393,6 +1393,8 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
 
     type = None
     model = InformationDesk
+    eid = "eid"
+
     fields = {
         "eid": ("type", "id"),  # ids are unique only for object of the same type,
         "phone": ("tags.contact:phone", "tags.phone"),
