@@ -391,7 +391,7 @@ L.Handler.MultiPath = L.Handler.extend({
         pop.events.fire('placed');
     },
 
-    addStartOrEndStep: function(layer, latlng) {
+    addStartOrEndStep: function(layer, latlng, positionOnPath) {
         if (this.steps.length >= 2) return;
 
         var self = this;
@@ -411,6 +411,7 @@ L.Handler.MultiPath = L.Handler.extend({
         }
 
         var pop = self.createStep(marker, next_step_idx);
+        pop.positionOnPath = positionOnPath
         pop.toggleActivate();
         self.forceMarkerToLayer(marker, layer);
         return pop
@@ -450,6 +451,8 @@ L.Handler.MultiPath = L.Handler.extend({
             if (this.steps.length > 1)
                 this.enableLoadingMode()
 
+            // ici mettre la pop position (quel PATH ?) (regarder avant Pg_routing)
+            // Pour moi elle y est déjà
             pop.previousPosition = {ll: pop.ll, polyline: pop.polyline}
 
             var currentStepIdx = self.getStepIdx(pop)
@@ -556,7 +559,6 @@ L.Handler.MultiPath = L.Handler.extend({
             newStepsIndexes: indexes of these steps after the route is updated
             pop (PointOnPolyline): step that is being added/modified/deleted
         */
-
         var stepsToRoute = []
         newStepsIndexes.forEach(idx => {
             stepsToRoute.push(this.steps[idx])
@@ -579,10 +581,12 @@ L.Handler.MultiPath = L.Handler.extend({
 
         var sentSteps = []
         stepsToRoute.forEach((step) => {
+            // pousser le path position
             var sentStep = {
                 path_id: step.polyline.properties.id,
                 lat: step.ll.lat,
                 lng: step.ll.lng,
+                positionOnPath: step.pathPositions
             }
             sentSteps.push(sentStep)
         })
@@ -641,6 +645,8 @@ L.Handler.MultiPath = L.Handler.extend({
     },
 
     restoreGeometry: function (serializedTopology) {
+        // Ici on crée les marqueurs à partir de la topologie : il faut stocker dans pop leur position sur le tronçon
+        // (entre 0 et 1). Attention, pop != marqueur
         var self = this;
 
         function pos2latlng(pos, layer) {
@@ -679,7 +685,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var topology = serializedTopology[0]
         var pathLayer = this.idToLayer(topology.paths[0])
         var latlng = pos2latlng(topology.positions[0][0], pathLayer)
-        var popStart = this.addStartOrEndStep(pathLayer, latlng)
+        var popStart = this.addStartOrEndStep(pathLayer, latlng, topology.positions[0][0])
         popStart.previousPosition = {ll: popStart.ll, polyline: popStart.polyline}
 
         // Add the end marker
@@ -687,7 +693,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var lastPosIdx = topology.paths.length - 1
         pathLayer = this.idToLayer(topology.paths[lastPosIdx])
         latlng = pos2latlng(topology.positions[lastPosIdx][1], pathLayer)
-        var popEnd = this.addStartOrEndStep(pathLayer, latlng)
+        var popEnd = this.addStartOrEndStep(pathLayer, latlng, topology.positions[lastPosIdx][1])
         popEnd.previousPosition = {ll: popEnd.ll, polyline: popEnd.polyline}
 
         // Add the via markers: for each topology, use its first position,
@@ -702,12 +708,14 @@ L.Handler.MultiPath = L.Handler.extend({
                 marker: self.markersFactory.drag(latlng, null, true)
             }
             var pop = self.addViaStep(viaMarker.marker, idx);
+            pop.pathPositions = topo.positions[0][0]
             self.forceMarkerToLayer(viaMarker.marker, viaMarker.layer);
-            pop.previousPosition = {ll: pop.ll, polyline: pop.polyline}
+            pop.previousPosition = {ll: pop.ll, polyline: pop.polyline, }
         })
 
         // Set the state
         serializedTopology.forEach(topo => {
+            console.log(topo.positions)
             this._routeTopology.push({
                 positions: topo.positions,
                 paths: topo.paths,
@@ -1064,11 +1072,13 @@ Geotrek.PointOnPolyline = function (marker) {
         },
         'snap': function onSnap(e) {
             this.ll = e.latlng;
+            this.pathPositions = L.GeometryUtil.locateOnLine(e.layer._map, e.layer, this.ll);
             this.polyline = e.layer;
             this.events.fire('valid');
         },
         'unsnap': function onUnsnap(e) {
             this.ll = null;
+            this.pathPositions = null
             this.polyline = null;
             this.events.fire('invalid');
         },
