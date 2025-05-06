@@ -127,7 +127,7 @@ class OpenStreetMapSignageParserTests(TestCase):
     def test_create_Signage_OSM(self):
         self.assertEqual(self.objects.count(), 1)
 
-    def test_Signage_eid_filter_OSM(self):
+    def test_signage_eid_filter_osm(self):
         signage_eid = self.objects.order_by("eid").all().values_list("eid", flat=True)
         self.assertListEqual(list(signage_eid), ["N7872800265"])
         self.assertNotEqual(signage_eid, ["7872800265"])
