@@ -82,7 +82,7 @@ class TestSignageOpenStreetMapParser(OpenStreetMapSignageParser):
     type = "Test"
 
 
-class OpenStreetMapSignageParser(TestCase):
+class OpenStreetMapSignageParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_Signage(cls, mocked):
