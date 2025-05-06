@@ -10,14 +10,13 @@ def fill_reports_assigned_handlers(apps, schema_editor):
     """
     Report = apps.get_model("feedback", "Report")
 
-    reports = Report.objects.all()
+    reports = Report.objects.select_related("status").exclude(
+        current_user__isnull=True,
+        status__identifier__in=["solved_intervention", "solved"],
+    )
     for report in reports:
-        if report.current_user and report.status.identifier not in [
-            "solved_intervention",
-            "solved",
-        ]:
-            report.assigned_handler = report.current_user
-            report.save()
+        report.assigned_handler = report.current_user
+        report.save()
 
 
 class Migration(migrations.Migration):
