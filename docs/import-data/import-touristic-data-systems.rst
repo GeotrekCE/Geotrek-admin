@@ -366,7 +366,7 @@ You can duplicate the class to import different types of information desks. In t
 Import POI
 ----------
 
-To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+To import point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -401,7 +401,7 @@ You can duplicate the class to import different types of information desks. In t
 Import Signage
 --------------
 
-To import Signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
 ::
 
