@@ -21,7 +21,7 @@ def fill_reports_assigned_handlers(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("feedback", "0045_rename_assigned_user_report_current_user"),
+        ("feedback", "0045_report_use_current_user_and_assigned_handler"),
     ]
 
     operations = [
