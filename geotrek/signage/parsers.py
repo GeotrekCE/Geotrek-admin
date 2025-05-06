@@ -59,7 +59,7 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
             self.constant_fields["type"] = self.type
 
     fields = {
-        "eid": ("type", "id"),  # ids are unique only for object of the same type
+        "eid": ("type", "id"),  # ids are unique only among objects of the same type
         "name": "tags.name",
         "description": "tags.description",
         "geom": ("lon", "lat"),
