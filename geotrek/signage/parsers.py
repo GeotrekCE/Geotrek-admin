@@ -77,7 +77,7 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
         super().start()
         if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
             raise GlobalImportError(
-                _("You need to add a network of paths before importing Signages")
+                _("You need to add a path network before importing signage")
             )
 
     def filter_geom(self, src, val):
