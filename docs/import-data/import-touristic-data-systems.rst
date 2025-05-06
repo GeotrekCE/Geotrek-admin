@@ -398,7 +398,7 @@ You can duplicate the class to import different types of information desks. In t
 
 .. _import-signage-osm:
 
-Import Signage
+Import signage
 --------------
 
 To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
