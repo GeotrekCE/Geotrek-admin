@@ -85,7 +85,7 @@ class TestSignageOpenStreetMapParser(OpenStreetMapSignageParser):
 class OpenStreetMapSignageParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
-    def import_Signage(cls, mocked):
+    def import_signage(cls, mocked):
         def mocked_json():
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "signage_OSM.json"
