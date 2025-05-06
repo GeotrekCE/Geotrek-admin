@@ -32,7 +32,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
             "problem_magnitude",
             "status",
             "related_trek",
-            "current_user",
+            "assigned_handler",
         )
         .prefetch_related("attachments")
     )
@@ -56,7 +56,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
                 )
             )
         ):
-            qs = qs.filter(current_user=self.request.user)
+            qs = qs.filter(assigned_handler=self.request.user)
         return qs
 
 
@@ -154,7 +154,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
                     user_id=self.request.user.pk
                 ).exists()
             ):
-                qs = qs.filter(current_user=self.request.user)
+                qs = qs.filter(assigned_handler=self.request.user)
 
         if self.format_kwarg == "geojson":
             number = "eid" if settings.SURICATE_WORKFLOW_ENABLED else "id"
