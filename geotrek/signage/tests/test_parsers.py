@@ -107,7 +107,7 @@ class OpenStreetMapSignageParserTests(TestCase):
         cls.path = PathFactory.create(
             geom=LineString((6.3737905, 44.8337000), (6.3757905, 44.8357000), srid=4326)
         )
-        cls.import_Signage()
+        cls.import_signage()
         cls.objects = Signage.objects.all()
 
     @skipIf(
@@ -116,7 +116,7 @@ class OpenStreetMapSignageParserTests(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing Signages"
+            CommandError, "You need to add a path network before importing signage"
         ):
             call_command(
                 "import",
@@ -129,8 +129,8 @@ class OpenStreetMapSignageParserTests(TestCase):
 
     def test_signage_eid_filter_osm(self):
         signage_eids = self.objects.order_by("eid").all().values_list("eid", flat=True)
-        self.assertListEqual(list(signage_eid), ["N7872800265"])
-        self.assertNotEqual(signage_eid, ["7872800265"])
+        self.assertListEqual(list(signage_eids), ["N7872800265"])
+        self.assertNotEqual(signage_eids, ["7872800265"])
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
