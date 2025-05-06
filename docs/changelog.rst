@@ -29,11 +29,13 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
 - Fix log book filters by updating mapentity (#4576)
 - Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
 
 **Improvements**
 
+- Add healthcheck to Dockerfile
 - Do not display "None" on Blade Direction
 - Add OpenStreetMap parser for Information Desk
 - Add OpenStreetMap parser for POI

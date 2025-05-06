@@ -1,6 +1,7 @@
 import html
 import json
 import logging
+import os
 from datetime import timedelta
 from uuid import uuid4
 
@@ -251,11 +252,9 @@ class Report(
 
     @property
     def full_url(self):
-        try:
-            return f"{settings.ALLOWED_HOSTS[0]}{self.get_detail_url()}"
-        except KeyError:
-            # Do not display url if there is no ALLOWED_HOSTS
-            return ""
+        scheme = "https" if settings.USE_SSL else "http"
+        server_name = os.getenv("SERVER_NAME")
+        return f"{scheme}://{server_name}{self.get_detail_url()}"
 
     @classmethod
     def get_create_label(cls):
@@ -791,7 +790,7 @@ class WorkflowManager(models.Model):
     def notify_new_reports(self, reports):
         reports_urls = []
         for report in Report.objects.filter(pk__in=reports):
-            reports_urls.append(f"https://{report.full_url}")
+            reports_urls.append(f"{report.full_url}")
         trad = _("New reports from Suricate")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
