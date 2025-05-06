@@ -13,6 +13,10 @@ CHANGELOG
 
 - Make OpenStreetMap eid as type+id
 
+**Documentation**
+
+- Add missing parameters from base.py (#4690)
+
 
 2.115.0    (2025-04-29)
 ----------------------------
