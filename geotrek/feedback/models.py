@@ -219,6 +219,7 @@ class Report(
         blank=True,
         on_delete=models.PROTECT,
         null=True,
+        # Translators: user (manager or handler) currently in charge of the report
         verbose_name=_("Current user"),
         related_name="current_reports",
     )
