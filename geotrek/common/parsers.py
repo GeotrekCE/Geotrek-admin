@@ -7,6 +7,7 @@ import re
 import textwrap
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
+from dataclasses import dataclass
 from ftplib import FTP
 from functools import reduce
 from io import BytesIO
@@ -1920,31 +1921,77 @@ class ApidaeBaseParser(Parser):
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
 
+    # parser settings
     delete = True
     flexible_fields = True
+
+    # query settings
     url = "https://overpass-api.de/api/interpreter/"
-    bbox = None
     tags = None
-    query = ""
+    query_settings = None
+
+    # OSM settings
     osm_srid = 4326
-    bbox_margin = 0.0
+
+    @dataclass
+    class QuerySettings:
+        bbox_margin: float = 0.0
+        output: str = "geom"
+        osm_element_type: str = "nwr"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if not self.query_settings:
+            self.query_settings = self.QuerySettings()
+
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
 
-        bbox_str = self.get_bbox_str()
-        for tag, values in self.tags.items():
-            if not isinstance(values, list):
-                values = list(values)
-                for value in values:
-                    self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+    def format_tags(self):
+        formatted_tags = []
+        for tags_filter in self.tags:
+            if isinstance(tags_filter, dict):
+                tags_filter = [tags_filter]
+
+            list_tags = [
+                f"['{key}'='{value}']"
+                for tag in tags_filter
+                for key, value in tag.items()
+            ]
+            formatted_tags.append(
+                f"{self.query_settings.osm_element_type}{''.join(list_tags)};"
+            )
+
+        return formatted_tags
 
     def get_bbox_str(self):
-        bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
+        bbox = api_bbox(settings.SPATIAL_EXTENT, self.query_settings.bbox_margin)
         return "{1},{0},{3},{2}".format(*bbox)
+
+    def build_query(self):
+        """
+        self.tags defines the set of tag filters to be used with the Overpass API.
+        It is a list, where each element is either:
+          - A dictionary: representing a single tag filter (e.g., {"boundary": "administrative"}), or
+          - A list of dictionaries: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+        The Overpass query will return the UNION of all top-level items.
+          For example:
+            self.tags = [
+                [{"boundary": "administrative"}, {"admin_level": "4"}],
+                {"highway": "bus_stop"}
+            ]
+          means: return objects that either have both `boundary=administrative` AND `admin_level=4`,
+          OR have `highway=bus_stop`.
+        Tag value lists and negations are not supported.
+        Conflicts between tags in the same sublist are not detected or handled.
+        """
+        tags_filters = self.format_tags()
+        bbox = self.get_bbox_str()
+        query = f"[out:json][timeout:180][bbox:{bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        return query
 
     def get_tag_info(self, osm_tags):
         for tag in osm_tags:
@@ -1975,9 +2022,7 @@ class OpenStreetMapParser(Parser):
         return centroid
 
     def next_row(self):
-        params = {
-            "data": f"[out:json];({self.query});out geom;",
-        }
+        params = {"data": self.build_query()}
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
         self.nb = len(self.root["elements"])
@@ -1985,3 +2030,7 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+    def filter_eid(self, src, val):
+        type, id = val
+        return f"{type[0].upper()}{id}"
