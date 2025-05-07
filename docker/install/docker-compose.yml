@@ -1,5 +1,3 @@
-version: "3"
-
 x-images:
   django: &django
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}
@@ -8,8 +6,32 @@ x-images:
       - .env
     volumes:
       - ./var:/opt/geotrek-admin/var
+    depends_on:
+      postgres:
+          condition: service_healthy
+      memcached:
+          condition: service_started
+      redis:
+          condition: service_started
+      screamshotter:
+          condition: service_started
+      convertit:
+          condition: service_started
 
 services:
+  postgres:
+      image: pgrouting/pgrouting:latest
+      env_file:
+        - .env
+      volumes:
+        - postgres:/var/lib/postgresql/data
+      healthcheck:
+          test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-geotrek}", "-d", "${POSTGRES_DB:-geotrekdb}"]
+          interval: 10s
+          retries: 5
+          start_period: 30s
+          timeout: 5s
+
   memcached:
     image: memcached:alpine
 
@@ -26,31 +48,73 @@ services:
 
   celery:
     <<: [ *django ]
-    depends_on:
-      - memcached
-      - redis
 
     command: celery -A geotrek worker -c 1
 
   web:
     <<: [ *django ]
-    ports:
-      - "${WEB_PORT:-8001}:8000"
     volumes:
       - ./var:/opt/geotrek-admin/var
-    depends_on:
-      - memcached
-      - redis
-      - screamshotter
-      - convertit
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui_server.rule=Host(`${SERVER_NAME}`)"
+      - "traefik.http.services.ui_server.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.gzip-ui.compress=true"
 
   api:
     <<: [ *django ]
-    ports:
-      - "${API_PORT:-8002}:8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api_server.rule=Host(`${SERVER_NAME}`) && PathPrefix(`/api`)"
+      - "traefik.http.services.api_server.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.gzip-api.compress=true"
+
+  nginx:
     depends_on:
-      - memcached
-      - redis
+      - web
+      - api
+    image: nginx:alpine
+    volumes:
+      - ./var/media:/usr/share/nginx/html/media
+      - ./var/static:/usr/share/nginx/html/static
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`${SERVER_NAME}`) && (PathPrefix(`/static`) || PathPrefix(`/media`))"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+
+  traefik:
+    image: traefik:latest
+    depends_on:
+      - nginx
+    command:
+      - "--api.insecure=true"
+      #- "--providers.docker=true"
+      #- "--entrypoints.web.address=:${NGINX_PORT}"
+      #- "--api=true"
+      #- "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      #- "--entrypoints.websecure.address=:443"
+      #- "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      #- "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      #- "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      #- "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.myresolver.acme.email=your-email@gmail.com"
+      #- "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - 'traefik.tls.certificates.http-catchall.middlewares=redirect-to-https'
+      #- 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+      - "443:443"
+      - "8080:8080" # Port pour le dashboard Traefik
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - letsencrypt:/letsencrypt
+      - ./certs:/etc/certs:ro
 
 volumes:
   redis:
+  postgres:
+  letsencrypt:
