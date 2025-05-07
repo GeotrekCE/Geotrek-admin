@@ -57,3 +57,17 @@ class IsSimple(GeoFunc):
 
 class GeometryN(GeomOutputGeoFunc):
     """ST_GeometryN postgis function"""
+
+
+class ST_X(GeoFunc):
+    """ST_X postgis function"""
+
+    output_field = FloatField()
+    function = "ST_X"
+
+
+class ST_Y(GeoFunc):
+    """ST_Y postgis function"""
+
+    output_field = FloatField()
+    function = "ST_Y"
