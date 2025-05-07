@@ -7,6 +7,7 @@ CHANGELOG
 
 **Improvements**
 
+- Ensure report handlers can access their solved reports (#4589)
 - Improve Overpass query for OpenStreetMap parsers
 
 **Bug fixes**
