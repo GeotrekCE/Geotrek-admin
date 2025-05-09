@@ -1694,6 +1694,7 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         "type": "label",
     }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
+    non_fields = {"attachments": "tags.wikimedia_commons"}
     topology = Topology.objects.none()
 
     def __init__(self, *args, **kwargs):
