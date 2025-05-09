@@ -15,6 +15,7 @@ from geotrek.common.parsers import (
     AttachmentParserMixin,
     GeotrekParser,
     LEIParser,
+OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
     TourInSoftParser,
@@ -1388,7 +1389,7 @@ class GeotrekInformationDeskParser(GeotrekParser):
         )
 
 
-class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
+class InformationDeskOpenStreetMapParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
     """Parser to import information desks from OpenStreetMap"""
 
     type = None
@@ -1410,7 +1411,7 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
     natural_keys = {
         "type": "label",
     }
-    non_fields = {}
+    non_fields = {"attachments": "tags.wikimedia_commons"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
