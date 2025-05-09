@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Make OpenStreetMap eid as type+id
+- Fix signage fixture typo
 
 **Documentation**
 
