@@ -1,7 +1,6 @@
 import html
 import json
 import logging
-import os
 from datetime import timedelta
 from uuid import uuid4
 
@@ -253,7 +252,7 @@ class Report(
     @property
     def full_url(self):
         scheme = "https" if settings.USE_SSL else "http"
-        server_name = os.getenv("SERVER_NAME")
+        server_name = settings.SERVER_NAME
         return f"{scheme}://{server_name}{self.get_detail_url()}"
 
     @classmethod
