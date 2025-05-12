@@ -325,19 +325,6 @@ When no translation exists for the default language, the base OpenStreetMap tag 
 
 Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
 
-
-OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
-
-During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
-
-For the default language (``settings.MODELTRANSLATION_DEFAULT_LANGUAGE``), a special mapping is applied: it includes a fallback to the base tag (e.g., ``name``) and maps it to the base Geotrek field name (e.g., ``name``). This allows for filtering operations without relying directly on the default language code.
-
-If a translation is missing, the field remains unset unless a fallback value is provided in ``default_fields_values`` using the pattern ``{field}_{lang}``.
-
-When no translation exists for the default language, the base OpenStreetMap tag (e.g., ``name``) is used. This can lead to incorrect language display if the OSM default does not match the Geotrek instance’s default language.
-
-Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
-
 Import information desks
 -------------------------
 
