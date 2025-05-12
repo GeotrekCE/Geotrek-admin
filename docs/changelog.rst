@@ -12,11 +12,13 @@ CHANGELOG
 **Bug fixes**
 
 - Make OpenStreetMap eid as type+id
-- Fix signage fixture typo
 
 **Documentation**
 
 - Add missing parameters from base.py (#4690)
+
+**Minor fix**
+- Fix signage fixture typo
 
 
 2.115.0    (2025-04-29)
