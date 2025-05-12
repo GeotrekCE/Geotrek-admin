@@ -1,10 +1,10 @@
-from geotrek.common.parsers import GeotrekParser, OpenStreetMapParser, GlobalImportError
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.core.models import Path, Topology
-
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils.translation import gettext as _
+
+from geotrek.common.parsers import GeotrekParser, GlobalImportError, OpenStreetMapParser
+from geotrek.core.models import Path, Topology
+from geotrek.infrastructure.models import Infrastructure
 
 
 class GeotrekInfrastructureParser(GeotrekParser):
@@ -30,6 +30,7 @@ class GeotrekInfrastructureParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/infrastructure"
+
 
 class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
     """Parser to import infrastructures from OpenStreetMap"""

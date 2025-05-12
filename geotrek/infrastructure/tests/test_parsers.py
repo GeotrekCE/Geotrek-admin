@@ -1,20 +1,23 @@
-import os
 import json
-
+import os
 from unittest import mock, skipIf
 
+from django.conf import settings
+from django.contrib.gis.geos import LineString
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.conf import settings
-from django.core.management.base import CommandError
 
 from geotrek.common.models import FileType
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
-from geotrek.infrastructure.models import Infrastructure, InfrastructureType
-from geotrek.infrastructure.parsers import GeotrekInfrastructureParser, OpenStreetMapInfrastructureParser
 from geotrek.core.tests.factories import PathFactory
-from django.contrib.gis.geos import LineString
+from geotrek.infrastructure.models import Infrastructure, InfrastructureType
+from geotrek.infrastructure.parsers import (
+    GeotrekInfrastructureParser,
+    OpenStreetMapInfrastructureParser,
+)
+
 
 class TestGeotrekInfrastructureParser(GeotrekInfrastructureParser):
     url = "https://test.fr"
@@ -116,7 +119,8 @@ class OpenStreetMapInfrastructureParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing Infrastructures"
+            CommandError,
+            "You need to add a network of paths before importing Infrastructures",
         ):
             call_command(
                 "import",
