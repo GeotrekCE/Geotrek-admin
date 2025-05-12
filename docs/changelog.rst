@@ -11,6 +11,7 @@ CHANGELOG
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
+- Add OpenStreetMap parser for infrastructures
 
 **Documentation**
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
