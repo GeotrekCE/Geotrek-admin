@@ -9,6 +9,7 @@ CHANGELOG
 
 - Improve Overpass query for OpenStreetMap parsers
 - OpenSteetMap parsers accept translations from OSM
+- Add OpenStreetMap parser for infrastructures
 
 **Bug fixes**
 
