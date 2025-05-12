@@ -235,7 +235,12 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.13.0
+mapentity@git+https://github.com/makinacorpus/django-mapentity.git@improve_detail_buttons#egg=mapentity
+
+
+
+
+
     # via geotrek (setup.py)
 markdown==3.8
     # via geotrek (setup.py)
