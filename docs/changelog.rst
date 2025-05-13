@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 - Improve Overpass query for OpenStreetMap parsers
+- Add healthcheck to Dockerfile
 
 **Bug fixes**
 
@@ -35,7 +36,6 @@ CHANGELOG
 
 **Improvements**
 
-- Add healthcheck to Dockerfile
 - Do not display "None" on Blade Direction
 - Add OpenStreetMap parser for Information Desk
 - Add OpenStreetMap parser for POI
