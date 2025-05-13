@@ -10,10 +10,13 @@ CHANGELOG
 - Improve Overpass query for OpenStreetMap parsers
 - OpenSteetMap parsers accept translations from OSM
 - Add OpenStreetMap parser for Signage
+- Add OpenStreetMap parser for Districts
+- Add healthcheck to Dockerfile
 
 **Bug fixes**
 
 - Make OpenStreetMap eid as type+id
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
 
 **Documentation**
 

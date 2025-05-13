@@ -91,7 +91,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.20
+django==4.2.21
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -195,7 +195,7 @@ fiona==1.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
-fonttools==4.57.0
+fonttools==4.58.0
     # via weasyprint
 geojson==3.2.0
     # via
@@ -342,7 +342,7 @@ ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
 sentry-sdk==2.27.0
     # via geotrek (setup.py)
-setuptools==80.3.1
+setuptools==80.4.0
     # via
     #   argdispatch
     #   zc-lockfile
