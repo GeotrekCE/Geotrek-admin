@@ -2048,7 +2048,7 @@ class OpenStreetMapParser(Parser):
             tags = [tags] if is_str else list(tags)
 
             # Protect the class from multiple translation mappings as field is a static attribute
-            is_translated = [tag for tag in tags if f":{default_lang}" in tag]
+            is_translated = [tag for tag in tags if tag.endswith(f":{default_lang}")]
             if is_translated:
                 continue
 
