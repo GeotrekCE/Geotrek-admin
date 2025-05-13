@@ -8,8 +8,9 @@ CHANGELOG
 **Improvements**
 
 - Improve Overpass query for OpenStreetMap parsers
-- Add healthcheck to Dockerfile
+- Add OpenStreetMap parser for Districts
 - OpenStreetMap parsers accept translations from OSM
+- Add healthcheck to Dockerfile
 
 **Bug fixes**
 
