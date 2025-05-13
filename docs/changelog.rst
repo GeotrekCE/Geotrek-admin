@@ -47,6 +47,7 @@ CHANGELOG
 - Update documentation about map settings and tourism/outdoor intersection margin (#4654)
 - Update documentation with missing parameters from base.py (#4676)
 
+
 2.114.0     (2025-03-13)
 ----------------------------
 
