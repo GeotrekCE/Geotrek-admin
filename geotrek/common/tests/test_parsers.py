@@ -46,6 +46,8 @@ from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.tourism.parsers import InformationDeskOpenStreetMapParser
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 
 
 class OrganismParser(ExcelParser):
