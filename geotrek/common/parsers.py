@@ -1941,6 +1941,7 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.translation_fields()
 
         if not self.query_settings:
             self.query_settings = self.QuerySettings()
@@ -2034,3 +2035,38 @@ class OpenStreetMapParser(Parser):
     def filter_eid(self, src, val):
         type, id = val
         return f"{type[0].upper()}{id}"
+
+    def translation_fields(self):
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+
+        for field in get_translated_fields(self.model):
+            tags = self.fields.get(field)
+            if not tags:
+                continue
+
+            is_str = isinstance(tags, str)
+            tags = [tags] if is_str else list(tags)
+
+            # Protect the class from multiple translation mappings as field is a static attribute
+            is_translated = [tag for tag in tags if tag.endswith(f":{default_lang}")]
+            if is_translated:
+                continue
+
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                if lang != default_lang:
+                    geotrek_field = f"{field}_{lang}"
+                    translated = [tag + ":" + lang for tag in tags]
+                    self.fields[geotrek_field] = (
+                        translated[0] if is_str else tuple(translated)
+                    )
+
+            translated = [f"{tag}:{default_lang}" for tag in tags]
+            self.fields[field] = (
+                (translated[0], tags[0]) if is_str else tuple(translated + tags)
+            )
+
+    def get_val(self, row, dst, src):
+        val = super().get_val(row, dst, src)
+        if not hasattr(self, f"filter_{dst}") and isinstance(val, list):
+            return next((item for item in val if item is not None), None)
+        return val
