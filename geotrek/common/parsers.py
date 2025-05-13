@@ -932,11 +932,9 @@ class AttachmentParserMixin:
         return found, updated
 
     def generate_content_attachment(self, attachment, parsed_url, url, updated, name):
-        print(parsed_url, url, attachment)
         if (
             parsed_url.scheme in ("http", "https") and self.download_attachments
         ) or parsed_url.scheme == "ftp":
-            print(parsed_url.scheme)
             content = self.download_attachment(url)
             if content is None:
                 return False, updated
@@ -945,7 +943,6 @@ class AttachmentParserMixin:
                 settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE
                 and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < f.size
             ):
-                print(settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE, f.size)
                 self.add_warning(
                     _("%(class)s #%(pk)s - %(url)s: downloaded file is too large")
                     % {
@@ -961,7 +958,6 @@ class AttachmentParserMixin:
                     settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH
                     and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width
                 ):
-                    print(settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH, image.width)
                     self.add_warning(
                         _(
                             "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
@@ -977,7 +973,6 @@ class AttachmentParserMixin:
                     settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT
                     and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height
                 ):
-                    print(settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT, image.height)
                     self.add_warning(
                         _(
                             "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
@@ -1925,19 +1920,22 @@ class ApidaeBaseParser(Parser):
 
 class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
     base_url_wikimedia = "https://api.wikimedia.org/core/v1/commons/file/"
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
 
     def filter_attachments(self, src, val):
         attachments = []
+        wikimedia, image = val
 
-        if val and "File:" in val:
+        if wikimedia and "File:" in wikimedia:
             # Wikimedia Commons API url
-            filename = val.split(":")[1]
+            filename = wikimedia.split(":")[1]
             filename.replace(' ', '_')
 
             url = self.base_url_wikimedia + filename
 
             # request API
-            response = self.request_or_retry(url)
+            action = getattr(requests, "get")
+            response = action(url, headers={"User-Agent": "Geotrek-Admin"}, allow_redirects=True)
             if response.status_code == requests.codes.ok:
                 data = response.json()
                 file = data["original"]["url"]
@@ -1945,6 +1943,12 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
                 author = data["latest"]["user"]["name"]
                 title = data["title"].split('.')[0] # remove extension
                 attachments.append([file, legend, author, title])
+            else:
+                self.add_warning(_(f"'{url}' is inaccessible (ERROR: '{response.status_code}')"))
+
+        if image:
+            file = image
+            attachments.append([file, "", "", ""])
 
         return attachments
 
