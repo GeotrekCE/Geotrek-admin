@@ -1413,7 +1413,6 @@ class InformationDeskOpenStreetMapParser(
     natural_keys = {
         "type": "label",
     }
-    non_fields = {"attachments": "tags.wikimedia_commons"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
