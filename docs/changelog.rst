@@ -10,10 +10,14 @@ CHANGELOG
 - Improve Overpass query for OpenStreetMap parsers
 - OpenSteetMap parsers accept translations from OSM
 - Add OpenStreetMap parser for infrastructures
+- Add OpenStreetMap parser for Signage
+- Add OpenStreetMap parser for Districts
+- Add healthcheck to Dockerfile
 
 **Bug fixes**
 
 - Make OpenStreetMap eid as type+id
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
 
 **Documentation**
 
@@ -47,6 +51,7 @@ CHANGELOG
 - Update instructions to regenerate UML diagrams of data model (#4594)
 - Update documentation about map settings and tourism/outdoor intersection margin (#4654)
 - Update documentation with missing parameters from base.py (#4676)
+
 
 2.114.0     (2025-03-13)
 ----------------------------
