@@ -109,9 +109,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
         cls.type = InfrastructureType.objects.create(label="Test")
         geom = LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
         geom.transform(settings.SRID)
-        cls.path = PathFactory.create(
-            geom=geom
-        )
+        cls.path = PathFactory.create(geom=geom)
         cls.import_Infrastructure()
         cls.objects = Infrastructure.objects.all()
 
