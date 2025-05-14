@@ -2008,7 +2008,7 @@ class OpenStreetMapParser(Parser):
             line = LineString([[point["lon"], point["lat"]] for point in geometries])
             line.srid = self.osm_srid
             line.transform(settings.SRID)
-            point = line.point_on_surface
+            point = line.interpolate_normalized(0.5)
         else:
             polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
             polygon.srid = self.osm_srid
