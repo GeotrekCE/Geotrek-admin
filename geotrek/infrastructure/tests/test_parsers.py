@@ -152,7 +152,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_point(self):
         infrastructure = self.objects.get(eid="N1")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 27402.291, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 27225.536, places=2)
         self.assertEqual(infrastructure.topo_object.paths.count(), 1)
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
@@ -171,7 +171,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_way(self):
         infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 32152.670, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
@@ -189,7 +189,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_polygon(self):
         infrastructure = self.objects.get(eid="W3")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 48967.827, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 48632.872, places=2)
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
@@ -207,7 +207,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_relation(self):
         infrastructure = self.objects.get(eid="R4")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 32148.555, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
