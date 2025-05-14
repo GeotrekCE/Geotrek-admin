@@ -2488,6 +2488,7 @@ class OpenStreetMapPOIParser(TestCase):
 
     def test_topology_polygon_no_dynamic_segmentation(self):
         poi = self.objects.get(eid="W3")
+
         self.assertAlmostEqual(poi.geom.x, 933507.759, places=2)
         self.assertAlmostEqual(poi.geom.y, 6410692.020, places=2)
 
