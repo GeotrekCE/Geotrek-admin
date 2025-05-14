@@ -16,7 +16,7 @@ from django.test.utils import override_settings
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.models import Attachment, FileType, Organism, RecordSource, Theme
+from geotrek.common.models import Attachment, FileType, License, Organism, RecordSource, Theme
 from geotrek.common.parsers import (
     AttachmentParserMixin,
     DownloadImportError,
@@ -97,6 +97,11 @@ class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
 
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
+
+
+class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
+    non_fields = {"attachments": "photo"}
+    license_label = "Creative Commons"
 
 
 class WarnAttachmentParser(AttachmentParser):
@@ -447,6 +452,7 @@ class AttachmentParserTests(TestCase):
         )
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(attachment.is_image)
+        self.assertEqual(attachment.license, None)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch("requests.get")
@@ -862,6 +868,60 @@ class AttachmentParserTests(TestCase):
             output.getvalue(),
         )
         self.assertEqual(mocked_get.call_count, 1)
+
+    @mock.patch("requests.get")
+    def test_attachment_get_default_license(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        License.objects.create(label="Creative Commons")
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.license.label, "Creative Commons")
+
+    @mock.patch("requests.get")
+    def test_attachment_create_default_license(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.license.label, "Creative Commons")
+
+    @mock.patch("geotrek.common.parsers.AttachmentParserMixin.has_size_changed", return_value=False)
+    @mock.patch("requests.get")
+    def test_attachment_update_license(self, mocked_get, mocked_size):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.AttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment1 = Attachment.objects.get()
+        self.assertEqual(attachment1.license, None)
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment2 = Attachment.objects.first()
+        self.assertEqual(attachment2.license.label, "Creative Commons")
 
 
 class TestXmlParser(XmlParser):
@@ -1573,6 +1633,7 @@ class OpenStreetMapTestParser(TestCase):
     def setUpTestData(cls):
         cls.typefile = FileType.objects.create(type="Photographie")
         cls.type = InformationDeskTypeFactory.create(label="Foo")
+        cls.license = License.objects.create(label="CC-by-sa 4.0")
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
@@ -1674,6 +1735,8 @@ class OpenStreetMapTestParser(TestCase):
         self.import_items()
 
         self.assertEqual(Attachment.objects.count(), 2)
+        self.assertEqual(Attachment.objects.first().filetype, self.typefile)
+        self.assertEqual(Attachment.objects.first().filetype, self.typefile)
 
         item1 = InformationDesk.objects.get(eid="N279480543")
         item2 = InformationDesk.objects.get(eid="W787047534")
