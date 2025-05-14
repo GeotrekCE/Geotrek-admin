@@ -100,7 +100,7 @@ class EntityAttachmentTestCase(TestCase):
             self.assertIn(attachment.legend.encode(), html)
             self.assertIn(attachment.title.encode(), html)
             self.assertIn(attachment.attachment_accessibility_file.url.encode(), html)
-            self.assertIn(b"paperclip/fileicons/odt.png", html)
+            self.assertIn(b'<i class="bi bi-file-richtext text-primary"></i> ODT', html)
 
     @override_settings(ACCESSIBILITY_ATTACHMENTS_ENABLED=False)
     def test_list_attachments_not_in_details_attachments_accessibility_disabled(self):
