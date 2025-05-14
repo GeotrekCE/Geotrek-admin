@@ -1418,20 +1418,22 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
             self.constant_fields["type"] = self.type
 
     def filter_street(self, src, val):
-        housenumber, street = val
-        if housenumber and street:
-            return housenumber + " " + street
+        house_number, street = val
+        if house_number and street:
+            return house_number + " " + street
         elif street:
             return street
         return None
 
     def filter_geom(self, src, val):
-        type, lng, lat, area, bbox = val
-        if type == "node":
+        type_geom, lng, lat, area, bbox = val
+        geom = None
+        if type_geom == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
             geom.transform(settings.SRID)
-            return geom
-        elif type == "way":
-            return self.get_centroid_from_way(area)
-        elif type == "relation":
-            return self.get_centroid_from_relation(bbox)
+        elif type_geom == "way":
+            geom = self.get_centroid_from_way(area)[1]
+        elif type_geom == "relation":
+            geom = self.get_centroid_from_relation(bbox)[1]
+
+        return geom

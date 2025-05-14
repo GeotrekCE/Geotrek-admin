@@ -2005,25 +2005,28 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         if geometries[0] != geometries[-1]:
-            line = LineString([[point["lon"], point["lat"]] for point in geometries])
-            line.srid = self.osm_srid
-            line.transform(settings.SRID)
-            point = line.interpolate_normalized(0.5)
+            line = LineString(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
+            geom = line.interpolate_normalized(0.5)
         else:
-            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
-            polygon.srid = self.osm_srid
-            polygon.transform(settings.SRID)
-            point = polygon.centroid
-        return point
+            polygon = Polygon(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
+            geom = polygon.centroid
+        geom_projected = geom.transform(settings.SRID, clone=True)
+        return geom, geom_projected
 
     def get_centroid_from_relation(self, bbox):
         polygon = Polygon.from_bbox(
             (bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"])
         )
         polygon.srid = self.osm_srid
-        polygon.transform(settings.SRID)
-        centroid = polygon.centroid
-        return centroid
+        geom = polygon.centroid
+        geom_projected = geom.transform(settings.SRID, clone=True)
+        return geom, geom_projected
 
     def next_row(self):
         params = {"data": self.build_query()}
