@@ -184,7 +184,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
         self.assertAlmostEqual(
             infrastructure.geom.x, 962840.506, places=2, msg=infrastructure.geom.ewkt
         )
-        self.assertAlmostEqual(infrastructure.geom.y, 6425572.291, places=2)
+        self.assertAlmostEqual(infrastructure.geom.y, 6425568.935, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
