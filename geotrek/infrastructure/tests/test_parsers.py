@@ -181,7 +181,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_way_geom(self):
         infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.geom.x, 962843.506, places=2)
+        self.assertAlmostEqual(infrastructure.geom.x, 962843.506, places=2, msg=infrastructure.geom.ewkt)
         self.assertAlmostEqual(infrastructure.geom.y, 6425572.291, places=2)
 
     @skipIf(
