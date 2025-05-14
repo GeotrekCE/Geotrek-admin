@@ -1979,6 +1979,12 @@ class OpenStreetMapTestParser(TestCase):
             verbosity=2,
         )
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.typefile = FileType.objects.create(type="Photographie")
+        cls.type = InformationDeskTypeFactory.create(label="Foo")
+        cls.license = License.objects.create(label="CC-by-sa 4.0")
+
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
