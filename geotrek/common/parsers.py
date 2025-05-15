@@ -1079,7 +1079,7 @@ class AttachmentParserMixin:
                 legend=legend,
                 author=author,
                 title=title,
-                license=self.license
+                license=self.license,
             )
             if found:
                 continue
@@ -1942,22 +1942,25 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
         if wikimedia and "File:" in wikimedia:
             # Wikimedia Commons API url
             filename = wikimedia.split(":")[1]
-            filename.replace(' ', '_')
+            filename.replace(" ", "_")
 
             url = self.base_url_wikimedia + filename
 
             # request API
             action = getattr(requests, "get")
-            response = action(url, headers={"User-Agent": "Geotrek-Admin"}, allow_redirects=True)
+            response = action(
+                url, headers={"User-Agent": "Geotrek-Admin"}, allow_redirects=True
+            )
             if response.status_code == requests.codes.ok:
                 data = response.json()
                 file = data["original"]["url"]
                 legend = ""
                 author = data["latest"]["user"]["name"]
-                title = data["title"].split('.')[0] # remove extension
+                title = data["title"].split(".")[0]  # remove extension
                 attachments.append([file, legend, author, title])
             else:
-                self.add_warning(_(f"'{url}' is inaccessible (ERROR: '{response.status_code}')"))
+                msg = f"'{url}' is inaccessible (ERROR: '{response.status_code}')"
+                self.add_warning(msg)
 
         if image:
             file = image
@@ -1992,7 +1995,6 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.translation_fields()
 
         if not self.query_settings:
             self.query_settings = self.QuerySettings()
@@ -2000,6 +2002,10 @@ class OpenStreetMapParser(Parser):
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
+
+    def start(self):
+        super().start()
+        self.translation_fields()
 
     def format_tags(self):
         formatted_tags = []
