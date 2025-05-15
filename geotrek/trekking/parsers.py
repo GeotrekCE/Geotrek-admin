@@ -1665,25 +1665,28 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
 
     def filter_geom(self, src, val):
         # convert OSM geometry to point
-        type, lng, lat, area, bbox = val
-        geom = None
-        if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom_projected = geom.transform(settings.SRID, clone=True)
-        elif type == "way":
-            geom, geom_projected = self.get_centroid_from_way(area)
-        elif type == "relation":
-            geom, geom_projected = self.get_centroid_from_relation(bbox)
+        type_object, lng, lat, area, bbox = val
+        original_geom = None
+        projected_geom = None
+        if type_object == "node":
+            original_geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+            projected_geom = original_geom.transform(settings.SRID, clone=True)
+        elif type_object == "way":
+            original_geom, projected_geom = self.get_centroid_from_way(area)
+        elif type_object == "relation":
+            original_geom, projected_geom = self.get_centroid_from_relation(bbox)
 
         # create topology
-        self.topology = Topology.objects.none()
+        self.topology = None
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+            serialized = f'{{"lng": {original_geom.x}, "lat": {original_geom.y}}}'
             self.topology = Topology.deserialize(serialized)
+            raise Exception(self.topology.offset, self.topology.paths[0].geom.ewkt)
+
             # Move deserialization aggregations to the POI
-        return geom_projected
+        return projected_geom
 
     def parse_obj(self, row, operation):
         super().parse_obj(row, operation)
