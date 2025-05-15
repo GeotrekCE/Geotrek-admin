@@ -331,7 +331,7 @@ You can change the bounding box by overriding ``get_bbox_str()``.
    The ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
    A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
 
-   For more information on how attachments work, consult the :ref:'_import_attachments'.
+   For more information on how attachments work, consult :ref:`this section <import-attachments>`.
 
 .. _import-information-desk:
 
@@ -475,7 +475,7 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
 
-.. _import_attachments:
+.. _import-attachments:
 
 Import attachments
 ==================
