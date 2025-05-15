@@ -16,13 +16,21 @@ from django.test.utils import override_settings
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.models import Attachment, FileType, License, Organism, RecordSource, Theme
+from geotrek.common.models import (
+    Attachment,
+    FileType,
+    License,
+    Organism,
+    RecordSource,
+    Theme,
+)
 from geotrek.common.parsers import (
     AttachmentParserMixin,
     DownloadImportError,
     ExcelParser,
     GeotrekAggregatorParser,
     GeotrekParser,
+    OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     OpenSystemParser,
     TourInSoftParser,
@@ -34,11 +42,10 @@ from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
 from geotrek.tourism.models import InformationDesk
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
-from geotrek.tourism.parsers import InformationDeskOpenStreetMapParser
-from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 
 
 class OrganismParser(ExcelParser):
@@ -898,7 +905,10 @@ class AttachmentParserTests(TestCase):
         attachment = Attachment.objects.get()
         self.assertEqual(attachment.license.label, "Creative Commons")
 
-    @mock.patch("geotrek.common.parsers.AttachmentParserMixin.has_size_changed", return_value=False)
+    @mock.patch(
+        "geotrek.common.parsers.AttachmentParserMixin.has_size_changed",
+        return_value=False,
+    )
     @mock.patch("requests.get")
     def test_attachment_update_license(self, mocked_get, mocked_size):
         mocked_get.return_value.status_code = 200
@@ -1570,17 +1580,20 @@ class OpenStreetMapInitialisationTest(OpenStreetMapParser):
     model = InformationDesk
 
 
-class OpenStreetMapTest(InformationDeskOpenStreetMapParser):
+class OpenStreetMapTest(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
     model = InformationDesk
     tags = [
         [{"boundary": "administrative"}, {"admin_level": "4"}],
         {"boundary": "protected_area"},
     ]
-    type = "Foo"
     fields = {
+        "eid": ("type", "id"),
         "name": "tags.name",
         "description": "tags.description_fr",
     }
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
+    constant_fields = {"type": "Foo"}
+    natural_keys = {"type": "label"}
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
@@ -1588,6 +1601,10 @@ class OpenStreetMapTestParser(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.osm_parser = OpenStreetMapTest()
+
+        cls.typefile = FileType.objects.create(type="Photographie")
+        cls.type = InformationDeskTypeFactory.create(label="Foo")
+        cls.license = License.objects.create(label="CC-by-sa 4.0")
 
     @mock.patch("requests.get")
     def import_items(self, mocked_get, status_code=200):
@@ -1614,26 +1631,25 @@ class OpenStreetMapTestParser(TestCase):
         mock_wikimedia.status_code = 200
 
         mock_attachment_image = mock.Mock()
-        mock_attachment_image.content = b'20'
+        mock_attachment_image.content = b"20"
         mock_attachment_image.status_code = status_code
 
         mock_attachment_wikimedia = mock.Mock()
-        mock_attachment_wikimedia.content = b'20'
+        mock_attachment_wikimedia.content = b"20"
         mock_attachment_wikimedia.status_code = 200
 
-        mocked_get.side_effect = [mock_OSM, mock_attachment_image, mock_wikimedia, mock_attachment_wikimedia]
+        mocked_get.side_effect = [
+            mock_OSM,
+            mock_attachment_image,
+            mock_wikimedia,
+            mock_attachment_wikimedia,
+        ]
 
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OpenStreetMapTest",
             verbosity=2,
         )
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.typefile = FileType.objects.create(type="Photographie")
-        cls.type = InformationDeskTypeFactory.create(label="Foo")
-        cls.license = License.objects.create(label="CC-by-sa 4.0")
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
@@ -1647,8 +1663,6 @@ class OpenStreetMapTestParser(TestCase):
         "geotrek.common.parsers.OpenStreetMapParser.get_bbox_str", return_value="test"
     )
     def test_query_settings(self, mocked):
-        osm_parser = OpenStreetMapTest()
-
         # default settings
         self.assertEqual(
             "[out:json][timeout:180][bbox:test];(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
@@ -1669,8 +1683,6 @@ class OpenStreetMapTestParser(TestCase):
         SPATIAL_EXTENT=(949226.1011, 6421548.4861, 966477.9123, 6432083.7731)
     )
     def test_bbox_str(self):
-        osm_parser = OpenStreetMapTest()
-
         def test_coordinates(Wlon, Slat, Elon, Nlat):
             bbox = self.osm_parser.get_bbox_str()
             minlat, minlon, maxlat, maxlon = map(float, bbox.split(","))
@@ -1687,6 +1699,7 @@ class OpenStreetMapTestParser(TestCase):
         test_coordinates(6.0434314, 44.729993, 6.4911242, 45.054940)
 
     def test_translation_mapping(self):
+        self.osm_parser.start()
         # default language
         self.assertIn("name", self.osm_parser.fields)
         self.assertEqual(
@@ -1702,7 +1715,10 @@ class OpenStreetMapTestParser(TestCase):
         self.assertEqual(self.osm_parser.fields.get("name_es"), "tags.name:es")
 
     def test_double_translation_mapping_protection(self):
-        osm_parser = OpenStreetMapQueryTest()
+        self.osm_parser.start()
+
+        osm_parser = OpenStreetMapTest()
+        osm_parser.start()
 
         # default language
         self.assertIn("name", osm_parser.fields)
@@ -1722,7 +1738,6 @@ class OpenStreetMapTestParser(TestCase):
             osm_parser.fields.get("description"),
             ("tags.description_fr:fr", "tags.description_fr"),
         )
-
 
     def test_eid_filter(self):
         self.import_items()
@@ -1779,9 +1794,14 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         self.configure_attachment_filter()
         wikimedia_commons = "File:Cime_de_Clot_Châtel_@_Crête_de_Puy_Salié.jpg"
 
-        attachment = self.osm_attachment_parser.filter_attachments("attachments", (wikimedia_commons,None))[0]
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (wikimedia_commons, None)
+        )[0]
 
-        self.assertEqual(attachment[0], "https://upload.wikimedia.org/wikipedia/commons/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg")
+        self.assertEqual(
+            attachment[0],
+            "https://upload.wikimedia.org/wikipedia/commons/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg",
+        )
         self.assertEqual(attachment[1], "")
         self.assertEqual(attachment[2], "Rémih")
         self.assertEqual(attachment[3], "Cime de Clot Châtel @ Crête de Puy Salié")
@@ -1790,9 +1810,14 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         self.configure_attachment_filter()
         image = "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg"
 
-        attachment = self.osm_attachment_parser.filter_attachments("attachments", (None,image))[0]
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (None, image)
+        )[0]
 
-        self.assertEqual(attachment[0], "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg")
+        self.assertEqual(
+            attachment[0],
+            "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg",
+        )
         self.assertEqual(attachment[1], "")
         self.assertEqual(attachment[2], "")
         self.assertEqual(attachment[3], "")
@@ -1801,12 +1826,14 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         self.configure_attachment_filter(status_code=404)
         wikimedia_commons = "File:Cime_de_Clot__de_Puy_Salié.jpg"
 
-        attachment = self.osm_attachment_parser.filter_attachments("attachments", (wikimedia_commons, None))
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (wikimedia_commons, None)
+        )
         warnings = self.osm_attachment_parser.warnings
 
         self.assertEqual(attachment, [])
 
         self.assertEqual(
-            warnings['Line 0'][0],
-            "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (ERROR: '404')"
+            warnings["Line 0"][0],
+            "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (ERROR: '404')",
         )

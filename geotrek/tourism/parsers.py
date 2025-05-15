@@ -1389,7 +1389,9 @@ class GeotrekInformationDeskParser(GeotrekParser):
         )
 
 
-class InformationDeskOpenStreetMapParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
+class InformationDeskOpenStreetMapParser(
+    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+):
     """Parser to import information desks from OpenStreetMap"""
 
     type = None

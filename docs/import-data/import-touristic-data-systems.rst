@@ -312,8 +312,6 @@ For example:
 
 *means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
 
-.. _import-information-desk:
-
 OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
 
 During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
@@ -328,6 +326,14 @@ Translation logic can be customized in custom parsers by overriding the ``transl
 
 Finally all the objects parsed by the OpenStreetMap parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can change the bounding box by overriding ``get_bbox_str()``.
+
+.. note::
+   The ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+   A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
+
+   For more information on how attachments work, consult the :ref:'_import_attachments'.
+
+.. _import-information-desk:
 
 Import information desks
 ------------------------
@@ -468,6 +474,34 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 * Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
 
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
+.. _import_attachments:
+
+Import attachments
+==================
+
+If available, parsers can attach files to imported objects. To enable this, the parser should inherit from ``AttachmentParserMixin``.
+
+This class provides several attributes:
+
+* ``download_attachments`` (default: ``True``): Indicates whether files should be downloaded or simply linked in the database.
+  If ``download_attachments`` is disabled, then ``PAPERCLIP_ENABLE_LINK`` must be enabled.
+
+* ``base_url``: The base URL used to download the files.
+
+* ``delete_attachments`` (default: ``True``): Determines whether existing attachments should be deleted during import.
+
+* ``filetype_name`` (default: ``"Photographie"``): The type of attachments. This must match a ``FileType`` label present in the database.
+
+* ``non_fields`` (default: ``{"attachments": _("Attachments")}``): A mapping between the internal attachment field and the corresponding external field(s).
+
+* ``license_label`` (default: ``None``): If specified, all imported attachments will be assigned this license by default. If the license does not exist, it will be created automatically.
+
+In order to import attachment data properly, you **must override** the ``filter_attachments`` method.
+
+.. warning::
+   These features should be used in base parsers, not in custom parsers.
+
 
 .. _importing-from-multiple-sources-with-deletion:
 

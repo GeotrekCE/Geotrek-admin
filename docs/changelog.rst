@@ -18,6 +18,8 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
+- Add attachments for OpenStreetMapParser
+- Add default license for attachments
 
 **Bug fixes**
 
