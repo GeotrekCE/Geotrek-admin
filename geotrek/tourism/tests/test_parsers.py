@@ -1429,7 +1429,6 @@ class OpenStreetMapParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.type = InformationDeskTypeFactory.create(label="Foo")
-        FileType.objects.create(type="Photographie")
 
         cls.import_information_desk()
 
