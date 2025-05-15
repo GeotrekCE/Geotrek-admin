@@ -51,7 +51,7 @@ class PathRouter:
 
         multi_line_string = GeometryCollection(line_strings, srid=settings.SRID)
         multi_line_string.transform(settings.API_SRID)
-        geojson = json.loads(line_strings.geojson)
+        geojson = json.loads(multi_line_string.geojson)
 
         return {"geojson": geojson, "serialized": serialized_topology}
 
