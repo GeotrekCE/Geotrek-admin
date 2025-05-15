@@ -1,0 +1,167 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-03-17T14:22:44Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1,
+  "lat": 43.4441381,
+  "lon": 2.6761940,
+  "tags": {
+    "tourism": "hotel",
+    "name": "hotel",
+    "contact:email": "hotel@email.com",
+    "contact:website": "https://hotel.com",
+    "description": "a description"
+
+  }
+},
+{
+  "type": "way",
+  "id": 2,
+  "bounds": {
+    "minlat": 43.4049208,
+    "minlon": 2.2519140,
+    "maxlat": 43.4050500,
+    "maxlon": 2.2521003
+  },
+  "nodes": [
+    2097948681,
+    2097948676
+  ],
+  "geometry": [
+    { "lat": 43.4050341, "lon": 2.2519140 },
+    { "lat": 43.4049208, "lon": 2.2519345 }
+  ],
+  "tags": {
+    "tourism": "hotel",
+    "name:fr": "hotel_fr",
+    "contact:phone": "0786535787",
+    "addr:housenumber": "46",
+    "tags.addr:city": "Montmorillon",
+    "email": "hotel@email.com",
+    "website": "https://hotel.com"
+  }
+},
+{
+  "type": "way",
+  "id": 3,
+  "bounds": {
+    "minlat": 43.4049208,
+    "minlon": 2.2519140,
+    "maxlat": 43.4050500,
+    "maxlon": 2.2521003
+  },
+  "nodes": [
+    2097948681,
+    2097948676,
+    2097948678,
+    2097948682,
+    2097948681
+  ],
+  "geometry": [
+    { "lat": 43.4050341, "lon": 2.2519140 },
+    { "lat": 43.4049208, "lon": 2.2519345 },
+    { "lat": 43.4049366, "lon": 2.2521003 },
+    { "lat": 43.4050500, "lon": 2.2520798 },
+    { "lat": 43.4050341, "lon": 2.2519140 }
+  ],
+  "tags": {
+    "tourism": "hotel",
+    "name:en": "hotel_en",
+    "phone": "0786535787",
+    "addr:street": "rue des tournesols",
+    "addr:postcode": "86500",
+    "tags.contact:city": "Montmorillon"
+  }
+},
+{
+  "type": "relation",
+  "id": 4,
+  "bounds": {
+    "minlat": 41.6010720,
+    "minlon": -122.8475703,
+    "maxlat": 41.6015180,
+    "maxlon": -122.8468805
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 835597461,
+      "role": "outer",
+      "geometry": [
+         { "lat": 41.6010720, "lon": -122.8470988 },
+         { "lat": 41.6013038, "lon": -122.8475703 },
+         { "lat": 41.6015180, "lon": -122.8473820 },
+         { "lat": 41.6013204, "lon": -122.8468805 },
+         { "lat": 41.6010720, "lon": -122.8470988 }
+      ]
+    },
+    {
+      "type": "way",
+      "ref": 835597462,
+      "role": "inner",
+      "geometry": [
+         { "lat": 41.6012565, "lon": -122.8472256 },
+         { "lat": 41.6012268, "lon": -122.8471658 },
+         { "lat": 41.6012696, "lon": -122.8471277 },
+         { "lat": 41.6012993, "lon": -122.8471875 },
+         { "lat": 41.6012565, "lon": -122.8472256 }
+      ]
+    }
+  ],
+  "tags": {
+    "tourism": "hotel",
+    "name:en": "hotel_en",
+    "phone": "0786535787",
+    "addr:housenumber": "46",
+    "addr:street": "rue des tournesols",
+    "contact:postcode": "86500"
+  }
+},
+{
+  "type": "relation",
+  "id": 5,
+  "bounds": {
+    "minlat": 41.6010720,
+    "minlon": -122.8475703,
+    "maxlat": 41.6015180,
+    "maxlon": -122.8468805
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 835597461,
+      "role": "outer",
+      "geometry": [
+         { "lat": 41.6010720, "lon": -122.8470988 },
+         { "lat": 41.6013038, "lon": -122.8475703 },
+         { "lat": 41.6015180, "lon": -122.8473820 },
+         { "lat": 41.6013204, "lon": -122.8468805 },
+         { "lat": 41.6010720, "lon": -122.8470988 }
+      ]
+    },
+    {
+      "type": "way",
+      "ref": 835597462,
+      "role": "inner",
+      "geometry": [
+         { "lat": 41.6012565, "lon": -122.8472256 },
+         { "lat": 41.6012268, "lon": -122.8471658 },
+         { "lat": 41.6012696, "lon": -122.8471277 },
+         { "lat": 41.6012993, "lon": -122.8471875 },
+         { "lat": 41.6012565, "lon": -122.8472256 }
+      ]
+    }
+  ],
+  "tags": {
+    "tourism": "hotel"
+  }
+}
+  ]
+}
