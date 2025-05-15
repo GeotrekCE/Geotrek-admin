@@ -115,7 +115,7 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
-    default_license_label = "Creative Commons"
+    license_label = "Creative Commons"
 
 
 class WarnAttachmentParser(AttachmentParser):
@@ -1978,12 +1978,6 @@ class OpenStreetMapTestParser(TestCase):
             "geotrek.common.tests.test_parsers.OpenStreetMapTest",
             verbosity=2,
         )
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.typefile = FileType.objects.create(type="Photographie")
-        cls.type = InformationDeskTypeFactory.create(label="Foo")
-        cls.license = License.objects.create(label="CC-by-sa 4.0")
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
