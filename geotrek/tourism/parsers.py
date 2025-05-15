@@ -4,7 +4,7 @@ from mimetypes import guess_type
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString, Polygon, fromstr
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models
@@ -19,6 +19,7 @@ from geotrek.common.parsers import (
     OpenStreetMapParser,
     Parser,
     TourInSoftParser,
+    DownloadImportError,
 )
 from geotrek.common.utils.file_infos import is_a_non_svg_image
 from geotrek.tourism.models import (
@@ -1436,6 +1437,117 @@ class InformationDeskOpenStreetMapParser(
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
+
+        geom.transform(settings.SRID)
+        return geom
+
+
+class OpenStreetMapTouristicContentParser(
+    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+):
+    """Parser to import touristic content from OpenStreetMap"""
+    url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
+
+    category = None
+    themes = None
+    source = None
+    portal = None
+    model = TouristicContent
+    eid = "eid"
+
+    fields = {
+        "eid": ("type", "id"),  # ids are unique only for object of the same type,
+        "name": "tags.name",
+        "description": "tags.description",
+        "contact": ("tags.contact:phone",
+                    "tags.phone",
+                    "tags.addr:housenumber",
+                    "tags.addr:street",
+                    "tags.addr:postcode",
+                    "tags.contact:postcode",
+                    "tags.addr:city",
+                    "tags.contact:city"),
+        "email": ("tags.contact:email", "tags.email"),
+        "website": ("tags.contact:website", "tags.website"),
+        "geom": ("type", "lon", "lat", "geometry", "bounds", "id")
+    }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    natural_keys = {
+        "category": "label",
+        "themes": "label",
+        "source": "name",
+        "portal": "name",
+    }
+    field_options = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        self.field_options = self.field_options.copy()
+        self.field_options["themes"] = {"create": True}
+        self.field_options["category"] = {"create": True}
+        if self.category is not None:
+            self.constant_fields["category"] = self.category
+        if self.themes is not None:
+            self.m2m_constant_fields["themes"] = self.themes
+        if self.source is not None:
+            self.m2m_constant_fields["source"] = self.source
+        if self.portal is not None:
+            self.m2m_constant_fields["portal"] = self.portal
+
+    def filter_contact(self, src, val):
+        phone = val[0] or val[1]
+        housenumber = val[2]
+        street = val[3]
+        postcode = val[4] or val[5]
+        city = val[6] or val[7]
+
+        contact = ""
+
+        if phone:
+            contact += f"{phone}, \n\n"
+
+        if housenumber and street:
+            contact += f"{housenumber} {street} \n"
+
+        if city:
+                contact += f"{postcode}, {city} \n" if postcode else f"{city} \n"
+
+        print(contact)
+        return contact
+
+    def get_polygon_from_API(self, id):
+        params = {
+            "id": id,
+            "params": 0,
+        }
+        response = self.request_or_retry(self.url_polygons, params=params)
+        wkt = response.content.decode("utf-8")
+        geom = fromstr(wkt, srid=self.osm_srid)
+        geom = geom.buffer(0)
+
+        if not geom.valid:
+            geom = geom.make_valid()
+
+        return geom
+
+    def filter_geom(self, src, val):
+        type, lng, lat, geometry, bbox, id = val
+        if type == "node":
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
+        elif type == "way":
+            coordinates = [[point["lon"], point["lat"]] for point in geometry]
+            if coordinates[0] != coordinates[-1]:
+                geom = LineString(coordinates, srid=self.osm_srid)
+            else:
+                geom = Polygon(coordinates)
+        elif type == "relation":
+            try:
+                geom = self.get_polygon_from_API(id)
+            except DownloadImportError:
+                geom = self.get_centroid_from_relation(bbox)
 
         geom.transform(settings.SRID)
         return geom
