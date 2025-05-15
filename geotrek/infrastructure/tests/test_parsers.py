@@ -209,7 +209,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_relation(self):
         infrastructure = self.objects.get(eid="R4")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2, msg=f"{infrastructure.topo_object.paths.all()}")
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
