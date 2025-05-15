@@ -1114,7 +1114,7 @@ class PathRouteViewTestCase(TestCase):
             {
                 "steps": [
                     {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk, "positionOnPath": 'abc'},
+                    {"path_id": path.pk, "positionOnPath": "abc"},
                 ]
             }
         )
@@ -1207,13 +1207,11 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path.pk,
-                        "lat": 43.456434372150945,
-                        "lng": 1.4050149210509666,
+                        "positionOnPath": 0.15786509111560937,
                     },
                     {
                         "path_id": path.pk,
-                        "lat": 43.45443525706161,
-                        "lng": 1.568413282119847,
+                        "positionOnPath": 0.8263090975648387,
                     },
                 ]
             }
@@ -1226,8 +1224,8 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.405015712586838, 43.45647101723782],
-                            [1.568414248971206, 43.45447481620145],
+                            [1.405015712586833, 43.456471017237945],
+                            [1.568414248971203, 43.454474816201596]
                         ],
                     }
                 ],
@@ -1284,8 +1282,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path1.pk, "lat": 43.5271443, "lng": 1.3904572},
-                    {"path_id": path2.pk, "lat": 43.5803909, "lng": 1.4447021},
+                    {"path_id": path1.pk, "positionOnPath": 0},
+                    {"path_id": path2.pk, "positionOnPath": 1},
                 ]
             }
         )
@@ -1297,9 +1295,9 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.390457746732034, 43.52714429900562],
-                            [1.4451303, 43.5270310999999],
-                            [1.444702104285981, 43.58039036639194],
+                            [1.390457746732034, 43.52714429900574],
+                            [1.4451303, 43.5270311],
+                            [1.444702104285982, 43.580390366392024]
                         ],
                     }
                 ],
@@ -1341,18 +1339,15 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path.pk,
-                        "lat": 43.45672005573014,
-                        "lng": 1.3816640340701447,
+                        "positionOnPath": 0.06234123320580364,
                     },
                     {
                         "path_id": path.pk,
-                        "lat": 43.45549487037786,
-                        "lng": 1.4818060951734013,
+                        "positionOnPath": 0.47200610033599394,
                     },
                     {
                         "path_id": path.pk,
-                        "lat": 43.4543343323152,
-                        "lng": 1.5766622578279499,
+                        "positionOnPath": 0.8600553166716347,
                     },
                 ]
             }
@@ -1366,15 +1361,15 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.381664375566539, 43.4567361685322],
-                            [1.481807670658969, 43.45556356375513],
+                            [1.381664375566537, 43.45673616853231],
+                            [1.481807670658968, 43.45556356375525]
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.481807670658969, 43.45556356375513],
-                            [1.576663073400372, 43.45436750716386],
+                            [1.481807670658968, 43.45556356375525],
+                            [1.576663073400379, 43.45436750716393]
                         ],
                     },
                 ],
@@ -1438,23 +1433,19 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path1.pk,
-                        "lat": 43.57192876776824,
-                        "lng": 1.4447700319492318,
+                        "positionOnPath": 0.1585837876873254,
                     },
                     {
                         "path_id": path3.pk,
-                        "lat": 43.546062327348785,
-                        "lng": 1.5300238809766273,
+                        "positionOnPath": 0.19588517457745494,
                     },
                     {
                         "path_id": path3.pk,
-                        "lat": 43.57342803491799,
-                        "lng": 1.5292498854902847,
+                        "positionOnPath": 0.47415881891337064,
                     },
                     {
                         "path_id": path3.pk,
-                        "lat": 43.60030465103801,
-                        "lng": 1.5284893807630917,
+                        "positionOnPath": 0.7474538771223748,
                     },
                 ]
             }
@@ -1467,24 +1458,25 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.444770058683145, 43.57192876788164],
-                            [1.4451303, 43.5270310999999],
-                            [1.5305685, 43.526799099999884],
-                            [1.530024258596995, 43.546062332995334],
+                            [1.444770058683146, 43.57192876788173],
+                            [1.4451303, 43.5270311],
+                            [1.5305685, 43.5267991],
+                            [1.530024258596995, 43.54606233299541]
+
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.530024258596995, 43.54606233299537],
-                            [1.52925048361151, 43.5734280438619],
+                            [1.530024258596995, 43.54606233299541],
+                            [1.529250483611507, 43.57342804386202]
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.52925048361151, 43.5734280438619],
-                            [1.528489833875641, 43.60030465781372],
+                            [1.529250483611507, 43.57342804386202],
+                            [1.528489833875647, 43.60030465781379]
                         ],
                     },
                 ],
@@ -1549,6 +1541,11 @@ class PathRouteViewTestCase(TestCase):
                 "3": path3.pk,
             },
         )
+
+        for geom in response1.data["geojson"]["geometries"]:
+            for i in geom["coordinates"]:
+                print(i)
+            print('\n')
         self.check_route_geometry_response(response1.data, expected_data)
 
         steps = {
