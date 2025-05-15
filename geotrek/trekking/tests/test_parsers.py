@@ -2410,7 +2410,6 @@ class OpenStreetMapPOIParser(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.type = POIType.objects.create(label="Test")
-        FileType.objects.create(type="Photographie")
         cls.path = PathFactory.create(
             geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
         )
