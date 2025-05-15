@@ -1022,12 +1022,12 @@ class PathRouteViewTestCase(TestCase):
         path_geom.transform(settings.SRID)
         path = PathFactory(geom=path_geom)
         response = self.get_route_geometry(
-            {"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": 2.333333}]}
+            {"steps": [{"path_id": path.pk, "positionOnPath": 0.5}]}
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get("error"), "There must be at least 2 steps")
 
-    def test_route_geometry_fail_no_lat(self):
+    def test_route_geometry_fail_no_position_on_path(self):
         path_geom = LineString(
             [
                 [1.3664246, 43.4569065],
@@ -1040,39 +1040,15 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "lng": 2.333333},
-                    {"path_id": 1, "lat": 47.866667, "lng": 1.333333},
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"path_id": path.pk},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid latitude and longitude",
-        )
-
-    def test_route_geometry_fail_no_lng(self):
-        path_geom = LineString(
-            [
-                [1.3664246, 43.4569065],
-                [1.6108704, 43.4539158],
-            ],
-            srid=settings.API_SRID,
-        )
-        path_geom.transform(settings.SRID)
-        path = PathFactory(geom=path_geom)
-        response = self.get_route_geometry(
-            {
-                "steps": [
-                    {"path_id": path.pk, "lat": 48.866667},
-                    {"path_id": 1, "lat": 47.866667, "lng": 1.333333},
-                ]
-            }
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.data.get("error"),
-            "Each step should contain a valid latitude and longitude",
+            "Each step should contain a valid position on its associated path (between 0 and 1)",
         )
 
     def test_route_geometry_fail_no_path_id(self):
@@ -1084,12 +1060,12 @@ class PathRouteViewTestCase(TestCase):
             srid=settings.API_SRID,
         )
         path_geom.transform(settings.SRID)
-        PathFactory(geom=path_geom)
+        path = PathFactory(geom=path_geom)
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"lat": 40.5267991, "lng": 0.5305685},
-                    {"lat": 40.5266465, "lng": 0.5765381},
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"positionOnPath": 0.6},
                 ]
             }
         )
@@ -1098,7 +1074,7 @@ class PathRouteViewTestCase(TestCase):
             response.data.get("error"), "Each step should contain a valid path id"
         )
 
-    def test_route_geometry_fail_incorrect_lat(self):
+    def test_route_geometry_fail_incorrect_position_on_path(self):
         path_geom = LineString(
             [
                 [1.3664246, 43.4569065],
@@ -1111,57 +1087,41 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "lat": 1000, "lng": 2.333333},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
-                ]
-            }
-        )
-        self.assertEqual(response.status_code, 400)
-        response = self.get_route_geometry(
-            {
-                "steps": [
-                    {"path_id": path.pk, "lat": "abc", "lng": 2.333333},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"path_id": path.pk, "positionOnPath": 1.1},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid latitude and longitude",
+            "Each step should contain a valid position on its associated path (between 0 and 1)",
         )
-
-    def test_route_geometry_fail_incorrect_lng(self):
-        path_geom = LineString(
-            [
-                [1.3664246, 43.4569065],
-                [1.6108704, 43.4539158],
-            ],
-            srid=settings.API_SRID,
-        )
-        path_geom.transform(settings.SRID)
-        path = PathFactory(geom=path_geom)
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "lat": 48.866667, "lng": 1000},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
-                ]
-            }
-        )
-        self.assertEqual(response.status_code, 400)
-        response = self.get_route_geometry(
-            {
-                "steps": [
-                    {"path_id": path.pk, "lat": 48.866667, "lng": "abc"},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"path_id": path.pk, "positionOnPath": -0.5},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid latitude and longitude",
+            "Each step should contain a valid position on its associated path (between 0 and 1)",
+        )
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"path_id": path.pk, "positionOnPath": 'abc'},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get("error"),
+            "Each step should contain a valid position on its associated path (between 0 and 1)",
         )
 
     def test_route_geometry_fail_incorrect_path_id(self):
@@ -1177,8 +1137,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": "abc", "lat": 48.866667, "lng": 1.333333},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
+                    {"path_id": 0, "positionOnPath": 0.5},
+                    {"path_id": "abc", "positionOnPath": 0.6},
                 ]
             }
         )
@@ -1186,8 +1146,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": -999, "lat": 48.866667, "lng": 1.333333},
-                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
+                    {"path_id": 0, "positionOnPath": 0.5},
+                    {"path_id": -999, "positionOnPath": 0.6},
                 ]
             }
         )
@@ -1212,8 +1172,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "lat": 40.5267991, "lng": 0.5305685},
-                    {"path_id": path.pk, "lat": 40.5266465, "lng": 0.5765381},
+                    {"path_id": path.pk, "positionOnPath": 0.5},
+                    {"path_id": path.pk, "positionOnPath": 0.6},
                 ]
             }
         )
