@@ -107,9 +107,9 @@ class OpenStreetMapInfrastructureParser(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.type = InfrastructureType.objects.create(label="Test")
-        cls.path = PathFactory.create(
-            geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
-        )
+        geom = LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
+        geom.transform(settings.SRID)
+        cls.path = PathFactory.create(geom=geom)
         cls.import_Infrastructure()
         cls.objects = Infrastructure.objects.all()
 
@@ -171,7 +171,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_way(self):
         infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 31946.239, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
@@ -181,8 +181,10 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_way_geom(self):
         infrastructure = self.objects.get(eid="W2")
-        self.assertAlmostEqual(infrastructure.geom.x, 962843.506, places=2)
-        self.assertAlmostEqual(infrastructure.geom.y, 6425572.291, places=2)
+        self.assertAlmostEqual(
+            infrastructure.geom.x, 962840.506, places=2, msg=infrastructure.geom.ewkt
+        )
+        self.assertAlmostEqual(infrastructure.geom.y, 6425568.935, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
@@ -207,7 +209,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
     )
     def test_topology_relation(self):
         infrastructure = self.objects.get(eid="R4")
-        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2)
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 31942.149, places=2, msg=f"{infrastructure.topo_object.paths.all()}")
         infrastructure_path = infrastructure.topo_object.paths.get()
         self.assertEqual(infrastructure_path, self.path)
         self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")

@@ -64,26 +64,25 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
     def filter_geom(self, src, val):
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
-        geom = None
+        original_geom = None
+        projected_geom = None
         if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
+            original_geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+            projected_geom = original_geom.transform(settings.SRID, clone=True)
         elif type == "way":
-            geom = self.get_centroid_from_way(area)
+            original_geom, projected_geom = self.get_centroid_from_way(area)
         elif type == "relation":
-            geom = self.get_centroid_from_relation(bbox)
+            original_geom, projected_geom = self.get_centroid_from_relation(bbox)
 
         # create topology
-        self.topology = Topology.objects.none()
+        self.topology = None
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
+            serialized = f'{{"lng": {original_geom.x}, "lat": {original_geom.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
-        return geom
+        return projected_geom
 
     def parse_obj(self, row, operation):
         super().parse_obj(row, operation)
