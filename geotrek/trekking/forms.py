@@ -285,12 +285,8 @@ class TrekForm(BaseTrekForm):
         sid = transaction.savepoint()
 
         try:
-            print("\n\n\nSave => ")
-            print(args)
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
-            print("return_value => ", return_value.geom)
-            print("is valid  => ", return_value.has_geom_valid())
             # TODO : Go through practice and not rating_scales
             if return_value.practice:
                 field = getattr(return_value, "ratings")
