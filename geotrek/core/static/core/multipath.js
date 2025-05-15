@@ -416,6 +416,15 @@ L.Handler.MultiPath = L.Handler.extend({
         if (positionOnPath)
             pop.positionOnPath = positionOnPath
         else
+            // The following is not done in the marker's "snap" event because that
+            // event is also triggered when displaying the route from a saved
+            // topology in the restoreGeometry method. In restoreGeometry, positionOnPath
+            // is set to the values from the saved topology to circumvent a bug where
+            // markers' geometries are slightly misplaced on paths when restored.
+            // If positionOnPath were set in the marker's "snap" event, it would be
+            // based on the incorrectly restored geometry, causing gaps in the route's
+            // topology and geometry.
+            // See: https://github.com/GeotrekCE/Geotrek-admin/issues/4657
             pop.positionOnPath = L.GeometryUtil.locateOnLine(
                 pop.marker._map,
                 pop.polyline,
@@ -460,7 +469,15 @@ L.Handler.MultiPath = L.Handler.extend({
 
             pop.previousLocation = {ll: pop.ll, polyline: pop.polyline}
 
-            // TODO: add comment to explaiin why this isn't done in the marker's'snap' event
+            // The following is not done in the marker's "snap" event because that
+            // event is also triggered when displaying the route from a saved
+            // topology in the restoreGeometry method. In restoreGeometry, positionOnPath
+            // is set to the values from the saved topology to circumvent a bug where
+            // markers' geometries are slightly misplaced on paths when restored.
+            // If positionOnPath were set in the marker's "snap" event, it would be
+            // based on the incorrectly restored geometry, causing gaps in the route's
+            // topology and geometry.
+            // See: https://github.com/GeotrekCE/Geotrek-admin/issues/4657
             pop.positionOnPath = L.GeometryUtil.locateOnLine(
                 pop.marker._map,
                 pop.polyline,
