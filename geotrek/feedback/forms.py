@@ -126,9 +126,7 @@ class ReportForm(CommonForm):
                 self.fields["message_supervisor"] = CharField(
                     required=False, widget=Textarea()
                 )
-                self.fields["message_supervisor"].label = _(
-                    "Message for supervisor"
-                )
+                self.fields["message_supervisor"].label = _("Message for supervisor")
                 right_after_user_index = (
                     self.fieldslayout[0].fields.index("current_user") + 1
                 )
@@ -149,9 +147,7 @@ class ReportForm(CommonForm):
                     right_after_message_sentinel_index, "message_administrators"
                 )
                 self.fields["current_user"].empty_label = None
-                if settings.SURICATE_WORKFLOW_SETTINGS.get(
-                    "SKIP_MANAGER_MODERATION"
-                ):
+                if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
                     self.fields["current_user"].widget = HiddenInput()
             else:
                 # On new reports
