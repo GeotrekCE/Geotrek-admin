@@ -1507,15 +1507,14 @@ class OpenStreetMapTouristicContentParser(
         contact = ""
 
         if phone:
-            contact += f"{phone}, \n\n"
+            contact += f"{phone}, \n"
 
         if housenumber and street:
-            contact += f"{housenumber} {street} \n"
+            contact += f"{housenumber} {street}, \n"
 
         if city:
-                contact += f"{postcode}, {city} \n" if postcode else f"{city} \n"
+            contact += f"{postcode}, {city} \n" if postcode else f"{city} \n"
 
-        print(contact)
         return contact
 
     def get_polygon_from_API(self, id):
@@ -1530,6 +1529,7 @@ class OpenStreetMapTouristicContentParser(
 
         if not geom.valid:
             geom = geom.make_valid()
+            print(geom)
 
         return geom
 
@@ -1537,17 +1537,22 @@ class OpenStreetMapTouristicContentParser(
         type, lng, lat, geometry, bbox, id = val
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)
+            geom.srid = self.osm_srid
         elif type == "way":
             coordinates = [[point["lon"], point["lat"]] for point in geometry]
             if coordinates[0] != coordinates[-1]:
                 geom = LineString(coordinates, srid=self.osm_srid)
+                geom.srid = self.osm_srid
             else:
                 geom = Polygon(coordinates)
+                geom.srid = self.osm_srid
         elif type == "relation":
             try:
                 geom = self.get_polygon_from_API(id)
+                geom.srid = self.osm_srid
             except DownloadImportError:
                 geom = self.get_centroid_from_relation(bbox)
 
-        geom.transform(settings.SRID)
+        if geom.srid == self.osm_srid:
+            geom.transform(settings.SRID)
         return geom
