@@ -17,6 +17,7 @@ CHANGELOG
 
 - Make OpenStreetMap eid as type+id
 - Fix wrong report url in Suricate Workflow emails (fixes #4588)
+- Ensure linear topologies don't fragment when modified despite marker shift (refs #4657)
 
 **Documentation**
 
