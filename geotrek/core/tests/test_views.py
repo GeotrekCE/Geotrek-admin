@@ -1143,6 +1143,9 @@ class PathRouteViewTestCase(TestCase):
             }
         )
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get("error"), "Each step should contain a valid path id"
+        )
         response = self.get_route_geometry(
             {
                 "steps": [

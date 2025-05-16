@@ -612,8 +612,6 @@ L.Handler.MultiPath = L.Handler.extend({
         stepsToRoute.forEach((step) => {
             var sentStep = {
                 path_id: step.polyline.properties.id,
-                // lat: step.ll.lat,
-                // lng: step.ll.lng,
                 positionOnPath: step.positionOnPath
             }
             sentSteps.push(sentStep)
@@ -1083,8 +1081,8 @@ Geotrek.PointOnPolyline = function (marker) {
     this.ll = null;
     this.polyline = null;
 
-    // Stores the last valid marker position. Used to revert the marker to its
-    // last valid position if dropped outside of any paths
+    // Stores the last valid marker location. Used to revert the marker to its
+    // last valid location if dropped outside of any paths
     this.previousLocation = null;
 
     this._activated = false;
