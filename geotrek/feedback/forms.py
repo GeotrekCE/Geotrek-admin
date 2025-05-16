@@ -80,7 +80,7 @@ class ReportForm(CommonForm):
             self.fields["email"].help_text = _(
                 "Leave this field empty not to forward Report to Suricate"
             )
-        if settings.SURICATE_WORKFLOW_ENABLED:  # On Management or Workflow modes
+        if settings.SURICATE_WORKFLOW_ENABLED:  # On Workflow mode
             if self.instance.pk:  # On updates
                 # Hide fields that are handled automatically in these modes
                 self.fields["email"].widget = HiddenInput()
@@ -88,72 +88,71 @@ class ReportForm(CommonForm):
                 self.fields["activity"].widget = HiddenInput()
                 self.fields["category"].widget = HiddenInput()
                 self.fields["problem_magnitude"].widget = HiddenInput()
-                if settings.SURICATE_WORKFLOW_ENABLED:  # On Workflow
-                    self.old_user = self.instance.current_user
-                    # Add fields that are used only in Workflow mode
-                    # status
-                    next_statuses = suricate_workflow_steps.get(
-                        self.instance.status.identifier,
-                        [self.instance.status.identifier],
-                    )
-                    self.fields["status"].empty_label = None
-                    self.fields["status"].queryset = ReportStatus.objects.filter(
-                        identifier__in=next_statuses
-                    )
-                    # current_user
-                    if self.old_status.identifier not in ["filed"]:
-                        self.fields["current_user"].widget = HiddenInput()
-                    # message for sentinel
-                    self.fields["message_sentinel"] = CharField(
-                        required=False, widget=Textarea()
-                    )
-                    self.fields["message_sentinel"].label = _("Message for sentinel")
-                    right_after_status_index = (
-                        self.fieldslayout[0].fields.index("status") + 1
-                    )
-                    self.fields["message_sentinel_predefined"] = forms.ModelChoiceField(
-                        label=_("Predefined email"),
-                        queryset=PredefinedEmail.objects.all(),
-                        required=False,
-                        initial=None,
-                    )
-                    self.fieldslayout[0].insert(
-                        right_after_status_index, "message_sentinel"
-                    )
-                    self.fieldslayout[0].insert(
-                        right_after_status_index, "message_sentinel_predefined"
-                    )
-                    # message for supervisor
-                    self.fields["message_supervisor"] = CharField(
-                        required=False, widget=Textarea()
-                    )
-                    self.fields["message_supervisor"].label = _(
-                        "Message for supervisor"
-                    )
-                    right_after_user_index = (
-                        self.fieldslayout[0].fields.index("current_user") + 1
-                    )
-                    self.fieldslayout[0].insert(
-                        right_after_user_index, "message_supervisor"
-                    )
-                    # message for administrators
-                    self.fields["message_administrators"] = CharField(
-                        required=False, widget=Textarea()
-                    )
-                    self.fields["message_administrators"].label = _(
-                        "Message for administrators"
-                    )
-                    right_after_message_sentinel_index = (
-                        self.fieldslayout[0].fields.index("message_sentinel") + 1
-                    )
-                    self.fieldslayout[0].insert(
-                        right_after_message_sentinel_index, "message_administrators"
-                    )
-                    self.fields["current_user"].empty_label = None
-                    if settings.SURICATE_WORKFLOW_SETTINGS.get(
-                        "SKIP_MANAGER_MODERATION"
-                    ):
-                        self.fields["current_user"].widget = HiddenInput()
+                self.old_user = self.instance.current_user
+                # Add fields that are used only in Workflow mode
+                # status
+                next_statuses = suricate_workflow_steps.get(
+                    self.instance.status.identifier,
+                    [self.instance.status.identifier],
+                )
+                self.fields["status"].empty_label = None
+                self.fields["status"].queryset = ReportStatus.objects.filter(
+                    identifier__in=next_statuses
+                )
+                # current_user
+                if self.old_status.identifier not in ["filed"]:
+                    self.fields["current_user"].widget = HiddenInput()
+                # message for sentinel
+                self.fields["message_sentinel"] = CharField(
+                    required=False, widget=Textarea()
+                )
+                self.fields["message_sentinel"].label = _("Message for sentinel")
+                right_after_status_index = (
+                    self.fieldslayout[0].fields.index("status") + 1
+                )
+                self.fields["message_sentinel_predefined"] = forms.ModelChoiceField(
+                    label=_("Predefined email"),
+                    queryset=PredefinedEmail.objects.all(),
+                    required=False,
+                    initial=None,
+                )
+                self.fieldslayout[0].insert(
+                    right_after_status_index, "message_sentinel"
+                )
+                self.fieldslayout[0].insert(
+                    right_after_status_index, "message_sentinel_predefined"
+                )
+                # message for supervisor
+                self.fields["message_supervisor"] = CharField(
+                    required=False, widget=Textarea()
+                )
+                self.fields["message_supervisor"].label = _(
+                    "Message for supervisor"
+                )
+                right_after_user_index = (
+                    self.fieldslayout[0].fields.index("current_user") + 1
+                )
+                self.fieldslayout[0].insert(
+                    right_after_user_index, "message_supervisor"
+                )
+                # message for administrators
+                self.fields["message_administrators"] = CharField(
+                    required=False, widget=Textarea()
+                )
+                self.fields["message_administrators"].label = _(
+                    "Message for administrators"
+                )
+                right_after_message_sentinel_index = (
+                    self.fieldslayout[0].fields.index("message_sentinel") + 1
+                )
+                self.fieldslayout[0].insert(
+                    right_after_message_sentinel_index, "message_administrators"
+                )
+                self.fields["current_user"].empty_label = None
+                if settings.SURICATE_WORKFLOW_SETTINGS.get(
+                    "SKIP_MANAGER_MODERATION"
+                ):
+                    self.fields["current_user"].widget = HiddenInput()
             else:
                 # On new reports
                 self.fields["status"].widget = HiddenInput()
