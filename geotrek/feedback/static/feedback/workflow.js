@@ -7,7 +7,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
     });
-    $('#id_assigned_user').change(function () {
+    $('#id_current_user').change(function () {
         display_message_fields_on_supervisor_change();
     });
     $('#div_id_message_sentinel_predefined').change(function () {
@@ -28,19 +28,19 @@ function display_message_fields_on_status_change() {
     $('#div_id_uses_timers').prop('hidden', !do_display_timer);
     // Prevent assigning and classifying at the same time - or rejecting and assigning
     if ((status_ids_and_colors[selected]['id'] == "classified") || (status_ids_and_colors[selected]['id'] == "rejected")) {
-        $('#id_assigned_user').val(workflow_manager);
-        $('#div_id_assigned_user').prop('hidden', true);
+        $('#id_current_user').val(workflow_manager);
+        $('#div_id_current_user').prop('hidden', true);
         $('#div_id_message_supervisor').prop('hidden', true);
         $('#div_id_uses_timers').prop('hidden', true);
     }
     if (status_ids_and_colors[selected]['id'] == "filed") {
-        $('#id_assigned_user').val(workflow_manager);
-        $('#div_id_assigned_user').prop('hidden', false);
+        $('#id_current_user').val(workflow_manager);
+        $('#div_id_current_user').prop('hidden', false);
     }
 }
 
 function display_message_fields_on_supervisor_change() {
-    var selected = $('#id_assigned_user').val() || null;
+    var selected = $('#id_current_user').val() || null;
     var workflow_manager = JSON.parse($('#workflow_manager').text());
     $('#div_id_message_sentinel').prop('hidden', (selected == workflow_manager));
     $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager));

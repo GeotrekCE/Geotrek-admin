@@ -46,7 +46,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report = ReportFactory(
             status=cls.filed_status,
             external_uuid=uuid.uuid4(),
-            assigned_user=UserFactory(),
+            current_user=UserFactory(),
         )
         cls.filed_report_1 = ReportFactory(
             status=cls.filed_status, external_uuid=uuid.uuid4()
@@ -111,7 +111,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)
 
@@ -133,7 +133,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
 
@@ -158,7 +158,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
 
     @test_for_workflow_mode
@@ -177,7 +177,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn("message_administrators", keys)
         self.assertIn("message_sentinel_predefined", keys)
         self.assertIn("message_supervisor", keys)
-        self.assertIsInstance(form.fields["assigned_user"].widget, Select)
+        self.assertIsInstance(form.fields["current_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
     @test_for_workflow_mode
@@ -189,7 +189,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         mails_before = len(mail.outbox)
         # When assigning a user to a report
         data = {
-            "assigned_user": str(self.other_user.pk),
+            "current_user": str(self.other_user.pk),
             "email": "test@test.fr",
             "geom": self.filed_report.geom,
             "message_sentinel": "Your message",
@@ -199,7 +199,8 @@ class TestSuricateForms(SuricateWorkflowTests):
         form.save()
         # Assert report status changes
         self.assertEqual(self.filed_report.status.identifier, "waiting")
-        self.assertEqual(self.filed_report.assigned_user, self.other_user)
+        self.assertEqual(self.filed_report.current_user, self.other_user)
+        self.assertEqual(self.filed_report.assigned_handler, self.other_user)
         # Asser timer is created
         self.assertEqual(
             TimerEvent.objects.filter(
@@ -247,7 +248,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(
             mail.outbox[-1].subject, "[Geotrek-Admin] New report to process"
         )
-        self.assertEqual(mail.outbox[-1].to, [self.filed_report.assigned_user.email])
+        self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(
@@ -281,13 +282,14 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn("message_administrators", keys)
         self.assertIn("message_sentinel_predefined", keys)
         self.assertIn("message_supervisor", keys)  # Will be hidden with JS
-        self.assertIsInstance(form.fields["assigned_user"].widget, HiddenInput)
+        self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)
         form.save()
         # Assert report status changes
         self.assertEqual(self.filed_report.status.identifier, "waiting")
-        self.assertEqual(self.filed_report.assigned_user, self.other_user)
+        self.assertEqual(self.filed_report.current_user, self.other_user)
+        self.assertEqual(self.filed_report.assigned_handler, self.other_user)
         # Asser timer is created
         self.assertEqual(
             TimerEvent.objects.filter(
@@ -396,7 +398,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert report changes status and manager is notified
         self.assertEqual(self.interv_report.status.identifier, "solved_intervention")
         self.assertEqual(
-            self.interv_report.assigned_user, WorkflowManager.objects.first().user
+            self.interv_report.current_user, WorkflowManager.objects.first().user
         )
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(
@@ -433,7 +435,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     @test_for_workflow_mode
     def test_date_intervention_serialized(self):
         report = self.intervention.target
-        report.assigned_user = self.admin
+        report.current_user = self.admin
         report.save()
         response = self.client.get(f"/report/edit/{self.intervention.target.pk}/")
         emails_data = ""

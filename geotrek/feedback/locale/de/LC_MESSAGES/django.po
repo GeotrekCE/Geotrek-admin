@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2025-05-06 15:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,11 @@ msgstr ""
 msgid "Last updated in Suricate"
 msgstr ""
 
-msgid "Supervisor"
+msgid "Assigned handler"
+msgstr ""
+
+#. Translators: user (manager or handler) currently in charge of the report
+msgid "Current user"
 msgstr ""
 
 msgid "Use timers"
