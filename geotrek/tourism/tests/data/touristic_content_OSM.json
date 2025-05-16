@@ -43,7 +43,7 @@
     "name:fr": "hotel_fr",
     "contact:phone": "0786535787",
     "addr:housenumber": "46",
-    "tags.addr:city": "Montmorillon",
+    "addr:city": "Montmorillon",
     "email": "hotel@email.com",
     "website": "https://hotel.com"
   }
@@ -77,7 +77,7 @@
     "phone": "0786535787",
     "addr:street": "rue des tournesols",
     "addr:postcode": "86500",
-    "tags.contact:city": "Montmorillon"
+    "contact:city": "Montmorillon"
   }
 },
 {
@@ -129,9 +129,48 @@
   "id": 5,
   "bounds": {
     "minlat": 41.6010720,
-    "minlon": -122.8475703,
+    "minlon": 3.8475703,
     "maxlat": 41.6015180,
-    "maxlon": -122.8468805
+    "maxlon": 3.8468805
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 835597461,
+      "role": "outer",
+      "geometry": [
+         { "lat": 41.6010720, "lon": -122.8470988 },
+         { "lat": 41.6013038, "lon": -122.8475703 },
+         { "lat": 41.6015180, "lon": -122.8473820 },
+         { "lat": 41.6013204, "lon": -122.8468805 },
+         { "lat": 41.6010720, "lon": -122.8470988 }
+      ]
+    },
+    {
+      "type": "way",
+      "ref": 835597462,
+      "role": "inner",
+      "geometry": [
+         { "lat": 41.6012565, "lon": -122.8472256 },
+         { "lat": 41.6012268, "lon": -122.8471658 },
+         { "lat": 41.6012696, "lon": -122.8471277 },
+         { "lat": 41.6012993, "lon": -122.8471875 },
+         { "lat": 41.6012565, "lon": -122.8472256 }
+      ]
+    }
+  ],
+  "tags": {
+    "tourism": "hotel"
+  }
+},
+{
+  "type": "relation",
+  "id": 6,
+  "bounds": {
+    "minlat": 41.6010720,
+    "minlon": 3.8475703,
+    "maxlat": 41.6015180,
+    "maxlon": 3.8468805
   },
   "members": [
     {

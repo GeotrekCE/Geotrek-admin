@@ -8,6 +8,7 @@ import requests
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
+from django.contrib.gis.geos import Point, LineString, Polygon
 
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
@@ -1505,17 +1506,17 @@ class OpenStreetMapInformationDeskParserTests(TestCase):
         self.assertEqual(information_desk2.name_en, None)
 
 
-class TestTouristicContentOpenStreetMapParser(OpenStreetMapTouristicContentParser):
-    type = "Foo"
+class TestOpenStreetMapTouristicContentParser(OpenStreetMapTouristicContentParser):
+    category = "Foo"
     tags = [{"tourism": "hotel"}]
     default_fields_values = {"name": "test_default"}
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
-class OpenStreetMapInformationDeskParserTests(TestCase):
+class OpenStreetMapTouristicContentParserTests(TestCase):
     @classmethod
     @mock.patch("requests.get")
-    def import_information_desk(cls, mocked):
+    def import_touristic_content(cls, mocked):
         def mocked_json():
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "touristic_content_OSM.json"
@@ -1523,91 +1524,107 @@ class OpenStreetMapInformationDeskParserTests(TestCase):
             with open(filename) as f:
                 return json.load(f)
 
-        def mocked_polygons():
-            wkt_polygon = "SRID=4326;MULTIPOLYGON(((-67.4320314 48.4640104,-67.4323081 48.463915,-67.4321457 48.4637076,-67.4318689 48.463803,-67.4320314 48.4640104)),((-67.4319498 48.4641871,-67.4325881 48.4639613,-67.4325393 48.4638967,-67.4326883 48.4638459,-67.4319498 48.4641871)))"
+        def mocked_polygons_valid(decode):
+            wkt_polygon = "SRID=4326;POLYGON ((3.976107 45.32012, 4.032755 45.32012, 4.032755 45.345841, 3.976107 45.345841, 3.976107 45.32012), (3.990655 45.326602, 4.020352 45.326602, 4.020352 45.340489, 3.990655 45.340489, 3.990655 45.326602))"
             return wkt_polygon
 
-        mocked.return_value.status_code = 200
-        mocked.return_value.json = mocked_json
+        def mocked_polygons_non_valid(decode):
+            wkt_polygon = "SRID=4326;MULTIPOLYGON (((3.976107 45.32012, 4.032755 45.32012, 4.032755 45.345841, 3.976107 45.345841, 3.976107 45.32012)), ((3.990655 45.326602, 4.020352 45.326602, 4.020352 45.340489, 3.990655 45.340489, 3.990655 45.326602)))"
+            return wkt_polygon
+
+        mock_overpass = mock.Mock()
+        mock_overpass.status_code = 200
+        mock_overpass.json = mocked_json
+
+        mock_polygons_valid = mock.Mock()
+        mock_polygons_valid.status_code = 200
+        mock_polygons_valid.content.decode = mocked_polygons_valid
+
+        mock_polygons_missing = mock.Mock()
+        mock_polygons_missing.status_code = 500
+        mock_polygons_missing.content.decode = mocked_polygons_valid
+
+        mock_polygons_non_valid = mock.Mock()
+        mock_polygons_non_valid.status_code = 200
+        mock_polygons_non_valid.content.decode = mocked_polygons_non_valid
+
+        mocked.side_effect = [mock_overpass, mock_polygons_valid, mock_polygons_missing, mock_polygons_non_valid]
 
         call_command(
             "import",
-            "geotrek.tourism.tests.test_parsers.TestInformationDeskOpenStreetMapParser",
+            "geotrek.tourism.tests.test_parsers.TestOpenStreetMapTouristicContentParser",
         )
 
     @classmethod
     def setUpTestData(cls):
-        cls.type = InformationDeskTypeFactory.create(label="Foo")
+        cls.category = TouristicContentCategoryFactory.create(label="Foo")
         FileType.objects.create(type="Photographie")
 
-        cls.import_information_desk()
+        cls.import_touristic_content()
 
-        cls.objects = InformationDesk.objects
+        cls.objects = TouristicContent.objects
 
-    def test_create_information_desk_OSM(self):
-        self.assertEqual(self.objects.count(), 4)
+    def test_create_touristic_content_OSM(self):
+        self.assertEqual(self.objects.count(), 6)
 
-    def test_InformationDesk_eid_filter_OSM(self):
-        information_desks_eids = (
-            self.objects.order_by("eid").all().values_list("eid", flat=True)
-        )
-        self.assertListEqual(list(information_desks_eids), ["N1", "N2", "R4", "W3"])
-        self.assertNotEqual(information_desks_eids, ["1", "2", "3", "4"])
+    def test_filter_contact(self):
+        touristic_content = self.objects.get(eid="N1")
+        self.assertEqual(touristic_content.contact, "")
 
-    def test_get_tag_info_existing_tag_OSM(self):
-        information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.phone, "0754347899")
+        touristic_content = self.objects.get(eid="W2")
+        contact = "0786535787, \nMontmorillon \n"
+        self.assertEqual(touristic_content.contact, contact)
 
-        information_desk2 = self.objects.get(eid="N2")
-        self.assertEqual(information_desk2.phone, "0754347899")
+        touristic_content = self.objects.get(eid="W3")
+        contact = "0786535787, \n86500, Montmorillon \n"
+        self.assertEqual(touristic_content.contact, contact)
 
-    def test_get_tag_info_no_tag_OSM(self):
-        information_desk = self.objects.get(eid="W3")
-        self.assertEqual(information_desk.phone, None)
+        touristic_content = self.objects.get(eid="R4")
+        contact = "0786535787, \n46 rue des tournesols, \n"
+        self.assertEqual(touristic_content.contact, contact)
 
-    def test_InformationDesk_street_filter_housenumber_and_street_OSM(self):
-        information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.street, "5 rue des chênes")
+    def test_geom_point(self):
+        touristic_content = self.objects.get(eid="N1")
+        self.assertEqual(type(touristic_content.geom), Point)
+        self.assertAlmostEqual(touristic_content.geom.x, 673775.507, places=2)
+        self.assertAlmostEqual(touristic_content.geom.y, 6260613.093, places=2)
 
-    def test_InformationDesk_street_filter_street_OSM(self):
-        information_desk = self.objects.get(eid="N2")
-        self.assertEqual(information_desk.street, "rue des chênes")
+    def test_geom_way_line(self):
+        touristic_content = self.objects.get(eid="W2")
+        self.assertEqual(type(touristic_content.geom), LineString)
+        self.assertEqual(len(touristic_content.geom), 2)
+        self.assertAlmostEqual(touristic_content.geom[0][0], 639373.356, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][1], 6256499.938, places=2)
 
-    def test_InformationDesk_street_filter_None_OSM(self):
-        information_desk = self.objects.get(eid="W3")
-        self.assertEqual(information_desk.street, None)
+    def test_geom_way_polygon(self):
+        touristic_content = self.objects.get(eid="W3")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 639373.356, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6256499.938, places=2)
 
-    def test_geom_point_to_point_OSM(self):
-        information_desk = self.objects.get(eid="N1")
-        self.assertAlmostEqual(information_desk.geom.coords[0], 673775.5074406686)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 6260613.093389216)
+    def test_geom_relation_polygon(self):
+        touristic_content = self.objects.get(eid="R4")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(touristic_content.geom.num_interior_rings, 1)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertEqual(len(touristic_content.geom[1]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
+        self.assertAlmostEqual(touristic_content.geom[1][0][0], 777605.887, places=2)
+        self.assertAlmostEqual(touristic_content.geom[1][0][1], 6470178.359, places=2)
 
-    def test_geom_way_to_point_OSM(self):
-        information_desk = self.objects.get(eid="W3")
-        self.assertAlmostEqual(information_desk.geom.coords[0], 639380.854410392)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 6256494.451055847)
+    def test_geom_relation_point(self):
+        touristic_content = self.objects.get(eid="R5")
+        self.assertEqual(type(touristic_content.geom), Point)
+        self.assertAlmostEqual(touristic_content.geom.x, 770813.800, places=2)
+        self.assertAlmostEqual(touristic_content.geom.y, 6055930.570, places=2)
 
-    def test_geom_relation_to_point_OSM(self):
-        information_desk = self.objects.get(eid="R4")
-        self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
+    def test_geom_relation_non_valid_polygon(self):
+        touristic_content = self.objects.get(eid="R6")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(touristic_content.geom.num_interior_rings, 0)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
 
-    def test_default_fields(self):
-        information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.name, "test:fr")
-
-        information_desk2 = self.objects.get(eid="R4")
-        self.assertEqual(information_desk2.name, "test_default")
-
-    def test_translated_fields(self):
-        # default language
-        information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.name, "test:fr")
-        information_desk2 = self.objects.get(eid="N2")
-        self.assertEqual(information_desk2.name, "test")
-
-        # translation language
-        information_desk = self.objects.get(eid="N1")
-        self.assertEqual(information_desk.name_en, "test:en")
-        information_desk2 = self.objects.get(eid="W3")
-        self.assertEqual(information_desk2.name_en, None)
