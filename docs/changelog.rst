@@ -5,6 +5,9 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Add OpenStreetMap links on detail sheet for OpenStreetMap provider parsed objects
 
 
 2.115.1    (2025-05-21)
@@ -18,7 +21,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
-- Add OpenStreetMap links on detail sheet for OpenStreetMap provider parsed objects
+
 
 **Bug fixes**
 
