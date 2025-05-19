@@ -54,7 +54,7 @@ jobs:
       matrix:
         os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
-        allow-error: false
+        allow-error: [false]
         include:
           - os: 'focal-3.10'
             allow-error: true
