@@ -1508,8 +1508,18 @@ class OpenStreetMapInformationDeskParserTests(TestCase):
 
 class TestOpenStreetMapTouristicContentParser(OpenStreetMapTouristicContentParser):
     category = "Foo"
+    type1 = ["test type1.1", "test type1.2", "test type1.3"]
+    type2 = "test type2"
+    themes = ["test theme1", "test theme2"]
+    portal = ["test portal1", "test portal2"]
+    source = ["test source1", "test source2"]
     tags = [{"tourism": "hotel"}]
     default_fields_values = {"name": "test_default"}
+    field_options = {
+        "themes": {"create": True},
+        "source": {"create": True},
+        "type2": {"create": True, "fk": "category"},
+    }
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
@@ -1550,15 +1560,24 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
 
         mocked.side_effect = [mock_overpass, mock_polygons_valid, mock_polygons_missing, mock_polygons_non_valid]
 
+        output = io.StringIO()
         call_command(
             "import",
             "geotrek.tourism.tests.test_parsers.TestOpenStreetMapTouristicContentParser",
+            stdout = output
         )
+
+        cls.output = output.getvalue()
+
 
     @classmethod
     def setUpTestData(cls):
         cls.category = TouristicContentCategoryFactory.create(label="Foo")
         FileType.objects.create(type="Photographie")
+        TouristicContentType1Factory.create(label="test type1.1", category=cls.category)
+        TouristicContentType1Factory.create(label="test type1.2", category=cls.category)
+        TargetPortalFactory(name="test portal1")
+        TargetPortalFactory(name="test portal2")
 
         cls.import_touristic_content()
 
@@ -1567,20 +1586,61 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
     def test_create_touristic_content_OSM(self):
         self.assertEqual(self.objects.count(), 6)
 
+    def test_type1_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.type1.all().count(), 2)
+        self.assertEqual(touristic_content.type1.first().label, "test type1.1")
+        warning = "Type1 'test type1.3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+        self.assertIn(warning, self.output)
+
+    def test_type2_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.type2.all().count(), 1)
+        self.assertEqual(touristic_content.type2.first().label, "test type2")
+        warning = "Type2 'test type2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+        self.assertIn(warning, self.output)
+
+    def test_themes_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.themes.all().count(), 2)
+        self.assertEqual(touristic_content.themes.first().label, "test theme1")
+        warnings = [
+            "Thème 'test theme1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Thème 'test theme2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
+    def test_portal_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.portal.all().count(), 2)
+        self.assertEqual(touristic_content.portal.first().name, "test portal1")
+
+    def test_source_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.source.all().count(), 2)
+        self.assertEqual(touristic_content.source.first().name, "test source1")
+        warnings = [
+            "Source Des Fiches 'test source1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
     def test_filter_contact(self):
         touristic_content = self.objects.get(eid="N1")
         self.assertEqual(touristic_content.contact, "")
 
         touristic_content = self.objects.get(eid="W2")
-        contact = "0786535787, \nMontmorillon \n"
+        contact = "0786535787<br>Montmorillon"
         self.assertEqual(touristic_content.contact, contact)
 
         touristic_content = self.objects.get(eid="W3")
-        contact = "0786535787, \n86500, Montmorillon \n"
+        contact = "0786535787<br>86500, Montmorillon"
         self.assertEqual(touristic_content.contact, contact)
 
         touristic_content = self.objects.get(eid="R4")
-        contact = "0786535787, \n46 rue des tournesols, \n"
+        contact = "0786535787<br>46 rue des tournesols"
         self.assertEqual(touristic_content.contact, contact)
 
     def test_geom_point(self):
