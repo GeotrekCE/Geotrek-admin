@@ -1443,7 +1443,7 @@ class InformationDeskOpenStreetMapParser(
 
 
 class OpenStreetMapTouristicContentParser(
-    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+    OpenStreetMapAttachmentsParserMixin, TouristicContentMixin, OpenStreetMapParser
 ):
     """Parser to import touristic content from OpenStreetMap"""
     url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
@@ -1490,14 +1490,12 @@ class OpenStreetMapTouristicContentParser(
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         self.field_options = self.field_options.copy()
-        self.field_options["themes"] = {"create": True}
-        self.field_options["category"] = {"create": True}
         if self.category is not None:
             self.constant_fields["category"] = self.category
         if self.type1 is not None:
-            self.constant_fields["type1"] = self.type1
+            self.m2m_constant_fields["type1"] = self.type1
         if self.type2 is not None:
-            self.constant_fields["type2"] = self.type2
+            self.m2m_constant_fields["type2"] = self.type2
         if self.themes is not None:
             self.m2m_constant_fields["themes"] = self.themes
         if self.source is not None:
@@ -1512,18 +1510,19 @@ class OpenStreetMapTouristicContentParser(
         postcode = val[4] or val[5]
         city = val[6] or val[7]
 
-        contact = ""
+        lines = []
 
         if phone:
-            contact += f"{phone}, \n"
+            lines.append(phone)
 
         if housenumber and street:
-            contact += f"{housenumber} {street}, \n"
+            lines.append(f"{housenumber} {street}")
 
         if city:
-            contact += f"{postcode}, {city} \n" if postcode else f"{city} \n"
+            location = f"{postcode}, {city}" if postcode else city
+            lines.append(location)
 
-        return contact
+        return "<br>".join(lines)
 
     def get_polygon_from_API(self, id):
         params = {
