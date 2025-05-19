@@ -54,10 +54,10 @@ jobs:
       matrix:
         os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
-        continue-on-error: false
+        continue-on-error: 'false'
         include:
           - os: 'focal-3.10'
-            continue-on-error: true
+            continue-on-error: 'true'
 
     env:
       ENV: ${{ matrix.tests-env }}
