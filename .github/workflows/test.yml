@@ -54,10 +54,10 @@ jobs:
       matrix:
         os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
-        continue-on-error: 'false'
+        allow-error: false
         include:
           - os: 'focal-3.10'
-            continue-on-error: 'true'
+            allow-error: true
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -152,7 +152,7 @@ jobs:
         ./venv/bin/celery -A geotrek worker -c 1 &
 
     - name: Unit test
-      continue-on-error: ${{ matrix.continue-on-error }}
+      continue-on-error: ${{ matrix.allow-error }}
       run: |
         ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
         ./venv/bin/coverage combine
