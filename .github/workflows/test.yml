@@ -58,6 +58,7 @@ jobs:
         include:
           - os: 'focal-3.10'
             allow-error: true
+            tests-env: ['tests', 'tests_nds']
 
     env:
       ENV: ${{ matrix.tests-env }}
