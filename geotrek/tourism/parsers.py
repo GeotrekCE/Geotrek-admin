@@ -1449,6 +1449,8 @@ class OpenStreetMapTouristicContentParser(
     url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
 
     category = None
+    type1 = None
+    type2 = None
     themes = None
     source = None
     portal = None
@@ -1475,6 +1477,8 @@ class OpenStreetMapTouristicContentParser(
     m2m_constant_fields = {}
     natural_keys = {
         "category": "label",
+        "type1": "label",
+        "type2": "label",
         "themes": "label",
         "source": "name",
         "portal": "name",
@@ -1490,6 +1494,10 @@ class OpenStreetMapTouristicContentParser(
         self.field_options["category"] = {"create": True}
         if self.category is not None:
             self.constant_fields["category"] = self.category
+        if self.type1 is not None:
+            self.constant_fields["type1"] = self.type1
+        if self.type2 is not None:
+            self.constant_fields["type2"] = self.type2
         if self.themes is not None:
             self.m2m_constant_fields["themes"] = self.themes
         if self.source is not None:
