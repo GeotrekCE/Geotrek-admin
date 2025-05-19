@@ -2,12 +2,12 @@
 {% autoescape off %}
 
 {% app_title as app_title %}
-{% trans "You have been assigned a report on" %} {{ app_title }} : 
+{% trans "You have been assigned a report on" %} {{ app_title }} :
 {% trans "Report" %} {% if report.eid|length %}{{report.eid}}{%else%}{{report.id}}{%endif%}
-    https://{{ report.full_url }}
+    {{ report.full_url }}
 
 {% if message|length %}
-    {% trans "Message from the manager" %} : {{ message }} 
+    {% trans "Message from the manager" %} : {{ message }}
 {% endif %}
 
 {% endautoescape %}

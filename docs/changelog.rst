@@ -2,8 +2,171 @@
 CHANGELOG
 =========
 
-2.110.0+dev     (XXXX-XX-XX)
+2.115.0+dev    (XXXX-XX-XX)
 ----------------------------
+
+**Improvements**
+
+- Improve Overpass query for OpenStreetMap parsers
+- OpenSteetMap parsers accept translations from OSM
+- Add OpenStreetMap parser for Signage
+- Add OpenStreetMap parser for Districts
+- Add healthcheck to Dockerfile
+
+**Bug fixes**
+
+- Make OpenStreetMap eid as type+id
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
+
+**Documentation**
+
+- Add missing parameters from base.py (#4690)
+
+
+2.115.0    (2025-04-29)
+----------------------------
+
+**Warnings**
+
+- This release changes the Information desk `photo` attribute from `FileField` to `ImageField`.
+- All photos defined that are nor images nor SVGs are deleted from the `photo` attribute but backed up as attachments.
+- Attachments can now be managed for Information desks.
+
+**Bug fixes**
+
+- Fix log book filters by updating mapentity (#4576)
+- Prevent trying to generate thumbnails for non-images (information desk's photo attribute)
+
+**Improvements**
+
+- Do not display "None" on Blade Direction
+- Add OpenStreetMap parser for Information Desk
+- Add OpenStreetMap parser for POI
+- Parsers accept default values for fields
+
+**Documentation**
+
+- Update documentation about paths with docker commands (#4578)
+- Update instructions to regenerate UML diagrams of data model (#4594)
+- Update documentation about map settings and tourism/outdoor intersection margin (#4654)
+- Update documentation with missing parameters from base.py (#4676)
+
+
+2.114.0     (2025-03-13)
+----------------------------
+
+**Breaking changes**
+
+This version drop support for Ubuntu Bionic 18.04 debian package. Please update or migrate your server to Ubuntu 24.04.
+
+**Bug fixes**
+
+- Fix `loaddem` command after debian fresh install which requires to install postgis package.
+
+**Improvements**
+
+- Officially support Ubuntu 24.04 debian package.
+- Pre-deprecate support of Ubuntu 20.04. Unit tests will continue but end to end tests will be stopped. Update will be available but install script will be discontinued.
+- Deprecate support of Ubuntu 18.04 bionic.
+- Improve filter on code signage (#4367)
+
+**UI/UX**
+
+- Fix right CSS class for images thumbnails max-width in attached files lists
+
+**Bug fixes**
+
+- Fix parent-child trek linking in GeotrekTrekParser: failure to retrieve a parent trek lead to not parsing any remaining child Treks
+- Add try-except when linking information desks to treks in GeotrekInformationDeskParser
+
+**Documentation**
+
+- Update documentation for sensitivity fixtures (#4492)
+- Update database restore process with PGRouting extension
+
+
+2.113.1         (2025-02-17)
+----------------------------
+
+**Improvements**
+
+- Officially support Ubuntu 22.04 debian package.
+- Add sensitive areas to mobile API and sync
+
+**Bug fixes**
+
+- Fix path picture in intervention form (#4450)
+- Fix gpx and kml parsing: geom is an empty GeometryCollection after invalid MultiLineString merge
+
+**Development**
+
+- Add clean and flush make command to init data in development mode
+
+**Documentation**
+
+- Update documentation theme and content, re-organize sections (#4484)
+- Add infos about adding new languages (#4486)
+- Fix typo in docs
+
+
+2.113.0         (2025-01-30)
+----------------------------
+
+**Breaking changes**
+
+This version uses pgRouting. You need to install this extension in your database before upgrading to this version. See :
+
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#from-geotrek-admin-2-113-0
+
+**Warnings**
+
+- The database migration to this version might take several minutes due to the generation of pgRouting's network topology.
+- When adding a via-point to a linear object's topology, it is now required to drop the new marker onto a path before the updated route is displayed, as the preview is no longer available when dragging the marker. This is due to the route computation now being performed on the backend. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+- After adding new paths, pre-existing topologies can follow routes that are no longer the shortest. When editing topology-based linear objects through the interface, their route will no longer be automatically recomputed to the shortest option, which was unwanted behavior. This means you might now encounter topologies that take a detour despite not using a via-point marker. Be careful when editing such a route, as moving or adding neighboring markers will remove the detour. Note: this does not address the topology ordering issue when adding new paths. For more information, see https://github.com/GeotrekCE/Geotrek-admin/issues/4286
+
+**Improvements**
+
+- Optimize routing: computation is now done in the backend using the A* algorithm (#4070)
+- Prevent from placing route markers outside of paths or on unreachable paths (#4070)
+- Fix clickable labels in admin site for Difficulty Levels and Touristic Content Categories
+- Change Admin site header to "Geotrek configuration"
+
+**Bug fixes**
+
+- Fix editing of topology-based linear objects via the interface: objects are no longer automatically rerouted (#4070)
+
+
+2.112.0         (2025-01-14)
+----------------------------
+
+**Performances**
+
+- Delay loading filter form in List Views (refs #2967)
+
+**UI/UX**
+
+- Move the related objects from the properties tab into their own tab, on objects details pages (refs #2967)
+- Move Treks' accessibility pictures into the attached files tab (refs #2967)
+- Removes the display of an object's structure in its properties tab title
+
+**Bug fixes**
+
+- Prevent objects from being returned several times in APIv2 by filtering on ManyToMany (#4448)
+- Fix missing languages for `published` field on Touristic Content in APIv2 (#4439)
+
+**Documentation**
+
+- Update theme color
+- Fix typo in documentation
+- Update and homogenize README.rst
+
+
+2.111.0         (2024-12-05)
+----------------------------
+
+**Features**
+
+- Add `CirkwiParser` to retrieve Treks and Touristic Contents from Cirkwi (refs #3947)
 
 **Improvements**
 
@@ -22,7 +185,7 @@ CHANGELOG
 - Add note about certbot ssl configuration in nginx
 
 
-2.110.0     (2024-11-13)
+2.110.0         (2024-11-13)
 ----------------------------
 
 **New features**
@@ -30,7 +193,7 @@ CHANGELOG
 - Add parser for schema_randonnee-compliant files (#4022)
 
 
-2.109.3     (2024-10-29)
+2.109.3         (2024-10-29)
 ----------------------------
 
 **Improvements**
@@ -55,7 +218,7 @@ CHANGELOG
 - Improve development quickstart documentation
 
 
-2.109.2     (2024-09-19)
+2.109.2         (2024-09-19)
 ----------------------------
 
 **Warning**
@@ -89,7 +252,7 @@ CHANGELOG
 - Add command line examples and templates for importing data
 
 
-2.109.1     (2024-08-22)
+2.109.1         (2024-08-22)
 ----------------------------
 
 **Improvements**
@@ -111,7 +274,7 @@ CHANGELOG
 - Optimize some backend queries for performances
 
 
-2.109.0     (2024-08-08)
+2.109.0         (2024-08-08)
 ----------------------------
 
 **New features**
@@ -176,7 +339,7 @@ CHANGELOG
 
 - This version use django 4.2, the latest LTS version. You need to upgrade your database to PostgreSQL 12 or higher before upgrading to this version.
 
-https://geotrek.readthedocs.io/en/latest/install/upgrade.html#postgresql
+https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.html#postgresql
 
 **New features**
 

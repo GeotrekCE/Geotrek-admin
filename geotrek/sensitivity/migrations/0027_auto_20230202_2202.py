@@ -4,33 +4,76 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sensitivity', '0026_alter_sensitivearea_geom_buffered'),
+        ("sensitivity", "0026_alter_sensitivearea_geom_buffered"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Rule',
+            name="Rule",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
-                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
-                ('pictogram', models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogram')),
-                ('code', models.CharField(blank=True, max_length=50, null=True, unique=True, verbose_name='Code')),
-                ('name', models.CharField(max_length=128, unique=True, verbose_name='Name')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('url', models.URLField(blank=True, verbose_name='URL')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Insertion date"
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True, db_index=True, verbose_name="Update date"
+                    ),
+                ),
+                (
+                    "pictogram",
+                    models.FileField(
+                        blank=True,
+                        max_length=512,
+                        null=True,
+                        upload_to="upload",
+                        verbose_name="Pictogram",
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        blank=True,
+                        max_length=50,
+                        null=True,
+                        unique=True,
+                        verbose_name="Code",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=128, unique=True, verbose_name="Name"),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                ("url", models.URLField(blank=True, verbose_name="URL")),
             ],
             options={
-                'verbose_name': 'Rule',
-                'verbose_name_plural': 'Rules',
-                'ordering': ['name'],
+                "verbose_name": "Rule",
+                "verbose_name_plural": "Rules",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='sensitivearea',
-            name='rules',
-            field=models.ManyToManyField(blank=True, to='sensitivity.Rule', verbose_name='Rules'),
+            model_name="sensitivearea",
+            name="rules",
+            field=models.ManyToManyField(
+                blank=True, to="sensitivity.Rule", verbose_name="Rules"
+            ),
         ),
     ]

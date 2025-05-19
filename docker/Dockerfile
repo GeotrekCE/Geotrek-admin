@@ -1,6 +1,6 @@
-ARG BASE_IMAGE=jammy
+ARG BASE_IMAGE=ubuntu:noble
 
-FROM ubuntu:${BASE_IMAGE} AS base
+FROM ${BASE_IMAGE} AS base
 
 # add labels
 LABEL org.opencontainers.image.authors="Makina Corpus"
@@ -12,8 +12,8 @@ LABEL org.opencontainers.image.url="https://geotrek.fr"
 LABEL org.opencontainers.image.title="Geotrek-admin"
 LABEL org.opencontainers.image.description="Manage and promote your trails and tourist content and activities."
 
-
 ENV PYTHONBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ENV=prod
 ENV SERVER_NAME="localhost"
@@ -71,27 +71,31 @@ FROM base AS build
 
 USER root
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
     python3-dev \
     python3-venv \
     build-essential \
+    graphviz \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN python3 -m venv /opt/venv
-RUN /opt/venv/bin/pip install --no-cache-dir -U "pip<24.3" setuptools wheel
+RUN uv venv /opt/venv
 COPY requirements.txt requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
+ENV UV_PYTHON=/opt/venv/bin/python
+
+RUN uv pip install --no-cache-dir -r requirements.txt
 
 FROM build AS dev
 
 ENV ENV=dev
-COPY dev-requirements.txt dev-requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r dev-requirements.txt
+COPY requirements-dev.txt requirements-dev.txt
+RUN uv pip install --no-cache-dir -r requirements-dev.txt
 COPY ./docs/requirements.txt doc-requirements.txt
-RUN /opt/venv/bin/pip install --no-cache-dir -r doc-requirements.txt
+RUN uv pip install --no-cache-dir -r doc-requirements.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
@@ -111,5 +115,7 @@ RUN apt-get update -qq && apt-get -yqq full-upgrade && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
+
+HEALTHCHECK CMD curl --fail http://127.0.0.1:8000/api/settings.json
 
 CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]

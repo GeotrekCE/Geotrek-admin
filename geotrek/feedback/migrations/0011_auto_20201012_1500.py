@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0010_report_related_trek'),
+        ("feedback", "0010_report_related_trek"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='report',
-            name='context_content_type',
+            model_name="report",
+            name="context_content_type",
         ),
         migrations.RemoveField(
-            model_name='report',
-            name='context_object_id',
+            model_name="report",
+            name="context_object_id",
         ),
     ]

@@ -8,26 +8,35 @@ from geotrek.core.models import Path
 
 
 class Command(BaseCommand):
-    help = 'Find and merge Paths that are splitted in several segments\n'
+    help = "Find and merge Paths that are splitted in several segments\n"
 
     def add_arguments(self, parser):
-        parser.add_argument('--sleeptime', '-d', action='store', dest='sleeptime', default=0.25,
-                            help="Time to wait between merges (SQL triggers take time)")
+        parser.add_argument(
+            "--sleeptime",
+            "-d",
+            action="store",
+            dest="sleeptime",
+            default=0.25,
+            help="Time to wait between merges (SQL triggers take time)",
+        )
 
     def extract_neighbourgs_graph(self, number_of_neighbourgs, extremities=[]):
         # Get all neighbours for each path
         neighbours = dict()
         with connection.cursor() as cursor:
-            cursor.execute('''select id1, array_agg(id2) from
+            cursor.execute("""select id1, array_agg(id2) from
                         (select p1.id as id1, p2.id as id2
                         from core_path p1, core_path p2
                         where st_touches(p1.geom, p2.geom) and (p1.id != p2.id)
                         group by p1.id, p2.id
                         order by p1.id) a
-                        group by id1;''')
+                        group by id1;""")
 
             for path_id, path_neighbours_ids in cursor.fetchall():
-                if path_id not in extremities and len(path_neighbours_ids) == number_of_neighbourgs:
+                if (
+                    path_id not in extremities
+                    and len(path_neighbours_ids) == number_of_neighbourgs
+                ):
                     neighbours[path_id] = path_neighbours_ids
         return neighbours
 
@@ -78,7 +87,7 @@ class Command(BaseCommand):
         fails = 0
         while len(mergeables) > fails:
             fails = 0
-            for (a, neighbours) in neighbours_graph.items():
+            for a, neighbours in neighbours_graph.items():
                 b = neighbours[0]
                 success = self.try_merge(a, b)
                 if success:
@@ -96,7 +105,7 @@ class Command(BaseCommand):
         mergeables = list(neighbours_graph.keys())
         extremities = []
         while len(mergeables) > len(extremities):
-            for (a, neighbours) in neighbours_graph.items():
+            for a, neighbours in neighbours_graph.items():
                 failed_neighbours = 0
                 for n in neighbours:
                     success = self.try_merge(a, n)
@@ -106,12 +115,14 @@ class Command(BaseCommand):
                         failed_neighbours += 1
                     if failed_neighbours == 3:
                         extremities.append(a)
-            neighbours_graph = self.extract_neighbourgs_graph(3, extremities=extremities)
+            neighbours_graph = self.extract_neighbourgs_graph(
+                3, extremities=extremities
+            )
             mergeables = list(neighbours_graph.keys())
         return successes
 
     def handle(self, *args, **options):
-        self.sleeptime = options.get('sleeptime')
+        self.sleeptime = options.get("sleeptime")
         total_successes = 0
         self.discarded = []
         paths_before = Path.include_invisible.count()
@@ -132,5 +143,7 @@ class Command(BaseCommand):
         total_successes += third_step_successes
 
         paths_after = Path.include_invisible.count()
-        self.stdout.write(f"\n--- RAN {total_successes} MERGES - FROM {paths_before} TO {paths_after} PATHS ---\n")
+        self.stdout.write(
+            f"\n--- RAN {total_successes} MERGES - FROM {paths_before} TO {paths_after} PATHS ---\n"
+        )
         self.stdout.write(str(datetime.now()))

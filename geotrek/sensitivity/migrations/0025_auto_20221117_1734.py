@@ -6,15 +6,15 @@ from geotrek.common.functions import Buffer
 
 
 def set_geom_buffered(apps, schema_editor):
-    SensitiveArea = apps.get_model('sensitivity', 'SensitiveArea')
-    SensitiveArea.objects.update(geom_buffered=Buffer('geom', settings.SENSITIVE_AREA_INTERSECTION_MARGIN))
+    SensitiveArea = apps.get_model("sensitivity", "SensitiveArea")
+    SensitiveArea.objects.update(
+        geom_buffered=Buffer("geom", settings.SENSITIVE_AREA_INTERSECTION_MARGIN)
+    )
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('sensitivity', '0024_sensitivearea_geom_buffered'),
+        ("sensitivity", "0024_sensitivearea_geom_buffered"),
     ]
 
-    operations = [
-        migrations.RunPython(set_geom_buffered, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(set_geom_buffered, migrations.RunPython.noop)]

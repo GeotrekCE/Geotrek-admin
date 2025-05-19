@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0050_alter_touristiceventorganizer_label'),
-        ('tourism', '0050_auto_20231220_0952'),
+        ("tourism", "0050_alter_touristiceventorganizer_label"),
+        ("tourism", "0050_auto_20231220_0952"),
     ]
 
-    operations = [
-    ]
+    operations = []

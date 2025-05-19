@@ -1,34 +1,39 @@
 from unittest import mock
 
 from django.contrib.auth.models import Group, Permission
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from paperclip.models import random_suffix_regexp
 
 from geotrek.authent.tests.base import AuthentFixturesTest
-from geotrek.authent.tests.factories import (StructureFactory, UserFactory,
-                                             UserProfileFactory)
+from geotrek.authent.tests.factories import (
+    StructureFactory,
+    UserFactory,
+    UserProfileFactory,
+)
 from geotrek.common.models import Attachment, FileType
-from geotrek.tourism.tests.factories import (InformationDeskFactory,
-                                             TouristicContentCategoryFactory,
-                                             TouristicContentFactory,
-                                             TouristicEventFactory)
+from geotrek.tourism.tests.factories import (
+    InformationDeskFactory,
+    TouristicContentCategoryFactory,
+    TouristicContentFactory,
+    TouristicEventFactory,
+)
 from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.trekking.tests.base import TrekkingManagerTest
 
 PNG_BLACK_PIXEL = bytes.fromhex(
-    '89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c0200'
-    '00000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082'
+    "89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c0200"
+    "00000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082"
 )
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
     @classmethod
     def setUpTestData(cls):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
+        profile = UserProfileFactory.create(
+            user__username="homer", user__password="dooh"
+        )
         cls.user = profile.user
         cls.user.groups.add(Group.objects.get(name="Référents communication"))
         cls.content1 = TouristicContentFactory.create()
@@ -42,32 +47,32 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         self.client.logout()
 
     def test_can_edit_same_structure(self):
-        url = "/touristiccontent/edit/{pk}/".format(pk=self.content1.pk)
+        url = f"/touristiccontent/edit/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/touristiccontent/edit/{pk}/".format(pk=self.content2.pk)
+        url = f"/touristiccontent/edit/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/touristiccontent/{self.content2.pk}/")
 
     def test_can_delete_same_structure(self):
-        url = "/touristiccontent/delete/{pk}/".format(pk=self.content1.pk)
+        url = f"/touristiccontent/delete/{self.content1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/touristiccontent/delete/{pk}/".format(pk=self.content2.pk)
+        url = f"/touristiccontent/delete/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
+        self.assertRedirects(response, f"/touristiccontent/{self.content2.pk}/")
 
     def test_contents_on_treks_do_not_exist(self):
-        response = self.client.get('api/en/treks/0/touristiccontents.geojson')
+        response = self.client.get("api/en/treks/0/touristiccontents.geojson")
         self.assertEqual(response.status_code, 404)
 
     def test_contents_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get('api/en/treks/{}/touristiccontents.geojson'.format(trek.pk))
+        response = self.client.get(f"api/en/treks/{trek.pk}/touristiccontents.geojson")
         self.assertEqual(response.status_code, 404)
 
 
@@ -77,7 +82,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         super().setUpTestData()
         cls.content = TouristicContentFactory.create()
         cat = cls.content.category
-        cat.type1_label = 'Michelin'
+        cat.type1_label = "Michelin"
         cat.save()
         cls.category2 = TouristicContentCategoryFactory(label="Another category")
 
@@ -88,28 +93,28 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         self.client.logout()
 
     def test_only_used_categories_are_shown(self):
-        url = "/touristiccontent/list/"
+        url = "/touristiccontent/filter/"
         response = self.client.get(url)
         self.assertContains(response, 'title="Category"')
         self.assertNotContains(response, 'title="Another category"')
 
     def test_shown_in_details_when_enabled(self):
-        url = "/touristiccontent/%s/" % self.content.pk
+        url = f"/touristiccontent/{self.content.pk}/"
         response = self.client.get(url)
-        self.assertContains(response, 'Tourism')
+        self.assertContains(response, "Tourism")
 
     @override_settings(TOURISM_ENABLED=False)
     def test_not_tourism_detail_fragment_displayed(self):
         """Test in other module, if tourism_detail_fragment.html is not displayed."""
         trek = trekking_factories.TrekFactory.create()
-        url = "/trek/%s/" % trek.pk
+        url = f"/trek/{trek.pk}/"
         response = self.client.get(url)
-        self.assertNotContains(response, 'Tourism')
+        self.assertNotContains(response, "Tourism")
 
     def test_type_label_shown_in_detail_page(self):
-        url = "/touristiccontent/{pk}/".format(pk=self.content.pk)
+        url = f"/touristiccontent/{self.content.pk}/"
         response = self.client.get(url)
-        self.assertContains(response, 'Michelin')
+        self.assertContains(response, "Michelin")
 
 
 class TouristicContentFormTest(TrekkingManagerTest):
@@ -124,19 +129,20 @@ class TouristicContentFormTest(TrekkingManagerTest):
     def test_no_category_selected_by_default(self):
         url = "/touristiccontent/add/"
         response = self.client.get(url)
-        self.assertNotContains(response, 'value="%s" selected' % self.category.pk)
+        self.assertNotContains(response, f'value="{self.category.pk}" selected')
 
     def test_default_category_is_taken_from_url_params(self):
-        url = "/touristiccontent/add/?category=%s" % self.category.pk
+        url = f"/touristiccontent/add/?category={self.category.pk}"
         response = self.client.get(url)
-        self.assertContains(response, 'value="%s" selected' % self.category.pk)
+        self.assertContains(response, f'value="{self.category.pk}" selected')
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
     @classmethod
     def setUpTestData(cls):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
+        profile = UserProfileFactory.create(
+            user__username="homer", user__password="dooh"
+        )
         cls.user = profile.user
         cls.user.groups.add(Group.objects.get(name="Référents communication"))
 
@@ -148,41 +154,40 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         self.client.force_login(user=self.user)
 
     def test_can_edit_same_structure(self):
-        url = "/touristicevent/edit/{pk}/".format(pk=self.event1.pk)
+        url = f"/touristicevent/edit/{self.event1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_edit_other_structure(self):
-        url = "/touristicevent/edit/{pk}/".format(pk=self.event2.pk)
+        url = f"/touristicevent/edit/{self.event2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
+        self.assertRedirects(response, f"/touristicevent/{self.event2.pk}/")
 
     def test_can_delete_same_structure(self):
-        url = "/touristicevent/delete/{pk}/".format(pk=self.event1.pk)
+        url = f"/touristicevent/delete/{self.event1.pk}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_cannot_delete_other_structure(self):
-        url = "/touristicevent/delete/{pk}/".format(pk=self.event2.pk)
+        url = f"/touristicevent/delete/{self.event2.pk}/"
         response = self.client.get(url)
-        self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
+        self.assertRedirects(response, f"/touristicevent/{self.event2.pk}/")
 
     def test_events_on_treks_do_not_exist(self):
-        response = self.client.get('/api/en/treks/0/touristicevents.geojson')
+        response = self.client.get("/api/en/treks/0/touristicevents.geojson")
         self.assertEqual(response.status_code, 404)
 
     def test_events_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get('/api/en/treks/{}/touristicevents.geojson'.format(trek.pk))
+        response = self.client.get(f"/api/en/treks/{trek.pk}/touristicevents.geojson")
         self.assertEqual(response.status_code, 404)
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
-
-    @mock.patch('mapentity.helpers.requests.get')
+    @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
@@ -194,31 +199,31 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
             filetype=FileType.objects.create(type="Topoguide"),
             content_object=content,
             creator=UserFactory.create(),
-            attachment_file=SimpleUploadedFile('external.pdf', b'External PDF')
+            attachment_file=SimpleUploadedFile("external.pdf", b"External PDF"),
         )
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         regexp = f"/media_secure/paperclip/tourism_touristiccontent/{content.pk}/external{random_suffix_regexp()}.pdf"
-        self.assertRegex(response['X-Accel-Redirect'], regexp)
+        self.assertRegex(response["X-Accel-Redirect"], regexp)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_only_external_public_document_pdf(self):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristiccontents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
 
 class TouristicEventOrganizerCreatePopupTest(TestCase):
     def test_cannot_create_organizer(self):
-        url = '/popup/add/organizer/'
+        url = "/popup/add/organizer/"
         response = self.client.get(url)
         # with no user logged -> redirect to login page
         self.assertRedirects(response, "/login/?next=/popup/add/organizer/")
@@ -230,9 +235,11 @@ class TouristicEventOrganizerCreatePopupTest(TestCase):
 
     def test_can_create_organizer(self):
         user = UserFactory()
-        user.user_permissions.add(Permission.objects.get(codename='add_touristiceventorganizer'))
+        user.user_permissions.add(
+            Permission.objects.get(codename="add_touristiceventorganizer")
+        )
         self.client.force_login(user=user)
-        url = '/popup/add/organizer/'
+        url = "/popup/add/organizer/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response = self.client.post(url, data={"label": "test"})
@@ -240,10 +247,10 @@ class TouristicEventOrganizerCreatePopupTest(TestCase):
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
-    @mock.patch('mapentity.helpers.requests.get')
+    @mock.patch("mapentity.helpers.requests.get")
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristicevents/{content.pk}/slug.pdf"
         mocked.return_value.status_code = 200
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
@@ -251,7 +258,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
 
     def test_not_published_document_pdf(self):
         content = TouristicEventFactory.create(published=False)
-        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+        url = f"/api/en/touristicevents/{content.pk}/slug.pdf"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
@@ -263,10 +270,10 @@ class TrekInformationDeskAPITest(TestCase):
         InformationDeskFactory.create()
         trek.information_desks.add(desk)
         trek.save()
-        response = self.client.get('/api/en/treks/{}/information_desks.geojson'.format(trek.pk))
+        response = self.client.get(f"/api/en/treks/{trek.pk}/information_desks.geojson")
         self.assertEqual(response.status_code, 200)
         result = response.json()
-        self.assertEqual(len(result['features']), 1)
-        self.assertEqual(result['features'][0]['type'], 'Feature')
-        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
-        self.assertEqual(result['features'][0]['properties']['name'], desk.name)
+        self.assertEqual(len(result["features"]), 1)
+        self.assertEqual(result["features"][0]["type"], "Feature")
+        self.assertEqual(result["features"][0]["geometry"]["type"], "Point")
+        self.assertEqual(result["features"][0]["properties"]["name"], desk.name)

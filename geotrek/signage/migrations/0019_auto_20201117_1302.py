@@ -4,25 +4,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0018_auto_20200831_1406'),
+        ("signage", "0018_auto_20200831_1406"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='signage',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Date de publication'),
+            model_name="signage",
+            name="publication_date",
+            field=models.DateField(
+                blank=True,
+                editable=False,
+                null=True,
+                verbose_name="Date de publication",
+            ),
         ),
         migrations.AlterField(
-            model_name='signage',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible sur Geotrek-rando', verbose_name='Publié'),
+            model_name="signage",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible sur Geotrek-rando",
+                verbose_name="Publié",
+            ),
         ),
         migrations.AlterField(
-            model_name='signagetype',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogramme'),
+            model_name="signagetype",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogramme",
+            ),
         ),
     ]

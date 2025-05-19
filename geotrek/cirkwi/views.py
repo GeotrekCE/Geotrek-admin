@@ -2,8 +2,7 @@ from django.http import HttpResponse
 from django.views.generic import ListView
 
 from geotrek.cirkwi.filters import CirkwiPOIFilterSet, CirkwiTrekFilterSet
-from geotrek.cirkwi.serializers import (CirkwiPOISerializer,
-                                        CirkwiTrekSerializer)
+from geotrek.cirkwi.serializers import CirkwiPOISerializer, CirkwiTrekSerializer
 from geotrek.trekking.models import POI, Trek
 
 
@@ -17,7 +16,7 @@ class CirkwiTrekView(ListView):
         return qs
 
     def get(self, request):
-        response = HttpResponse(content_type='application/xml')
+        response = HttpResponse(content_type="application/xml")
         serializer = CirkwiTrekSerializer(request, response, request.GET)
         treks = self.get_queryset()
         serializer.serialize(treks)
@@ -34,7 +33,7 @@ class CirkwiPOIView(ListView):
         return qs
 
     def get(self, request):
-        response = HttpResponse(content_type='application/xml')
+        response = HttpResponse(content_type="application/xml")
         serializer = CirkwiPOISerializer(request, response, request.GET)
         pois = self.get_queryset()
         serializer.serialize(pois)

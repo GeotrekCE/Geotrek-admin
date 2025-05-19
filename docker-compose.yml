@@ -6,7 +6,7 @@ x-images:
       dockerfile: ./docker/Dockerfile
       target: dev
       args:
-          BASE_IMAGE: focal
+        BASE_IMAGE: ubuntu:jammy
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env
@@ -15,13 +15,19 @@ x-images:
 
 services:
   postgres:
-    image: postgis/postgis:12-2.5
+    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:12-3.0-3.0.0}
     env_file:
       - .env
     ports:
       - "${POSTGRES_LOCAL_PORT:-5432}:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-geotrek}", "-d", "${POSTGRES_DB:-geotrekdb}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
 
   redis:
     image: redis:5.0-alpine
@@ -37,8 +43,11 @@ services:
   celery:
     <<: [ *django ]
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
     command: celery -A geotrek worker -c 1
 
   web:
@@ -48,24 +57,17 @@ services:
       - "${WEB_PORT:-8000}:8000"
 
     depends_on:
-      - postgres
-      - redis
-      - screamshotter
-      - convertit
-      - celery
+      screamshotter:
+        condition: service_started
+      convertit:
+        condition: service_started
+      celery:
+        condition: service_started
 
     networks:
       default:
         aliases:
           - ${SERVER_NAME}
-
-  sphinx:
-    <<: [ *django ]
-    working_dir: /opt/geotrek-admin/docs
-    ports:
-      - "${SPHINX_PORT:-8800}:8800"
-
-    command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
 
 volumes:
   postgres:

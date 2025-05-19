@@ -6,9 +6,11 @@ on:
       - master
     paths:
       - 'docs/**'
+      - '.github/workflows/doc.yml'  # if doc workflow change
   pull_request:
     paths:
       - 'docs/**'
+      - '.github/workflows/doc.yml'  # if doc workflow change
   release:
     types:
       - created
@@ -22,11 +24,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/python-cache-requirements
+      - uses: astral-sh/setup-uv@v6
         with:
-          requirements: docs/requirements.txt
+            version: "latest"
+            python-version: "3.10"
+            enable-cache: true
+            cache-suffix: "sphinx"
+            activate-environment: true
 
       - name: Build doc
         run: |
           cd docs/
+          uv pip install -r requirements.txt
           make html SPHINXOPTS="-W"

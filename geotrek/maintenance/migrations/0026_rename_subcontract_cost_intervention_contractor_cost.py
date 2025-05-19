@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0025_remove_intervention_date'),
+        ("maintenance", "0025_remove_intervention_date"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='intervention',
-            old_name='subcontract_cost',
-            new_name='contractor_cost',
+            model_name="intervention",
+            old_name="subcontract_cost",
+            new_name="contractor_cost",
         ),
         migrations.AlterField(
-            model_name='intervention',
-            name='contractor_cost',
-            field=models.FloatField(blank=True, default=0.0, null=True, verbose_name='Contractor cost'),
+            model_name="intervention",
+            name="contractor_cost",
+            field=models.FloatField(
+                blank=True, default=0.0, null=True, verbose_name="Contractor cost"
+            ),
         ),
     ]

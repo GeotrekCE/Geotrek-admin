@@ -5,7 +5,7 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - dev-requirements.txt
+      - ../../requirements-dev.txt
       - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
@@ -19,26 +19,21 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest']
-        python-version: ['3.8']
+        python-version: ['3.10']
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: ./.github/actions/python-cache-requirements
+      - uses: astral-sh/setup-uv@v6
         with:
-          requirements: dev-requirements.txt
-
-      - name: Install dependencies
-        run: |
-          pip3 install -U "pip<24.3"  # prevent relative bug path with pip 24.3 and pip-tools 
-          pip3 install -c dev-requirements.txt pip-tools
+          version: "latest"
+          python-version: ${{ matrix.python-version }}
 
       - name: Check dependency graph
         run: |
-          pip-compile -q --strip-extras
-          pip-compile -q --strip-extras dev-requirements.in
-          pip-compile -q --strip-extras docs/requirements.in
+          uv pip compile setup.py -o requirements.txt
+          uv pip compile requirements-dev.in -o requirements-dev.txt
+          cd docs/ && uv pip compile requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v20
@@ -46,7 +41,7 @@ jobs:
         with:
           files: |
             requirements.txt
-            dev-requirements.txt
+            requirements-dev.txt
             docs/requirements.txt
 
       - name: Validating graph
@@ -54,4 +49,4 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')

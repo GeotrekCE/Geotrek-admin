@@ -1,8 +1,44 @@
-geotrek-admin (2.110.0+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.115.0+dev) UNRELEASED; urgency=medium
 
-  *
+  * 
 
- -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 13 Nov 2024 11:09:31 +0100
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 29 Apr 2025 16:43:26 +0200
+
+geotrek-admin (2.115.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 29 Apr 2025 15:32:54 +0200
+
+geotrek-admin (2.114.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 13 Mar 2025 16:40:58 +0100
+
+geotrek-admin (2.113.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Mon, 17 Feb 2025 15:41:12 +0100
+
+geotrek-admin (2.113.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 30 Jan 2025 16:08:05 +0100
+
+geotrek-admin (2.112.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 14 Jan 2025 14:46:23 +0100
+
+geotrek-admin (2.111.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 05 Dec 2024 14:26:01 +0100
 
 geotrek-admin (2.110.0) RELEASED; urgency=medium
 
@@ -254,7 +290,7 @@ geotrek-admin (2.93.0) RELEASED; urgency=medium
 
   * New package release
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 06 Dec 2022 15:03:20 +0100"
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 06 Dec 2022 15:03:20 +0100
 
 geotrek-admin (2.92.3) RELEASED; urgency=medium
 

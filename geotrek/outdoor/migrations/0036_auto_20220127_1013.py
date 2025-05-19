@@ -5,22 +5,27 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0035_auto_20211022_1255'),
+        ("outdoor", "0035_auto_20211022_1255"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='course',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['points_reference'], name='course_points_ref_gist_idx'),
+            model_name="course",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["points_reference"], name="course_points_ref_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='course',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom_3d'], name='course_geom_3d_gist_idx'),
+            model_name="course",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom_3d"], name="course_geom_3d_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='site',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom_3d'], name='site_geom_3d_gist_idx'),
+            model_name="site",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom_3d"], name="site_geom_3d_gist_idx"
+            ),
         ),
     ]

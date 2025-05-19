@@ -5,25 +5,23 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('authent', '0005_remove_userprofile_language'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("authent", "0005_remove_userprofile_language"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SelectableUser',
-            fields=[
-            ],
+            name="SelectableUser",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('auth.user',),
+            bases=("auth.user",),
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
     ]

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0027_flush_cache_1234'),
+        ("common", "0027_flush_cache_1234"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recordsource',
-            name='name',
-            field=models.CharField(max_length=80, verbose_name='Name'),
+            model_name="recordsource",
+            name="name",
+            field=models.CharField(max_length=80, verbose_name="Name"),
         ),
     ]

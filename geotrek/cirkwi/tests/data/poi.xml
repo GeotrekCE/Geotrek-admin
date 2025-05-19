@@ -1,0 +1,127 @@
+<pois version="2">
+    <listing_ids nb_objects="2" first="0" rows="100">
+        <id>357</id>
+        <id>358</id>
+    </listing_ids>
+    <poi date_modification="1365413342" id_poi="357" id_utilisateur="1" id_source="1">
+        <categories>
+            <categorie nom="Monuments et Architecture" id_categorie="15" />
+            <categorie nom="Eglise" id_categorie="11" />
+        </categories>
+        <tags_prives>
+            <tag_prive id="31" nom="bretagne_randonnee" />
+            <tag_prive id="39" nom="bretagne_tourisme" />
+        </tags_prives>
+        <informations>
+            <information langue="fr">
+                <titre>Tour de lancienne église Sainte-Gertrude</titre>
+                <description>A Tenneville, ce site reposant vous fera découvrir</description>
+                <medias>
+                    <images>
+                        <image nature="13">
+                            <legende>Le patrimoine de Plancoët</legende>
+                            <url>https://example.net/a_picture.jpg</url>
+                            <credit>Manon</credit>
+                        </image>
+                        <image nature="3">
+                            <url>https://example.net/a_picture.jpg</url>
+                        </image>
+                    </images>
+                    <videos>
+                        <video>
+                            <code>
+                                <iframe width='500' height='360'
+                                    src='https://www.youtube.com/embed/bI2z9VGhd0A' />
+                            </code>
+                            <credit>Valentin</credit>
+                        </video>
+                    </videos>
+                    <sons>
+                        <son>
+                            <url>https://www.cirkwi.com/mp3/6302_fr.mp3</url>
+                            <credit>Valentin</credit>
+                        </son>
+                    </sons>
+                </medias>
+                <informations_complementaires>
+                    <information_complementaire>
+                        <titre>Horaire</titre>
+                        <description>Ouvert du Lundi au Vendredi de 8h à 19h</description>
+                    </information_complementaire>
+                    <information_complementaire>
+                        <titre>Contact</titre>
+                        <description>Téléphone: 01 02 03 04 05</description>
+                    </information_complementaire>
+                </informations_complementaires>
+            </information>
+            <information langue="en">
+                <titre>Titre en anglais</titre>
+                <description>Description en anglais</description>
+            </information>
+        </informations>
+        <adresse>
+            <num>1</num>
+            <rue>route de Bastogne</rue>
+            <ville>Tenneville</ville>
+            <cp>6970</cp>
+            <pays code_pays="BE">Belgique</pays>
+            <position>
+                <lat>48.7125946</lat>
+                <lng>6.1442926</lng>
+            </position>
+            <altitude>468.0</altitude>
+        </adresse>
+        <dates>
+            <date recursivite_annuelle="true">
+                <date_debut>1365123600</date_debut>
+                <date_fin>1365130800</date_fin>
+            </date>
+            <date recursivite_annuelle="false">
+                <date_debut>1365123601</date_debut>
+                <date_fin>1365130802</date_fin>
+            </date>
+        </dates>
+        <qrcodelink>
+            https://ws.cirkwi.com/ul/p/357
+        </qrcodelink>
+        <diffusion cirkwi="1" mobile="1" reseau="1" partage="2" />
+    </poi>
+     <poi date_modification="1365413342" id_poi="358" id_utilisateur="1" id_source="1">
+        <categories>
+            <categorie nom="Monuments et Architecture" id_categorie="15" />
+        </categories>
+        <informations>
+            <information langue="fr">
+                <titre>Tour de lancienne église Sainte-Gertrude 2</titre>
+                <description>A Tenneville, ce site reposant vous fera découvrir</description>
+                <informations_complementaires>
+                    <information_complementaire>
+                        <titre>Horaire</titre>
+                        <description>Ouvert du Lundi au Vendredi de 8h à 19h</description>
+                    </information_complementaire>
+                    <information_complementaire>
+                        <titre>Contact</titre>
+                        <description>Téléphone: 01 02 03 04 05</description>
+                    </information_complementaire>
+                </informations_complementaires>
+            </information>
+            <information langue="en">
+                <titre>Titre en anglais</titre>
+                <description>Description en anglais</description>
+            </information>
+        </informations>
+                 <adresse>
+            <num>1</num>
+            <rue>route de Bastogne</rue>
+            <ville>Tenneville</ville>
+            <cp>6970</cp>
+            <pays code_pays="BE">Belgique</pays>
+            <position>
+                <lat>48.7125946</lat>
+                <lng>6.1442926</lng>
+            </position>
+            <altitude>468.0</altitude>
+        </adresse>
+        <diffusion cirkwi="1" mobile="1" reseau="1" partage="2" />
+    </poi>
+</pois>

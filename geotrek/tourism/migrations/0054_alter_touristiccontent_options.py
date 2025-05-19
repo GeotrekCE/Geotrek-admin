@@ -4,14 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0053_alter_touristicevent_price'),
+        ("tourism", "0053_alter_touristicevent_price"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='touristiccontent',
-            options={'ordering': ('name',), 'verbose_name': 'Touristic content', 'verbose_name_plural': 'Touristic contents'},
+            name="touristiccontent",
+            options={
+                "ordering": ("name",),
+                "verbose_name": "Touristic content",
+                "verbose_name_plural": "Touristic contents",
+            },
         ),
     ]

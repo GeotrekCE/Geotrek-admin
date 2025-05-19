@@ -6,6 +6,7 @@ from mapentity.views import (
     MapEntityDelete,
     MapEntityDetail,
     MapEntityDocument,
+    MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
     MapEntityUpdate,
@@ -25,20 +26,41 @@ from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializ
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
     queryset = Infrastructure.objects.existing()
-    filterform = InfrastructureFilterSet
-    mandatory_columns = ['id', 'name']
-    default_extra_columns = ['type', 'conditions', 'cities']
-    searchable_columns = ['id', 'name']
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["type", "conditions", "cities"]
+    searchable_columns = ["id", "name"]
+
+
+class InfrastructureFilter(MapEntityFilter):
+    model = Infrastructure
+    filterset_class = InfrastructureFilterSet
 
 
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
-    mandatory_columns = ['id']
+    filterset_class = InfrastructureFilterSet
+    mandatory_columns = ["id"]
     default_extra_columns = [
-        'id', 'name', 'type', 'conditions', 'description', 'accessibility',
-        'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas', 'usage_difficulty',
-        'maintenance_difficulty', 'access', 'uuid',
-    ] + AltimetryMixin.COLUMNS
+        "id",
+        "name",
+        "type",
+        "conditions",
+        "description",
+        "accessibility",
+        "implantation_year",
+        "published",
+        "publication_date",
+        "structure",
+        "date_insert",
+        "date_update",
+        "cities",
+        "districts",
+        "areas",
+        "usage_difficulty",
+        "maintenance_difficulty",
+        "access",
+        "uuid",
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class InfrastructureDetail(MapEntityDetail):
@@ -46,7 +68,7 @@ class InfrastructureDetail(MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
         return context
 
 
@@ -63,7 +85,7 @@ class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
     form_class = InfrastructureForm
 
-    @same_structure_required('infrastructure:infrastructure_detail')
+    @same_structure_required("infrastructure:infrastructure_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -71,7 +93,7 @@ class InfrastructureUpdate(MapEntityUpdate):
 class InfrastructureDelete(MapEntityDelete):
     model = Infrastructure
 
-    @same_structure_required('infrastructure:infrastructure_detail')
+    @same_structure_required("infrastructure:infrastructure_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
@@ -85,11 +107,19 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == 'geojson':
-            qs = qs.annotate(api_geom=Transform('geom', settings.API_SRID))
-            qs = qs.only('id', 'name', 'published')
+        if self.format_kwarg == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = qs.only("id", "name", "published")
         else:
-            qs = qs.select_related('type', 'maintenance_difficulty', 'access', 'usage_difficulty').prefetch_related(
-                Prefetch('conditions',
-                         queryset=InfrastructureCondition.objects.select_related('structure'), to_attr="conditions_list"),)
+            qs = qs.select_related(
+                "type", "maintenance_difficulty", "access", "usage_difficulty"
+            ).prefetch_related(
+                Prefetch(
+                    "conditions",
+                    queryset=InfrastructureCondition.objects.select_related(
+                        "structure"
+                    ),
+                    to_attr="conditions_list",
+                ),
+            )
         return qs

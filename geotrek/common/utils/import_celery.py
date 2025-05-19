@@ -1,13 +1,13 @@
-import os
 import importlib
+import os
 
 from django.conf import settings
 
 from geotrek.common.parsers import Parser
 
-if 'geotrek.zoning' in settings.INSTALLED_APPS:
-    import geotrek.zoning.parsers  # noqa
-if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+if "geotrek.zoning" in settings.INSTALLED_APPS:
+    import geotrek.zoning.parsers
+if "geotrek.sensitivity" in settings.INSTALLED_APPS:
     import geotrek.sensitivity.parsers  # noqa
 
 
@@ -39,8 +39,8 @@ def discover_available_parsers(request):
     choices_url = []
 
     if not parsers_module:
-        module_path = os.path.join(settings.VAR_DIR, 'conf/parsers.py')
-        spec = importlib.util.spec_from_file_location('parsers', module_path)
+        module_path = os.path.join(settings.VAR_DIR, "conf/parsers.py")
+        spec = importlib.util.spec_from_file_location("parsers", module_path)
         parsers_module = importlib.util.module_from_spec(spec)
         try:
             spec.loader.exec_module(parsers_module)
@@ -49,19 +49,21 @@ def discover_available_parsers(request):
 
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
-        if cls.__module__.startswith('parsers') or cls.__module__.startswith('geotrek'):
+        if cls.__module__.startswith("parsers") or cls.__module__.startswith("geotrek"):
             lang = request.LANGUAGE_CODE
-            label_lang = getattr(cls, f'label_{lang}', None)
+            label_lang = getattr(cls, f"label_{lang}", None)
             if label_lang:
                 label = label_lang
             else:
                 label = cls.label
             if not label or not cls.model:
                 continue
-            codename = '{}.import_{}'.format(cls.model._meta.app_label, cls.model._meta.model_name)
+            codename = (
+                f"{cls.model._meta.app_label}.import_{cls.model._meta.model_name}"
+            )
             if not request.user.has_perm(codename):
                 continue
-            if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
+            if not getattr(cls, "url", None) and not getattr(cls, "base_url", None):
                 choices.append((index, label))
             else:
                 choices_url.append((index, label))

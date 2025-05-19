@@ -1,9 +1,19 @@
 import factory
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
-from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
-from geotrek.outdoor.models import Site, Practice, SiteType, CourseType, RatingScale, Rating, Sector, Course
+from django.contrib.contenttypes.models import ContentType
 from mapentity.tests.factories import UserFactory
+
+from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
+from geotrek.outdoor.models import (
+    Course,
+    CourseType,
+    Practice,
+    Rating,
+    RatingScale,
+    Sector,
+    Site,
+    SiteType,
+)
 
 
 class SectorFactory(factory.django.DjangoModelFactory):
@@ -65,12 +75,12 @@ class SiteFactory(StructureRelatedDefaultFactory):
     advice = "Warning!"
     accessibility = "Accessible"
     period = "Summer"
-    orientation = ['S', 'SW']
-    wind = ['N']
+    orientation = ["S", "SW"]
+    wind = ["N"]
     published = True
     type = factory.SubFactory(SiteTypeFactory)
     eid = "42"
-    geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
+    geom = "GEOMETRYCOLLECTION(POINT(0 0))"
 
     @factory.post_generation
     def managers(obj, create, extracted=None, **kwargs):
@@ -85,9 +95,11 @@ class OutdoorManagerFactory(UserFactory):
     def create_outdoor_manager(obj, create, extracted, **kwargs):
         for model in (Site, Course):
             content_type = ContentType.objects.get_for_model(model)
-            for action in ('add', 'change', 'delete', 'read', 'export'):
-                codename = '{}_{}'.format(action, model.__name__.lower())
-                permission = Permission.objects.get(content_type=content_type, codename=codename)
+            for action in ("add", "change", "delete", "read", "export"):
+                codename = f"{action}_{model.__name__.lower()}"
+                permission = Permission.objects.get(
+                    content_type=content_type, codename=codename
+                )
                 obj.user_permissions.add(permission)
 
 
@@ -104,10 +116,10 @@ class CourseFactory(StructureRelatedDefaultFactory):
     published = True
     duration = 55
     eid = "43"
-    geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
+    geom = "GEOMETRYCOLLECTION(POINT(0 0))"
     type = factory.SubFactory(CourseTypeFactory)
-    ratings_description = 'Ths rating is ratable'
-    gear = 'Shoes mandatory'
+    ratings_description = "Ths rating is ratable"
+    gear = "Shoes mandatory"
 
     @factory.post_generation
     def parent_sites(obj, create, extracted=None, **kwargs):
