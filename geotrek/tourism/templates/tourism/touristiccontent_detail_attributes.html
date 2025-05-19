@@ -77,7 +77,17 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if object.eid %}{{ object.eid|safe }}
+            <td>{% if object.eid %}
+                    {% if object.provider == "OpenStreetMap" %}
+                        {% if object.eid.0 == "N" %}
+                            <a href="https://www.openstreetmap.org/node/{{ object.eid|slice:"1:"|safe }}" target="_blank">{{ object.eid|safe }}</a>
+                        {% elif object.eid.0 == "W" %}
+                            <a href="https://www.openstreetmap.org/way/{{ object.eid|slice:"1:"|safe }}" target="_blank">{{ object.eid|safe }}</a>
+                        {% elif object.eid.0 == "R" %}
+                            <a href="https://www.openstreetmap.org/relation/{{ object.eid|slice:"1:"|safe }}" target="_blank">{{ object.eid|safe }}</a>
+                        {% endif %}
+                    {% else %}
+                        {{ object.eid|safe }}{% endif %}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
