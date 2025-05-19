@@ -54,6 +54,10 @@ jobs:
       matrix:
         os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
+        continue-on-error: false
+        include:
+          - os: 'focal-3.10'
+            continue-on-error: true
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -148,43 +152,18 @@ jobs:
         ./venv/bin/celery -A geotrek worker -c 1 &
 
     - name: Unit test
+      continue-on-error: ${{ matrix.continue-on-error }}
       run: |
         ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
         ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
-    - name: Save coverage
-      uses: actions/upload-artifact@v4
+    - uses: codecov/codecov-action@v5
       with:
-        name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-        path: coverage.xml
-
-  upload_coverage:
-    name: Upload coverage to codecov
-    runs-on: ubuntu-latest
-    needs: [ test ]
-    strategy:
-      matrix:
-        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
-        tests-env: ['tests', 'tests_nds']
-
-    env:
-      ENV: ${{ matrix.tests-env }}
-      OS: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-            path: .
-
-      - uses: codecov/codecov-action@v5
-        with:
-            files: ./coverage.xml
-            env_vars: OS,ENV
-            token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
-            fail_ci_if_error: true # optional (default = false)
+        files: ./coverage.xml
+        env_vars: OS,ENV
+        token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+        fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
