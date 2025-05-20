@@ -1946,7 +1946,7 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
             filename = wikimedia.split(":")[1]
             filename.replace(" ", "_")
 
-            url = self.base_url_wikimedia + filename
+            url =  f"{self.base_url_wikimedia}{filename}"
 
             # API request
             response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
