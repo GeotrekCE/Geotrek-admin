@@ -1683,7 +1683,6 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
             # to a path aggregation (topology)
             serialized = f'{{"lng": {original_geom.x}, "lat": {original_geom.y}}}'
             self.topology = Topology.deserialize(serialized)
-            raise Exception(self.topology.offset, self.topology.paths[0].geom.ewkt)
 
             # Move deserialization aggregations to the POI
         return projected_geom
