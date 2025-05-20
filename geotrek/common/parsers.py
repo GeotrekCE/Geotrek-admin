@@ -1941,12 +1941,12 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
         attachments = []
         wikimedia, image = val
 
-        if wikimedia and  wikimedia.startswith("File:"):
+        if wikimedia and wikimedia.startswith("File:"):
             # Wikimedia Commons API url
             filename = wikimedia.split(":")[1]
             filename.replace(" ", "_")
 
-            url =  f"{self.base_url_wikimedia}{filename}"
+            url = f"{self.base_url_wikimedia}{filename}"
 
             # API request
             response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
