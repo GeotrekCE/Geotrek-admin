@@ -1535,9 +1535,6 @@ class OpenStreetMapTouristicContentParser(
         geom = fromstr(wkt, srid=self.osm_srid)
         geom = geom.buffer(0)
 
-        if not geom.valid:
-            geom = geom.make_valid()
-
         return geom
 
     def filter_geom(self, src, val):
@@ -1557,7 +1554,7 @@ class OpenStreetMapTouristicContentParser(
             try:
                 geom = self.get_polygon_from_API(id)
                 geom.srid = self.osm_srid
-            except DownloadImportError:
+            except Exception:
                 geom = self.get_centroid_from_relation(bbox)
 
         if geom.srid == self.osm_srid:
