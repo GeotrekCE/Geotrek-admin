@@ -938,7 +938,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
-HIDDEN_FORM_FIELDS = {"report": ["assigned_user"]}
+HIDDEN_FORM_FIELDS = {"report": ["current_user"]}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
@@ -1027,6 +1027,6 @@ LEAFLET_CONFIG["SPATIAL_EXTENT"] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 if (
     SURICATE_WORKFLOW_ENABLED
     and "report" in HIDDEN_FORM_FIELDS.keys()
-    and "assigned_user" in HIDDEN_FORM_FIELDS["report"]
+    and "current_user" in HIDDEN_FORM_FIELDS["report"]
 ):
-    HIDDEN_FORM_FIELDS["report"].remove("assigned_user")
+    HIDDEN_FORM_FIELDS["report"].remove("current_user")

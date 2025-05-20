@@ -239,7 +239,7 @@ class InterventionForm(CommonForm):
                 if not settings.SURICATE_WORKFLOW_SETTINGS.get(
                     "SKIP_MANAGER_MODERATION"
                 ):
-                    target.assigned_user = WorkflowManager.objects.first().user
+                    target.current_user = WorkflowManager.objects.first().user
                 target.save()
                 if not settings.SURICATE_WORKFLOW_SETTINGS.get(
                     "SKIP_MANAGER_MODERATION"

@@ -89,17 +89,17 @@ class TestTimerEventClass(SuricateWorkflowTests):
         cls.programmed_report = ReportFactory(
             status=cls.programmed_status,
             uses_timers=True,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.waiting_report = ReportFactory(
             status=cls.waiting_status,
             uses_timers=True,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.waiting_report_no_timers = ReportFactory(
             status=cls.waiting_status,
             uses_timers=False,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.event1 = TimerEvent.objects.create(
             step=cls.waiting_status, report=cls.waiting_report
@@ -310,7 +310,7 @@ class TestPendingAPIRequests(SuricateTests):
         report = ReportFactory.create(
             email="john.doe@nowhere.com",
             comment="This is a 'comment'",
-            assigned_user=self.user,
+            current_user=self.user,
             external_uuid=uid,
         )
         # Report lock fails the first time
@@ -354,7 +354,7 @@ class TestPendingAPIRequests(SuricateTests):
             ReportFactory.create(
                 email="john.doe@nowhere.com",
                 comment="This is a 'comment'",
-                assigned_user=self.user,
+                current_user=self.user,
             ),
         )
         self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)
