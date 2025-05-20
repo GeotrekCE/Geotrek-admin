@@ -383,10 +383,10 @@ Then set up appropriate values:
 
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-.. _import-touristic-content:
+.. _import-touristic-contents:
 
-Import touristic content
-------------------------
+Import touristic contents
+-------------------------
 
 To import touristic content from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -399,12 +399,16 @@ To import touristic content from OpenStreetMap, edit the ``var/conf/parsers.py``
         tags = [{"amenity": "restaurant"}]
         default_fields_values = {"name": "restaurant"}
         category = "Restaurants"
+        type1 = "Restaurant"
 
 Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-* ``category`` to specify the Geotrek category for imported objects
+* ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: type1 = ["Restaurant", "Hotel"])
+* ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
+* ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
+* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes must be defined in a list.
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
 

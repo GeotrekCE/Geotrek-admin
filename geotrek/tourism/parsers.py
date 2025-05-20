@@ -4,7 +4,7 @@ from mimetypes import guess_type
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.gis.geos import Point, LineString, Polygon, fromstr
+from django.contrib.gis.geos import LineString, Point, Polygon, fromstr
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models
@@ -13,13 +13,13 @@ from django.utils.translation import gettext as _
 from geotrek.common.parsers import (
     ApidaeBaseParser,
     AttachmentParserMixin,
+    DownloadImportError,
     GeotrekParser,
     LEIParser,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
     TourInSoftParser,
-    DownloadImportError,
 )
 from geotrek.common.utils.file_infos import is_a_non_svg_image
 from geotrek.tourism.models import (
@@ -1446,6 +1446,7 @@ class OpenStreetMapTouristicContentParser(
     OpenStreetMapAttachmentsParserMixin, TouristicContentMixin, OpenStreetMapParser
 ):
     """Parser to import touristic content from OpenStreetMap"""
+
     url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
 
     category = None
@@ -1461,17 +1462,19 @@ class OpenStreetMapTouristicContentParser(
         "eid": ("type", "id"),  # ids are unique only for object of the same type,
         "name": "tags.name",
         "description": "tags.description",
-        "contact": ("tags.contact:phone",
-                    "tags.phone",
-                    "tags.addr:housenumber",
-                    "tags.addr:street",
-                    "tags.addr:postcode",
-                    "tags.contact:postcode",
-                    "tags.addr:city",
-                    "tags.contact:city"),
+        "contact": (
+            "tags.contact:phone",
+            "tags.phone",
+            "tags.addr:housenumber",
+            "tags.addr:street",
+            "tags.addr:postcode",
+            "tags.contact:postcode",
+            "tags.addr:city",
+            "tags.contact:city",
+        ),
         "email": ("tags.contact:email", "tags.email"),
         "website": ("tags.contact:website", "tags.website"),
-        "geom": ("type", "lon", "lat", "geometry", "bounds", "id")
+        "geom": ("type", "lon", "lat", "geometry", "bounds", "id"),
     }
     constant_fields = {}
     m2m_constant_fields = {}
@@ -1498,10 +1501,10 @@ class OpenStreetMapTouristicContentParser(
             self.m2m_constant_fields["type2"] = self.type2
         if self.themes is not None:
             self.m2m_constant_fields["themes"] = self.themes
-        if self.source is not None:
-            self.m2m_constant_fields["source"] = self.source
         if self.portal is not None:
             self.m2m_constant_fields["portal"] = self.portal
+        if self.source is not None:
+            self.m2m_constant_fields["source"] = self.source
 
     def filter_contact(self, src, val):
         phone = val[0] or val[1]
