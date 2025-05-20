@@ -5,10 +5,10 @@ from datetime import date
 from unittest import mock
 
 import requests
+from django.contrib.gis.geos import LineString, Point, Polygon
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
-from django.contrib.gis.geos import Point, LineString, Polygon
 
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
@@ -23,13 +23,13 @@ from geotrek.tourism.parsers import (
     InformationDeskOpenStreetMapParser,
     LEITouristicContentParser,
     LEITouristicEventParser,
+    OpenStreetMapTouristicContentParser,
     TouristicContentApidaeParser,
     TouristicContentTourInSoftParser,
     TouristicContentTourInSoftParserV3,
     TouristicContentTourInSoftParserV3withMedias,
     TouristicEventApidaeParser,
     TouristicEventTourInSoftParser,
-    OpenStreetMapTouristicContentParser,
 )
 from geotrek.tourism.tests.factories import (
     InformationDeskTypeFactory,
@@ -1558,17 +1558,21 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         mock_polygons_non_valid.status_code = 200
         mock_polygons_non_valid.content.decode = mocked_polygons_non_valid
 
-        mocked.side_effect = [mock_overpass, mock_polygons_valid, mock_polygons_missing, mock_polygons_non_valid]
+        mocked.side_effect = [
+            mock_overpass,
+            mock_polygons_valid,
+            mock_polygons_missing,
+            mock_polygons_non_valid,
+        ]
 
         output = io.StringIO()
         call_command(
             "import",
             "geotrek.tourism.tests.test_parsers.TestOpenStreetMapTouristicContentParser",
-            stdout = output
+            stdout=output,
         )
 
         cls.output = output.getvalue()
-
 
     @classmethod
     def setUpTestData(cls):
@@ -1590,7 +1594,9 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         touristic_content = self.objects.first()
         self.assertEqual(touristic_content.type1.all().count(), 2)
         self.assertEqual(touristic_content.type1.first().label, "test type1.1")
-        warning = "Type1 'test type1.3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+        warning = (
+            "Type1 'test type1.3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+        )
         self.assertIn(warning, self.output)
 
     def test_type2_touristic_content_OSM(self):
@@ -1606,7 +1612,7 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(touristic_content.themes.first().label, "test theme1")
         warnings = [
             "Thème 'test theme1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
-            "Thème 'test theme2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+            "Thème 'test theme2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)
@@ -1622,7 +1628,7 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(touristic_content.source.first().name, "test source1")
         warnings = [
             "Source Des Fiches 'test source1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
-            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)
@@ -1687,4 +1693,3 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(len(touristic_content.geom[0]), 5)
         self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
         self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
-
