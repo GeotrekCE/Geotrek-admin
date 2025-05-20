@@ -13,7 +13,6 @@ from django.utils.translation import gettext as _
 from geotrek.common.parsers import (
     ApidaeBaseParser,
     AttachmentParserMixin,
-    DownloadImportError,
     GeotrekParser,
     LEIParser,
     OpenStreetMapAttachmentsParserMixin,
