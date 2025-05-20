@@ -1534,7 +1534,9 @@ class OpenStreetMapTouristicContentParser(
         response = self.request_or_retry(self.url_polygons, params=params)
         wkt = response.content.decode("utf-8")
         geom = fromstr(wkt, srid=self.osm_srid)
-        geom = geom.buffer(0)
+
+        if not geom.valid:
+            geom = geom.buffer(0)
 
         return geom
 
