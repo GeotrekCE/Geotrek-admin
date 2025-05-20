@@ -1941,7 +1941,7 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
         attachments = []
         wikimedia, image = val
 
-        if wikimedia and "File:" in wikimedia:
+        if wikimedia and  wikimedia.startswith("File:"):
             # Wikimedia Commons API url
             filename = wikimedia.split(":")[1]
             filename.replace(" ", "_")
