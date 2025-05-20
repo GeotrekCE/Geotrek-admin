@@ -528,7 +528,7 @@ The following attributes can be customized:
 * ``non_fields`` (default: ``{"attachments": _("Attachments")}``):
   Maps the internal ``attachments`` field to the field name containing attachment data in the external source.
 
-* ``license_label`` (default: ``None``):
+* ``default_license_label`` (default: ``None``):
   If specified, this license will be assigned to all imported attachments.
   If the license does not exist, it will be created automatically.
 

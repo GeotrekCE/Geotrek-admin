@@ -814,14 +814,14 @@ class AttachmentParserMixin:
     non_fields = {
         "attachments": _("Attachments"),
     }
-    license_label = None
+    default_license_label = None
 
     def start(self):
         super().start()
 
         self.license = None
-        if self.license_label:
-            self.license = License.objects.get_or_create(label=self.license_label)[0]
+        if self.default_license_label:
+            self.license = License.objects.get_or_create(label=self.default_license_label)[0]
 
         if (
             settings.PAPERCLIP_ENABLE_LINK is False
@@ -1933,7 +1933,7 @@ class ApidaeBaseParser(Parser):
 class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
     base_url_wikimedia = "https://api.wikimedia.org/core/v1/commons/file/"
     non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
-    license_label = "CC-by-sa 4.0"
+    default_license_label = "CC-by-sa 4.0"
 
     def filter_attachments(self, src, val):
         attachments = []
