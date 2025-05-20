@@ -115,7 +115,7 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
-    license_label = "Creative Commons"
+    default_license_label = "Creative Commons"
 
 
 class WarnAttachmentParser(AttachmentParser):
