@@ -1751,15 +1751,14 @@ class OpenStreetMapTestParser(TestCase):
 
         self.assertEqual(Attachment.objects.count(), 2)
         self.assertEqual(Attachment.objects.first().filetype, self.typefile)
-        self.assertEqual(Attachment.objects.first().filetype, self.typefile)
 
         item1 = InformationDesk.objects.get(eid="N279480543")
         item2 = InformationDesk.objects.get(eid="W787047534")
         item3 = InformationDesk.objects.get(eid="R3538072")
 
-        self.assertEqual(Attachment.objects.filter(object_id=item1.pk).count(), 1)
-        self.assertEqual(Attachment.objects.filter(object_id=item2.pk).count(), 1)
-        self.assertEqual(Attachment.objects.filter(object_id=item3.pk).count(), 0)
+        self.assertEqual(item1.attachments.count(), 1)
+        self.assertEqual(item2.attachments.count(), 1)
+        self.assertEqual(item3.attachments.count(), 0)
 
     def test_attachments_image_missing(self):
         self.import_items(status_code=404)
@@ -1770,9 +1769,9 @@ class OpenStreetMapTestParser(TestCase):
         item2 = InformationDesk.objects.get(eid="W787047534")
         item3 = InformationDesk.objects.get(eid="R3538072")
 
-        self.assertEqual(Attachment.objects.filter(object_id=item1.pk).count(), 0)
-        self.assertEqual(Attachment.objects.filter(object_id=item2.pk).count(), 1)
-        self.assertEqual(Attachment.objects.filter(object_id=item3.pk).count(), 0)
+        self.assertEqual(item1.attachments.count(), 0)
+        self.assertEqual(item2.attachments.count(), 1)
+        self.assertEqual(item3.attachments.count(), 0)
 
 
 class OpenStreetMapAttachmentParserMixinTests(TestCase):
@@ -1835,5 +1834,5 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
 
         self.assertEqual(
             warnings["Line 0"][0],
-            "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (ERROR: '404')",
+            "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (Error 404)",
         )

@@ -328,7 +328,7 @@ Finally all the objects parsed by the OpenStreetMap parsers will be those contai
 You can change the bounding box by overriding ``get_bbox_str()``.
 
 .. note::
-   The ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+   ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
    A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
 
    For more information on how attachments work, consult :ref:`this section <import-attachments>`.
@@ -485,28 +485,81 @@ If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_f
 Import attachments
 ==================
 
-If available, parsers can attach files to imported objects. To enable this, the parser should inherit from ``AttachmentParserMixin``.
+``AttachmentParserMixin`` lets a parser **link (and optionally download) media files** to any object it imports (signage, infrastructures, POIs, touristic content, events, etc).
+The mixin is located in ``geotrek/common/parsers.py`` and must be inherited in your parser:
 
-This class provides several attributes:
+.. code-block:: python
 
-* ``download_attachments`` (default: ``True``): Indicates whether files should be downloaded or simply linked in the database.
-  If ``download_attachments`` is disabled, then ``PAPERCLIP_ENABLE_LINK`` must be enabled.
+   class ExampleParser(AttachmentParserMixin, Parser):
 
-* ``base_url``: The base URL used to download the files.
-
-* ``delete_attachments`` (default: ``True``): Determines whether existing attachments should be deleted during import.
-
-* ``filetype_name`` (default: ``"Photographie"``): The type of attachments. This must match a ``FileType`` label present in the database.
-
-* ``non_fields`` (default: ``{"attachments": _("Attachments")}``): A mapping between the internal attachment field and the corresponding external field(s).
-
-* ``license_label`` (default: ``None``): If specified, all imported attachments will be assigned this license by default. If the license does not exist, it will be created automatically.
-
-In order to import attachment data properly, you **must override** the ``filter_attachments`` method.
+       # Parser configuration …
 
 .. warning::
-   These features should be used in base parsers, not in custom parsers.
 
+   Use ``AttachmentParserMixin`` **only in base parsers**.
+   Custom parsers should focus on configuration.
+   Factor attachment logic into shared base classes to keep custom parsers clean and maintainable.
+
+Attributes
+----------
+
+The following attributes can be customized:
+
+* ``download_attachments`` (default: ``True``):
+  Whether to download and store attachments via Paperclip. If set to ``False``, attachments are only linked.
+  Requires ``PAPERCLIP_ENABLE_LINK = True`` in Django settings.
+
+* ``base_url`` (default: ``""``):
+  Base URL prepended to each relative attachment path returned by ``filter_attachments``.
+
+* ``delete_attachments`` (default: ``True``):
+  After the new attachments have been processed, **every existing
+  attachment that is *not* present in the current feed (or whose file has
+  been replaced)** is permanently removed.
+
+* ``filetype_name`` (default: ``"Photographie"``):
+  Label of the ``FileType`` model assigned to all imported files.
+  If it does not exist in the database, the parser will raise a warning:
+
+  ::
+
+     FileType '<name>' does not exist in Geotrek-Admin. Please add it
+
+* ``non_fields`` (default: ``{"attachments": _("Attachments")}``):
+  Maps the internal ``attachments`` field to the field name containing attachment data in the external source.
+
+* ``license_label`` (default: ``None``):
+  If specified, this license will be assigned to all imported attachments.
+  If the license does not exist, it will be created automatically.
+
+Filtering attachments
+---------------------
+
+``filter_attachments`` method format the external source data to match with the internal format.
+
+Signature:
+
+.. code-block:: python
+
+   def filter_attachments(self, src, val) -> list[[str, str, str, str]]:
+       ...
+       return [[url, legend, author, title], ...]
+
+
+Default implementation:
+
+.. code-block:: python
+
+   def filter_attachments(self, src, val):
+       if not val:
+           return []
+       return [
+           (subval.strip(), "", "", "")  # url, legend, author, title
+           for subval in val.split(self.separator)
+           if subval.strip()
+       ]
+
+If the attachment data has a different structure ``filter_attachments`` should be override.
 
 .. _importing-from-multiple-sources-with-deletion:
 

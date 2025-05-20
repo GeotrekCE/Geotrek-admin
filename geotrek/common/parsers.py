@@ -1946,11 +1946,8 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
 
             url = self.base_url_wikimedia + filename
 
-            # request API
-            action = getattr(requests, "get")
-            response = action(
-                url, headers={"User-Agent": "Geotrek-Admin"}, allow_redirects=True
-            )
+            # API request
+            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
             if response.status_code == requests.codes.ok:
                 data = response.json()
                 file = data["original"]["url"]
@@ -1959,7 +1956,7 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
                 title = data["title"].split(".")[0]  # remove extension
                 attachments.append([file, legend, author, title])
             else:
-                msg = f"'{url}' is inaccessible (ERROR: '{response.status_code}')"
+                msg = f"'{url}' is inaccessible (Error {response.status_code})"
                 self.add_warning(msg)
 
         if image:
