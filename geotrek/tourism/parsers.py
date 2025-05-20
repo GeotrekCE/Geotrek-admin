@@ -1537,7 +1537,6 @@ class OpenStreetMapTouristicContentParser(
 
         if not geom.valid:
             geom = geom.make_valid()
-            print(geom)
 
         return geom
 
