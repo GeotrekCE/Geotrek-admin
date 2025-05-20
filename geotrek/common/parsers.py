@@ -821,7 +821,9 @@ class AttachmentParserMixin:
 
         self.license = None
         if self.default_license_label:
-            self.license = License.objects.get_or_create(label=self.default_license_label)[0]
+            self.license = License.objects.get_or_create(
+                label=self.default_license_label
+            )[0]
 
         if (
             settings.PAPERCLIP_ENABLE_LINK is False
