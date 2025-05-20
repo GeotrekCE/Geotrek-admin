@@ -159,12 +159,15 @@ jobs:
       continue-on-error: ${{ matrix.allow-error }}
       run: |
         ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+
+    - name: Prepare coverage report
+      run: |
         ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
     - uses: codecov/codecov-action@v5
       with:
-        files: ./coverage.xml
+        files: ./var/coverage.xml
         env_vars: OS,ENV
         token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
         fail_ci_if_error: true # optional (default = false)
