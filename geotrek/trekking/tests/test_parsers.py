@@ -2482,7 +2482,12 @@ class OpenStreetMapPOIParser(TestCase):
     def test_topology_polygon(self):
         poi = self.objects.get(eid="W3")
         raise Exception(poi.topo_object.paths.first().ewkt)
-        self.assertAlmostEqual(poi.topo_object.offset, -1398.993, places=2, msg=poi.topo_object.paths.first().ewkt)
+        self.assertAlmostEqual(
+            poi.topo_object.offset,
+            -1398.993,
+            places=2,
+            msg=poi.topo_object.paths.first().geom.ewkt,
+        )
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
