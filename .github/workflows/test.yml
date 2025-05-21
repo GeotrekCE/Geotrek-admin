@@ -254,7 +254,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build_docker_image]
     env:
-      CYPRESS_BASE_URL: http://geotrek.local:8080
+      CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
@@ -282,6 +282,8 @@ jobs:
 
       - name: Launch service
         run: |
+          sudo systemctl stop apache2
+          sudo systemctl stop nginx
           docker tag geotrek:latest geotrekce/admin:latest
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
@@ -309,7 +311,7 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8080"; do
+          while ! nc -z "127.0.0.1" "80"; do
             sleep 0.1
           done
 
