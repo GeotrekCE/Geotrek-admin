@@ -329,6 +329,10 @@ Translation logic can be customized in custom parsers by overriding the ``transl
 Finally all the objects parsed by the OpenStreetMap parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can change the bounding box by overriding ``get_bbox_str()``.
 
+.. note::
+    In order to display a link to the corresponding object on OpenStreetMap website in detail sheet of Geotrek object,
+    you must use ``OpenStreetMapParser`` with the ``OpenStreetMap`` provider
+
 Import information desks
 ------------------------
 
