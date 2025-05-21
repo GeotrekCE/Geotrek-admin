@@ -254,7 +254,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build_docker_image]
     env:
-      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_BASE_URL: http://geotrek.local:8080
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
@@ -286,11 +286,12 @@ jobs:
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
           cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
-          echo 'LANGUAGES=en fr' >> .env
-          echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/UID=/UID="$UID"/' .env
           sudo sed -i 's/GID=/GID="$GID"/' .env
           sudo sed -i 's/localhost/geotrek.local/' .env
+          sudo sed -i 's/80/8080/' .env
+          echo 'LANGUAGES=en fr' >> .env
+          echo 'LANGUAGE_CODE=en' >> .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
           cp cypress/custom.py var/conf/custom.py
