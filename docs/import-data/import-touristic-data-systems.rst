@@ -357,11 +357,6 @@ A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by th
 
 For more information on how attachments work, consult :ref:`this section <import-attachments>`.
 
-.. note::
-    When using the ``OpenStreetMapParser`` with the ``OpenStreetMap`` provider,
-    the eid field of the parsed objects in the detail sheet provide a link
-    to the corresponding object on the OpenStreetMap website.
-
 .. _import-information-desk:
 
 Import information desks
