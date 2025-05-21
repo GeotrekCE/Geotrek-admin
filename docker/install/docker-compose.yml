@@ -67,10 +67,7 @@ services:
       - ./var/static:/usr/share/nginx/html/static
 
     ports:
-      - "${NGINX_PORT}:${NGINX_PORT}"
-      - "443:443"
-      - "8080:8080" # Port pour le dashboard Traefik
-
+      - "${PROXY_PORT}:80"
 volumes:
   redis:
   postgres:
