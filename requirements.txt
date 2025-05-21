@@ -27,8 +27,8 @@ cachetools==5.5.2
     # via large-image
 cairocffi==1.7.1
     # via
-    #   geotrek (setup.py)
     #   cairosvg
+    #   geotrek (setup.py)
     #   mapentity
 cairosvg==2.7.1
     # via geotrek (setup.py)
@@ -91,7 +91,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.21
+django==5.2.1
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
