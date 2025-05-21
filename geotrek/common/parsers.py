@@ -21,11 +21,11 @@ import requests
 import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
-from django.contrib.gis.geos.collections import MultiPolygon as django_MultiPolygon
-from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
+from django.contrib.gis.geos.collections import MultiPolygon
+from django.core.exceptions import ImproperlyConfigured, FieldError
 from django.core.files.base import ContentFile
 from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
@@ -34,7 +34,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
-from geojson import MultiPolygon
 from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 from PIL import Image, UnidentifiedImageError
@@ -646,13 +645,53 @@ class Parser:
             self.to_delete = set(
                 self.model.objects.filter(**kwargs).values_list("pk", flat=True)
             )
-        self.to_delete_out_of_zone = set()
+        print(self.to_delete)
+        if self.intersection_geom:
+            model = self.intersection_geom.get("model")
+            app = self.intersection_geom.get("app_label")
+            geom_field = self.intersection_geom.get("geom_field")
+            object_filter = self.intersection_geom.get("object_filter")
+
+            if model and app and geom_field and object_filter:
+                try:
+                    contenttype_model = ContentType.objects.get(
+                        app_label=app, model=model
+                    )
+                    ref_model = contenttype_model.model_class()
+                    ref_object = ref_model.objects.filter(**object_filter).all()
+                except ContentType.DoesNotExist:
+                    msg = f"{app}.{model} is not defined in contenttype"
+                    raise ImproperlyConfigured(msg)
+                except FieldError:
+                    msg = f"{app}.{model} does not have {list(object_filter.keys())} field"
+                    raise ImproperlyConfigured(msg)
+
+                if not ref_object:
+                    msg = f"Reference geometry does not exist {self.intersection_geom}"
+                    raise ImproperlyConfigured(msg)
+                if len(ref_object) > 1:
+                    print("warnings multiple")
+                    self.add_warning(
+                        f"{self.intersection_geom} reference multiple geometries. {ref_object.first()} has been used"
+                    )
+
+                ref_object = ref_object.first()
+                ref_geom = getattr(ref_object, geom_field, None)
+
+                if type(ref_geom) in (Polygon, MultiPolygon):
+                    self.ref_geom = ref_geom
+                else:
+                    msg = f"Reference object for filter_geom must be a Polygon or a Multipolygon not a {type(ref_geom)}"
+                    raise ImproperlyConfigured(msg)
+
+            else:
+                msg = "intersection_geom miss attribut(s) it must have: model, app_label, geom_field and object_filter"
+                raise ImproperlyConfigured(msg)
 
     def end(self):
         if self.delete:
+            print(self.to_delete)
             self.model.objects.filter(pk__in=self.to_delete).delete()
-        if self.to_delete_out_of_zone:
-            self.model.objects.filter(pk__in=self.to_delete_out_of_zone).delete()
 
     def parse(self, filename=None, limit=None):
         if filename:
@@ -721,49 +760,25 @@ class Parser:
             "model": "District",
             "app_label": "zoning",
             "geom_field": "geom",
-            "object_filter": {"name": "Auvergne-Rhône Alpes"}
+            "object_filter": {"name": "Auvergne-Rhône Alpes"},
         }
         ```
         * model: class name of the model
         * app_label: application where the model is defined
         * geom_field: field name in the model where the geometry is defined
-        * object_name: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
+        * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
         if self.intersection_geom:
-            model = self.intersection_geom.get("model")
-            app = self.intersection_geom.get("app_label")
-            geom_field = self.intersection_geom.get("geom_field")
-            object_filter = self.intersection_geom.get("object_filter")
-
-            if model and app and geom_field and object_filter:
-                try:
-                    contenttype_model = ContentType.objects.get(app_label=app, model=model)
-                except ContentType.DoesNotExist:
-                    msg = f"{app}.{model} is not defined in contenttype"
-                    raise ImproperlyConfigured(msg)
-
-                ref_model = contenttype_model.model_class()
-                ref_object = ref_model.objects.filter(**object_filter).all()
-                if not ref_object:
-                    msg = f"Reference geometry does not exist {self.intersection_geom}"
-                    raise ImproperlyConfigured(msg)
-                if len(ref_object) > 1:
-                    self.add_warning(f"{self.intersection_geom} reference multiple geometries. {ref_object.first()} has been used")
-
-                ref_object = ref_object.first()
-                ref_geom = getattr(ref_object, geom_field)
-
-                if type(ref_geom) in (Polygon, django_MultiPolygon):
-                    if ref_geom.intersects(geom):
-                        return geom
-                    else:
-                        if self.delete:
-                            self.to_delete(self.obj.pk)
-                        msg = f"Object geometry does not intersect with reference geometry ({ref_object})"
-                        raise RowImportError(msg)
-                else:
-                    msg = f"Reference object for filter_geom must be a Polygon or a Multipolygon not a {type(ref_geom)}"
-                    raise ImproperlyConfigured(msg)
+            if self.ref_geom.intersects(geom):
+                return geom
+            else:
+                if self.delete:
+                    self.to_delete.add(self.obj.pk)
+                print("warnings delete")
+                msg = (f"Object geometry does not intersect with reference geometry "
+                       f"({self.intersection_geom['app_label']}.{self.intersection_geom['model']}: "
+                       f"{self.intersection_geom['object_filter']})")
+                raise RowImportError(msg)
 
         return geom
 
