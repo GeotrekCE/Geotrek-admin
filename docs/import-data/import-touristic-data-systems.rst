@@ -281,6 +281,9 @@ By default, the parser uses the German Overpass server:
 
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
 
+Query configuration
+-------------------
+
 Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
 
 * ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
@@ -312,6 +315,12 @@ For example:
 
 *means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
 
+All the objects parsed by the ``OpenStreetMap`` parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can change the bounding box by overriding ``get_bbox_str()``.
+
+Handling translated fields
+--------------------------
+
 OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
 
 During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
@@ -324,14 +333,12 @@ When no translation exists for the default language, the base OpenStreetMap tag 
 
 Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
 
-Finally all the objects parsed by the OpenStreetMap parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
-You can change the bounding box by overriding ``get_bbox_str()``.
+Attachments
+-----------
+``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
 
-.. note::
-   ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
-   A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
-
-   For more information on how attachments work, consult :ref:`this section <import-attachments>`.
+For more information on how attachments work, consult :ref:`this section <import-attachments>`.
 
 .. _import-information-desk:
 
@@ -446,42 +453,13 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
 
-.. _multiple-imports:
-
-Multiple imports
-=================
-
-When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
-It can be interesting with portals for example.
-
-Parameters for the aggregation : ``m2m_aggregate_fields``
-
-Here is an example with 2 parsers :
-
-::
-
-    class Portal_1Parser(XXXParser):
-        portal = "portal_1"
-
-    class AggregateParser(XXXParser):
-        portal = "portal_2"
-        m2m_aggregate_fields = ["portal"]
-
-Then, when you import the first parser ``Portal_1Parser``, you get multiple objects with ``portal_1`` as portal.
-If any object of the ``Portal_1Parser`` is also in ``AggregateParser``, fields in ``m2m_aggregate_fields`` will have their values not be replaced but aggregated.
-Then your object in both portals will have as portal: ``portal_1, portal_2``
-
-* Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
-
-If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
-
 .. _import-attachments:
 
 Import attachments
 ==================
 
 ``AttachmentParserMixin`` lets a parser **link (and optionally download) media files** to any object it imports (signage, infrastructures, POIs, touristic content, events, etc).
-The mixin is located in ``geotrek/common/parsers.py`` and must be inherited in your parser:
+The mixin is located in ``geotrek/common/parsers.py`` and must be inherited by your parser:
 
 .. code-block:: python
 
@@ -514,14 +492,14 @@ The following attributes can be customized:
 
 * ``filetype_name`` (default: ``"Photographie"``):
   Label of the ``FileType`` model assigned to all imported files.
-  If it does not exist in the database, the parser will raise a warning:
+  If it does not exist in the database, the import will fail with a warning:
 
   ::
 
      FileType '<name>' does not exist in Geotrek-Admin. Please add it
 
 * ``non_fields`` (default: ``{"attachments": _("Attachments")}``):
-  Maps the internal ``attachments`` field to the field name containing attachment data in the external source.
+  Maps the internal ``attachments`` field to the field name(s) containing attachments data in the external source.
 
 * ``default_license_label`` (default: ``None``):
   If specified, this license will be assigned to all imported attachments.
@@ -530,31 +508,41 @@ The following attributes can be customized:
 Filtering attachments
 ---------------------
 
-``filter_attachments`` method format the external source data to match with the internal format.
+The ``filter_attachments`` method formats the external source data to match with the internal format.
 
-Signature:
+If the attachment data has a different structure than the default ``filter_attachments``, the method must be overridden.
 
-.. code-block:: python
+See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/common/parsers.py/>`_ file to see more about attachments.
 
-   def filter_attachments(self, src, val) -> list[[str, str, str, str]]:
-       ...
-       return [[url, legend, author, title], ...]
+.. _multiple-imports:
 
+Multiple imports
+=================
 
-Default implementation:
+When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
+It can be interesting with portals for example.
 
-.. code-block:: python
+Parameters for the aggregation : ``m2m_aggregate_fields``
 
-   def filter_attachments(self, src, val):
-       if not val:
-           return []
-       return [
-           (subval.strip(), "", "", "")  # url, legend, author, title
-           for subval in val.split(self.separator)
-           if subval.strip()
-       ]
+Here is an example with 2 parsers :
 
-If the attachment data has a different structure ``filter_attachments`` should be override.
+::
+
+    class Portal_1Parser(XXXParser):
+        portal = "portal_1"
+
+    class AggregateParser(XXXParser):
+        portal = "portal_2"
+        m2m_aggregate_fields = ["portal"]
+
+Then, when you import the first parser ``Portal_1Parser``, you get multiple objects with ``portal_1`` as portal.
+If any object of the ``Portal_1Parser`` is also in ``AggregateParser``, fields in ``m2m_aggregate_fields`` will have their values not be replaced but aggregated.
+Then your object in both portals will have as portal: ``portal_1, portal_2``
+
+* Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
+
+If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
 
 .. _importing-from-multiple-sources-with-deletion:
 
