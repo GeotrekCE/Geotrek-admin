@@ -4,31 +4,23 @@ from geotrek.infrastructure.models import Infrastructure
 
 class GeotrekInfrastructureParser(GeotrekParser):
     """Geotrek parser for Infrastructure"""
+
     fill_empty_translated_fields = True
     url = None
     model = Infrastructure
-    constant_fields = {
-        "deleted": False
-    }
-    replace_fields = {
-        "eid": "uuid",
-        "geom": "geometry"
-    }
+    constant_fields = {"deleted": False}
+    replace_fields = {"eid": "uuid", "geom": "geometry"}
     url_categories = {
         "structure": "structure",
-        'condition': 'infrastructure_condition',
-        'type': 'infrastructure_type',
+        "condition": "infrastructure_condition",
+        "type": "infrastructure_type",
     }
     categories_keys_api_v2 = {
         "structure": "name",
-        'condition': 'label',
-        'type': 'label'
+        "condition": "label",
+        "type": "label",
     }
-    natural_keys = {
-        "structure": "name",
-        'condition': 'label',
-        'type': 'label'
-    }
+    natural_keys = {"structure": "name", "condition": "label", "type": "label"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

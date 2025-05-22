@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-04-16 18:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -123,10 +123,6 @@ msgid "Information desk"
 msgstr ""
 
 msgid "Information desks"
-msgstr ""
-
-#, python-format
-msgid "Image %s invalid or missing from disk."
 msgstr ""
 
 msgid "Point"
@@ -388,6 +384,11 @@ msgstr ""
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
 
+#, python-format
+msgid ""
+"Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
+msgstr ""
+
 msgid "Add a new touristic content"
 msgstr ""
 
@@ -413,9 +414,6 @@ msgid "Public print booklet"
 msgstr ""
 
 msgid "Print booklet"
-msgstr ""
-
-msgid "Attributes"
 msgstr ""
 
 msgid "yes,no"

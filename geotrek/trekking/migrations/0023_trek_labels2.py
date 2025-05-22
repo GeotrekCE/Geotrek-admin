@@ -4,16 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0015_label'),
-        ('trekking', '0022_auto_20201117_1302'),
+        ("common", "0015_label"),
+        ("trekking", "0022_auto_20201117_1302"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='trek',
-            name='labels2',
-            field=models.ManyToManyField(blank=True, related_name='labels2', to='common.Label', verbose_name='Labels'),
+            model_name="trek",
+            name="labels2",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="labels2",
+                to="common.Label",
+                verbose_name="Labels",
+            ),
         ),
     ]

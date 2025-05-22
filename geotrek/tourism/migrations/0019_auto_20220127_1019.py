@@ -5,14 +5,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0018_auto_20211022_1255'),
+        ("tourism", "0018_auto_20211022_1255"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='informationdesk',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom'], name='informationdesk_geom_gist_idx'),
+            model_name="informationdesk",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom"], name="informationdesk_geom_gist_idx"
+            ),
         ),
     ]

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-06 08:26+0000\n"
+"POT-Creation-Date: 2025-04-28 18:47+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -134,9 +134,6 @@ msgstr "Date de mise à jour"
 msgid "Deleted"
 msgstr "Supprimé"
 
-msgid "Image {} invalid or missing from disk: {}."
-msgstr "L'image {} est invalide ou absente du disque : {}."
-
 msgid "Thumbnail"
 msgstr "Miniature"
 
@@ -191,9 +188,6 @@ msgstr "Information accessibilité"
 
 msgid "License"
 msgstr "Licence"
-
-msgid "Creation Date"
-msgstr "Date de création"
 
 msgid "Creator"
 msgstr "Créateur"
@@ -360,9 +354,9 @@ msgstr "Moyen d'accès"
 msgid "Access means"
 msgstr "Moyens d'accès"
 
-#, python-brace-format
-msgid "Line {line}"
-msgstr "Ligne {line}"
+#, python-format
+msgid "Line %(line)s"
+msgstr "Ligne %(line)s"
 
 #, python-brace-format
 msgid "Missing {required}field '{src}'"
@@ -372,13 +366,13 @@ msgstr "Le champ {required}'{src}' est manquant"
 msgid "Destination field '{dst}' not in natural keys configuration"
 msgstr "Le champ de destination '{dst}' n'est pas dans les clés naturelles"
 
-#, python-brace-format
-msgid "Null value not allowed for field '{src}'"
-msgstr "La valeur null n'est pas autorisée pour le champ '{src}'"
+#, python-format
+msgid "Null value not allowed for field '%(src)s'"
+msgstr "La valeur null n'est pas autorisée pour le champ '%(src)s'"
 
-#, python-brace-format
-msgid "Blank value not allowed for field '{src}'"
-msgstr "La valeur blank n'est pas autorisée pour le champ '{src}'"
+#, python-format
+msgid "Blank value not allowed for field '%(src)s'"
+msgstr "La valeur blank n'est pas autorisée pour le champ '%(src)s'"
 
 #, python-brace-format
 msgid "Eid field '{eid_dst}' missing in parser configuration"
@@ -440,9 +434,6 @@ msgstr "Le fichier à l'emplacement {filename} n'existe pas"
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
 
-msgid "Invalid geometry pointer"
-msgstr "Pointeur de géométrie invalide"
-
 msgid "Attachments"
 msgstr "Pièce-jointes"
 
@@ -456,42 +447,51 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
 
-#, python-brace-format
-msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"too large"
+#, python-format
+msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
 msgstr ""
 
-#, python-brace-format
+#, fuzzy, python-format, python-brace-format
+#| msgid "The uploaded file is not wide enough"
+msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
+msgstr "L'image sélectionnée n'est pas assez large"
+
+#, fuzzy, python-format
+#| msgid "The uploaded file is not tall enough"
+msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
+msgstr "L'image sélectionnée n'est pas assez haute"
+
+#, python-format
 msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"not wide enough"
+"Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' "
+"is not allowed."
 msgstr ""
 
-#, python-brace-format
+#, python-format
 msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"not tall enough"
+"Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type "
+"'%(mimetype)s' is not allowed for %(ext)s."
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj."
-"pk}: "
-msgstr ""
-"Fichier attaché invalide {url} pour {self.obj.__class__.__name__} #{self.obj."
-"pk}: "
+#, fuzzy, python-format
+#| msgid "File does not exists at: {filename}"
+msgid "File does not exists at: %(filename)s"
+msgstr "Le fichier à l'emplacement {filename} n'existe pas"
 
-#, python-brace-format
-msgid "Model {model}"
+#, python-format
+msgid "Model %(model)s"
 msgstr ""
 
 msgid "Geotrek-admin"
 msgstr ""
 
-#, python-brace-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Source '{name}' did not exist in Geotrek-Admin and was automatically "
+#| "created"
 msgid ""
-"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
+"Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
+"created"
 msgstr ""
 "Source '{name}' n'existait pas dans Geotrek-Admin. Elle a été créée "
 "automatiquement"
@@ -590,9 +590,6 @@ msgstr "Historique"
 msgid "Annotate"
 msgstr "Annoter"
 
-msgid "Attributes"
-msgstr "Attributs"
-
 msgid "Date"
 msgstr "Date"
 
@@ -686,12 +683,16 @@ msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr "%(obj)s a changé d'état, et a besoin d'être validé pour être publié."
 
 #, python-format
-msgid "%s days"
-msgstr "%s jours"
+msgid "%(nb)s days"
+msgstr "%(nb)s jours"
 
 #, python-format
 msgid "%s day"
 msgstr "%s jour"
+
+#, python-format
+msgid "%s days"
+msgstr "%s jours"
 
 #, python-format
 msgid "%(hour)s h %(min)s"
@@ -726,6 +727,20 @@ msgstr "E"
 msgctxt "West"
 msgid "W"
 msgstr "O"
+
+msgid ""
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
+msgstr ""
+"La géométrie de l'objet ne peut être convertie en une unique LineString "
+"continue"
+
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
+msgstr ""
+"Les géométries de plusieurs objets ne peuvent être converties en une unique "
+"LineString continue"
 
 msgid "Reports"
 msgstr "Signalements"

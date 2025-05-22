@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sensitivity', '0021_auto_20210218_0734'),
+        ("sensitivity", "0021_auto_20210218_0734"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sensitivearea',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="sensitivearea",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
     ]

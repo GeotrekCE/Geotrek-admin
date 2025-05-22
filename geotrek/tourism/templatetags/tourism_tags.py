@@ -6,7 +6,6 @@ from django.contrib.gis.db.models.functions import Transform
 
 from geotrek.tourism.models import TouristicContentCategory, TouristicEventPlace
 
-
 register = template.Library()
 
 
@@ -14,19 +13,21 @@ register = template.Library()
 def touristic_content_categories():
     categories = {
         str(category.pk): {
-            'type1_label': category.type1_label,
-            'type2_label': category.type2_label,
-            'type1_values': {
+            "type1_label": category.type1_label,
+            "type2_label": category.type2_label,
+            "type1_values": {
                 str(type.pk): type.label
-                for type in category.types.all() if type.in_list == 1
+                for type in category.types.all()
+                if type.in_list == 1
             },
-            'type2_values': {
+            "type2_values": {
                 str(type.pk): type.label
-                for type in category.types.all() if type.in_list == 2
+                for type in category.types.all()
+                if type.in_list == 2
             },
-            'geometry_type': category.geometry_type
+            "geometry_type": category.geometry_type,
         }
-        for category in TouristicContentCategory.objects.prefetch_related('types').all()
+        for category in TouristicContentCategory.objects.prefetch_related("types").all()
     }
     return json.dumps(categories)
 
@@ -39,6 +40,6 @@ def is_tourism_enabled():
 @register.simple_tag
 def places_coords():
     places = TouristicEventPlace.objects.annotate(
-        geom_4326=Transform('geom', 4326)  # Leaflet requries 4326
+        geom_4326=Transform("geom", 4326)  # Leaflet requries 4326
     )
     return json.dumps({str(p.pk): p.geom_4326.coords for p in places})

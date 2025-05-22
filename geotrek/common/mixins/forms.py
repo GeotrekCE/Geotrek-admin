@@ -22,10 +22,10 @@ class FormsetMixin:
         if self.request.POST:
             try:
                 context[self.context_name] = self.formset_class(
-                    self.request.POST, instance=self.object)
+                    self.request.POST, instance=self.object
+                )
             except ValidationError:
                 pass
         else:
-            context[self.context_name] = self.formset_class(
-                instance=self.object)
+            context[self.context_name] = self.formset_class(instance=self.object)
         return context

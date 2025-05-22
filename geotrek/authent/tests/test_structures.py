@@ -1,10 +1,11 @@
 """
-    Unit tests
+Unit tests
 """
-from .base import AuthentFixturesTest
 
-from geotrek.authent.tests.factories import StructureFactory, PathManagerFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
 from geotrek.core.tests.factories import PathFactory
+
+from .base import AuthentFixturesTest
 
 
 class StructureRestrictionTest(AuthentFixturesTest):

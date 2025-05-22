@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0036_infrastructure_access_tmp'),
+        ("infrastructure", "0036_infrastructure_access_tmp"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='infrastructure',
-            name='access',
+            model_name="infrastructure",
+            name="access",
         ),
     ]

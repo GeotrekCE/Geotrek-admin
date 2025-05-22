@@ -6,3 +6,4 @@
 /opt/geotrek-admin/var/media/upload
 /opt/geotrek-admin/var/pid
 /opt/geotrek-admin/var/mobile
+/opt/geotrek-admin/var/tmp

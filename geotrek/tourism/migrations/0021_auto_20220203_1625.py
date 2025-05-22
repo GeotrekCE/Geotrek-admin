@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0020_auto_20220202_0900'),
+        ("tourism", "0020_auto_20220202_0900"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='approved',
-            field=models.BooleanField(default=False, help_text='Indicates whether the content has a label or brand', verbose_name='Approved'),
+            model_name="touristiccontent",
+            name="approved",
+            field=models.BooleanField(
+                default=False,
+                help_text="Indicates whether the content has a label or brand",
+                verbose_name="Approved",
+            ),
         ),
     ]

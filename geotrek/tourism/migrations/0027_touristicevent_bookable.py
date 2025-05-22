@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0026_auto_20220907_1400'),
+        ("tourism", "0026_auto_20220907_1400"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='touristicevent',
-            name='bookable',
-            field=models.BooleanField(default=False, verbose_name='Bookable'),
+            model_name="touristicevent",
+            name="bookable",
+            field=models.BooleanField(default=False, verbose_name="Bookable"),
         ),
     ]

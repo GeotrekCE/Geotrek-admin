@@ -1,10 +1,10 @@
 from django.apps import AppConfig
-from django.core.checks import register, Tags
+from django.core.checks import Tags, register
 from django.utils.translation import gettext_lazy as _
 
 
 class TourismConfig(AppConfig):
-    name = 'geotrek.tourism'
+    name = "geotrek.tourism"
     verbose_name = _("Tourism")
 
     def ready(self):

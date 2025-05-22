@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-06 08:26+0000\n"
+"POT-Creation-Date: 2025-04-28 18:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,9 +126,6 @@ msgstr ""
 msgid "Deleted"
 msgstr ""
 
-msgid "Image {} invalid or missing from disk: {}."
-msgstr ""
-
 msgid "Thumbnail"
 msgstr ""
 
@@ -182,9 +179,6 @@ msgid "Information accessibility"
 msgstr ""
 
 msgid "License"
-msgstr ""
-
-msgid "Creation Date"
 msgstr ""
 
 msgid "Creator"
@@ -352,8 +346,8 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
-#, python-brace-format
-msgid "Line {line}"
+#, python-format
+msgid "Line %(line)s"
 msgstr ""
 
 #, python-brace-format
@@ -364,12 +358,12 @@ msgstr ""
 msgid "Destination field '{dst}' not in natural keys configuration"
 msgstr ""
 
-#, python-brace-format
-msgid "Null value not allowed for field '{src}'"
+#, python-format
+msgid "Null value not allowed for field '%(src)s'"
 msgstr ""
 
-#, python-brace-format
-msgid "Blank value not allowed for field '{src}'"
+#, python-format
+msgid "Blank value not allowed for field '%(src)s'"
 msgstr ""
 
 #, python-brace-format
@@ -423,9 +417,6 @@ msgstr ""
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr ""
 
-msgid "Invalid geometry pointer"
-msgstr ""
-
 msgid "Attachments"
 msgstr ""
 
@@ -437,40 +428,45 @@ msgstr ""
 msgid "Failed to download '{url}'"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"too large"
+#, python-format
+msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"not wide enough"
+#, python-format, python-brace-format
+msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
 msgstr ""
 
-#, python-brace-format
-msgid ""
-"{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is "
-"not tall enough"
+#, python-format
+msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
 msgstr ""
 
-#, python-brace-format
+#, python-format
 msgid ""
-"Invalid attachment file {url} for {self.obj.__class__.__name__} #{self.obj."
-"pk}: "
+"Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' "
+"is not allowed."
 msgstr ""
 
-#, python-brace-format
-msgid "Model {model}"
+#, python-format
+msgid ""
+"Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type "
+"'%(mimetype)s' is not allowed for %(ext)s."
+msgstr ""
+
+#, python-format
+msgid "File does not exists at: %(filename)s"
+msgstr ""
+
+#, python-format
+msgid "Model %(model)s"
 msgstr ""
 
 msgid "Geotrek-admin"
 msgstr ""
 
-#, python-brace-format
+#, python-format
 msgid ""
-"Source '{name}' did not exist in Geotrek-Admin and was automatically created"
+"Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
+"created"
 msgstr ""
 
 msgid "Import from web."
@@ -563,9 +559,6 @@ msgstr ""
 msgid "Annotate"
 msgstr ""
 
-msgid "Attributes"
-msgstr ""
-
 msgid "Date"
 msgstr ""
 
@@ -654,11 +647,15 @@ msgid "%(obj)s has changed state, it needs a review to be published. "
 msgstr ""
 
 #, python-format
-msgid "%s days"
+msgid "%(nb)s days"
 msgstr ""
 
 #, python-format
 msgid "%s day"
+msgstr ""
+
+#, python-format
+msgid "%s days"
 msgstr ""
 
 #, python-format
@@ -693,6 +690,16 @@ msgstr ""
 
 msgctxt "West"
 msgid "W"
+msgstr ""
+
+msgid ""
+"Feature geometry cannot be converted to a single continuous LineString "
+"feature"
+msgstr ""
+
+msgid ""
+"Geometries from various features cannot be converted to a single continuous "
+"LineString feature"
 msgstr ""
 
 msgid "Reports"

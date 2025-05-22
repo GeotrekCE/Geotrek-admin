@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0012_auto_20200708_1448'),
+        ("tourism", "0012_auto_20200708_1448"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="touristiccontent",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="touristicevent",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
     ]

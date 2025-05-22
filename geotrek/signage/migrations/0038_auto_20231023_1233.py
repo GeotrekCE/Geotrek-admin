@@ -4,18 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0037_auto_20231016_1331'),
+        ("signage", "0037_auto_20231016_1331"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='signagecondition',
-            options={'ordering': ['label'], 'verbose_name': 'Signage Condition', 'verbose_name_plural': 'Signage Conditions'},
+            name="signagecondition",
+            options={
+                "ordering": ["label"],
+                "verbose_name": "Signage Condition",
+                "verbose_name_plural": "Signage Conditions",
+            },
         ),
         migrations.RemoveField(
-            model_name='blade',
-            name='condition',
+            model_name="blade",
+            name="condition",
         ),
     ]

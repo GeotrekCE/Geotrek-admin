@@ -1,30 +1,40 @@
 import os
 
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.utils.translation import gettext_lazy as _, pgettext_lazy
-
-from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.mixins.models import AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, GeotrekMapEntityMixin, TimeStampedModelMixin
+from geotrek.common.mixins.models import (
+    AddPropertyMixin,
+    GeotrekMapEntityMixin,
+    NoDeleteMixin,
+    OptionalPictogramMixin,
+    TimeStampedModelMixin,
+)
 from geotrek.common.models import Organism
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import (
-    classproperty, format_coordinates, collate_c, spatial_reference, intersecting, queryset_or_model, queryset_or_all_objects
+    classproperty,
+    collate_c,
+    format_coordinates,
+    intersecting,
+    queryset_or_all_objects,
+    queryset_or_model,
+    spatial_reference,
 )
-
-from geotrek.core.models import Topology, Path
-
+from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.models import BaseInfrastructure
 from geotrek.signage.managers import SignageGISManager
-
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
 class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
-    """ A sealing linked with a signage"""
+    """A sealing linked with a signage"""
+
     label = models.CharField(verbose_name=_("Name"), max_length=250)
 
     class Meta:
@@ -33,35 +43,44 @@ class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
-class SignageType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
-    """ Types of infrastructures (bridge, WC, stairs, ...) """
+class SignageType(
+    TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin
+):
+    """Types of infrastructures (bridge, WC, stairs, ...)"""
+
     label = models.CharField(max_length=128)
 
     class Meta:
         verbose_name = _("Signage Type")
         verbose_name_plural = _("Signage Types")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
         pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
-        return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
+        return os.path.join(settings.STATIC_URL, "signage/picto-signage.png")
 
 
 class LinePictogram(TimeStampedModelMixin, OptionalPictogramMixin):
-    label = models.CharField(verbose_name=_("Label"), max_length=250, blank=True, null=False, default='')
-    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
-    description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("Complete description"))
+    label = models.CharField(
+        verbose_name=_("Label"), max_length=250, blank=True, null=False, default=""
+    )
+    code = models.CharField(
+        verbose_name=_("Code"), max_length=250, blank=True, null=False, default=""
+    )
+    description = models.TextField(
+        verbose_name=_("Description"), blank=True, help_text=_("Complete description")
+    )
 
     class Meta:
         verbose_name = _("Line pictogram")
@@ -81,23 +100,47 @@ class SignageCondition(TimeStampedModelMixin, StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
 class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
-    """ An infrastructure in the park, which is of type SIGNAGE """
+    """An infrastructure in the park, which is of type SIGNAGE"""
+
     objects = SignageGISManager()
-    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
-    manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.PROTECT)
-    sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.PROTECT)
-    printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
-    type = models.ForeignKey(SignageType, related_name='signages', verbose_name=_("Type"), on_delete=models.PROTECT)
+    code = models.CharField(
+        verbose_name=_("Code"), max_length=250, blank=True, null=False, default=""
+    )
+    manager = models.ForeignKey(
+        Organism,
+        verbose_name=_("Manager"),
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    sealing = models.ForeignKey(
+        Sealing,
+        verbose_name=_("Sealing"),
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    printed_elevation = models.IntegerField(
+        verbose_name=_("Printed elevation"), blank=True, null=True
+    )
+    type = models.ForeignKey(
+        SignageType,
+        related_name="signages",
+        verbose_name=_("Type"),
+        on_delete=models.PROTECT,
+    )
     coordinates_verbose_name = _("Coordinates")
     conditions = models.ManyToManyField(
         SignageCondition,
-        related_name='signages',
-        verbose_name=_("Condition"), blank=True)
+        related_name="signages",
+        verbose_name=_("Condition"),
+        blank=True,
+    )
 
     geometry_types_allowed = ["POINT"]
 
@@ -108,7 +151,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     @classmethod
     def path_signages(cls, path):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+            return cls.objects.existing().filter(aggregations__path=path).distinct("pk")
         else:
             area = path.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
             return cls.objects.existing().filter(geom__intersects=area)
@@ -137,11 +180,11 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.existing().order_by(collate_c('number'))
+        return self.blade_set.existing().order_by(collate_c("number"))
 
     @property
     def coordinates(self):
-        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
+        return f"{format_coordinates(self.geom)} ({spatial_reference()})"
 
     @property
     def geomtransform(self):
@@ -158,7 +201,9 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def conditions_display(self):
-        return ", ".join([str(c) for c in self.conditions.select_related('structure').all()])
+        return ", ".join(
+            [str(c) for c in self.conditions.select_related("structure").all()]
+        )
 
     def distance(self, to_cls):
         """Distance to associate this signage to another class"""
@@ -179,13 +224,16 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 @receiver(pre_delete, sender=Topology)
 def log_cascade_deletion_from_signage_topology(sender, instance, using, **kwargs):
     # Signages are deleted when Topologies (from BaseInfrastructure) are deleted
-    log_cascade_deletion(sender, instance, Signage, 'topo_object')
+    log_cascade_deletion(sender, instance, Signage, "topo_object")
 
 
-Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
-Topology.add_property('signages', Signage.topology_signages, _("Signages"))
-Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
-                      _("Published Signages"))
+Path.add_property("signages", lambda self: Signage.path_signages(self), _("Signages"))
+Topology.add_property("signages", Signage.topology_signages, _("Signages"))
+Topology.add_property(
+    "published_signages",
+    lambda self: Signage.published_topology_signages(self),
+    _("Published Signages"),
+)
 
 
 class Direction(TimeStampedModelMixin, models.Model):
@@ -211,17 +259,18 @@ class Color(TimeStampedModelMixin, models.Model):
 
 
 class BladeType(TimeStampedModelMixin, StructureOrNoneRelated):
-    """ Types of blades"""
+    """Types of blades"""
+
     label = models.CharField(max_length=128)
 
     class Meta:
         verbose_name = _("Blade type")
         verbose_name_plural = _("Blade types")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -231,28 +280,47 @@ class BladeCondition(TimeStampedModelMixin, StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Blade Condition")
         verbose_name_plural = _("Blade Conditions")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
-class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, GeotrekMapEntityMixin, NoDeleteMixin):
-    signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
-                                on_delete=models.CASCADE)
+class Blade(
+    TimeStampedModelMixin,
+    ZoningPropertiesMixin,
+    AddPropertyMixin,
+    GeotrekMapEntityMixin,
+    NoDeleteMixin,
+):
+    signage = models.ForeignKey(
+        Signage, verbose_name=_("Signage"), on_delete=models.CASCADE
+    )
     number = models.CharField(verbose_name=_("Number"), max_length=250)
-    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
-                                  blank=True)
-    type = models.ForeignKey(BladeType, verbose_name=_("Type"), on_delete=models.PROTECT)
-    color = models.ForeignKey(Color, on_delete=models.PROTECT, null=True, blank=True,
-                              verbose_name=_("Color"))
+    direction = models.ForeignKey(
+        Direction,
+        verbose_name=_("Direction"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    type = models.ForeignKey(
+        BladeType, verbose_name=_("Type"), on_delete=models.PROTECT
+    )
+    color = models.ForeignKey(
+        Color, on_delete=models.PROTECT, null=True, blank=True, verbose_name=_("Color")
+    )
     conditions = models.ManyToManyField(
-        BladeCondition,
-        related_name='blades',
-        verbose_name=_("Condition"), blank=True)
-    topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
+        BladeCondition, related_name="blades", verbose_name=_("Condition"), blank=True
+    )
+    topology = models.ForeignKey(
+        Topology,
+        related_name="blades_set",
+        verbose_name=_("Blades"),
+        on_delete=models.CASCADE,
+    )
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
@@ -271,19 +339,24 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 
     @classproperty
     def geomfield(cls):
-        return Topology._meta.get_field('geom')
+        return Topology._meta.get_field("geom")
 
     def __str__(self):
-        return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code, bladenumber=self.number)
+        return settings.BLADE_CODE_FORMAT.format(
+            signagecode=self.signage.code, bladenumber=self.number
+        )
 
     def set_topology(self, topology):
         self.topology = topology
         if not self.is_signage:
-            raise ValueError("Expecting a signage")
+            msg = "Expecting a signage"
+            raise ValueError(msg)
 
     @property
     def conditions_display(self):
-        return ", ".join([str(c) for c in self.conditions.select_related('structure').all()])
+        return ", ".join(
+            [str(c) for c in self.conditions.select_related("structure").all()]
+        )
 
     @property
     def paths(self):
@@ -305,23 +378,20 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 
     @property
     def signage_display(self):
-        return '<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
+        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
 
     @property
     def order_lines(self):
-        return self.lines.order_by('number')
+        return self.lines.order_by("number")
 
     @property
     def number_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(), self, self)
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
         return s
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                             self.get_detail_url(),
-                                                             self,
-                                                             self)
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}">{self}</a>'
         return s
 
     @property
@@ -329,16 +399,19 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
         return self.signage.structure
 
     def same_structure(self, user):
-        """ Returns True if the user is in the same structure or has
-            bypass_structure permission, False otherwise. """
-        return (user.profile.structure == self.structure
-                or user.is_superuser
-                or user.has_perm('authent.can_bypass_structure'))
+        """Returns True if the user is in the same structure or has
+        bypass_structure permission, False otherwise."""
+        return (
+            user.profile.structure == self.structure
+            or user.is_superuser
+            or user.has_perm("authent.can_bypass_structure")
+        )
 
     @property
     def bladecode_csv_display(self):
-        return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code,
-                                                 bladenumber=self.number)
+        return settings.BLADE_CODE_FORMAT.format(
+            signagecode=self.signage.code, bladenumber=self.number
+        )
 
     @property
     def coordinates_csv_display(self):
@@ -364,41 +437,66 @@ class Blade(TimeStampedModelMixin, ZoningPropertiesMixin, AddPropertyMixin, Geot
 @receiver(pre_delete, sender=Topology)
 def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
     # Blade are deleted when Topology are deleted
-    log_cascade_deletion(sender, instance, Blade, 'topology')
+    log_cascade_deletion(sender, instance, Blade, "topology")
 
 
 @receiver(pre_delete, sender=Signage)
 def log_cascade_deletion_from_blade_signage(sender, instance, using, **kwargs):
     # Blade are deleted when Signage are deleted
-    log_cascade_deletion(sender, instance, Blade, 'signage')
+    log_cascade_deletion(sender, instance, Blade, "signage")
 
 
 class Line(models.Model):
-    blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
-                              on_delete=models.CASCADE)
+    blade = models.ForeignKey(
+        Blade, related_name="lines", verbose_name=_("Blade"), on_delete=models.CASCADE
+    )
     number = models.IntegerField(verbose_name=_("Number"))
-    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), on_delete=models.PROTECT, null=True,
-                                  blank=True)
-    text = models.CharField(verbose_name=_("Text"), max_length=1000, blank=True, default="")
-    distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
-                                   decimal_places=1, max_digits=8, help_text='km')
-    pictograms = models.ManyToManyField('LinePictogram', related_name="lines",
-                                        blank=True,
-                                        verbose_name=_("Pictograms"))
-    time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
-                                help_text=_("Hours:Minutes:Seconds"))
+    direction = models.ForeignKey(
+        Direction,
+        verbose_name=_("Direction"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    text = models.CharField(
+        verbose_name=_("Text"), max_length=1000, blank=True, default=""
+    )
+    distance = models.DecimalField(
+        verbose_name=_("Distance"),
+        null=True,
+        blank=True,
+        decimal_places=1,
+        max_digits=8,
+        help_text="km",
+    )
+    pictograms = models.ManyToManyField(
+        "LinePictogram", related_name="lines", blank=True, verbose_name=_("Pictograms")
+    )
+    time = models.DurationField(
+        verbose_name=pgettext_lazy("duration", "Time"),
+        null=True,
+        blank=True,
+        help_text=_("Hours:Minutes:Seconds"),
+    )
     distance_pretty_verbose_name = _("Distance")
     time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
+
+    class Meta:
+        unique_together = (("blade", "number"),)
+        verbose_name = _("Line")
+        verbose_name_plural = _("Lines")
 
     def __str__(self):
         return self.linecode
 
     @property
     def linecode(self):
-        return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
-                                                bladenumber=self.blade.number,
-                                                linenumber=self.number)
+        return settings.LINE_CODE_FORMAT.format(
+            signagecode=self.blade.signage.code,
+            bladenumber=self.blade.number,
+            linenumber=self.number,
+        )
 
     @property
     def distance_pretty(self):
@@ -413,15 +511,12 @@ class Line(models.Model):
         hours = self.time.seconds // 3600
         minutes = (self.time.seconds % 3600) // 60
         seconds = self.time.seconds % 60
-        return settings.LINE_TIME_FORMAT.format(hours=hours, minutes=minutes, seconds=seconds)
-
-    class Meta:
-        unique_together = (('blade', 'number'), )
-        verbose_name = _("Line")
-        verbose_name_plural = _("Lines")
+        return settings.LINE_TIME_FORMAT.format(
+            hours=hours, minutes=minutes, seconds=seconds
+        )
 
 
 @receiver(pre_delete, sender=Blade)
 def log_cascade_deletion_from_line_blade(sender, instance, using, **kwargs):
     # Lines are deleted when Blade are deleted
-    log_cascade_deletion(sender, instance, Line, 'blade')
+    log_cascade_deletion(sender, instance, Line, "blade")

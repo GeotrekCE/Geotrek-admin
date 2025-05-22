@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0006_auto_20200406_1413'),
+        ("flatpages", "0006_auto_20200406_1413"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='flatpage',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="flatpage",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
     ]

@@ -1,74 +1,82 @@
 from django.conf import settings
-from django.contrib.gis.geos import Point, Polygon, MultiPolygon
+from django.contrib.gis.geos import MultiPolygon, Point, Polygon
 
-from geotrek.common.parsers import Parser, ShapeParser, RowImportError, ValueImportError
+from geotrek.common.parsers import Parser, RowImportError, ShapeParser, ValueImportError
+
 from .models import SensitiveArea, Species, SportPractice
 
 
 class BiodivParser(Parser):
     model = SensitiveArea
     label = "Biodiv'Sports"
-    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
-    eid = 'eid'
+    url = "https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore"
+    eid = "eid"
     separator = None
     delete = True
     practices = None
-    next_url = ''
+    next_url = ""
     fields = {
-        'eid': 'id',
-        'geom': 'geometry',
-        'contact': 'contact',
-        'species': (
-            'species_id',
-            'name',
-            'period',
-            'practices',
-            'info_url',
-            'radius',
-        )
+        "eid": "id",
+        "geom": "geometry",
+        "contact": "contact",
+        "species": (
+            "species_id",
+            "name",
+            "period",
+            "practices",
+            "info_url",
+            "radius",
+        ),
     }
     constant_fields = {
-        'published': True,
-        'deleted': False,
+        "published": True,
+        "deleted": False,
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            self.fields['description_' + lang] = 'description.' + lang
+            self.fields["description_" + lang] = "description." + lang
 
     @property
     def items(self):
-        return self.root['results']
+        return self.root["results"]
 
     def get_to_delete_kwargs(self):
         kwargs = super().get_to_delete_kwargs()
-        kwargs['eid__isnull'] = False
+        kwargs["eid__isnull"] = False
         return kwargs
 
     def next_row(self):
-        response = self.request_or_retry('https://biodiv-sports.fr/api/v2/sportpractice/')
-        for practice in response.json()['results']:
-            defaults = {'name_' + lang: practice['name'][lang] for lang in practice['name'].keys() if lang in settings.MODELTRANSLATION_LANGUAGES}
-            SportPractice.objects.get_or_create(id=practice['id'], defaults=defaults)
+        response = self.request_or_retry(
+            "https://biodiv-sports.fr/api/v2/sportpractice/"
+        )
+        for practice in response.json()["results"]:
+            defaults = {
+                "name_" + lang: practice["name"][lang]
+                for lang in practice["name"].keys()
+                if lang in settings.MODELTRANSLATION_LANGUAGES
+            }
+            SportPractice.objects.get_or_create(id=practice["id"], defaults=defaults)
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
         bbox.transform(4326)  # WGS84
         self.next_url = self.url
         while self.next_url:
             params = {
-                'in_bbox': ','.join([str(coord) for coord in bbox.extent]),
+                "in_bbox": ",".join([str(coord) for coord in bbox.extent]),
             }
             if self.practices:
-                params['practices'] = ','.join([str(practice) for practice in self.practices])
+                params["practices"] = ",".join(
+                    [str(practice) for practice in self.practices]
+                )
             response = self.request_or_retry(self.next_url, params=params)
 
             self.root = response.json()
-            self.nb = int(self.root['count'])
+            self.nb = int(self.root["count"])
 
-            for row in self.items:
-                yield row
-            self.next_url = self.root['next']
+            yield from self.items
+            self.next_url = self.root["next"]
 
     def normalize_field_name(self, name):
         return name
@@ -77,17 +85,18 @@ class BiodivParser(Parser):
         return str(val)
 
     def filter_geom(self, src, val):
-        if val['type'] == "Point":
-            geom = Point(val['coordinates'], srid=4326)  # WGS84
-        elif val['type'] == "Polygon":
-            geom = Polygon(*val['coordinates'], srid=4326)  # WGS84
-        elif val['type'] == "MultiPolygon":
+        if val["type"] == "Point":
+            geom = Point(val["coordinates"], srid=4326)  # WGS84
+        elif val["type"] == "Polygon":
+            geom = Polygon(*val["coordinates"], srid=4326)  # WGS84
+        elif val["type"] == "MultiPolygon":
             polygons = []
-            for polygon in val['coordinates']:
+            for polygon in val["coordinates"]:
                 polygons.append(Polygon(*polygon, srid=4326))
             geom = MultiPolygon(polygons, srid=4326)
         else:
-            raise ValueImportError("This object is neither a point, nor a polygon, nor a multipolygon")
+            msg = "This object is neither a point, nor a polygon, nor a multipolygon"
+            raise ValueImportError(msg)
         geom.transform(settings.SRID)
         return geom
 
@@ -105,12 +114,14 @@ class BiodivParser(Parser):
             except Species.DoesNotExist:
                 species = Species(category=Species.SPECIES, eid=eid)
         for lang, translation in names.items():
-            if lang in settings.MODELTRANSLATION_LANGUAGES and translation != getattr(species, 'name_' + lang):
-                setattr(species, 'name_' + lang, translation)
+            if lang in settings.MODELTRANSLATION_LANGUAGES and translation != getattr(
+                species, "name_" + lang
+            ):
+                setattr(species, "name_" + lang, translation)
                 need_save = True
         for i in range(12):
-            if period[i] != getattr(species, 'period{:02}'.format(i + 1)):
-                setattr(species, 'period{:02}'.format(i + 1), period[i])
+            if period[i] != getattr(species, f"period{i + 1:02}"):
+                setattr(species, f"period{i + 1:02}", period[i])
                 need_save = True
         practices = [SportPractice.objects.get(id=id) for id in practice_ids]
         if url != species.url:
@@ -131,27 +142,25 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
     label = "Shapefile zone sensible espèce"
     label_fr = "Shapefile zone sensible espèce"
     label_en = "Shapefile species sensitive area"
-    separator = ','
+    separator = ","
     delete = False
     fields = {
-        'geom': 'geom',
-        'contact': 'contact',
-        'description': 'description',
-        'species': 'espece',
+        "geom": "geom",
+        "contact": "contact",
+        "description": "description",
+        "species": "espece",
     }
     constant_fields = {
-        'published': True,
-        'deleted': False,
+        "published": True,
+        "deleted": False,
     }
-    field_options = {
-        'species': {'required': True}
-    }
+    field_options = {"species": {"required": True}}
 
     def filter_species(self, src, val):
         try:
             species = Species.objects.get(category=Species.SPECIES, name=val)
         except Species.DoesNotExist:
-            msg = "L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(val)
+            msg = f"L'espèce {val} n'existe pas dans Geotrek. Merci de la créer."
             raise RowImportError(msg)
         return species
 
@@ -161,23 +170,23 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
     label = "Shapefile zone sensible réglementaire"
     label_fr = "Shapefile zone sensible réglementaire"
     label_en = "Shapefile species sensitive area"
-    separator = ','
+    separator = ","
     delete = False
     fields = {
-        'geom': 'geom',
-        'contact': 'contact',
-        'description': 'descriptio',
-        'species': (
-            'nom',
-            'altitude',
-            'periode',
-            'pratiques',
-            'url',
-        )
+        "geom": "geom",
+        "contact": "contact",
+        "description": "descriptio",
+        "species": (
+            "nom",
+            "altitude",
+            "periode",
+            "pratiques",
+            "url",
+        ),
     }
     constant_fields = {
-        'published': True,
-        'deleted': False,
+        "published": True,
+        "deleted": False,
     }
 
     def filter_species(self, src, val):
@@ -188,7 +197,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
             period = period.split(self.separator)
             for i in range(1, 13):
                 if str(i) in period:
-                    setattr(species, 'period{:02}'.format(i), True)
+                    setattr(species, f"period{i:02}", True)
         species.url = url
         species.radius = elevation
         practices = []
@@ -197,7 +206,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
                 try:
                     practice = SportPractice.objects.get(name=practice_name)
                 except SportPractice.DoesNotExist:
-                    msg = "La pratique sportive {} n'existe pas dans Geotrek. Merci de l'ajouter.".format(practice_name)
+                    msg = f"La pratique sportive {practice_name} n'existe pas dans Geotrek. Merci de l'ajouter."
                     raise RowImportError(msg)
                 practices.append(practice)
         species.save()

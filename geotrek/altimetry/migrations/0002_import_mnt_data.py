@@ -4,13 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('altimetry', '0001_initial'),
+        ("altimetry", "0001_initial"),
     ]
 
     operations = [
-        migrations.RunSQL("CREATE TABLE IF NOT EXISTS mnt (rid serial primary key, rast raster);"),
+        migrations.RunSQL(
+            "CREATE TABLE IF NOT EXISTS mnt (rid serial primary key, rast raster);"
+        ),
         migrations.RunSQL("INSERT INTO altimetry_dem (rast) SELECT rast FROM mnt;"),
         migrations.RunSQL("DROP TABLE mnt;"),
     ]

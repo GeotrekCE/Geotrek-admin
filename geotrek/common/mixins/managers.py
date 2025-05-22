@@ -25,25 +25,32 @@ class ProviderChoicesMixin:
         qs = self.get_queryset()
         if hasattr(qs, "existing"):
             qs = qs.existing()
-        values = qs.exclude(provider__exact='') \
-            .distinct('provider').order_by("provider").values_list('provider', flat=True)
+        values = (
+            qs.exclude(provider__exact="")
+            .distinct("provider")
+            .order_by("provider")
+            .values_list("provider", flat=True)
+        )
         return tuple((value, value) for value in values)
 
 
 class TimestampedChoicesMixin:
-
     def extract_year_choices(self, fieldname):
         qs = self.get_queryset()
         if hasattr(qs, "existing"):
             qs = qs.existing()
-        first_year = qs.order_by(fieldname).values_list(f'{fieldname}__year', flat=True).first()
+        first_year = (
+            qs.order_by(fieldname).values_list(f"{fieldname}__year", flat=True).first()
+        )
         current_year = timezone_today().year
         if first_year:
-            return tuple((year, year) for year in range(current_year, first_year - 1, -1))
-        return (('', '---------'),)  # No data
+            return tuple(
+                (year, year) for year in range(current_year, first_year - 1, -1)
+            )
+        return (("", "---------"),)  # No data
 
     def year_insert_choices(self):
-        return self.extract_year_choices('date_insert')
+        return self.extract_year_choices("date_insert")
 
     def year_update_choices(self):
-        return self.extract_year_choices('date_update')
+        return self.extract_year_choices("date_update")

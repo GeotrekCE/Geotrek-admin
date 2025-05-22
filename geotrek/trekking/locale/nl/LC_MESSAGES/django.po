@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-08 16:23+0000\n"
+"POT-Creation-Date: 2025-04-16 18:22+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -68,8 +68,8 @@ msgstr ""
 msgid "Cannot add children because this trek is itself a child."
 msgstr ""
 
-#, python-brace-format
-msgid "Cannot use parent trek {child.name} as a child trek."
+#, python-format
+msgid "Cannot use parent trek %(name)s as a child trek."
 msgstr ""
 
 msgid "Cancel"
@@ -428,9 +428,9 @@ msgstr ""
 msgid "Published Services"
 msgstr ""
 
-#, python-brace-format
+#, python-format
 msgid ""
-"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+"Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
 msgid "You need to add a network of paths before importing POIs"
@@ -455,28 +455,18 @@ msgid ""
 "{geom_type}"
 msgstr ""
 
-#, python-brace-format
+#, python-format
 msgid ""
 "Trying to retrieve children for missing trek : could not find trek with UUID "
-"{key}"
+"%(key)s"
 msgstr ""
 
-msgid ""
-"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+#, python-format
+msgid "An error occurred in children generation: %(message)s"
 msgstr ""
 
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
-msgstr ""
-
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
-msgstr ""
-
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
 msgstr ""
 
 msgid "Trek geometry is None"
@@ -499,9 +489,6 @@ msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
 msgstr ""
 
 msgid "Attached files"
-msgstr ""
-
-msgid "Attributes"
 msgstr ""
 
 msgid "None"
@@ -540,9 +527,6 @@ msgid "Public print booklet"
 msgstr ""
 
 msgid "Print booklet"
-msgstr ""
-
-msgid "Photos accessibility"
 msgstr ""
 
 msgid "Itinerancy"

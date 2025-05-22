@@ -3,5 +3,5 @@ from django.utils.translation import gettext_lazy as _
 
 
 class ZoningConfig(AppConfig):
-    name = 'geotrek.zoning'
+    name = "geotrek.zoning"
     verbose_name = _("Zoning")

@@ -7,7 +7,6 @@ from geotrek.feedback.tests.factories import ReportFactory
 
 
 class ReportFilterTest(TestCase):
-
     @classmethod
     @freeze_time("2020-01-01")
     def setUpTestData(cls):
@@ -28,11 +27,14 @@ class ReportFilterTest(TestCase):
 
     def test_year_insert_filter(self):
         current_year = timezone_today().year
-        filter_set = ReportFilterSet(data={'year_insert': [2020]})
+        filter_set = ReportFilterSet(data={"year_insert": [2020]})
         filter_form = filter_set.form
 
         self.assertIn('<option value="2020">2020</option>', filter_form.as_p())
-        self.assertIn(f'<option value="{current_year}">{current_year}</option>', filter_form.as_p())
+        self.assertIn(
+            f'<option value="{current_year}">{current_year}</option>',
+            filter_form.as_p(),
+        )
 
         self.assertTrue(filter_form.is_valid())
         self.assertIn(self.report1, filter_set.qs)
@@ -40,11 +42,14 @@ class ReportFilterTest(TestCase):
 
     def test_year_update_filter(self):
         current_year = timezone_today().year
-        filter_set = ReportFilterSet(data={'year_update': [current_year]})
+        filter_set = ReportFilterSet(data={"year_update": [current_year]})
         filter_form = filter_set.form
 
         self.assertIn('<option value="2020">2020</option>', filter_form.as_p())
-        self.assertIn(f'<option value="{current_year}">{current_year}</option>', filter_form.as_p())
+        self.assertIn(
+            f'<option value="{current_year}">{current_year}</option>',
+            filter_form.as_p(),
+        )
 
         self.assertTrue(filter_form.is_valid())
         self.assertNotIn(self.report1, filter_set.qs)

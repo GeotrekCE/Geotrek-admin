@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0017_auto_20200708_1455'),
+        ("signage", "0017_auto_20200708_1455"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='signage',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="signage",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
     ]

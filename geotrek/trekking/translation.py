@@ -1,74 +1,89 @@
 from django.conf import settings
-
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import TranslationOptions, translator
 
 from geotrek.trekking import models as trekking_models
 
-
 # Trek app
 
+
 class TrekTO(TranslationOptions):
-    fields = ('name', 'departure', 'arrival', 'description_teaser', 'description', 'ambiance', 'access',
-              'accessibility_infrastructure', 'advice', 'gear', 'accessibility_signage', 'accessibility_slope',
-              'accessibility_covering', 'accessibility_exposure', 'accessibility_width',
-              'accessibility_advice', 'advised_parking', 'public_transport', 'ratings_description') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
-    fallback_undefined = {'published': None}
+    fields = (
+        "name",
+        "departure",
+        "arrival",
+        "description_teaser",
+        "description",
+        "ambiance",
+        "access",
+        "accessibility_infrastructure",
+        "advice",
+        "gear",
+        "accessibility_signage",
+        "accessibility_slope",
+        "accessibility_covering",
+        "accessibility_exposure",
+        "accessibility_width",
+        "accessibility_advice",
+        "advised_parking",
+        "public_transport",
+        "ratings_description",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {"published": None}
 
 
 class POITO(TranslationOptions):
-    fields = ('name', 'description') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple()
+    fields = ("name", "description") + (
+        ("published",) if settings.PUBLISHED_BY_LANG else tuple()
     )
-    fallback_undefined = {'published': None}
+    fallback_undefined = {"published": None}
 
 
 class POITypeTO(TranslationOptions):
-    fields = ('label', )
+    fields = ("label",)
 
 
 class TrekNetworkTO(TranslationOptions):
-    fields = ('network', )
+    fields = ("network",)
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class AccessibilityTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class AccessibilityLevelTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class RouteTO(TranslationOptions):
-    fields = ('route', )
+    fields = ("route",)
 
 
 class DifficultyLevelTO(TranslationOptions):
-    fields = ('difficulty', )
+    fields = ("difficulty",)
 
 
 class WebLinkTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class WebLinkCategoryTO(TranslationOptions):
-    fields = ('label', )
+    fields = ("label",)
 
 
 class RatingScaleTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class RatingTO(TranslationOptions):
-    fields = ('name', 'description')
+    fields = ("name", "description")
 
 
 class ServiceTypeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 # Register previously defined translation options
@@ -86,7 +101,7 @@ trek_translation_to_register = [
     (trekking_models.WebLinkCategory, WebLinkCategoryTO),
     (trekking_models.ServiceType, ServiceTypeTO),
     (trekking_models.Rating, RatingTO),
-    (trekking_models.RatingScale, RatingScaleTO)
+    (trekking_models.RatingScale, RatingScaleTO),
 ]
 
 for model, model_to in trek_translation_to_register:

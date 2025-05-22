@@ -4,40 +4,55 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0011_auto_20210106_2046'),
+        ("outdoor", "0011_auto_20210106_2046"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='site',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Insertion date'),
+            model_name="site",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Insertion date"
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date'),
+            model_name="site",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Update date"
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='name',
-            field=models.CharField(help_text='Public name (Change carefully)', max_length=128, verbose_name='Name'),
+            model_name="site",
+            name="name",
+            field=models.CharField(
+                help_text="Public name (Change carefully)",
+                max_length=128,
+                verbose_name="Name",
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Publication date'),
+            model_name="site",
+            name="publication_date",
+            field=models.DateField(
+                blank=True, editable=False, null=True, verbose_name="Publication date"
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible on Geotrek-rando', verbose_name='Published'),
+            model_name="site",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible on Geotrek-rando",
+                verbose_name="Published",
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='review',
-            field=models.BooleanField(default=False, verbose_name='Waiting for publication'),
+            model_name="site",
+            name="review",
+            field=models.BooleanField(
+                default=False, verbose_name="Waiting for publication"
+            ),
         ),
     ]

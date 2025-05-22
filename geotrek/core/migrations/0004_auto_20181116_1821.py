@@ -4,14 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0003_path_draft'),
+        ("core", "0003_path_draft"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='path',
-            options={'permissions': [('add_draft_path', 'Can add draft Path'), ('change_draft_path', 'Can change draft Path'), ('delete_draft_path', 'Can delete draft Path')], 'verbose_name': 'Path', 'verbose_name_plural': 'Paths'},
+            name="path",
+            options={
+                "permissions": [
+                    ("add_draft_path", "Can add draft Path"),
+                    ("change_draft_path", "Can change draft Path"),
+                    ("delete_draft_path", "Can delete draft Path"),
+                ],
+                "verbose_name": "Path",
+                "verbose_name_plural": "Paths",
+            },
         ),
     ]

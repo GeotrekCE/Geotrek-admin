@@ -4,14 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sensitivity', '0018_auto_20200228_2152'),
+        ("sensitivity", "0018_auto_20200228_2152"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE s_b_pratique_sportive_id_seq RENAME TO sensitivity_sportpractice_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_b_espece_id_seq RENAME TO sensitivity_species_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_r_espece_pratique_sportive_id_seq RENAME TO sensitivity_species_practices_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_t_zone_sensible_id_seq RENAME TO sensitivity_sensitivearea_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_pratique_sportive_id_seq RENAME TO sensitivity_sportpractice_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_espece_id_seq RENAME TO sensitivity_species_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_r_espece_pratique_sportive_id_seq RENAME TO sensitivity_species_practices_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_t_zone_sensible_id_seq RENAME TO sensitivity_sensitivearea_id_seq;"
+        ),
     ]

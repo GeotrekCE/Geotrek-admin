@@ -115,7 +115,7 @@ BEGIN
                          AND draft = FALSE
                          AND NEW.draft = FALSE
                          AND ST_DWithin(t.geom, NEW.geom, 0)
-                         AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
+                         AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING') ORDER BY id
     LOOP
 
         -- RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), path.id, path.name, ST_AsText(path.geom), ST_AsText(ST_Intersection(path.geom, NEW.geom));

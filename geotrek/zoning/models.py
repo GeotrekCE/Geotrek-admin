@@ -1,9 +1,10 @@
 """
 
-   Zoning models
-   (not MapEntity : just layers, on which intersections with objects is done in triggers)
+Zoning models
+(not MapEntity : just layers, on which intersections with objects is done in triggers)
 
 """
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
@@ -25,33 +26,55 @@ class RestrictedAreaType(models.Model):
 class RestrictedArea(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.PROTECT)
-    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
+    area_type = models.ForeignKey(
+        RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.PROTECT
+    )
+    published = models.BooleanField(
+        verbose_name=_("Published"),
+        default=True,
+        help_text=_("Visible on Geotrek-rando"),
+    )
 
     class Meta:
-        ordering = ['area_type', 'name']
+        ordering = ["area_type", "name"]
         verbose_name = _("Restricted area")
         verbose_name_plural = _("Restricted areas")
         indexes = [
-            GistIndex(name='restrictedarea_geom_gist_idx', fields=['geom']),
+            GistIndex(name="restrictedarea_geom_gist_idx", fields=["geom"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
         ]
 
     def __str__(self):
-        return "{} - {}".format(self.area_type.name, self.name)
+        return f"{self.area_type.name} - {self.name}"
 
 
 class City(TimeStampedModelMixin, models.Model):
     code = models.CharField(primary_key=True, max_length=6)
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
+    published = models.BooleanField(
+        verbose_name=_("Published"),
+        default=True,
+        help_text=_("Visible on Geotrek-rando"),
+    )
 
     class Meta:
         verbose_name = _("City")
         verbose_name_plural = _("Cities")
-        ordering = ['name']
+        ordering = ["name"]
         indexes = [
-            GistIndex(name='city_geom_gist_idx', fields=['geom']),
+            GistIndex(name="city_geom_gist_idx", fields=["geom"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
         ]
 
     def __str__(self):
@@ -61,14 +84,24 @@ class City(TimeStampedModelMixin, models.Model):
 class District(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
+    published = models.BooleanField(
+        verbose_name=_("Published"),
+        default=True,
+        help_text=_("Visible on Geotrek-rando"),
+    )
 
     class Meta:
         verbose_name = _("District")
         verbose_name_plural = _("Districts")
-        ordering = ['name']
+        ordering = ["name"]
         indexes = [
-            GistIndex(name='district_geom_gist_idx', fields=['geom']),
+            GistIndex(name="district_geom_gist_idx", fields=["geom"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
         ]
 
     def __str__(self):

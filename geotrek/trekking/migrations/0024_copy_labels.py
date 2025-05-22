@@ -4,19 +4,21 @@ from django.db import migrations
 
 
 def copy_labels(apps, schema_editor):
-    Trek = apps.get_model('trekking', 'Trek')
-    Label = apps.get_model('common', 'Label')
+    Trek = apps.get_model("trekking", "Trek")
+    Label = apps.get_model("common", "Label")
 
     for trek in Trek.objects.all():
         for label in trek.labels.all():
-            label2, created = Label.objects.get_or_create(name=label.name, defaults={'advice': label.advice, 'filter': label.filter_rando})
+            label2, created = Label.objects.get_or_create(
+                name=label.name,
+                defaults={"advice": label.advice, "filter": label.filter_rando},
+            )
             trek.labels2.add(label2)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0023_trek_labels2'),
+        ("trekking", "0023_trek_labels2"),
     ]
 
     operations = [

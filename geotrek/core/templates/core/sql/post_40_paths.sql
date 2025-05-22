@@ -74,22 +74,6 @@ CREATE TRIGGER core_path_90_topologies_geom_u_tgr
 AFTER UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_path_changes();
 
-
--------------------------------------------------------------------------------
--- Ensure paths have valid geometries
--------------------------------------------------------------------------------
-
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_isvalid;
-
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_issimple;
-
-ALTER TABLE core_path ADD CONSTRAINT core_path_geom_isvalid CHECK (ST_IsValid(geom));
-ALTER TABLE core_path ADD CONSTRAINT core_path_geom_issimple CHECK (ST_IsSimple(geom));
-
-
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
@@ -158,3 +142,20 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER core_path_latest_updated_d_tgr
 AFTER DELETE ON core_path
 FOR EACH ROW EXECUTE PROCEDURE path_latest_updated_d();
+
+
+----------------------------------------------------------------------------
+-- Set pgRouting-related values to null after the geometry has been modified
+----------------------------------------------------------------------------
+
+CREATE FUNCTION {{ schema_geotrek }}.set_pgrouting_values_to_null() RETURNS trigger SECURITY DEFINER AS $$
+DECLARE
+BEGIN
+    UPDATE core_path SET source = NULL, target = NULL WHERE id = NEW.id;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER core_path_pgrouting_values_null_tgr
+AFTER UPDATE OF geom ON core_path
+FOR EACH ROW EXECUTE PROCEDURE set_pgrouting_values_to_null();

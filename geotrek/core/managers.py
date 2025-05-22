@@ -9,9 +9,13 @@ class PathManager(models.Manager, ProviderChoicesMixin):
     use_for_related_fields = True
 
     def get_queryset(self):
-        """Hide all ``Path`` records that are not marked as visible.
-        """
-        return super().get_queryset().filter(visible=True).annotate(length_2d=Length('geom'))
+        """Hide all ``Path`` records that are not marked as visible."""
+        return (
+            super()
+            .get_queryset()
+            .filter(visible=True)
+            .annotate(length_2d=Length("geom"))
+        )
 
 
 class PathInvisibleManager(models.Manager):
@@ -26,12 +30,12 @@ class TopologyManager(NoDeleteManager):
     use_for_related_fields = True
 
     def get_queryset(self):
-        return super().get_queryset().annotate(length_2d=Length('geom'))
+        return super().get_queryset().annotate(length_2d=Length("geom"))
 
 
 class PathAggregationManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().order_by('order')
+        return super().get_queryset().order_by("order")
 
 
 class TrailManager(TopologyManager, ProviderChoicesMixin):

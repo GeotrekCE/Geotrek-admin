@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0027_intervention_workforce_cost'),
+        ("maintenance", "0027_intervention_workforce_cost"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='intervention',
-            name='contractors',
-            field=models.ManyToManyField(blank=True, related_name='interventions', to='maintenance.Contractor', verbose_name='Contractors'),
+            model_name="intervention",
+            name="contractors",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="interventions",
+                to="maintenance.Contractor",
+                verbose_name="Contractors",
+            ),
         ),
     ]

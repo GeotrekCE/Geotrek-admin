@@ -2,56 +2,53 @@
 {% load static crispy_forms_tags i18n %}
 
 {% block extrahead %}
-<script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
-<link rel="stylesheet" href="{% static "common/css/import.css" %}" />
+    <script type="text/javascript" src="{% static "common/js/import.js" %}"></script>
+    <link rel="stylesheet" href="{% static "common/css/import.css" %}"/>
 {% endblock extrahead %}
 
 {% block toolbar %}
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div id="import-forms" class="col-12 col-sm-3">
-	{% block mainform %}
-	{% if form %}
-		{% crispy form form.helper %}
-	{% endif %}
-	{% if encoding_error %}
-		<p style="color: red;">
-			{% trans "Decoding error. Please check encoding and use only ASCII in file names." %}
-		</p>
-	{% endif %}
-	{% if form_without_file %}
-		{% crispy form_without_file form_without_file.helper%}
-	{% endif %}
-	{% if form_suricate %}
-		{% crispy form_suricate form_suricate.helper%}
-	{% endif %}
-	{% if not form and not form_without_file and not form_suricate %}
-		<p>{% trans "No parser available." %}</p>
-	{% endif %}
-	{% endblock mainform %}
-</div>
-<div id="progress-bars" class="col-12 col-sm-5">
-</div>
+    <div id="import-forms" class="col-12 col-md-6 offset-md-3">
+        {% block mainform %}
+            {% if form %}
+                {% crispy form form.helper %}
+            {% endif %}
+            {% if encoding_error %}
+                <p style="color: red;">
+                    {% trans "Decoding error. Please check encoding and use only ASCII in file names." %}
+                </p>
+            {% endif %}
+            {% if form_without_file %}
+                {% crispy form_without_file form_without_file.helper %}
+            {% endif %}
+            {% if form_suricate %}
+                {% crispy form_suricate form_suricate.helper %}
+            {% endif %}
+            {% if not form and not form_without_file and not form_suricate %}
+                <p>{% trans "No parser available." %}</p>
+            {% endif %}
+        {% endblock mainform %}
+        <div id="progress-bars" class="col-12">
+        </div>
+    </div>
 
-<script id="import-template" type="text/template">
-	<div id="progress-tpl">
-		<button type="button" class="close" data-dismiss="alert">&times;</button>
-		<div class="description">
-			<span class="parser"></span>
-			<span class="filename">
-			</span>
-		</div>
-		<div class="pull-left">
-			<span></span>
-		</div>
-		<div class="progress progress-striped active">
-			<div class="bar"></div>
-		</div>
-		<div class="alert">
-			<span></span>
-		</div>
-		<hr></hr>
-	</div>
-</script>
+    <script id="import-template" type="text/template">
+        <div id="progress-tpl">
+            <div class="description">
+                <span class="parser"></span>
+                <span class="filename"></span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <span class="message"></span>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+        </div>
+    </script>
 {% endblock mainpanel %}

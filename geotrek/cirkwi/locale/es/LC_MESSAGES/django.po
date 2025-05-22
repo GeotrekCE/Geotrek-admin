@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2025-01-06 15:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,4 +43,29 @@ msgid "Cirkwi POI category"
 msgstr ""
 
 msgid "Cirkwi POI categories"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"No Practice matching Cirkwi Locomotion '{type}' (id: '{id}') was found. "
+"Please add it"
+msgstr ""
+
+msgid "Difficulty Level with Cirkwi Level"
+msgstr ""
+
+msgid "Address"
+msgstr ""
+
+#, python-brace-format
+msgid "Type 1 '{type}' does not exist for category '{cat}'. Please add it"
 msgstr ""

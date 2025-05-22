@@ -9,12 +9,14 @@ class ComaSeparatedMultipleModelChoiceField(ModelChoiceField):
         if value in self.empty_values:
             return None
         try:
-            key = self.to_field_name or 'pk'
-            value = self.queryset.filter(**{f'{key}__in': value.split(',')})
+            key = self.to_field_name or "pk"
+            value = self.queryset.filter(**{f"{key}__in": value.split(",")})
         except (ValueError, TypeError):
-            raise ValidationError(self.error_messages['invalid_choice'], code='invalid_choice')
+            raise ValidationError(
+                self.error_messages["invalid_choice"], code="invalid_choice"
+            )
         return value
 
 
 class OneLineRangeField(RangeField):
-    widget = OneLineRangeWidget(attrs={'class': 'minmax-field'})
+    widget = OneLineRangeWidget(attrs={"class": "minmax-field"})

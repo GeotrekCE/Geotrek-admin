@@ -4,14 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0038_auto_20231023_1233'),
+        ("signage", "0038_auto_20231023_1233"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='bladetype',
-            options={'ordering': ('label',), 'verbose_name': 'Blade type', 'verbose_name_plural': 'Blade types'},
+            name="bladetype",
+            options={
+                "ordering": ("label",),
+                "verbose_name": "Blade type",
+                "verbose_name_plural": "Blade types",
+            },
         ),
     ]

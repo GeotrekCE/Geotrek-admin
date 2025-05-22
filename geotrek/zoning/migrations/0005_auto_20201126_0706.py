@@ -4,9 +4,8 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0004_auto_20200831_1406'),
+        ("zoning", "0004_auto_20200831_1406"),
     ]
 
     operations = [
@@ -15,6 +14,6 @@ class Migration(migrations.Migration):
             "DELETE FROM zoning_cityedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';"
             "DELETE FROM zoning_districtedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';"
             "DELETE FROM zoning_restrictedareaedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';",
-            migrations.RunSQL.noop
+            migrations.RunSQL.noop,
         )
     ]

@@ -1,12 +1,12 @@
 import factory
-
 from django.conf import settings
 
-from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.feedback.tests.factories import ReportFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
+
 from .. import models
 
 
@@ -14,28 +14,28 @@ class InterventionStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InterventionStatus
 
-    status = factory.Sequence(lambda n: "Status %s" % n)
+    status = factory.Sequence(lambda n: f"Status {n}")
 
 
 class InterventionDisorderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InterventionDisorder
 
-    disorder = factory.Sequence(lambda n: "Disorder %s" % n)
+    disorder = factory.Sequence(lambda n: f"Disorder {n}")
 
 
 class InterventionTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InterventionType
 
-    type = factory.Sequence(lambda n: "Type %s" % n)
+    type = factory.Sequence(lambda n: f"Type {n}")
 
 
 class InterventionJobFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InterventionJob
 
-    job = factory.Sequence(lambda n: "Job %s" % n)
+    job = factory.Sequence(lambda n: f"Job {n}")
     cost = 500.0
 
 
@@ -51,7 +51,7 @@ class LightInterventionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Intervention
 
-    name = factory.Sequence(lambda n: "Intervention %s" % n)
+    name = factory.Sequence(lambda n: f"Intervention {n}")
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
@@ -59,7 +59,7 @@ class LightInterventionFactory(factory.django.DjangoModelFactory):
 
 
 class InterventionFactory(LightInterventionFactory):
-    begin_date = '2022-03-30'
+    begin_date = "2022-03-30"
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
@@ -82,10 +82,14 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(paths=[(PathFactory.create(), 0.5, 0.5)])
+            infra = InfrastructureFactory.create(
+                paths=[(PathFactory.create(), 0.5, 0.5)]
+            )
 
         else:
-            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            infra = InfrastructureFactory.create(
+                geom="SRID=2154;POINT (700040 6600040)"
+            )
         obj.target = infra
         if create:
             obj.save()
@@ -99,28 +103,28 @@ class ContractorFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Contractor
 
-    contractor = factory.Sequence(lambda n: "Contractor %s" % n)
+    contractor = factory.Sequence(lambda n: f"Contractor {n}")
 
 
 class ProjectTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ProjectType
 
-    type = factory.Sequence(lambda n: "Type %s" % n)
+    type = factory.Sequence(lambda n: f"Type {n}")
 
 
 class ProjectDomainFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ProjectDomain
 
-    domain = factory.Sequence(lambda n: "Domain %s" % n)
+    domain = factory.Sequence(lambda n: f"Domain {n}")
 
 
 class ProjectFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Project
 
-    name = factory.Sequence(lambda n: "Project %s" % n)
+    name = factory.Sequence(lambda n: f"Project {n}")
     begin_year = 2010
 
     @factory.post_generation

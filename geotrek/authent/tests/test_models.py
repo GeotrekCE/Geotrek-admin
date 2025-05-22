@@ -15,7 +15,7 @@ class StructureModelTestCase(TestCase):
 
     @override_settings(TEST=False, DEFAULT_STRUCTURE_NAME="Mércäntour")
     def test_default_structure_pk_cache(self):
-        """ Test if default structure pk is in cache to avoid unnecessary queries """
+        """Test if default structure pk is in cache to avoid unnecessary queries"""
         with self.assertNumQueries(1):
             # request and set in cache
             default_structure_pk()

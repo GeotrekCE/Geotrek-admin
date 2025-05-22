@@ -1,8 +1,9 @@
 import json
-from geotrek.feedback.models import PredefinedEmail, ReportStatus, WorkflowManager
+
 from django import template
 from django.conf import settings
 
+from geotrek.feedback.models import PredefinedEmail, ReportStatus, WorkflowManager
 
 register = template.Library()
 
@@ -29,7 +30,7 @@ def status_ids_and_colors():
             "label": str(status.label),
             "id": str(status.identifier),
             "color": str(status.color),
-            "display_in_legend": status.display_in_legend
+            "display_in_legend": status.display_in_legend,
         }
         for status in ReportStatus.objects.all()
     }
@@ -39,10 +40,7 @@ def status_ids_and_colors():
 @register.simple_tag
 def predefined_emails():
     predefined_emails = {
-        email.pk: {
-            "label": str(email.label),
-            "text": str(email.text)
-        }
+        email.pk: {"label": str(email.label), "text": str(email.text)}
         for email in PredefinedEmail.objects.all()
     }
     return json.dumps(predefined_emails)
@@ -56,15 +54,19 @@ def resolved_intervention_info(report):
         if intervention:
             authors = intervention.authors
             if authors:
-                user = authors.last()  # oldest author is the one that created the intervention
+                user = (
+                    authors.last()
+                )  # oldest author is the one that created the intervention
                 if user.profile and user.profile.extended_username:
                     username = user.profile.extended_username
                 else:
                     username = user.username
 
             resolved_intervention_info = {
-                "end_date": report.interventions.first().end_date.strftime("%d/%m/%Y") if report.interventions else None,
-                "username": username
+                "end_date": report.interventions.first().end_date.strftime("%d/%m/%Y")
+                if report.interventions
+                else None,
+                "username": username,
             }
             return json.dumps(resolved_intervention_info)
     return json.dumps({})

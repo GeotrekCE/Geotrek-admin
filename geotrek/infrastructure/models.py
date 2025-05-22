@@ -1,48 +1,61 @@
 import os
 
+from django.conf import settings
 from django.db import models
+from django.db.models.enums import TextChoices
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 
-from extended_choices import Choices
-
-from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.signals import log_cascade_deletion
-from geotrek.common.utils import classproperty, intersecting, queryset_or_all_objects, queryset_or_model
-from geotrek.common.mixins.models import (BasePublishableMixin, OptionalPictogramMixin, TimeStampedModelMixin,
-                                          GeotrekMapEntityMixin)
+from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
+from geotrek.common.mixins.models import (
+    BasePublishableMixin,
+    GeotrekMapEntityMixin,
+    OptionalPictogramMixin,
+    TimeStampedModelMixin,
+)
 from geotrek.common.models import AccessMean
-from geotrek.core.models import Topology, Path
+from geotrek.common.signals import log_cascade_deletion
+from geotrek.common.utils import (
+    classproperty,
+    intersecting,
+    queryset_or_all_objects,
+    queryset_or_model,
+)
+from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.managers import InfrastructureGISManager
 
-INFRASTRUCTURE_TYPES = Choices(
-    ('BUILDING', 'A', _("Building")),
-    ('FACILITY', 'E', _("Facility")),
-)
+
+class InfrastructureTypeChoices(TextChoices):
+    BUILDING = "A", _("Building")
+    FACILITY = "E", _("Facility")
 
 
-class InfrastructureType(TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin):
-    """ Types of infrastructures (bridge, WC, stairs, ...) """
+class InfrastructureType(
+    TimeStampedModelMixin, StructureOrNoneRelated, OptionalPictogramMixin
+):
+    """Types of infrastructures (bridge, WC, stairs, ...)"""
+
     label = models.CharField(max_length=128)
-    type = models.CharField(max_length=1, choices=INFRASTRUCTURE_TYPES)
+    type = models.CharField(max_length=1, choices=InfrastructureTypeChoices.choices)
 
     class Meta:
         verbose_name = _("Infrastructure Type")
         verbose_name_plural = _("Infrastructure Types")
-        ordering = ['label', 'type']
+        ordering = ["label", "type"]
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
     def get_pictogram_url(self):
         pictogram_url = super().get_pictogram_url()
         if pictogram_url:
             return pictogram_url
-        return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
+        return os.path.join(
+            settings.STATIC_URL, "infrastructure/picto-infrastructure.png"
+        )
 
 
 class InfrastructureAccessMean(TimeStampedModelMixin):
@@ -51,7 +64,7 @@ class InfrastructureAccessMean(TimeStampedModelMixin):
     class Meta:
         verbose_name = _("Access mean")
         verbose_name_plural = _("Access means")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         return self.label
@@ -63,26 +76,28 @@ class InfrastructureCondition(TimeStampedModelMixin, StructureOrNoneRelated):
     class Meta:
         verbose_name = _("Infrastructure Condition")
         verbose_name_plural = _("Infrastructure Conditions")
-        ordering = ('label',)
+        ordering = ("label",)
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
-class InfrastructureMaintenanceDifficultyLevel(TimeStampedModelMixin, StructureOrNoneRelated):
+class InfrastructureMaintenanceDifficultyLevel(
+    TimeStampedModelMixin, StructureOrNoneRelated
+):
     label = models.CharField(verbose_name=_("Label"), max_length=250)
 
     class Meta:
         verbose_name = _("Maintenance difficulty")
         verbose_name_plural = _("Maintenance difficulty levels")
-        ordering = ('label',)
-        unique_together = ('label', 'structure')
+        ordering = ("label",)
+        unique_together = ("label", "structure")
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
@@ -92,30 +107,44 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
     class Meta:
         verbose_name = _("Usage difficulty")
         verbose_name_plural = _("Usage difficulty levels")
-        ordering = ('label',)
-        unique_together = ('label', 'structure')
+        ordering = ("label",)
+        unique_together = ("label", "structure")
 
     def __str__(self):
         if self.structure:
-            return "{} ({})".format(self.label, self.structure.name)
+            return f"{self.label} ({self.structure.name})"
         return self.label
 
 
 class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
-    """ A generic infrastructure in the park """
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       on_delete=models.CASCADE)
+    """A generic infrastructure in the park"""
 
-    name = models.CharField(max_length=128,
-                            help_text=_("Reference, code, ..."), verbose_name=_("Name"))
-    description = models.TextField(blank=True,
-                                   verbose_name=_("Description"), help_text=_("Specificites"))
-    access = models.ForeignKey(AccessMean,
-                               verbose_name=_("Access mean"), blank=True, null=True,
-                               on_delete=models.PROTECT)
-    implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-    provider = models.CharField(verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True)
+    topo_object = models.OneToOneField(
+        Topology, parent_link=True, on_delete=models.CASCADE
+    )
+
+    name = models.CharField(
+        max_length=128, help_text=_("Reference, code, ..."), verbose_name=_("Name")
+    )
+    description = models.TextField(
+        blank=True, verbose_name=_("Description"), help_text=_("Specificites")
+    )
+    access = models.ForeignKey(
+        AccessMean,
+        verbose_name=_("Access mean"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+    implantation_year = models.PositiveSmallIntegerField(
+        verbose_name=_("Implantation year"), null=True
+    )
+    eid = models.CharField(
+        verbose_name=_("External id"), max_length=1024, blank=True, default=""
+    )
+    provider = models.CharField(
+        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    )
 
     class Meta:
         abstract = True
@@ -125,15 +154,18 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def implantation_year_display(self):
-        return "{}".format(self.implantation_year) if self.implantation_year else ""
+        return f"{self.implantation_year}" if self.implantation_year else ""
 
     @property
     def name_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(),
-                                                              self,
-                                                              self)
+        s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self}" >{self}</a>'
         if self.published:
-            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = (
+                '<span class="badge badge-success" title="{}">&#x2606;</span> '.format(
+                    _("Published")
+                )
+                + s
+            )
         return s
 
     @property
@@ -158,27 +190,40 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 
 class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
-    """ An infrastructure in the park, which is not of type SIGNAGE """
-    type = models.ForeignKey(InfrastructureType, related_name="infrastructures", verbose_name=_("Type"), on_delete=models.PROTECT)
+    """An infrastructure in the park, which is not of type SIGNAGE"""
+
+    type = models.ForeignKey(
+        InfrastructureType,
+        related_name="infrastructures",
+        verbose_name=_("Type"),
+        on_delete=models.PROTECT,
+    )
     objects = InfrastructureGISManager()
-    maintenance_difficulty = models.ForeignKey(InfrastructureMaintenanceDifficultyLevel,
-                                               verbose_name=_("Maintenance difficulty"),
-                                               help_text=_("Danger level of infrastructure maintenance"),
-                                               blank=True, null=True,
-                                               on_delete=models.PROTECT,
-                                               related_name='infrastructures_set')
-    usage_difficulty = models.ForeignKey(InfrastructureUsageDifficultyLevel,
-                                         verbose_name=_("Usage difficulty"),
-                                         help_text=_("Danger level of end users' infrastructure usage"),
-                                         blank=True, null=True,
-                                         on_delete=models.PROTECT,
-                                         related_name='infrastructures_set')
+    maintenance_difficulty = models.ForeignKey(
+        InfrastructureMaintenanceDifficultyLevel,
+        verbose_name=_("Maintenance difficulty"),
+        help_text=_("Danger level of infrastructure maintenance"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="infrastructures_set",
+    )
+    usage_difficulty = models.ForeignKey(
+        InfrastructureUsageDifficultyLevel,
+        verbose_name=_("Usage difficulty"),
+        help_text=_("Danger level of end users' infrastructure usage"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="infrastructures_set",
+    )
     accessibility = models.TextField(verbose_name=_("Accessibility"), blank=True)
     conditions = models.ManyToManyField(
         InfrastructureCondition,
-        related_name='infrastructures',
+        related_name="infrastructures",
         verbose_name=_("Conditions"),
-        blank=True)
+        blank=True,
+    )
 
     geometry_types_allowed = ["LINESTRING", "POINT"]
 
@@ -189,7 +234,7 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
     @classmethod
     def path_infrastructures(cls, path):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+            return cls.objects.existing().filter(aggregations__path=path).distinct("pk")
         else:
             area = path.geom.buffer(settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN)
             return cls.objects.existing().filter(geom__intersects=area)
@@ -199,7 +244,9 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
-            area = topology.geom.buffer(settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN)
+            area = topology.geom.buffer(
+                settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN
+            )
             qs = queryset_or_all_objects(queryset, cls)
             qs = qs.filter(geom__intersects=area)
         return qs
@@ -222,7 +269,7 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
             # Use conditions prefetched
             conditions_list = self.conditions_list
         else:
-            conditions_list = self.conditions.select_related('structure').all()
+            conditions_list = self.conditions.select_related("structure").all()
         return ", ".join([str(c) for c in conditions_list])
 
     def save(self, *args, **kwargs):
@@ -237,12 +284,23 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
 
 
 @receiver(pre_delete, sender=Topology)
-def log_cascade_deletion_from_infrastructure_topology(sender, instance, using, **kwargs):
+def log_cascade_deletion_from_infrastructure_topology(
+    sender, instance, using, **kwargs
+):
     # Infrastructures are deleted when topologies (from BaseInfrastructure) are deleted
-    log_cascade_deletion(sender, instance, Infrastructure, 'topo_object')
+    log_cascade_deletion(sender, instance, Infrastructure, "topo_object")
 
 
-Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))
-Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _("Infrastructures"))
-Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
-                      _("Published Infrastructures"))
+Path.add_property(
+    "infrastructures",
+    lambda self: Infrastructure.path_infrastructures(self),
+    _("Infrastructures"),
+)
+Topology.add_property(
+    "infrastructures", Infrastructure.topology_infrastructures, _("Infrastructures")
+)
+Topology.add_property(
+    "published_infrastructures",
+    Infrastructure.published_topology_infrastructure,
+    _("Published Infrastructures"),
+)

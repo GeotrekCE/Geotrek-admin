@@ -9,37 +9,37 @@ class ReportStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportStatus
 
-    label = factory.Sequence(lambda n: "Status %s" % n)
-    identifier = factory.Sequence(lambda n: "ID %s" % n)
+    label = factory.Sequence(lambda n: f"Status {n}")
+    identifier = factory.Sequence(lambda n: f"ID {n}")
 
 
 class ReportActivityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportActivity
 
-    label = factory.Sequence(lambda n: "Activity %s" % n)
+    label = factory.Sequence(lambda n: f"Activity {n}")
 
 
 class ReportCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportCategory
 
-    label = factory.Sequence(lambda n: "Category %s" % n)
+    label = factory.Sequence(lambda n: f"Category {n}")
 
 
 class PredefinedEmailFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.PredefinedEmail
 
-    label = factory.Sequence(lambda n: "Predefined Email %s" % n)
-    text = factory.Sequence(lambda n: "Some email body content %s" % n)
+    label = factory.Sequence(lambda n: f"Predefined Email {n}")
+    text = factory.Sequence(lambda n: f"Some email body content {n}")
 
 
 class ReportProblemMagnitudeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportProblemMagnitude
 
-    label = factory.Sequence(lambda n: "Utilisation %s" % n)
+    label = factory.Sequence(lambda n: f"Utilisation {n}")
 
 
 class WorkflowManagerFactory(factory.django.DjangoModelFactory):
@@ -56,8 +56,8 @@ class ReportFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = feedback_models.Report
 
-    email = factory.Sequence(lambda n: "email%s@domain.tld" % n)
-    comment = factory.Sequence(lambda n: "comment %s" % n)
+    email = factory.Sequence(lambda n: f"email{n}@domain.tld")
+    comment = factory.Sequence(lambda n: f"comment {n}")
     geom = Point(700000, 6600000, srid=settings.SRID)
     activity = factory.SubFactory(ReportActivityFactory)
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
@@ -67,6 +67,5 @@ class ReportFactory(factory.django.DjangoModelFactory):
 
 
 class TimerEventFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = feedback_models.TimerEvent

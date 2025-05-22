@@ -9,7 +9,7 @@ class TrekOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('parent', 'child')
+        qs = super().get_queryset().select_related("parent", "child")
         # Exclude deleted treks
         return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
@@ -20,7 +20,7 @@ class TrekManager(TopologyManager, ProviderChoicesMixin):
 
 class WebLinkManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related('category')
+        return super().get_queryset().select_related("category")
 
 
 class POIManager(NoDeleteManager, ProviderChoicesMixin):

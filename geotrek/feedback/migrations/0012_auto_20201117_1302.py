@@ -4,20 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0011_auto_20201012_1500'),
+        ("feedback", "0011_auto_20201012_1500"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='report',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="report",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='report',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="report",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
     ]

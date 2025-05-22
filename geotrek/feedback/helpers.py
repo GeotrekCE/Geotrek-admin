@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class SuricateRequestManager:
-
     URL = None
     ID_ORIGIN = None
     PRIVATE_KEY_CLIENT_SERVER = None
@@ -24,15 +23,13 @@ class SuricateRequestManager:
 
     def check_response_integrity(self, response):
         if response.status_code not in [200, 201]:
-            raise Exception(
-                f"Failed to access Suricate API - Status code: {response.status_code}"
-            )
+            msg = f"Failed to access Suricate API - Status code: {response.status_code}"
+            raise Exception(msg)
         else:
             data = json.loads(response.content.decode())
-            if ("code_ok" in data) and (data["code_ok"] == 'false'):
-                raise Exception(
-                    f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
-                )
+            if ("code_ok" in data) and (data["code_ok"] == "false"):
+                msg = f"Unsuccesful request on Suricate API:   [{data['error']['code']} - {data['error']['message']} - {data['message']}]"
+                raise Exception(msg)
             return data
         #  THIS SHOULD BE A THING but the documentation is at war with the API
         #         else:
@@ -50,7 +47,9 @@ class SuricateRequestManager:
         # Include alert ID in check when needed
         if "uid_alerte" in url_params:
             id_alert = str(url_params["uid_alerte"])
-            check = md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()).hexdigest()
+            check = md5(
+                (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN + id_alert).encode()
+            ).hexdigest()
         else:
             check = self.CHECK_CLIENT
         all_url_params["check"] = check
@@ -83,7 +82,7 @@ class SuricateRequestManager:
             api=which_api,
             endpoint=endpoint,
             params=json.dumps(params),
-            error_message=error_message
+            error_message=error_message,
         )
 
     def get_suricate(self, endpoint, url_params={}):
@@ -128,27 +127,28 @@ class SuricateRequestManager:
             )
         if response.status_code not in [200, 201]:
             logger.warning(
-                f"Failed to access Suricate attachment - Status code: {response.status_code}"
+                "Failed to access Suricate attachment - Status code: %s",
+                response.status_code,
             )
         return response
 
     def print_response_OK_or_KO(self, response):
         if response.status_code not in [200, 201]:
-            print(f"KO - Status code: {response.status_code}")
+            return f"KO - Status code: {response.status_code}"
         else:
             data = json.loads(response.content.decode())
-            if "code_ok" in data and (data["code_ok"] == 'false'):
-                print(f"KO:   [{data['error']['code']} - {data['error']['message']}]")
-            elif "code_ok" in data and (data["code_ok"] == 'true'):
-                print("OK")
+
+            if "code_ok" in data and (data["code_ok"] == "false"):
+                return f"KO:   [{data['error']['code']} - {data['error']['message']}]"
+            elif "code_ok" in data and (data["code_ok"] == "true"):
+                return "OK"
 
     def test_suricate_connection(self):
         response = self.get_from_suricate_no_integrity_check(endpoint="wsGetActivities")
-        self.print_response_OK_or_KO(response)
+        return self.print_response_OK_or_KO(response)
 
 
 class SuricateStandardRequestManager(SuricateRequestManager):
-
     def __init__(self, pending_requests_model=None):
         self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_REPORT_SETTINGS["URL"]
@@ -160,14 +160,15 @@ class SuricateStandardRequestManager(SuricateRequestManager):
             "PRIVATE_KEY_SERVER_CLIENT"
         ]
         self.CHECK_CLIENT = md5((self.PRIVATE_KEY_CLIENT_SERVER).encode()).hexdigest()
-        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
+        self.CHECK_SERVER = md5(
+            (self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()
+        ).hexdigest()
 
         self.USE_AUTH = "AUTH" in settings.SURICATE_REPORT_SETTINGS.keys()
         self.AUTH = settings.SURICATE_REPORT_SETTINGS["AUTH"] if self.USE_AUTH else None
 
 
 class SuricateGestionRequestManager(SuricateRequestManager):
-
     def __init__(self, pending_requests_model=None):
         self.pending_requests_model = pending_requests_model
         self.URL = settings.SURICATE_MANAGEMENT_SETTINGS["URL"]
@@ -178,15 +179,20 @@ class SuricateGestionRequestManager(SuricateRequestManager):
         self.PRIVATE_KEY_SERVER_CLIENT = settings.SURICATE_MANAGEMENT_SETTINGS[
             "PRIVATE_KEY_SERVER_CLIENT"
         ]
-        self.CHECK_CLIENT = md5((self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()).hexdigest()
-        self.CHECK_SERVER = md5((self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()).hexdigest()
+        self.CHECK_CLIENT = md5(
+            (self.PRIVATE_KEY_CLIENT_SERVER + self.ID_ORIGIN).encode()
+        ).hexdigest()
+        self.CHECK_SERVER = md5(
+            (self.PRIVATE_KEY_SERVER_CLIENT + self.ID_ORIGIN).encode()
+        ).hexdigest()
 
         self.USE_AUTH = "AUTH" in settings.SURICATE_MANAGEMENT_SETTINGS.keys()
-        self.AUTH = settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
+        self.AUTH = (
+            settings.SURICATE_MANAGEMENT_SETTINGS["AUTH"] if self.USE_AUTH else None
+        )
 
 
 class SuricateMessenger:
-
     def __init__(self, pending_requests_model=None):
         self.pending_requests_model = pending_requests_model
         self.standard_manager = SuricateStandardRequestManager(pending_requests_model)
@@ -198,9 +204,17 @@ class SuricateMessenger:
             (manager.PRIVATE_KEY_CLIENT_SERVER + report.email).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
-        activity_id = report.activity.identifier if report.activity is not None else None
-        category_id = report.category.identifier if report.category is not None else None
-        magnitude_id = report.problem_magnitude.identifier if report.problem_magnitude is not None else None
+        activity_id = (
+            report.activity.identifier if report.activity is not None else None
+        )
+        category_id = (
+            report.category.identifier if report.category is not None else None
+        )
+        magnitude_id = (
+            report.problem_magnitude.identifier
+            if report.problem_magnitude is not None
+            else None
+        )
         gps_geom = report.geom.transform(4326, clone=True)
         params = {
             "id_origin": manager.ID_ORIGIN,
@@ -229,10 +243,20 @@ class SuricateMessenger:
             "wsUnlockAlert", url_params={"uid_alerte": id_alert}
         )
 
-    def update_status(self, id_alert, new_status, message_sentinel="No message", message_admins="No message"):
+    def update_status(
+        self,
+        id_alert,
+        new_status,
+        message_sentinel="No message",
+        message_admins="No message",
+    ):
         """Update status for given report on Suricate Rest API"""
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
+            (
+                self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                + self.gestion_manager.ID_ORIGIN
+                + str(id_alert)
+            ).encode()
         ).hexdigest()
 
         params = {
@@ -249,19 +273,22 @@ class SuricateMessenger:
         """Update report GPS coordinates on Suricate Rest API"""
         url_params = {
             "uid_alerte": id_alert,
-            "gpslatitude": '{0:.6f}'.format(gps_lat),
-            "gpslongitude": '{0:.6f}'.format(gps_long),
+            "gpslatitude": f"{gps_lat:.6f}",
+            "gpslongitude": f"{gps_long:.6f}",
         }
         if force:
             url_params["force_update"] = 1
         self.gestion_manager.get_or_retry_from_suricate(
-            "wsUpdateGPS",
-            url_params=url_params
+            "wsUpdateGPS", url_params=url_params
         )
 
     def message_sentinel(self, id_alert, message):
         check = md5(
-            (self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER + self.gestion_manager.ID_ORIGIN + str(id_alert)).encode()
+            (
+                self.gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                + self.gestion_manager.ID_ORIGIN
+                + str(id_alert)
+            ).encode()
         ).hexdigest()
         """Send report to Suricate Rest API"""
         params = {
@@ -271,7 +298,9 @@ class SuricateMessenger:
             "check": check,
         }
 
-        self.gestion_manager.post_or_retry_to_suricate("wsSendMessageSentinelle", params)
+        self.gestion_manager.post_or_retry_to_suricate(
+            "wsSendMessageSentinelle", params
+        )
 
     def retry_failed_requests(self):
         for failed_request in self.pending_requests_model.objects.all():
@@ -281,12 +310,16 @@ class SuricateMessenger:
                 request_manager = self.gestion_manager
             try:
                 # Calls either request_manager.get_suricate() or request_manager.post_suricate()
-                getattr(request_manager, f"{failed_request.request_type.lower()}_suricate")(failed_request.endpoint, json.loads(failed_request.params))
+                getattr(
+                    request_manager, f"{failed_request.request_type.lower()}_suricate"
+                )(failed_request.endpoint, json.loads(failed_request.params))
                 # Delete this pending request if it was successful
                 failed_request.delete()
             except Exception as e:
                 failed_request.retries += 1
-                failed_request.error_message = str(e.args)  # Keep last exception message
+                failed_request.error_message = str(
+                    e.args
+                )  # Keep last exception message
                 failed_request.save()
 
     def flush_failed_requests(self):

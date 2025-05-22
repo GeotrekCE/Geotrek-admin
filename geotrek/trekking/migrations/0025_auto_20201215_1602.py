@@ -4,19 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0024_copy_labels'),
+        ("trekking", "0024_copy_labels"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='trek',
-            name='labels',
+            model_name="trek",
+            name="labels",
         ),
         migrations.RenameField(
-            model_name='trek',
-            old_name='labels2',
-            new_name='labels',
+            model_name="trek",
+            old_name="labels2",
+            new_name="labels",
         ),
     ]

@@ -1,29 +1,34 @@
 from django.conf import settings
-
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import TranslationOptions, translator
 
 from geotrek.diving import models as diving_models
 
-
 # Trek app
 
+
 class DiveTO(TranslationOptions):
-    fields = ('name', 'departure', 'description_teaser', 'facilities',
-              'description', 'disabled_sport', 'advice') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
-    fallback_undefined = {'published': None}
+    fields = (
+        "name",
+        "departure",
+        "description_teaser",
+        "facilities",
+        "description",
+        "disabled_sport",
+        "advice",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {"published": None}
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class DifficultyTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class LevelTO(TranslationOptions):
-    fields = ('name', 'description')
+    fields = ("name", "description")
 
 
 # Register previously defined translation options

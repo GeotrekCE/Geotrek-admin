@@ -1,14 +1,14 @@
 from django.apps import AppConfig
-from django.core.checks import register, Tags
+from django.core.checks import Tags, register
 from django.utils.translation import gettext_lazy as _
 
 
 class OutdoorConfig(AppConfig):
-    name = 'geotrek.outdoor'
+    name = "geotrek.outdoor"
     verbose_name = _("Outdoor")
 
     def ready(self):
-        from .forms import SiteForm, CourseForm
+        from .forms import CourseForm, SiteForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings

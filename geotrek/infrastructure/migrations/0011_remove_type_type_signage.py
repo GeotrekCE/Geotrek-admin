@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0010_remove_old_signage'),
+        ("infrastructure", "0010_remove_old_signage"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='infrastructuretype',
-            name='type',
-            field=models.CharField(choices=[('A', 'Building'), ('E', 'Facility')], db_column='type', max_length=1),
+            model_name="infrastructuretype",
+            name="type",
+            field=models.CharField(
+                choices=[("A", "Building"), ("E", "Facility")],
+                db_column="type",
+                max_length=1,
+            ),
         ),
     ]

@@ -3,7 +3,10 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter, RangeFilter
 from mapentity.filters import MapEntityFilterSet
 
-from geotrek.common.filters.fields import ComaSeparatedMultipleModelChoiceField, OneLineRangeField
+from geotrek.common.filters.fields import (
+    ComaSeparatedMultipleModelChoiceField,
+    OneLineRangeField,
+)
 from geotrek.common.models import HDViewPoint
 
 
@@ -16,8 +19,12 @@ class OptionalRangeFilter(RangeFilter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.field.fields[0].label = format_lazy('{min} {label}', min=_('min'), label=self.field.label)
-        self.field.fields[1].label = format_lazy('{max} {label}', max=_('max'), label=self.field.label)
+        self.field.fields[0].label = format_lazy(
+            "{min} {label}", min=_("min"), label=self.field.label
+        )
+        self.field.fields[1].label = format_lazy(
+            "{max} {label}", max=_("max"), label=self.field.label
+        )
 
 
 class RightFilter(ModelMultipleChoiceFilter):
@@ -25,9 +32,11 @@ class RightFilter(ModelMultipleChoiceFilter):
     queryset = None
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', self.get_queryset())
+        kwargs.setdefault("queryset", self.get_queryset())
         super().__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + 'right-filter'
+        self.field.widget.attrs["class"] = (
+            self.field.widget.attrs.get("class", "") + "right-filter"
+        )
         self.field.widget.renderer = None
 
     def get_queryset(self, request=None):
@@ -37,7 +46,6 @@ class RightFilter(ModelMultipleChoiceFilter):
 
 
 class HDViewPointFilterSet(MapEntityFilterSet):
-
     class Meta(MapEntityFilterSet.Meta):
         model = HDViewPoint
-        fields = ['title']
+        fields = ["title"]

@@ -4,7 +4,6 @@
 
 {% block attributes %}
 
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ trek|verbose:"structure" }}</th>
@@ -38,7 +37,7 @@
             <td>
                 {% for label in trek.labels.all %}
                     {% if label.published %}
-                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span>
                     {% endif %}
                     {{ label.name }}<br>
                 {% endfor %}
@@ -260,5 +259,6 @@
             </td>
         </tr>
     </table>
+
     {{ block.super }}
 {% endblock attributes %}

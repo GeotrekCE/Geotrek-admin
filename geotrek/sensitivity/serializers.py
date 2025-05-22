@@ -6,9 +6,9 @@ from . import models as sensitivity_models
 
 
 class SensitiveAreaSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
-    category = rest_serializers.CharField(source='category_display')
-    structure = rest_serializers.SlugRelatedField('name', read_only=True)
-    species = rest_serializers.CharField(source='species_display')
+    category = rest_serializers.CharField(source="category_display")
+    structure = rest_serializers.SlugRelatedField("name", read_only=True)
+    species = rest_serializers.CharField(source="species_display")
 
     class Meta:
         model = sensitivity_models.SensitiveArea
@@ -20,4 +20,4 @@ class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = sensitivity_models.SensitiveArea
-        fields = ['id', 'species', 'radius', 'published']
+        fields = ["id", "species", "radius", "published"]

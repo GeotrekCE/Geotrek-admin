@@ -1,20 +1,21 @@
 import os
 
-from django.test import TestCase
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
-
+from django.test import TestCase
 from mapentity.registry import registry
 
 
 class AuthentFixturesMixin:
-    fixtures = [os.path.join(settings.PROJECT_DIR, 'authent', 'fixtures', 'minimal.json'),
-                os.path.join(settings.PROJECT_DIR, 'authent', 'fixtures', 'basic.json')]
+    fixtures = [
+        os.path.join(settings.PROJECT_DIR, "authent", "fixtures", "minimal.json"),
+        os.path.join(settings.PROJECT_DIR, "authent", "fixtures", "basic.json"),
+    ]
 
     def _pre_setup(self):
         if not isinstance(self, TestCase):
-            call_command('update_geotrek_permissions', verbosity=0)
+            call_command("update_geotrek_permissions", verbosity=0)
         super()._pre_setup()
 
     @classmethod
@@ -40,7 +41,7 @@ class AuthentFixturesMixin:
             from geotrek.trekking import urls  # NOQA
             from geotrek.tourism import urls  # NOQA
 
-        call_command('update_geotrek_permissions', verbosity=0)
+        call_command("update_geotrek_permissions", verbosity=0)
 
         return super().setUpClass()
 

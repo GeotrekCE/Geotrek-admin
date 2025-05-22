@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0027_merge_ratings'),
+        ("outdoor", "0027_merge_ratings"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='site',
-            name='ratings_min',
+            model_name="site",
+            name="ratings_min",
         ),
     ]

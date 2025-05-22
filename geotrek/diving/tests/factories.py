@@ -1,15 +1,12 @@
 import factory
-
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from mapentity.tests.factories import UserFactory
 
 from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from .. import models
-
-from mapentity.tests.factories import UserFactory
-
-from django.contrib.auth.models import Permission
 
 
 class PracticeFactory(factory.django.DjangoModelFactory):
@@ -26,7 +23,7 @@ class LevelFactory(factory.django.DjangoModelFactory):
 
     name = "Level"
     description = "<p>Description</p>"
-    pictogram = get_dummy_uploaded_image('level.png')
+    pictogram = get_dummy_uploaded_image("level.png")
 
 
 class DiveWithLevelsFactory(StructureRelatedDefaultFactory):
@@ -35,7 +32,7 @@ class DiveWithLevelsFactory(StructureRelatedDefaultFactory):
 
     name = "Dive"
     practice = factory.SubFactory(PracticeFactory)
-    geom = 'POINT(0 0)'
+    geom = "POINT(0 0)"
     published = True
 
     @factory.post_generation
@@ -50,7 +47,7 @@ class DiveFactory(StructureRelatedDefaultFactory):
 
     name = "Dive"
     practice = factory.SubFactory(PracticeFactory)
-    geom = 'POINT(0 0)'
+    geom = "POINT(0 0)"
     published = True
 
     @factory.post_generation
@@ -71,9 +68,16 @@ class DivingManagerFactory(UserFactory):
     def create_biodiv_manager(obj, create, extracted, **kwargs):
         content_type_dive = ContentType.objects.get_for_model(models.Dive)
         content_type_divelevel = ContentType.objects.get_for_model(models.Level)
-        content_type_divedifficutly = ContentType.objects.get_for_model(models.Difficulty)
-        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, content_type_divelevel.pk,
-                                                                content_type_divedifficutly.pk]):
+        content_type_divedifficutly = ContentType.objects.get_for_model(
+            models.Difficulty
+        )
+        for perm in Permission.objects.filter(
+            content_type__in=[
+                content_type_dive.pk,
+                content_type_divelevel.pk,
+                content_type_divedifficutly.pk,
+            ]
+        ):
             obj.user_permissions.add(perm)
 
 
@@ -82,4 +86,4 @@ class DifficultyFactory(factory.django.DjangoModelFactory):
         model = models.Difficulty
 
     name = "Difficulty"
-    pictogram = get_dummy_uploaded_image('difficulty.png')
+    pictogram = get_dummy_uploaded_image("difficulty.png")

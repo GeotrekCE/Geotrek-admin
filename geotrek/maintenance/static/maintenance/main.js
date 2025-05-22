@@ -48,7 +48,7 @@ $(window).on('entity:view:add', function (e, data) {
     };
 });
 
-$(window).on('entity:view:list', function (e, data) {
+$(window).on('entity:view:filter', function (e, data) {
     if (data.modelname === "intervention"){
         setDatePickerConfig('#id_begin_date_0, #id_begin_date_1, #id_end_date_0, #id_end_date_1');
     };

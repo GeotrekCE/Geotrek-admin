@@ -6,16 +6,15 @@ from django.db import migrations
 def delete_force(apps, schema_editor):
     # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
-    Blade = apps.get_model('signage', 'Blade')
-    Line = apps.get_model('signage', 'Line')
+    Blade = apps.get_model("signage", "Blade")
+    Line = apps.get_model("signage", "Line")
     Line.objects.filter(blade__deleted=True).delete()
     Blade.objects.filter(deleted=True).delete()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0012_auto_20200406_1411'),
+        ("signage", "0012_auto_20200406_1411"),
     ]
 
     operations = [

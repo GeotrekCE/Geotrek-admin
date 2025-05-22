@@ -1,120 +1,265 @@
-from django.db import migrations, models
-import mapentity.models
-import geotrek.authent.models
 import django.db.models.deletion
+import mapentity.models
+from django.db import migrations, models
+
+import geotrek.authent.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0001_initial'),
-        ('authent', '0001_initial'),
-        ('core', '0001_initial'),
+        ("common", "0001_initial"),
+        ("authent", "0001_initial"),
+        ("core", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CompetenceEdge',
+            name="CompetenceEdge",
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column='organisme', on_delete=django.db.models.deletion.CASCADE, verbose_name='Organism', to='common.Organism')),
+                (
+                    "topo_object",
+                    models.OneToOneField(
+                        parent_link=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        db_column="evenement",
+                        serialize=False,
+                        to="core.Topology",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        db_column="organisme",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        verbose_name="Organism",
+                        to="common.Organism",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'f_t_competence',
-                'verbose_name': 'Competence edge',
-                'verbose_name_plural': 'Competence edges',
+                "db_table": "f_t_competence",
+                "verbose_name": "Competence edge",
+                "verbose_name_plural": "Competence edges",
             },
-            bases=(mapentity.models.MapEntityMixin, 'core.topology'),
+            bases=(mapentity.models.MapEntityMixin, "core.topology"),
         ),
         migrations.CreateModel(
-            name='LandEdge',
+            name="LandEdge",
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('owner', models.TextField(verbose_name='Owner', db_column='proprietaire', blank=True)),
-                ('agreement', models.BooleanField(default=False, verbose_name='Agreement', db_column='convention')),
+                (
+                    "topo_object",
+                    models.OneToOneField(
+                        parent_link=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        db_column="evenement",
+                        serialize=False,
+                        to="core.Topology",
+                    ),
+                ),
+                (
+                    "owner",
+                    models.TextField(
+                        verbose_name="Owner", db_column="proprietaire", blank=True
+                    ),
+                ),
+                (
+                    "agreement",
+                    models.BooleanField(
+                        default=False, verbose_name="Agreement", db_column="convention"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'f_t_foncier',
-                'verbose_name': 'Land edge',
-                'verbose_name_plural': 'Land edges',
+                "db_table": "f_t_foncier",
+                "verbose_name": "Land edge",
+                "verbose_name_plural": "Land edges",
             },
-            bases=(mapentity.models.MapEntityMixin, 'core.topology'),
+            bases=(mapentity.models.MapEntityMixin, "core.topology"),
         ),
         migrations.CreateModel(
-            name='LandType',
+            name="LandType",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=128, verbose_name='Name', db_column='foncier')),
-                ('right_of_way', models.BooleanField(default=False, verbose_name='Right of way', db_column='droit_de_passage')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=128, verbose_name="Name", db_column="foncier"
+                    ),
+                ),
+                (
+                    "right_of_way",
+                    models.BooleanField(
+                        default=False,
+                        verbose_name="Right of way",
+                        db_column="droit_de_passage",
+                    ),
+                ),
+                (
+                    "structure",
+                    models.ForeignKey(
+                        db_column="structure",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        default=geotrek.authent.models.default_structure_pk,
+                        verbose_name="Related structure",
+                        to="authent.Structure",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['name'],
-                'db_table': 'f_b_foncier',
-                'verbose_name': 'Land type',
-                'verbose_name_plural': 'Land types',
+                "ordering": ["name"],
+                "db_table": "f_b_foncier",
+                "verbose_name": "Land type",
+                "verbose_name_plural": "Land types",
             },
         ),
         migrations.CreateModel(
-            name='PhysicalEdge',
+            name="PhysicalEdge",
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                (
+                    "topo_object",
+                    models.OneToOneField(
+                        parent_link=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        db_column="evenement",
+                        serialize=False,
+                        to="core.Topology",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'f_t_nature',
-                'verbose_name': 'Physical edge',
-                'verbose_name_plural': 'Physical edges',
+                "db_table": "f_t_nature",
+                "verbose_name": "Physical edge",
+                "verbose_name_plural": "Physical edges",
             },
-            bases=(mapentity.models.MapEntityMixin, 'core.topology'),
+            bases=(mapentity.models.MapEntityMixin, "core.topology"),
         ),
         migrations.CreateModel(
-            name='PhysicalType',
+            name="PhysicalType",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=128, verbose_name='Name', db_column='nom')),
-                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=128, verbose_name="Name", db_column="nom"
+                    ),
+                ),
+                (
+                    "structure",
+                    models.ForeignKey(
+                        db_column="structure",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        default=geotrek.authent.models.default_structure_pk,
+                        verbose_name="Related structure",
+                        to="authent.Structure",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['name'],
-                'db_table': 'f_b_nature',
-                'verbose_name': 'Physical type',
-                'verbose_name_plural': 'Physical types',
+                "ordering": ["name"],
+                "db_table": "f_b_nature",
+                "verbose_name": "Physical type",
+                "verbose_name_plural": "Physical types",
             },
         ),
         migrations.CreateModel(
-            name='SignageManagementEdge',
+            name="SignageManagementEdge",
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column='organisme', on_delete=django.db.models.deletion.CASCADE, verbose_name='Organism', to='common.Organism')),
+                (
+                    "topo_object",
+                    models.OneToOneField(
+                        parent_link=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        db_column="evenement",
+                        serialize=False,
+                        to="core.Topology",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        db_column="organisme",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        verbose_name="Organism",
+                        to="common.Organism",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'f_t_gestion_signaletique',
-                'verbose_name': 'Signage management edge',
-                'verbose_name_plural': 'Signage management edges',
+                "db_table": "f_t_gestion_signaletique",
+                "verbose_name": "Signage management edge",
+                "verbose_name_plural": "Signage management edges",
             },
-            bases=(mapentity.models.MapEntityMixin, 'core.topology'),
+            bases=(mapentity.models.MapEntityMixin, "core.topology"),
         ),
         migrations.CreateModel(
-            name='WorkManagementEdge',
+            name="WorkManagementEdge",
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column='organisme', on_delete=django.db.models.deletion.CASCADE, verbose_name='Organism', to='common.Organism')),
+                (
+                    "topo_object",
+                    models.OneToOneField(
+                        parent_link=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        db_column="evenement",
+                        serialize=False,
+                        to="core.Topology",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        db_column="organisme",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        verbose_name="Organism",
+                        to="common.Organism",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'f_t_gestion_travaux',
-                'verbose_name': 'Work management edge',
-                'verbose_name_plural': 'Work management edges',
+                "db_table": "f_t_gestion_travaux",
+                "verbose_name": "Work management edge",
+                "verbose_name_plural": "Work management edges",
             },
-            bases=(mapentity.models.MapEntityMixin, 'core.topology'),
+            bases=(mapentity.models.MapEntityMixin, "core.topology"),
         ),
         migrations.AddField(
-            model_name='physicaledge',
-            name='physical_type',
-            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, verbose_name='Physical type', to='land.PhysicalType'),
+            model_name="physicaledge",
+            name="physical_type",
+            field=models.ForeignKey(
+                db_column="type",
+                on_delete=django.db.models.deletion.CASCADE,
+                verbose_name="Physical type",
+                to="land.PhysicalType",
+            ),
         ),
         migrations.AddField(
-            model_name='landedge',
-            name='land_type',
-            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, verbose_name='Land type', to='land.LandType'),
+            model_name="landedge",
+            name="land_type",
+            field=models.ForeignKey(
+                db_column="type",
+                on_delete=django.db.models.deletion.CASCADE,
+                verbose_name="Land type",
+                to="land.LandType",
+            ),
         ),
     ]

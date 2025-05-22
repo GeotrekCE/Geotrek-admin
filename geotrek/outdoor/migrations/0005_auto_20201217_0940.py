@@ -4,43 +4,75 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0016_auto_20201217_0940'),
-        ('tourism', '0014_auto_20201117_1302'),
-        ('trekking', '0026_auto_20201217_0940'),
-        ('outdoor', '0004_auto_20201216_0940'),
+        ("common", "0016_auto_20201217_0940"),
+        ("tourism", "0014_auto_20201117_1302"),
+        ("trekking", "0026_auto_20201217_0940"),
+        ("outdoor", "0004_auto_20201216_0940"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='site',
-            name='information_desks',
-            field=models.ManyToManyField(blank=True, help_text='Where to obtain information', related_name='sites', to='tourism.InformationDesk', verbose_name='Information desks'),
+            model_name="site",
+            name="information_desks",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="Where to obtain information",
+                related_name="sites",
+                to="tourism.InformationDesk",
+                verbose_name="Information desks",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='labels',
-            field=models.ManyToManyField(blank=True, related_name='sites', to='common.Label', verbose_name='Labels'),
+            model_name="site",
+            name="labels",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="sites",
+                to="common.Label",
+                verbose_name="Labels",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='portal',
-            field=models.ManyToManyField(blank=True, related_name='sites', to='common.TargetPortal', verbose_name='Portal'),
+            model_name="site",
+            name="portal",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="sites",
+                to="common.TargetPortal",
+                verbose_name="Portal",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='source',
-            field=models.ManyToManyField(blank=True, related_name='sites', to='common.RecordSource', verbose_name='Source'),
+            model_name="site",
+            name="source",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="sites",
+                to="common.RecordSource",
+                verbose_name="Source",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='themes',
-            field=models.ManyToManyField(blank=True, help_text='Main theme(s)', related_name='sites', to='common.Theme', verbose_name='Themes'),
+            model_name="site",
+            name="themes",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="Main theme(s)",
+                related_name="sites",
+                to="common.Theme",
+                verbose_name="Themes",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='web_links',
-            field=models.ManyToManyField(blank=True, help_text='External resources', related_name='sites', to='trekking.WebLink', verbose_name='Web links'),
+            model_name="site",
+            name="web_links",
+            field=models.ManyToManyField(
+                blank=True,
+                help_text="External resources",
+                related_name="sites",
+                to="trekking.WebLink",
+                verbose_name="Web links",
+            ),
         ),
     ]

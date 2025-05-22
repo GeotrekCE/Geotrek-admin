@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0017_course'),
+        ("outdoor", "0017_course"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='equipment',
-            field=models.TextField(blank=True, verbose_name='Equipment'),
+            model_name="course",
+            name="equipment",
+            field=models.TextField(blank=True, verbose_name="Equipment"),
         ),
         migrations.AddField(
-            model_name='course',
-            name='height',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Height'),
+            model_name="course",
+            name="height",
+            field=models.IntegerField(blank=True, null=True, verbose_name="Height"),
         ),
     ]

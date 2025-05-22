@@ -4,20 +4,19 @@ from django.db import migrations
 
 
 def remove_infrastructuretype_signage(apps, schema_editor):
-    InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
-    InfrastructureType.objects.filter(type='S').delete()
+    InfrastructureType = apps.get_model("infrastructure", "InfrastructureType")
+    InfrastructureType.objects.filter(type="S").delete()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0011_remove_type_type_signage'),
+        ("infrastructure", "0011_remove_type_type_signage"),
     ]
 
     operations = [
         migrations.AlterModelTable(
-            name='infrastructuretype',
-            table='a_b_infrastructure',
+            name="infrastructuretype",
+            table="a_b_infrastructure",
         ),
         migrations.RunPython(remove_infrastructuretype_signage),
     ]

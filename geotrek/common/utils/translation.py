@@ -1,7 +1,7 @@
 from django.conf import settings
 
-if 'modeltranslation' in settings.INSTALLED_APPS:
-    from modeltranslation.translator import translator, NotRegistered
+if "modeltranslation" in settings.INSTALLED_APPS:
+    from modeltranslation.translator import NotRegistered, translator
 
 
 def get_translated_fields(model):
@@ -11,5 +11,5 @@ def get_translated_fields(model):
     except NotRegistered:
         translated_fields = []
     else:
-        translated_fields = mto.fields.keys()
+        return list(mto.fields)
     return translated_fields

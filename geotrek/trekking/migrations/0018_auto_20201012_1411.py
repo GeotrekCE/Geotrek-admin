@@ -4,30 +4,65 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0017_auto_20200831_1406'),
+        ("trekking", "0017_auto_20200831_1406"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LabelTrek',
+            name="LabelTrek",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pictogram', models.FileField(max_length=512, null=True, upload_to='upload', verbose_name='Pictogram')),
-                ('name', models.CharField(max_length=128, verbose_name='Name')),
-                ('advice', models.TextField(default='', blank=True, help_text='Advice linked to the label', verbose_name='Advices')),
-                ('filter_rando', models.BooleanField(default=False, help_text='Show filters portal', verbose_name='Filter rando'))
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "pictogram",
+                    models.FileField(
+                        max_length=512,
+                        null=True,
+                        upload_to="upload",
+                        verbose_name="Pictogram",
+                    ),
+                ),
+                ("name", models.CharField(max_length=128, verbose_name="Name")),
+                (
+                    "advice",
+                    models.TextField(
+                        default="",
+                        blank=True,
+                        help_text="Advice linked to the label",
+                        verbose_name="Advices",
+                    ),
+                ),
+                (
+                    "filter_rando",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Show filters portal",
+                        verbose_name="Filter rando",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Trekking Label',
-                'verbose_name_plural': 'Trekking Labels',
-                'ordering': ['name'],
+                "verbose_name": "Trekking Label",
+                "verbose_name_plural": "Trekking Labels",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='trek',
-            name='labels',
-            field=models.ManyToManyField(blank=True, related_name='labels', to='trekking.LabelTrek', verbose_name='Labels'),
+            model_name="trek",
+            name="labels",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="labels",
+                to="trekking.LabelTrek",
+                verbose_name="Labels",
+            ),
         ),
     ]

@@ -238,7 +238,7 @@
             "geom": "POINT(700020 6600020)",
             "date_insert": "2012-05-17T14:33:34.307Z",
             "date_update": "2012-05-17T14:33:34.307Z",
-            "assigned_user": 9
+            "current_user": 9
         }
     },
     {

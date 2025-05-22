@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0031_signage_access'),
+        ("signage", "0031_signage_access"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='line',
-            name='text',
-            field=models.CharField(blank=True, default='', max_length=1000, verbose_name='Text'),
+            model_name="line",
+            name="text",
+            field=models.CharField(
+                blank=True, default="", max_length=1000, verbose_name="Text"
+            ),
         ),
     ]

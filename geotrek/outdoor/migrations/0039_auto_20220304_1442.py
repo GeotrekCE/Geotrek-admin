@@ -4,20 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0038_site_accessibility'),
+        ("outdoor", "0038_site_accessibility"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='course',
-            name='ratings',
-            field=models.ManyToManyField(blank=True, related_name='courses', to='outdoor.Rating', verbose_name='Ratings'),
+            model_name="course",
+            name="ratings",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="courses",
+                to="outdoor.Rating",
+                verbose_name="Ratings",
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='ratings',
-            field=models.ManyToManyField(blank=True, related_name='sites', to='outdoor.Rating', verbose_name='Ratings'),
+            model_name="site",
+            name="ratings",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="sites",
+                to="outdoor.Rating",
+                verbose_name="Ratings",
+            ),
         ),
     ]

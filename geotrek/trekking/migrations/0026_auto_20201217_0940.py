@@ -4,29 +4,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0016_auto_20201217_0940'),
-        ('trekking', '0025_auto_20201215_1602'),
+        ("common", "0016_auto_20201217_0940"),
+        ("trekking", "0025_auto_20201215_1602"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='LabelTrek',
+            name="LabelTrek",
         ),
         migrations.AlterField(
-            model_name='poitype',
-            name='label',
-            field=models.CharField(max_length=128, verbose_name='Name'),
+            model_name="poitype",
+            name="label",
+            field=models.CharField(max_length=128, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='trek',
-            name='labels',
-            field=models.ManyToManyField(blank=True, related_name='treks', to='common.Label', verbose_name='Labels'),
+            model_name="trek",
+            name="labels",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="treks",
+                to="common.Label",
+                verbose_name="Labels",
+            ),
         ),
         migrations.AlterField(
-            model_name='weblinkcategory',
-            name='label',
-            field=models.CharField(max_length=128, verbose_name='Name'),
+            model_name="weblinkcategory",
+            name="label",
+            field=models.CharField(max_length=128, verbose_name="Name"),
         ),
     ]

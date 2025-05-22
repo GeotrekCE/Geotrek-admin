@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0034_migrate_pictogram'),
+        ("signage", "0034_migrate_pictogram"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='line',
-            name='pictogram_name',
+            model_name="line",
+            name="pictogram_name",
         ),
     ]

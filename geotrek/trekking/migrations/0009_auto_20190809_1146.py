@@ -5,15 +5,20 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0008_auto_20190626_1514'),
+        ("trekking", "0008_auto_20190626_1514"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='practice',
-            name='color',
-            field=colorfield.fields.ColorField(db_column='couleur', default='#444444', help_text='Color of the practice, only used in mobile.', max_length=18, verbose_name='Color'),
+            model_name="practice",
+            name="color",
+            field=colorfield.fields.ColorField(
+                db_column="couleur",
+                default="#444444",
+                help_text="Color of the practice, only used in mobile.",
+                max_length=18,
+                verbose_name="Color",
+            ),
         ),
     ]

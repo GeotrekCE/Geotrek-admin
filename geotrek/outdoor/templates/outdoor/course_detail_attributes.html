@@ -2,9 +2,8 @@
 {% load i18n geotrek_tags mapentity_tags outdoor_tags %}
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}    
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}
     </ul>
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"structure" }}</th>

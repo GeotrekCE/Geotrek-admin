@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0020_remove_trek_is_park_centered'),
+        ("trekking", "0020_remove_trek_is_park_centered"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='labeltrek',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="labeltrek",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogram",
+            ),
         ),
     ]

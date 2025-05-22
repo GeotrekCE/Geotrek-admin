@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from geotrek.feedback import models as feedback_models
 
-if 'modeltranslation' in settings.INSTALLED_APPS:
+if "modeltranslation" in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
 else:
     from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
@@ -18,8 +18,11 @@ class WorkflowManagerAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         # There can be only one manager
         perms = super().has_add_permission(request)
-        if perms and (not settings.SURICATE_WORKFLOW_ENABLED or feedback_models.WorkflowManager.objects.exists()):
-            perms = False   # Disallow creating a new workflow manager if there is one already
+        if perms and (
+            not settings.SURICATE_WORKFLOW_ENABLED
+            or feedback_models.WorkflowManager.objects.exists()
+        ):
+            perms = False  # Disallow creating a new workflow manager if there is one already
         return perms
 
 
@@ -32,8 +35,11 @@ class WorkflowDistrictAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         # There can be only one district
         perms = super().has_add_permission(request)
-        if perms and (not settings.SURICATE_WORKFLOW_ENABLED or feedback_models.WorkflowDistrict.objects.exists()):
-            perms = False   # Disallow creating a new workflow district if there is one already
+        if perms and (
+            not settings.SURICATE_WORKFLOW_ENABLED
+            or feedback_models.WorkflowDistrict.objects.exists()
+        ):
+            perms = False  # Disallow creating a new workflow district if there is one already
         return perms
 
 

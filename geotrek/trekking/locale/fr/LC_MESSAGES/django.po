@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-08 16:23+0000\n"
+"POT-Creation-Date: 2025-04-16 18:22+0200\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -72,8 +72,9 @@ msgid "Cannot add children because this trek is itself a child."
 msgstr ""
 "Impossible d'ajouter des enfants car cet itinéraire est lui-même un enfant."
 
-#, python-brace-format
-msgid "Cannot use parent trek {child.name} as a child trek."
+#, fuzzy, python-format
+#| msgid "Cannot use parent trek {child.name} as a child trek."
+msgid "Cannot use parent trek %(name)s as a child trek."
 msgstr ""
 "Impossible d'utiliser l'itinéraire parent {child.name} comme itinéraire "
 "enfant."
@@ -450,12 +451,12 @@ msgstr "Publié"
 msgid "Published Services"
 msgstr "Services publiés"
 
-#, python-brace-format
+#, python-format
 msgid ""
-"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+"Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
-"Valeur '{val}' erronée pour le champ {src}. Devrait être similaire à '2h30', "
-"'2,5' ou '2.5'"
+"Valeur '%(val)s' erronée pour le champ %(src)s. Devrait être similaire à "
+"'2h30', '2,5' ou '2.5'"
 
 msgid "You need to add a network of paths before importing POIs"
 msgstr "Tu as besoin d'ajouter un réseau de tronçons avant d'importer des POIs"
@@ -485,33 +486,19 @@ msgstr ""
 "Le type de géométrie du champ '{src}' est invalide. Il devrait être "
 "LineString, pas {geom_type}"
 
-#, python-brace-format
+#, python-format
 msgid ""
 "Trying to retrieve children for missing trek : could not find trek with UUID "
-"{key}"
+"%(key)s"
 msgstr ""
 
-msgid ""
-"An error occured in children generation : {getattr(e, 'message', repr(e))}"
+#, python-format
+msgid "An error occurred in children generation: %(message)s"
 msgstr ""
 
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
-
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
-msgstr ""
-"La géométrie de la feature ne peut pas être convertie en une unique "
-"LineString continue"
-
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
-msgstr ""
-"Les géométries de plusieurs features ne peuvent pas être converties en une "
-"unique LineString continue"
 
 msgid "Trek geometry is None"
 msgstr "La valeur de la géométrie de l'itinéraire est None"
@@ -539,9 +526,6 @@ msgstr "La license '{val} n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
 
 msgid "Attached files"
 msgstr "Fichiers liés"
-
-msgid "Attributes"
-msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
@@ -582,9 +566,6 @@ msgstr "Impression livret grand public"
 
 msgid "Print booklet"
 msgstr "Impr. livret"
-
-msgid "Photos accessibility"
-msgstr "Photos accessibilité"
 
 msgid "Itinerancy"
 msgstr "Itinérance"

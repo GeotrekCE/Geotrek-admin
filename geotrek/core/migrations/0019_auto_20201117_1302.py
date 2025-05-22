@@ -4,35 +4,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0018_remove_other_objects_from_factories'),
+        ("core", "0018_remove_other_objects_from_factories"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='path',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="path",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='path',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="path",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
         migrations.AlterField(
-            model_name='topology',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="topology",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='topology',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="topology",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
         migrations.AlterField(
-            model_name='topology',
-            name='deleted',
-            field=models.BooleanField(default=False, editable=False, verbose_name='Supprimé'),
+            model_name="topology",
+            name="deleted",
+            field=models.BooleanField(
+                default=False, editable=False, verbose_name="Supprimé"
+            ),
         ),
     ]

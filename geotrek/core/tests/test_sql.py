@@ -1,13 +1,12 @@
-from django.test import TestCase
+from unittest import skipIf
 
 from django.conf import settings
 from django.db import connection
+from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.core.models import Path, PathAggregation, Topology, Trail
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
-
-from unittest import skipIf
 
 
 class SQLDefaultValuesTest(TestCase):
@@ -27,7 +26,9 @@ class SQLDefaultValuesTest(TestCase):
         path = Path.objects.first()
         self.assertTrue(path.valid)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_topology(self):
         path = PathFactory.create()
         with connection.cursor() as cur:
@@ -36,9 +37,11 @@ class SQLDefaultValuesTest(TestCase):
         topology = Topology.objects.first()
         topology.add_path(path, 0, 1)
         self.assertEqual(topology.geom, path.geom)
-        self.assertEqual(topology.kind, '')
+        self.assertEqual(topology.kind, "")
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_pathaggregation(self):
         path = PathFactory.create()
         topology = TopologyFactory.create(paths=[])
@@ -75,4 +78,4 @@ class SQLDefaultValuesTest(TestCase):
                                   {structure.pk}
                                   )""")
         trail = Trail.objects.first()
-        self.assertEqual(trail.departure, '')
+        self.assertEqual(trail.departure, "")

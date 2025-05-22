@@ -3,5 +3,5 @@ from django.utils.translation import gettext_lazy as _
 
 
 class FeedbackConfig(AppConfig):
-    name = 'geotrek.feedback'
+    name = "geotrek.feedback"
     verbose_name = _("Feedback")
