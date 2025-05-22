@@ -12,6 +12,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
+- Add spatial filtering in parsers
 
 **Bug fixes**
 
