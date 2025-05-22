@@ -452,7 +452,7 @@ which restricts imported objects to a defined geographic area.
 Geometry Formatting with ``filter_geom``
 ----------------------------------------
 
-The ``filter_geom(self, src, val)`` method is automatically called by the parser whenever a field is mapped to ``"geom"``in the source configuration.
+The ``filter_geom(self, src, val)`` method is automatically called by the parser whenever a field is mapped to ``"geom"`` in the source configuration.
 Its purpose is to convert raw input from ``val`` into a usable geometry object within Geotrek.
 
 This method must return a ``GEOSGeometry`` instance with the SRID defined in ``settings.SRID``.
