@@ -124,8 +124,7 @@ class JSONParser(Parser):
         self.root = json.loads(response)
         rows = self.root[self.entry]
         self.nb = len(rows)
-        for obj in rows:
-            yield obj
+        yield from rows
 
     def normalize_field_name(self, name):
         return name
@@ -145,6 +144,7 @@ class JSONParserIntersectionGeomTest(JSONParser):
         geom = fromstr(val, srid=2154)
         filtered_geom = self.intersect_geom(geom)
         return filtered_geom
+
 
 class JSONParserIntersectionGeomMissingAttributTest(JSONParserIntersectionGeomTest):
     intersection_geom = {
@@ -197,6 +197,7 @@ class JSONParserIntersectionGeomValidTest(JSONParserIntersectionGeomTest):
         "geom_field": "geom",
         "object_filter": {"name": "test"},
     }
+
 
 class JSONParserIntersectionGeomValidDeleteTest(JSONParserIntersectionGeomTest):
     intersection_geom = {
@@ -441,8 +442,13 @@ class ParserTests(TestCase):
         )
         self.assertEqual(TouristicContent.objects.count(), 12)
 
-        touristic_content_eids = TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
-        self.assertEqual(list(touristic_content_eids), ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids),
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+        )
 
     def test_intersection_geom_missing_attribut(self):
         TouristicContentCategory.objects.create(label="Foo")
@@ -452,8 +458,8 @@ class ParserTests(TestCase):
         geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
         District.objects.create(name="test", geom=geom)
         with self.assertRaisesMessage(
-                ImproperlyConfigured,
-                "intersection_geom miss attribut(s) it must have: model, app_label, geom_field and object_filter",
+            ImproperlyConfigured,
+            "intersection_geom is missing required keys: app_label",
         ):
             call_command(
                 "import",
@@ -468,7 +474,7 @@ class ParserTests(TestCase):
             os.path.dirname(__file__), "data", "touristic_content.json"
         )
         with self.assertRaisesMessage(
-                ImproperlyConfigured, "tourism.district is not defined in contenttype"
+            ImproperlyConfigured, "tourism.district is not defined in contenttype"
         ):
             call_command(
                 "import",
@@ -485,8 +491,8 @@ class ParserTests(TestCase):
         geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
         District.objects.create(name="test", geom=geom)
         with self.assertRaisesMessage(
-                ImproperlyConfigured,
-                "Reference object for filter_geom must be a Polygon or a Multipolygon not a <class 'NoneType'>",
+            ImproperlyConfigured,
+            "Reference geometry must be a Polygon or MultiPolygon, not <class 'NoneType'>",
         ):
             call_command(
                 "import",
@@ -503,8 +509,8 @@ class ParserTests(TestCase):
         geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
         District.objects.create(name="test", geom=geom)
         with self.assertRaisesMessage(
-                ImproperlyConfigured,
-                f"zoning.district does not have ['label'] field",
+            ImproperlyConfigured,
+            "zoning.district does not have field(s): ['label']",
         ):
             call_command(
                 "import",
@@ -521,8 +527,8 @@ class ParserTests(TestCase):
         json_parser = JSONParserIntersectionGeomValidTest()
 
         with self.assertRaisesMessage(
-                ImproperlyConfigured,
-                f"Reference geometry does not exist {json_parser.intersection_geom}",
+            ImproperlyConfigured,
+            f"Reference geometry does not exist: {json_parser.intersection_geom}",
         ):
             call_command(
                 "import",
@@ -546,12 +552,15 @@ class ParserTests(TestCase):
             "import",
             "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidTest",
             filename,
-            verbosity=0,
-            stdout = out
+            verbosity=2,
+            stdout=out,
         )
 
-        output = out.read()
-        self.assertIn(f"{json_parser.intersection_geom} reference multiple geometries. {district} has been used", output)
+        output = out.getvalue()
+        self.assertIn(
+            f"{json_parser.intersection_geom} references multiple geometries. {district} has been used",
+            output,
+        )
 
     def test_intersection_geom_incorrect_ref_object_geometry(self):
         category = TouristicContentCategory.objects.create(label="Foo")
@@ -561,8 +570,8 @@ class ParserTests(TestCase):
         geom = fromstr("POINT(0 0)", srid=2154)
         TouristicContent.objects.create(name="test", geom=geom, category_id=category.pk)
         with self.assertRaisesMessage(
-                ImproperlyConfigured,
-                "Reference object for filter_geom must be a Polygon or a Multipolygon not a <class 'django.contrib.gis.geos.point.Point'>",
+            ImproperlyConfigured,
+            "Reference geometry must be a Polygon or MultiPolygon, not <class 'django.contrib.gis.geos.point.Point'>",
         ):
             call_command(
                 "import",
@@ -583,29 +592,33 @@ class ParserTests(TestCase):
             "import",
             "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidTest",
             filename,
-            verbosity=0,
+            verbosity=2,
             stdout=output,
         )
         self.assertEqual(TouristicContent.objects.count(), 8)
 
-        touristic_content_eids = TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
-        self.assertEqual(list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"])
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"]
+        )
 
-        output = output.read()
+        output = output.getvalue()
         self.assertIn(
-        '#Line 3\nObject geometry does not intersect with reference geometry (zoning.district: {"name": "test"})',
+            "# Line 3:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
             output,
         )
         self.assertIn(
-        '#Line 6\nObject geometry does not intersect with reference geometry (zoning.district: {"name": "test"})',
+            "# Line 6:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
             output,
         )
         self.assertIn(
-        '#Line 9\nObject geometry does not intersect with reference geometry (zoning.district: {"name": "test"})',
+            "# Line 9:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
             output,
         )
         self.assertIn(
-        '#Line 12\nObject geometry does not intersect with reference geometry (zoning.district: {"name": "test"})',
+            "# Line 12:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
             output,
         )
 
@@ -619,7 +632,7 @@ class ParserTests(TestCase):
             "import",
             "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomTest",
             filename,
-            verbosity=0
+            verbosity=0,
         )
 
         self.assertEqual(TouristicContent.objects.count(), 12)
@@ -630,13 +643,18 @@ class ParserTests(TestCase):
             "import",
             "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidDeleteTest",
             filename,
-            verbosity=0
+            verbosity=0,
         )
 
         self.assertEqual(TouristicContent.objects.count(), 8)
 
-        touristic_content_eids = TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
-        self.assertEqual(list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"])
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"]
+        )
+
 
 class ThemeParser(ExcelParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
@@ -645,16 +663,19 @@ class ThemeParser(ExcelParser):
     eid = "label"  # Ensure that already created themes with same name will be updated
     fields = {"label": "Nom"}
 
+
 class MultilangThemeParser(ThemeParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
 
     fill_empty_translated_fields = True
+
 
 class MultilangFilterThemeParser(MultilangThemeParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
 
     def filter_label(self, src, val):
         return f"filtered {val}"
+
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class MultilangParserTests(TestCase):
@@ -727,6 +748,7 @@ class MultilangParserTests(TestCase):
         theme_imported = Theme.objects.get(label="filtered Paysages")
         self.assertEqual(theme_imported.label_fr, theme_imported.label_en)
         self.assertEqual(theme_imported.label_fr, "filtered Paysages")
+
 
 class AttachmentParserTests(TestCase):
     def setUp(self):
@@ -934,8 +956,8 @@ class AttachmentParserTests(TestCase):
         mocked.return_value.content = b""
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         with self.assertRaisesRegex(
-                CommandError,
-                "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it",
+            CommandError,
+            "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it",
         ):
             call_command(
                 "import",
@@ -1168,6 +1190,7 @@ class AttachmentParserTests(TestCase):
         )
         self.assertEqual(mocked_get.call_count, 1)
 
+
 class TestXmlParser(XmlParser):
     results_path = "Result/el"
     model = Organism
@@ -1178,6 +1201,7 @@ class TestXmlParser(XmlParser):
         self.filename = os.path.join(os.path.dirname(__file__), "data", "test.xml")
         self.filetype = FileType.objects.create(type="Photographie")
         super().__init__()
+
 
 class XMLParserTests(TestCase):
     def test_xml_parser(self):
@@ -1190,6 +1214,7 @@ class XMLParserTests(TestCase):
         parser = TestXmlParser()
         parser.parse(limit=-1)
         self.assertEqual(Organism.objects.count(), 0)
+
 
 class TourInSoftParserTests(TestCase):
     def test_attachment(self):
@@ -1226,6 +1251,7 @@ class TourInSoftParserTests(TestCase):
                 ("Mél|chateau.senonches@gmail.Com#Instagram|#chateaudesenonches", ""),
             )
 
+
 class TourismSystemParserTest(TestCase):
     @mock.patch("geotrek.common.parsers.HTTPBasicAuth")
     @mock.patch("requests.get")
@@ -1257,6 +1283,7 @@ class TourismSystemParserTest(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(mocked_auth.call_count, 1)
 
+
 class OpenSystemParserTest(TestCase):
     @mock.patch("requests.get")
     def test_attachment(self, mocked_get):
@@ -1285,10 +1312,12 @@ class OpenSystemParserTest(TestCase):
         parser.parse()
         self.assertEqual(mocked_get.call_count, 1)
 
+
 class GeotrekTrekTestParser(GeotrekParser):
     url = "https://test.fr"
     model = Trek
     url_categories = {"foo_field": "test"}
+
 
 class GeotrekTrekTestProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
@@ -1298,14 +1327,17 @@ class GeotrekTrekTestProviderParser(GeotrekTrekParser):
     url_categories = {}
     constant_fields = {"structure": settings.DEFAULT_STRUCTURE_NAME}
 
+
 class GeotrekTrekTestNoProviderParser(GeotrekTrekParser):
     url = "https://test.fr"
     delete = True
     url_categories = {}
     constant_fields = {"structure": settings.DEFAULT_STRUCTURE_NAME}
 
+
 class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
     pass
+
 
 class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
@@ -1313,8 +1345,8 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(
-                ImproperlyConfigured,
-                "foo_field is not configured in categories_keys_api_v2",
+            ImproperlyConfigured,
+            "foo_field is not configured in categories_keys_api_v2",
         ):
             call_command(
                 "import",
@@ -1420,14 +1452,15 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         )
         self.assertEqual([t.pk], list(Trek.objects.values_list("pk", flat=True)))
 
+
 class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
 
     def test_geotrek_aggregator_no_file(self):
         with self.assertRaisesRegex(
-                CommandError,
-                "File does not exists at: config_aggregator_does_not_exist.json",
+            CommandError,
+            "File does not exists at: config_aggregator_does_not_exist.json",
         ):
             call_command(
                 "import",
@@ -1445,7 +1478,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @mock.patch("django.template.loader.render_to_string")
     @mock.patch("requests.get")
     def test_geotrek_aggregator_no_data_to_import(
-            self, mocked_get, mocked_render, mocked_import_module
+        self, mocked_get, mocked_render, mocked_import_module
     ):
         def mocked_json():
             return {}
@@ -1514,7 +1547,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @mock.patch("django.template.loader.render_to_string")
     @mock.patch("requests.get")
     def test_geotrek_aggregator_parser_multiple_admin(
-            self, mocked_get, mocked_render, mocked_import_module
+        self, mocked_get, mocked_render, mocked_import_module
     ):
         def mocked_json():
             return {}
@@ -1710,12 +1743,14 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ).information_desks.count(),
         )
 
+
 class GeotrekTrekTestSourcesParser(GeotrekTrekParser):
     url = "https://test.fr"
     model = Trek
     url_categories = {"source": "source"}
     field_options = {"source": {"create": True}}
     constant_fields = {"structure": settings.DEFAULT_STRUCTURE_NAME}
+
 
 class GeotrekAggregatorSourcesTests(TestCase):
     def mocked_responses(self, url):
@@ -1768,7 +1803,7 @@ class GeotrekAggregatorSourcesTests(TestCase):
     @mock.patch("geotrek.common.parsers.GeotrekParser.request_or_retry")
     @mock.patch("geotrek.common.parsers.GeotrekParser.add_warning")
     def test_sources_extra_fields_parsing(
-            self, mocked_add_warning, mocked_request_or_retry, mocked_get
+        self, mocked_add_warning, mocked_request_or_retry, mocked_get
     ):
         self.mock_time = 0
         mocked_request_or_retry.side_effect = self.mocked_responses
@@ -1797,8 +1832,10 @@ class GeotrekAggregatorSourcesTests(TestCase):
             "Failed to download 'https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerroragain.png'"
         )
 
+
 class OpenStreetMapInitialisationTest(OpenStreetMapParser):
     model = InformationDesk
+
 
 class OpenStreetMapQueryTest(OpenStreetMapParser):
     model = InformationDesk
@@ -1810,6 +1847,7 @@ class OpenStreetMapQueryTest(OpenStreetMapParser):
         "name": "tags.name",
         "description": "tags.description_fr",
     }
+
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapTestParser(TestCase):
@@ -1900,4 +1938,3 @@ class OpenStreetMapTestParser(TestCase):
             osm_parser.fields.get("description"),
             ("tags.description_fr:fr", "tags.description_fr"),
         )
-
