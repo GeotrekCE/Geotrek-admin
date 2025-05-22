@@ -98,8 +98,6 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
             # Move deserialization aggregations to the POI
 
         geom.transform(settings.SRID)
-
-        geom = self.intersect_geom(geom)
         return geom
 
     def parse_obj(self, row, operation):
