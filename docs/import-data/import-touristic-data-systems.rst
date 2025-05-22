@@ -638,9 +638,19 @@ The following attributes can be customized:
 Filtering attachments
 ---------------------
 
-``filter_attachments`` method format the external source data to match with the internal format.
+The ``filter_attachments`` method formats the external source data to match with the internal format.
 
-Signature:
+If the attachment data has a different structure than the default ``filter_attachments``, the method must be overridden.
+
+See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/common/parsers.py/>`_ file to see more about attachments.
+
+.. _multiple-imports:
+
+Multiple imports
+=================
+
+When you need to import data for the same object found in 2 different parsers, you can to force the aggregation of both values in many to many relationship case.
+It can be interesting with portals for example.
 
 Parameters for the aggregation : ``m2m_aggregate_fields``
 
