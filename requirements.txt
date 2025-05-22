@@ -30,7 +30,7 @@ cairocffi==1.7.1
     #   geotrek (setup.py)
     #   cairosvg
     #   mapentity
-cairosvg==2.7.1
+cairosvg==2.8.2
     # via geotrek (setup.py)
 celery==5.5.2
     # via
