@@ -198,7 +198,7 @@ and to install it on other distributions than Ubuntu.
 5. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary.
 6. We recommend to use a specific user to run geotrek. So created it (useradd -m geotrek) and change ownership of the folder to this user.
    You should get UID and GID from this user and set them in .env file. With command ``id geotrek`` you should get uid and gid values.
-7. Create user and database, enable PostGIS, Postgid_raster and pgcrypto extensions
+7. Create user and database, enable PostGIS, Postgis_raster and pgcrypto extensions
 8. Run ``docker compose run --rm web update.sh``
 9. Run ``docker compose up``
 10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
