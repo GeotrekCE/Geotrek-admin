@@ -429,6 +429,32 @@ Then set up appropriate values:
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 
+.. _import-restricted-area:
+
+Import restricted areas
+-----------------------
+
+To import restricted areas from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.zoning.parsers import OpenStreetMapRestrictedAreaParser
+
+    class RegionalNatureParkParser(OpenStreetMapDistrictParser):
+        provider = "OpenStreetMap"
+        tags = [{"protection_title"="parc naturel régional"}]
+        default_fields_values = {"name": "parc naturel régional"}
+        area_type = "Inconnu"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``area_type`` to specify the restricted area type for imported objects
+* See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+the parsed objects will be those that intersect the ``settings.SPATIAL_EXTENT`` bounding box.
+
 .. _import-signage-osm:
 
 Import signage

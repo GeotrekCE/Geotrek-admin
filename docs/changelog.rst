@@ -9,6 +9,7 @@ CHANGELOG
 
 - Add attachments for OpenStreetMapParser
 - Add default license for attachments
+- Add OpenStreetMap parser for Restricted Area
 
 
 2.115.1    (2025-05-21)
