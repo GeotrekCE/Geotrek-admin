@@ -5,6 +5,10 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Add attachments for OpenStreetMapParser
+- Add default license for attachments
 
 
 2.115.1    (2025-05-21)
