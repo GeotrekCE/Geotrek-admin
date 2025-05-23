@@ -5,6 +5,10 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Add attachments for OpenStreetMapParser
+- Add default license for attachments
 
 
 2.115.1    (2025-05-21)
@@ -18,8 +22,6 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
-- Add attachments for OpenStreetMapParser
-- Add default license for attachments
 
 **Bug fixes**
 
