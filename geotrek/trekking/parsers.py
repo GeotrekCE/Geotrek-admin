@@ -26,7 +26,6 @@ from geotrek.common.parsers import (
     GlobalImportError,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
-    OpenStreetMapAttachmentsParserMixin,
     Parser,
     RowImportError,
     ShapeParser,
