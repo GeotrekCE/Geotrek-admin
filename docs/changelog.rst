@@ -5,6 +5,9 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Add OpenStreetMap parser for infrastructures
 
 
 2.115.1    (2025-05-21)
@@ -14,7 +17,7 @@ CHANGELOG
 
 - Ensure report handlers can access their solved reports (#4589)
 - Improve Overpass query for OpenStreetMap parsers
-- OpenStreetMap parsers accept translations from OSM
+- OpenSteetMap parsers accept translations from OSM
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
