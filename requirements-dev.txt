@@ -30,7 +30,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
-ruff==0.11.9
+ruff==0.11.10
     # via -r requirements-dev.in
 six==1.17.0
     # via
@@ -43,9 +43,9 @@ sqlparse==0.5.3
     #   django-debug-toolbar
 tblib==3.1.0
     # via -r requirements-dev.in
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   -c requirements.txt
     #   asgiref
-uv==0.7.3
+uv==0.7.5
     # via -r requirements-dev.in

@@ -56,7 +56,7 @@ setup(
         "django-treebeard",
         'easy-thumbnails[svg]',
         # prod,
-        'gunicorn',
+        'gunicorn[gevent]',
         'sentry-sdk',
     ],
     include_package_data=True,
