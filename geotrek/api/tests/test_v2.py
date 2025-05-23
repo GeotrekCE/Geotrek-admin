@@ -253,7 +253,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
     ]
 )
 
-CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
+CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "code", "geometry", "name", "published"])
 
 DISTRICT_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
 

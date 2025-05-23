@@ -5,7 +5,9 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
 
+- move primary key of City model on a new column ID
 
 2.115.1    (2025-05-21)
 ----------------------------
