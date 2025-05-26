@@ -600,7 +600,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             city = (
                 zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
             )
-            return city.code if city else None
+            return city.id if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
         organizers = serializers.SerializerMethodField()
@@ -1002,7 +1002,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
-            return city.code if city else None
+            return city.id if city else None
 
         def _replace_image_paths_with_urls(self, data):
             def replace(html_content):
