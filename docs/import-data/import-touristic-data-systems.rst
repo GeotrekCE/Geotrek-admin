@@ -281,6 +281,9 @@ By default, the parser uses the German Overpass server:
 
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
 
+Query configuration
+-------------------
+
 Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
 
 * ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
@@ -312,7 +315,11 @@ For example:
 
 *means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
 
-.. _import-information-desk:
+All the objects parsed by the ``OpenStreetMap`` parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can change the bounding box by overriding ``get_bbox_str()``.
+
+Handling translated fields
+--------------------------
 
 OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
 
@@ -326,8 +333,14 @@ When no translation exists for the default language, the base OpenStreetMap tag 
 
 Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
 
-Finally all the objects parsed by the OpenStreetMap parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
-You can change the bounding box by overriding ``get_bbox_str()``.
+Attachments
+-----------
+``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
+
+For more information on how attachments work, consult :ref:`this section <import-attachments>`.
+
+.. _import-information-desk:
 
 Import information desks
 ------------------------
@@ -440,6 +453,67 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
 
+.. _import-attachments:
+
+Import attachments
+==================
+
+``AttachmentParserMixin`` lets a parser **link (and optionally download) media files** to any object it imports (signage, infrastructures, POIs, touristic content, events, etc).
+The mixin is located in ``geotrek/common/parsers.py`` and must be inherited by your parser:
+
+.. code-block:: python
+
+   class ExampleParser(AttachmentParserMixin, Parser):
+
+       # Parser configuration …
+
+.. warning::
+
+   Use ``AttachmentParserMixin`` **only in base parsers**.
+   Custom parsers should focus on configuration.
+   Factor attachment logic into shared base classes to keep custom parsers clean and maintainable.
+
+Attributes
+----------
+
+The following attributes can be customized:
+
+* ``download_attachments`` (default: ``True``):
+  Whether to download and store attachments via Paperclip. If set to ``False``, attachments are only linked.
+  Requires ``PAPERCLIP_ENABLE_LINK = True`` in Django settings.
+
+* ``base_url`` (default: ``""``):
+  Base URL prepended to each relative attachment path returned by ``filter_attachments``.
+
+* ``delete_attachments`` (default: ``True``):
+  After the new attachments have been processed, **every existing
+  attachment that is *not* present in the current feed (or whose file has
+  been replaced)** is permanently removed.
+
+* ``filetype_name`` (default: ``"Photographie"``):
+  Label of the ``FileType`` model assigned to all imported files.
+  If it does not exist in the database, the import will fail with a warning:
+
+  ::
+
+     FileType '<name>' does not exist in Geotrek-Admin. Please add it
+
+* ``non_fields`` (default: ``{"attachments": _("Attachments")}``):
+  Maps the internal ``attachments`` field to the field name(s) containing attachments data in the external source.
+
+* ``default_license_label`` (default: ``None``):
+  If specified, this license will be assigned to all imported attachments.
+  If the license does not exist, it will be created automatically.
+
+Filtering attachments
+---------------------
+
+The ``filter_attachments`` method formats the external source data to match with the internal format.
+
+If the attachment data has a different structure than the default ``filter_attachments``, the method must be overridden.
+
+See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/common/parsers.py/>`_ file to see more about attachments.
+
 .. _multiple-imports:
 
 Multiple imports
@@ -468,6 +542,7 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 * Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
 
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
 
 .. _importing-from-multiple-sources-with-deletion:
 
