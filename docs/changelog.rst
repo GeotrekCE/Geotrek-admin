@@ -6,7 +6,8 @@ CHANGELOG
 ----------------------------
 
 **Improvements**
-
+- Add attachments for OpenStreetMapParser
+- Add default license for attachments
 - move primary key of City model on a new column ID
 
 2.115.1    (2025-05-21)
