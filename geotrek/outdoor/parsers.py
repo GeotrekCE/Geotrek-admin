@@ -1,6 +1,13 @@
 from django.conf import settings
+from django.contrib.gis.geos import Point, LineString, Polygon
+from django.contrib.gis.geos.collections import GeometryCollection
 
-from geotrek.common.parsers import GeotrekParser
+from geotrek.common.parsers import (
+    GeotrekParser,
+    OpenStreetMapAttachmentsParserMixin,
+    OpenStreetMapParser,
+    RowImportError,
+)
 from geotrek.outdoor.models import (
     Course,
     CourseType,
@@ -315,3 +322,70 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
                     parent=parent_course, child=child_course, defaults={"order": i}
                 )
         super().end()
+
+
+class OpenStreetMapOutdoorSiteParser(
+    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+):
+    """Parser to import outdoor sites from OpenStreetMap"""
+
+    #url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
+
+    practice = None
+    themes = None
+    portal = None
+    source = None
+    model = Site
+    eid = "eid"
+
+    fields = {
+        "eid": ("type", "id"),  # ids are unique only for object of the same type,
+        "name": "tags.name",
+        "description": "tags.description",
+        "geom": ("type", "lon", "lat", "geometry"),
+    }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    natural_keys = {
+        "practice": "name",
+        "themes": "label",
+        "source": "name",
+        "portal": "name",
+    }
+    field_options = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        self.field_options = self.field_options.copy()
+        if self.practice is not None:
+            self.constant_fields["practice"] = self.practice
+        if self.themes is not None:
+            self.m2m_constant_fields["themes"] = self.themes
+        if self.portal is not None:
+            self.m2m_constant_fields["portal"] = self.portal
+        if self.source is not None:
+            self.m2m_constant_fields["source"] = self.source
+
+    def filter_geom(self, src, val):
+        type, lng, lat, geometry = val
+        if type == "node":
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
+            geom_collection = GeometryCollection(geom)
+            geom_collection.srid = self.osm_srid
+        elif type == "way":
+            coordinates = [[point["lon"], point["lat"]] for point in geometry]
+            if coordinates[0] != coordinates[-1]:
+                geom = LineString(coordinates, srid=self.osm_srid)
+            else:
+                geom = Polygon(coordinates)
+
+            geom_collection = GeometryCollection(geom)
+            geom_collection.srid = self.osm_srid
+        elif type == "relation":
+            raise RowImportError("Relations are not yet supported")
+
+        if geom_collection.srid == self.osm_srid:
+            geom_collection.transform(settings.SRID)
+        return geom_collection
