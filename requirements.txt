@@ -205,7 +205,7 @@ gevent==25.4.2
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.2.1
+greenlet==3.2.2
     # via gevent
 gunicorn==23.0.0
     # via geotrek (setup.py)
