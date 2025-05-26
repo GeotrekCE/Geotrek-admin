@@ -532,7 +532,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             return get_translation_or_dict("practical_info", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -991,7 +991,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return json.loads(geojson)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1542,7 +1542,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
             return get_translation_or_dict("period", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1671,7 +1671,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
             return get_translation_or_dict("accessibility", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
