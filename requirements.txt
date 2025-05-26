@@ -201,7 +201,7 @@ geojson==3.2.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==25.4.2
+gevent==25.5.1
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
