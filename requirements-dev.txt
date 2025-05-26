@@ -19,7 +19,7 @@ factory-boy==3.3.3
     # via -r requirements-dev.in
 faker==19.3.1
     # via factory-boy
-freezegun==1.5.1
+freezegun==1.5.2
     # via -r requirements-dev.in
 lxml==4.9.3
     # via
