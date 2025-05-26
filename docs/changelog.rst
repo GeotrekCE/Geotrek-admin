@@ -7,8 +7,8 @@ CHANGELOG
 
 **Improvements**
 
+- Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
-- Add default license for attachments
 - Add OpenStreetMap parser for Restricted Area
 
 
