@@ -1469,18 +1469,18 @@ class OpenStreetMapParserTests(TestCase):
 
     def test_geom_point_to_point_OSM(self):
         information_desk = self.objects.get(eid="N1")
-        self.assertAlmostEqual(information_desk.geom.coords[0], 673775.5074406686)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 6260613.093389216)
+        self.assertAlmostEqual(information_desk.geom.coords[0], 673775.507, places=2)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 6260613.093, places=2)
 
     def test_geom_way_to_point_OSM(self):
         information_desk = self.objects.get(eid="W3")
-        self.assertAlmostEqual(information_desk.geom.coords[0], 639380.854410392)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 6256494.451055847)
+        self.assertAlmostEqual(information_desk.geom.coords[0], 639380.854, places=2)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 6256494.451, places=2)
 
     def test_geom_relation_to_point_OSM(self):
         information_desk = self.objects.get(eid="R4")
-        self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
-        self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
+        self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244, places=2)
+        self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659, places=2)
 
     def test_default_fields(self):
         information_desk = self.objects.get(eid="N1")

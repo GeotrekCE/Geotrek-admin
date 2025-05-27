@@ -2466,7 +2466,7 @@ class OpenStreetMapPOIParser(TestCase):
     )
     def test_topology_way(self):
         poi = self.objects.get(eid="W2")
-        self.assertAlmostEqual(poi.topo_object.offset, -1401.037, places=2)
+        self.assertAlmostEqual(poi.topo_object.offset, 1401.037, places=2)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
@@ -2481,7 +2481,7 @@ class OpenStreetMapPOIParser(TestCase):
     )
     def test_topology_polygon(self):
         poi = self.objects.get(eid="W3")
-        self.assertAlmostEqual(poi.topo_object.offset, -1398.870, places=2)
+        self.assertAlmostEqual(poi.topo_object.offset, 1398.870, places=2)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")

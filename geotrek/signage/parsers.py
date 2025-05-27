@@ -85,6 +85,7 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
         lng, lat = val
 
         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+        geom = self.intersect_geom(geom)
 
         # create topology
         self.topology = Topology.objects.none()

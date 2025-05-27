@@ -81,4 +81,6 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
         if isinstance(geom, Polygon):
             geom = MultiPolygon(geom)
 
+        geom = self.intersect_geom(geom)
+
         return geom

@@ -769,6 +769,7 @@ class Parser:
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
         if self.intersection_geom:
+            self.ref_geom.transform(geom.srid)
             if self.ref_geom.intersects(geom):
                 return geom
             else:
@@ -2087,12 +2088,10 @@ class OpenStreetMapParser(Parser):
         if geometries[0] != geometries[-1]:
             line = LineString([[point["lon"], point["lat"]] for point in geometries])
             line.srid = self.osm_srid
-            line.transform(settings.SRID)
             point = line.point_on_surface
         else:
             polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
             polygon.srid = self.osm_srid
-            polygon.transform(settings.SRID)
             point = polygon.centroid
         return point
 
@@ -2101,7 +2100,6 @@ class OpenStreetMapParser(Parser):
             (bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"])
         )
         polygon.srid = self.osm_srid
-        polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid
 
