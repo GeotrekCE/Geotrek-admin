@@ -15,6 +15,7 @@ from geotrek.common.parsers import (
     AttachmentParserMixin,
     GeotrekParser,
     LEIParser,
+    OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
     TourInSoftParser,
@@ -1388,13 +1389,17 @@ class GeotrekInformationDeskParser(GeotrekParser):
         )
 
 
-class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
+class InformationDeskOpenStreetMapParser(
+    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+):
     """Parser to import information desks from OpenStreetMap"""
 
     type = None
     model = InformationDesk
+    eid = "eid"
+
     fields = {
-        "eid": "id",
+        "eid": ("type", "id"),  # ids are unique only for object of the same type,
         "phone": ("tags.contact:phone", "tags.phone"),
         "email": ("tags.contact:email", "tags.email"),
         "website": ("tags.contact:website", "tags.website"),
@@ -1408,7 +1413,6 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
     natural_keys = {
         "type": "label",
     }
-    non_fields = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1422,21 +1426,6 @@ class InformationDeskOpenStreetMapParser(OpenStreetMapParser):
         elif street:
             return street
         return None
-
-    def filter_postal_code(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_municipality(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_phone(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_email(self, src, val):
-        return self.get_tag_info(val)
-
-    def filter_website(self, src, val):
-        return self.get_tag_info(val)
 
     def filter_geom(self, src, val):
         type, lng, lat, area, bbox = val

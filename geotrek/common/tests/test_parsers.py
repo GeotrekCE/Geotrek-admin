@@ -16,13 +16,21 @@ from django.test.utils import override_settings
 from requests import Response
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.models import Attachment, FileType, Organism, RecordSource, Theme
+from geotrek.common.models import (
+    Attachment,
+    FileType,
+    License,
+    Organism,
+    RecordSource,
+    Theme,
+)
 from geotrek.common.parsers import (
     AttachmentParserMixin,
     DownloadImportError,
     ExcelParser,
     GeotrekAggregatorParser,
     GeotrekParser,
+    OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     OpenSystemParser,
     TourInSoftParser,
@@ -34,6 +42,7 @@ from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
 from geotrek.tourism.models import InformationDesk
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
@@ -95,6 +104,11 @@ class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
 
 class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
+
+
+class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
+    non_fields = {"attachments": "photo"}
+    default_license_label = "Creative Commons"
 
 
 class WarnAttachmentParser(AttachmentParser):
@@ -445,6 +459,7 @@ class AttachmentParserTests(TestCase):
         )
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(attachment.is_image)
+        self.assertEqual(attachment.license, None)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch("requests.get")
@@ -860,6 +875,63 @@ class AttachmentParserTests(TestCase):
             output.getvalue(),
         )
         self.assertEqual(mocked_get.call_count, 1)
+
+    @mock.patch("requests.get")
+    def test_attachment_get_default_license(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        License.objects.create(label="Creative Commons")
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.license.label, "Creative Commons")
+
+    @mock.patch("requests.get")
+    def test_attachment_create_default_license(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.license.label, "Creative Commons")
+
+    @mock.patch(
+        "geotrek.common.parsers.AttachmentParserMixin.has_size_changed",
+        return_value=False,
+    )
+    @mock.patch("requests.get")
+    def test_attachment_update_license(self, mocked_get, mocked_size):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = get_dummy_img()
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.AttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment1 = Attachment.objects.get()
+        self.assertEqual(attachment1.license, None)
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
+            filename,
+            verbosity=0,
+        )
+        attachment2 = Attachment.objects.first()
+        self.assertEqual(attachment2.license.label, "Creative Commons")
 
 
 class TestXmlParser(XmlParser):
@@ -1508,7 +1580,77 @@ class OpenStreetMapInitialisationTest(OpenStreetMapParser):
     model = InformationDesk
 
 
+class OpenStreetMapTest(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
+    model = InformationDesk
+    tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"boundary": "protected_area"},
+    ]
+    fields = {
+        "eid": ("type", "id"),
+        "name": "tags.name",
+        "description": "tags.description_fr",
+    }
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
+    constant_fields = {"type": "Foo"}
+    natural_keys = {"type": "label"}
+
+
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapTestParser(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.osm_parser = OpenStreetMapTest()
+
+        cls.typefile = FileType.objects.create(type="Photographie")
+        cls.type = InformationDeskTypeFactory.create(label="Foo")
+        cls.license = License.objects.create(label="CC-by-sa 4.0")
+
+    @mock.patch("requests.get")
+    def import_items(self, mocked_get, status_code=200):
+        def mocked_json_OSM():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "OSM_import.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        def mocked_json_attachment():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "OSM_attachments.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        mock_OSM = mock.Mock()
+        mock_OSM.json = mocked_json_OSM
+        mock_OSM.status_code = 200
+
+        mock_wikimedia = mock.Mock()
+        mock_wikimedia.json = mocked_json_attachment
+        mock_wikimedia.status_code = 200
+
+        mock_attachment_image = mock.Mock()
+        mock_attachment_image.content = b"20"
+        mock_attachment_image.status_code = status_code
+
+        mock_attachment_wikimedia = mock.Mock()
+        mock_attachment_wikimedia.content = b"20"
+        mock_attachment_wikimedia.status_code = 200
+
+        mocked_get.side_effect = [
+            mock_OSM,
+            mock_attachment_image,
+            mock_wikimedia,
+            mock_attachment_wikimedia,
+        ]
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.OpenStreetMapTest",
+            verbosity=2,
+        )
+
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
@@ -1516,3 +1658,181 @@ class OpenStreetMapTestParser(TestCase):
                 "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest",
                 verbosity=2,
             )
+
+    @mock.patch(
+        "geotrek.common.parsers.OpenStreetMapParser.get_bbox_str", return_value="test"
+    )
+    def test_query_settings(self, mocked):
+        # default settings
+        self.assertEqual(
+            "[out:json][timeout:180][bbox:test];(nwr['boundary'='administrative']['admin_level'='4'];nwr['boundary'='protected_area'];);out geom;",
+            self.osm_parser.build_query(),
+        )
+
+        self.osm_parser.query_settings = self.osm_parser.QuerySettings(
+            osm_element_type="relation", output="tags"
+        )
+
+        # custom settings
+        self.assertEqual(
+            "[out:json][timeout:180][bbox:test];(relation['boundary'='administrative']['admin_level'='4'];relation['boundary'='protected_area'];);out tags;",
+            self.osm_parser.build_query(),
+        )
+
+    @override_settings(
+        SPATIAL_EXTENT=(949226.1011, 6421548.4861, 966477.9123, 6432083.7731)
+    )
+    def test_bbox_str(self):
+        def test_coordinates(Wlon, Slat, Elon, Nlat):
+            bbox = self.osm_parser.get_bbox_str()
+            minlat, minlon, maxlat, maxlon = map(float, bbox.split(","))
+
+            self.assertAlmostEqual(minlon, Wlon, places=2)
+            self.assertAlmostEqual(minlat, Slat, places=2)
+            self.assertAlmostEqual(maxlon, Elon, places=2)
+            self.assertAlmostEqual(maxlat, Nlat, places=2)
+
+        test_coordinates(6.155090, 44.841868, 6.378937, 44.943065)
+
+        self.osm_parser.query_settings = self.osm_parser.QuerySettings(bbox_margin=0.5)
+
+        test_coordinates(6.0434314, 44.729993, 6.4911242, 45.054940)
+
+    def test_translation_mapping(self):
+        self.osm_parser.start()
+        # default language
+        self.assertIn("name", self.osm_parser.fields)
+        self.assertEqual(
+            self.osm_parser.fields.get("name"), ("tags.name:fr", "tags.name")
+        )
+
+        # translation language
+        self.assertIn("name_en", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", self.osm_parser.fields)
+        self.assertEqual(self.osm_parser.fields.get("name_es"), "tags.name:es")
+
+    def test_double_translation_mapping_protection(self):
+        self.osm_parser.start()
+
+        osm_parser = OpenStreetMapTest()
+        osm_parser.start()
+
+        # default language
+        self.assertIn("name", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name"), ("tags.name:fr", "tags.name"))
+
+        # translation language
+        self.assertIn("name_en", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_en"), "tags.name:en")
+        self.assertIn("name_it", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_it"), "tags.name:it")
+        self.assertIn("name_es", osm_parser.fields)
+        self.assertEqual(osm_parser.fields.get("name_es"), "tags.name:es")
+
+        # translate tags that contains the default language code
+        self.assertIn("description", osm_parser.fields)
+        self.assertEqual(
+            osm_parser.fields.get("description"),
+            ("tags.description_fr:fr", "tags.description_fr"),
+        )
+
+    def test_eid_filter(self):
+        self.import_items()
+
+        items_eids = InformationDesk.objects.all().values_list("eid", flat=True)
+        self.assertListEqual(list(items_eids), ["N279480543", "W787047534", "R3538072"])
+        self.assertNotEqual(items_eids, ["279480543", "787047534", "3538072"])
+
+    def test_attachments(self):
+        self.import_items()
+
+        self.assertEqual(Attachment.objects.count(), 2)
+        self.assertEqual(Attachment.objects.first().filetype, self.typefile)
+
+        item1 = InformationDesk.objects.get(eid="N279480543")
+        item2 = InformationDesk.objects.get(eid="W787047534")
+        item3 = InformationDesk.objects.get(eid="R3538072")
+
+        self.assertEqual(Attachment.objects.filter(object_id=item1.pk).count(), 1)
+        self.assertEqual(Attachment.objects.filter(object_id=item2.pk).count(), 1)
+        self.assertEqual(Attachment.objects.filter(object_id=item3.pk).count(), 0)
+
+    def test_attachments_image_missing(self):
+        self.import_items(status_code=404)
+
+        self.assertEqual(Attachment.objects.count(), 1)
+
+        item1 = InformationDesk.objects.get(eid="N279480543")
+        item2 = InformationDesk.objects.get(eid="W787047534")
+        item3 = InformationDesk.objects.get(eid="R3538072")
+
+        self.assertEqual(Attachment.objects.filter(object_id=item1.pk).count(), 0)
+        self.assertEqual(Attachment.objects.filter(object_id=item2.pk).count(), 1)
+        self.assertEqual(Attachment.objects.filter(object_id=item3.pk).count(), 0)
+
+
+class OpenStreetMapAttachmentParserMixinTests(TestCase):
+    @mock.patch("geotrek.common.parsers.Parser.request_or_retry")
+    def configure_attachment_filter(cls, mocked, status_code=200):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "OSM_attachments.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        mocked.json = mocked_json
+        mocked.status_code = status_code
+
+        cls.osm_attachment_parser = OpenStreetMapTest()
+
+    def test_wikimedia_commons(self):
+        self.configure_attachment_filter()
+        wikimedia_commons = "File:Cime_de_Clot_Châtel_@_Crête_de_Puy_Salié.jpg"
+
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (wikimedia_commons, None)
+        )[0]
+
+        self.assertEqual(
+            attachment[0],
+            "https://upload.wikimedia.org/wikipedia/commons/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg",
+        )
+        self.assertEqual(attachment[1], "")
+        self.assertEqual(attachment[2], "Rémih")
+        self.assertEqual(attachment[3], "Cime de Clot Châtel @ Crête de Puy Salié")
+
+    def test_image(self):
+        self.configure_attachment_filter()
+        image = "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg"
+
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (None, image)
+        )[0]
+
+        self.assertEqual(
+            attachment[0],
+            "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg",
+        )
+        self.assertEqual(attachment[1], "")
+        self.assertEqual(attachment[2], "")
+        self.assertEqual(attachment[3], "")
+
+    def test_missing_reference_wikimedia_commons(self):
+        self.configure_attachment_filter(status_code=404)
+        wikimedia_commons = "File:Cime_de_Clot__de_Puy_Salié.jpg"
+
+        attachment = self.osm_attachment_parser.filter_attachments(
+            "attachments", (wikimedia_commons, None)
+        )
+        warnings = self.osm_attachment_parser.warnings
+
+        self.assertEqual(attachment, [])
+
+        self.assertEqual(
+            warnings["Line 0"][0],
+            "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (Error 404)",
+        )

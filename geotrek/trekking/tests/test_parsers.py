@@ -2376,11 +2376,14 @@ class SchemaRandonneeParserTests(TestCase):
 
 class TestPOIOpenStreetMapParser(OpenStreetMapPOIParser):
     provider = "OpenStreetMap"
-    tags = {
-        "natural": ["peak", "arete", "saddle", "wood"],
-        "tourism": "alpine_hut",
-        "mountain_pass": "yes",
-    }
+    tags = [
+        {"natural": "peak"},
+        {"natural": "arete"},
+        {"natural": "saddle"},
+        {"natural": "wood"},
+        {"tourism": "alpine_hut"},
+        {"mountain_pass": "yes"},
+    ]
     default_fields_values = {"name": "Test"}
     type = "Test"
 
@@ -2407,6 +2410,7 @@ class OpenStreetMapPOIParser(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.type = POIType.objects.create(label="Test")
+        FileType.objects.create(type="Photographie")
         cls.path = PathFactory.create(
             geom=LineString((5.8394587, 44.6918860), (5.9527022, 44.7752786), srid=4326)
         )
@@ -2430,70 +2434,91 @@ class OpenStreetMapPOIParser(TestCase):
     def test_create_POI_OSM(self):
         self.assertEqual(self.objects.count(), 4)
 
+    def test_POI_eid_filter_OSM(self):
+        poi_eid = self.objects.all().values_list("eid", flat=True)
+        self.assertListEqual(list(poi_eid), ["N1", "W2", "W3", "R4"])
+        self.assertNotEqual(poi_eid, ["1", "2", "3", "4"])
+
     def test_default_name(self):
-        poi1 = self.objects.get(eid=1)
+        poi1 = self.objects.get(eid="N1")
         self.assertEqual(poi1.name, "Grande Tête de l'Obiou")
 
-        poi3 = self.objects.get(eid=3)
+        poi3 = self.objects.get(eid="W3")
         self.assertEqual(poi3.name, "Test")
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_point(self):
-        poi = self.objects.get(eid=1)
-        self.assertAlmostEqual(poi.topo_object.offset, 6437.493262796821)
+        poi = self.objects.get(eid="N1")
+        self.assertAlmostEqual(poi.topo_object.offset, 6437.493, places=2)
         self.assertEqual(poi.topo_object.paths.count(), 1)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_point_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid=1)
-        self.assertAlmostEqual(poi.geom.x, 924596.692586552)
-        self.assertAlmostEqual(poi.geom.y, 6412498.122749874)
+        poi = self.objects.get(eid="N1")
+        self.assertAlmostEqual(poi.geom.x, 924596.692, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6412498.122, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_way(self):
-        poi = self.objects.get(eid=2)
-        self.assertAlmostEqual(poi.topo_object.offset, -1401.0373646193946)
+        poi = self.objects.get(eid="W2")
+        self.assertAlmostEqual(poi.topo_object.offset, -1401.037, places=2)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_way_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid=2)
-        self.assertAlmostEqual(poi.geom.x, 926882.1207550302)
-        self.assertAlmostEqual(poi.geom.y, 6403317.111114113)
+        poi = self.objects.get(eid="W2")
+        self.assertAlmostEqual(poi.geom.x, 926882.120, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6403317.111, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_polygon(self):
-        poi = self.objects.get(eid=3)
-        self.assertAlmostEqual(poi.topo_object.offset, -1398.870241563602)
+        poi = self.objects.get(eid="W3")
+        self.assertAlmostEqual(poi.topo_object.offset, -1398.870, places=2)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_polygon_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid=3)
-        self.assertAlmostEqual(poi.geom.x, 933501.2402840604)
-        self.assertAlmostEqual(poi.geom.y, 6410680.482150642)
+        poi = self.objects.get(eid="W3")
+        self.assertAlmostEqual(poi.geom.x, 933501.240, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6410680.482, places=2)
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_topology_relation(self):
-        poi = self.objects.get(eid=4)
-        self.assertAlmostEqual(poi.topo_object.offset, 2589.2357898722626)
+        poi = self.objects.get(eid="R4")
+        self.assertAlmostEqual(poi.topo_object.offset, 2589.235, places=2)
         poi_path = poi.topo_object.paths.get()
         self.assertEqual(poi_path, self.path)
         self.assertEqual(poi.topo_object.kind, "POI")
 
     def test_topology_relation_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid=4)
-        self.assertAlmostEqual(poi.geom.x, 930902.9339307954)
-        self.assertAlmostEqual(poi.geom.y, 6406011.138417606)
+        poi = self.objects.get(eid="R4")
+        self.assertAlmostEqual(poi.geom.x, 930902.933, places=2)
+        self.assertAlmostEqual(poi.geom.y, 6406011.138, places=2)
+
+    def test_multiple_import(self):
+        poi1 = self.objects.get(eid="N1")
+        poi2 = self.objects.get(eid="W2")
+
+        id1 = poi1.id
+        id2 = poi2.id
+
+        self.import_POI()
+
+        poi1_bis = self.objects.get(eid="N1")
+        poi2_bis = self.objects.get(eid="W2")
+
+        self.assertEqual(poi1_bis.id, id1)
+        self.assertEqual(poi2_bis.id, id2)
+        self.assertEqual(self.objects.count(), 4)

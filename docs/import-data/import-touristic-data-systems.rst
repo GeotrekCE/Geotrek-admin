@@ -274,10 +274,78 @@ If you use an url that filters a unique category, you can change its name. Examp
 Import from OpenStreetMap
 ==========================
 
-Import information desks
--------------------------
+OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
-To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+By default, the parser uses the German Overpass server:
+``https://overpass-api.de/api/interpreter/``.
+
+You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
+
+Query configuration
+-------------------
+
+Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
+
+* ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
+
+* ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
+
+* ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
+    * ``geom``: return the object type, the object ID, the tags and the geometry
+    * ``tags``: return the object type, the object ID and the tags
+
+The ``tags`` attribute defines the set of tag filters to be used with the Overpass API.
+It is a list where each element is either:
+
+* A **dictionary**: representing a single tag filter (e.g., ``{"highway": "bus_stop"}``)
+
+* A **list of dictionaries**: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+
+The Overpass query will return the UNION of all top-level items.
+
+For example:
+
+::
+
+    self.tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"highway": "bus_stop"}
+    ]
+
+*means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
+
+All the objects parsed by the ``OpenStreetMap`` parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can change the bounding box by overriding ``get_bbox_str()``.
+
+Handling translated fields
+--------------------------
+
+OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
+
+During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
+
+For the default language (``settings.MODELTRANSLATION_DEFAULT_LANGUAGE``), a special mapping is applied: it includes a fallback to the base tag (e.g., ``name``) and maps it to the base Geotrek field name (e.g., ``name``). This allows for filtering operations without relying directly on the default language code.
+
+If a translation is missing, the field remains unset unless a fallback value is provided in ``default_fields_values`` using the pattern ``{field}_{lang}``.
+
+When no translation exists for the default language, the base OpenStreetMap tag (e.g., ``name``) is used. This can lead to incorrect language display if the OSM default does not match the Geotrek instance’s default language.
+
+Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
+
+Attachments
+-----------
+``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
+
+For more information on how attachments work, consult :ref:`this section <import-attachments>`.
+
+.. _import-information-desk:
+
+Import information desks
+------------------------
+
+To import information desks from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -285,7 +353,7 @@ To import information desks from OpenStreetMap, edit the ``/opt/geotrek-admin/va
 
     class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
         provider = "OpenStreetMap"
-        tags = {"amenity": "ranger_station"}
+        tags = [{"amenity": "ranger_station"}]
         default_fields_values = {"name": "Maison du Parc"}
         type = "Maisons du parc"
 
@@ -296,13 +364,15 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
-The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-Import POI
-----------
 
-To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+.. _import-poi:
+
+Import points of interest (POIs)
+--------------------------------
+
+To import point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -310,23 +380,139 @@ To import Point of interest (POI) from OpenStreetMap, edit the ``var/conf/parser
 
     class HistoryParser(OpenStreetMapPOIParser):
         provider = "OpenStreetMap"
-        tags = {
-            "historic": ["yes","castel","memorial","fort","bunker"],
-            "building": "church",
-        }
+        tags = [
+            {"historic": "yes"},
+            {"historic": "castel"},
+            {"historic": "memorial"},
+            {"historic": "fort"},
+            {"historic": "bunker"},
+            {"building": "chapel"},
+            {"building": "bunker"},
+        ]
         default_fields_values = {"name": "Historic spot"}
         type = "Histoire"
 
 Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-    * if there is multiple tags with the same key, groups the different attributs in a list
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
 * ``type`` to specify the Geotrek type for imported objects
-* See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+* See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
-You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
+
+.. _import-district:
+
+Import districts
+-----------------
+
+To import districts from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.zoning.parsers import OpenStreetMapDistrictParser
+
+    class DistrictParser(OpenStreetMapDistrictParser):
+        provider = "OpenStreetMap"
+        tags = [
+            [{"boundary": "administrative"}, {"admin_level": "6"}], # departement
+            [{"boundary": "administrative"}, {"admin_level": "4"}], # region
+        ]
+        default_fields_values = {"name": "district"}
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+
+.. _import-signage-osm:
+
+Import signage
+--------------
+
+To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.signage.parsers import OpenStreetMapSignageParser
+
+    class DirectionalParser(OpenStreetMapSignageParser):
+        provider = "OpenStreetMap"
+        tags = [{"information": "guidepost"}]
+        default_fields_values = {"name": "guidepost"}
+        type = "Directionelle"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``type`` to specify the Geotrek type for imported objects
+* See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
+
+.. _import-attachments:
+
+Import attachments
+==================
+
+``AttachmentParserMixin`` lets a parser **link (and optionally download) media files** to any object it imports (signage, infrastructures, POIs, touristic content, events, etc).
+The mixin is located in ``geotrek/common/parsers.py`` and must be inherited by your parser:
+
+.. code-block:: python
+
+   class ExampleParser(AttachmentParserMixin, Parser):
+
+       # Parser configuration …
+
+.. warning::
+
+   Use ``AttachmentParserMixin`` **only in base parsers**.
+   Custom parsers should focus on configuration.
+   Factor attachment logic into shared base classes to keep custom parsers clean and maintainable.
+
+Attributes
+----------
+
+The following attributes can be customized:
+
+* ``download_attachments`` (default: ``True``):
+  Whether to download and store attachments via Paperclip. If set to ``False``, attachments are only linked.
+  Requires ``PAPERCLIP_ENABLE_LINK = True`` in Django settings.
+
+* ``base_url`` (default: ``""``):
+  Base URL prepended to each relative attachment path returned by ``filter_attachments``.
+
+* ``delete_attachments`` (default: ``True``):
+  After the new attachments have been processed, **every existing
+  attachment that is *not* present in the current feed (or whose file has
+  been replaced)** is permanently removed.
+
+* ``filetype_name`` (default: ``"Photographie"``):
+  Label of the ``FileType`` model assigned to all imported files.
+  If it does not exist in the database, the import will fail with a warning:
+
+  ::
+
+     FileType '<name>' does not exist in Geotrek-Admin. Please add it
+
+* ``non_fields`` (default: ``{"attachments": _("Attachments")}``):
+  Maps the internal ``attachments`` field to the field name(s) containing attachments data in the external source.
+
+* ``default_license_label`` (default: ``None``):
+  If specified, this license will be assigned to all imported attachments.
+  If the license does not exist, it will be created automatically.
+
+Filtering attachments
+---------------------
+
+The ``filter_attachments`` method formats the external source data to match with the internal format.
+
+If the attachment data has a different structure than the default ``filter_attachments``, the method must be overridden.
+
+See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/common/parsers.py/>`_ file to see more about attachments.
 
 .. _multiple-imports:
 
@@ -356,6 +542,7 @@ Then your object in both portals will have as portal: ``portal_1, portal_2``
 * Here in this example whenever you import the first parser ``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields`` is not filled. Then, be careful to import parsers in the right order or add the param ``m2m_aggregate_fields`` on all parsers.
 
 If you need to cancel the aggregation of portals, remove param ``m2m_aggregate_fields``.
+
 
 .. _importing-from-multiple-sources-with-deletion:
 

@@ -304,15 +304,31 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         cls.classified_status = feedback_factories.ReportStatusFactory(
             identifier="classified"
         )
+        cls.solved_intervention_status = feedback_factories.ReportStatusFactory(
+            identifier="solved_intervention"
+        )
+        cls.solved_status = feedback_factories.ReportStatusFactory(identifier="solved")
         feedback_factories.WorkflowManagerFactory(user=cls.workflow_manager_user)
         cls.admin = SuperUserFactory(username="Admin", password="drowssap")
-        cls.report = feedback_factories.ReportFactory(
-            assigned_user=cls.normal_user, status=cls.classified_status
+        feedback_factories.ReportFactory(
+            current_user=cls.normal_user,
+            assigned_handler=cls.normal_user,
+            status=cls.classified_status,
         )
-        cls.report = feedback_factories.ReportFactory(
-            assigned_user=cls.workflow_manager_user, status=cls.classified_status
+        feedback_factories.ReportFactory(
+            current_user=cls.normal_user,
+            assigned_handler=cls.normal_user,
+            status=cls.solved_intervention_status,
         )
-        cls.report = feedback_factories.ReportFactory(status=cls.classified_status)
+        feedback_factories.ReportFactory(
+            current_user=cls.normal_user,
+            assigned_handler=cls.normal_user,
+            status=cls.solved_status,
+        )
+        feedback_factories.ReportFactory(
+            current_user=cls.workflow_manager_user, status=cls.classified_status
+        )
+        feedback_factories.ReportFactory(status=cls.classified_status)
         permission = Permission.objects.get(name__contains="Can read Report")
         permission_export = Permission.objects.get(name__contains="Can export Report")
         cls.workflow_manager_user.user_permissions.add(permission)
@@ -327,22 +343,42 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.client.force_login(user=self.workflow_manager_user)
         response = self.client.get(reverse("feedback:report_list"), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["object_list"].count(), 4)
+        self.assertEqual(response.context_data["object_list"].count(), 6)
         response = self.client.get(
             reverse("feedback:report-drf-list", format="geojson"),
             data={"status": self.classified_status.pk},
         )
         self.assertEqual(len(response.json()["features"]), 3)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_intervention_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
 
     @test_for_workflow_mode
     def test_normal_user_sees_only_assigned_reports(self):
         self.client.force_login(user=self.normal_user)
         response = self.client.get(reverse("feedback:report_list"), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["object_list"].count(), 1)
+        self.assertEqual(response.context_data["object_list"].count(), 3)
         response = self.client.get(
             reverse("feedback:report-drf-list", format="geojson"),
             data={"status": self.classified_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_intervention_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_status.pk},
         )
         self.assertEqual(len(response.json()["features"]), 1)
 
@@ -351,26 +387,44 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
         self.client.force_login(user=self.super_user)
         response = self.client.get(reverse("feedback:report_list"), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["object_list"].count(), 4)
+        self.assertEqual(response.context_data["object_list"].count(), 6)
         response = self.client.get(
             reverse("feedback:report-drf-list", format="geojson"),
             data={"status": self.classified_status.pk},
         )
         self.assertEqual(len(response.json()["features"]), 3)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_intervention_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
 
     @test_for_report_and_basic_modes
     def test_normal_user_sees_everything_1(self):
         self.client.force_login(user=self.normal_user)
         response = self.client.get(reverse("feedback:report_list"), follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["object_list"].count(), 4)
+        self.assertEqual(response.context_data["object_list"].count(), 6)
         response = self.client.get(
             reverse("feedback:report-drf-list", format="geojson"),
             data={"status": self.classified_status.pk},
         )
-        self.assertEqual(
-            len(response.json()["features"]), 3, response.json()["features"]
+        self.assertEqual(len(response.json()["features"]), 3)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_intervention_status.pk},
         )
+        self.assertEqual(len(response.json()["features"]), 1)
+        response = self.client.get(
+            reverse("feedback:report-drf-list", format="geojson"),
+            data={"status": self.solved_status.pk},
+        )
+        self.assertEqual(len(response.json()["features"]), 1)
 
     @test_for_workflow_mode
     def test_cannot_delete_report_intervention(self):
@@ -385,7 +439,7 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
     def test_can_delete_closed_report_intervention(self):
         self.client.force_login(user=self.admin)
         report = self.intervention.target
-        report.status = feedback_factories.ReportStatusFactory(identifier="solved")
+        report.status = self.solved_status
         report.save()
         response = self.client.get(
             f"/intervention/edit/{self.intervention.pk}/", follow=True

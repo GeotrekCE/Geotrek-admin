@@ -7,6 +7,7 @@ import re
 import textwrap
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
+from dataclasses import dataclass
 from ftplib import FTP
 from functools import reduce
 from io import BytesIO
@@ -813,9 +814,17 @@ class AttachmentParserMixin:
     non_fields = {
         "attachments": _("Attachments"),
     }
+    default_license_label = None
 
     def start(self):
         super().start()
+
+        self.license = None
+        if self.default_license_label:
+            self.license = License.objects.get_or_create(
+                label=self.default_license_label
+            )[0]
+
         if (
             settings.PAPERCLIP_ENABLE_LINK is False
             and self.download_attachments is False
@@ -908,6 +917,7 @@ class AttachmentParserMixin:
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
+
             if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
                 kwargs.get("url"), attachment
             ):
@@ -917,6 +927,7 @@ class AttachmentParserMixin:
                     kwargs.get("author") != attachment.author
                     or kwargs.get("legend") != attachment.legend
                     or kwargs.get("title") != attachment.title
+                    or kwargs.get("license") != attachment.license
                 ):
                     attachment.author = kwargs.get("author")
                     attachment.legend = textwrap.shorten(
@@ -925,6 +936,7 @@ class AttachmentParserMixin:
                     attachment.title = textwrap.shorten(
                         kwargs.get("title", ""), width=127
                     )
+                    attachment.license = kwargs.get("license")
                     attachment.save(**{"skip_file_save": True})
                     updated = True
                 break
@@ -1048,6 +1060,8 @@ class AttachmentParserMixin:
         attachment.author = kwargs.get("author")
         attachment.legend = textwrap.shorten(kwargs.get("legend"), width=127)
         attachment.title = textwrap.shorten(kwargs.get("title"), width=127)
+        attachment.license = self.license
+
         return attachment
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
@@ -1067,6 +1081,7 @@ class AttachmentParserMixin:
                 legend=legend,
                 author=author,
                 title=title,
+                license=self.license,
             )
             if found:
                 continue
@@ -1917,34 +1932,123 @@ class ApidaeBaseParser(Parser):
         return name
 
 
+class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
+    base_url_wikimedia = "https://api.wikimedia.org/core/v1/commons/file/"
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
+    default_license_label = "CC-by-sa 4.0"
+
+    def filter_attachments(self, src, val):
+        attachments = []
+        wikimedia, image = val
+
+        if wikimedia and wikimedia.startswith("File:"):
+            # Wikimedia Commons API url
+            filename = wikimedia.split(":")[1]
+            filename.replace(" ", "_")
+
+            url = f"{self.base_url_wikimedia}{filename}"
+
+            # API request
+            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
+            if response.status_code == requests.codes.ok:
+                data = response.json()
+                file = data["original"]["url"]
+                legend = ""
+                author = data["latest"]["user"]["name"]
+                title = data["title"].split(".")[0]  # remove extension
+                attachments.append([file, legend, author, title])
+            else:
+                msg = f"'{url}' is inaccessible (Error {response.status_code})"
+                self.add_warning(msg)
+
+        if image:
+            file = image
+            attachments.append([file, "", "", ""])
+
+        return attachments
+
+
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
 
+    # parser settings
     delete = True
     flexible_fields = True
+
+    # overpass query settings
     url = "https://overpass-api.de/api/interpreter/"
-    bbox = None
     tags = None
-    query = ""
+    query_settings = None
+
+    # nominatim query settings
+    url_nominatim = "https://nominatim.openstreetmap.org/lookup"
+
+    # OSM settings
     osm_srid = 4326
-    bbox_margin = 0.0
+
+    @dataclass
+    class QuerySettings:
+        bbox_margin: float = 0.0
+        output: str = "geom"
+        osm_element_type: str = "nwr"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if not self.query_settings:
+            self.query_settings = self.QuerySettings()
+
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
 
-        bbox_str = self.get_bbox_str()
-        for tag, values in self.tags.items():
-            if not isinstance(values, list):
-                values = list(values)
-                for value in values:
-                    self.query += f"nwr['{tag}'='{value}']({bbox_str});"
+    def start(self):
+        super().start()
+        self.translation_fields()
+
+    def format_tags(self):
+        formatted_tags = []
+        for tags_filter in self.tags:
+            if isinstance(tags_filter, dict):
+                tags_filter = [tags_filter]
+
+            list_tags = [
+                f"['{key}'='{value}']"
+                for tag in tags_filter
+                for key, value in tag.items()
+            ]
+            formatted_tags.append(
+                f"{self.query_settings.osm_element_type}{''.join(list_tags)};"
+            )
+
+        return formatted_tags
 
     def get_bbox_str(self):
-        bbox = api_bbox(settings.SPATIAL_EXTENT, self.bbox_margin)
+        bbox = api_bbox(settings.SPATIAL_EXTENT, self.query_settings.bbox_margin)
         return "{1},{0},{3},{2}".format(*bbox)
+
+    def build_query(self):
+        """
+        self.tags defines the set of tag filters to be used with the Overpass API.
+        It is a list, where each element is either:
+          - A dictionary: representing a single tag filter (e.g., {"boundary": "administrative"}), or
+          - A list of dictionaries: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+        The Overpass query will return the UNION of all top-level items.
+          For example:
+            self.tags = [
+                [{"boundary": "administrative"}, {"admin_level": "4"}],
+                {"highway": "bus_stop"}
+            ]
+          means: return objects that either have both `boundary=administrative` AND `admin_level=4`,
+          OR have `highway=bus_stop`.
+        Tag value lists and negations are not supported.
+        Conflicts between tags in the same sublist are not detected or handled.
+        """
+        tags_filters = self.format_tags()
+        bbox = self.get_bbox_str()
+        query = f"[out:json][timeout:180][bbox:{bbox}];({''.join(tags_filters)});out {self.query_settings.output};"
+        return query
 
     def get_tag_info(self, osm_tags):
         for tag in osm_tags:
@@ -1975,9 +2079,7 @@ class OpenStreetMapParser(Parser):
         return centroid
 
     def next_row(self):
-        params = {
-            "data": f"[out:json];({self.query});out geom;",
-        }
+        params = {"data": self.build_query()}
         response = self.request_or_retry(self.url, params=params)
         self.root = response.json()
         self.nb = len(self.root["elements"])
@@ -1985,3 +2087,42 @@ class OpenStreetMapParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+    def filter_eid(self, src, val):
+        type, id = val
+        return f"{type[0].upper()}{id}"
+
+    def translation_fields(self):
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+
+        for field in get_translated_fields(self.model):
+            tags = self.fields.get(field)
+            if not tags:
+                continue
+
+            is_str = isinstance(tags, str)
+            tags = [tags] if is_str else list(tags)
+
+            # Protect the class from multiple translation mappings as field is a static attribute
+            is_translated = [tag for tag in tags if tag.endswith(f":{default_lang}")]
+            if is_translated:
+                continue
+
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                if lang != default_lang:
+                    geotrek_field = f"{field}_{lang}"
+                    translated = [tag + ":" + lang for tag in tags]
+                    self.fields[geotrek_field] = (
+                        translated[0] if is_str else tuple(translated)
+                    )
+
+            translated = [f"{tag}:{default_lang}" for tag in tags]
+            self.fields[field] = (
+                (translated[0], tags[0]) if is_str else tuple(translated + tags)
+            )
+
+    def get_val(self, row, dst, src):
+        val = super().get_val(row, dst, src)
+        if not hasattr(self, f"filter_{dst}") and isinstance(val, list):
+            return next((item for item in val if item is not None), None)
+        return val

@@ -69,9 +69,14 @@ class TestFeedbackModel(TestCase):
         s = f'<a data-pk="{self.report.pk}" href="{self.report.get_detail_url()}" title="Report {self.report.eid}">Report {self.report.eid}</a>'
         self.assertEqual(self.report.name_display, s)
 
-    @override_settings(ALLOWED_HOSTS=["geotrek.local"])
-    def test_get_full_url(self):
-        s = f"geotrek.local/report/{self.report.pk}/"
+    @override_settings(USE_SSL=False)
+    def test_get_full_url_http(self):
+        s = f"http://geotrek.local/report/{self.report.pk}/"
+        self.assertEqual(self.report.full_url, s)
+
+    @override_settings(USE_SSL=True)
+    def test_get_full_url_https(self):
+        s = f"https://geotrek.local/report/{self.report.pk}/"
         self.assertEqual(self.report.full_url, s)
 
 
@@ -84,17 +89,17 @@ class TestTimerEventClass(SuricateWorkflowTests):
         cls.programmed_report = ReportFactory(
             status=cls.programmed_status,
             uses_timers=True,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.waiting_report = ReportFactory(
             status=cls.waiting_status,
             uses_timers=True,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.waiting_report_no_timers = ReportFactory(
             status=cls.waiting_status,
             uses_timers=False,
-            assigned_user=UserFactory(password="drowssap"),
+            current_user=UserFactory(password="drowssap"),
         )
         cls.event1 = TimerEvent.objects.create(
             step=cls.waiting_status, report=cls.waiting_report
@@ -305,7 +310,7 @@ class TestPendingAPIRequests(SuricateTests):
         report = ReportFactory.create(
             email="john.doe@nowhere.com",
             comment="This is a 'comment'",
-            assigned_user=self.user,
+            current_user=self.user,
             external_uuid=uid,
         )
         # Report lock fails the first time
@@ -349,7 +354,7 @@ class TestPendingAPIRequests(SuricateTests):
             ReportFactory.create(
                 email="john.doe@nowhere.com",
                 comment="This is a 'comment'",
-                assigned_user=self.user,
+                current_user=self.user,
             ),
         )
         self.assertEqual(PendingSuricateAPIRequest.objects.count(), 1)

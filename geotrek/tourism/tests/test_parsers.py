@@ -1402,15 +1402,11 @@ class InformationDeskGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
 class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser):
     type = "Foo"
-    tags = {"amenity": "ranger_station"}
-
-    def filter_name(self, src, val):
-        if val:
-            return val
-        else:
-            return "test_flexible"
+    tags = [{"amenity": "ranger_station"}]
+    default_fields_values = {"name": "test_default"}
 
 
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
 class OpenStreetMapParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
@@ -1433,6 +1429,7 @@ class OpenStreetMapParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.type = InformationDeskTypeFactory.create(label="Foo")
+        FileType.objects.create(type="Photographie")
 
         cls.import_information_desk()
 
@@ -1441,47 +1438,67 @@ class OpenStreetMapParserTests(TestCase):
     def test_create_information_desk_OSM(self):
         self.assertEqual(self.objects.count(), 4)
 
+    def test_InformationDesk_eid_filter_OSM(self):
+        information_desks_eids = (
+            self.objects.order_by("eid").all().values_list("eid", flat=True)
+        )
+        self.assertListEqual(list(information_desks_eids), ["N1", "N2", "R4", "W3"])
+        self.assertNotEqual(information_desks_eids, ["1", "2", "3", "4"])
+
     def test_get_tag_info_existing_tag_OSM(self):
-        information_desk = self.objects.get(eid=1)
+        information_desk = self.objects.get(eid="N1")
         self.assertEqual(information_desk.phone, "0754347899")
 
-        information_desk2 = self.objects.get(eid=2)
+        information_desk2 = self.objects.get(eid="N2")
         self.assertEqual(information_desk2.phone, "0754347899")
 
     def test_get_tag_info_no_tag_OSM(self):
-        information_desk = self.objects.get(eid=3)
+        information_desk = self.objects.get(eid="W3")
         self.assertEqual(information_desk.phone, None)
 
     def test_InformationDesk_street_filter_housenumber_and_street_OSM(self):
-        information_desk = self.objects.get(eid=1)
+        information_desk = self.objects.get(eid="N1")
         self.assertEqual(information_desk.street, "5 rue des chênes")
 
     def test_InformationDesk_street_filter_street_OSM(self):
-        information_desk = self.objects.get(eid=2)
+        information_desk = self.objects.get(eid="N2")
         self.assertEqual(information_desk.street, "rue des chênes")
 
     def test_InformationDesk_street_filter_None_OSM(self):
-        information_desk = self.objects.get(eid=3)
+        information_desk = self.objects.get(eid="W3")
         self.assertEqual(information_desk.street, None)
 
     def test_geom_point_to_point_OSM(self):
-        information_desk = self.objects.get(eid=1)
+        information_desk = self.objects.get(eid="N1")
         self.assertAlmostEqual(information_desk.geom.coords[0], 673775.5074406686)
         self.assertAlmostEqual(information_desk.geom.coords[1], 6260613.093389216)
 
     def test_geom_way_to_point_OSM(self):
-        information_desk = self.objects.get(eid=3)
+        information_desk = self.objects.get(eid="W3")
         self.assertAlmostEqual(information_desk.geom.coords[0], 639380.854410392)
         self.assertAlmostEqual(information_desk.geom.coords[1], 6256494.451055847)
 
     def test_geom_relation_to_point_OSM(self):
-        information_desk = self.objects.get(eid=4)
+        information_desk = self.objects.get(eid="R4")
         self.assertAlmostEqual(information_desk.geom.coords[0], -5898321.244682654)
         self.assertAlmostEqual(information_desk.geom.coords[1], 12807160.659235487)
 
-    def test_flexible_fields(self):
-        information_desk = self.objects.get(eid=1)
-        self.assertEqual(information_desk.name, "test")
+    def test_default_fields(self):
+        information_desk = self.objects.get(eid="N1")
+        self.assertEqual(information_desk.name, "test:fr")
 
-        information_desk2 = self.objects.get(eid=4)
-        self.assertEqual(information_desk2.name, "test_flexible")
+        information_desk2 = self.objects.get(eid="R4")
+        self.assertEqual(information_desk2.name, "test_default")
+
+    def test_translated_fields(self):
+        # default language
+        information_desk = self.objects.get(eid="N1")
+        self.assertEqual(information_desk.name, "test:fr")
+        information_desk2 = self.objects.get(eid="N2")
+        self.assertEqual(information_desk2.name, "test")
+
+        # translation language
+        information_desk = self.objects.get(eid="N1")
+        self.assertEqual(information_desk.name_en, "test:en")
+        information_desk2 = self.objects.get(eid="W3")
+        self.assertEqual(information_desk2.name_en, None)

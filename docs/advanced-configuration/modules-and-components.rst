@@ -487,7 +487,7 @@ Treks
 Trek signage intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which signage are considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
 
 .. md-tab-set::
     :name: trek-signage-intersection-margin-tabs
@@ -507,7 +507,7 @@ This setting defines the maximum distance (in meters) within which signage are c
 Trek infrastructure intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which infrastructure are considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
 
 .. md-tab-set::
     :name: trek-infrastructure-intersection-margin-tabs
@@ -531,7 +531,7 @@ Interventions
 Intervention intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which intervention are considered related to other objects such as treks, POIs, services, or tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
 
 .. md-tab-set::
     :name: intervention-intersection-margin-tabs
@@ -555,7 +555,7 @@ Maintenance intersection margin
 
     .. 
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. 
 
 .. md-tab-set::
     :name: maintenance-intersection-margin-tabs
@@ -582,7 +582,7 @@ Report intersection margin
 
     .. 
 
-This setting defines the maximum distance (in meters) within which reports are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+This setting defines the maximum distance (in meters) within which reports are considered related to other objects such as treks, POIs, services, tourism content, etc. 
 
 .. md-tab-set::
     :name: report-intersection-margin-tabs
@@ -602,7 +602,7 @@ This setting defines the maximum distance (in meters) within which reports are c
 Signage, blades and lines
 --------------------------
 
-Blade and line enabled
+Enable blades and lines
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 These parameters enable or disable submodules for signage blades and lines:
@@ -624,10 +624,10 @@ These parameters enable or disable submodules for signage blades and lines:
                 BLADE_ENABLED = False
                 LINE_ENABLED = True
 
-Direction on lines enabled
+Enable line direction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This parameter is used to have ``direction`` field on lines instead of blades.
+This parameter is used to assign the ``direction`` field to lines rather than blades.
 
 .. md-tab-set::
   :name: direction-on-lines-enabled-tabs
@@ -645,10 +645,10 @@ This parameter is used to have ``direction`` field on lines instead of blades.
               DIRECTION_ON_LINES_ENABLED = True
 
 
-Signage line enabled
+Enable signage lines
 ~~~~~~~~~~~~~~~~~~~~~
 
-This parameter is used to manage lines by blades.
+This parameter is used to manage lines per blade.
 
 .. md-tab-set::
   :name: signage-line-enabled-tabs
@@ -1024,7 +1024,7 @@ Defines the radius of sensitivity areas when not specified for species:
 Sensitive area intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which sensitive areas are considered related to other objects such as treks, POIs, services, or tourism content, etc. 
+This setting defines the maximum distance (in meters) within which sensitive areas are considered related to other objects such as treks, POIs, services, tourism content, etc. 
 
 .. md-tab-set::
     :name: sensitive-areas-intersection-margin-tabs

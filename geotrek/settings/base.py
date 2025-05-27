@@ -37,8 +37,13 @@ DOT_ENV_FILE = os.path.join(VAR_DIR, "conf/env")
 if os.path.exists(DOT_ENV_FILE):
     load_dotenv(DOT_ENV_FILE)
 
-ALLOWED_HOSTS = os.getenv("SERVER_NAME", "localhost").split(" ")
+# [Retrocompatibility] For prods where SERVER_NAME still contains several values:
+SERVER_NAMES = os.getenv("SERVER_NAME", "localhost").split(" ")
+SERVER_NAME = SERVER_NAMES[0]
+ALLOWED_HOSTS = ["127.0.0.1", *SERVER_NAMES]  # allow "127.0.0.1" for docker healthcheck
 ALLOWED_HOSTS = ["*" if host == "_" else host for host in ALLOWED_HOSTS]
+
+USE_SSL = False
 
 CACHE_ROOT = os.path.join(VAR_DIR, "cache")
 
@@ -933,7 +938,7 @@ PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
 
 USE_BOOKLET_PDF = False
-HIDDEN_FORM_FIELDS = {"report": ["assigned_user"]}
+HIDDEN_FORM_FIELDS = {"report": ["current_user"]}
 COLUMNS_LISTS = {}
 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
 
@@ -1000,14 +1005,14 @@ ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
 env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
 with open(env_settings_file) as f:
-    logger.warning("Read env configuration from %s", env_settings_file)
+    logger.info("Read env configuration from %s", env_settings_file)
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
 if custom_settings_file and "tests" not in ENV:
     with open(custom_settings_file) as f:
-        logger.warning("Read custom configuration from %s", custom_settings_file)
+        logger.info("Read custom configuration from %s", custom_settings_file)
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
@@ -1022,6 +1027,6 @@ LEAFLET_CONFIG["SPATIAL_EXTENT"] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 if (
     SURICATE_WORKFLOW_ENABLED
     and "report" in HIDDEN_FORM_FIELDS.keys()
-    and "assigned_user" in HIDDEN_FORM_FIELDS["report"]
+    and "current_user" in HIDDEN_FORM_FIELDS["report"]
 ):
-    HIDDEN_FORM_FIELDS["report"].remove("assigned_user")
+    HIDDEN_FORM_FIELDS["report"].remove("current_user")

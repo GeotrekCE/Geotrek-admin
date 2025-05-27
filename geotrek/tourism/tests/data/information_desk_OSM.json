@@ -15,6 +15,8 @@
   "tags": {
     "amenity": "ranger_station",
     "name": "test",
+    "name:fr": "test:fr",
+    "name:en": "test:en",
     "contact:phone": "0754347899",
     "addr:housenumber": "5",
     "addr:street": "rue des chênes"
@@ -28,6 +30,7 @@
   "tags": {
     "amenity": "ranger_station",
     "name": "test",
+    "name:en": "test:en",
     "phone": "0754347899",
     "addr:street": "rue des chênes"
   }

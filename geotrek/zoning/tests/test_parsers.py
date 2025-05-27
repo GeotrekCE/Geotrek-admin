@@ -1,11 +1,13 @@
+import json
 import os
+from unittest import mock
 
 from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
 from django.core.management import CommandError, call_command
 from django.test import TestCase
 
-from geotrek.zoning.models import City
-from geotrek.zoning.parsers import CityParser
+from geotrek.zoning.models import City, District
+from geotrek.zoning.parsers import CityParser, OpenStreetMapDistrictParser
 
 WKT = (
     b"MULTIPOLYGON (((309716.2814 6698350.2022, 330923.9024 6728938.1171, "
@@ -59,3 +61,100 @@ class FilterGeomTest(TestCase):
         geom = MultiPolygon(Polygon(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))))
         self.assertEqual(self.parser.filter_geom("geom", geom), geom)
         self.assertFalse(self.parser.warnings)
+
+
+class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
+    provider = "OpenStreetMap"
+    tags = [[{"boundary": "administrative"}, {"admin_level": "6"}]]
+
+
+class OpenStreetMapDistrictParserTests(TestCase):
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def import_district(self, nominatim_file, mocked):
+        def mocked_json_overpass():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "district_OSM.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        def mocked_json_nominatim():
+            filename = os.path.join(os.path.dirname(__file__), "data", nominatim_file)
+            with open(filename) as f:
+                return json.load(f)
+
+        response1 = mock.Mock()
+        response1.json = mocked_json_overpass
+        response1.status_code = 200
+
+        response2 = mock.Mock()
+        response2.json = mocked_json_nominatim
+        response2.status_code = 200
+
+        mocked.side_effect = [response1, response2]
+
+        call_command(
+            "import",
+            "geotrek.zoning.tests.test_parsers.TestDistrictOpenStreetMapParser",
+        )
+
+        self.districts = District.objects.order_by("pk").all()
+
+    def test_query_OSM(self):
+        query = TestDistrictOpenStreetMapParser().build_query()
+
+        self.assertIn(
+            "(relation['boundary'='administrative']['admin_level'='6'];);out tags;",
+            query,
+        )
+
+    def test_multipolygon_OSM(self):
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_multipolygon.json"
+        )
+        self.import_district(nominatim_file)
+
+        self.assertEqual(len(self.districts), 1)
+        self.assertEqual(type(self.districts[0].geom), MultiPolygon)
+        self.assertEqual(len(self.districts[0].geom), 2)
+
+        # test the first point of each polygon
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[0][0][0][0], 869953.4333298746
+        )
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[0][0][0][1], 6365109.915336954
+        )
+
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[1][0][0][0], 872596.9093673624
+        )
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[1][0][0][1], 6367024.025305742
+        )
+
+    def test_polygon_OSM(self):
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_polygon.json"
+        )
+        self.import_district(nominatim_file)
+
+        self.assertEqual(len(self.districts), 1)
+        self.assertEqual(type(self.districts[0].geom), MultiPolygon)
+        self.assertEqual(len(self.districts[0].geom), 1)
+
+        # test the first point of each polygon
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[0][0][0][0], 872596.9093673624
+        )
+        self.assertAlmostEqual(
+            self.districts[0].geom.coords[0][0][0][1], 6367024.025305742
+        )
+
+    def test_name_OSM(self):
+        nominatim_file = os.path.join(
+            os.path.dirname(__file__), "data", "district_polygon.json"
+        )
+        self.import_district(nominatim_file)
+
+        self.assertEqual(self.districts[0].name, "Venterol")
