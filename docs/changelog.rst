@@ -10,6 +10,9 @@ CHANGELOG
 - Add attachments for OpenStreetMapParser
 - Add default license for attachments
 
+**Documentation**
+
+- Fix docker command for fixtures, add map settings and columns list details (#4740)
 
 2.115.1    (2025-05-21)
 ----------------------------
