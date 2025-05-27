@@ -18,7 +18,7 @@ Leaflet configuration
 Change or add tiled basemaps (IGN, OSM, Mapbox…)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, Geotrek-admin installation includes two basemap layers (OpenStreetMap and OpenTopoMap).
+By default, a Geotrek-admin installation includes two basemap layers: OpenStreetMap and OpenTopoMap.
 
 You can customize or add more tiled basemap layers by specifying the tile URLs in your custom Django settings file:
 
