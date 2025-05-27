@@ -5,7 +5,7 @@ Interface
 ============
 
 .. info::
-  
+
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Configure columns displayed in lists views and exports
@@ -21,13 +21,13 @@ To configure which columns appear in the main table view for a specific module, 
     .. md-tab-item:: Syntax
 
         .. code-block:: python
-    
+
               COLUMNS_LISTS['<module>_view'] = ['list', 'of', 'columns']
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               COLUMNS_LISTS['trek_view'] = [
               'structure',
               'departure',
@@ -51,13 +51,13 @@ To define which columns should be included when exporting data to CSV or SHP for
     .. md-tab-item:: Syntax
 
         .. code-block:: python
-    
+
               COLUMNS_LISTS['<module>_export'] = ['list', 'of', 'columns']
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               COLUMNS_LISTS['outdoor_site_export'] = [
                     'structure',
                     'name',
@@ -77,7 +77,7 @@ To define which columns should be included when exporting data to CSV or SHP for
                     'wind'
                 ]
 
-Enable jobs cost detailed export 
+Enable jobs cost detailed export
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, job cost details are not included in intervention exports. You can enable a more detailed export by setting the following parameter:
@@ -88,12 +88,12 @@ By default, job cost details are not included in intervention exports. You can e
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 ENABLE_JOBS_COSTS_DETAILED_EXPORT = False
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ENABLE_JOBS_COSTS_DETAILED_EXPORT = True
 
 When enabled, a new column will be added to intervention exports, displaying the total cost for each job.
@@ -437,7 +437,7 @@ A complete list of attributes that can be used for displaying or exporting colum
           "date_insert",
           "created_in_suricate",
           "last_updated_in_suricate",
-          "assigned_user",
+          "current_user",
           "uses_timers",
           "provider",
           "last_author",
@@ -1081,7 +1081,8 @@ A complete list of attributes that can be used for displaying or exporting colum
           "date_insert",
           "created_in_suricate",
           "last_updated_in_suricate",
-          "assigned_user",
+          "current_user",
+          "assigned_handler",
           "uses_timers",
           "provider",
           "last_author",
@@ -1177,13 +1178,13 @@ For each module, use the following syntax to configure fields to hide in the cre
     .. md-tab-item:: Syntax
 
         .. code-block:: python
-    
+
               HIDDEN_FORM_FIELDS['<module>'] = ['list', 'of', 'fields']
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               HIDDEN_FORM_FIELDS['signage'] = [
                       'condition',
                       'description',
@@ -1446,7 +1447,7 @@ Hideable form fields
               "locked",
               "uid",
               "origin",
-              "assigned_user",
+              "current_user",
               "uses_timers"
           ],
       HIDDEN_FORM_FIELDS["sensitivity_species"] = [
@@ -1493,8 +1494,8 @@ Hideable form fields
           ]
 
 .. note::
-  
-  By default, the *assigned_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
+
+  By default, the *current_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
 
 .. code-block:: python
 
@@ -1514,14 +1515,14 @@ Controls the strictness of completeness checks:
     .. md-tab-item:: Default configuration
 
         .. code-block:: python
-    
+
               COMPLETENESS_LEVEL = 'warning'
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
-              COMPLETENESS_LEVEL = 'error_on_publication' 
+
+              COMPLETENESS_LEVEL = 'error_on_publication'
 
 .. info::
 
@@ -1539,7 +1540,7 @@ Define which fields are mandatory before review or publication:
     .. md-tab-item:: Default configuration
 
         .. code-block:: python
-    
+
               COMPLETENESS_FIELDS = {
               'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
               'dive': ['practice', 'difficulty', 'description_teaser'],
@@ -1548,7 +1549,7 @@ Define which fields are mandatory before review or publication:
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               COMPLETENESS_FIELDS = {
               'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
               'signage': ['code', 'type', 'condition','description','sealing'],

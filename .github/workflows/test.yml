@@ -282,13 +282,17 @@ jobs:
 
       - name: Launch service
         run: |
+          sudo systemctl stop apache2
+          sudo systemctl stop nginx
           docker tag geotrek:latest geotrekce/admin:latest
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
           cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
+          sudo sed -i 's/UID=/UID="$UID"/' .env
+          sudo sed -i 's/GID=/GID="$GID"/' .env
+          sudo sed -i 's/localhost/geotrek.local/' .env
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
-          sudo sed -i 's/localhost/geotrek.local/' .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
           cp cypress/custom.py var/conf/custom.py
@@ -306,7 +310,7 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8001"; do
+          while ! nc -z "127.0.0.1" "80"; do
             sleep 0.1
           done
 
@@ -516,3 +520,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: '*.deb'
+
+      - name: Prepare install-docker.zip
+        run: |
+          cd docker/install
+          mkdir -p geotrek/var
+          cp * ./geotrek 2>/dev/null || :
+          zip -r ../install-docker.zip geotrek/
+
+      - name: Attach zip archive as release binary
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'install-docker.zip'

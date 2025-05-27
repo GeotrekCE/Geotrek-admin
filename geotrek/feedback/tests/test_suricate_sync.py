@@ -322,7 +322,7 @@ class SuricateAPITests(SuricateTests):
         # Test new filed report are assigned to workflow manager
         r = Report.objects.get(external_uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
         self.assertIn(
-            r.assigned_user.pk,
+            r.current_user.pk,
             list(WorkflowManager.objects.values_list("user", flat=True)),
         )
         # Assert no new mail on update
@@ -676,10 +676,10 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
         cls.report_filed_1 = ReportFactory(
-            status=cls.filed_status, external_uuid=uuid.uuid4(), assigned_user=cls.admin
+            status=cls.filed_status, external_uuid=uuid.uuid4(), current_user=cls.admin
         )
         cls.report_filed_2 = ReportFactory(
-            status=cls.filed_status, external_uuid=uuid.uuid4(), assigned_user=cls.admin
+            status=cls.filed_status, external_uuid=uuid.uuid4(), current_user=cls.admin
         )
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)

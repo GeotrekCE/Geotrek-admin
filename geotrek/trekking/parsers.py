@@ -24,6 +24,7 @@ from geotrek.common.parsers import (
     DownloadImportError,
     GeotrekParser,
     GlobalImportError,
+    OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
     RowImportError,
@@ -1629,7 +1630,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         super().end()
 
 
-class OpenStreetMapPOIParser(OpenStreetMapParser):
+class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
     """Parser to import POI from OpenStreetMap"""
 
     type = None

@@ -387,11 +387,11 @@ L.Handler.MultiPath = L.Handler.extend({
         var layer = e.layer
           , latlng = e.latlng
 
-        var pop = this.addStartOrEndStep(layer, latlng)
+        var pop = this.addStartOrEndStep(layer, latlng, null)
         pop.events.fire('placed');
     },
 
-    addStartOrEndStep: function(layer, latlng) {
+    addStartOrEndStep: function(layer, latlng, positionOnPath) {
         if (this.steps.length >= 2) return;
 
         var self = this;
@@ -413,6 +413,23 @@ L.Handler.MultiPath = L.Handler.extend({
         var pop = self.createStep(marker, next_step_idx);
         pop.toggleActivate();
         self.forceMarkerToLayer(marker, layer);
+        if (positionOnPath)
+            pop.positionOnPath = positionOnPath
+        else
+            // The following is not done in the marker's "snap" event because that
+            // event is also triggered when displaying the route from a saved
+            // topology in the restoreGeometry method. In restoreGeometry, positionOnPath
+            // is set to the values from the saved topology to circumvent a bug where
+            // markers' geometries are slightly misplaced on paths when restored.
+            // If positionOnPath were set in the marker's "snap" event, it would be
+            // based on the incorrectly restored geometry, causing gaps in the route's
+            // topology and geometry.
+            // See: https://github.com/GeotrekCE/Geotrek-admin/issues/4657
+            pop.positionOnPath = L.GeometryUtil.locateOnLine(
+                pop.marker._map,
+                pop.polyline,
+                pop.ll
+            );
         return pop
     },
 
@@ -433,10 +450,10 @@ L.Handler.MultiPath = L.Handler.extend({
                 // Display an alert message
                 this._unsnappedMarkerToast.show()
 
-                if (pop.previousPosition) {
+                if (pop.previousLocation) {
                     // If the pop was on a path before, set it to its previous position
-                    pop.marker.setLatLng(pop.previousPosition.ll)
-                    self.forceMarkerToLayer(pop.marker, pop.previousPosition.polyline);
+                    pop.marker.setLatLng(pop.previousLocation.ll)
+                    self.forceMarkerToLayer(pop.marker, pop.previousLocation.polyline);
                     if (!this._routeIsValid) {
                         // If the route is not valid, the marker must stay highlighted
                         L.DomUtil.removeClass(pop.marker._icon, 'marker-snapped');
@@ -450,7 +467,22 @@ L.Handler.MultiPath = L.Handler.extend({
             if (this.steps.length > 1)
                 this.enableLoadingMode()
 
-            pop.previousPosition = {ll: pop.ll, polyline: pop.polyline}
+            pop.previousLocation = {ll: pop.ll, polyline: pop.polyline}
+
+            // The following is not done in the marker's "snap" event because that
+            // event is also triggered when displaying the route from a saved
+            // topology in the restoreGeometry method. In restoreGeometry, positionOnPath
+            // is set to the values from the saved topology to circumvent a bug where
+            // markers' geometries are slightly misplaced on paths when restored.
+            // If positionOnPath were set in the marker's "snap" event, it would be
+            // based on the incorrectly restored geometry, causing gaps in the route's
+            // topology and geometry.
+            // See: https://github.com/GeotrekCE/Geotrek-admin/issues/4657
+            pop.positionOnPath = L.GeometryUtil.locateOnLine(
+                pop.marker._map,
+                pop.polyline,
+                pop.ll
+            );
 
             var currentStepIdx = self.getStepIdx(pop)
 
@@ -556,7 +588,6 @@ L.Handler.MultiPath = L.Handler.extend({
             newStepsIndexes: indexes of these steps after the route is updated
             pop (PointOnPolyline): step that is being added/modified/deleted
         */
-
         var stepsToRoute = []
         newStepsIndexes.forEach(idx => {
             stepsToRoute.push(this.steps[idx])
@@ -581,8 +612,7 @@ L.Handler.MultiPath = L.Handler.extend({
         stepsToRoute.forEach((step) => {
             var sentStep = {
                 path_id: step.polyline.properties.id,
-                lat: step.ll.lat,
-                lng: step.ll.lng,
+                positionOnPath: step.positionOnPath
             }
             sentSteps.push(sentStep)
         })
@@ -679,16 +709,16 @@ L.Handler.MultiPath = L.Handler.extend({
         var topology = serializedTopology[0]
         var pathLayer = this.idToLayer(topology.paths[0])
         var latlng = pos2latlng(topology.positions[0][0], pathLayer)
-        var popStart = this.addStartOrEndStep(pathLayer, latlng)
-        popStart.previousPosition = {ll: popStart.ll, polyline: popStart.polyline}
+        var popStart = this.addStartOrEndStep(pathLayer, latlng, topology.positions[0][0])
+        popStart.previousLocation = {ll: popStart.ll, polyline: popStart.polyline}
 
         // Add the end marker
         topology = serializedTopology[serializedTopology.length - 1]
         var lastPosIdx = topology.paths.length - 1
         pathLayer = this.idToLayer(topology.paths[lastPosIdx])
         latlng = pos2latlng(topology.positions[lastPosIdx][1], pathLayer)
-        var popEnd = this.addStartOrEndStep(pathLayer, latlng)
-        popEnd.previousPosition = {ll: popEnd.ll, polyline: popEnd.polyline}
+        var popEnd = this.addStartOrEndStep(pathLayer, latlng, topology.positions[lastPosIdx][1])
+        popEnd.previousLocation = {ll: popEnd.ll, polyline: popEnd.polyline}
 
         // Add the via markers: for each topology, use its first position,
         // except for the first topology (it would be the start marker)
@@ -702,8 +732,9 @@ L.Handler.MultiPath = L.Handler.extend({
                 marker: self.markersFactory.drag(latlng, null, true)
             }
             var pop = self.addViaStep(viaMarker.marker, idx);
+            pop.positionOnPath = topo.positions[0][0]
             self.forceMarkerToLayer(viaMarker.marker, viaMarker.layer);
-            pop.previousPosition = {ll: pop.ll, polyline: pop.polyline}
+            pop.previousLocation = {ll: pop.ll, polyline: pop.polyline}
         })
 
         // Set the state
@@ -1050,8 +1081,9 @@ Geotrek.PointOnPolyline = function (marker) {
     this.ll = null;
     this.polyline = null;
 
-    // To reset the pop to its previous valid position when not dropped on a path:
-    this.previousPosition = null;
+    // Stores the last valid marker location. Used to revert the marker to its
+    // last valid location if dropped outside of any paths
+    this.previousLocation = null;
 
     this._activated = false;
 

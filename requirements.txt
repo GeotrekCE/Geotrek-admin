@@ -23,14 +23,14 @@ brotli==1.1.0
     # via fonttools
 btrees==6.1
     # via zodb
-cachetools==5.5.2
+cachetools==6.0.0
     # via large-image
 cairocffi==1.7.1
     # via
     #   geotrek (setup.py)
     #   cairosvg
     #   mapentity
-cairosvg==2.7.1
+cairosvg==2.8.2
     # via geotrek (setup.py)
 celery==5.5.2
     # via
@@ -201,8 +201,12 @@ geojson==3.2.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
+gevent==25.5.1
+    # via gunicorn
 gpxpy==1.6.2
     # via mapentity
+greenlet==3.2.2
+    # via gevent
 gunicorn==23.0.0
     # via geotrek (setup.py)
 idna==3.10
@@ -290,7 +294,7 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.25.5
+pymupdf==1.26.0
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -332,7 +336,7 @@ requests==2.32.3
     #   mapentity
 rjsmin==1.2.2
     # via django-compressor
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
@@ -340,13 +344,14 @@ ruamel-yaml==0.18.10
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.28.0
+sentry-sdk==2.29.1
     # via geotrek (setup.py)
-setuptools==80.7.1
+setuptools==80.8.0
     # via
     #   argdispatch
     #   zc-lockfile
     #   zope-deferredimport
+    #   zope-event
     #   zope-interface
     #   zope-proxy
 shapely==2.0.7
@@ -373,7 +378,7 @@ tinyhtml5==2.0.0
     # via weasyprint
 transaction==5.0
     # via zodb
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   asgiref
     #   beautifulsoup4
@@ -426,10 +431,13 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==5.0
     # via persistent
+zope-event==5.0
+    # via gevent
 zope-interface==7.2
     # via
     #   btrees
     #   datetime
+    #   gevent
     #   persistent
     #   transaction
     #   zodb

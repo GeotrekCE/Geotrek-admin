@@ -895,9 +895,17 @@ class AttachmentParserMixin:
     non_fields = {
         "attachments": _("Attachments"),
     }
+    default_license_label = None
 
     def start(self):
         super().start()
+
+        self.license = None
+        if self.default_license_label:
+            self.license = License.objects.get_or_create(
+                label=self.default_license_label
+            )[0]
+
         if (
             settings.PAPERCLIP_ENABLE_LINK is False
             and self.download_attachments is False
@@ -990,6 +998,7 @@ class AttachmentParserMixin:
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
+
             if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
                 kwargs.get("url"), attachment
             ):
@@ -999,6 +1008,7 @@ class AttachmentParserMixin:
                     kwargs.get("author") != attachment.author
                     or kwargs.get("legend") != attachment.legend
                     or kwargs.get("title") != attachment.title
+                    or kwargs.get("license") != attachment.license
                 ):
                     attachment.author = kwargs.get("author")
                     attachment.legend = textwrap.shorten(
@@ -1007,6 +1017,7 @@ class AttachmentParserMixin:
                     attachment.title = textwrap.shorten(
                         kwargs.get("title", ""), width=127
                     )
+                    attachment.license = kwargs.get("license")
                     attachment.save(**{"skip_file_save": True})
                     updated = True
                 break
@@ -1130,6 +1141,8 @@ class AttachmentParserMixin:
         attachment.author = kwargs.get("author")
         attachment.legend = textwrap.shorten(kwargs.get("legend"), width=127)
         attachment.title = textwrap.shorten(kwargs.get("title"), width=127)
+        attachment.license = self.license
+
         return attachment
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
@@ -1149,6 +1162,7 @@ class AttachmentParserMixin:
                 legend=legend,
                 author=author,
                 title=title,
+                license=self.license,
             )
             if found:
                 continue
@@ -1999,6 +2013,42 @@ class ApidaeBaseParser(Parser):
         return name
 
 
+class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
+    base_url_wikimedia = "https://api.wikimedia.org/core/v1/commons/file/"
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
+    default_license_label = "CC-by-sa 4.0"
+
+    def filter_attachments(self, src, val):
+        attachments = []
+        wikimedia, image = val
+
+        if wikimedia and wikimedia.startswith("File:"):
+            # Wikimedia Commons API url
+            filename = wikimedia.split(":")[1]
+            filename.replace(" ", "_")
+
+            url = f"{self.base_url_wikimedia}{filename}"
+
+            # API request
+            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
+            if response.status_code == requests.codes.ok:
+                data = response.json()
+                file = data["original"]["url"]
+                legend = ""
+                author = data["latest"]["user"]["name"]
+                title = data["title"].split(".")[0]  # remove extension
+                attachments.append([file, legend, author, title])
+            else:
+                msg = f"'{url}' is inaccessible (Error {response.status_code})"
+                self.add_warning(msg)
+
+        if image:
+            file = image
+            attachments.append([file, "", "", ""])
+
+        return attachments
+
+
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
 
@@ -2025,7 +2075,6 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.translation_fields()
 
         if not self.query_settings:
             self.query_settings = self.QuerySettings()
@@ -2033,6 +2082,10 @@ class OpenStreetMapParser(Parser):
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
+
+    def start(self):
+        super().start()
+        self.translation_fields()
 
     def format_tags(self):
         formatted_tags = []

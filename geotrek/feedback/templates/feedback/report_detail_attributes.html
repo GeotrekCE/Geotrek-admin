@@ -63,8 +63,8 @@
             </td>
         </tr>
         <tr>
-            <th>{{ report|verbose:"assigned_user" }}</th>
-            <td>{% if report.assigned_user %}{{ report.assigned_user|safe }}
+            <th>{{ report|verbose:"current_user" }}</th>
+            <td>{% if report.current_user %}{{ report.current_user|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
