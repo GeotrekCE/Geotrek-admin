@@ -2,12 +2,44 @@
 CHANGELOG
 =========
 
-2.115.0+dev    (XXXX-XX-XX)
+2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
+
+**Improvements**
+
+- Add attachments for OpenStreetMapParser
+- Add default license for attachments
+
+**Documentation**
+
+- Fix docker command for fixtures, add map settings and columns list details (#4740)
+
+2.115.1    (2025-05-21)
+----------------------------
+
+**Improvements**
+
+- Ensure report handlers can access their solved reports (#4589)
+- Improve Overpass query for OpenStreetMap parsers
+- OpenStreetMap parsers accept translations from OSM
+- Add OpenStreetMap parser for Signage
+- Add OpenStreetMap parser for Districts
+- Add healthcheck to Dockerfile
+
+**Bug fixes**
+
+- Make OpenStreetMap eid as type+id
+- Fix wrong report url in Suricate Workflow emails (fixes #4588)
+- Ensure linear topologies don't fragment when modified despite marker shift (refs #4657)
 
 **Documentation**
 
 - Add missing parameters from base.py (#4690)
+
+**Minor fixes**
+
+- Fix signage fixture typo
+
 
 2.115.0    (2025-04-29)
 ----------------------------
