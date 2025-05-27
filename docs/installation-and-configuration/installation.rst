@@ -235,7 +235,7 @@ To load minimal fixtures, run this command **only once during setup**:
   
   - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
 
-Create superuser
+Create a superuser
 ------------------
 
 To create an application superuser, run this command :
