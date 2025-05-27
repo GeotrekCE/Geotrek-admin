@@ -220,7 +220,7 @@ During the initial setup of Geotrek-admin, you may need to run certain commands 
 
 .. info::
 
-  - The ``load_data.sh`` script is intended only for first-time installation. Never re-run this script after the initial installation, especially in a production environment. It will overwrite manually entered or modified data (e.g., paths, infrastructures, zoning, practices, etc.).
+  - The ``load_data.sh`` script is intended only for first-time installation. Never re-run this script after the initial installation, especially in a production environment. It will overwrite manually entered or modified data (e.g., paths, infrastructure, zoning, practices, etc.).
 
   - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable.
 
