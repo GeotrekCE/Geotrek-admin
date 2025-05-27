@@ -27,7 +27,7 @@ You can customize or add more tiled basemap layers by specifying the tile URLs i
     LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
 .. note:: 
-  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the `{z}/{x}/{y}` format**. This means that **standard WMS services are not supported**.  
+  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the {z}/{x}/{y} format**. This means that **standard WMS services are not supported**.  
 
   - Only **WMTS services or other XYZ tile providers** (like OpenStreetMap, OpenTopoMap, Mapbox, etc.) can be used. WMTS is a standard protocol that can provide such tiles, but not all XYZ tile providers follow WMTS – for example, OpenStreetMap does not.
 
