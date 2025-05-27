@@ -45,10 +45,10 @@ from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
 from geotrek.tourism.models import (
     InformationDesk,
-    InformationDeskTypeFactory,
     TouristicContent,
     TouristicContentCategory,
 )
+from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
