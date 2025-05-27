@@ -1162,6 +1162,15 @@ A complete list of attributes that can be used for displaying or exporting colum
           "authors",
       ]
 
+.. note::
+  
+  You can find all mandatory, default, and searchable columns for each module directly in the Geotrek-admin source code. For example, in the `outdoor_site_view <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/views.py#L35>`_ :
+
+  .. code-block:: python
+
+    mandatory_columns = ["id", "name"]
+    default_extra_columns = ["super_practices", "date_update"]
+    searchable_columns = ["id", "name"]
 
 Configure form fields in creation views
 -----------------------------------------
@@ -1496,9 +1505,9 @@ Hideable form fields
   
   By default, the *assigned_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
 
-.. code-block:: python
+  .. code-block:: python
 
-  HIDDEN_FORM_FIELDS['report'] = []
+    HIDDEN_FORM_FIELDS['report'] = []
 
 Configure form fields required or needed for review or publication
 -------------------------------------------------------------------
