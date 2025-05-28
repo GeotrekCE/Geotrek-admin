@@ -15,21 +15,23 @@ Map settings
 Leaflet configuration
 ----------------------
 
-Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Change or add tiled basemaps (IGN, OSM, Mapbox…)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, you have two basemaps layers in your Geotrek-admin (OSM and OpenTopoMap)
+By default, a Geotrek-admin installation includes two basemap layers: OpenStreetMap and OpenTopoMap.
 
-You can change or add more basemaps layers like this:
-
-Specify the tiles URLs this way in your custom Django setting file:
+You can customize or add more tiled basemap layers by specifying the tile URLs in your custom Django settings file:
 
 .. code-block:: python
 
     LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
 .. note:: 
-  To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
+  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the {z}/{x}/{y} format**. This means that **standard WMS services are not supported**.  
+
+  - Only **WMTS services or other XYZ tile providers** (like OpenStreetMap, OpenTopoMap, Mapbox, etc.) can be used. WMTS is a standard protocol that can provide such tiles, but not all XYZ tile providers follow WMTS – for example, OpenStreetMap does not.
+
+  - If you plan to use IGN Geoportail WMTS layers (such as Plan IGN, Scan25, Orthophotos…), an API key might be required. For more details, see https://geoservices.ign.fr/services-geoplateforme-diffusion.
 
 .. md-tab-set::
     :name: leaflet-config-tile-tabs

@@ -216,13 +216,32 @@ Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
 1. ``cd <install directory>`` 
 2. ``docker compose run --rm web update.sh``
 
-To load minimal data and create an application superuser, run:
+Load fixtures
+--------------
 
-::
+During the initial setup of Geotrek-admin, you may need to run certain commands to generate and load initial data (fixtures).
 
-   docker compose run --rm web load_data.sh
-   docker compose run --rm web ./manage.py createsuperuser
+To load minimal fixtures, run this command **only once during setup**:
 
-.. IMPORTANT::
-   Once your Geotrek is installed, you need to import :ref:`initial data <minimal-initial-data>`.
+.. code::
+
+  docker compose run --rm web load_data.sh
+
+.. info::
+
+  - The ``load_data.sh`` script is intended only for first-time installation. Never re-run this script after the initial installation, especially in a production environment. It will overwrite manually entered or modified data (e.g., paths, infrastructure, zoning, practices, etc.).
+
+  - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable
+  
+  - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
+
+Create a superuser
+------------------
+
+To create an application superuser, run this command :
+
+.. code::
+
+  docker compose run --rm web ./manage.py createsuperuser
+
 

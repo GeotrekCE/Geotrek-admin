@@ -11,6 +11,10 @@ CHANGELOG
 - Add default license for attachments
 - Add OpenStreetMap parser for Touristic Content
 
+**Documentation**
+
+- Fix docker command for fixtures, add map settings and columns list details (#4740)
+
 
 2.115.1    (2025-05-21)
 ----------------------------
