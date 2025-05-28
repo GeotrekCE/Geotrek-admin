@@ -19,6 +19,7 @@ from geotrek.outdoor.models import (
     Site,
     SiteType,
 )
+from geotrek.trekking.models import WebLink
 
 
 class GeotrekOutdoorParser(GeotrekParser):
@@ -343,14 +344,17 @@ class OpenStreetMapOutdoorSiteParser(
         "name": "tags.name",
         "description": "tags.description",
         "geom": ("type", "lon", "lat", "geometry"),
+        "practice": "tags.leisure",
     }
     constant_fields = {}
     m2m_constant_fields = {}
+    m2m_fields = {"web_links": ("tags.website", "tags.contact:website")}
     natural_keys = {
         "practice": "name",
         "themes": "label",
         "source": "name",
         "portal": "name",
+        "web_links": "url",
     }
     field_options = {}
 
@@ -359,8 +363,6 @@ class OpenStreetMapOutdoorSiteParser(
         self.constant_fields = self.constant_fields.copy()
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         self.field_options = self.field_options.copy()
-        if self.practice is not None:
-            self.constant_fields["practice"] = self.practice
         if self.themes is not None:
             self.m2m_constant_fields["themes"] = self.themes
         if self.portal is not None:
@@ -389,3 +391,17 @@ class OpenStreetMapOutdoorSiteParser(
         if geom_collection.srid == self.osm_srid:
             geom_collection.transform(settings.SRID)
         return geom_collection
+
+    def filter_practice(self, src, val):
+        if val == "sports_centre":
+            raise RowImportError("This object is an indoor site.")
+
+        practice = self.filter_fk(src, self.practice, Practice, self.natural_keys["practice"])
+        return practice
+
+    def filter_web_links(self, src, val):
+        url = next((item for item in val if item is not None), None)
+        weblink = []
+        if url:
+            weblink.append(WebLink.objects.create(name=url, url=url))
+        return weblink
