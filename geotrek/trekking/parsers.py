@@ -1670,11 +1670,12 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         geom = None
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
+
+        geom = self.intersect_geom(geom)
 
         # create topology
         self.topology = Topology.objects.none()
@@ -1686,6 +1687,8 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
+
+        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):
