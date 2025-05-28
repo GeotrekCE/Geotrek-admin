@@ -1729,7 +1729,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         super().start()
         kwargs = self.get_to_delete_kwargs()
         json_id_key = self.replace_fields.get("eid", "id")
-        params = {"fields": json_id_key, "page_size": 10000}
+        params = {"fields": json_id_key, "page_size": 10000, **self.get_url_params()}
         response = self.request_or_retry(self.next_url, params=params)
         ids = [
             f"{element[json_id_key]}" for element in response.json().get("results", [])
@@ -1793,12 +1793,17 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         geom = GEOSGeometry(geom)
         return geom
 
+    def get_url_params(self):
+        return {
+            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
+            "portals": ",".join(self.portals_filter) if self.portals_filter else "",
+        }
+
     def next_row(self):
         """Returns next row.
         Geotrek API is paginated, run until "next" is empty
         :returns row
         """
-        portals = self.portals_filter
         updated_after = None
 
         available_fields = [field.name for field in self.model._meta.get_fields()]
@@ -1812,13 +1817,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 .latest("date_update")
                 .date_update.strftime("%Y-%m-%d")
             )
-        params = {
-            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
-            "portals": ",".join(portals) if portals else "",
-            "updated_after": updated_after,
-        }
-        self.params_used = params
-        response = self.request_or_retry(self.next_url, params=params)
+        self.params_used = {"updated_after": updated_after, **self.get_url_params()}
+        response = self.request_or_retry(self.next_url, params=self.params_used)
         self.root = response.json()
         self.nb = int(self.root["count"])
 
