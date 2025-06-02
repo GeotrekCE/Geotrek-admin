@@ -71,6 +71,10 @@ class DownloadImportError(ImportError):
     pass
 
 
+class BypassRow(Exception):
+    pass
+
+
 class Parser:
     """
     provider: Allows to differentiate multiple Parser for the same model
@@ -468,8 +472,12 @@ class Parser:
             objects = _objects
             operation = "updated"
         for self.obj in objects:
-            self.parse_obj(row, operation)
-            self.to_delete.discard(self.obj.pk)
+            try:
+                self.parse_obj(row, operation)
+                self.to_delete.discard(self.obj.pk)
+            except BypassRow as warnings:
+                self.add_warning(str(warnings))
+                return
         self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb, self.line, self.eid_val)
@@ -650,52 +658,11 @@ class Parser:
                 self.model.objects.filter(**kwargs).values_list("pk", flat=True)
             )
 
-        if self.intersection_geom:
-            required_keys = {"model", "app_label", "geom_field", "object_filter"}
-            missing_keys = required_keys - self.intersection_geom.keys()
-
-            if missing_keys:
-                msg = f"intersection_geom is missing required keys: {', '.join(missing_keys)}"
-                raise ImproperlyConfigured(msg)
-
-            model = self.intersection_geom["model"]
-            app = self.intersection_geom["app_label"]
-            geom_field = self.intersection_geom["geom_field"]
-            object_filter = self.intersection_geom["object_filter"]
-
-            try:
-                contenttype_model = ContentType.objects.get(app_label=app, model=model)
-                ref_model = contenttype_model.model_class()
-                ref_objects = ref_model.objects.filter(**object_filter)
-            except ContentType.DoesNotExist:
-                msg = f"{app}.{model} is not defined in contenttype"
-                raise ImproperlyConfigured(msg)
-            except FieldError:
-                msg = f"{app}.{model} does not have field(s): {list(object_filter.keys())}"
-                raise ImproperlyConfigured(msg)
-
-            if not ref_objects.exists():
-                msg = f"Reference geometry does not exist: {self.intersection_geom}"
-                raise ImproperlyConfigured(msg)
-
-            if ref_objects.count() > 1:
-                msg = f"{self.intersection_geom} references multiple geometries. {ref_objects.first()} has been used"
-                self.add_warning(msg)
-
-            ref_geom = getattr(ref_objects.first(), geom_field, None)
-
-            if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
-                self.ref_geom = ref_geom
-            else:
-                msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
-                raise ImproperlyConfigured(msg)
-
-        self.to_delete_out_of_born = set()
+        self.start_intersect_geom()
 
     def end(self):
         if self.delete:
             self.model.objects.filter(pk__in=self.to_delete).delete()
-            self.model.objects.filter(pk__in=self.to_delete_out_of_born).delete()
 
     def parse(self, filename=None, limit=None):
         if filename:
@@ -753,6 +720,47 @@ class Parser:
             )
         )
 
+    def start_intersect_geom(self):
+        if self.intersection_geom:
+            required_keys = {"model", "app_label", "geom_field", "object_filter"}
+            missing_keys = required_keys - self.intersection_geom.keys()
+
+            if missing_keys:
+                msg = f"intersection_geom is missing required keys: {', '.join(missing_keys)}"
+                raise ImproperlyConfigured(msg)
+
+            model = self.intersection_geom["model"]
+            app = self.intersection_geom["app_label"]
+            geom_field = self.intersection_geom["geom_field"]
+            object_filter = self.intersection_geom["object_filter"]
+
+            try:
+                contenttype_model = ContentType.objects.get(app_label=app, model=model)
+                ref_model = contenttype_model.model_class()
+                ref_objects = ref_model.objects.filter(**object_filter)
+            except ContentType.DoesNotExist:
+                msg = f"{app}.{model} is not defined in contenttype"
+                raise ImproperlyConfigured(msg)
+            except FieldError:
+                msg = f"{app}.{model} does not have field(s): {list(object_filter.keys())}"
+                raise ImproperlyConfigured(msg)
+
+            if not ref_objects.exists():
+                msg = f"Reference geometry does not exist: {self.intersection_geom}"
+                raise ImproperlyConfigured(msg)
+
+            if ref_objects.count() > 1:
+                msg = f"{self.intersection_geom} references multiple geometries. {ref_objects.first()} has been used"
+                self.add_warning(msg)
+
+            ref_geom = getattr(ref_objects.first(), geom_field, None)
+
+            if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
+                self.ref_geom = ref_geom
+            else:
+                msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
+                raise ImproperlyConfigured(msg)
+
     def intersect_geom(self, geom):
         """
         Get a reference geometry from any model, and check if the geom given as input intersect or not the reference geometry.
@@ -778,13 +786,13 @@ class Parser:
                 return geom
             else:
                 if self.delete:
-                    self.to_delete_out_of_born.add(self.obj.pk)
+                    self.to_delete.add(self.obj.pk)
                 msg = (
                     f"Object geometry does not intersect with reference geometry "
                     f"({self.intersection_geom['app_label']}.{self.intersection_geom['model']}: "
                     f"{self.intersection_geom['object_filter']})"
                 )
-                raise RowImportError(msg)
+                raise BypassRow(msg)
 
         return geom
 
