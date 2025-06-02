@@ -1,15 +1,18 @@
+import json
 import os
 from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos.collections import MultiPoint
+from django.contrib.gis.geos import LineString, Point, Polygon
+from django.contrib.gis.geos.collections import GeometryCollection, MultiPoint
 from django.core.management import call_command
 from django.test import TestCase
 
-from geotrek.common.models import Attachment, FileType
+from geotrek.common.models import Attachment, FileType, TargetPortal
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.outdoor.models import (
+    ChildSitesExistError,
     Course,
     OrderedCourseChild,
     Practice,
@@ -19,6 +22,7 @@ from geotrek.outdoor.models import (
     Site,
     SiteType,
 )
+from geotrek.outdoor.parsers import OpenStreetMapOutdoorSiteParser
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
@@ -351,3 +355,420 @@ class OutdoorGeotrekParserWrongChildrenTests(GeotrekParserTestMixin, TestCase):
             "Trying to retrieve missing child Course (UUID: 43ce927d-9236-4a62-ac7f-799d1c024b5a) for parent Course (UUID: 0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc)",
             outputs,
         )
+
+
+class TestOpenStreetMapOutdoorParser(OpenStreetMapOutdoorSiteParser):
+    practice = "Foo"
+    themes = ["test theme1", "test theme2"]
+    portal = "test portal1"
+    source = ["test source1", "test source2"]
+    tags = [{"sport": "climbing"}]
+    default_fields_values = {"name": "test_default"}
+    field_options = {
+        "themes": {"create": True},
+        "source": {"create": True},
+    }
+
+
+class OpenStreetMapOutdoorSiteParserTests(TestCase):
+    @classmethod
+    @mock.patch("requests.get")
+    def import_outdoor_site(cls, mocked, output_available):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "outdoor_OSM.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        def mocked_polygons_valid(decode):
+            wkt_polygon = "SRID=4326;POLYGON ((6.25876177 44.90539914, 6.25944969 44.90610886, 6.25807932 44.90434684, 6.25876177 44.90539914))"
+            return wkt_polygon
+
+        def mocked_polygons_not_valid(decode):
+            wkt_polygon = "SRID=4326;POLYGON ((6.25876177 44.90539914, 6.25944969 44.90610886, 6.25807932 44.90434684))"
+            return wkt_polygon
+
+        def mocked_multipolygons_valid(decode):
+            wkt_polygon = "SRID=4326;MULTIPOLYGON (((6.25876177 44.90539914, 6.25944969 44.90610886, 6.25807932 44.90434684, 6.25876177 44.90539914)), ((6.15876177 44.80539914, 6.15944969 44.80610886, 6.15807932 44.80434684, 6.15876177 44.80539914)))"
+            return wkt_polygon
+
+        def mocked_multipolygons_not_valid(decode):
+            wkt_polygon = "SRID=4326;MULTIPOLYGON (((6.25876177 44.90539914, 6.25944969 44.90610886, 6.25807932 44.90434684, 6.25876177 44.90539914)), ((6.25876177 44.90539914, 6.25944969 44.90610886, 6.25807932 44.90434684, 6.25876177 44.90539914)))"
+            return wkt_polygon
+
+        mock_overpass = mock.Mock()
+        mock_overpass.status_code = 200
+        mock_overpass.json = mocked_json
+
+        mock_polygons_valid = mock.Mock()
+        mock_polygons_valid.status_code = 200
+        mock_polygons_valid.content.decode = mocked_polygons_valid
+
+        mock_polygons_not_valid = mock.Mock()
+        mock_polygons_not_valid.status_code = 200
+        mock_polygons_not_valid.content.decode = mocked_polygons_not_valid
+
+        mock_API_error = mock.Mock()
+        mock_API_error.status_code = 404
+        mock_API_error.url = "https//polygons.openstreetmap.fr"
+
+        mock_multipolygons_valid = mock.Mock()
+        mock_multipolygons_valid.status_code = 200
+        mock_multipolygons_valid.content.decode = mocked_multipolygons_valid
+
+        mock_multipolygons_not_valid = mock.Mock()
+        mock_multipolygons_not_valid.status_code = 200
+        mock_multipolygons_not_valid.content.decode = mocked_multipolygons_not_valid
+
+        mocked.side_effect = [
+            mock_overpass,
+            mock_polygons_valid,
+            mock_polygons_not_valid,
+            mock_API_error,
+            mock_API_error,
+            mock_multipolygons_valid,
+            mock_multipolygons_not_valid,
+            mock_API_error,
+            mock_API_error,
+            mock_API_error,
+        ]
+
+        output = StringIO()
+        call_command(
+            "import",
+            "geotrek.outdoor.tests.test_parsers.TestOpenStreetMapOutdoorParser",
+            stdout=output,
+        )
+
+        if output_available:
+            cls.output = output.getvalue()
+
+    @classmethod
+    def setUpTestData(cls):
+        Practice.objects.create(name="Foo")
+        TargetPortal.objects.create(name="test portal1")
+        FileType.objects.create(type="Photographie")
+
+        cls.import_outdoor_site(output_available=True)
+
+        cls.objects = Site.objects
+
+    def test_create_outdoor_site_OSM(self):
+        self.assertEqual(self.objects.count(), 14)
+
+    def test_practice_outdoor_site_OSM(self):
+        outdoor_site = self.objects.get(eid="N1")
+        self.assertEqual(outdoor_site.practice.name, "Foo")
+
+    def test_themes_outdoor_site_OSM(self):
+        outdoor_site = self.objects.get(eid="N1")
+        self.assertEqual(outdoor_site.themes.all().count(), 2)
+        self.assertEqual(outdoor_site.themes.first().label, "test theme1")
+        warnings = [
+            "Theme 'test theme1' did not exist in Geotrek-Admin and was automatically created",
+            "Theme 'test theme2' did not exist in Geotrek-Admin and was automatically created",
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
+    def test_portal_outdoor_site_OSM(self):
+        outdoor_site = self.objects.get(eid="N1")
+        self.assertEqual(outdoor_site.portal.all().count(), 1)
+        self.assertEqual(outdoor_site.portal.first().name, "test portal1")
+
+    def test_source_outdoor_site_OSM(self):
+        outdoor_site = self.objects.get(eid="N1")
+        self.assertEqual(outdoor_site.source.all().count(), 2)
+        self.assertEqual(outdoor_site.source.first().name, "test source1")
+        warnings = [
+            "Record Source 'test source1' did not exist in Geotrek-Admin and was automatically created",
+            "Record Source 'test source2' did not exist in Geotrek-Admin and was automatically created",
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
+    def test_indoor_practice_filter(self):
+        with self.assertRaises(Site.DoesNotExist):
+            self.objects.get(eid="W1000")
+
+        self.assertIn("This object is an indoor site", self.output)
+
+    def test_geom_transform(self):
+        outdoor_site = self.objects.get(eid="W3")
+        geom = outdoor_site.geom[0]
+        self.assertAlmostEqual(geom.coords[0][0][0], 957149.000, places=2)
+        self.assertAlmostEqual(geom.coords[0][0][1], 6428219.000, places=2)
+        self.assertAlmostEqual(geom.coords[0][1][0], 957200.000, places=2)
+        self.assertAlmostEqual(geom.coords[0][1][1], 6428300.000, places=2)
+        self.assertAlmostEqual(geom.coords[0][2][0], 957100.000, places=2)
+        self.assertAlmostEqual(geom.coords[0][2][1], 6428100.000, places=2)
+
+    def test_geom_point(self):
+        outdoor_site = self.objects.get(eid="N1")
+        geom = outdoor_site.geom[0]
+        self.assertEqual(type(geom), Point)
+
+    def test_geom_way_linestring(self):
+        outdoor_site = self.objects.get(eid="W2")
+        geom = outdoor_site.geom[0]
+        self.assertEqual(type(geom), LineString)
+        self.assertEqual(len(geom.coords[0]), 2)
+
+    def test_geom_way_polygon(self):
+        outdoor_site = self.objects.get(eid="W3")
+        geom = outdoor_site.geom[0]
+        self.assertEqual(type(geom), Polygon)
+        self.assertEqual(len(geom.coords[0]), 4)
+
+    def test_geom_relation_polygon_API_valid(self):
+        outdoor_site = self.objects.get(eid="R4")
+        geom = outdoor_site.geom[0]
+        self.assertEqual(type(geom), Polygon)
+        self.assertEqual(len(geom.coords[0]), 4)
+
+    def test_geom_relation_polygon_API_not_valid(self):
+        outdoor_site = self.objects.get(eid="R5")
+        self.assertEqual(len(outdoor_site.geom), 2)
+        self.assertEqual(type(outdoor_site.geom[0]), LineString)
+        self.assertEqual(type(outdoor_site.geom[1]), LineString)
+        self.assertEqual(len(outdoor_site.geom[0][0]), 2)
+        self.assertEqual(len(outdoor_site.geom[1][0]), 2)
+
+    def test_geom_relation_multipoint(self):
+        outdoor_site = self.objects.get(eid="R6")
+        self.assertEqual(len(outdoor_site.geom), 2)
+        self.assertEqual(type(outdoor_site.geom[0]), Point)
+        self.assertEqual(type(outdoor_site.geom[1]), Point)
+
+    def test_geom_relation_multilinestring(self):
+        outdoor_site = self.objects.get(eid="R7")
+        self.assertEqual(len(outdoor_site.geom), 2)
+        self.assertEqual(type(outdoor_site.geom[0]), LineString)
+        self.assertEqual(type(outdoor_site.geom[1]), LineString)
+
+    def test_geom_relation_multipolygon_API_valid(self):
+        outdoor_site = self.objects.get(eid="R8")
+        geom = outdoor_site.geom
+        self.assertEqual(type(geom[0]), Polygon)
+        self.assertEqual(len(geom[0].coords[0]), 4)
+        self.assertEqual(type(geom[1]), Polygon)
+        self.assertEqual(len(geom[1].coords[0]), 4)
+
+    def test_geom_relation_multipolygon_API_not_valid(self):
+        outdoor_site = self.objects.get(eid="R9")
+        geom = outdoor_site.geom[0]
+        self.assertEqual(type(geom), Polygon)
+        self.assertEqual(len(geom.coords[0]), 4)
+
+    def test_geom_relation_multipolygon_valid(self):
+        outdoor_site = self.objects.get(eid="R10")
+        geom = outdoor_site.geom
+        self.assertEqual(type(geom[0]), Polygon)
+        self.assertEqual(len(geom[0].coords[0]), 4)
+        self.assertEqual(type(geom[1]), Polygon)
+        self.assertEqual(len(geom[1].coords[0]), 4)
+
+    def test_geom_relation_point_way(self):
+        outdoor_site = self.objects.get(eid="R11")
+        geom = outdoor_site.geom
+        self.assertEqual(type(geom[0]), Point)
+        self.assertEqual(type(geom[1]), LineString)
+        self.assertEqual(len(geom[1].coords[0]), 2)
+
+    def test_geom_relation_point_polygon(self):
+        outdoor_site = self.objects.get(eid="R12")
+        geom = outdoor_site.geom
+        self.assertEqual(type(geom[0]), Point)
+        self.assertEqual(type(geom[1]), Polygon)
+        self.assertEqual(len(geom[1].coords[0]), 4)
+
+    def test_geom_relation_linestring_polygon(self):
+        outdoor_site = self.objects.get(eid="R13")
+        geom = outdoor_site.geom
+        self.assertEqual(type(geom[0]), LineString)
+        self.assertEqual(len(geom[0].coords[0]), 2)
+        self.assertEqual(type(geom[1]), Polygon)
+        self.assertEqual(len(geom[1].coords[0]), 4)
+
+    def test_hierarchy_osm_site_sync(self):
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)
+
+        # synchronisation
+        self.import_outdoor_site(output_available=False)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)
+
+    def test_hierarchy_osm_sector_sync(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        site = Site.objects.create(name="site", eid="1", geom=geom)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        outdoor_sector.parent = site
+        outdoor_sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_sector.parent.name, "site")
+
+        # synchronisation
+        self.import_outdoor_site(output_available=False)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_sector.parent.name, "site")
+
+    def test_hierarchy_osm_sector_delete_site(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        site = Site.objects.create(name="site", eid="1", geom=geom)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        outdoor_sector.parent = site
+        outdoor_sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_sector.parent.name, "site")
+
+        # delete site
+        with self.assertRaises(ChildSitesExistError):
+            site.delete()
+
+    def test_hierarchy_osm_site_with_course_sync(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        course = Course.objects.create(eid="3", geom=geom)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        course.parent_sites.set([outdoor_site])
+
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+        # synchronisation
+        self.import_outdoor_site(output_available=False)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+    def test_hierarchy_osm_site_with_course_delete_course(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        course = Course.objects.create(eid="3", geom=geom)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        course.parent_sites.set([outdoor_site])
+
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+        # delete course
+        course.delete()
+
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)
+
+    def test_hierarchy_osm_sector_with_site_and_course_sync(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        site = Site.objects.create(name="site", eid="1", geom=geom)
+        course = Course.objects.create(eid="3", geom=geom)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        course.parent_sites.set([outdoor_sector])
+        outdoor_sector.parent = site
+        outdoor_sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_sector.parent.name, "site")
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+        # synchronisation
+        self.import_outdoor_site(output_available=False)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_sector.parent.name, "site")
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+    def test_hierarchy_osm_sector_with_site_and_course_delete_course(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        site = Site.objects.create(name="site", eid="1", geom=geom)
+        course = Course.objects.create(eid="3", geom=geom)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        course.parent_sites.set([outdoor_sector])
+        outdoor_sector.parent = site
+        outdoor_sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_sector.parent.name, "site")
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+        # delete course
+        course.delete()
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_sector.parent.name, "site")
+
+    def test_hierarchy_osm_sector_with_site_and_course_delete_site(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        site = Site.objects.create(name="site", eid="1", geom=geom)
+        course = Course.objects.create(eid="3", geom=geom)
+
+        outdoor_sector = self.objects.get(eid="N1001")
+        course.parent_sites.set([outdoor_sector])
+        outdoor_sector.parent = site
+        outdoor_sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_sector.parent.name, "site")
+        self.assertEqual(course.parent_sites.first().eid, "N1001")
+
+        # delete site
+        with self.assertRaises(ChildSitesExistError):
+            site.delete()
+
+    def test_hierarchy_osm_site_with_sector_sync(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        sector = Site.objects.create(name="sector", eid="2", geom=geom)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        sector.parent = outdoor_site
+        sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(sector.parent.eid, "N1001")
+
+        # synchronisation
+        self.import_outdoor_site(output_available=False)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(sector.parent.eid, "N1001")
+
+    def test_hierarchy_osm_site_with_sector_delete_sector(self):
+        geom = GeometryCollection(Point(0, 0))
+        geom.srid = 2154
+
+        sector = Site.objects.create(name="sector", eid="2", geom=geom)
+
+        outdoor_site = self.objects.get(eid="N1001")
+        sector.parent = outdoor_site
+        sector.save(update_fields=["parent"])
+
+        self.assertEqual(outdoor_site.parent, None)
+        self.assertEqual(sector.parent.eid, "N1001")
+
+        # delete sector
+        sector.delete()
+
+        outdoor_site = self.objects.get(eid="N1001")
+        self.assertEqual(outdoor_site.parent, None)

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.gis.geos import Point, LineString, Polygon
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
 
 from geotrek.common.parsers import (
@@ -330,7 +330,7 @@ class OpenStreetMapOutdoorSiteParser(
 ):
     """Parser to import outdoor sites from OpenStreetMap"""
 
-    #url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
+    url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
 
     practice = None
     themes = None
@@ -343,7 +343,7 @@ class OpenStreetMapOutdoorSiteParser(
         "eid": ("type", "id"),  # ids are unique only for object of the same type,
         "name": "tags.name",
         "description": "tags.description",
-        "geom": ("type", "lon", "lat", "geometry"),
+        "geom": ("type", "id", "lon", "lat", "geometry", "members"),
         "practice": "tags.leisure",
     }
     constant_fields = {}
@@ -370,33 +370,58 @@ class OpenStreetMapOutdoorSiteParser(
         if self.source is not None:
             self.m2m_constant_fields["source"] = self.source
 
+    def way(self, geometry):
+        coordinates = [[point["lon"], point["lat"]] for point in geometry]
+        if coordinates[0] != coordinates[-1]:
+            geom = LineString(coordinates, srid=self.osm_srid)
+        else:
+            geom = Polygon(coordinates)
+        return geom
+
     def filter_geom(self, src, val):
-        type, lng, lat, geometry = val
+        type, id, lng, lat, geometry, geometry_members = val
+        geom_members = []
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)
-            geom_collection = GeometryCollection(geom)
-            geom_collection.srid = self.osm_srid
+            geom_members.append(geom)
         elif type == "way":
-            coordinates = [[point["lon"], point["lat"]] for point in geometry]
-            if coordinates[0] != coordinates[-1]:
-                geom = LineString(coordinates, srid=self.osm_srid)
-            else:
-                geom = Polygon(coordinates)
-
-            geom_collection = GeometryCollection(geom)
-            geom_collection.srid = self.osm_srid
+            geom_members.append(self.way(geometry))
         elif type == "relation":
-            raise RowImportError("Relations are not yet supported")
+            try:
+                geom = self.get_polygon_from_API(id)
 
-        if geom_collection.srid == self.osm_srid:
-            geom_collection.transform(settings.SRID)
+                if isinstance(geom, MultiPolygon):
+                    # Multipolygon are not supported in the database
+                    polygons_list = [polygon for polygon in geom]
+                    geom_members = polygons_list
+                else:
+                    geom_members.append(geom)
+
+            except Exception:
+                for member in geometry_members:
+                    if member["type"] == "node":
+                        lng = member["lon"]
+                        lat = member["lat"]
+                        geom_members.append(
+                            Point(float(lng), float(lat), srid=self.osm_srid)
+                        )
+                    elif member["type"] == "way":
+                        geom_members.append(self.way(member["geometry"]))
+
+        geom_collection = GeometryCollection(geom_members)
+        geom_collection.srid = self.osm_srid
+        geom_collection.transform(settings.SRID)
+
         return geom_collection
 
     def filter_practice(self, src, val):
         if val == "sports_centre":
-            raise RowImportError("This object is an indoor site.")
+            msg = "This object is an indoor site."
+            raise RowImportError(msg)
 
-        practice = self.filter_fk(src, self.practice, Practice, self.natural_keys["practice"])
+        practice = self.filter_fk(
+            src, self.practice, Practice, self.natural_keys["practice"]
+        )
         return practice
 
     def filter_web_links(self, src, val):
