@@ -22,7 +22,14 @@ import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
+from django.contrib.gis.geos import (
+    GEOSGeometry,
+    LineString,
+    Point,
+    Polygon,
+    WKBWriter,
+    fromstr,
+)
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
@@ -2077,6 +2084,20 @@ class OpenStreetMapParser(Parser):
         polygon.transform(settings.SRID)
         centroid = polygon.centroid
         return centroid
+
+    def get_polygon_from_API(self, id):
+        params = {
+            "id": id,
+            "params": 0,
+        }
+        response = self.request_or_retry(self.url_polygons, params=params)
+        wkt = response.content.decode("utf-8")
+        geom = fromstr(wkt, srid=self.osm_srid)
+
+        if not geom.valid:
+            geom = geom.make_valid()
+
+        return geom
 
     def next_row(self):
         params = {"data": self.build_query()}
