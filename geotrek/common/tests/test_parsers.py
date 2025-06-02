@@ -156,8 +156,7 @@ class JSONParserIntersectionGeomTest(JSONParser):
 
     def filter_geom(self, src, val):
         geom = fromstr(val, srid=2154)
-        filtered_geom = self.intersect_geom(geom)
-        return filtered_geom
+        return geom
 
 
 class JSONParserIntersectionGeomMissingAttributTest(JSONParserIntersectionGeomTest):

@@ -1675,8 +1675,6 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
 
-        geom = self.intersect_geom(geom)
-
         # create topology
         self.topology = Topology.objects.none()
         if settings.TREKKING_TOPOLOGY_ENABLED:

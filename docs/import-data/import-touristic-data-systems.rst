@@ -455,29 +455,11 @@ Then set up appropriate values:
 
 .. _format_geometries:
 
-Geometry Formatting in Geotrek Parsers
+Geometry filtering in Geotrek Parsers
 ======================================
 
-Geotrek uses a standardized method for geometry formatting called ``filter_geom``, implemented in generic (non-custom) parsers.
-This process can be complemented with a spatial filter using the ``intersect_geom`` method,
-which restricts imported objects to a defined geographic area.
-
-Geometry Formatting with ``filter_geom``
-----------------------------------------
-
-The ``filter_geom(self, src, val)`` method is automatically called by the parser whenever a field is mapped to ``"geom"`` in the source configuration.
-Its purpose is to convert raw input from ``val`` into a usable geometry object within Geotrek.
-
-This method must return a ``GEOSGeometry`` instance with the SRID defined in ``settings.SRID``.
-It must also return a geometry of the expected type for the model being parsed.
-For example, a ``Point`` for objects such as *InformationDesk* or *POI*, or a ``LineString`` for *Treks*,
-
-Spatial Filtering with ``intersect_geom``
------------------------------------------
-
 In some cases, you may want to restrict imported objects to a specific geographic area.
-This can be done by adding ``intersect_geom`` method at the end of ``filter_geom``.
-It relies on a reference geometry defined in the parser’s ``intersection_geom`` attribute.
+This can be done by defined the parser’s ``intersection_geom`` attribute
 
 This attribute is a dictionary with the following keys:
 
@@ -491,10 +473,8 @@ The ``object_filter`` must return exactly one object:
 - If no object is found, the parser raises a **blocking error**.
 - If multiple objects are returned, only the **first** will be used, which may cause unexpected behavior.
 
-Once the reference geometry is retrieved, calling ``intersect_geom(geom)`` will **filter out** any geometries that do not intersect with it.
-
 Conditional Deletion with ``delete = True``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------------
 
 If ``delete`` attribut is set to ``True``, the parser will automatically **delete existing objects** of the current model
 that **do not intersect** the reference geometry.

@@ -1438,5 +1438,4 @@ class InformationDeskOpenStreetMapParser(
             geom = self.get_centroid_from_relation(bbox)
 
         geom.transform(settings.SRID)
-        geom = self.intersect_geom(geom)
         return geom

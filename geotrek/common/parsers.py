@@ -261,6 +261,10 @@ class Parser:
             val = getattr(self, f"filter_{dst}")(src, val)
         else:
             val = self.apply_filter(dst, src, val)
+
+        if dst == "geom" and (val := self.intersect_geom(val)) is None:
+            return False
+
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 val = set(val)
