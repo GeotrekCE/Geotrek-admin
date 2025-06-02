@@ -474,8 +474,8 @@ the parsed objects will be those that intersect the ``settings.SPATIAL_EXTENT`` 
 
 .. _import-signage-osm:
 
-Import signage
---------------
+Import signages
+---------------
 
 To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -524,6 +524,33 @@ Then set up appropriate values:
 * See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
 
 You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+.. _import-outdoor-site-osm:
+
+Import outdoor sites
+--------------------
+
+To import outdoor sites from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.outdoor.parsers import OpenStreetMapOutdoorSiteParser
+
+    class ClimbingSiteParser(OpenStreetMapOutdoorSiteParser):
+        provider = "OpenStreetMap"
+        tags = [{"sports": "climbing"}]
+        default_fields_values = {"name": "climbing site"}
+        practice = "Escalade"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``practice`` to select in which Geotrek practice imported objects should go.
+* ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
+* ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
+* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes must be defined in a list.
+* See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
 
 .. _format_geometries:
 
