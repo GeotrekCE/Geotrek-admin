@@ -1422,7 +1422,10 @@ class InformationDeskOpenStreetMapParser(
     def filter_street(self, src, val):
         housenumber, street = val
         if housenumber and street:
-            return _("%(housenumber})s %(street)s") % {"housenumber": housenumber, "street": street}
+            return _("%(housenumber)s %(street)s") % {
+                "housenumber": housenumber,
+                "street": street,
+            }
         elif street:
             return street
         return None
@@ -1512,18 +1515,33 @@ class OpenStreetMapTouristicContentParser(
         postcode = val[4] or val[5]
         city = val[6] or val[7]
 
+        location_street = ""
+        location_city = ""
+
         lines = []
 
         if phone:
             lines.append(phone)
 
-        if housenumber and street:
-            location_street = _("%(housenumber})s %(street)s") % {"housenumber": housenumber, "street": street} if housenumber else street
+        if street:
+            location_street = (
+                _("%(housenumber)s %(street)s")
+                % {"housenumber": housenumber, "street": street}
+                if housenumber
+                else street
+            )
 
         if city:
-            location_city = _("%(postcode), %(city)") % {"postcode": postcode, "city": city} if postcode else city
+            location_city = (
+                _("%(postcode)s, %(city)s") % {"postcode": postcode, "city": city}
+                if postcode
+                else city
+            )
 
-        location = _("%(street)s <br>%(city)s") % {"street": location_street, "city": location_city}
+        location = _("%(street)s<br>%(city)s") % {
+            "street": location_street,
+            "city": location_city,
+        }
         lines.append(location)
 
         return "<br>".join(lines)

@@ -1635,18 +1635,18 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
 
     def test_filter_contact(self):
         touristic_content = self.objects.get(eid="N1")
-        self.assertEqual(touristic_content.contact, "")
+        self.assertEqual(touristic_content.contact, "<br>")
 
         touristic_content = self.objects.get(eid="W2")
-        contact = "0786535787<br>Montmorillon"
+        contact = "0786535787<br><br>Montmorillon"
         self.assertEqual(touristic_content.contact, contact)
 
         touristic_content = self.objects.get(eid="W3")
-        contact = "0786535787<br>86500, Montmorillon"
+        contact = "0786535787<br>rue des tournesols<br>86500, Montmorillon"
         self.assertEqual(touristic_content.contact, contact)
 
         touristic_content = self.objects.get(eid="R4")
-        contact = "0786535787<br>46 rue des tournesols"
+        contact = "0786535787<br>46 rue des tournesols<br>"
         self.assertEqual(touristic_content.contact, contact)
 
     def test_geom_point(self):
