@@ -1344,7 +1344,7 @@ class ApidaeServiceParser(ApidaeBaseParser):
             geom.transform(settings.SRID)
         except Exception:
             raise RowImportError(
-                _("Could not parse geom from value '{value}'").format(value=val)
+                _("Could not parse geometry from value '{value}'").format(value=val)
             )
         return geom
 
