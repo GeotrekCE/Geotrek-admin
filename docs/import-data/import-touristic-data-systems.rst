@@ -408,7 +408,7 @@ Then set up appropriate values:
 * ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: ``type1 = ["Restaurant", "Hotel"]``)
 * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be assigned (ex: ``portal = ["portal 1", "portal 2"]``)
 * ``source`` to select the data source. Multiple sources can be assigned (ex: ``source = ["source 1", "source 2"]``)
-* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes must be defined in a list.
+* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be assigned (ex: ``themes = ["theme 1", "theme 2"]``)
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
 

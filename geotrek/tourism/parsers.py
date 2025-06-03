@@ -1422,9 +1422,7 @@ class InformationDeskOpenStreetMapParser(
     def filter_street(self, src, val):
         housenumber, street = val
         if housenumber and street:
-            return _("{housenumber} {street}").format(
-                housenumber=housenumber, street=street
-            )
+            return _("%(housenumber})s %(street)s") % {"housenumber": housenumber, "street": street}
         elif street:
             return street
         return None
@@ -1520,19 +1518,13 @@ class OpenStreetMapTouristicContentParser(
             lines.append(phone)
 
         if housenumber and street:
-            lines.append(
-                _("{housenumber} {street}").format(
-                    housenumber=housenumber, street=street
-                )
-            )
+            location_street = _("%(housenumber})s %(street)s") % {"housenumber": housenumber, "street": street} if housenumber else street
 
         if city:
-            location = (
-                _("{postcode}, {city}").format(postcode=postcode, city=city)
-                if postcode
-                else city
-            )
-            lines.append(location)
+            location_city = _("%(postcode), %(city)") % {"postcode": postcode, "city": city} if postcode else city
+
+        location = _("%(street)s <br>%(city)s") % {"street": location_street, "city": location_city}
+        lines.append(location)
 
         return "<br>".join(lines)
 
