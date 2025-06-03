@@ -266,8 +266,8 @@ class Parser:
         else:
             val = self.apply_filter(dst, src, val)
 
-        if dst == "geom" and (val := self.intersect_geom(val)) is None:
-            return False
+        if dst == "geom":
+            self.intersect_geom(val) # an exception is raised if the object isn't in the reference geometry
 
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
@@ -782,9 +782,7 @@ class Parser:
         """
         if self.intersection_geom:
             self.ref_geom.transform(geom.srid)
-            if self.ref_geom.intersects(geom):
-                return geom
-            else:
+            if not self.ref_geom.intersects(geom):
                 if self.delete:
                     self.to_delete.add(self.obj.pk)
                 msg = (
@@ -793,8 +791,6 @@ class Parser:
                     f"{self.intersection_geom['object_filter']})"
                 )
                 raise BypassRow(msg)
-
-        return geom
 
 
 class XmlParser(Parser):
