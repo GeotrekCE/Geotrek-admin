@@ -1324,9 +1324,8 @@ class ApidaeServiceParser(ApidaeBaseParser):
 
     responseFields = [
         "id",
-        "localisation",
+        "localisation.geolocalisation.geoJson",
     ]
-    locales = ["fr", "en"]
 
     fields = {
         "eid": "id",
@@ -1340,8 +1339,13 @@ class ApidaeServiceParser(ApidaeBaseParser):
     }
 
     def filter_geom(self, src, val):
-        geom = GEOSGeometry(str(val))
-        geom.transform(settings.SRID)
+        try:
+            geom = GEOSGeometry(str(val))
+            geom.transform(settings.SRID)
+        except Exception:
+            raise RowImportError(
+                _("Could not parse geom from value '{value}'").format(value=val)
+            )
         return geom
 
     def __init__(self, *args, **kwargs):

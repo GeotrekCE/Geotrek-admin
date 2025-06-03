@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point, WKTWriter
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import SimpleTestCase, TestCase
@@ -38,6 +39,7 @@ from geotrek.trekking.models import (
 )
 from geotrek.trekking.parsers import (
     ApidaePOIParser,
+    ApidaeServiceParser,
     ApidaeTrekParser,
     ApidaeTrekThemeParser,
     GeotrekPOIParser,
@@ -1961,6 +1963,78 @@ class ApidaePOIParserTests(TestCase):
             verbosity=0,
         )
         self.assertEqual(Attachment.objects.count(), 0)
+
+
+class TestApidaeServiceParser(ApidaeServiceParser):
+    url = "https://example.net/fake/api/"
+    api_key = "ABCDEF"
+    project_id = 1234
+    selection_id = 654321
+    type = "Foo"
+
+
+class TestApidaeServiceParserMissingType(ApidaeServiceParser):
+    url = "https://example.net/fake/api/"
+    api_key = "ABCDEF"
+    project_id = 1234
+    selection_id = 654321
+
+
+class ApidaeServiceParserTests(TestCase):
+    @staticmethod
+    def make_dummy_get(apidae_data_file):
+        return make_dummy_apidae_get(
+            parser_class=TestApidaeServiceParser,
+            test_data_dir="geotrek/trekking/tests/data/apidae_service_parser",
+            data_filename=apidae_data_file,
+        )
+
+    def test_no_service_type(self):
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "A service type must be defined in parser configuration.",
+        ):
+            TestApidaeServiceParserMissingType()
+
+    @mock.patch("requests.get")
+    def test_skip_row_and_continue_when_wrong_geometry(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get(
+            "services_incorrect_geometries.json"
+        )
+
+        output = StringIO()
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeServiceParser",
+            verbosity=2,
+            stdout=output,
+        )
+
+        self.assertEqual(Service.objects.count(), 0)
+        self.assertIn(
+            """Could not parse geom from value '{'coordinates': [0, 0]}'""",
+            output.getvalue(),
+        )
+        self.assertIn(
+            """Could not parse geom from value '{'type': 'Point'}'""", output.getvalue()
+        )
+
+    @mock.patch("requests.get")
+    def test_service_is_imported(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get("service.json")
+
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeServiceParser",
+            verbosity=0,
+        )
+
+        self.assertEqual(Service.objects.count(), 1)
+        service = Service.objects.all().first()
+        self.assertEqual(service.type.name, "Foo")
+        self.assertEqual(service.eid, "5532466")
+        self.assertAlmostEqual(service.geom.coords[0], 813833.6, delta=0.1)
+        self.assertAlmostEqual(service.geom.coords[1], 6324255.0, delta=0.1)
 
 
 class PrepareAttachmentFromIllustrationTests(TestCase):

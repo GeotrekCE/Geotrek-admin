@@ -1,0 +1,17 @@
+{
+    "numFound" : 47,
+    "objetsTouristiques" : [
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 5532466,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "type" : "Point",
+                        "coordinates" : [ 4.419540, 44.008088 ]
+                    }
+                }
+            }
+        }
+    ]
+}
