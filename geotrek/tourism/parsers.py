@@ -1422,7 +1422,9 @@ class InformationDeskOpenStreetMapParser(
     def filter_street(self, src, val):
         housenumber, street = val
         if housenumber and street:
-            return housenumber + " " + street
+            return _("{housenumber} {street}").format(
+                housenumber=housenumber, street=street
+            )
         elif street:
             return street
         return None
@@ -1458,7 +1460,7 @@ class OpenStreetMapTouristicContentParser(
     eid = "eid"
 
     fields = {
-        "eid": ("type", "id"),  # ids are unique only for object of the same type,
+        "eid": ("type", "id"),  # ids are unique only among objects of the same type
         "name": "tags.name",
         "description": "tags.description",
         "contact": (
@@ -1518,10 +1520,18 @@ class OpenStreetMapTouristicContentParser(
             lines.append(phone)
 
         if housenumber and street:
-            lines.append(f"{housenumber} {street}")
+            lines.append(
+                _("{housenumber} {street}").format(
+                    housenumber=housenumber, street=street
+                )
+            )
 
         if city:
-            location = f"{postcode}, {city}" if postcode else city
+            location = (
+                _("{postcode}, {city}").format(postcode=postcode, city=city)
+                if postcode
+                else city
+            )
             lines.append(location)
 
         return "<br>".join(lines)

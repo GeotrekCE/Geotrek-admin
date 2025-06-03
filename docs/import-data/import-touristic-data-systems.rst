@@ -405,9 +405,9 @@ Then set up appropriate values:
 
 * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-* ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: type1 = ["Restaurant", "Hotel"])
-* ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
-* ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
+* ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: ``type1 = ["Restaurant", "Hotel"]``)
+* ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be assigned (ex: ``portal = ["portal 1", "portal 2"]``)
+* ``source`` to select the data source. Multiple sources can be assigned (ex: ``source = ["source 1", "source 2"]``)
 * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes must be defined in a list.
 * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
