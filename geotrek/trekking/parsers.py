@@ -1675,7 +1675,9 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         elif type == "relation":
             geom_tmp = self.get_centroid_from_relation(bbox)
 
-        geom = geom_tmp.transform(settings.SRID, clone=True) # clone the geometry to avoid too much transform on it
+        geom = geom_tmp.transform(
+            settings.SRID, clone=True
+        )  # clone the geometry to avoid too much transform on it
 
         # create topology
         self.topology = Topology.objects.none()
