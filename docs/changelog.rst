@@ -10,6 +10,7 @@ CHANGELOG
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
+- Add Apidae parser for Services
 
 **Documentation**
 

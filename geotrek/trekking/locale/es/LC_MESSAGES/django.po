@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:22+0200\n"
+"POT-Creation-Date: 2025-06-03 10:11+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -467,6 +467,9 @@ msgstr ""
 
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
+msgstr ""
+
+msgid "A service type must be defined in parser configuration."
 msgstr ""
 
 msgid "Trek geometry is None"

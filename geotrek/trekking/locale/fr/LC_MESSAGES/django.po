@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:22+0200\n"
+"POT-Creation-Date: 2025-06-03 10:11+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -499,6 +499,9 @@ msgstr ""
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
+
+msgid "A service type must be defined in parser configuration."
+msgstr "Un type de service doit être défini dans la configuration du parser."
 
 msgid "Trek geometry is None"
 msgstr "La valeur de la géométrie de l'itinéraire est None"
