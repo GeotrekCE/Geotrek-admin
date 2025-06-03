@@ -1667,26 +1667,27 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
     def filter_geom(self, src, val):
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
-        geom = None
+        geom_tmp = None
         if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+            geom_tmp = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
         elif type == "way":
-            geom = self.get_centroid_from_way(area)
+            geom_tmp = self.get_centroid_from_way(area)
         elif type == "relation":
-            geom = self.get_centroid_from_relation(bbox)
+            geom_tmp = self.get_centroid_from_relation(bbox)
+
+        geom = geom_tmp.transform(settings.SRID, clone=True) # clone the geometry to avoid too much transform on it
 
         # create topology
         self.topology = Topology.objects.none()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
+            geometry = geom_tmp.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
 
-        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):
