@@ -2012,11 +2012,12 @@ class ApidaeServiceParserTests(TestCase):
 
         self.assertEqual(Service.objects.count(), 0)
         self.assertIn(
-            """Could not parse geom from value '{'coordinates': [0, 0]}'""",
+            """Could not parse geometry from value '{'coordinates': [0, 0]}'""",
             output.getvalue(),
         )
         self.assertIn(
-            """Could not parse geom from value '{'type': 'Point'}'""", output.getvalue()
+            """Could not parse geometry from value '{'type': 'Point'}'""",
+            output.getvalue(),
         )
 
     @mock.patch("requests.get")
