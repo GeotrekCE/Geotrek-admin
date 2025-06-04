@@ -340,7 +340,7 @@ rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.11
+ruamel-yaml==0.18.12
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
