@@ -2477,33 +2477,24 @@ class OpenStreetMapPOIParser(TestCase):
         self.assertAlmostEqual(poi.geom.x, 926882.120, places=2)
         self.assertAlmostEqual(poi.geom.y, 6403317.111, places=2)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_topology_polygon(self):
+    def test_imported_object_polygon(self):
         poi = self.objects.get(eid="W3")
-        self.assertAlmostEqual(poi.topo_object.offset, -1398.870, places=2)
-        poi_path = poi.topo_object.paths.get()
-        self.assertEqual(poi_path, self.path)
-        self.assertEqual(poi.topo_object.kind, "POI")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertAlmostEqual(poi.topo_object.offset, -1398.870, places=2)
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, self.path)
+            self.assertEqual(poi.topo_object.kind, "POI")
 
-    def test_topology_polygon_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid="W3")
         self.assertAlmostEqual(poi.geom.x, 933501.240, places=2)
         self.assertAlmostEqual(poi.geom.y, 6410680.482, places=2)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_topology_relation(self):
+    def test_imported_object_relation(self):
         poi = self.objects.get(eid="R4")
-        self.assertAlmostEqual(poi.topo_object.offset, -2589.235, places=2)
-        poi_path = poi.topo_object.paths.get()
-        self.assertEqual(poi_path, self.path)
-        self.assertEqual(poi.topo_object.kind, "POI")
-
-    def test_topology_relation_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid="R4")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertAlmostEqual(poi.topo_object.offset, -2589.235, places=2)
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, self.path)
+            self.assertEqual(poi.topo_object.kind, "POI")
         self.assertAlmostEqual(poi.geom.x, 930902.933, places=2)
         self.assertAlmostEqual(poi.geom.y, 6406011.138, places=2)
 

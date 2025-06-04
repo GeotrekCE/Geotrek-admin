@@ -2149,13 +2149,12 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         if geometries[0] != geometries[-1]:
-            line = LineString([[point["lon"], point["lat"]] for point in geometries])
+            line = LineString([[point["lon"], point["lat"]] for point in geometries], srid=self.osm_srid)
             point = line.point_on_surface
         else:
-            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
+            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries], srid=self.osm_srid)
             point = polygon.centroid
 
-        point.srid = self.osm_srid
         return point
 
     def get_centroid_from_relation(self, bbox):

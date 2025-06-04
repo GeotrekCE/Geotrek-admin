@@ -84,7 +84,8 @@ RUN apt-get update -qq && apt-get install -y -qq  \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-RUN uv venv /opt/venv
+ENV UV_PYTHON_INSTALL_DIR=/opt
+RUN uv python install 3.10.17 && uv venv /opt/venv
 ENV UV_PYTHON=/opt/venv/bin/python
 ENV UV_LINK_MODE=copy
 ENV UV_CACHE_DIR=/opt/geotrek-admin/var/cache/
