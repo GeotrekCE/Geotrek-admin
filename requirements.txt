@@ -32,7 +32,7 @@ cairocffi==1.7.1
     #   mapentity
 cairosvg==2.8.2
     # via geotrek (setup.py)
-celery==5.5.2
+celery==5.5.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
@@ -221,7 +221,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.6
     # via coreschema
-jsonschema==4.23.0
+jsonschema==4.24.0
     # via drf-spectacular
 jsonschema-specifications==2025.4.1
     # via jsonschema
@@ -318,7 +318,7 @@ pyyaml==6.0.2
     # via drf-spectacular
 rcssmin==1.1.2
     # via django-compressor
-redis==6.1.0
+redis==6.2.0
     # via geotrek (setup.py)
 referencing==0.36.2
     # via
@@ -340,7 +340,7 @@ rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.10
+ruamel-yaml==0.18.11
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
@@ -423,7 +423,7 @@ zc-lockfile==3.0.post1
     # via zodb
 zconfig==4.2
     # via zodb
-zipp==3.21.0
+zipp==3.22.0
     # via importlib-metadata
 zodb==6.0.1
     # via appy
