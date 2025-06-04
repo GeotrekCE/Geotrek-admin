@@ -32,7 +32,7 @@ cairocffi==1.7.1
     #   mapentity
 cairosvg==2.8.2
     # via geotrek (setup.py)
-celery==5.5.2
+celery==5.5.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
