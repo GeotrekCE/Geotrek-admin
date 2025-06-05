@@ -2149,10 +2149,16 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         if geometries[0] != geometries[-1]:
-            line = LineString([[point["lon"], point["lat"]] for point in geometries], srid=self.osm_srid)
-            point = line.point_on_surface
+            line = LineString(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
+            point = line.interpolate_normalized(0.5)
         else:
-            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries], srid=self.osm_srid)
+            polygon = Polygon(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
             point = polygon.centroid
 
         return point

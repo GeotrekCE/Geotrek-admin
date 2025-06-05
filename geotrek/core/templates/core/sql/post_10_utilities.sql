@@ -11,17 +11,15 @@ CREATE TYPE {{ schema_geotrek }}.line_infos AS
 []
 );
 
-CREATE OR REPLACE FUNCTION st_extend(
+CREATE OR REPLACE FUNCTION st_line_extend(  -- Backport of ST_LineExtend from PostGIS 3.4
     geom geometry,
-    head_rate double precision,
     head_constant double precision,
-    tail_rate double precision,
     tail_constant double precision)
     RETURNS geometry AS
 $BODY$
     -- Extends a linestring.
--- First segment get extended by length * head_rate + head_constant.
--- Last segment get extended by length * tail_rate + tail_constant.
+-- First segment get extended by length + head_constant.
+-- Last segment get extended by length + tail_constant.
 --
 -- References:
 -- http://blog.cleverelephant.ca/2015/02/breaking-linestring-into-segments.html
@@ -51,14 +49,14 @@ WITH segment_parts AS (
     SELECT segment_num,
          CASE
              WHEN bool(segment_flag & 2)
-             THEN ST_Translate(b, sin(az2) * (len * tail_rate + tail_constant),
-                               cos(az2) * (len * tail_rate + tail_constant))
+             THEN ST_Translate(b, sin(az2) * (len + tail_constant),
+                               cos(az2) * (len + tail_constant))
              ELSE
                  a
         END AS a,
         CASE WHEN bool(segment_flag & 1)
-             THEN ST_Translate(a, sin(az1) * (len * head_rate + head_constant),
-                               cos(az1) * (len * head_rate + head_constant))
+             THEN ST_Translate(a, sin(az1) * (len + head_constant),
+                               cos(az1) * (len + head_constant))
              ELSE b
         END AS b
     FROM extended_segment_parts
@@ -67,7 +65,7 @@ WITH segment_parts AS (
            ST_MakeLine(a, b) as geom
     FROM expanded_segment_parts
 )
-SELECT ST_LineMerge(ST_Collect(geom ORDER BY segment_num)) AS geom
+SELECT ST_REVERSE(ST_LineMerge(ST_Collect(geom ORDER BY segment_num))) AS geom
 FROM expanded_segment_lines;
 
 $BODY$
@@ -84,7 +82,7 @@ DECLARE
 BEGIN
     linear_offset := ST_LineLocatePoint(line, point);
     shortest_line := ST_ShortestLine(line, point);
-    crossing_dir := ST_LineCrossingDirection(line, ST_REVERSE(st_extend(shortest_line, 1,2,1,2)));
+    crossing_dir := ST_LineCrossingDirection(line, st_line_extend(shortest_line, 2, 2));
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
     side_offset := ST_Length(shortest_line) * CASE WHEN crossing_dir <= 0
                                                    THEN 1
