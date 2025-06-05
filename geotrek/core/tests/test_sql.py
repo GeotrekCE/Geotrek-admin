@@ -82,7 +82,7 @@ class SQLDefaultValuesTest(TestCase):
         self.assertEqual(trail.departure, "")
 
 
-class STExtendTest(TestCase):
+class STLineExtendTest(TestCase):
     head_rate = 1
     head_constant = 2
     tail_rate = 1
@@ -92,7 +92,7 @@ class STExtendTest(TestCase):
     def execute_extend(self, line):
         cursor = connection.cursor()
         sql = f"""
-                SELECT st_extend(ST_GeomFromText('{line}',{self.srid}), {self.head_rate}, {self.head_constant}, {self.tail_rate}, {self.tail_constant})
+                SELECT st_line_extend(ST_GeomFromText('{line}',{self.srid}), {self.head_constant}, {self.tail_constant})
                 """
         cursor.execute(sql)
         result = cursor.fetchall()
