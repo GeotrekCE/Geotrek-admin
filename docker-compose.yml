@@ -7,6 +7,7 @@ x-images:
       target: dev
       args:
         BASE_IMAGE: ${DEV_BASE_IMAGE:-ubuntu:jammy}
+        PYTHON_VERSION: ${DEV_PYTHON_VERSION:-3.10}
     user: ${UID:-1000}:${GID:-1000}
     env_file:
       - .env

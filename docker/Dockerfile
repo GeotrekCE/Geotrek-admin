@@ -1,4 +1,5 @@
 ARG BASE_IMAGE=ubuntu:noble
+ARG PYTHON_VERSION=3.12
 
 FROM ${BASE_IMAGE} AS base
 
@@ -26,16 +27,21 @@ ENV CONVERSION_HOST="convertit"
 ENV CAPTURE_HOST="screamshotter"
 ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 ENV TZ=UTC
+ENV UV_PYTHON_INSTALL_DIR=/opt
+ARG PYTHON_VERSION
 
 WORKDIR /opt/geotrek-admin
 RUN mkdir -p /opt/geotrek-admin/var/log /opt/geotrek-admin/var/cache
 RUN useradd -m -d /opt/geotrek-admin -s /bin/false -u 1001 geotrek && chown geotrek:geotrek -R /opt
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+RUN uv python install ${PYTHON_VERSION}
+
 # Install postgis because raster2pgsl is required by manage.py loaddem
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get -qq update && apt-get -qq install -y \
-        python3 \
         ca-certificates \
         gettext \
         postgresql-client \
@@ -72,20 +78,16 @@ FROM base AS build
 
 USER root
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-
 RUN apt-get update -qq && apt-get install -y -qq  \
     git \
-    python3-dev \
-    python3-venv \
     build-essential \
     graphviz \
     libpq-dev &&\
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 USER geotrek
-ENV UV_PYTHON_INSTALL_DIR=/opt
-RUN uv python install 3.10.17 && uv venv /opt/venv
+
+RUN uv venv -p $PYTHON_VERSION /opt/venv
 ENV UV_PYTHON=/opt/venv/bin/python
 ENV UV_LINK_MODE=copy
 ENV UV_CACHE_DIR=/opt/geotrek-admin/var/cache/
