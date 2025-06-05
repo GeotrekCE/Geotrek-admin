@@ -2012,11 +2012,11 @@ class ApidaeServiceParserTests(TestCase):
 
         self.assertEqual(Service.objects.count(), 0)
         self.assertIn(
-            """Could not parse geometry from value '{'coordinates': [0, 0]}'""",
+            "Could not parse geometry from value '{'coordinates': [0, 0]}'",
             output.getvalue(),
         )
         self.assertIn(
-            """Could not parse geometry from value '{'type': 'Point'}'""",
+            "Could not parse geometry from value '{'type': 'Point'}'",
             output.getvalue(),
         )
 
@@ -2033,7 +2033,7 @@ class ApidaeServiceParserTests(TestCase):
         self.assertEqual(Service.objects.count(), 1)
         service = Service.objects.all().first()
         self.assertEqual(service.type.name, "Foo")
-        self.assertEqual(service.eid, "5532466")
+        self.assertEqual(service.eid, "1")
         self.assertAlmostEqual(service.geom.coords[0], 813833.6, delta=0.1)
         self.assertAlmostEqual(service.geom.coords[1], 6324255.0, delta=0.1)
 

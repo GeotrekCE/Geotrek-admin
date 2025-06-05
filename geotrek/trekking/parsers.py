@@ -1338,16 +1338,6 @@ class ApidaeServiceParser(ApidaeBaseParser):
         "type": {"create": True},
     }
 
-    def filter_geom(self, src, val):
-        try:
-            geom = GEOSGeometry(str(val))
-            geom.transform(settings.SRID)
-        except Exception:
-            raise RowImportError(
-                _("Could not parse geometry from value '{value}'").format(value=val)
-            )
-        return geom
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.type:
@@ -1357,6 +1347,16 @@ class ApidaeServiceParser(ApidaeBaseParser):
             raise ImproperlyConfigured(
                 _("A service type must be defined in parser configuration.")
             )
+
+    def filter_geom(self, src, val):
+        try:
+            geom = GEOSGeometry(str(val))
+            geom.transform(settings.SRID)
+        except Exception:
+            raise RowImportError(
+                _("Could not parse geometry from value '{value}'").format(value=val)
+            )
+        return geom
 
 
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
