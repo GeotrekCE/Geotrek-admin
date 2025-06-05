@@ -65,7 +65,7 @@ WITH segment_parts AS (
            ST_MakeLine(b, a) as geom
     FROM expanded_segment_parts
 )
-SELECT ST_LineMerge(ST_Collect(geom ORDER BY segment_num)) AS geom
+SELECT ST_REVERSE(ST_LineMerge(ST_Collect(geom ORDER BY segment_num))) AS geom
 FROM expanded_segment_lines;
 
 $BODY$
