@@ -257,6 +257,7 @@ packaging==25.0
     #   drf-extensions
     #   drf-yasg
     #   gunicorn
+    #   kombu
     #   large-image-source-vips
 palettable==3.3.3
     # via large-image
