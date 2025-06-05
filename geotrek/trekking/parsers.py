@@ -1351,6 +1351,7 @@ class ApidaeServiceParser(ApidaeBaseParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.type:
+            self.constant_fields = self.constant_fields.copy()
             self.constant_fields["type"] = self.type
         else:
             raise ImproperlyConfigured(
