@@ -15,6 +15,7 @@ CHANGELOG
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
 
+
 2.115.1    (2025-05-21)
 ----------------------------
 
