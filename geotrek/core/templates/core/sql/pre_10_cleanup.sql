@@ -4,7 +4,7 @@ DROP TYPE IF EXISTS line_infos CASCADE;
 DROP FUNCTION IF EXISTS ST_InterpolateAlong(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ST_Smart_Line_Substring(geometry, float, float) CASCADE;
 DROP FUNCTION IF EXISTS ST_SmartLineSubstring(geometry, float, float) CASCADE;
-DROP FUNCTION IF EXISTS st_extend(geometry, double precision, double precision, double precision, double precision) CASCADE;
+DROP FUNCTION IF EXISTS st_line_extend(geometry, double precision, double precision) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsBefore(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsAfter(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_Smart_MakeLine(geometry[]) CASCADE;
