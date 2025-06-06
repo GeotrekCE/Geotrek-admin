@@ -26,6 +26,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
+- Add ability to specify model instance to filter parsed objects by intersection
 
 **Bug fixes**
 

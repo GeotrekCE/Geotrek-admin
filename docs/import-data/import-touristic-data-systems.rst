@@ -479,6 +479,36 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
 
+.. _format_geometries:
+
+Geometry filtering in Geotrek Parsers
+======================================
+
+In some cases, you may want to restrict imported objects to a specific geographic area already defined in geotrek model instance (ex: a City or District).
+This can be done by defined the parser’s ``intersection_geom`` attribute
+
+This attribute is a dictionary with the following keys:
+
+- ``model``: The Django model containing the reference geometry object.
+- ``app_label``: The Django application where the model is defined.
+- ``geom_field``: The name of the geometry field in the model.
+- ``object_filter``: A dictionary to identify the reference object (e.g., using an ID).
+
+The ``object_filter`` must return exactly one object:
+
+- If no object is found, the parser raises a **blocking error**.
+- If multiple objects are returned, only the **first** will be used, which may cause unexpected behavior.
+
+Conditional Deletion with ``delete = True``
+-------------------------------------------
+
+If ``delete`` attribut is set to ``True``, the parser will automatically **delete existing objects** of the current model
+that **do not intersect** the reference geometry.
+
+.. note::
+
+   Deletion only affects objects of the model handled by the current parser. Other models are not impacted.
+
 .. _import-attachments:
 
 Import attachments
