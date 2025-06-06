@@ -1320,7 +1320,7 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 class ApidaeServiceParser(ApidaeBaseParser):
     model = Service
     eid = "eid"
-    type = None
+    service_type = None
 
     responseFields = [
         "id",
@@ -1340,9 +1340,9 @@ class ApidaeServiceParser(ApidaeBaseParser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.type:
+        if self.service_type:
             self.constant_fields = self.constant_fields.copy()
-            self.constant_fields["type"] = self.type
+            self.constant_fields["type"] = self.service_type
         else:
             raise ImproperlyConfigured(
                 _("A service type must be defined in parser configuration.")

@@ -1970,7 +1970,7 @@ class TestApidaeServiceParser(ApidaeServiceParser):
     api_key = "ABCDEF"
     project_id = 1234
     selection_id = 654321
-    type = "Foo"
+    service_type = "Foo"
 
 
 class TestApidaeServiceParserMissingType(ApidaeServiceParser):
