@@ -1,0 +1,27 @@
+{
+    "numFound" : 2,
+    "objetsTouristiques" : [
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 1,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "coordinates" : [ 0, 0 ]
+                    }
+                }
+            }
+        },
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 2,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "type" : "Point"
+                    }
+                }
+            }
+        }
+    ]
+}

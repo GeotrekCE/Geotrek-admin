@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
@@ -1314,6 +1315,48 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 )
             )
         return rv
+
+
+class ApidaeServiceParser(ApidaeBaseParser):
+    model = Service
+    eid = "eid"
+    service_type = None
+
+    responseFields = [
+        "id",
+        "localisation.geolocalisation.geoJson",
+    ]
+
+    fields = {
+        "eid": "id",
+        "geom": "localisation.geolocalisation.geoJson",
+    }
+    natural_keys = {
+        "type": "name",
+    }
+    field_options = {
+        "type": {"create": True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.service_type:
+            self.constant_fields = self.constant_fields.copy()
+            self.constant_fields["type"] = self.service_type
+        else:
+            raise ImproperlyConfigured(
+                _("A service type must be defined in parser configuration.")
+            )
+
+    def filter_geom(self, src, val):
+        try:
+            geom = GEOSGeometry(str(val))
+            geom.transform(settings.SRID)
+        except Exception:
+            raise RowImportError(
+                _("Could not parse geometry from value '{value}'").format(value=val)
+            )
+        return geom
 
 
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
