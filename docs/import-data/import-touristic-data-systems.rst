@@ -508,13 +508,13 @@ To import infrastructures from OpenStreetMap, edit the ``var/conf/parsers.py`` f
     from geotrek.infrastructure.parsers import OpenStreetMapInfrastructureParser
 
     class TableParser(OpenStreetMapInfrastructureParser):
-    provider = "OpenStreetMap"
-    tags = [
-        {"leisure": "picnic_table"},
-        {"tourism": "picnic_table"}
-    ]
-    default_fields_values = {"name": "picnic table"}
-    type = "Table"
+        provider = "OpenStreetMap"
+        tags = [
+            {"leisure": "picnic_table"},
+            {"tourism": "picnic_table"}
+        ]
+        default_fields_values = {"name": "picnic table"}
+        type = "Table"
 
 Then set up appropriate values:
 

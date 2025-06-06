@@ -7,18 +7,18 @@ CHANGELOG
 
 **Improvements**
 
-- Add OpenStreetMap parser for infrastructures
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
-- Add OpenStreetMap parser for infrastructures
 - Add Apidae parser for Services
+- Add OpenStreetMap parser for infrastructures
 
 **Bug fixes**
 
 - Fix delete=True in GeotrekParser when filtering by bbox or portal
 
 **Documentation**
+
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
 
 
@@ -29,7 +29,7 @@ CHANGELOG
 
 - Ensure report handlers can access their solved reports (#4589)
 - Improve Overpass query for OpenStreetMap parsers
-- OpenSteetMap parsers accept translations from OSM
+- OpenStreetMap parsers accept translations from OSM
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
