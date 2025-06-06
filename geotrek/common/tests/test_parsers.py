@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import requests
 from django.conf import settings
+from django.contrib.gis.geos import fromstr
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -33,6 +34,7 @@ from geotrek.common.parsers import (
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     OpenSystemParser,
+    Parser,
     TourInSoftParser,
     TourismSystemParser,
     ValueImportError,
@@ -41,11 +43,16 @@ from geotrek.common.parsers import (
 from geotrek.common.tests.factories import ThemeFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
-from geotrek.tourism.models import InformationDesk
+from geotrek.tourism.models import (
+    InformationDesk,
+    TouristicContent,
+    TouristicContentCategory,
+)
 from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.zoning.models import District
 
 
 class OrganismParser(ExcelParser):
@@ -119,6 +126,100 @@ class AttachmentLegendParser(AttachmentParser):
     def filter_attachments(self, src, val):
         (url, legend, author) = val.split(", ")
         return [(url, legend, author)]
+
+
+class JSONParser(Parser):
+    entry = "features"
+
+    def next_row(self):
+        if self.filename:
+            with open(self.filename) as f:
+                response = f.read()
+        self.root = json.loads(response)
+        rows = self.root[self.entry]
+        self.nb = len(rows)
+        yield from rows
+
+    def normalize_field_name(self, name):
+        return name
+
+
+class JSONParserIntersectionGeomTest(JSONParser):
+    model = TouristicContent
+    eid = "eid"
+    fields = {
+        "eid": "eid",
+        "geom": "geom",
+    }
+    constant_fields = {"category": "Foo"}
+    natural_keys = {"category": "label"}
+
+    def filter_geom(self, src, val):
+        geom = fromstr(val, srid=2154)
+        return geom
+
+
+class JSONParserIntersectionGeomMissingAttributTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "geom_field": "geom",
+        "object_filter": {"name": "test"},
+    }
+
+
+class JSONParserIntersectionGeomIncorrectGeomFieldTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "app_label": "zoning",
+        "geom_field": "geom_field",
+        "object_filter": {"name": "test"},
+    }
+
+
+class JSONParserIntersectionGeomRefObjIncorrectGeomTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "touristiccontent",
+        "app_label": "tourism",
+        "geom_field": "geom",
+        "object_filter": {"name": "test"},
+    }
+
+
+class JSONParserIntersectionGeomIncorrectFilterTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "app_label": "zoning",
+        "geom_field": "geom",
+        "object_filter": {"label": "test"},
+    }
+
+
+class JSONParserIntersectionGeomNotInContentTypeTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "app_label": "tourism",
+        "geom_field": "geom",
+        "object_filter": {"name": "test"},
+    }
+
+
+class JSONParserIntersectionGeomValidTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "app_label": "zoning",
+        "geom_field": "geom",
+        "object_filter": {"name": "test"},
+    }
+
+
+class JSONParserIntersectionGeomValidDeleteTest(JSONParserIntersectionGeomTest):
+    intersection_geom = {
+        "model": "district",
+        "app_label": "zoning",
+        "geom_field": "geom",
+        "object_filter": {"name": "test"},
+    }
+    delete = True
 
 
 class ParserTests(TestCase):
@@ -339,6 +440,233 @@ class ParserTests(TestCase):
         )
         websites = RecordSource.objects.order_by("pk")
         self.assertEqual(websites[0].website, "website test default")
+
+    def test_intersection_geom_None(self):
+        TouristicContentCategory.objects.create(label="Foo")
+
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomTest",
+            filename,
+            verbosity=0,
+        )
+        self.assertEqual(TouristicContent.objects.count(), 12)
+
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids),
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+        )
+
+    def test_intersection_geom_missing_attribut(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        District.objects.create(name="test", geom=geom)
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "intersection_geom is missing required keys: app_label",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomMissingAttributTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_model_not_in_contenttype(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        with self.assertRaisesMessage(
+            ImproperlyConfigured, "tourism.district is not defined in contenttype"
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomNotInContentTypeTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_incorrect_geom_field(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        District.objects.create(name="test", geom=geom)
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "Reference geometry must be a Polygon or MultiPolygon, not <class 'NoneType'>",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomIncorrectGeomFieldTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_incorrect_object_filter(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        District.objects.create(name="test", geom=geom)
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "zoning.district does not have field(s): ['label']",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomIncorrectFilterTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_ref_object_does_not_exist(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        json_parser = JSONParserIntersectionGeomValidTest()
+
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            f"Reference geometry does not exist: {json_parser.intersection_geom}",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_multiple_result(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        district = District.objects.create(name="test", geom=geom)
+        District.objects.create(name="test", geom=geom)
+        json_parser = JSONParserIntersectionGeomValidTest()
+
+        out = StringIO()
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidTest",
+            filename,
+            verbosity=2,
+            stdout=out,
+        )
+
+        output = out.getvalue()
+        self.assertIn(
+            f"{json_parser.intersection_geom} references multiple geometries. {district} has been used",
+            output,
+        )
+
+    def test_intersection_geom_incorrect_ref_object_geometry(self):
+        category = TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("POINT(0 0)", srid=2154)
+        TouristicContent.objects.create(name="test", geom=geom, category_id=category.pk)
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "Reference geometry must be a Polygon or MultiPolygon, not <class 'django.contrib.gis.geos.point.Point'>",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomRefObjIncorrectGeomTest",
+                filename,
+                verbosity=0,
+            )
+
+    def test_intersection_geom_valid(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        District.objects.create(name="test", geom=geom)
+        output = StringIO()
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidTest",
+            filename,
+            verbosity=2,
+            stdout=output,
+        )
+        self.assertEqual(TouristicContent.objects.count(), 8)
+
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"]
+        )
+
+        output = output.getvalue()
+        self.assertIn(
+            "# Line 3:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
+            output,
+        )
+        self.assertIn(
+            "# Line 6:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
+            output,
+        )
+        self.assertIn(
+            "# Line 9:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
+            output,
+        )
+        self.assertIn(
+            "# Line 12:\n- Object geometry does not intersect with reference geometry (zoning.district: {'name': 'test'})",
+            output,
+        )
+
+    def test_intersection_geom_valid_with_delete(self):
+        TouristicContentCategory.objects.create(label="Foo")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "touristic_content.json"
+        )
+
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomTest",
+            filename,
+            verbosity=0,
+        )
+
+        self.assertEqual(TouristicContent.objects.count(), 12)
+
+        geom = fromstr("MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))", srid=2154)
+        District.objects.create(name="test", geom=geom)
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONParserIntersectionGeomValidDeleteTest",
+            filename,
+            verbosity=0,
+        )
+
+        self.assertEqual(TouristicContent.objects.count(), 8)
+
+        touristic_content_eids = (
+            TouristicContent.objects.order_by("pk").all().values_list("eid", flat=True)
+        )
+        self.assertEqual(
+            list(touristic_content_eids), ["1", "2", "4", "5", "7", "8", "10", "11"]
+        )
 
 
 class ThemeParser(ExcelParser):

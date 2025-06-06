@@ -1670,7 +1670,6 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         geom = None
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
@@ -1681,11 +1680,10 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
+        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):
