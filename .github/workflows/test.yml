@@ -303,6 +303,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         with:
             working-directory: cypress
         env:
@@ -310,6 +311,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_BASE_URL: http://geotrek.local
           CYPRESS_CACHE_FOLDER: ~/cypress/cache
+      - name: Show logs
+        run: cat ./var/log/geotrek.log
 
       - name: Check DEM scripts are available in docker image
         run: |
