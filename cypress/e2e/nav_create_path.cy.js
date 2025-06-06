@@ -10,6 +10,7 @@ describe('Create path workflow', () => {
         cy.visit('/path/list');
         cy.wait('@tiles');
         cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
+        cy.get("a.leaflet-draw-draw-polyline").click();
         cy.get('#id_geom-map')
                     .click(380, 220)
                     .click(405, 290)
