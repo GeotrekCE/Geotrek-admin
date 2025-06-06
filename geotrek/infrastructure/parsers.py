@@ -47,7 +47,6 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
     natural_keys = {
         "type": "label",
     }
-    non_fields = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
