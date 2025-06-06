@@ -12,7 +12,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Restricted Area
 - Add Apidae parser for Services
 - Add OpenStreetMap parser for infrastructures
-- Add OpenStreetMap parser for Touristic content
+- Add OpenStreetMap parser for touristic content
 
 **Bug fixes**
 
