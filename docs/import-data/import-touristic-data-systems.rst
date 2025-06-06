@@ -14,7 +14,7 @@ Real-time integration
 
 Geotrek-admin integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
 
-These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.). 
+These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.).
 
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
@@ -70,7 +70,7 @@ Just run:
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import  HebergementParser
 
 Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
@@ -89,7 +89,7 @@ Open the top right menu and clic on ``imports``.
 Import from APIDAE
 ====================
 
-Import touristic content 
+Import touristic content
 ------------------------
 
 To import touristic content from APIDAE (ex-SITRA), edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
@@ -133,11 +133,28 @@ Example of a parser configuration :
 
 ::
 
-    class ImportTreksApidae(TrekParser):
+    class ImportTreksApidae(ApidaeTrekParser):
         label = "Import trek with eid"
         label_fr = "Import itinéraires avec identifiant externe"
         label_en = "Import trek with eid"
         eid = 'eid'
+
+Import services
+---------------
+
+To import services from APIDAE, define a subclass of ``geotrek.trekking.parsers.ApidaeServiceParser`` in your ``var/conf/parsers.py`` configuration file.
+
+In addition to the usual attributes, the service type name (``type``) must be specified. This type will be assigned to all objects imported through the parser.
+
+Example of an APIDAE service parser configuration:
+
+::
+
+    class DrinkingWaterPoint(ApidaeServiceParser):
+        label = "Drinking water points"
+        provider = "Apidae"
+        selection_id = 12345
+        type = "Drinking water point"
 
 .. _import-from-tourinsoft:
 
@@ -170,7 +187,7 @@ The functionality for importing treks and touristic content from Cirkwi was deve
 
 The following parsers have been developed to facilitate data import from Cirkwi into Geotrek-admin:
 
-- **Trek Parser**: Allows the integration of treks from Cirkwi into Geotrek. This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only. 
+- **Trek Parser**: Allows the integration of treks from Cirkwi into Geotrek. This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only.
 
 Example of a parser configuration :
 
@@ -187,7 +204,7 @@ Example of a parser configuration :
         provider = "Cirkwi"
 
 
-- **Touristic content Parser**: Enables the import of touristic content from Cirkwi into Geotrek. 
+- **Touristic content Parser**: Enables the import of touristic content from Cirkwi into Geotrek.
 
 Example of a parser configuration :
 
@@ -250,7 +267,7 @@ You can duplicate the class. Each class must have a different name.
 
 In this case categories and types in Geotrek database have to be the same as in Esprit parc database. Otherwise missing categories and types will be created in Geotrek database.
 
-Imported contents will be automatically published and approved (certified). 
+Imported contents will be automatically published and approved (certified).
 
 If you use an url that filters a unique category, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
 
@@ -681,8 +698,8 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
 
 .. important::
 
-    - It is recommended to use ``provider`` from the first import. 
-    - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
+    - It is recommended to use ``provider`` from the first import.
+    - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser.
     - If a parser does not have a ``provider`` value, it will not take providers into account, meaning that it could delete objects from preceeding parsers even if these other parsers do have a ``provider`` themselves.
 
 The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.

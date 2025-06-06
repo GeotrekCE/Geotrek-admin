@@ -12,6 +12,11 @@ CHANGELOG
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
 - Add OpenStreetMap parser for infrastructures
+- Add Apidae parser for Services
+
+**Bug fixes**
+
+- Fix delete=True in GeotrekParser when filtering by bbox or portal
 
 **Documentation**
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
