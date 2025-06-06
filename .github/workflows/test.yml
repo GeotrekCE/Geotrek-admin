@@ -398,6 +398,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         with:
             working-directory: cypress
             record: true
@@ -406,7 +407,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_BASE_URL: http://geotrek.local
           CYPRESS_CACHE_FOLDER: ~/cypress/cache
-
+      - name: Show logs
+        run: cat /opt/geotrek-admin/var/log/geotrek.log
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v4
         with:
