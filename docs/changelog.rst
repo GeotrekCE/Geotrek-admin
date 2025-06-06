@@ -11,9 +11,14 @@ CHANGELOG
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
 
+**Bug fixes**
+
+- Fix delete=True in GeotrekParser when filtering by bbox or portal
+
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+
 
 2.115.1    (2025-05-21)
 ----------------------------
