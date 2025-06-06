@@ -115,6 +115,7 @@ class Parser:
     default_language = None
     headers = {"User-Agent": "Geotrek-Admin"}
     intersection_geom = None
+    _ref_geom = None
 
     def __init__(self, progress_cb=None, user=None, encoding="utf8"):
         self.warnings = {}
@@ -758,8 +759,8 @@ class Parser:
             ref_geom = getattr(ref_objects.first(), geom_field, None)
 
             if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
-                self.ref_geom = ref_geom
-                self.ref_geom.transform(settings.SRID)
+                self._ref_geom = ref_geom
+                self._ref_geom.transform(settings.SRID)
             else:
                 msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
                 raise ImproperlyConfigured(msg)
@@ -783,7 +784,7 @@ class Parser:
         * geom_field: field name in the model where the geometry is defined
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
-        if hasattr(self, "ref_geom"):
+        if self._ref_geom:
             if not self.ref_geom.intersects(geom):
                 if self.delete:
                     self.to_delete.add(self.obj.pk)
