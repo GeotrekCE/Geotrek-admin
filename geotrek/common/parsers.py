@@ -784,16 +784,15 @@ class Parser:
         * geom_field: field name in the model where the geometry is defined
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
-        if self._ref_geom:
-            if not self._ref_geom.intersects(geom):
-                if self.delete:
-                    self.to_delete.add(self.obj.pk)
-                msg = (
-                    f"Object geometry does not intersect with reference geometry "
-                    f"({self.intersection_geom['app_label']}.{self.intersection_geom['model']}: "
-                    f"{self.intersection_geom['object_filter']})"
-                )
-                raise BypassRow(msg)
+        if self._ref_geom and not self._ref_geom.intersects(geom):
+            if self.delete:
+                self.to_delete.add(self.obj.pk)
+            msg = (
+                f"Object geometry does not intersect with reference geometry "
+                f"({self.intersection_geom['app_label']}.{self.intersection_geom['model']}: "
+                f"{self.intersection_geom['object_filter']})"
+            )
+            raise BypassRow(msg)
 
 
 class XmlParser(Parser):
