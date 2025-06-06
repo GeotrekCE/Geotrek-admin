@@ -785,7 +785,7 @@ class Parser:
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
         if self._ref_geom:
-            if not self.ref_geom.intersects(geom):
+            if not self._ref_geom.intersects(geom):
                 if self.delete:
                     self.to_delete.add(self.obj.pk)
                 msg = (
