@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
+"POT-Creation-Date: 2025-06-06 15:23+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -429,6 +429,11 @@ msgstr "Un nom de fichier ou une url est requis"
 #, python-brace-format
 msgid "File does not exists at: {filename}"
 msgstr "Le fichier à l'emplacement {filename} n'existe pas"
+
+#, python-brace-format
+msgid ""
+"Could not parse row due to the following exception: {exc_name}: {exc_msg}"
+msgstr "La ligne n'a pas pu être parsée à cause de l'exception suivante : {exc_name}: {exc_msg}"
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
