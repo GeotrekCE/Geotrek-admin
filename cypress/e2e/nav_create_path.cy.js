@@ -10,7 +10,7 @@ describe('Create path', () => {
         cy.visit('/path/list');
         cy.wait('@tiles');
         cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
-        cy.get("#id_geom").type("{\"geom\":\"{\"type\":\"LineString\",\"coordinates\":[[-7.279815673828125,43.35713822211053],[1.553192138671875,42.4234565179383]]}\",\"snap\":[null,null]}", {force: true, parseSpecialCharSequences: false});
+        cy.get("#id_geom").type('{"geom":"{"type":"LineString","coordinates":[[-7.279815673828125,43.35713822211053],[1.553192138671875,42.4234565179383]]}","snap":[null,null]}', {force: true, parseSpecialCharSequences: false});
         cy.get("input[name='name']").type('Path number 1');
         cy.get('#save_changes').click();
         cy.url().should('not.include', '/path/add/');
