@@ -1434,7 +1434,6 @@ class InformationDeskOpenStreetMapParser(
         type, lng, lat, area, bbox = val
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
