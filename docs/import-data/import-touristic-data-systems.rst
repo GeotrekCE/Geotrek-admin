@@ -484,7 +484,7 @@ Then set up appropriate values:
 Geometry filtering in Geotrek Parsers
 ======================================
 
-In some cases, you may want to restrict imported objects to a specific geographic area.
+In some cases, you may want to restrict imported objects to a specific geographic area already defined in geotrek model instance (ex: a City or District).
 This can be done by defined the parser’s ``intersection_geom`` attribute
 
 This attribute is a dictionary with the following keys:
