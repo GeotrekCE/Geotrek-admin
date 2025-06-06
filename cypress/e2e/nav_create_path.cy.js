@@ -37,7 +37,7 @@ describe('Create path', () => {
         cy.get('.content').should('contain', 'Path number 2');
     });
 
-    it('Path list', () => {
+    it('Check resulting path list', () => {
         cy.visit('/path/list');
         cy.get("a[title='Path number 1']").should('have.length', 2);
         cy.get("a[title='Path number 2']").should('have.length', 2);
