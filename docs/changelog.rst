@@ -18,6 +18,10 @@ CHANGELOG
 
 - Fix delete=True in GeotrekParser when filtering by bbox or portal
 
+**Bug fixes**
+
+- Fix delete=True in GeotrekParser when filtering by bbox or portal
+
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
