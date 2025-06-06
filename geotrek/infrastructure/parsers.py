@@ -82,7 +82,8 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
-            geom.transform(settings.SRID)
+
+        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):
