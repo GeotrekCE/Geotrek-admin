@@ -496,7 +496,7 @@ Then set up appropriate values:
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
 
-.. _import-infrastructures:
+.. _import-infrastructures_osm:
 
 Import Infrastructures
 ----------------------
