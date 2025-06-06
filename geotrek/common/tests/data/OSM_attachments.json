@@ -1,0 +1,39 @@
+{
+  "title":"Cime de Clot Châtel @ Crête de Puy Salié.jpg",
+  "file_description_url":"//commons.wikimedia.org/wiki/File:Cime_de_Clot_Ch%C3%A2tel_@_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg",
+  "latest":
+  {
+    "timestamp":"2025-04-01T17:35:59Z",
+    "user":{
+      "id":50806,
+      "name":"Rémih"
+    }
+  },
+  "preferred":
+  {
+    "mediatype":"BITMAP",
+    "size":null,
+    "width":800,
+    "height":600,
+    "duration":null,
+    "url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg/960px-Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg"
+  },
+  "original":
+  {
+    "mediatype":"BITMAP",
+    "size":2893889,
+    "width":5184,
+    "height":3888,
+    "duration":null,
+    "url":"https://upload.wikimedia.org/wikipedia/commons/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg"
+  },
+  "thumbnail":
+  {
+    "mediatype":"BITMAP",
+    "size":null,
+    "width":2560,
+    "height":1920,
+    "duration":null,
+    "url":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg/2560px-Cime_de_Clot_Ch%C3%A2tel_%40_Cr%C3%AAte_de_Puy_Sali%C3%A9.jpg"
+  }
+}

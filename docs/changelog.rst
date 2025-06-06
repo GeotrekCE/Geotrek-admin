@@ -8,6 +8,12 @@ CHANGELOG
 **Improvements**
 
 - Add OpenStreetMap parser for infrastructures
+- Add default license for attachments parsers
+- Add attachments for OpenStreetMapParser
+- Add OpenStreetMap parser for Restricted Area
+
+**Documentation**
+- Fix docker command for fixtures, add map settings and columns list details (#4740)
 
 
 2.115.1    (2025-05-21)
@@ -21,6 +27,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
+- Add ability to specify model instance to filter parsed objects by intersection
 
 **Bug fixes**
 
