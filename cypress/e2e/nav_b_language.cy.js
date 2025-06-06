@@ -1,11 +1,11 @@
-describe('Create path', () => {
+describe('Change language', () => {
     beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
         cy.loginByCSRF(username, password);
     });
 
-    it('Change language', () => {
+    it('Can change language', () => {
         cy.visit('/path/list');
         cy.get("a.dropdown-toggle").contains('admin').click();
         cy.get("button.language-menu-item[value='fr']").click();

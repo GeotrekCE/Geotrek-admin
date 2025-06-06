@@ -1,4 +1,4 @@
-describe('Create path', () => {
+describe('Create path workflow', () => {
     beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
@@ -6,11 +6,11 @@ describe('Create path', () => {
         cy.mockTiles();
     });
 
-    it('Create path', () => {
+    it('Create a path', () => {
         cy.visit('/path/list');
         cy.wait('@tiles');
         cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
-        cy.get('.leaflet-map-pane')
+        cy.get('#id_geom-map')
                     .click(380, 220)
                     .click(405, 290)
                     .click(405, 290);
@@ -20,7 +20,7 @@ describe('Create path', () => {
         cy.get('.content').should('contain', 'Path number 1');
     });
 
-    it('Create path split', () => {
+    it('Split existing path by new one', () => {
         cy.visit('/path/list');
         cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
         cy.get("a.leaflet-draw-draw-polyline").click();
@@ -34,7 +34,7 @@ describe('Create path', () => {
         cy.get('.content').should('contain', 'Path number 2');
     });
 
-    it('Path list', () => {
+    it('Check resulting path list', () => {
         cy.visit('/path/list');
         cy.get("a[title='Path number 1']").should('have.length', 2);
         cy.get("a[title='Path number 2']").should('have.length', 2);
