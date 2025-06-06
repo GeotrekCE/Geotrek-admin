@@ -759,6 +759,7 @@ class Parser:
 
             if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
                 self.ref_geom = ref_geom
+                self.ref_geom.transform(settings.SRID)
             else:
                 msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
                 raise ImproperlyConfigured(msg)
@@ -782,8 +783,8 @@ class Parser:
         * geom_field: field name in the model where the geometry is defined
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
-        if self.intersection_geom:
-            self.ref_geom.transform(geom.srid)
+        if hasattr(self, "ref_geom"):
+
             if not self.ref_geom.intersects(geom):
                 if self.delete:
                     self.to_delete.add(self.obj.pk)
