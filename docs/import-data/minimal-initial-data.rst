@@ -62,7 +62,7 @@ And use the Geotrek-admin command to load it into PostGIS :
 
 .. _import-dem-altimetry:
 
-Load DEM 
+Load DEM
 ---------
 
 .. example:: sudo geotrek help loaddem
@@ -70,7 +70,7 @@ Load DEM
 
     ::
 
-      usage: manage.py loaddem [-h] [--replace] 
+      usage: manage.py loaddem [-h] [--replace]
       					 [--update-altimetry]
       					 [--version]
                          [-v {0,1,2,3}] [--settings SETTINGS]
@@ -115,30 +115,30 @@ Load DEM
 
 		    sudo geotrek loaddem \
 		    ./var/dem.tif \
-		    --update-altimetry 
+		    --update-altimetry
 
     .. md-tab-item:: Example with Docker
 
          .. code-block:: bash
-    
+
 		    docker compose run --rm web ./manage.py loaddem \
 		    ./var/dem.tif \
-		    --update-altimetry 
-			    
+		    --update-altimetry
+
 .. _docker-container-path:
 
-.. IMPORTANT:: 
-   When running a command via Docker, all file paths must refer to locations **inside the container**, not on the host machine. The ``var`` folder is mounted as a volume in the container, with the following mapping:  
+.. IMPORTANT::
+   When running a command via Docker, all file paths must refer to locations **inside the container**, not on the host machine. The ``var`` folder is mounted as a volume in the container, with the following mapping:
    ``/path-on-host/var`` → ``/opt/geotrek-admin/var``.
 
    So you just need to place the file in the ``var`` directory on the host, and it will be accessible from inside the container at the expected path.
 
-   👉 In short:  
-   Docker commands in Geotrek use **container paths**.  
+   👉 In short:
+   Docker commands in Geotrek use **container paths**.
    The `var` folder is shared between the host and the container, so any file placed in `var` can be accessed using either ``./var/...`` or ``/opt/geotrek-admin/var/...`` **inside the container**.
 
    Example : ``./var/dem.tif`` or ``/opt/geotrek-admin/var/dem.tif``
-   
+
 Paths
 =======
 
@@ -149,8 +149,8 @@ Paths
 
 .. ns-only::
 
-    .. 
-      
+    ..
+
 Requirements
 -------------
 
@@ -257,7 +257,7 @@ Load paths
     * **Geometric type** : Linestring
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * When importing a Geopackage, the first layer is always used
@@ -287,7 +287,7 @@ Load paths
 	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
-    
+
           docker compose run --rm web ./manage.py loadpaths \
           ./var/paths.geojson \
           --srid=2154 \
@@ -299,7 +299,7 @@ Load paths
 
 .. note::
 
-  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing. 
+  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing.
 
   This action is not mandatory, but will reduce the time needed for the first routing following the import.
 
@@ -317,7 +317,7 @@ Load paths
       .. md-tab-item:: Example with Docker
 
           .. code-block:: bash
-      
+
             docker compose run --rm web ./manage.py generate_pgr_network_topology
 
 Get OpenStreetMap paths
@@ -325,7 +325,7 @@ Get OpenStreetMap paths
 
 You can use the ``osm-paths`` tool to download OSM paths data via the overpass API. This tool converts paths to into linestrings and exports them to GeoJSON.
 
-For more information, refer to the `osm-paths documentation <https://github.com/makinacorpus/osm-paths>`_ 
+For more information, refer to the `osm-paths documentation <https://github.com/makinacorpus/osm-paths>`_
 
 Areas
 =======
