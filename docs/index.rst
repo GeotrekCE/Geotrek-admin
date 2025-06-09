@@ -79,16 +79,28 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     advanced-configuration/settings-for-geotrek-mobile
 
 .. toctree::
+    :caption: 🗃️ Import data old
+    :hidden:
+
+    import-data-old/minimal-initial-data
+    import-data-old/import-dem-raster
+    import-data-old/import-paths
+    import-data-old/import-areas
+    import-data-old/import-touristic-data-systems
+    import-data-old/import-other-data
+    import-data-old/import-aggregator
+
+.. toctree::
     :caption: 🗃️ Import data
     :hidden:
 
+    import-data/introduction
     import-data/minimal-initial-data
-    import-data/import-dem-raster
-    import-data/import-paths
-    import-data/import-areas
-    import-data/import-touristic-data-systems
-    import-data/import-other-data
-    import-data/import-aggregator
+    import-data/fixtures
+    import-data/command-load
+    import-data/parsers
+    import-data/aggregator
+    import-data/development
 
 .. toctree::
     :caption: ✨ Contribute
