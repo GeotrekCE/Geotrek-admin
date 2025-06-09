@@ -793,7 +793,7 @@ The link template should contain the `{{object.eid}}` placeholder, which will be
    <a href="https://example.com/objects/{{object.eid}}" target="_blank">{{object.eid}}</a>
 
 Fixtures are available for two providers: **OpenStreetMap** and **Apidae**. These predefined Provider records can be loaded during a new installation.
-See the :ref:`fixture documentation <load-fixtures>` to see more about fixtures.
+See the :ref:`fixture documentation <loading-fixtures>` to see more about fixtures.
 
 .. note::
 
