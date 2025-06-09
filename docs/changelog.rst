@@ -10,6 +10,10 @@ CHANGELOG
 * Topology length 2d is now computed at database level.
 * Last modified header and content cache is now enabled on zoning internal API.
 
+**Documentation**
+
+- Reorganize the "Import data" chapter
+
 
 2.120.2         (2025-10-28)
 ----------------------------
