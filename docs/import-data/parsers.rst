@@ -343,7 +343,7 @@ These imported data elements are automatically linked to nearby treks, regardles
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
 .. seealso::
- 
+
   If you want to implement your own parser or adapt an existing one, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
 
 Data sources
