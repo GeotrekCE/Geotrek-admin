@@ -16,11 +16,11 @@ Geotrek-admin's documentation
 
         🏞️ **About Geotrek (fr)**
         ^^^
-        Discover Geotrek’s main features and ecosystem.  
+        Discover Geotrek’s main features and ecosystem.
 
-        - Components & profiles  
-        - Community & governance  
-        - Open-source stack  
+        - Components & profiles
+        - Community & governance
+        - Open-source stack
         +++
         Introduction
 
@@ -31,16 +31,16 @@ Geotrek-admin's documentation
 
         🚀 **User manual (fr)**
         ^^^
-        Step-by-step guide for all users.  
+        Step-by-step guide for all users.
 
-        - Modules & views  
-        - Data & media  
-        - API & menus  
+        - Modules & views
+        - Data & media
+        - API & menus
         +++
         Functional docs
 
 .. grid:: 2
-    :gutter: 2  
+    :gutter: 2
 
     .. grid-item-card:: Tutorials
         :link: visualiser-les-donnees-dans-qgis
@@ -49,11 +49,11 @@ Geotrek-admin's documentation
 
         💡 **Tutorials (fr)**
         ^^^
-        Hands-on guides to learn by doing.  
+        Hands-on guides to learn by doing.
 
-        - QGIS connection  
-        - Basemaps setup  
-        - Fix topology  
+        - QGIS connection
+        - Basemaps setup
+        - Fix topology
         +++
         Learn by doing
 
@@ -64,11 +64,11 @@ Geotrek-admin's documentation
 
         🔧 **Installation**
         ^^^
-        Set up and adapt Geotrek.  
+        Set up and adapt Geotrek.
 
-        - Ubuntu install  
-        - Config & users  
-        - Maintenance  
+        - Ubuntu install
+        - Config & users
+        - Maintenance
         +++
         Technical setup
 
@@ -82,11 +82,11 @@ Geotrek-admin's documentation
 
         ⚙️ **Advanced config**
         ^^^
-        Fine-tune Geotrek’s settings.  
+        Fine-tune Geotrek’s settings.
 
-        - Maps & APIs  
-        - UI & PDF  
-        - Mobile sync  
+        - Maps & APIs
+        - UI & PDF
+        - Mobile sync
         +++
         Power options
 
@@ -97,16 +97,16 @@ Geotrek-admin's documentation
 
         🗃️ **Import data**
         ^^^
-        Import, update, and manage data.  
+        Import, update, and manage data.
 
-        - Import data 
-        - Touristic data systems  
-        - Aggregator  
+        - Import data
+        - Touristic data systems
+        - Aggregator
         +++
         Data management
 
 .. grid:: 2
-    :gutter: 2 
+    :gutter: 2
 
     .. grid-item-card:: Contribute
         :link: contributing
@@ -115,11 +115,11 @@ Geotrek-admin's documentation
 
         ✨ **Contribute**
         ^^^
-        Improve Geotrek together.  
+        Improve Geotrek together.
 
-        - Code & docs  
-        - Translations  
-        - Guidelines  
+        - Code & docs
+        - Translations
+        - Guidelines
         +++
         Community
 
@@ -130,11 +130,11 @@ Geotrek-admin's documentation
 
         📝 **Others**
         ^^^
-        Tips, fixes, and credits.  
+        Tips, fixes, and credits.
 
-        - Troubleshooting  
-        - Authors  
-        - Changelog  
+        - Troubleshooting
+        - Authors
+        - Changelog
         +++
         Resources
 
@@ -173,7 +173,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     user-manual/overview.rst
     user-manual/interfaces.rst
     user-manual/management-modules.rst
-    user-manual/touristic-modules.rst 
+    user-manual/touristic-modules.rst
     user-manual/editing-objects.rst
     user-manual/configuration-ttw.rst
     user-manual/apis.rst
@@ -215,13 +215,13 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     :caption: 🗃️ Import data
     :hidden:
 
+    import-data/introduction
     import-data/minimal-initial-data
-    import-data/import-dem-raster
-    import-data/import-paths
-    import-data/import-areas
-    import-data/import-touristic-data-systems
-    import-data/import-other-data
-    import-data/import-aggregator
+    import-data/fixtures
+    import-data/command-load
+    import-data/parsers
+    import-data/aggregator
+    import-data/development
 
 .. toctree::
     :caption: ✨ Contribute
