@@ -19,7 +19,7 @@ Geotrek-admin includes several **default parsers** for common data types (cities
 Parsers can be used in two ways:
 
 * **Through the web interface**, using the *Imports* section in the admin panel.
-* **Via the command line**, using a dedicated `import` command.
+* **Via the command line**, using a dedicated ``import`` command.
 
 Import options
 ===============
@@ -274,7 +274,7 @@ Custom parsers
 Adapt or create a parser class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can add parsers in your custom `parsers.py` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to import data from files directly in your admin (superusers only).
+You can add parsers in your custom ``parsers.py`` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to import data from files directly in your admin (superusers only).
 
 However, these parsers are not plug-and-play : they must be properly configured to suit the structure and format of your data source. In most cases, you will need to adapt or create a parser class that can interpret your data and map it to the corresponding Geotrek-admin models.
 
@@ -301,7 +301,7 @@ Depending on the source, you can configure your custom parser to:
 * or retrieve data from a remote feed via URL.
 
 .. note::
-Not all parsers support dynamic segmentation. For example, the `TrekParser` can only be used if `TREKKING_TOPOLOGY_ENABLED` is set to `False`.
+Not all parsers support dynamic segmentation. For example, the ``TrekParser`` can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
 
 Real-time integration
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -312,7 +312,9 @@ These imported data elements are automatically linked to nearby treks, regardles
 
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
-If you want to implement your own parser or adapt an existing one, refer to :ref:`the parsers developer documentation <development-import>` for details and examples.
+.. seealso::
+ 
+  If you want to implement your own parser or adapt an existing one, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
 
 Data sources
 ~~~~~~~~~~~~~

@@ -115,7 +115,6 @@ Load DEM
 
 		    sudo geotrek loaddem \
 		    ./var/dem.tif \
-		    --replace \
 		    --update-altimetry 
 
     .. md-tab-item:: Example with Docker
@@ -124,7 +123,6 @@ Load DEM
     
 		    docker compose run --rm web ./manage.py loaddem \
 		    ./var/dem.tif \
-		    --replace \
 		    --update-altimetry 
 			    
 .. _docker-container-path:
