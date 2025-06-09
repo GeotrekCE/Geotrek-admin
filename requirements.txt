@@ -390,7 +390,7 @@ tzdata==2025.2
     # via
     #   kombu
     #   mapentity
-uritemplate==4.1.1
+uritemplate==4.2.0
     # via
     #   coreapi
     #   drf-spectacular
