@@ -48,12 +48,12 @@ The table below helps you identify the most appropriate import method based on k
      - Practices, zoning types, difficulties, categories, types
    * - **Manual import**
      - ❌
-     - ❌ 
+     - ❌
      - Occasional edits or new records
      - Adding new POIs or cities
    * - **Aggregator**
      - ✅
-     - ✅ 
+     - ✅
      - Sync from multiple Geotrek instances
      - Consolidating treks from multiple parks
 

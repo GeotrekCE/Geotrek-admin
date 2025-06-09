@@ -16,11 +16,12 @@ Importing from a Geotrek-admin instance works the same way as from SIT.
 A usecase for this is to aggregate data from several Geotrek-admin instances.
 
 .. important::
-  
-  Importing data from a remote Geotrek-admin instance does not work with dynamic segmentation, your instance where you import data must have :ref:`dynamic segmentation disabled <configuration-dynamic-segmentation>`.
+
+ Importing data from a remote Geotrek-admin instance does not work with dynamic segmentation, your instance where you import data
+    must have :ref:`dynamic segmentation disabled <configuration-dynamic-segmentation>`.
 
 .. seealso::
- 
+
   If you want to implement your own aggregator, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
 
 Import data from another instance
