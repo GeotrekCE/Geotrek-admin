@@ -128,8 +128,8 @@ class Path(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), blank=True, null=True, on_delete=models.PROTECT
     )
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -1129,7 +1129,9 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     provider = models.CharField(
         verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
-
+    provider_fk = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
+    )
     certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
 
