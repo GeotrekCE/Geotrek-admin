@@ -15,6 +15,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix delete=True in GeotrekParser when filtering by bbox or portal
+- Fix parser crash when parsing a row fails with unhandled exception
 
 **Documentation**
 
