@@ -10,7 +10,6 @@ from django.contrib.gis.geos import fromstr
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.db.utils import DatabaseError
 from django.template.exceptions import TemplateDoesNotExist
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -35,9 +34,9 @@ from geotrek.common.parsers import (
     OpenStreetMapParser,
     OpenSystemParser,
     Parser,
+    RowImportError,
     TourInSoftParser,
     TourismSystemParser,
-    RowImportError,
     ValueImportError,
     XmlParser,
 )
@@ -368,9 +367,15 @@ class ParserTests(TestCase):
             parser.report(output_format="toto")
 
     @mock.patch("geotrek.common.parsers.Parser.parse_row")
-    def test_warn_and_continue_when_row_parsing_fails_with_custom_error(self, mock_parse_row):
+    def test_warn_and_continue_when_row_parsing_fails_with_custom_error(
+        self, mock_parse_row
+    ):
         output = StringIO()
-        mock_parse_row.side_effect = [RowImportError("message1"), ValueImportError("message2"), ValueImportError("message3")]
+        mock_parse_row.side_effect = [
+            RowImportError("message1"),
+            ValueImportError("message2"),
+            ValueImportError("message3"),
+        ]
         filename = os.path.join(os.path.dirname(__file__), "data", "organisms.json")
         call_command(
             "import",
@@ -385,7 +390,9 @@ class ParserTests(TestCase):
         self.assertIn("message3", output.getvalue())
 
     @mock.patch("geotrek.common.parsers.Parser.parse_row")
-    def test_warn_and_continue_when_row_parsing_fails_with_exception(self, mock_parse_row):
+    def test_warn_and_continue_when_row_parsing_fails_with_exception(
+        self, mock_parse_row
+    ):
         output = StringIO()
         mock_parse_row.side_effect = Exception("message")
         filename = os.path.join(os.path.dirname(__file__), "data", "organisms.json")
@@ -399,7 +406,9 @@ class ParserTests(TestCase):
         self.assertEqual(len(Organism.objects.all()), 0)
         # Check that the warning is displayed several times to make sure that
         # the parser does not stop after a row fails:
-        expected_warning = f"Could not parse row due to the following exception: Exception: message"
+        expected_warning = (
+            "Could not parse row due to the following exception: Exception: message"
+        )
         self.assertEqual(output.getvalue().count(expected_warning), 3)
 
     def test_fk_not_in_natural_keys(self):

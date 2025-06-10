@@ -29,7 +29,7 @@ from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
-from django.db.utils import DatabaseError, InternalError
+from django.db.utils import InternalError
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
