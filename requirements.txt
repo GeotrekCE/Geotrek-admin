@@ -111,6 +111,7 @@ django==4.2.21
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
+    #   djangorestframework-gis
     #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
