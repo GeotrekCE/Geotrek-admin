@@ -691,8 +691,8 @@ class Parser:
                     break
                 try:
                     self.parse_row(row)
-                except (DatabaseError, RowImportError, ValueImportError) as e:
-                    self.add_warning(str(e))
+                except (RowImportError, ValueImportError) as custom_error:
+                    self.add_warning(str(custom_error))
                 except Exception as e:
                     self.add_warning(
                         _(

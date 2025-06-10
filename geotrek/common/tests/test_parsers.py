@@ -37,6 +37,7 @@ from geotrek.common.parsers import (
     Parser,
     TourInSoftParser,
     TourismSystemParser,
+    RowImportError,
     ValueImportError,
     XmlParser,
 )
@@ -142,6 +143,12 @@ class JSONParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+
+class JSONOrganismParser(JSONParser):
+    model = Organism
+    entry = "organisms"
+    fields = {"organism": "name"}
 
 
 class JSONParserIntersectionGeomTest(JSONParser):
@@ -361,18 +368,39 @@ class ParserTests(TestCase):
             parser.report(output_format="toto")
 
     @mock.patch("geotrek.common.parsers.Parser.parse_row")
-    def test_databaseerror_except(self, mock_parse_row):
+    def test_warn_and_continue_when_row_parsing_fails_with_custom_error(self, mock_parse_row):
         output = StringIO()
-        mock_parse_row.side_effect = DatabaseError("foo bar")
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        mock_parse_row.side_effect = [RowImportError("message1"), ValueImportError("message2"), ValueImportError("message3")]
+        filename = os.path.join(os.path.dirname(__file__), "data", "organisms.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismEidParser",
+            "geotrek.common.tests.test_parsers.JSONOrganismParser",
             filename,
             verbosity=2,
             stdout=output,
         )
-        self.assertIn("foo bar", output.getvalue())
+        self.assertEqual(len(Organism.objects.all()), 0)
+        self.assertIn("message1", output.getvalue())
+        self.assertIn("message2", output.getvalue())
+        self.assertIn("message3", output.getvalue())
+
+    @mock.patch("geotrek.common.parsers.Parser.parse_row")
+    def test_warn_and_continue_when_row_parsing_fails_with_exception(self, mock_parse_row):
+        output = StringIO()
+        mock_parse_row.side_effect = Exception("message")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organisms.json")
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.JSONOrganismParser",
+            filename,
+            verbosity=2,
+            stdout=output,
+        )
+        self.assertEqual(len(Organism.objects.all()), 0)
+        # Check that the warning is displayed several times to make sure that
+        # the parser does not stop after a row fails:
+        expected_warning = f"Could not parse row due to the following exception: Exception: message"
+        self.assertEqual(output.getvalue().count(expected_warning), 3)
 
     def test_fk_not_in_natural_keys(self):
         output = StringIO()
