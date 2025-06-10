@@ -131,12 +131,6 @@ class Path(
     provider = models.CharField(
         verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
-    provider_new = models.ForeignKey(
-        "common.Provider",
-        verbose_name=_("Provider"),
-        blank=True,
-        on_delete=models.PROTECT,
-    )
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
