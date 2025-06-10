@@ -1563,22 +1563,17 @@ class OpenStreetMapTouristicContentParser(
         type, lng, lat, geometry, bbox, id = val
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)
-            geom.srid = self.osm_srid
         elif type == "way":
             coordinates = [[point["lon"], point["lat"]] for point in geometry]
             if coordinates[0] != coordinates[-1]:
                 geom = LineString(coordinates, srid=self.osm_srid)
-                geom.srid = self.osm_srid
             else:
-                geom = Polygon(coordinates)
-                geom.srid = self.osm_srid
+                geom = Polygon(coordinates, srid=self.osm_srid)
         elif type == "relation":
             try:
                 geom = self.get_polygon_from_API(id)
-                geom.srid = self.osm_srid
             except Exception:
                 geom = self.get_centroid_from_relation(bbox)
 
-        if geom.srid == self.osm_srid:
-            geom.transform(settings.SRID)
+        geom.transform(settings.SRID)
         return geom
