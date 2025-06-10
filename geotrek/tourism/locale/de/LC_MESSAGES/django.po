@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:12+0200\n"
+"POT-Creation-Date: 2025-06-10 11:20+0200\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -392,6 +392,18 @@ msgstr ""
 #, python-format
 msgid ""
 "Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
+msgstr ""
+
+#, python-format
+msgid "%(housenumber)s %(street)s"
+msgstr ""
+
+#, python-format
+msgid "%(postcode)s, %(city)s"
+msgstr ""
+
+#, python-format
+msgid "%(street)s<br>%(city)s"
 msgstr ""
 
 msgid "Add a new touristic content"
