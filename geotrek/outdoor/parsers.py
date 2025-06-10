@@ -3,11 +3,10 @@ from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
 
 from geotrek.common.parsers import (
+    BypassRow,
     GeotrekParser,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
-    RowImportError,
-    BypassRow
 )
 from geotrek.outdoor.models import (
     Course,
