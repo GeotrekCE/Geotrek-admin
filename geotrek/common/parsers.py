@@ -23,7 +23,14 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter, fromstr
+from django.contrib.gis.geos import (
+    GEOSGeometry,
+    LineString,
+    Point,
+    Polygon,
+    WKBWriter,
+    fromstr,
+)
 from django.contrib.gis.geos.collections import MultiPolygon
 from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile

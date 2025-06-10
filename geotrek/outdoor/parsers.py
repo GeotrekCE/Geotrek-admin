@@ -408,8 +408,7 @@ class OpenStreetMapOutdoorSiteParser(
                     elif member["type"] == "way":
                         geom_members.append(self.way(member["geometry"]))
 
-        geom_collection = GeometryCollection(geom_members)
-        geom_collection.srid = self.osm_srid
+        geom_collection = GeometryCollection(geom_members, srid=self.osm_srid)
         geom_collection.transform(settings.SRID)
 
         return geom_collection
