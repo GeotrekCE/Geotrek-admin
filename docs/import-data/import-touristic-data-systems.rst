@@ -549,7 +549,7 @@ Then set up appropriate values:
 * ``practice`` to select in which Geotrek practice imported objects should go.
 * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
 * ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
-* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes must be defined in a list.
+* ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be affected (ex: themes = ["theme 1", "theme 2"])
 * See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
 
 .. _format_geometries:
