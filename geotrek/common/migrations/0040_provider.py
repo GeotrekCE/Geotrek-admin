@@ -2,32 +2,6 @@
 
 from django.db import migrations, models
 
-def create_existing_providers(apps, schema_editor):
-    provider_model = apps.get_model("common", "Provider")
-
-    models = [
-        ("core", "Path"),
-        ("core", "Trail"),
-        ("feedback", "Report"),
-        ("infrastructure", "Infrastructure"),
-        ("outdoor", "Site"),
-        ("outdoor", "Course"),
-        ("sensitivity", "SensitiveArea"),
-        ("tourism", "InformationDesk"),
-        ("tourism", "TouristicContent"),
-        ("tourism", "TouristicEvent"),
-        ("trekking", "Trek"),
-        ("trekking", "POI"),
-        ("trekking", "Service")
-    ]
-
-    for app, model_name in models:
-        model = apps.get_model(app, model_name)
-
-        for obj in model.objects.all():
-            if obj.provider:
-                provider_model.objects.get_or_create(name=obj.provider)
-
 
 class Migration(migrations.Migration):
 
@@ -51,5 +25,4 @@ class Migration(migrations.Migration):
                 'ordering': ('name',),
             },
         ),
-        migrations.RunPython(create_existing_providers, migrations.RunPython.noop),
     ]
