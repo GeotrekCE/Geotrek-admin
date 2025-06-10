@@ -2188,7 +2188,7 @@ class OpenStreetMapParser(Parser):
         geom = fromstr(wkt, srid=self.osm_srid)
 
         if not geom.valid:
-            geom = geom.make_valid()
+            geom = geom.buffer(0)
 
         return geom
 
