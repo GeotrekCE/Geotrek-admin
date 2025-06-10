@@ -7,6 +7,7 @@ from geotrek.common.parsers import (
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     RowImportError,
+    BypassRow
 )
 from geotrek.outdoor.models import (
     Course,
@@ -416,7 +417,7 @@ class OpenStreetMapOutdoorSiteParser(
     def filter_practice(self, src, val):
         if val == "sports_centre":
             msg = "This object is an indoor site."
-            raise RowImportError(msg)
+            raise BypassRow(msg)
 
         practice = self.filter_fk(
             src, self.practice, Practice, self.natural_keys["practice"]
