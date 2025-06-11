@@ -142,8 +142,8 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, default=""
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     class Meta:

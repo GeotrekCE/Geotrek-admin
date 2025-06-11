@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags feedback_tags %}
+{% load i18n mapentity_tags feedback_tags geotrek_tags %}
 
 
 {% block attributes %}
@@ -70,7 +70,7 @@
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if report.provider %}{{ report.provider|safe }}
+            <td>{% if report.provider %}{{ report.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -115,7 +115,12 @@
         </tr>
             <tr>
                 <th>{{ report|verbose:"eid" }}</th>
-                <td>{{ report.eid }}</td>
+                <td>{% if report.eid %}
+                        {% object_link report %}
+                    {% else %}
+                        <span class="none">{% trans "None" %}</span>
+                    {% endif %}
+                </td>
             </tr>
         <tr>
             <th>{{ report|verbose:"locked" }}</th>

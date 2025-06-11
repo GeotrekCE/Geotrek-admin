@@ -138,8 +138,8 @@ class SensitiveArea(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     rules = models.ManyToManyField(Rule, verbose_name=_("Rules"), blank=True)
 

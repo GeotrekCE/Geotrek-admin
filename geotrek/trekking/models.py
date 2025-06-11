@@ -387,8 +387,8 @@ class Trek(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     eid2 = models.CharField(
         verbose_name=_("Second external id"), max_length=1024, blank=True, null=True
@@ -927,8 +927,8 @@ class POI(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     view_points = GenericRelation("common.HDViewPoint", related_query_name="poi")
 
@@ -1113,8 +1113,8 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     objects = ServiceManager()

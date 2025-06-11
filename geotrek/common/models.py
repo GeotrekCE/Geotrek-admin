@@ -486,3 +486,6 @@ class Provider(TimeStampedModelMixin):
         verbose_name = _("Provider")
         verbose_name_plural = _("Providers")
         ordering = ("name",)
+
+    def __str__(self):
+        return self.name

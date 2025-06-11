@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
+"POT-Creation-Date: 2025-06-11 14:38+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -329,6 +329,18 @@ msgstr "Moyen d'accès"
 
 msgid "Access means"
 msgstr "Moyens d'accès"
+
+msgid "Link template"
+msgstr ""
+
+msgid "HTML template for external source links"
+msgstr ""
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Providers"
+msgstr "Fournisseurs"
 
 #, python-format
 msgid "Line %(line)s"

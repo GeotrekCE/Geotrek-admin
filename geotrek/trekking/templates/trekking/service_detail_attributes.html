@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n mapentity_tags geotrek_tags %}
 
 {% block attributes %}
 
@@ -14,13 +14,16 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if service.eid %}{{ service.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <td>{% if service.eid %}
+                    {% object_link service %}
+                {% else %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endif %}
             </td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if service.provider %}{{ service.provider|safe }}
+            <td>{% if service.provider %}{{ service.provide.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

@@ -320,8 +320,8 @@ class Site(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -597,8 +597,8 @@ class Course(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     type = models.ForeignKey(
         CourseType,
