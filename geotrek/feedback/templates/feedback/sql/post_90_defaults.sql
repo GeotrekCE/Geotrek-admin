@@ -22,7 +22,6 @@ ALTER TABLE feedback_report ALTER COLUMN mail_errors SET DEFAULT 0;
 ALTER TABLE feedback_report ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE feedback_report ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE feedback_report ALTER COLUMN deleted SET DEFAULT False;
-ALTER TABLE feedback_report ALTER COLUMN provider SET DEFAULT '';
 
 
 -- ReportActivity

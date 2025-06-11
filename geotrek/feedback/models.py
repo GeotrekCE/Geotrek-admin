@@ -244,8 +244,8 @@ class Report(
             "A notification email could not be sent. Please contact an administrator"
         ),
     )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     objects = ReportManager()
