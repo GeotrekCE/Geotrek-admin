@@ -3,27 +3,6 @@
 from django.db import migrations, models
 import django.db.models.deletion
 
-def forward_fill_provider(apps, schema_editor):
-    provider_model = apps.get_model('common', 'Provider')
-
-    models = ["Trail", "Path"]
-    for model_name in models:
-        model = apps.get_model('core', model_name)
-
-        for obj in model.objects.all():
-            provider, _ = provider_model.objects.get_or_create(name=obj.provider)
-            obj.provider_fk = provider
-            obj.save()
-
-def backward_fill_provider(apps, schema_editor):
-    models = ["Trail", "Path"]
-    for model_name in models:
-        model = apps.get_model('core', model_name)
-
-        for obj in model.objects.all():
-            obj.provider = obj.provider_fk.name
-            obj.save()
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -42,30 +21,5 @@ class Migration(migrations.Migration):
             model_name='trail',
             name='provider_fk',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='common.provider', verbose_name='Provider'),
-        ),
-
-        # Populate provider_fk field with provider values
-        migrations.RunPython(forward_fill_provider, backward_fill_provider),
-
-        # Delete provider field
-        migrations.RemoveField(
-            model_name='path',
-            name='provider'
-        ),
-        migrations.RemoveField(
-            model_name='trail',
-            name='provider'
-        ),
-
-        # Rename provider_fk field
-        migrations.RenameField(
-            model_name='path',
-            old_name='provider_fk',
-            new_name='provider'
-        ),
-        migrations.RenameField(
-            model_name='trail',
-            old_name='provider_fk',
-            new_name='provider'
         )
     ]
