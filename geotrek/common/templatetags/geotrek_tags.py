@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from django import template
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django.template import Template, Context
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -76,3 +78,12 @@ def duration(value):
         final_duration = _("%s min") % duration.minute
 
     return final_duration
+
+@register.simple_tag
+def object_link(object):
+    try:
+        tmpl = Template(object.provider.link_template)
+        context = Context({"object": object})
+        return mark_safe(tmpl.render(context))
+    except Exception:
+        return object.eid

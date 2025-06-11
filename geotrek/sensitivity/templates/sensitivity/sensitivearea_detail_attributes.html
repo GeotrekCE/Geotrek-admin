@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n mapentity_tags geotrek_tags%}
 
 
 {% block attributes %}
@@ -69,13 +69,16 @@
         {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if sensitivearea.eid %}{{ sensitivearea.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            <td>{% if sensitivearea.eid %}
+                    {% object_link sensitivearea %}
+                {% else %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endif %}
             </td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if sensitivearea.provider %}{{ sensitivearea.provider|safe }}
+            <td>{% if sensitivearea.provider %}{{ sensitivearea.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
