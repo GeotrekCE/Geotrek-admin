@@ -15,6 +15,7 @@ from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 
@@ -1253,7 +1254,7 @@ class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
     name_field = "name"
 
 
-class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
+class ApidaePOIParser(AttachmentParserMixin, PointTopologyParserMixin, ApidaeBaseTrekkingParser):
     model = POI
     eid = "eid"
     separator = None
@@ -1299,6 +1300,7 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
 
     def filter_geom(self, src, val):
         geom = GEOSGeometry(str(val))
+        self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)
         return geom
 
