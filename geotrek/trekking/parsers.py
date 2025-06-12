@@ -33,6 +33,7 @@ from geotrek.common.parsers import (
 )
 from geotrek.common.utils.parsers import (
     GeomValueError,
+    force_geom_to_2d,
     get_geom_from_gpx,
     get_geom_from_kml,
 )
@@ -86,7 +87,7 @@ class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin):
         if val is None:
             # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
             raise RowImportError(_("Could not import object: geometry is None"))
-        # TODO: call super only if it has a filter_geom method?
+        # TODO: remove or call super only if it has a filter_geom method?
         super().filter_geom()
 
 
@@ -105,7 +106,7 @@ class POIParser(BasePOIParser, ShapeParser):
     def filter_geom(self, src, val):
         super().filter_geom()
         geometry = val.transform(settings.API_SRID, clone=True)
-        geometry.coord_dim = 2  # TODO: why?
+        geometry = force_geom_to_2d(geometry)
         self.generate_topology_from_geometry(geometry)
         return val
 

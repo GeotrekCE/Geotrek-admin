@@ -6,8 +6,6 @@ from geotrek.core.models import Path, Topology
 
 
 class PointTopologyParserMixin:
-    topology = Topology.objects.none()  # TODO: why is this needed?
-
     def start(self):
         if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
             raise GlobalImportError(
@@ -23,7 +21,6 @@ class PointTopologyParserMixin:
                     geom_type=geometry.geom_type
                 )
             )
-        self.topology = Topology.objects.none()  # TODO: why is this needed?
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
