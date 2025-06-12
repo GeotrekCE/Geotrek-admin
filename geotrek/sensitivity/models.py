@@ -18,6 +18,7 @@ from geotrek.common.mixins.models import (
     OptionalPictogramMixin,
     TimeStampedModelMixin,
     get_uuid_duplication,
+    ExternalSourceMixin,
 )
 from geotrek.common.utils import classproperty, intersecting, queryset_or_model
 from geotrek.core.models import simplify_coords
@@ -119,6 +120,7 @@ class SensitiveArea(
     TimeStampedModelMixin,
     NoDeleteMixin,
     AddPropertyMixin,
+    ExternalSourceMixin,
 ):
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
@@ -135,12 +137,6 @@ class SensitiveArea(
     )
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
-    )
     rules = models.ManyToManyField(Rule, verbose_name=_("Rules"), blank=True)
 
     objects = SensitiveAreaManager()

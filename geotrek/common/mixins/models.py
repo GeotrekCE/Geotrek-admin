@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django.template import Template, Context
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from mapentity.models import MapEntityMixin
@@ -473,3 +474,28 @@ class GeotrekMapEntityMixin(MapEntityMixin):
         if hasattr(clone, "mutate"):
             clone.mutate(self)
         return clone
+
+
+class ExternalSourceMixin(models.Model):
+    provider = models.ForeignKey(
+        "common.Provider", verbose_name=_("Provider"), blank=True, null=True, on_delete=models.PROTECT
+    )
+    eid = models.CharField(
+        verbose_name=_("External id"), max_length=1024, blank=True, null=True
+    )
+
+    class Meta:
+        abstract = True
+
+    @property
+    def get_eid(self):
+        if self.eid:
+            if self.provider and self.provider.link_template:
+                tmpl = Template(self.provider.link_template)
+                context = Context({"object": self})
+                return mark_safe(tmpl.render(context))
+            else:
+                return self.eid
+        else:
+            tmpl = Template("{% load i18n  %} <span class='none'>{% trans 'None' %}</span>")
+            return mark_safe(tmpl.render(Context({})))

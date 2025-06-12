@@ -24,6 +24,7 @@ from geotrek.common.models import (
     Organism,
     RecordSource,
     Theme,
+    Provider
 )
 from geotrek.common.parsers import (
     AttachmentParserMixin,
@@ -1456,15 +1457,17 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         t = Trek.objects.first()
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
-        self.assertEqual(t.provider, "Provider1")
+        self.assertEqual(t.provider.name, "Provider1")
         self.assertEqual(t.description_teaser, "Header")
         self.assertEqual(t.description_teaser_fr, "Chapeau")
         self.assertEqual(t.description_teaser_en, "Header")
-        TrekFactory(provider="Provider1", name="I should be deleted", eid="1234")
+        provider1 = Provider.objects.get(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        TrekFactory(provider=provider1, name="I should be deleted", eid="1234")
         t2 = TrekFactory(
-            provider="Provider2", name="I should not be deleted", eid="1236"
+            provider=provider2, name="I should not be deleted", eid="1236"
         )
-        t3 = TrekFactory(provider="", name="I should not be deleted", eid="12374")
+        t3 = TrekFactory(provider=None, name="I should not be deleted", eid="12374")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser",
@@ -1512,10 +1515,10 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         )
         self.assertEqual(Trek.objects.count(), 1)
         t = Trek.objects.first()
-        self.assertEqual(t.provider, "")
+        self.assertEqual(t.provider, None)
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
-        TrekFactory(provider="", name="I should be deleted", eid="12374")
+        TrekFactory(provider=None, name="I should be deleted", eid="12374")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.GeotrekTrekTestNoProviderParser",

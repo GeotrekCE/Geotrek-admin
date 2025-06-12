@@ -25,6 +25,7 @@ from geotrek.common.mixins.models import (
     NoDeleteMixin,
     PicturesMixin,
     TimeStampedModelMixin,
+    ExternalSourceMixin,
 )
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting
@@ -130,6 +131,7 @@ class Report(
     NoDeleteMixin,
     AddPropertyMixin,
     ZoningPropertiesMixin,
+    ExternalSourceMixin,
 ):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
 
@@ -185,9 +187,6 @@ class Report(
         editable=False, unique=True, null=True, verbose_name=_("Identifier")
     )
     uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
-    eid = models.CharField(
-        blank=True, max_length=1024, default="", verbose_name=_("External id")
-    )
     locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
         blank=True,
@@ -243,9 +242,6 @@ class Report(
         help_text=_(
             "A notification email could not be sent. Please contact an administrator"
         ),
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     objects = ReportManager()

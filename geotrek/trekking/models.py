@@ -30,6 +30,7 @@ from geotrek.common.mixins.models import (
     PublishableMixin,
     TimeStampedModelMixin,
     get_uuid_duplication,
+    ExternalSourceMixin,
 )
 from geotrek.common.models import (
     AccessibilityAttachment,
@@ -165,7 +166,7 @@ def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
 
 
 class Trek(
-    Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin
+    Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
@@ -383,12 +384,6 @@ class Trek(
     )
     labels = models.ManyToManyField(
         "common.Label", related_name="treks", verbose_name=_("Labels"), blank=True
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     eid2 = models.CharField(
         verbose_name=_("Second external id"), max_length=1024, blank=True, null=True
@@ -913,7 +908,7 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 
 
 class POI(
-    StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology
+    StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology, ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
@@ -923,12 +918,6 @@ class POI(
     )
     type = models.ForeignKey(
         "POIType", related_name="pois", verbose_name=_("Type"), on_delete=models.PROTECT
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
     view_points = GenericRelation("common.HDViewPoint", related_query_name="poi")
 
@@ -1100,7 +1089,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
         return self.name
 
 
-class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
+class Service(StructureRelated, GeotrekMapEntityMixin, ExternalSourceMixin, Topology):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
     )
@@ -1109,12 +1098,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
         related_name="services",
         verbose_name=_("Type"),
         on_delete=models.PROTECT,
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     objects = ServiceManager()

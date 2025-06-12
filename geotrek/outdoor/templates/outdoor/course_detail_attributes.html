@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n geotrek_tags mapentity_tags outdoor_tags geotrek_tags %}
+{% load i18n geotrek_tags mapentity_tags outdoor_tags %}
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
             {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}
@@ -86,12 +86,7 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if object.eid %}
-                    {% object_link object %}
-                {% else %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endif %}
-            </td>
+            <td>{{ object.get_eid }}</td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
