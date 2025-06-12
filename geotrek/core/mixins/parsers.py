@@ -1,4 +1,5 @@
 from django.utils.translation import gettext as _
+
 from geotrek import settings
 from geotrek.common.parsers import GlobalImportError, RowImportError
 from geotrek.core.models import Path, Topology
@@ -10,16 +11,17 @@ class PointTopologyParserMixin:
     def start(self):
         if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
             raise GlobalImportError(
-                _("You need to add a path network before importing %(model)s objects") % {"model": self.model}
+                _("You need to add a path network before importing %(model)s objects")
+                % {"model": self.model}
             )
         super().start()
 
     def generate_topology_from_geometry(self, geometry):
         if geometry.geom_type != "Point":
             raise RowImportError(
-                _(
-                    "Invalid geometry type: should be 'Point', not '{geom_type}'"
-                ).format(geom_type=geometry.geom_type)
+                _("Invalid geometry type: should be 'Point', not '{geom_type}'").format(
+                    geom_type=geometry.geom_type
+                )
             )
         self.topology = Topology.objects.none()  # TODO: why is this needed?
         if settings.TREKKING_TOPOLOGY_ENABLED:

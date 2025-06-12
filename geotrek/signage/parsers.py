@@ -1,14 +1,12 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import (
     GeotrekParser,
-    GlobalImportError,
     OpenStreetMapParser,
 )
 from geotrek.core.mixins.parsers import PointTopologyParserMixin
-from geotrek.core.models import Path, Topology
+from geotrek.core.models import Topology
 from geotrek.signage.models import Signage
 
 
