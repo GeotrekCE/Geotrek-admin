@@ -9,7 +9,7 @@ from django.contrib.gis.geos.collections import GeometryCollection, MultiPoint
 from django.core.management import call_command
 from django.test import TestCase
 
-from geotrek.common.models import Attachment, FileType, TargetPortal
+from geotrek.common.models import Attachment, FileType, Provider, TargetPortal
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.outdoor.models import (
     ChildSitesExistError,
@@ -105,8 +105,9 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
+        provider =  Provider.objects.create(name="Test Provider")
         Site.objects.create(
-            name="To delete", provider="URL_1", geom="GEOMETRYCOLLECTION(POINT(0 0))"
+            name="To delete", provider=provider, geom="GEOMETRYCOLLECTION(POINT(0 0))"
         )
 
     @mock.patch("requests.get")
