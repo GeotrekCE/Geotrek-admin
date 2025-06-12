@@ -1,0 +1,406 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-03-17T14:22:44Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+{
+  "type": "node",
+  "id": 1,
+  "lat": 44.90539914,
+  "lon": 6.25876177,
+  "tags": {
+    "sport": "climbing",
+    "name": "test",
+    "website": "https://test.org"
+  }
+},
+{
+  "type": "node",
+  "id": 1001,
+  "lat": 44.90539914,
+  "lon": 6.25876177,
+  "tags": {
+    "sport": "climbing",
+    "name": "test",
+    "website": "https://test.org"
+  }
+},
+{
+  "type": "way",
+  "id": 2,
+  "bounds": {
+    "minlat": 44.90539914,
+    "minlon": 6.25876177,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "geometry": [
+    { "lat": 44.90539914, "lon": 6.25876177 },
+    { "lat": 44.90610886, "lon": 6.25944969 }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "way",
+  "id": 1000,
+  "bounds": {
+    "minlat": 44.90539914,
+    "minlon": 6.25876177,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "geometry": [
+    { "lat": 44.90539914, "lon": 6.25876177 },
+    { "lat": 44.90610886, "lon": 6.25944969 }
+  ],
+  "tags": {
+    "sport": "climbing",
+    "leisure": "sports_centre"
+  }
+},
+{
+  "type": "way",
+  "id": 3,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90539914,
+    "maxlon": 6.25944969
+  },
+  "geometry": [
+    { "lat": 44.90539914, "lon": 6.25876177 },
+    { "lat": 44.90610886, "lon": 6.25944969 },
+    { "lat": 44.90434684, "lon": 6.25807932 },
+    { "lat": 44.90539914, "lon": 6.25876177 }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 4,
+  "bounds": {
+    "minlat": 44.90539914,
+    "minlon": 6.25876177,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 5,
+  "bounds": {
+    "minlat": 44.90539914,
+    "minlon": 6.25876177,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 6,
+  "bounds": {
+    "minlat": 44.90539914,
+    "minlon": 6.25876177,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "node",
+      "role": "",
+      "lat": 44.90539914,
+      "lon": 6.25876177
+    },
+    {
+      "type": "node",
+      "role": "",
+      "lat": 44.90610886,
+      "lon": 6.25944969
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 7,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 8,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 9,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 10,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539814, "lon": 6.25876077 },
+         { "lat": 44.90610786, "lon": 6.25944869 },
+         { "lat": 44.90434584, "lon": 6.25807832 },
+         { "lat": 44.90539814, "lon": 6.25876077 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 11,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "node",
+      "role": "",
+      "lat": 44.90539914,
+      "lon": 6.25876177
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 12,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "node",
+      "role": "",
+      "lat": 44.90539914,
+      "lon": 6.25876177
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+},
+{
+  "type": "relation",
+  "id": 13,
+  "bounds": {
+    "minlat": 44.90434684,
+    "minlon": 6.25807932,
+    "maxlat": 44.90610886,
+    "maxlon": 6.25944969
+  },
+  "members": [
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 }
+      ]
+    },
+    {
+      "type": "way",
+      "role": "",
+      "geometry": [
+         { "lat": 44.90539914, "lon": 6.25876177 },
+         { "lat": 44.90610886, "lon": 6.25944969 },
+         { "lat": 44.90434684, "lon": 6.25807932 },
+         { "lat": 44.90539914, "lon": 6.25876177 }
+      ]
+    }
+  ],
+  "tags": {
+    "sport": "climbing"
+  }
+}
+]
+}
