@@ -30,6 +30,7 @@ from geotrek.common.mixins.models import (
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     TimeStampedModelMixin,
+    ExternalSourceMixin,
 )
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, simplify_coords, sqlfunction, uniquify
@@ -52,6 +53,7 @@ class Path(
     GeotrekMapEntityMixin,
     AltimetryMixin,
     TimeStampedModelMixin,
+    ExternalSourceMixin,
     StructureRelated,
     ClusterableModel,
 ):
@@ -124,12 +126,6 @@ class Path(
     )
     networks = models.ManyToManyField(
         "Network", blank=True, related_name="paths", verbose_name=_("Networks")
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), blank=True, null=True, on_delete=models.PROTECT
     )
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -1108,7 +1104,7 @@ class Network(StructureOrNoneRelated):
         return self.network
 
 
-class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
+class Trail(GeotrekMapEntityMixin, ExternalSourceMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
     )
@@ -1123,12 +1119,6 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
-    )
     certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
 

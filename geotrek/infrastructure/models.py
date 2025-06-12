@@ -13,6 +13,7 @@ from geotrek.common.mixins.models import (
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
+    ExternalSourceMixin,
 )
 from geotrek.common.models import AccessMean
 from geotrek.common.signals import log_cascade_deletion
@@ -116,7 +117,7 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
         return self.label
 
 
-class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
+class BaseInfrastructure(BasePublishableMixin, ExternalSourceMixin, Topology, StructureRelated):
     """A generic infrastructure in the park"""
 
     topo_object = models.OneToOneField(
@@ -138,12 +139,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     )
     implantation_year = models.PositiveSmallIntegerField(
         verbose_name=_("Implantation year"), null=True
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, default=""
-    )
-    provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), null=True, blank=True, on_delete=models.PROTECT
     )
 
     class Meta:
