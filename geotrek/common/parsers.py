@@ -23,7 +23,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon
 from django.contrib.gis.geos.collections import MultiPolygon
 from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile
@@ -41,7 +41,7 @@ from requests.auth import HTTPBasicAuth
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import Attachment, FileType, License, RecordSource
-from geotrek.common.utils.parsers import add_http_prefix
+from geotrek.common.utils.parsers import add_http_prefix, force_geom_to_2d
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.settings.base import api_bbox
 
@@ -1880,8 +1880,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     def filter_geom(self, src, val):
         geom = GEOSGeometry(json.dumps(val))
         geom.transform(settings.SRID)
-        geom = WKBWriter().write(geom)
-        geom = GEOSGeometry(geom)
+        geom = force_geom_to_2d(geom)
         return geom
 
     def get_url_params(self):
