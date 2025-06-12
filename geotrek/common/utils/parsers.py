@@ -5,7 +5,7 @@ from tempfile import NamedTemporaryFile
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import MultiLineString
+from django.contrib.gis.geos import GEOSGeometry, MultiLineString, WKBWriter
 from django.utils.translation import gettext as _
 
 from geotrek.common.utils.file_infos import get_encoding_file
@@ -154,3 +154,9 @@ def get_geom_from_kml(data):
         geos = get_geos_linestring(ds)
         geos.transform(settings.SRID)
         return geos
+
+
+def force_geom_to_2d(geom):
+    geom_2d = WKBWriter().write(geom)
+    geom_2d = GEOSGeometry(geom_2d)
+    return geom_2d
