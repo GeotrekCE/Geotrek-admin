@@ -95,7 +95,6 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
             geometry.coord_dim = 2
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             self.topology = Topology.deserialize(serialized)
-            # Move deserialization aggregations to the POI
 
         geom.transform(settings.SRID)
         return geom
