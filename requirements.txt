@@ -111,6 +111,7 @@ django==4.2.22
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
+    #   djangorestframework-gis
     #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
@@ -172,7 +173,7 @@ djangorestframework==3.15.2
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
-djangorestframework-gis==1.1
+djangorestframework-gis==1.2.0
     # via mapentity
 docutils==0.21.2
     # via geotrek (setup.py)
