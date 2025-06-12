@@ -5,6 +5,7 @@ from datetime import date
 from unittest import mock
 
 import requests
+from django.contrib.gis.geos import LineString, Point, Polygon
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
@@ -22,6 +23,7 @@ from geotrek.tourism.parsers import (
     InformationDeskOpenStreetMapParser,
     LEITouristicContentParser,
     LEITouristicEventParser,
+    OpenStreetMapTouristicContentParser,
     TouristicContentApidaeParser,
     TouristicContentTourInSoftParser,
     TouristicContentTourInSoftParserV3,
@@ -1407,7 +1409,7 @@ class TestInformationDeskOpenStreetMapParser(InformationDeskOpenStreetMapParser)
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
-class OpenStreetMapParserTests(TestCase):
+class OpenStreetMapInformationDeskParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_information_desk(cls, mocked):
@@ -1502,3 +1504,192 @@ class OpenStreetMapParserTests(TestCase):
         self.assertEqual(information_desk.name_en, "test:en")
         information_desk2 = self.objects.get(eid="W3")
         self.assertEqual(information_desk2.name_en, None)
+
+
+class TestOpenStreetMapTouristicContentParser(OpenStreetMapTouristicContentParser):
+    category = "Foo"
+    type1 = ["test type1.1", "test type1.2", "test type1.3"]
+    type2 = "test type2"
+    themes = ["test theme1", "test theme2"]
+    portal = ["test portal1", "test portal2"]
+    source = ["test source1", "test source2"]
+    tags = [{"tourism": "hotel"}]
+    default_fields_values = {"name": "test_default"}
+    field_options = {
+        "themes": {"create": True},
+        "source": {"create": True},
+        "type2": {"create": True, "fk": "category"},
+    }
+
+
+@override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
+class OpenStreetMapTouristicContentParserTests(TestCase):
+    @classmethod
+    @mock.patch("requests.get")
+    def import_touristic_content(cls, mocked):
+        def mocked_json():
+            filename = os.path.join(
+                os.path.dirname(__file__), "data", "touristic_content_OSM.json"
+            )
+            with open(filename) as f:
+                return json.load(f)
+
+        def mocked_polygons_valid(decode):
+            wkt_polygon = "SRID=4326;POLYGON ((3.976107 45.32012, 4.032755 45.32012, 4.032755 45.345841, 3.976107 45.345841, 3.976107 45.32012), (3.990655 45.326602, 4.020352 45.326602, 4.020352 45.340489, 3.990655 45.340489, 3.990655 45.326602))"
+            return wkt_polygon
+
+        def mocked_polygons_non_valid(decode):
+            wkt_polygon = "SRID=4326;MULTIPOLYGON (((3.976107 45.32012, 4.032755 45.32012, 4.032755 45.345841, 3.976107 45.345841, 3.976107 45.32012)), ((3.990655 45.326602, 4.020352 45.326602, 4.020352 45.340489, 3.990655 45.340489, 3.990655 45.326602)))"
+            return wkt_polygon
+
+        mock_overpass = mock.Mock()
+        mock_overpass.status_code = 200
+        mock_overpass.json = mocked_json
+
+        mock_polygons_valid = mock.Mock()
+        mock_polygons_valid.status_code = 200
+        mock_polygons_valid.content.decode = mocked_polygons_valid
+
+        mock_polygons_missing = mock.Mock()
+        mock_polygons_missing.status_code = 500
+        mock_polygons_missing.content.decode = mocked_polygons_valid
+
+        mock_polygons_non_valid = mock.Mock()
+        mock_polygons_non_valid.status_code = 200
+        mock_polygons_non_valid.content.decode = mocked_polygons_non_valid
+
+        mocked.side_effect = [
+            mock_overpass,
+            mock_polygons_valid,
+            mock_polygons_missing,
+            mock_polygons_non_valid,
+        ]
+
+        output = io.StringIO()
+        call_command(
+            "import",
+            "geotrek.tourism.tests.test_parsers.TestOpenStreetMapTouristicContentParser",
+            stdout=output,
+        )
+
+        cls.output = output.getvalue()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.category = TouristicContentCategoryFactory.create(label="Foo")
+        FileType.objects.create(type="Photographie")
+        TouristicContentType1Factory.create(label="test type1.1", category=cls.category)
+        TouristicContentType1Factory.create(label="test type1.2", category=cls.category)
+        TargetPortalFactory(name="test portal1")
+        TargetPortalFactory(name="test portal2")
+
+        cls.import_touristic_content()
+
+        cls.objects = TouristicContent.objects
+
+    def test_create_touristic_content_OSM(self):
+        self.assertEqual(self.objects.count(), 6)
+
+    def test_type1_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.type1.all().count(), 2)
+        self.assertEqual(touristic_content.type1.first().label, "test type1.1")
+        warning = (
+            "Type1 'test type1.3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+        )
+        self.assertIn(warning, self.output)
+
+    def test_type2_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.type2.all().count(), 1)
+        self.assertEqual(touristic_content.type2.first().label, "test type2")
+        warning = "Type2 'test type2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+        self.assertIn(warning, self.output)
+
+    def test_themes_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.themes.all().count(), 2)
+        self.assertEqual(touristic_content.themes.first().label, "test theme1")
+        warnings = [
+            "Thème 'test theme1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Thème 'test theme2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
+    def test_portal_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.portal.all().count(), 2)
+        self.assertEqual(touristic_content.portal.first().name, "test portal1")
+
+    def test_source_touristic_content_OSM(self):
+        touristic_content = self.objects.first()
+        self.assertEqual(touristic_content.source.all().count(), 2)
+        self.assertEqual(touristic_content.source.first().name, "test source1")
+        warnings = [
+            "Source Des Fiches 'test source1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+        ]
+        self.assertIn(warnings[0], self.output)
+        self.assertIn(warnings[1], self.output)
+
+    def test_filter_contact(self):
+        touristic_content = self.objects.get(eid="N1")
+        self.assertEqual(touristic_content.contact, "\n")
+
+        touristic_content = self.objects.get(eid="W2")
+        contact = "0786535787\n\nMontmorillon"
+        self.assertEqual(touristic_content.contact, contact)
+
+        touristic_content = self.objects.get(eid="W3")
+        contact = "0786535787\nrue des tournesols\n86500, Montmorillon"
+        self.assertEqual(touristic_content.contact, contact)
+
+        touristic_content = self.objects.get(eid="R4")
+        contact = "0786535787\n46 rue des tournesols\n"
+        self.assertEqual(touristic_content.contact, contact)
+
+    def test_geom_point(self):
+        touristic_content = self.objects.get(eid="N1")
+        self.assertEqual(type(touristic_content.geom), Point)
+        self.assertAlmostEqual(touristic_content.geom.x, 673775.507, places=2)
+        self.assertAlmostEqual(touristic_content.geom.y, 6260613.093, places=2)
+
+    def test_geom_way_line(self):
+        touristic_content = self.objects.get(eid="W2")
+        self.assertEqual(type(touristic_content.geom), LineString)
+        self.assertEqual(len(touristic_content.geom), 2)
+        self.assertAlmostEqual(touristic_content.geom[0][0], 639373.356, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][1], 6256499.938, places=2)
+
+    def test_geom_way_polygon(self):
+        touristic_content = self.objects.get(eid="W3")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 639373.356, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6256499.938, places=2)
+
+    def test_geom_relation_polygon(self):
+        touristic_content = self.objects.get(eid="R4")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(touristic_content.geom.num_interior_rings, 1)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertEqual(len(touristic_content.geom[1]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
+        self.assertAlmostEqual(touristic_content.geom[1][0][0], 777605.887, places=2)
+        self.assertAlmostEqual(touristic_content.geom[1][0][1], 6470178.359, places=2)
+
+    def test_geom_relation_point(self):
+        touristic_content = self.objects.get(eid="R5")
+        self.assertEqual(type(touristic_content.geom), Point)
+        self.assertAlmostEqual(touristic_content.geom.x, 770813.800, places=2)
+        self.assertAlmostEqual(touristic_content.geom.y, 6055930.570, places=2)
+
+    def test_geom_relation_non_valid_polygon(self):
+        touristic_content = self.objects.get(eid="R6")
+        self.assertEqual(type(touristic_content.geom), Polygon)
+        self.assertEqual(touristic_content.geom.num_interior_rings, 0)
+        self.assertEqual(len(touristic_content.geom[0]), 5)
+        self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
+        self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)

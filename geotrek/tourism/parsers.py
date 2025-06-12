@@ -4,7 +4,7 @@ from mimetypes import guess_type
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import LineString, Point, Polygon, fromstr
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
 from django.db import models
@@ -1422,7 +1422,10 @@ class InformationDeskOpenStreetMapParser(
     def filter_street(self, src, val):
         housenumber, street = val
         if housenumber and street:
-            return housenumber + " " + street
+            return _("%(housenumber)s %(street)s") % {
+                "housenumber": housenumber,
+                "street": street,
+            }
         elif street:
             return street
         return None
@@ -1431,11 +1434,146 @@ class InformationDeskOpenStreetMapParser(
         type, lng, lat, area, bbox = val
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
+
+        geom.transform(settings.SRID)
+        return geom
+
+
+class OpenStreetMapTouristicContentParser(
+    OpenStreetMapAttachmentsParserMixin, TouristicContentMixin, OpenStreetMapParser
+):
+    """Parser to import touristic content from OpenStreetMap"""
+
+    url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
+
+    category = None
+    type1 = None
+    type2 = None
+    themes = None
+    source = None
+    portal = None
+    model = TouristicContent
+    eid = "eid"
+
+    fields = {
+        "eid": ("type", "id"),  # ids are unique only among objects of the same type
+        "name": "tags.name",
+        "description": "tags.description",
+        "contact": (
+            "tags.contact:phone",
+            "tags.phone",
+            "tags.addr:housenumber",
+            "tags.addr:street",
+            "tags.addr:postcode",
+            "tags.contact:postcode",
+            "tags.addr:city",
+            "tags.contact:city",
+        ),
+        "email": ("tags.contact:email", "tags.email"),
+        "website": ("tags.contact:website", "tags.website"),
+        "geom": ("type", "lon", "lat", "geometry", "bounds", "id"),
+    }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    natural_keys = {
+        "category": "label",
+        "type1": "label",
+        "type2": "label",
+        "themes": "label",
+        "source": "name",
+        "portal": "name",
+    }
+    field_options = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        self.field_options = self.field_options.copy()
+        if self.category is not None:
+            self.constant_fields["category"] = self.category
+        if self.type1 is not None:
+            self.m2m_constant_fields["type1"] = self.type1
+        if self.type2 is not None:
+            self.m2m_constant_fields["type2"] = self.type2
+        if self.themes is not None:
+            self.m2m_constant_fields["themes"] = self.themes
+        if self.portal is not None:
+            self.m2m_constant_fields["portal"] = self.portal
+        if self.source is not None:
+            self.m2m_constant_fields["source"] = self.source
+
+    def filter_contact(self, src, val):
+        phone = val[0] or val[1]
+        housenumber = val[2]
+        street = val[3]
+        postcode = val[4] or val[5]
+        city = val[6] or val[7]
+
+        location_street = ""
+        location_city = ""
+
+        lines = []
+
+        if phone:
+            lines.append(phone)
+
+        if street:
+            location_street = (
+                _("%(housenumber)s %(street)s")
+                % {"housenumber": housenumber, "street": street}
+                if housenumber
+                else street
+            )
+
+        if city:
+            location_city = (
+                _("%(postcode)s, %(city)s") % {"postcode": postcode, "city": city}
+                if postcode
+                else city
+            )
+
+        location = _("%(street)s\n%(city)s") % {
+            "street": location_street,
+            "city": location_city,
+        }
+        lines.append(location)
+
+        return "\n".join(lines)
+
+    def get_polygon_from_API(self, id):
+        params = {
+            "id": id,
+            "params": 0,
+        }
+        response = self.request_or_retry(self.url_polygons, params=params)
+        wkt = response.content.decode("utf-8")
+        geom = fromstr(wkt, srid=self.osm_srid)
+
+        if not geom.valid:
+            geom = geom.buffer(0)
+
+        return geom
+
+    def filter_geom(self, src, val):
+        type, lng, lat, geometry, bbox, id = val
+        if type == "node":
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
+        elif type == "way":
+            coordinates = [[point["lon"], point["lat"]] for point in geometry]
+            if coordinates[0] != coordinates[-1]:
+                geom = LineString(coordinates, srid=self.osm_srid)
+            else:
+                geom = Polygon(coordinates, srid=self.osm_srid)
+        elif type == "relation":
+            try:
+                geom = self.get_polygon_from_API(id)
+            except Exception:
+                geom = self.get_centroid_from_relation(bbox)
 
         geom.transform(settings.SRID)
         return geom

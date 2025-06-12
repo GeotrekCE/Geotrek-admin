@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:12+0200\n"
+"POT-Creation-Date: 2025-06-10 11:20+0200\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -400,6 +400,18 @@ msgid ""
 msgstr ""
 "Impossible de lier le lieu de renseignement à un itinéraire : l'itinéraire "
 "correspondant à l'UUID %(uuid)s est introuvable"
+
+#, python-format
+msgid "%(housenumber)s %(street)s"
+msgstr ""
+
+#, python-format
+msgid "%(postcode)s, %(city)s"
+msgstr ""
+
+#, python-format
+msgid "%(street)s<br>%(city)s"
+msgstr ""
 
 msgid "Add a new touristic content"
 msgstr "Ajouter un contenu touristique"
