@@ -15,7 +15,6 @@ from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
-from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 
@@ -25,7 +24,6 @@ from geotrek.common.parsers import (
     AttachmentParserMixin,
     DownloadImportError,
     GeotrekParser,
-    GlobalImportError,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
@@ -38,7 +36,7 @@ from geotrek.common.utils.parsers import (
     get_geom_from_gpx,
     get_geom_from_kml,
 )
-from geotrek.core.models import Path, Topology
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from geotrek.trekking.models import (
     POI,
     Accessibility,
@@ -90,6 +88,7 @@ class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin):
             raise RowImportError(_("Could not import object: geometry is None"))
         # TODO: call super only if it has a filter_geom method?
         super().filter_geom()
+
 
 class POIParser(BasePOIParser, ShapeParser):
     label = "Import POI"
@@ -1651,8 +1650,11 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         super().end()
 
 
-class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, BasePOIParser, OpenStreetMapParser):
+class OpenStreetMapPOIParser(
+    OpenStreetMapAttachmentsParserMixin, BasePOIParser, OpenStreetMapParser
+):
     """Parser to import POI from OpenStreetMap"""
+
     type = None
     eid = "eid"
 
