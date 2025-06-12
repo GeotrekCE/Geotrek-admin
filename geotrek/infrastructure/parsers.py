@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import GeotrekParser, GlobalImportError, OpenStreetMapParser
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.models import Infrastructure
 
@@ -32,7 +33,7 @@ class GeotrekInfrastructureParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/infrastructure"
 
 
-class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
+class OpenStreetMapInfrastructureParser(PointTopologyParserMixin, OpenStreetMapParser):
     """Parser to import infrastructures from OpenStreetMap"""
 
     type = None
@@ -53,13 +54,6 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
         if self.type:
             self.constant_fields["type"] = self.type
 
-    def start(self):
-        super().start()
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _("You need to add a network of paths before importing Infrastructures")
-            )
-
     def filter_geom(self, src, val):
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
@@ -71,18 +65,6 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
 
-        # create topology
-        self.topology = Topology.objects.none()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-            self.topology = Topology.deserialize(serialized)
-
+        self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)
         return geom
-
-    def parse_obj(self, row, operation):
-        super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
-            self.obj.mutate(self.topology)

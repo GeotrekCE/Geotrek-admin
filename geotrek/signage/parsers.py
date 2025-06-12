@@ -7,6 +7,7 @@ from geotrek.common.parsers import (
     GlobalImportError,
     OpenStreetMapParser,
 )
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from geotrek.core.models import Path, Topology
 from geotrek.signage.models import Signage
 
@@ -43,7 +44,7 @@ class GeotrekSignageParser(GeotrekParser):
         self.next_url = f"{self.url}/api/v2/signage"
 
 
-class OpenStreetMapSignageParser(OpenStreetMapParser):
+class OpenStreetMapSignageParser(PointTopologyParserMixin, OpenStreetMapParser):
     """Parser to import signage from OpenStreetMap"""
 
     type = None
@@ -73,33 +74,10 @@ class OpenStreetMapSignageParser(OpenStreetMapParser):
     field_options = {"geom": {"required": True}, "type": {"required": True}}
     topology = Topology.objects.none()
 
-    def start(self):
-        super().start()
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _("You need to add a path network before importing signage")
-            )
-
     def filter_geom(self, src, val):
         # convert OSM geometry to point
         lng, lat = val
-
         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-
-        # create topology
-        self.topology = Topology.objects.none()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
-            self.topology = Topology.deserialize(serialized)
-
+        self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)
         return geom
-
-    def parse_obj(self, row, operation):
-        super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
-            self.obj.mutate(self.topology)
