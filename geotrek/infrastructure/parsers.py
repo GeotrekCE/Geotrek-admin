@@ -78,7 +78,6 @@ class OpenStreetMapInfrastructureParser(OpenStreetMapParser):
             # to a path aggregation (topology)
             serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
             self.topology = Topology.deserialize(serialized)
-            # Move deserialization aggregations to the POI
 
         geom.transform(settings.SRID)
         return geom
