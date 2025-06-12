@@ -119,7 +119,7 @@ msgid "Published Infrastructures"
 msgstr "Aménagements publiés"
 
 msgid "You need to add a network of paths before importing Infrastructures"
-msgstr ""
+msgstr "Vous devez ajouter un réseau de tronçons avant d'importer des infrastructures."
 
 msgid "None"
 msgstr "Aucun(e)"
