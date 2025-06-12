@@ -26,7 +26,7 @@ class ProviderChoicesMixin:
         if hasattr(qs, "existing"):
             qs = qs.existing()
         values = (
-            qs.exclude(provider__exact="")
+            qs.exclude(provider__name__exact="")
             .distinct("provider")
             .order_by("provider")
             .values_list("provider", flat=True)
