@@ -1537,13 +1537,13 @@ class OpenStreetMapTouristicContentParser(
                 else city
             )
 
-        location = _("%(street)s<br>%(city)s") % {
+        location = _("%(street)s\n%(city)s") % {
             "street": location_street,
             "city": location_city,
         }
         lines.append(location)
 
-        return "<br>".join(lines)
+        return "\n".join(lines)
 
     def get_polygon_from_API(self, id):
         params = {
