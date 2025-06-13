@@ -164,5 +164,5 @@ def force_geom_to_2d(geom):
         return geom
     writer = WKBWriter()
     writer.outdim = 2
-    geom_2d = GEOSGeometry(writer.write(geom))
+    geom_2d = GEOSGeometry(writer.write(geom), srid=geom.srid)
     return geom_2d

@@ -2026,7 +2026,7 @@ class ApidaeServiceParserTests(TestCase):
             output.getvalue(),
         )
         self.assertIn(
-            "Could not parse geometry from value 'None'",
+            "Cannot import object: geometry is None",
             output.getvalue(),
         )
 
