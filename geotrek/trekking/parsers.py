@@ -75,7 +75,7 @@ class DurationParserMixin:
             return None
 
 
-class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin):
+class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin, Parser):
     model = POI
 
     natural_keys = {
@@ -87,8 +87,8 @@ class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin):
         if val is None:
             # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
             raise RowImportError(_("Could not import object: geometry is None"))
-        # TODO: remove or call super only if it has a filter_geom method?
-        super().filter_geom()
+        if hasattr(super(), 'filter_geom'):
+            super().filter_geom(src, val)
 
 
 class POIParser(BasePOIParser, ShapeParser):
@@ -104,7 +104,7 @@ class POIParser(BasePOIParser, ShapeParser):
     field_options = {"geom": {"required": True}, "type": {"required": True}}
 
     def filter_geom(self, src, val):
-        super().filter_geom()
+        super().filter_geom(src, val)
         geometry = val.transform(settings.API_SRID, clone=True)
         geometry = force_geom_to_2d(geometry)
         self.generate_topology_from_geometry(geometry)
@@ -318,12 +318,16 @@ class GeotrekTrekParser(GeotrekParser):
         super().end()
 
 
-class GeotrekServiceParser(GeotrekParser):
+class BaseServiceParser(PointTopologyParserMixin, Parser):
+    model = Service
+    natural_keys = {"structure": "name", "type": "name"}  # TODO: check that it doesn't throw an error is structure is not in the source data
+
+
+class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
     """Geotrek parser for Service"""
 
     fill_empty_translated_fields = True
     url = None
-    model = Service
     constant_fields = {
         "deleted": False,
     }
@@ -336,7 +340,6 @@ class GeotrekServiceParser(GeotrekParser):
         "structure": "name",
         "type": "name",
     }
-    natural_keys = {"structure": "name", "type": "name"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1274,7 +1277,7 @@ class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
         return self.apply_filter(dst="type", src=src, val=type_label)
 
     def filter_geom(self, src, val):
-        super().filter_geom()
+        super().filter_geom(src, val)
         geom = GEOSGeometry(str(val))
         self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)
@@ -1295,8 +1298,7 @@ class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
         return rv
 
 
-class ApidaeServiceParser(ApidaeBaseParser):
-    model = Service
+class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
     eid = "eid"
     service_type = None
 
@@ -1308,9 +1310,6 @@ class ApidaeServiceParser(ApidaeBaseParser):
     fields = {
         "eid": "id",
         "geom": "localisation.geolocalisation.geoJson",
-    }
-    natural_keys = {
-        "type": "name",
     }
     field_options = {
         "type": {"create": True},
@@ -1327,8 +1326,9 @@ class ApidaeServiceParser(ApidaeBaseParser):
             )
 
     def filter_geom(self, src, val):
-        try:
+        try :
             geom = GEOSGeometry(str(val))
+            self.generate_topology_from_geometry(geom)
             geom.transform(settings.SRID)
         except Exception:
             raise RowImportError(
@@ -1676,7 +1676,7 @@ class OpenStreetMapPOIParser(
             self.constant_fields["type"] = self.type
 
     def filter_geom(self, src, val):
-        super().filter_geom()
+        super().filter_geom(src, val)
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
         geom = None
