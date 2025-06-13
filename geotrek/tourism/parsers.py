@@ -63,7 +63,7 @@ class TouristicContentMixin:
             except field.remote_field.model.DoesNotExist:
                 return None
         if hasattr(self.model, "provider") and self.provider is not None:
-            kwargs["provider__exact"] = self.provider
+            kwargs["provider__name__exact"] = self.provider
         return kwargs
 
 

@@ -499,3 +499,17 @@ class AccessMean(TimeStampedModelMixin):
 
     def __str__(self):
         return self.label
+
+
+class Provider(TimeStampedModelMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=1024, unique=True)
+    link_template = models.TextField(verbose_name=_("Link template"), blank=True, help_text=_("HTML template for external source links"))
+    copyright = models.CharField(max_length=1024, blank=True, verbose_name='Copyright')
+
+    class Meta:
+        verbose_name = _("Provider")
+        verbose_name_plural = _("Providers")
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name

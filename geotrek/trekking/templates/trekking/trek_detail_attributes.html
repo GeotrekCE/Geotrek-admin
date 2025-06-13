@@ -170,13 +170,11 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if trek.eid %}{{ trek.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
+            <td>{{ trek.get_eid }}</td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if trek.provider %}{{ trek.provider|safe }}
+            <td>{% if trek.provider %}{{ trek.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

@@ -20,6 +20,7 @@ from paperclip.validators import FileMimetypeValidator
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     OptionalPictogramMixin,
@@ -70,13 +71,7 @@ class LabelAccessibility(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class InformationDesk(TimeStampedModelMixin, models.Model):
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
+class InformationDesk(TimeStampedModelMixin, ExternalSourceMixin, models.Model):
     name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(
         InformationDeskType,
@@ -304,6 +299,7 @@ class TouristicContent(
     TimeStampedModelMixin,
     PicturesMixin,
     NoDeleteMixin,
+    ExternalSourceMixin,
 ):
     """A generic touristic content (accommodation, museum, etc.) in the park"""
 
@@ -373,12 +369,6 @@ class TouristicContent(
         related_name="contents",
         blank=True,
         null=True,
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     reservation_system = models.ForeignKey(
         ReservationSystem,
@@ -541,6 +531,7 @@ class TouristicEvent(
     PicturesMixin,
     TimeStampedModelMixin,
     NoDeleteMixin,
+    ExternalSourceMixin,
 ):
     """A touristic event (conference, workshop, etc.) in the park"""
 
@@ -622,12 +613,6 @@ class TouristicEvent(
         blank=True,
         related_name="touristicevents",
         verbose_name=_("Portal"),
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
