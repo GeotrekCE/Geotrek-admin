@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.models import Provider
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.maintenance.tests.factories import SignageInterventionFactory
 
 from ..filters import BladeFilterSet, SignageFilterSet

@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import (
     BooleanFilter,
     CharFilter,
-    MultipleChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
 )
@@ -12,8 +11,8 @@ from django_filters import (
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.common.models import Provider
 from geotrek.common.functions import GeometryType
+from geotrek.common.models import Provider
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
