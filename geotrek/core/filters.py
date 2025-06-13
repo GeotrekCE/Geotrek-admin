@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import (
     BooleanFilter,
     CharFilter,
-    ModelChoiceFilter,
+    MultipleChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
 )
@@ -127,9 +127,9 @@ class PathFilterSet(
 ):
     name = CharFilter(label=_("Name"), lookup_expr="icontains")
     comments = CharFilter(label=_("Comments"), lookup_expr="icontains")
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(path__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
     networks = ModelMultipleChoiceFilter(
         queryset=Network.objects.all().select_related("structure")
@@ -172,11 +172,10 @@ class TrailFilterSet(
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
     )
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(trail__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
-
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = [

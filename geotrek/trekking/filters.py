@@ -1,5 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter, ModelChoiceFilter
+from django_filters import ModelMultipleChoiceFilter
 
 from geotrek.altimetry.filters import (
     AltimetryAllGeometriesFilterSet,
@@ -19,9 +19,9 @@ class TrekFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(trek__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -56,9 +56,9 @@ class POIFilterSet(
     StructureRelatedFilterSet,
 ):
     trek = POITrekFilter(label=_("Trek"), required=False)
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(poi__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -78,9 +78,9 @@ class ServiceFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(service__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

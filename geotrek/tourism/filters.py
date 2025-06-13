@@ -32,9 +32,9 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     type2 = TypeFilter(
         queryset=TouristicContentType2.objects.select_related("category").all()
     )
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(touristiccontent__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -85,9 +85,9 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         label=_("Before"), lookup_expr="lte", field_name="begin_date"
     )
     completed = CompletedFilter(label=_("Completed"))
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(touristicevent__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
