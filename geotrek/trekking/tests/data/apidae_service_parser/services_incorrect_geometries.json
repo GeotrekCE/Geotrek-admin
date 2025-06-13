@@ -22,6 +22,15 @@
                     }
                 }
             }
+        },
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 3,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : null
+                }
+            }
         }
     ]
 }
