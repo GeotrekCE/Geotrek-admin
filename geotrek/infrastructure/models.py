@@ -10,10 +10,10 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins.models import (
     BasePublishableMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
-    ExternalSourceMixin,
 )
 from geotrek.common.models import AccessMean
 from geotrek.common.signals import log_cascade_deletion

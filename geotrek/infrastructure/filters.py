@@ -9,10 +9,10 @@ from django_filters import (
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.maintenance.models import Intervention
 from geotrek.zoning.filters import ZoningFilterSet
-from geotrek.common.models import Provider
 
 from .models import (
     Infrastructure,

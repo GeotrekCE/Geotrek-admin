@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from geotrek.sensitivity.filters import SensitiveAreaFilterSet
 from geotrek.common.models import Provider
+from geotrek.sensitivity.filters import SensitiveAreaFilterSet
 
 from .factories import SensitiveAreaFactory
 

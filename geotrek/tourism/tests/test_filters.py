@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from geotrek.common.models import Provider
 from geotrek.tourism.filters import (
     CompletedFilter,
     TouristicContentFilterSet,
@@ -10,7 +11,6 @@ from geotrek.tourism.tests.factories import (
     TouristicContentFactory,
     TouristicEventFactory,
 )
-from geotrek.common.models import Provider
 
 
 class TouristicEventFilterSetTestCase(TestCase):

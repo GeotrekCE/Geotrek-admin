@@ -2,9 +2,10 @@ import django_filters.rest_framework
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
-from django_filters.filters import ModelMultipleChoiceFilter, ModelChoiceFilter
+from django_filters.filters import ModelMultipleChoiceFilter
 
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import (
@@ -13,7 +14,6 @@ from .models import (
     TouristicContentType2,
     TouristicEvent,
 )
-from geotrek.common.models import Provider
 
 
 class TypeField(forms.ModelMultipleChoiceField):

@@ -27,10 +27,10 @@ from geotrek.common.functions import IsSimple
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
     CheckBoxActionMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     TimeStampedModelMixin,
-    ExternalSourceMixin,
 )
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import classproperty, simplify_coords, sqlfunction, uniquify

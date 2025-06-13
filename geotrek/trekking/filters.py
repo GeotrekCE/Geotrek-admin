@@ -6,9 +6,9 @@ from geotrek.altimetry.filters import (
     AltimetryPointFilterSet,
 )
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.core.filters import TopologyFilter, ValidTopologyFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
-from geotrek.common.models import Provider
 
 from .models import POI, Service, Trek
 

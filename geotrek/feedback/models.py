@@ -21,11 +21,11 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     PicturesMixin,
     TimeStampedModelMixin,
-    ExternalSourceMixin,
 )
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting

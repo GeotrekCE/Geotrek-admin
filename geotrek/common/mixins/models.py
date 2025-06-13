@@ -9,12 +9,12 @@ from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Count, Max
+from django.template import Context, Template
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, Context
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from mapentity.models import MapEntityMixin
@@ -481,7 +481,7 @@ class ExternalSourceMixin(models.Model):
         "common.Provider", verbose_name=_("Provider"), blank=True, null=True, on_delete=models.PROTECT
     )
     eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
+        verbose_name=_("External id"), max_length=1024, blank=True
     )
 
     class Meta:

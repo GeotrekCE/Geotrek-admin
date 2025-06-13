@@ -2,8 +2,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter, MultipleChoiceFilter
 from mapentity.filters import MapEntityFilterSet
 
-from geotrek.zoning.filters import ZoningFilterSet
 from geotrek.common.models import Provider
+from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import Report
 
