@@ -24,7 +24,6 @@ from geotrek.common.parsers import (
     AttachmentParserMixin,
     DownloadImportError,
     GeotrekParser,
-    GlobalImportError,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
@@ -37,7 +36,7 @@ from geotrek.common.utils.parsers import (
     get_geom_from_gpx,
     get_geom_from_kml,
 )
-from geotrek.core.models import Path, Topology
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from geotrek.trekking.models import (
     POI,
     Accessibility,
@@ -75,55 +74,43 @@ class DurationParserMixin:
             return None
 
 
-class POIParser(AttachmentParserMixin, ShapeParser):
+class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin, Parser):
+    model = POI
+
+    natural_keys = {
+        "structure": "name",
+        "type": "label",
+    }
+
+    # def filter_geom(self, src, val):
+    #     if val is None:
+    #         # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
+    #         raise RowImportError(_("Could not import object: geometry is None"))
+    #     if hasattr(super(), "filter_geom"):
+    #         super().filter_geom(src, val)
+
+
+class POIParser(BasePOIParser, ShapeParser):
     label = "Import POI"
     label_fr = "Import POI"
     label_en = "Import POI"
-    model = POI
     simplify_tolerance = 2
     eid = "name"
     constant_fields = {
         "published": True,
         "deleted": False,
     }
-    natural_keys = {
-        "type": "label",
-    }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
-    topology = Topology.objects.none()
 
-    def start(self):
-        super().start()
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _("You need to add a network of paths before importing POIs")
-            )
+    # def filter_geom(self, src, val):
+    #     super().filter_geom(src, val)
+    #     geometry = val.transform(settings.API_SRID, clone=True)
+    #     geometry = force_geom_to_2d(geometry)
+    #     self.generate_topology_from_geometry(geometry)
+    #     return val
 
-    def filter_geom(self, src, val):
-        self.topology = Topology.objects.none()
-        if val is None:
-            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
-            raise RowImportError(_("Invalid geometry"))
-        if val.geom_type != "Point":
-            raise RowImportError(
-                _(
-                    "Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
-                ).format(src=src, geom_type=val.geom_type)
-            )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
-            geometry = val.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
-            self.topology = Topology.deserialize(serialized)
-            # Move deserialization aggregations to the POI
-        return val
-
-    def parse_obj(self, row, operation):
-        super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
-            self.obj.mutate(self.topology)
+    def build_geos_geometry(self, src, val):
+        return val.transform(settings.API_SRID, clone=True)
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
@@ -333,12 +320,19 @@ class GeotrekTrekParser(GeotrekParser):
         super().end()
 
 
-class GeotrekServiceParser(GeotrekParser):
+class BaseServiceParser(PointTopologyParserMixin, Parser):
+    model = Service
+    natural_keys = {
+        "structure": "name",
+        "type": "name",
+    }
+
+
+class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
     """Geotrek parser for Service"""
 
     fill_empty_translated_fields = True
     url = None
-    model = Service
     constant_fields = {
         "deleted": False,
     }
@@ -351,19 +345,19 @@ class GeotrekServiceParser(GeotrekParser):
         "structure": "name",
         "type": "name",
     }
-    natural_keys = {"structure": "name", "type": "name"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/service"
 
+    # TODO: build_geos_geometry?
 
-class GeotrekPOIParser(GeotrekParser):
+
+class GeotrekPOIParser(BasePOIParser, GeotrekParser):
     """Geotrek parser for GeotrekPOI"""
 
     fill_empty_translated_fields = True
     url = None
-    model = POI
     constant_fields = {
         "deleted": False,
     }
@@ -376,14 +370,13 @@ class GeotrekPOIParser(GeotrekParser):
         "structure": "name",
         "type": "label",
     }
-    natural_keys = {
-        "structure": "name",
-        "type": "label",
-    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
+
+    # TODO: build_geos_geometry?
+    # and check if the right filter_geom is called (same for Services)
 
 
 class ApidaeTranslatedField:
@@ -1253,8 +1246,7 @@ class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
     name_field = "name"
 
 
-class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
-    model = POI
+class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
     eid = "eid"
     separator = None
 
@@ -1283,9 +1275,6 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "eid": "id",
         "type": "type",
     }
-    natural_keys = {
-        "type": "label",
-    }
     field_options = {
         "type": {"create": True},
         "name": {"expand_translations": True},
@@ -1297,10 +1286,14 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         type_label = val.replace("_", " ").lower().capitalize()
         return self.apply_filter(dst="type", src=src, val=type_label)
 
-    def filter_geom(self, src, val):
-        geom = GEOSGeometry(str(val))
-        geom.transform(settings.SRID)
-        return geom
+    # def filter_geom(self, src, val):
+    #     super().filter_geom(src, val)
+    #     geom = GEOSGeometry(str(val))
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+    def build_geos_geometry(self, src, val):
+        return GEOSGeometry(str(val))
 
     def filter_attachments(self, src, val):
         translation_src = self._get_default_translation_src()
@@ -1317,8 +1310,7 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return rv
 
 
-class ApidaeServiceParser(ApidaeBaseParser):
-    model = Service
+class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
     eid = "eid"
     service_type = None
 
@@ -1330,9 +1322,6 @@ class ApidaeServiceParser(ApidaeBaseParser):
     fields = {
         "eid": "id",
         "geom": "localisation.geolocalisation.geoJson",
-    }
-    natural_keys = {
-        "type": "name",
     }
     field_options = {
         "type": {"create": True},
@@ -1348,15 +1337,19 @@ class ApidaeServiceParser(ApidaeBaseParser):
                 _("A service type must be defined in parser configuration.")
             )
 
-    def filter_geom(self, src, val):
-        try:
-            geom = GEOSGeometry(str(val))
-            geom.transform(settings.SRID)
-        except Exception:
-            raise RowImportError(
-                _("Could not parse geometry from value '{value}'").format(value=val)
-            )
-        return geom
+    # def filter_geom(self, src, val):
+    #     try:
+    #         geom = GEOSGeometry(str(val))
+    #         self.generate_topology_from_geometry(geom)
+    #         geom.transform(settings.SRID)
+    #     except Exception:
+    #         raise RowImportError(
+    #             _("Could not parse geometry from value '{value}'").format(value=val)
+    #         )
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
+        return GEOSGeometry(str(val))
 
 
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
@@ -1673,11 +1666,12 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         super().end()
 
 
-class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
+class OpenStreetMapPOIParser(
+    OpenStreetMapAttachmentsParserMixin, BasePOIParser, OpenStreetMapParser
+):
     """Parser to import POI from OpenStreetMap"""
 
     type = None
-    model = POI
     eid = "eid"
 
     fields = {
@@ -1689,47 +1683,36 @@ class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapP
     constant_fields = {
         "published": True,
     }
-    natural_keys = {
-        "type": "label",
-    }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
-    topology = Topology.objects.none()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.type:
             self.constant_fields["type"] = self.type
 
-    def start(self):
-        super().start()
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _("You need to add a network of paths before importing POIs")
-            )
+    # def filter_geom(self, src, val):
+    #     # convert OSM geometry to point
+    #     type, lng, lat, area, bbox = val
+    #     geom = None
+    #     if type == "node":
+    #         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+    #     elif type == "way":
+    #         geom = self.get_centroid_from_way(area)
+    #     elif type == "relation":
+    #         geom = self.get_centroid_from_relation(bbox)
 
-    def filter_geom(self, src, val):
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
         geom = None
         if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
-
-        # create topology
-        self.topology = Topology.objects.none()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-            self.topology = Topology.deserialize(serialized)
-            # Move deserialization aggregations to the POI
-        geom.transform(settings.SRID)
         return geom
-
-    def parse_obj(self, row, operation):
-        super().parse_obj(row, operation)
-        if settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
-            self.obj.mutate(self.topology)

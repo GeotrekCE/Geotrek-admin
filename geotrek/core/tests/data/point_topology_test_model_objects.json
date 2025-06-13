@@ -1,0 +1,22 @@
+{
+    "features": [
+        {
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    3.0,
+                    45.0
+                ]
+            }
+        },
+        {
+            "geometry":{
+                "type": "Point",
+                "coordinates": [
+                    4.0,
+                    46
+                ]
+            }
+        }
+    ]
+}
