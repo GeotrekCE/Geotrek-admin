@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import (
     BooleanFilter,
     CharFilter,
-    ChoiceFilter,
+    ModelChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
 )
@@ -12,6 +12,7 @@ from django_filters import (
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
+from geotrek.common.models import Provider
 from geotrek.common.functions import GeometryType
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
@@ -126,11 +127,9 @@ class PathFilterSet(
 ):
     name = CharFilter(label=_("Name"), lookup_expr="icontains")
     comments = CharFilter(label=_("Comments"), lookup_expr="icontains")
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
-        label=_("Provider"),
-        choices=lambda: Path.objects.provider_choices(),
+    provider = ModelChoiceFilter(
+        queryset=Provider.objects.filter(path__isnull=False).distinct(),
+        empty_label=_("Provider")
     )
     networks = ModelMultipleChoiceFilter(
         queryset=Network.objects.all().select_related("structure")
@@ -173,11 +172,9 @@ class TrailFilterSet(
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
-        label=_("Provider"),
-        choices=lambda: Trail.objects.provider_choices(),
+    provider = ModelChoiceFilter(
+        queryset=Provider.objects.filter(trail__isnull=False).distinct(),
+        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
