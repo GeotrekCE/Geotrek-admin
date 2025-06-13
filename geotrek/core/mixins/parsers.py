@@ -9,7 +9,9 @@ class PointTopologyParserMixin:
     def start(self):
         if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
             raise GlobalImportError(
-                _("You need to add a network of paths before importing '%(model)s' objects")
+                _(
+                    "You need to add a network of paths before importing '%(model)s' objects"
+                )
                 % {"model": self.model.__name__}
             )
         super().start()

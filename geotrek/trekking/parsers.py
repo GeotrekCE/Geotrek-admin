@@ -87,7 +87,7 @@ class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin, Parser):
         if val is None:
             # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
             raise RowImportError(_("Could not import object: geometry is None"))
-        if hasattr(super(), 'filter_geom'):
+        if hasattr(super(), "filter_geom"):
             super().filter_geom(src, val)
 
 
@@ -320,7 +320,10 @@ class GeotrekTrekParser(GeotrekParser):
 
 class BaseServiceParser(PointTopologyParserMixin, Parser):
     model = Service
-    natural_keys = {"structure": "name", "type": "name"}  # TODO: check that it doesn't throw an error is structure is not in the source data
+    natural_keys = {
+        "structure": "name",
+        "type": "name",
+    }  # TODO: check that it doesn't throw an error if structure is not in the source data
 
 
 class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
@@ -1326,7 +1329,7 @@ class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
             )
 
     def filter_geom(self, src, val):
-        try :
+        try:
             geom = GEOSGeometry(str(val))
             self.generate_topology_from_geometry(geom)
             geom.transform(settings.SRID)

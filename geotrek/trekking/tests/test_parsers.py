@@ -204,7 +204,8 @@ class POIParserTests(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing 'POI' objects"
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
         ):
             call_command(
                 "import", "geotrek.trekking.parsers.POIParser", filename, verbosity=0
@@ -2024,6 +2025,10 @@ class ApidaeServiceParserTests(TestCase):
             "Could not parse geometry from value '{'type': 'Point'}'",
             output.getvalue(),
         )
+        self.assertIn(
+            "Could not parse geometry from value 'None'",
+            output.getvalue(),
+        )
 
     @mock.patch("requests.get")
     def test_service_is_imported(self, mocked_get):
@@ -2503,7 +2508,8 @@ class OpenStreetMapPOIParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing 'POI' objects"
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
         ):
             call_command(
                 "import",

@@ -157,6 +157,12 @@ def get_geom_from_kml(data):
 
 
 def force_geom_to_2d(geom):
-    geom_2d = WKBWriter().write(geom)
-    geom_2d = GEOSGeometry(geom_2d)
+    if geom is None:
+        msg = "Input geometry cannot be None"
+        raise ValueError(msg)
+    if geom.empty:
+        return geom
+    writer = WKBWriter()
+    writer.outdim = 2
+    geom_2d = GEOSGeometry(writer.write(geom))
     return geom_2d
