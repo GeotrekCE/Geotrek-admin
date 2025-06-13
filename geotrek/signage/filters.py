@@ -3,7 +3,6 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     CharFilter,
-    ModelChoiceFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
@@ -47,9 +46,9 @@ class SignageFilterSet(
         choices=lambda: Intervention.objects.year_choices(),
     )
     trail = TopologyFilterTrail(label=_("Trail"), required=False)
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(signage__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

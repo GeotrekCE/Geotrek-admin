@@ -1,7 +1,6 @@
 from django.db.models import Q
 from django.utils.translation import gettext as _
 from django_filters.filters import (
-    ModelChoiceFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
@@ -26,9 +25,9 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     managers = ModelMultipleChoiceFilter(
         queryset=Organism.objects.all(), method="filter_manager", label=_("Manager")
     )
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(site__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -81,11 +80,10 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     wind = MultipleChoiceFilter(
         choices=Site.WIND_CHOICES, method="filter_orientation", label=_("Wind")
     )
-    provider = ModelChoiceFilter(
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
         queryset=Provider.objects.filter(course__isnull=False).distinct(),
-        empty_label=_("Provider")
     )
-
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = [
