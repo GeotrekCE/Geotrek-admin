@@ -47,7 +47,7 @@ from PIL import Image, UnidentifiedImageError
 from requests.auth import HTTPBasicAuth
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import Attachment, FileType, License, RecordSource, Provider
+from geotrek.common.models import Attachment, FileType, License, Provider, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.settings.base import api_bbox

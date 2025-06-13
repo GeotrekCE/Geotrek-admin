@@ -22,6 +22,7 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     BasePublishableMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     PictogramMixin,
@@ -29,7 +30,6 @@ from geotrek.common.mixins.models import (
     PublishableMixin,
     TimeStampedModelMixin,
     get_uuid_duplication,
-    ExternalSourceMixin,
 )
 from geotrek.common.models import (
     AccessibilityAttachment,

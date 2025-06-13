@@ -13,12 +13,12 @@ from pyopenair.factory import wkt2openair
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
     get_uuid_duplication,
-    ExternalSourceMixin,
 )
 from geotrek.common.utils import classproperty, intersecting, queryset_or_model
 from geotrek.core.models import simplify_coords

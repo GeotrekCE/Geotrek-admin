@@ -21,12 +21,12 @@ from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     PicturesMixin,
     PublishableMixin,
     TimeStampedModelMixin,
-    ExternalSourceMixin,
 )
 from geotrek.common.models import Organism, RatingMixin, RatingScaleMixin
 from geotrek.common.signals import log_cascade_deletion

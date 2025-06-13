@@ -20,6 +20,7 @@ from paperclip.validators import FileMimetypeValidator
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     OptionalPictogramMixin,
@@ -27,7 +28,6 @@ from geotrek.common.mixins.models import (
     PicturesMixin,
     PublishableMixin,
     TimeStampedModelMixin,
-    ExternalSourceMixin,
 )
 from geotrek.common.models import ReservationSystem, Theme
 from geotrek.common.signals import log_cascade_deletion

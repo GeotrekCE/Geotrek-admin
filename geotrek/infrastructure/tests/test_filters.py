@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory
 from geotrek.common.models import Provider
+from geotrek.maintenance.tests.factories import InfrastructureInterventionFactory
 
 from ..filters import InfrastructureFilterSet
 from .factories import (

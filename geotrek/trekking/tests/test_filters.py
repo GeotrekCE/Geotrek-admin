@@ -1,8 +1,8 @@
 from django.test import TestCase
 
+from geotrek.common.models import Provider
 from geotrek.land.tests.test_filters import LandFiltersTest
 from geotrek.trekking.filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from geotrek.common.models import Provider
 
 from .factories import POIFactory, ServiceFactory, TrekFactory
 

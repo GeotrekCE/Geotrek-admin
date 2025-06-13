@@ -22,9 +22,9 @@ from geotrek.common.models import (
     FileType,
     License,
     Organism,
+    Provider,
     RecordSource,
     Theme,
-    Provider
 )
 from geotrek.common.parsers import (
     AttachmentParserMixin,

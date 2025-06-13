@@ -1,8 +1,8 @@
 from django.http import QueryDict
 from django.test import TestCase
 
-from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.models import Provider
+from geotrek.common.tests.factories import OrganismFactory
 
 from ..filters import CourseFilterSet, SiteFilterSet
 from ..models import Course, Site
