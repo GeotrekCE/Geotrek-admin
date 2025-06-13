@@ -204,7 +204,7 @@ class POIParserTests(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing POIs"
+            CommandError, "You need to add a network of paths before importing 'POI' objects"
         ):
             call_command(
                 "import", "geotrek.trekking.parsers.POIParser", filename, verbosity=0
@@ -223,7 +223,7 @@ class POIParserTests(TestCase):
         )
         self.assertEqual(POI.objects.count(), 0)
         self.assertIn(
-            "Invalid geometry type for field 'GEOM'. Should be Point, not LineString,",
+            "Invalid geometry type: should be 'Point', not 'LineString',",
             output.getvalue(),
         )
 
@@ -1981,6 +1981,11 @@ class TestApidaeServiceParserMissingType(ApidaeServiceParser):
 
 
 class ApidaeServiceParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create()
+
     @staticmethod
     def make_dummy_get(apidae_data_file):
         return make_dummy_apidae_get(
@@ -2498,7 +2503,7 @@ class OpenStreetMapPOIParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing POIs"
+            CommandError, "You need to add a network of paths before importing 'POI' objects"
         ):
             call_command(
                 "import",

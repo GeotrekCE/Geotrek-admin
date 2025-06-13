@@ -120,7 +120,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
         self.path.delete()
         with self.assertRaisesRegex(
             CommandError,
-            "You need to add a network of paths before importing Infrastructures",
+            "You need to add a network of paths before importing 'Infrastructure' objects",
         ):
             call_command(
                 "import",
