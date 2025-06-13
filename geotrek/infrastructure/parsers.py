@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from geotrek.common.parsers import GeotrekParser, OpenStreetMapParser
@@ -52,8 +51,22 @@ class OpenStreetMapInfrastructureParser(PointTopologyParserMixin, OpenStreetMapP
         if self.type:
             self.constant_fields["type"] = self.type
 
-    def filter_geom(self, src, val):
-        # convert OSM geometry to point
+    # def filter_geom(self, src, val):
+    #     # convert OSM geometry to point
+    #     type, lng, lat, area, bbox = val
+    #     geom = None
+    #     if type == "node":
+    #         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+    #     elif type == "way":
+    #         geom = self.get_centroid_from_way(area)
+    #     elif type == "relation":
+    #         geom = self.get_centroid_from_relation(bbox)
+
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
         type, lng, lat, area, bbox = val
         geom = None
         if type == "node":
@@ -62,7 +75,4 @@ class OpenStreetMapInfrastructureParser(PointTopologyParserMixin, OpenStreetMapP
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
-
-        self.generate_topology_from_geometry(geom)
-        geom.transform(settings.SRID)
         return geom

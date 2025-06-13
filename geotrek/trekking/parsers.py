@@ -33,7 +33,6 @@ from geotrek.common.parsers import (
 )
 from geotrek.common.utils.parsers import (
     GeomValueError,
-    force_geom_to_2d,
     get_geom_from_gpx,
     get_geom_from_kml,
 )
@@ -79,16 +78,16 @@ class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin, Parser):
     model = POI
 
     natural_keys = {
-        "structure": "name",  # TODO: check that no error is raised if structure is not in source data
+        "structure": "name",
         "type": "label",
     }
 
-    def filter_geom(self, src, val):
-        if val is None:
-            # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
-            raise RowImportError(_("Could not import object: geometry is None"))
-        if hasattr(super(), "filter_geom"):
-            super().filter_geom(src, val)
+    # def filter_geom(self, src, val):
+    #     if val is None:
+    #         # We use RowImportError because with TREKKING_TOPOLOGY_ENABLED, geom has default value POINT(0 0)
+    #         raise RowImportError(_("Could not import object: geometry is None"))
+    #     if hasattr(super(), "filter_geom"):
+    #         super().filter_geom(src, val)
 
 
 class POIParser(BasePOIParser, ShapeParser):
@@ -103,12 +102,15 @@ class POIParser(BasePOIParser, ShapeParser):
     }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
 
-    def filter_geom(self, src, val):
-        super().filter_geom(src, val)
-        geometry = val.transform(settings.API_SRID, clone=True)
-        geometry = force_geom_to_2d(geometry)
-        self.generate_topology_from_geometry(geometry)
-        return val
+    # def filter_geom(self, src, val):
+    #     super().filter_geom(src, val)
+    #     geometry = val.transform(settings.API_SRID, clone=True)
+    #     geometry = force_geom_to_2d(geometry)
+    #     self.generate_topology_from_geometry(geometry)
+    #     return val
+
+    def build_geos_geometry(self, src, val):
+        return val.transform(settings.API_SRID, clone=True)
 
 
 class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
@@ -323,7 +325,7 @@ class BaseServiceParser(PointTopologyParserMixin, Parser):
     natural_keys = {
         "structure": "name",
         "type": "name",
-    }  # TODO: check that it doesn't throw an error if structure is not in the source data
+    }
 
 
 class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
@@ -348,6 +350,8 @@ class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/service"
 
+    # TODO: build_geos_geometry?
+
 
 class GeotrekPOIParser(BasePOIParser, GeotrekParser):
     """Geotrek parser for GeotrekPOI"""
@@ -370,6 +374,9 @@ class GeotrekPOIParser(BasePOIParser, GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
+
+    # TODO: build_geos_geometry?
+    # and check if the right filter_geom is called (same for Services)
 
 
 class ApidaeTranslatedField:
@@ -1279,12 +1286,14 @@ class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
         type_label = val.replace("_", " ").lower().capitalize()
         return self.apply_filter(dst="type", src=src, val=type_label)
 
-    def filter_geom(self, src, val):
-        super().filter_geom(src, val)
-        geom = GEOSGeometry(str(val))
-        self.generate_topology_from_geometry(geom)
-        geom.transform(settings.SRID)
-        return geom
+    # def filter_geom(self, src, val):
+    #     super().filter_geom(src, val)
+    #     geom = GEOSGeometry(str(val))
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+    def build_geos_geometry(self, src, val):
+        return GEOSGeometry(str(val))
 
     def filter_attachments(self, src, val):
         translation_src = self._get_default_translation_src()
@@ -1328,16 +1337,19 @@ class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
                 _("A service type must be defined in parser configuration.")
             )
 
-    def filter_geom(self, src, val):
-        try:
-            geom = GEOSGeometry(str(val))
-            self.generate_topology_from_geometry(geom)
-            geom.transform(settings.SRID)
-        except Exception:
-            raise RowImportError(
-                _("Could not parse geometry from value '{value}'").format(value=val)
-            )
-        return geom
+    # def filter_geom(self, src, val):
+    #     try:
+    #         geom = GEOSGeometry(str(val))
+    #         self.generate_topology_from_geometry(geom)
+    #         geom.transform(settings.SRID)
+    #     except Exception:
+    #         raise RowImportError(
+    #             _("Could not parse geometry from value '{value}'").format(value=val)
+    #         )
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
+        return GEOSGeometry(str(val))
 
 
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
@@ -1678,18 +1690,29 @@ class OpenStreetMapPOIParser(
         if self.type:
             self.constant_fields["type"] = self.type
 
-    def filter_geom(self, src, val):
-        super().filter_geom(src, val)
+    # def filter_geom(self, src, val):
+    #     # convert OSM geometry to point
+    #     type, lng, lat, area, bbox = val
+    #     geom = None
+    #     if type == "node":
+    #         geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+    #     elif type == "way":
+    #         geom = self.get_centroid_from_way(area)
+    #     elif type == "relation":
+    #         geom = self.get_centroid_from_relation(bbox)
+
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
         # convert OSM geometry to point
         type, lng, lat, area, bbox = val
         geom = None
         if type == "node":
-            geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
             geom = self.get_centroid_from_relation(bbox)
-
-        self.generate_topology_from_geometry(geom)
-        geom.transform(settings.SRID)
         return geom
