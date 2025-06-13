@@ -6,6 +6,7 @@ from django.forms.widgets import HiddenInput, Textarea
 from django.utils.translation import gettext as _
 
 from geotrek.common.forms import CommonForm
+from geotrek.common.models import Provider
 
 from .models import (
     PredefinedEmail,
@@ -244,6 +245,6 @@ class ReportForm(CommonForm):
         ):  # Outside of workflow, create timer if report is new or if its status changed
             TimerEvent.objects.create(step=report.status, report=report)
         elif creation and not settings.SURICATE_WORKFLOW_ENABLED:
-            report.provider = "Geotrek-admin"
+            report.provider, _ = Provider.objects.get_or_create(name="Geotrek-admin")
             report.save()
         return report

@@ -6740,7 +6740,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                     "url": "http://url.com",
                 },
             ],
-            "provider": "",
+            "provider": None,
             "structure": self.structure.pk,
             "published": True,
         }
@@ -6814,7 +6814,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                 "previous": None,
                 "next": None,
                 "results": [self.expected_result],
-            },
+            }
         )
 
     @override_settings(

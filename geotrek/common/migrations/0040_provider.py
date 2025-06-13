@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
                 ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
                 ('name', models.CharField(max_length=1024, unique=True, verbose_name='Name')),
                 ('link_template', models.TextField(blank=True, help_text='HTML template for external source links', verbose_name='Link template')),
+                ('copyright', models.CharField(max_length=1024, blank=True, verbose_name='Name')),
             ],
             options={
                 'verbose_name': 'Provider',

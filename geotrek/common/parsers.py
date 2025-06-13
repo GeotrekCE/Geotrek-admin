@@ -389,7 +389,9 @@ class Parser:
                 and self.provider is not None
                 and not self.obj.provider
             ):
-                self.obj.provider, _ = Provider.objects.get_or_create(name=self.provider)
+                self.obj.provider, created = Provider.objects.get_or_create(name=self.provider)
+                if created:
+                    self.add_warning(f"Provider '{self.provider}' did not exist in Geotrek-Admin and was automatically created")
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
