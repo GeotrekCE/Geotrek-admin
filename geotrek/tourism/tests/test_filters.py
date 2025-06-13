@@ -10,6 +10,7 @@ from geotrek.tourism.tests.factories import (
     TouristicContentFactory,
     TouristicEventFactory,
 )
+from geotrek.common.models import Provider
 
 
 class TouristicEventFilterSetTestCase(TestCase):
@@ -58,17 +59,19 @@ class TouristicContentFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        touristic_content1 = TouristicContentFactory.create(provider="my_provider1")
-        touristic_content2 = TouristicContentFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        touristic_content1 = TouristicContentFactory.create(provider=provider1)
+        touristic_content2 = TouristicContentFactory.create(provider=provider2)
 
         filter_set = TouristicContentFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(touristic_content1, filter_set.qs)
@@ -87,17 +90,19 @@ class TouristicEventFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        touristic_event1 = TouristicEventFactory.create(provider="my_provider1")
-        touristic_event2 = TouristicEventFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        touristic_event1 = TouristicEventFactory.create(provider=provider1)
+        touristic_event2 = TouristicEventFactory.create(provider=provider2)
 
         filter_set = TouristicEventFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(touristic_event1, filter_set.qs)
