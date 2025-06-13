@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from geotrek.land.tests.test_filters import LandFiltersTest
 from geotrek.trekking.filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
+from geotrek.common.models import Provider
 
 from .factories import POIFactory, ServiceFactory, TrekFactory
 
@@ -31,17 +32,19 @@ class TrekFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        trek1 = TrekFactory.create(provider="my_provider1")
-        trek2 = TrekFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        trek1 = TrekFactory.create(provider=provider1)
+        trek2 = TrekFactory.create(provider=provider2)
 
         filter_set = TrekFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(trek1, filter_set.qs)
@@ -60,17 +63,19 @@ class POIFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        poi1 = POIFactory.create(provider="my_provider1")
-        poi2 = POIFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        poi1 = POIFactory.create(provider=provider1)
+        poi2 = POIFactory.create(provider=provider2)
 
         filter_set = POIFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(poi1, filter_set.qs)
@@ -89,17 +94,19 @@ class ServiceFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        service1 = ServiceFactory.create(provider="my_provider1")
-        service2 = ServiceFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        service1 = ServiceFactory.create(provider=provider1)
+        service2 = ServiceFactory.create(provider=provider2)
 
         filter_set = ServiceFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(service1, filter_set.qs)

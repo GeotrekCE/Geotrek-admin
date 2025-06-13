@@ -174,11 +174,8 @@
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if poi.eid %}
-                    {% object_link poi %}
-                {% else %}
-                    <span class="none">{% trans "None" %}</span>
-                {% endif %}
+            <td>{% if trek.provider %}{{ trek.provider.name|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>

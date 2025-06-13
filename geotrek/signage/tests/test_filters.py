@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.common.models import Provider
 from geotrek.maintenance.tests.factories import SignageInterventionFactory
 
 from ..filters import BladeFilterSet, SignageFilterSet
@@ -70,17 +71,19 @@ class SignageFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        signage1 = SignageFactory.create(provider="my_provider1")
-        signage2 = SignageFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        signage1 = SignageFactory.create(provider=provider1)
+        signage2 = SignageFactory.create(provider=provider2)
 
         filter_set = self.filterset()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(signage1, filter_set.qs)
