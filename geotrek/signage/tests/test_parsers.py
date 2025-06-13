@@ -116,7 +116,7 @@ class OpenStreetMapSignageParserTests(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a path network before importing signage"
+            CommandError, "You need to add a network of paths before importing 'Signage' objects"
         ):
             call_command(
                 "import",
