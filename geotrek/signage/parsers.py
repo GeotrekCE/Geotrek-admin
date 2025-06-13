@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from geotrek.common.parsers import (
@@ -72,10 +71,15 @@ class OpenStreetMapSignageParser(PointTopologyParserMixin, OpenStreetMapParser):
     field_options = {"geom": {"required": True}, "type": {"required": True}}
     topology = Topology.objects.none()
 
-    def filter_geom(self, src, val):
+    # def filter_geom(self, src, val):
+    #     # convert OSM geometry to point
+    #     lng, lat = val
+    #     geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
+    #     self.generate_topology_from_geometry(geom)
+    #     geom.transform(settings.SRID)
+    #     return geom
+
+    def build_geos_geometry(self, src, val):
         # convert OSM geometry to point
         lng, lat = val
-        geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-        self.generate_topology_from_geometry(geom)
-        geom.transform(settings.SRID)
-        return geom
+        return Point(float(lng), float(lat), srid=self.osm_srid)
