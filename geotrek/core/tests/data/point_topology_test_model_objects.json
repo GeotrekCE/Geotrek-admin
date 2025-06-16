@@ -1,6 +1,7 @@
 {
     "features": [
         {
+            "name": "test1",
             "geometry": {
                 "type": "Point",
                 "coordinates": [
@@ -10,6 +11,7 @@
             }
         },
         {
+            "name": "test2",
             "geometry":{
                 "type": "Point",
                 "coordinates": [
