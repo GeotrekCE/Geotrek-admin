@@ -7,6 +7,7 @@ CHANGELOG
 
 **Improvements**
 
+- move primary key of City model on a new column ID
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
