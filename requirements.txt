@@ -72,14 +72,11 @@ click-repl==0.3.0
 cligj==0.7.2
     # via fiona
 coreapi==2.3.3
-    # via
-    #   geotrek (setup.py)
-    #   drf-yasg
+    # via geotrek (setup.py)
 coreschema==0.0.4
     # via
     #   geotrek (setup.py)
     #   coreapi
-    #   drf-yasg
 crispy-bootstrap4==2025.6
     # via mapentity
 cssselect2==0.8.0
@@ -317,7 +314,9 @@ pyvips==3.0.0
 pyxdg==0.28
     # via pdfimpose
 pyyaml==6.0.2
-    # via drf-spectacular
+    # via
+    #   drf-spectacular
+    #   drf-yasg
 rcssmin==1.1.2
     # via django-compressor
 redis==6.2.0
@@ -342,10 +341,6 @@ rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.14
-    # via drf-yasg
-ruamel-yaml-clib==0.2.12
-    # via ruamel-yaml
 sentry-sdk==2.30.0
     # via geotrek (setup.py)
 setuptools==80.9.0
