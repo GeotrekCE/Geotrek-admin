@@ -9,7 +9,8 @@ from geotrek.authent.tests.factories import (
     UserFactory,
     UserProfileFactory,
 )
-from geotrek.common.models import Theme
+from geotrek.common.models import Theme, Provider
+from geotrek.common.mixins.models import ExternalSourceMixin
 from geotrek.common.tests.factories import (
     HDViewPointFactory,
     LabelFactory,
@@ -94,3 +95,51 @@ class HDViewPointTestCase(TestCase):
     def test_properties(self):
         self.assertEqual(str(self.vp), "Panorama")
         self.assertIn("admin/", self.vp.get_list_url())
+
+
+class ProviderTest(TestCase):
+    def test_str(self):
+        provider = Provider.objects.create(name="foo")
+        self.assertEqual(str(provider), "foo")
+
+
+class ExternalSourceMixinTest(TestCase):
+    class Source(ExternalSourceMixin):
+        pass
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.provider = Provider.objects.create(name="foo")
+
+    def test_create(self):
+        source = self.Source.objects.create(provider=self.provider, eid="67854224689")
+        self.assertEqual(source.provider.name, "foo")
+        self.assertEqual(source.eid, "67854224689")
+
+    def test_get_eid_with_template_link(self):
+        provider_with_template = Provider.objects.create(
+            name="link",
+            link_template="<a href='http://test/object/{{object.eid|safe}}'>{{object.eid|safe}}</a>"
+        )
+        source = self.Source.objects.create(eid="12345", provider=provider_with_template)
+        self.assertEqual(source.get_eid, "<a href='http://test/object/12345'>12345</a>")
+
+    def test_get_eid_without_template_link(self):
+        source = self.Source.objects.create(eid="12345", provider=self.provider)
+        self.assertEqual(source.get_eid, "12345")
+
+    def test_get_eid_without_eid(self):
+        instance = self.Source.objects.create(provider=self.provider)
+        self.assertEqual(instance.get_eid, " <span class='none'>None</span>")
+
+    def test_get_eid_without_provider(self):
+        instance = self.Source.objects.create(provider=self.provider)
+        self.assertEqual(instance.get_eid, " <span class='none'>None</span>")
+
+
+
+
+
+
+
+
