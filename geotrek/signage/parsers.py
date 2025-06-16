@@ -1,5 +1,6 @@
 import json
-from django.contrib.gis.geos import Point, GEOSGeometry
+
+from django.contrib.gis.geos import GEOSGeometry, Point
 
 from geotrek.common.parsers import (
     GeotrekParser,
