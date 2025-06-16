@@ -21,9 +21,11 @@ import requests
 import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
-from django.core.exceptions import ImproperlyConfigured
+from django.contrib.gis.geos.collections import MultiPolygon
+from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
@@ -69,6 +71,10 @@ class DownloadImportError(ImportError):
     pass
 
 
+class BypassRow(Exception):
+    pass
+
+
 class Parser:
     """
     provider: Allows to differentiate multiple Parser for the same model
@@ -108,6 +114,8 @@ class Parser:
     default_fields_values = {}
     default_language = None
     headers = {"User-Agent": "Geotrek-Admin"}
+    intersection_geom = None
+    _ref_geom = None
 
     def __init__(self, progress_cb=None, user=None, encoding="utf8"):
         self.warnings = {}
@@ -258,6 +266,12 @@ class Parser:
             val = getattr(self, f"filter_{dst}")(src, val)
         else:
             val = self.apply_filter(dst, src, val)
+
+        if dst == "geom":
+            self.intersect_geom(
+                val
+            )  # an exception is raised if the object isn't in the reference geometry
+
         if hasattr(self.obj, dst):
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 val = set(val)
@@ -461,8 +475,12 @@ class Parser:
             objects = _objects
             operation = "updated"
         for self.obj in objects:
-            self.parse_obj(row, operation)
-            self.to_delete.discard(self.obj.pk)
+            try:
+                self.parse_obj(row, operation)
+                self.to_delete.discard(self.obj.pk)
+            except BypassRow as warnings:
+                self.add_warning(str(warnings))
+                return
         self.nb_success += 1  # FIXME
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb, self.line, self.eid_val)
@@ -643,6 +661,8 @@ class Parser:
                 self.model.objects.filter(**kwargs).values_list("pk", flat=True)
             )
 
+        self.start_intersect_geom()
+
     def end(self):
         if self.delete:
             self.model.objects.filter(pk__in=self.to_delete).delete()
@@ -702,6 +722,77 @@ class Parser:
                 url=response.url, status_code=response.status_code
             )
         )
+
+    def start_intersect_geom(self):
+        if self.intersection_geom:
+            required_keys = {"model", "app_label", "geom_field", "object_filter"}
+            missing_keys = required_keys - self.intersection_geom.keys()
+
+            if missing_keys:
+                msg = f"intersection_geom is missing required keys: {', '.join(missing_keys)}"
+                raise ImproperlyConfigured(msg)
+
+            model = self.intersection_geom["model"]
+            app = self.intersection_geom["app_label"]
+            geom_field = self.intersection_geom["geom_field"]
+            object_filter = self.intersection_geom["object_filter"]
+
+            try:
+                contenttype_model = ContentType.objects.get(app_label=app, model=model)
+                ref_model = contenttype_model.model_class()
+                ref_objects = ref_model.objects.filter(**object_filter)
+            except ContentType.DoesNotExist:
+                msg = f"{app}.{model} is not defined in contenttype"
+                raise ImproperlyConfigured(msg)
+            except FieldError:
+                msg = f"{app}.{model} does not have field(s): {list(object_filter.keys())}"
+                raise ImproperlyConfigured(msg)
+
+            if not ref_objects.exists():
+                msg = f"Reference geometry does not exist: {self.intersection_geom}"
+                raise ImproperlyConfigured(msg)
+
+            if ref_objects.count() > 1:
+                msg = f"{self.intersection_geom} references multiple geometries. {ref_objects.first()} has been used"
+                self.add_warning(msg)
+
+            ref_geom = getattr(ref_objects.first(), geom_field, None)
+
+            if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
+                self._ref_geom = ref_geom
+                self._ref_geom.transform(settings.SRID)
+            else:
+                msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
+                raise ImproperlyConfigured(msg)
+
+    def intersect_geom(self, geom):
+        """
+        Get a reference geometry from any model, and check if the geom given as input intersect or not the reference geometry.
+        The reference geometry is defined by 4 attributes store in self.intersection_geom.
+
+        self.intersection_geom example:
+        ```
+        self.intersection_geom = {
+            "model": "District",
+            "app_label": "zoning",
+            "geom_field": "geom",
+            "object_filter": {"name": "Auvergne-Rhône Alpes"},
+        }
+        ```
+        * model: class name of the model
+        * app_label: application where the model is defined
+        * geom_field: field name in the model where the geometry is defined
+        * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
+        """
+        if self._ref_geom and not self._ref_geom.intersects(geom):
+            if self.delete:
+                self.to_delete.add(self.obj.pk)
+            msg = (
+                f"Object geometry does not intersect with reference geometry "
+                f"({self.intersection_geom['app_label']}.{self.intersection_geom['model']}: "
+                f"{self.intersection_geom['object_filter']})"
+            )
+            raise BypassRow(msg)
 
 
 class XmlParser(Parser):
@@ -814,9 +905,17 @@ class AttachmentParserMixin:
     non_fields = {
         "attachments": _("Attachments"),
     }
+    default_license_label = None
 
     def start(self):
         super().start()
+
+        self.license = None
+        if self.default_license_label:
+            self.license = License.objects.get_or_create(
+                label=self.default_license_label
+            )[0]
+
         if (
             settings.PAPERCLIP_ENABLE_LINK is False
             and self.download_attachments is False
@@ -909,6 +1008,7 @@ class AttachmentParserMixin:
             regexp = (
                 f"{upload_name}({random_suffix_regexp()})?(_[a-zA-Z0-9]{{7}})?{ext}"
             )
+
             if re.search(rf"^{regexp}$", existing_name) and not self.has_size_changed(
                 kwargs.get("url"), attachment
             ):
@@ -918,6 +1018,7 @@ class AttachmentParserMixin:
                     kwargs.get("author") != attachment.author
                     or kwargs.get("legend") != attachment.legend
                     or kwargs.get("title") != attachment.title
+                    or kwargs.get("license") != attachment.license
                 ):
                     attachment.author = kwargs.get("author")
                     attachment.legend = textwrap.shorten(
@@ -926,6 +1027,7 @@ class AttachmentParserMixin:
                     attachment.title = textwrap.shorten(
                         kwargs.get("title", ""), width=127
                     )
+                    attachment.license = kwargs.get("license")
                     attachment.save(**{"skip_file_save": True})
                     updated = True
                 break
@@ -1049,6 +1151,8 @@ class AttachmentParserMixin:
         attachment.author = kwargs.get("author")
         attachment.legend = textwrap.shorten(kwargs.get("legend"), width=127)
         attachment.title = textwrap.shorten(kwargs.get("title"), width=127)
+        attachment.license = self.license
+
         return attachment
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
@@ -1068,6 +1172,7 @@ class AttachmentParserMixin:
                 legend=legend,
                 author=author,
                 title=title,
+                license=self.license,
             )
             if found:
                 continue
@@ -1715,7 +1820,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         super().start()
         kwargs = self.get_to_delete_kwargs()
         json_id_key = self.replace_fields.get("eid", "id")
-        params = {"fields": json_id_key, "page_size": 10000}
+        params = {"fields": json_id_key, "page_size": 10000, **self.get_url_params()}
         response = self.request_or_retry(self.next_url, params=params)
         ids = [
             f"{element[json_id_key]}" for element in response.json().get("results", [])
@@ -1779,12 +1884,17 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         geom = GEOSGeometry(geom)
         return geom
 
+    def get_url_params(self):
+        return {
+            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
+            "portals": ",".join(self.portals_filter) if self.portals_filter else "",
+        }
+
     def next_row(self):
         """Returns next row.
         Geotrek API is paginated, run until "next" is empty
         :returns row
         """
-        portals = self.portals_filter
         updated_after = None
 
         available_fields = [field.name for field in self.model._meta.get_fields()]
@@ -1798,13 +1908,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 .latest("date_update")
                 .date_update.strftime("%Y-%m-%d")
             )
-        params = {
-            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
-            "portals": ",".join(portals) if portals else "",
-            "updated_after": updated_after,
-        }
-        self.params_used = params
-        response = self.request_or_retry(self.next_url, params=params)
+        self.params_used = {"updated_after": updated_after, **self.get_url_params()}
+        response = self.request_or_retry(self.next_url, params=self.params_used)
         self.root = response.json()
         self.nb = int(self.root["count"])
 
@@ -1918,6 +2023,42 @@ class ApidaeBaseParser(Parser):
         return name
 
 
+class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
+    base_url_wikimedia = "https://api.wikimedia.org/core/v1/commons/file/"
+    non_fields = {"attachments": ("tags.wikimedia_commons", "tags.image")}
+    default_license_label = "CC-by-sa 4.0"
+
+    def filter_attachments(self, src, val):
+        attachments = []
+        wikimedia, image = val
+
+        if wikimedia and wikimedia.startswith("File:"):
+            # Wikimedia Commons API url
+            filename = wikimedia.split(":")[1]
+            filename.replace(" ", "_")
+
+            url = f"{self.base_url_wikimedia}{filename}"
+
+            # API request
+            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
+            if response.status_code == requests.codes.ok:
+                data = response.json()
+                file = data["original"]["url"]
+                legend = ""
+                author = data["latest"]["user"]["name"]
+                title = data["title"].split(".")[0]  # remove extension
+                attachments.append([file, legend, author, title])
+            else:
+                msg = f"'{url}' is inaccessible (Error {response.status_code})"
+                self.add_warning(msg)
+
+        if image:
+            file = image
+            attachments.append([file, "", "", ""])
+
+        return attachments
+
+
 class OpenStreetMapParser(Parser):
     """Parser to import "anything" from OpenStreetMap"""
 
@@ -1944,7 +2085,6 @@ class OpenStreetMapParser(Parser):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.translation_fields()
 
         if not self.query_settings:
             self.query_settings = self.QuerySettings()
@@ -1952,6 +2092,10 @@ class OpenStreetMapParser(Parser):
         if self.tags is None:
             msg = "Tags must be defined"
             raise ImproperlyConfigured(msg)
+
+    def start(self):
+        super().start()
+        self.translation_fields()
 
     def format_tags(self):
         formatted_tags = []
@@ -2005,24 +2149,26 @@ class OpenStreetMapParser(Parser):
 
     def get_centroid_from_way(self, geometries):
         if geometries[0] != geometries[-1]:
-            line = LineString([[point["lon"], point["lat"]] for point in geometries])
-            line.srid = self.osm_srid
-            line.transform(settings.SRID)
-            point = line.point_on_surface
+            line = LineString(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
+            point = line.interpolate_normalized(0.5)
         else:
-            polygon = Polygon([[point["lon"], point["lat"]] for point in geometries])
-            polygon.srid = self.osm_srid
-            polygon.transform(settings.SRID)
+            polygon = Polygon(
+                [[point["lon"], point["lat"]] for point in geometries],
+                srid=self.osm_srid,
+            )
             point = polygon.centroid
+
         return point
 
     def get_centroid_from_relation(self, bbox):
         polygon = Polygon.from_bbox(
             (bbox["minlon"], bbox["minlat"], bbox["maxlon"], bbox["maxlat"])
         )
-        polygon.srid = self.osm_srid
-        polygon.transform(settings.SRID)
         centroid = polygon.centroid
+        centroid.srid = self.osm_srid
         return centroid
 
     def next_row(self):

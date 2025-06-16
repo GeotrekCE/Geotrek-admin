@@ -137,18 +137,18 @@ class TestPendingEmail(SuricateTests):
         self.assertEqual(sent_mail.to, [WorkflowManager.objects.first().user.email])
 
     @mock.patch("geotrek.feedback.models.logger")
-    def test_email_failing_for_assigned_user(self, mocked):
+    def test_email_failing_for_current_user(self, mocked):
         report = ReportFactory.create(
             email="john.doe@nowhere.com",
             comment="This is a 'comment'",
-            assigned_user=self.user,
+            current_user=self.user,
         )
         # Email fails the first time
         with override_settings(
             EMAIL_BACKEND="geotrek.feedback.tests.test_email.FailingEmailBackend"
         ):
             self.assertRaises(
-                Exception, report.notify_assigned_user("A nice and useful message")
+                Exception, report.notify_current_user("A nice and useful message")
             )
             mocked.error.assert_called_with(
                 "Email could not be sent to report's assigned user."
@@ -157,7 +157,7 @@ class TestPendingEmail(SuricateTests):
             report.refresh_from_db()
             self.assertEqual(1, report.mail_errors)
             pending_mail = PendingEmail.objects.first()
-            self.assertEqual(pending_mail.recipient, report.assigned_user.email)
+            self.assertEqual(pending_mail.recipient, report.current_user.email)
             self.assertEqual(pending_mail.retries, 0)
             self.assertEqual(pending_mail.error_message, "('Fake problem',)")
             self.assertEqual(AttachedMessage.objects.filter(report=report).count(), 0)
@@ -170,7 +170,7 @@ class TestPendingEmail(SuricateTests):
             report.refresh_from_db()
             self.assertEqual(1, report.mail_errors)
             pending_mail.refresh_from_db()
-            self.assertEqual(pending_mail.recipient, report.assigned_user.email)
+            self.assertEqual(pending_mail.recipient, report.current_user.email)
             self.assertEqual(pending_mail.retries, 1)
             self.assertEqual(pending_mail.error_message, "('Fake problem 2',)")
         # Email succeeds at second retry
@@ -178,7 +178,7 @@ class TestPendingEmail(SuricateTests):
         self.assertEqual(PendingEmail.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 2)
         sent_mail = mail.outbox[1]
-        self.assertEqual(sent_mail.to, [report.assigned_user.email])
+        self.assertEqual(sent_mail.to, [report.current_user.email])
         self.assertIn("A nice and useful message", sent_mail.body)
         report.refresh_from_db()
         self.assertEqual(0, report.mail_errors)
@@ -186,6 +186,6 @@ class TestPendingEmail(SuricateTests):
         attached = AttachedMessage.objects.filter(report=report).first()
         self.assertEqual(
             attached.author,
-            settings.DEFAULT_FROM_EMAIL + " to " + report.assigned_user.email,
+            settings.DEFAULT_FROM_EMAIL + " to " + report.current_user.email,
         )
         self.assertIn("You have been assigned a report on Geotrek", attached.content)

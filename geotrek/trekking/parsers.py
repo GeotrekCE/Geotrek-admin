@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
@@ -24,6 +25,7 @@ from geotrek.common.parsers import (
     DownloadImportError,
     GeotrekParser,
     GlobalImportError,
+    OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     Parser,
     RowImportError,
@@ -1315,6 +1317,48 @@ class ApidaePOIParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         return rv
 
 
+class ApidaeServiceParser(ApidaeBaseParser):
+    model = Service
+    eid = "eid"
+    service_type = None
+
+    responseFields = [
+        "id",
+        "localisation.geolocalisation.geoJson",
+    ]
+
+    fields = {
+        "eid": "id",
+        "geom": "localisation.geolocalisation.geoJson",
+    }
+    natural_keys = {
+        "type": "name",
+    }
+    field_options = {
+        "type": {"create": True},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.service_type:
+            self.constant_fields = self.constant_fields.copy()
+            self.constant_fields["type"] = self.service_type
+        else:
+            raise ImproperlyConfigured(
+                _("A service type must be defined in parser configuration.")
+            )
+
+    def filter_geom(self, src, val):
+        try:
+            geom = GEOSGeometry(str(val))
+            geom.transform(settings.SRID)
+        except Exception:
+            raise RowImportError(
+                _("Could not parse geometry from value '{value}'").format(value=val)
+            )
+        return geom
+
+
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
     """Parser for v1.1.0 of schema_randonnee: https://github.com/PnX-SI/schema_randonnee/tree/v1.1.0"""
 
@@ -1629,7 +1673,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
         super().end()
 
 
-class OpenStreetMapPOIParser(OpenStreetMapParser):
+class OpenStreetMapPOIParser(OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser):
     """Parser to import POI from OpenStreetMap"""
 
     type = None
@@ -1669,7 +1713,6 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
         geom = None
         if type == "node":
             geom = Point(float(lng), float(lat), srid=self.osm_srid)  # WGS84
-            geom.transform(settings.SRID)
         elif type == "way":
             geom = self.get_centroid_from_way(area)
         elif type == "relation":
@@ -1680,11 +1723,10 @@ class OpenStreetMapPOIParser(OpenStreetMapParser):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
-            geometry = geom.transform(settings.API_SRID, clone=True)
-            geometry.coord_dim = 2
-            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
             self.topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
+        geom.transform(settings.SRID)
         return geom
 
     def parse_obj(self, row, operation):

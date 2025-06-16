@@ -886,7 +886,7 @@ You can insert circulation and authorization types using this command:
 
          .. code-block:: python
     
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/land/fixtures/circulations.json
 
 Show labels
 ~~~~~~~~~~~~~~~~
@@ -954,7 +954,7 @@ To insert Outdoor minimal data:
 
          .. code-block:: python
     
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/outdoor/fixtures/basic.json
 
 After installing the Outdoor module, you need to add permissions to user groups for outdoor sites and courses.
 
@@ -998,9 +998,8 @@ To insert sensitivity area rules:
 
          .. code-block:: python
     
-                sudo docker compose run --rm web ./manage.py loaddata rules
-                docker compose run --rm web bash
-                cp -r /opt/geotrek-admin/geotrek/sensitivity/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+                docker compose run --rm web ./manage.py loaddata rules
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/sensitivity/fixtures/basic.json
 
 Sensitivity default radius
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

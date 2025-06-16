@@ -1,0 +1,116 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-05-02T14:27:38Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1,
+  "lat": 44.8537680,
+  "lon": 6.2789348,
+  "tags": {
+    "amenity": "shelter",
+    "ele": "2150",
+    "name": "Abri de la Muande Bellone",
+    "ref:refuges.info": "3381",
+    "shelter_type": "weather_shelter"
+  }
+},
+{
+  "type": "way",
+  "id": 2,
+  "bounds": {
+    "minlat": 44.8793940,
+    "minlon": 6.3293488,
+    "maxlat": 44.8794521,
+    "maxlon": 6.3294283
+  },
+  "nodes": [
+    3640495380,
+    3640495379
+  ],
+  "geometry": [
+    { "lat": 44.8794521, "lon": 6.3294283 },
+    { "lat": 44.8793940, "lon": 6.3293488 }
+  ],
+  "tags": {
+    "bridge": "yes",
+    "highway": "path",
+    "layer": "1",
+    "sac_scale": "hiking"
+  }
+},
+    {
+  "type": "way",
+  "id": 3,
+  "bounds": {
+    "minlat": 45.1932667,
+    "minlon": 5.7690820,
+    "maxlat": 45.1933781,
+    "maxlon": 5.7691558
+  },
+  "nodes": [
+    349121135,
+    349121137,
+    349121139,
+    349121141,
+    349121135
+  ],
+  "geometry": [
+    { "lat": 45.1933748, "lon": 5.7690820 },
+    { "lat": 45.1933781, "lon": 5.7691422 },
+    { "lat": 45.1932700, "lon": 5.7691558 },
+    { "lat": 45.1932667, "lon": 5.7690932 },
+    { "lat": 45.1933748, "lon": 5.7690820 }
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "bicycle_parking",
+    "bicycle_parking": "stands",
+    "capacity": "30",
+    "covered": "yes",
+    "fee": "no"
+  }
+},
+    {
+  "type": "relation",
+  "id": 4,
+  "bounds": {
+    "minlat": 44.8793940,
+    "minlon": 6.3293488,
+    "maxlat": 44.8794521,
+    "maxlon": 6.3294283
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 168870260,
+      "role": "outer",
+      "geometry": [
+         { "lat": 45.1741972, "lon": 5.7626250 },
+         { "lat": 45.1744076, "lon": 5.7622498 },
+         { "lat": 45.1743745, "lon": 5.7622505 },
+         { "lat": 45.1743442, "lon": 5.7622518 },
+         { "lat": 45.1743145, "lon": 5.7622565 },
+         { "lat": 45.1742668, "lon": 5.7622703 },
+         { "lat": 45.1742361, "lon": 5.7622853 },
+         { "lat": 45.1742003, "lon": 5.7623077 },
+         { "lat": 45.1741613, "lon": 5.7623434 },
+         { "lat": 45.1740932, "lon": 5.7624211 },
+         { "lat": 45.1741972, "lon": 5.7626250 }
+      ]
+    }
+  ],
+  "tags": {
+    "access": "private",
+    "amenity": "bicycle_parking",
+    "building": "roof",
+    "name": "Garage à Vélos"
+  }
+}
+  ]
+}

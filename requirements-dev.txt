@@ -4,9 +4,9 @@ asgiref==3.8.1
     # via
     #   -c requirements.txt
     #   django
-coverage==7.8.0
+coverage==7.9.1
     # via -r requirements-dev.in
-django==4.2.21
+django==4.2.22
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -19,7 +19,7 @@ factory-boy==3.3.3
     # via -r requirements-dev.in
 faker==19.3.1
     # via factory-boy
-freezegun==1.5.1
+freezegun==1.5.2
     # via -r requirements-dev.in
 lxml==4.9.3
     # via
@@ -30,7 +30,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
-ruff==0.11.10
+ruff==0.11.13
     # via -r requirements-dev.in
 six==1.17.0
     # via
@@ -43,9 +43,9 @@ sqlparse==0.5.3
     #   django-debug-toolbar
 tblib==3.1.0
     # via -r requirements-dev.in
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   -c requirements.txt
     #   asgiref
-uv==0.7.5
+uv==0.7.13
     # via -r requirements-dev.in
