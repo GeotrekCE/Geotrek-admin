@@ -61,6 +61,5 @@ class Migration(migrations.Migration):
         # Update id increment value
         migrations.RunSQL(
             "SELECT setval('zoning_city_id_seq', (SELECT MAX(id) FROM zoning_city));",
-            "SELECT setval('zoning_city_id_seq', 1);",
         ),
     ]
