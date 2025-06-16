@@ -67,7 +67,7 @@ FLATPAGE_TINYMCE_CONFIG = {
             ],
         },
     ],
-    "newline_behavior": "",
+    "newline_behavior": "default",
     "default_font_stack": ["-apple-system", "Helvetica", "Arial", "sans-serif"],
     "theme": "silver",
     "paste_auto_cleanup_on_paste": True,
