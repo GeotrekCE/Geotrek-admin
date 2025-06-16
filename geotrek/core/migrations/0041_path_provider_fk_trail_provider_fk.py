@@ -5,11 +5,11 @@ from django.db import migrations, models
 
 
 def forward_fill_provider(apps, schema_editor):
-    provider_model = apps.get_model('common', 'Provider')
+    provider_model = apps.get_model("common", "Provider")
 
     models = ["Trail", "Path"]
     for model_name in models:
-        model = apps.get_model('core', model_name)
+        model = apps.get_model("core", model_name)
 
         for obj in model.objects.all():
             if obj.provider:
@@ -17,58 +17,58 @@ def forward_fill_provider(apps, schema_editor):
                 obj.provider_fk = provider
                 obj.save()
 
+
 def backward_fill_provider(apps, schema_editor):
     models = ["Trail", "Path"]
     for model_name in models:
-        model = apps.get_model('core', model_name)
+        model = apps.get_model("core", model_name)
 
         for obj in model.objects.all():
             if obj.provider_fk:
                 obj.provider = obj.provider_fk.name
                 obj.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('common', '0040_provider'),
-        ('core', '0040_path_core_path_geom_is_valid_and_more'),
+        ("common", "0040_provider"),
+        ("core", "0040_path_core_path_geom_is_valid_and_more"),
     ]
 
     operations = [
         # add a new fk field for provider
         migrations.AddField(
-            model_name='path',
-            name='provider_fk',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='common.provider', verbose_name='Provider'),
+            model_name="path",
+            name="provider_fk",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="common.provider",
+                verbose_name="Provider",
+            ),
         ),
         migrations.AddField(
-            model_name='trail',
-            name='provider_fk',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='common.provider', verbose_name='Provider'),
+            model_name="trail",
+            name="provider_fk",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="common.provider",
+                verbose_name="Provider",
+            ),
         ),
-
         # Populate provider_fk field with provider values
         migrations.RunPython(forward_fill_provider, backward_fill_provider),
-
         # Delete provider field
-        migrations.RemoveField(
-            model_name='trail',
-            name='provider'
-        ),
-        migrations.RemoveField(
-            model_name='path',
-            name='provider'
-        ),
-
+        migrations.RemoveField(model_name="trail", name="provider"),
+        migrations.RemoveField(model_name="path", name="provider"),
         # Rename provider_fk field
         migrations.RenameField(
-            model_name='path',
-            old_name='provider_fk',
-            new_name='provider'
+            model_name="path", old_name="provider_fk", new_name="provider"
         ),
         migrations.RenameField(
-            model_name='trail',
-            old_name='provider_fk',
-            new_name='provider'
-        )
+            model_name="trail", old_name="provider_fk", new_name="provider"
+        ),
     ]

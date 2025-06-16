@@ -5,11 +5,11 @@ from django.db import migrations, models
 
 
 def forward_fill_provider(apps, schema_editor):
-    provider_model = apps.get_model('common', 'Provider')
+    provider_model = apps.get_model("common", "Provider")
 
     models = ["Site", "Course"]
     for model_name in models:
-        model = apps.get_model('outdoor', model_name)
+        model = apps.get_model("outdoor", model_name)
 
         for obj in model.objects.all():
             if obj.provider:
@@ -17,61 +17,58 @@ def forward_fill_provider(apps, schema_editor):
                 obj.provider_fk = provider
                 obj.save()
 
+
 def backward_fill_provider(apps, schema_editor):
     models = ["Site", "Course"]
     for model_name in models:
-        model = apps.get_model('outdoor', model_name)
+        model = apps.get_model("outdoor", model_name)
 
         for obj in model.objects.all():
             if obj.provider_fk:
                 obj.provider = obj.provider_fk.name
                 obj.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('common', '0040_provider'),
-        ('outdoor', '0045_alter_rating_color'),
+        ("common", "0040_provider"),
+        ("outdoor", "0045_alter_rating_color"),
     ]
 
     operations = [
         # add a new fk field for provider
         migrations.AddField(
-            model_name='site',
-            name='provider_fk',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='common.provider', verbose_name='Provider'),
+            model_name="site",
+            name="provider_fk",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="common.provider",
+                verbose_name="Provider",
+            ),
         ),
         migrations.AddField(
-            model_name='course',
-            name='provider_fk',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT,
-                                    to='common.provider', verbose_name='Provider'),
+            model_name="course",
+            name="provider_fk",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="common.provider",
+                verbose_name="Provider",
+            ),
         ),
-
         # Populate provider_fk field with provider values
         migrations.RunPython(forward_fill_provider, backward_fill_provider),
-
         # Delete provider field
-        migrations.RemoveField(
-            model_name='site',
-            name='provider'
-        ),
-        migrations.RemoveField(
-            model_name='course',
-            name='provider'
-        ),
-
+        migrations.RemoveField(model_name="site", name="provider"),
+        migrations.RemoveField(model_name="course", name="provider"),
         # Rename provider_fk field
         migrations.RenameField(
-            model_name='site',
-            old_name='provider_fk',
-            new_name='provider'
+            model_name="site", old_name="provider_fk", new_name="provider"
         ),
         migrations.RenameField(
-            model_name='course',
-            old_name='provider_fk',
-            new_name='provider'
-        )
+            model_name="course", old_name="provider_fk", new_name="provider"
+        ),
     ]
-
-

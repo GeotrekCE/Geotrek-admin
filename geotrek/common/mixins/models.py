@@ -478,10 +478,14 @@ class GeotrekMapEntityMixin(MapEntityMixin):
 
 class ExternalSourceMixin(models.Model):
     provider = models.ForeignKey(
-        "common.Provider", verbose_name=_("Provider"), blank=True, null=True, on_delete=models.PROTECT
+        "common.Provider",
+        verbose_name=_("Provider"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
     )
     eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True
+        verbose_name=_("External id"), max_length=1024, blank=True, default=""
     )
 
     class Meta:
@@ -497,5 +501,7 @@ class ExternalSourceMixin(models.Model):
             else:
                 return self.eid
         else:
-            tmpl = Template("{% load i18n  %} <span class='none'>{% trans 'None' %}</span>")
+            tmpl = Template(
+                "{% load i18n  %} <span class='none'>{% trans 'None' %}</span>"
+            )
             return mark_safe(tmpl.render(Context({})))

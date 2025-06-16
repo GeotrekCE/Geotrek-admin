@@ -105,7 +105,7 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
-        provider =  Provider.objects.create(name="Test Provider")
+        provider = Provider.objects.create(name="URL_1")
         Site.objects.create(
             name="To delete", provider=provider, geom="GEOMETRYCOLLECTION(POINT(0 0))"
         )

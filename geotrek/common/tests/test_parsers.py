@@ -1464,9 +1464,7 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         provider1 = Provider.objects.get(name="Provider1")
         provider2 = Provider.objects.create(name="Provider2")
         TrekFactory(provider=provider1, name="I should be deleted", eid="1234")
-        t2 = TrekFactory(
-            provider=provider2, name="I should not be deleted", eid="1236"
-        )
+        t2 = TrekFactory(provider=provider2, name="I should not be deleted", eid="1236")
         t3 = TrekFactory(provider=None, name="I should not be deleted", eid="12374")
         call_command(
             "import",

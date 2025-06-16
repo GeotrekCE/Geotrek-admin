@@ -175,6 +175,7 @@ class TrailFilterSet(
         label=_("Provider"),
         queryset=Provider.objects.filter(trail__isnull=False).distinct(),
     )
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail
         fields = [

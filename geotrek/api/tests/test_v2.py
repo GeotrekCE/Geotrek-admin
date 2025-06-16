@@ -6811,7 +6811,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                 "previous": None,
                 "next": None,
                 "results": [self.expected_result],
-            }
+            },
         )
 
     @override_settings(
