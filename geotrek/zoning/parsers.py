@@ -2,8 +2,14 @@ from django.conf import settings
 from django.contrib.gis.geos import MultiPolygon, Polygon, fromstr
 from django.utils.translation import gettext as _
 
-from geotrek.common.parsers import GlobalImportError, OpenStreetMapParser, ShapeParser
-from geotrek.zoning.models import City, District
+from geotrek.common.parsers import (
+    DownloadImportError,
+    GlobalImportError,
+    OpenStreetMapParser,
+    RowImportError,
+    ShapeParser,
+)
+from geotrek.zoning.models import City, District, RestrictedArea
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -40,18 +46,7 @@ class CityParser(ShapeParser):
         )
 
 
-class OpenStreetMapDistrictParser(OpenStreetMapParser):
-    """Parser to import district from OpenStreetMap"""
-
-    model = District
-    fields = {
-        "name": "tags.name",
-        "geom": ("type", "id"),
-    }
-    constant_fields = {
-        "published": True,
-    }
-
+class OpenStreetMapZoningParserMixin(OpenStreetMapParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -69,16 +64,52 @@ class OpenStreetMapDistrictParser(OpenStreetMapParser):
             "format": "json",
             "polygon_threshold": 0.0001,
         }
-        response = self.request_or_retry(self.url_nominatim, params=params)
-        root = response.json()[0]
+        try:
+            response = self.request_or_retry(self.url_nominatim, params=params)
+            root = response.json()[0]
 
-        wkt = root["geotext"]
+            wkt = root["geotext"]
 
-        geom = fromstr(wkt, srid=self.osm_srid)
-        geom.srid = self.osm_srid
-        geom.transform(settings.SRID)
+            geom = fromstr(wkt, srid=self.osm_srid)
+            geom.srid = self.osm_srid
+            geom.transform(settings.SRID)
 
-        if isinstance(geom, Polygon):
-            geom = MultiPolygon(geom)
+            if isinstance(geom, Polygon):
+                geom = MultiPolygon(geom)
 
-        return geom
+            return geom
+        except DownloadImportError as e:
+            raise RowImportError(str(e))
+
+
+class OpenStreetMapDistrictParser(OpenStreetMapZoningParserMixin):
+    """Parser to import district from OpenStreetMap"""
+
+    model = District
+    fields = {
+        "name": "tags.name",
+        "geom": ("type", "id"),
+    }
+    constant_fields = {
+        "published": True,
+    }
+
+
+class OpenStreetMapRestrictedAreaParser(OpenStreetMapZoningParserMixin):
+    """Parser to import restricted areas from OpenStreetMap"""
+
+    area_type = None
+    model = RestrictedArea
+    fields = {
+        "name": "tags.name",
+        "geom": ("type", "id"),
+    }
+    constant_fields = {
+        "published": True,
+    }
+    natural_keys = {"area_type": "name"}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.area_type:
+            self.constant_fields["area_type"] = self.area_type

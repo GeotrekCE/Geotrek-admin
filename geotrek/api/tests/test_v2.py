@@ -253,7 +253,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
     ]
 )
 
-CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
+CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "code", "geometry", "name", "published"])
 
 DISTRICT_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
 
@@ -6484,7 +6484,6 @@ class AltimetryCacheTests(BaseApiTest):
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_cache_is_used_when_getting_trek_DEM(self):
-        # There are 9 queries to get trek DEM
         with self.assertNumQueries(10):
             response = self.client.get(reverse("apiv2:trek-dem", args=(self.trek.pk,)))
         self.assertEqual(response.status_code, 200)

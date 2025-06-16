@@ -532,7 +532,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             return get_translation_or_dict("practical_info", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -600,7 +600,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             city = (
                 zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
             )
-            return city.code if city else None
+            return city.id if city else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
         organizers = serializers.SerializerMethodField()
@@ -991,7 +991,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return json.loads(geojson)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1002,7 +1002,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_departure_city(self, obj):
             geom = self.get_first_point(obj.geom)
             city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
-            return city.code if city else None
+            return city.id if city else None
 
         def _replace_image_paths_with_urls(self, data):
             def replace(html_content):
@@ -1405,11 +1405,11 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(
             read_only=True, source="geom", precision=7
         )
-        id = serializers.ReadOnlyField(source="code")
 
         class Meta:
             model = zoning_models.City
-            fields = ("id", "geometry", "name", "published")
+            fields = ("id", "code", "geometry", "name", "published")
+            read_only_fields = ("id", "code")
 
     class DistrictsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
@@ -1542,7 +1542,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
             return get_translation_or_dict("period", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1671,7 +1671,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
             return get_translation_or_dict("accessibility", self, obj)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.published_cities]
+            return [city.id for city in obj.published_cities]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
