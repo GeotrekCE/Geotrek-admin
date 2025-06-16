@@ -563,12 +563,7 @@ class Parser:
         fk=None,
         **kwargs,
     ):
-        if src=="structure":
-            print(src, val, model, field)
         val = self.get_mapping(src, val, mapping, partial)
-        if src=="structure":
-            print(src, val, model, field)
-
         if val is None:
             return None
         fields = {field: val}
