@@ -72,13 +72,20 @@ class PointTopologyParserMixinTest(TestCase):
             output.getvalue(),
         )
         self.assertIn("Cannot import object: geometry is None", output.getvalue())
-        self.assertIn("Could not parse geometry from value '{'type': 'Point'}'", output.getvalue(),)
+        self.assertIn(
+            "Could not parse geometry from value '{'type': 'Point'}'",
+            output.getvalue(),
+        )
         self.assertEqual(len(PointTopologyTestModel.objects.all()), 0)
 
     def test_object_parsing_succeeds_when_geom_is_a_point_several_objects(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create(geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326))
-        filename = self.get_test_data_file_path("point_topology_test_model_objects.json")
+            path = PathFactory.create(
+                geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
+            )
+        filename = self.get_test_data_file_path(
+            "point_topology_test_model_objects.json"
+        )
         call_command(
             "import",
             "geotrek.core.tests.test_mixins.PointTopologyTestModelParser",
