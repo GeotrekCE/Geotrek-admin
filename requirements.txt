@@ -417,7 +417,7 @@ webencodings==0.5.1
     #   cssselect2
     #   tinycss2
     #   tinyhtml5
-xlrd==2.0.1
+xlrd==2.0.2
     # via geotrek (setup.py)
 xmltodict==0.14.2
     # via tif2geojson
