@@ -33,6 +33,7 @@ from geotrek.common.parsers import (
 )
 from geotrek.common.utils.parsers import (
     GeomValueError,
+    force_geom_to_2d,
     get_geom_from_gpx,
     get_geom_from_kml,
 )
@@ -336,7 +337,10 @@ class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/service"
 
-    # TODO: build_geos_geometry?
+    def build_geos_geometry(self, src, val):
+        geom = GEOSGeometry(json.dumps(val))
+        geom = force_geom_to_2d(geom)
+        return geom
 
 
 class GeotrekPOIParser(BasePOIParser, GeotrekParser):
@@ -361,8 +365,10 @@ class GeotrekPOIParser(BasePOIParser, GeotrekParser):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/poi"
 
-    # TODO: build_geos_geometry?
-    # and check if the right filter_geom is called (same for Services)
+    def build_geos_geometry(self, src, val):
+        geom = GEOSGeometry(json.dumps(val))
+        geom = force_geom_to_2d(geom)
+        return geom
 
 
 class ApidaeTranslatedField:
