@@ -9,8 +9,8 @@ from geotrek.authent.tests.factories import (
     UserFactory,
     UserProfileFactory,
 )
-from geotrek.common.models import Theme, Provider
 from geotrek.common.mixins.models import ExternalSourceMixin
+from geotrek.common.models import Provider, Theme
 from geotrek.common.tests.factories import (
     HDViewPointFactory,
     LabelFactory,
@@ -119,9 +119,11 @@ class ExternalSourceMixinTest(TestCase):
     def test_get_eid_with_template_link(self):
         provider_with_template = Provider.objects.create(
             name="link",
-            link_template="<a href='http://test/object/{{object.eid|safe}}'>{{object.eid|safe}}</a>"
+            link_template="<a href='http://test/object/{{object.eid|safe}}'>{{object.eid|safe}}</a>",
         )
-        source = self.Source.objects.create(eid="12345", provider=provider_with_template)
+        source = self.Source.objects.create(
+            eid="12345", provider=provider_with_template
+        )
         self.assertEqual(source.get_eid, "<a href='http://test/object/12345'>12345</a>")
 
     def test_get_eid_without_template_link(self):
@@ -135,11 +137,3 @@ class ExternalSourceMixinTest(TestCase):
     def test_get_eid_without_provider(self):
         instance = self.Source.objects.create(provider=self.provider)
         self.assertEqual(instance.get_eid, " <span class='none'>None</span>")
-
-
-
-
-
-
-
-
