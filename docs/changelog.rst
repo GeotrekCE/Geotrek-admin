@@ -12,6 +12,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Restricted Area
 - Add Apidae parser for Services
 - Add OpenStreetMap parser for infrastructures
+- Add OpenStreetMap parser for Outdoor Sites
 
 **Bug fixes**
 
