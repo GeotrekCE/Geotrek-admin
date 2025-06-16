@@ -196,7 +196,7 @@ fiona==1.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
-fonttools==4.58.2
+fonttools==4.58.4
     # via weasyprint
 geojson==3.2.0
     # via
