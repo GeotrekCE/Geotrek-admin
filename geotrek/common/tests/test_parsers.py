@@ -1448,16 +1448,19 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 200
 
+        output = StringIO()
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.GeotrekTrekTestProviderParser",
-            verbosity=0,
+            verbosity=2,
+            stdout=output,
         )
         self.assertEqual(Trek.objects.count(), 1)
         t = Trek.objects.first()
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider.name, "Provider1")
+        self.assertIn("Provider 'Provider1' did not exist in Geotrek-Admin and was automatically created", output.getvalue())
         self.assertEqual(t.description_teaser, "Header")
         self.assertEqual(t.description_teaser_fr, "Chapeau")
         self.assertEqual(t.description_teaser_en, "Header")
