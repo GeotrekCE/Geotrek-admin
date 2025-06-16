@@ -1,0 +1,13 @@
+{
+  "organisms": [
+    {
+      "name": "org1"
+    },
+    {
+      "name": "org2"
+    },
+    {
+      "name": "org3"
+    }
+  ]
+}

@@ -36,7 +36,7 @@ from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
-from django.db.utils import DatabaseError, InternalError
+from django.db.utils import InternalError
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
@@ -698,10 +698,14 @@ class Parser:
                     break
                 try:
                     self.parse_row(row)
-                except (DatabaseError, RowImportError, ValueImportError) as e:
-                    self.add_warning(str(e))
+                except (RowImportError, ValueImportError) as custom_error:
+                    self.add_warning(str(custom_error))
                 except Exception as e:
-                    raise e
+                    self.add_warning(
+                        _(
+                            "Could not parse row due to the following exception: {exc_name}: {exc_msg}"
+                        ).format(exc_name=e.__class__.__name__, exc_msg=e)
+                    )
             self.end()
 
     def request_or_retry(self, url, verb="get", **kwargs):
