@@ -114,6 +114,35 @@ Types of parsers
 Default parsers
 ----------------
 
+There are several default parsers, which are more or less generic scripts that help save time when creating mappings. Here is the list of these scripts for each Touristic Data System:
+
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+|                   | Apidae | Tourinsoft | Lei | Esprit Parc | OpenStreetMap | Datagouv | Biodiv'sport |
++===================+========+============+=====+=============+===============+==========+==============+
+| Touristic event   | X      | X          | X   |             |               |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Touristic content | X      | X          | X   |             |               |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Information desk  | X      |            |     |             | X             |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| POI               | X      |            |     |             | X             |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Trek              | X      |            |     |             |               | X        |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Signage           |        |            |     |             | X             |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Infrastructure    |        |            |     |             | X             |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Sensitive areas   |        |            |     |             |               |          | X            |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Sensitive species |        |            |     |             |               |          | X            |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+
+
+.. note::
+
+  Geometries cannot be integrated for treks in a database with dynamic segmentation.
+
 .. _import-cities-ui:
 
 Cities
@@ -301,7 +330,8 @@ Depending on the source, you can configure your custom parser to:
 * or retrieve data from a remote feed via URL.
 
 .. note::
-Not all parsers support dynamic segmentation. For example, the ``TrekParser`` can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
+
+  Not all parsers support dynamic segmentation. For example, the ``TrekParser`` can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
 
 Real-time integration
 ~~~~~~~~~~~~~~~~~~~~~~~
