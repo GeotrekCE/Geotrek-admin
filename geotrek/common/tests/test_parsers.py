@@ -1460,7 +1460,10 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         self.assertEqual(t.eid, "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider.name, "Provider1")
-        self.assertIn("Provider 'Provider1' did not exist in Geotrek-Admin and was automatically created", output.getvalue())
+        self.assertIn(
+            "Provider 'Provider1' did not exist in Geotrek-Admin and was automatically created",
+            output.getvalue(),
+        )
         self.assertEqual(t.description_teaser, "Header")
         self.assertEqual(t.description_teaser_fr, "Chapeau")
         self.assertEqual(t.description_teaser_en, "Header")
