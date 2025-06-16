@@ -133,7 +133,6 @@ class Parser:
         self.progress_cb = progress_cb
         self.user = user
         self.structure = (user and user.profile.structure) or default_structure()
-        print(self.structure)
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
 
@@ -564,7 +563,12 @@ class Parser:
         fk=None,
         **kwargs,
     ):
+        if src=="structure":
+            print(src, val, model, field)
         val = self.get_mapping(src, val, mapping, partial)
+        if src=="structure":
+            print(src, val, model, field)
+
         if val is None:
             return None
         fields = {field: val}
