@@ -276,7 +276,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: "geotrek:latest"
 
@@ -447,7 +447,7 @@ jobs:
           name: noble
 
       - name: Download docker image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: 'geotrek:latest'
 
