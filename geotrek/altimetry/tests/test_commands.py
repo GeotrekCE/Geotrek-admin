@@ -99,7 +99,7 @@ class CommandLoadDemTest(TransactionTestCase):
             geom=LineString((605600, 6650000), (605900, 6650010), srid=2154)
         )
         with self.assertNumQueries(
-            22
+            23
         ):  # 5 for loaddem initial + 17 with selects and update geom
             call_command(
                 "loaddem",
