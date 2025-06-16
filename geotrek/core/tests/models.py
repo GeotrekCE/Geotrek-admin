@@ -4,6 +4,7 @@ from geotrek.core.models import Topology
 
 
 class PointTopologyTestModel(Topology):
+    name = models.CharField()
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
     )
