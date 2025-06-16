@@ -522,6 +522,7 @@ jobs:
           args: '*.deb'
 
       - name: Prepare install-docker.zip
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           cd docker/install
           mkdir -p geotrek/var
@@ -529,6 +530,7 @@ jobs:
           zip -r ../install-docker.zip geotrek/
 
       - name: Attach zip archive as release binary
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

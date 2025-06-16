@@ -6,7 +6,7 @@ asgiref==3.8.1
     #   django
 coverage==7.9.1
     # via -r requirements-dev.in
-django==4.2.22
+django==4.2.23
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
@@ -43,7 +43,7 @@ sqlparse==0.5.3
     #   django-debug-toolbar
 tblib==3.1.0
     # via -r requirements-dev.in
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   -c requirements.txt
     #   asgiref

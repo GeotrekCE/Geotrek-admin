@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2025-06-10 11:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,6 +115,9 @@ msgid "Infrastructures"
 msgstr ""
 
 msgid "Published Infrastructures"
+msgstr ""
+
+msgid "You need to add a network of paths before importing Infrastructures"
 msgstr ""
 
 msgid "None"

@@ -7,11 +7,14 @@ CHANGELOG
 
 **Improvements**
 
+- move primary key of City model on a new column ID
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
 - Add Apidae parser for Services
 - Add OpenStreetMap parser for infrastructures
+- Add OpenStreetMap parser for touristic contents
+- Add OpenStreetMap parser for Outdoor Sites
 
 **Bug fixes**
 

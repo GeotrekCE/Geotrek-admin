@@ -91,7 +91,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==4.2.22
+django==4.2.23
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -139,7 +139,7 @@ django-embed-video==1.4.10
     # via
     #   mapentity
     #   paperclip
-django-filter==24.3
+django-filter==25.1
     # via
     #   djangorestframework-gis
     #   mapentity
@@ -163,7 +163,7 @@ django-weasyprint==2.4.0
     # via
     #   geotrek (setup.py)
     #   mapentity
-djangorestframework==3.15.2
+djangorestframework==3.16.0
     # via
     #   django-large-image
     #   djangorestframework-datatables
@@ -231,11 +231,11 @@ kombu==5.5.4
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.31.1
+large-image==1.32.9
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.31.1
+large-image-source-vips==1.32.9
     # via geotrek (setup.py)
 lxml==4.9.3
     # via
@@ -313,7 +313,7 @@ pytz==2025.2
     # via
     #   datetime
     #   drf-yasg
-pyvips==2.2.3
+pyvips==3.0.0
     # via large-image-source-vips
 pyxdg==0.28
     # via pdfimpose
@@ -381,7 +381,7 @@ tinyhtml5==2.0.0
     # via weasyprint
 transaction==5.0
     # via zodb
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   asgiref
     #   beautifulsoup4
