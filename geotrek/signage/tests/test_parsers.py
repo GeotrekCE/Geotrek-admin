@@ -37,6 +37,8 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch("requests.get")
