@@ -48,7 +48,7 @@ class PointTopologyParserMixin(ABC):
             geom = self.build_geos_geometry(src, val)
         except Exception:
             raise RowImportError(
-                _("Could not parse geometry from value '{value}'. ").format(value=val)
+                _("Could not parse geometry from value '{value}'").format(value=val)
             )
         self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)

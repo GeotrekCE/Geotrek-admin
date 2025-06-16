@@ -2,7 +2,7 @@ import os
 from io import StringIO
 from unittest import skipIf
 
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
@@ -53,7 +53,7 @@ class PointTopologyParserMixinTest(TestCase):
                 verbosity=0,
             )
 
-    def test_parsing_fails_when_geom_is_not_a_point(self):
+    def test_object_parsing_fails_when_geom_is_incorrect(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             PathFactory.create()
         output = StringIO()
@@ -71,9 +71,27 @@ class PointTopologyParserMixinTest(TestCase):
             "Invalid geometry type: should be 'Point', not 'LineString'",
             output.getvalue(),
         )
+        self.assertIn("Cannot import object: geometry is None", output.getvalue())
+        self.assertIn("Could not parse geometry from value '{'type': 'Point'}'", output.getvalue(),)
+        self.assertEqual(len(PointTopologyTestModel.objects.all()), 0)
 
-    # def test_parsing_succeeds_when_geom_is_a_point_several_objects(self):
-    #     if settings.TREKKING_TOPOLOGY_ENABLED:
-    #         PathFactory.create()
-    #     filename = self.get_test_data_file_path("point_topology_test_model_objects.json")
-    #     # TODO
+    def test_object_parsing_succeeds_when_geom_is_a_point_several_objects(self):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            PathFactory.create(geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326))
+        filename = self.get_test_data_file_path("point_topology_test_model_objects.json")
+        call_command(
+            "import",
+            "geotrek.core.tests.test_mixins.PointTopologyTestModelParser",
+            filename,
+            verbosity=0,
+        )
+        test_objects = PointTopologyTestModel.objects.all()
+        self.assertEqual(len(test_objects), 2)
+        obj_1 = test_objects[1]
+        obj_2 = test_objects[2]
+        self.assertEqual(obj_1)
+        # TODO
+        # - add name to model so we can retrieve them and tests are not flaky
+        # - check geom nds
+        # - check geom + topo ds
+        # - check geom srid, coords, type
