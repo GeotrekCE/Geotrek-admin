@@ -312,7 +312,7 @@ pytz==2025.2
     # via
     #   datetime
     #   drf-yasg
-pyvips==2.2.3
+pyvips==3.0.0
     # via large-image-source-vips
 pyxdg==0.28
     # via pdfimpose
