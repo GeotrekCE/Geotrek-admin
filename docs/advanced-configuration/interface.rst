@@ -1110,17 +1110,10 @@ A complete list of attributes that can be used for displaying or exporting colum
           "advice",
           "accessibility",
           "period",
-          "labels",
-          "themes",
-          "portal",
-          "source",
           "information_desks",
           "web_links",
           "eid",
-          "orientation",
-          "wind",
           "ratings",
-          "managers",
           "type",
           "description",
           "description_teaser",
@@ -1162,6 +1155,21 @@ A complete list of attributes that can be used for displaying or exporting colum
           "creator",
           "authors",
       ]
+
+.. note::
+  
+  - You can find all mandatory, default, and searchable columns for each module directly in the Geotrek-admin source code. For example, these are the properties for `outdoor_site_view <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/views.py#L35>`_ :
+
+    .. code-block:: python
+
+      mandatory_columns = ["id", "name"]
+      default_extra_columns = ["super_practices", "date_update"]
+      searchable_columns = ["id", "name"]
+
+  - ``mandatory_columns`` defines the list of columns required for displaying and exporting the view's list.
+  - ``default_extra_columns`` defines the list of columns included in the default export
+  - ``searchable_columns`` defines the columns on which it will be possible to perform a search in the view's list. For example, for outdoor sites, it is possible to search by ``name`` or ``id``, but not by ``practice``.
+
 
 
 Configure form fields in creation views
@@ -1497,9 +1505,9 @@ Hideable form fields
 
   By default, the *current_user* field is hidden in ``HIDDEN_FORM_FIELDS['report']``. To make it visible, set:
 
-.. code-block:: python
+  .. code-block:: python
 
-  HIDDEN_FORM_FIELDS['report'] = []
+    HIDDEN_FORM_FIELDS['report'] = []
 
 Configure form fields required or needed for review or publication
 -------------------------------------------------------------------

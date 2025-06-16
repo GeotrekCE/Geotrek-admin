@@ -14,7 +14,7 @@ Real-time integration
 
 Geotrek-admin integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
 
-These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.). 
+These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.).
 
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
@@ -70,7 +70,7 @@ Just run:
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import  HebergementParser
 
 Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
@@ -89,7 +89,7 @@ Open the top right menu and clic on ``imports``.
 Import from APIDAE
 ====================
 
-Import touristic content 
+Import touristic content
 ------------------------
 
 To import touristic content from APIDAE (ex-SITRA), edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
@@ -133,11 +133,28 @@ Example of a parser configuration :
 
 ::
 
-    class ImportTreksApidae(TrekParser):
+    class ImportTreksApidae(ApidaeTrekParser):
         label = "Import trek with eid"
         label_fr = "Import itinéraires avec identifiant externe"
         label_en = "Import trek with eid"
         eid = 'eid'
+
+Import services
+---------------
+
+To import services from APIDAE, define a subclass of ``geotrek.trekking.parsers.ApidaeServiceParser`` in your ``var/conf/parsers.py`` configuration file.
+
+In addition to the usual attributes, the service type name (``type``) must be specified. This type will be assigned to all objects imported through the parser.
+
+Example of an APIDAE service parser configuration:
+
+::
+
+    class DrinkingWaterPoint(ApidaeServiceParser):
+        label = "Drinking water points"
+        provider = "Apidae"
+        selection_id = 12345
+        type = "Drinking water point"
 
 .. _import-from-tourinsoft:
 
@@ -170,7 +187,7 @@ The functionality for importing treks and touristic content from Cirkwi was deve
 
 The following parsers have been developed to facilitate data import from Cirkwi into Geotrek-admin:
 
-- **Trek Parser**: Allows the integration of treks from Cirkwi into Geotrek. This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only. 
+- **Trek Parser**: Allows the integration of treks from Cirkwi into Geotrek. This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only.
 
 Example of a parser configuration :
 
@@ -187,7 +204,7 @@ Example of a parser configuration :
         provider = "Cirkwi"
 
 
-- **Touristic content Parser**: Enables the import of touristic content from Cirkwi into Geotrek. 
+- **Touristic content Parser**: Enables the import of touristic content from Cirkwi into Geotrek.
 
 Example of a parser configuration :
 
@@ -250,7 +267,7 @@ You can duplicate the class. Each class must have a different name.
 
 In this case categories and types in Geotrek database have to be the same as in Esprit parc database. Otherwise missing categories and types will be created in Geotrek database.
 
-Imported contents will be automatically published and approved (certified). 
+Imported contents will be automatically published and approved (certified).
 
 If you use an url that filters a unique category, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
 
@@ -429,6 +446,32 @@ Then set up appropriate values:
 
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 
+.. _import-restricted-area:
+
+Import restricted areas
+-----------------------
+
+To import restricted areas from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.zoning.parsers import OpenStreetMapRestrictedAreaParser
+
+    class RegionalNatureParkParser(OpenStreetMapDistrictParser):
+        provider = "OpenStreetMap"
+        tags = [{"protection_title"="parc naturel régional"}]
+        default_fields_values = {"name": "parc naturel régional"}
+        area_type = "Inconnu"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``area_type`` to specify the restricted area type for imported objects
+* See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+the parsed objects will be those that intersect the ``settings.SPATIAL_EXTENT`` bounding box.
+
 .. _import-signage-osm:
 
 Import signage
@@ -452,6 +495,65 @@ Then set up appropriate values:
 * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
 * ``type`` to specify the Geotrek type for imported objects
 * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
+
+.. _import-infrastructures_osm:
+
+Import Infrastructures
+----------------------
+
+To import infrastructures from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.infrastructure.parsers import OpenStreetMapInfrastructureParser
+
+    class TableParser(OpenStreetMapInfrastructureParser):
+        provider = "OpenStreetMap"
+        tags = [
+            {"leisure": "picnic_table"},
+            {"tourism": "picnic_table"}
+        ]
+        default_fields_values = {"name": "picnic table"}
+        type = "Table"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``type`` to specify the Geotrek type for imported objects
+* See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
+
+You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+.. _format_geometries:
+
+Geometry filtering in Geotrek Parsers
+======================================
+
+In some cases, you may want to restrict imported objects to a specific geographic area already defined in geotrek model instance (ex: a City or District).
+This can be done by defined the parser’s ``intersection_geom`` attribute
+
+This attribute is a dictionary with the following keys:
+
+- ``model``: The Django model containing the reference geometry object.
+- ``app_label``: The Django application where the model is defined.
+- ``geom_field``: The name of the geometry field in the model.
+- ``object_filter``: A dictionary to identify the reference object (e.g., using an ID).
+
+The ``object_filter`` must return exactly one object:
+
+- If no object is found, the parser raises a **blocking error**.
+- If multiple objects are returned, only the **first** will be used, which may cause unexpected behavior.
+
+Conditional Deletion with ``delete = True``
+-------------------------------------------
+
+If ``delete`` attribut is set to ``True``, the parser will automatically **delete existing objects** of the current model
+that **do not intersect** the reference geometry.
+
+.. note::
+
+   Deletion only affects objects of the model handled by the current parser. Other models are not impacted.
 
 .. _import-attachments:
 
@@ -565,8 +667,8 @@ In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` will eac
 
 .. important::
 
-    - It is recommended to use ``provider`` from the first import. 
-    - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser. 
+    - It is recommended to use ``provider`` from the first import.
+    - Do not add a ``provider`` field to preexisting parsers that already imported objects, or you will have to manually set the same value for ``provider`` on all objects already created by this parser.
     - If a parser does not have a ``provider`` value, it will not take providers into account, meaning that it could delete objects from preceeding parsers even if these other parsers do have a ``provider`` themselves.
 
 The following example would cause ``NoProviderParser`` to delete objects from ``Provider_2Parser`` and ``Provider_1Parser``.

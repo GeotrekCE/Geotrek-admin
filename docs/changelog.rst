@@ -6,9 +6,22 @@ CHANGELOG
 ----------------------------
 
 **Improvements**
-- Add attachments for OpenStreetMapParser
-- Add default license for attachments
+
 - move primary key of City model on a new column ID
+- Add default license for attachments parsers
+- Add attachments for OpenStreetMapParser
+- Add OpenStreetMap parser for Restricted Area
+- Add Apidae parser for Services
+- Add OpenStreetMap parser for infrastructures
+
+**Bug fixes**
+
+- Fix delete=True in GeotrekParser when filtering by bbox or portal
+
+**Documentation**
+
+- Fix docker command for fixtures, add map settings and columns list details (#4740)
+
 
 2.115.1    (2025-05-21)
 ----------------------------
@@ -21,6 +34,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Signage
 - Add OpenStreetMap parser for Districts
 - Add healthcheck to Dockerfile
+- Add ability to specify model instance to filter parsed objects by intersection
 
 **Bug fixes**
 

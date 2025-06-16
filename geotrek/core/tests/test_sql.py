@@ -1,6 +1,7 @@
 from unittest import skipIf
 
 from django.conf import settings
+from django.contrib.gis.geos import WKBReader
 from django.db import connection
 from django.test import TestCase
 
@@ -79,3 +80,66 @@ class SQLDefaultValuesTest(TestCase):
                                   )""")
         trail = Trail.objects.first()
         self.assertEqual(trail.departure, "")
+
+
+class STLineExtendTest(TestCase):
+    head_rate = 1
+    head_constant = 2
+    tail_rate = 1
+    tail_constant = 2
+    srid = 2154
+
+    def execute_extend(self, line):
+        cursor = connection.cursor()
+        sql = f"""
+                SELECT st_line_extend(ST_GeomFromText('{line}',{self.srid}), {self.head_constant}, {self.tail_constant})
+                """
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        wkb_r = WKBReader()
+        geom = wkb_r.read(result[0][0])
+        return geom
+
+    def test_linestring_2_points(self):
+        line = "LINESTRING(0 0, 10 0)"
+        extend_line = self.execute_extend(line)
+
+        self.assertAlmostEqual(extend_line.coords[0][0], -2, places=5)
+        self.assertAlmostEqual(extend_line.coords[0][1], 0, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][0], 12, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][1], 0, places=5)
+
+    def test_linestring_3_points(self):
+        line = "LINESTRING(0 0, 5 0, 10 0)"
+        extend_line = self.execute_extend(line)
+
+        self.assertAlmostEqual(extend_line.coords[0][0], -2, places=5)
+        self.assertAlmostEqual(extend_line.coords[0][1], 0, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][0], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][1], 0, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][0], 12, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][1], 0, places=5)
+
+    def test_linestring_3_points_not_aligned(self):
+        line = "LINESTRING(0 0, 5 5, 10 0)"
+        extend_line = self.execute_extend(line)
+
+        self.assertAlmostEqual(extend_line.coords[0][0], -1.414213, places=5)
+        self.assertAlmostEqual(extend_line.coords[0][1], -1.414213, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][0], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][1], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][0], 11.414213, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][1], -1.414213, places=5)
+
+    def test_closed_linestring(self):
+        line = "LINESTRING(0 0, 5 0, 5 5, 0 0)"
+        extend_line = self.execute_extend(line)
+
+        self.assertAlmostEqual(extend_line.coords[0][0], -2, places=5)
+        self.assertAlmostEqual(extend_line.coords[0][1], 0, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][0], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[1][1], 0, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][0], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[2][1], 5, places=5)
+        self.assertAlmostEqual(extend_line.coords[3][0], -1.414213, places=5)
+        self.assertAlmostEqual(extend_line.coords[3][1], -1.414213, places=5)

@@ -345,13 +345,13 @@ class ViewsImportTest(TestCase):
             url,
             {
                 "import-web": "Upload",
-                "without-file-parser": "99",
+                "without-file-parser": "9999999",
             },
         )
         self.assertEqual(response_real.status_code, 200)
         self.assertContains(
             response_real,
-            "Select a valid choice. 99 is not one of the available choices.",
+            "Select a valid choice. 9999999 is not one of the available choices.",
         )
         # There is no parser available for user not superuser
 
