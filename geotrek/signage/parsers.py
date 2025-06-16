@@ -1,15 +1,17 @@
-from django.contrib.gis.geos import Point
+import json
+from django.contrib.gis.geos import Point, GEOSGeometry
 
 from geotrek.common.parsers import (
     GeotrekParser,
     OpenStreetMapParser,
 )
+from geotrek.common.utils.parsers import force_geom_to_2d
 from geotrek.core.mixins.parsers import PointTopologyParserMixin
 from geotrek.core.models import Topology
 from geotrek.signage.models import Signage
 
 
-class GeotrekSignageParser(GeotrekParser):
+class GeotrekSignageParser(PointTopologyParserMixin, GeotrekParser):
     """Geotrek parser for Signage"""
 
     fill_empty_translated_fields = True
@@ -39,6 +41,11 @@ class GeotrekSignageParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.next_url = f"{self.url}/api/v2/signage"
+
+    def build_geos_geometry(self, src, val):
+        geom = GEOSGeometry(json.dumps(val))
+        geom = force_geom_to_2d(geom)
+        return geom
 
 
 class OpenStreetMapSignageParser(PointTopologyParserMixin, OpenStreetMapParser):
