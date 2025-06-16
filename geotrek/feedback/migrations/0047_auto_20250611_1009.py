@@ -5,11 +5,11 @@ from django.db import migrations, models
 
 
 def forward_fill_provider(apps, schema_editor):
-    provider_model = apps.get_model('common', 'Provider')
+    provider_model = apps.get_model("common", "Provider")
 
     models = ["Report"]
     for model_name in models:
-        model = apps.get_model('feedback', model_name)
+        model = apps.get_model("feedback", model_name)
 
         for obj in model.objects.all():
             if obj.provider:
@@ -17,44 +17,43 @@ def forward_fill_provider(apps, schema_editor):
                 obj.provider_fk = provider
                 obj.save()
 
+
 def backward_fill_provider(apps, schema_editor):
     models = ["Report"]
     for model_name in models:
-        model = apps.get_model('feedback', model_name)
+        model = apps.get_model("feedback", model_name)
 
         for obj in model.objects.all():
             if obj.provider_fk:
                 obj.provider = obj.provider_fk.name
                 obj.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('common', '0040_provider'),
-        ('feedback', '0046_auto_20250505_1016'),
+        ("common", "0040_provider"),
+        ("feedback", "0046_auto_20250505_1016"),
     ]
 
     operations = [
         # add a new fk field for provider
         migrations.AddField(
-            model_name='report',
-            name='provider_fk',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='common.provider', verbose_name='Provider'),
+            model_name="report",
+            name="provider_fk",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="common.provider",
+                verbose_name="Provider",
+            ),
         ),
-
         # Populate provider_fk field with provider values
         migrations.RunPython(forward_fill_provider, backward_fill_provider),
-
         # Delete provider field
-        migrations.RemoveField(
-            model_name='report',
-            name='provider'
-        ),
-
+        migrations.RemoveField(model_name="report", name="provider"),
         # Rename provider_fk field
         migrations.RenameField(
-            model_name='report',
-            old_name='provider_fk',
-            new_name='provider'
-        )
+            model_name="report", old_name="provider_fk", new_name="provider"
+        ),
     ]

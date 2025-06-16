@@ -133,6 +133,7 @@ class Parser:
         self.progress_cb = progress_cb
         self.user = user
         self.structure = (user and user.profile.structure) or default_structure()
+        print(self.structure)
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
 
@@ -389,9 +390,13 @@ class Parser:
                 and self.provider is not None
                 and not self.obj.provider
             ):
-                self.obj.provider, created = Provider.objects.get_or_create(name=self.provider)
+                self.obj.provider, created = Provider.objects.get_or_create(
+                    name=self.provider
+                )
                 if created:
-                    self.add_warning(f"Provider '{self.provider}' did not exist in Geotrek-Admin and was automatically created")
+                    self.add_warning(
+                        f"Provider '{self.provider}' did not exist in Geotrek-Admin and was automatically created"
+                    )
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)

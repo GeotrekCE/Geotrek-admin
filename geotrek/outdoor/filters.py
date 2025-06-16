@@ -84,6 +84,7 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         label=_("Provider"),
         queryset=Provider.objects.filter(course__isnull=False).distinct(),
     )
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = Course
         fields = [

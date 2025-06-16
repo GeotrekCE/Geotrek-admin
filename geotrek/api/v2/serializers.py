@@ -205,7 +205,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(
             read_only=True, source="geom3d_transformed", precision=7
         )
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         class Meta:
             model = trekking_models.Service
@@ -549,8 +549,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         departure_city_code = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
-
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicContent
@@ -617,7 +616,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         type = serializers.SerializerMethodField()
         cancellation_reason = serializers.SerializerMethodField()
         place = serializers.SlugRelatedField(read_only=True, slug_field="name")
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
         meeting_time = serializers.ReadOnlyField(
             source="start_time",
             help_text=_(
@@ -739,7 +738,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         name = serializers.SerializerMethodField()
         photo_url = serializers.SerializerMethodField()
         type = InformationDeskTypeSerializer()
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_accessibility(self, obj):
             return get_translation_or_dict("accessibility", self, obj)
@@ -786,7 +785,7 @@ if "geotrek.core" in settings.INSTALLED_APPS:
         )
         length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
@@ -873,7 +872,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_gear(self, obj):
             return get_translation_or_dict("gear", self, obj)
@@ -1169,7 +1168,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         )
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
         view_points = HDViewPointSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_type_label(self, obj):
             return get_translation_or_dict("label", self, obj.type)
@@ -1281,7 +1280,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
         openair_url = serializers.SerializerMethodField(read_only=True)
         rules = RuleSerializer(many=True)
         attachments = AttachmentSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj.species)
@@ -1538,7 +1537,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1682,7 +1681,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField()
         city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -2018,7 +2017,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
         )
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_accessibility(self, obj):
             return get_translation_or_dict("accessibility", self, obj)
@@ -2097,7 +2096,7 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
         )
         attachments = AttachmentSerializer(many=True)
         blades = BladeSerializer(source="blades_set", many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field='name')
+        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
         condition = serializers.SerializerMethodField(
             help_text=_(
                 "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
@@ -2177,7 +2176,9 @@ class ReportAPISerializer(rest_serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data["provider"], _ = common_models.Provider.objects.get_or_create(name="API")
+        validated_data["provider"], _ = common_models.Provider.objects.get_or_create(
+            name="API"
+        )
         return super().create(validated_data)
 
     def validate_geom(self, value):

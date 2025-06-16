@@ -166,7 +166,12 @@ def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
 
 
 class Trek(
-    Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, ExternalSourceMixin,
+    Topology,
+    StructureRelated,
+    PicturesMixin,
+    PublishableMixin,
+    GeotrekMapEntityMixin,
+    ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
@@ -908,7 +913,12 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 
 
 class POI(
-    StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology, ExternalSourceMixin,
+    StructureRelated,
+    PicturesMixin,
+    PublishableMixin,
+    GeotrekMapEntityMixin,
+    Topology,
+    ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE

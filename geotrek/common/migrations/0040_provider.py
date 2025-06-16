@@ -4,26 +4,58 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0039_alter_recordsource_website_and_more'),
+        ("common", "0039_alter_recordsource_website_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Provider',
+            name="Provider",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
-                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
-                ('name', models.CharField(max_length=1024, unique=True, verbose_name='Name')),
-                ('link_template', models.TextField(blank=True, help_text='HTML template for external source links', verbose_name='Link template')),
-                ('copyright', models.CharField(max_length=1024, blank=True, verbose_name='Copyright')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Insertion date"
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True, db_index=True, verbose_name="Update date"
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=1024, unique=True, verbose_name="Name"),
+                ),
+                (
+                    "link_template",
+                    models.TextField(
+                        blank=True,
+                        help_text="HTML template for external source links",
+                        verbose_name="Link template",
+                    ),
+                ),
+                (
+                    "copyright",
+                    models.CharField(
+                        max_length=1024, blank=True, verbose_name="Copyright"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Provider',
-                'verbose_name_plural': 'Providers',
-                'ordering': ('name',),
+                "verbose_name": "Provider",
+                "verbose_name_plural": "Providers",
+                "ordering": ("name",),
             },
         ),
     ]

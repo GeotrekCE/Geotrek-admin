@@ -117,7 +117,9 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
         return self.label
 
 
-class BaseInfrastructure(BasePublishableMixin, ExternalSourceMixin, Topology, StructureRelated):
+class BaseInfrastructure(
+    BasePublishableMixin, ExternalSourceMixin, Topology, StructureRelated
+):
     """A generic infrastructure in the park"""
 
     topo_object = models.OneToOneField(
