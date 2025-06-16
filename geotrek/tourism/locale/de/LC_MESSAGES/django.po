@@ -403,7 +403,7 @@ msgid "%(postcode)s, %(city)s"
 msgstr ""
 
 #, python-format
-msgid "%(street)s<br>%(city)s"
+msgid "%(street)s\n%(city)s"
 msgstr ""
 
 msgid "Add a new touristic content"
