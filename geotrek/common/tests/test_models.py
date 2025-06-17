@@ -131,9 +131,9 @@ class ExternalSourceMixinTest(TestCase):
         self.assertEqual(source.get_eid, "12345")
 
     def test_get_eid_without_eid(self):
-        instance = self.Source.objects.create(provider=self.provider)
-        self.assertEqual(instance.get_eid, " <span class='none'>None</span>")
+        source = self.Source.objects.create(provider=self.provider)
+        self.assertEqual(source.get_eid, " <span class='none'>None</span>")
 
     def test_get_eid_without_provider(self):
-        instance = self.Source.objects.create(provider=self.provider)
-        self.assertEqual(instance.get_eid, " <span class='none'>None</span>")
+        source = self.Source.objects.create(provider=self.provider)
+        self.assertEqual(source.get_eid, " <span class='none'>None</span>")
