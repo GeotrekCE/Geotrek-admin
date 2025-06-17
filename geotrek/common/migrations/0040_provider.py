@@ -41,6 +41,7 @@ class Migration(migrations.Migration):
                     "link_template",
                     models.TextField(
                         blank=True,
+                        null=True,
                         help_text="HTML template for external source links",
                         verbose_name="Link template",
                     ),
