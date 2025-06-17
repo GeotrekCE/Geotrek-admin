@@ -75,24 +75,19 @@ class DurationParserMixin:
             return None
 
 
-class BasePOIParser(AttachmentParserMixin, PointTopologyParserMixin, Parser):
-    model = POI
-
-    natural_keys = {
-        "structure": "name",
-        "type": "label",
-    }
-
-
-class POIParser(BasePOIParser, ShapeParser):
+class POIParser(AttachmentParserMixin, PointTopologyParserMixin, ShapeParser):
     label = "Import POI"
     label_fr = "Import POI"
     label_en = "Import POI"
+    model = POI
     simplify_tolerance = 2
     eid = "name"
     constant_fields = {
         "published": True,
         "deleted": False,
+    }
+    natural_keys = {
+        "type": "label",
     }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
 
@@ -307,19 +302,12 @@ class GeotrekTrekParser(GeotrekParser):
         super().end()
 
 
-class BaseServiceParser(PointTopologyParserMixin, Parser):
-    model = Service
-    natural_keys = {
-        "structure": "name",
-        "type": "name",
-    }
-
-
-class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
+class GeotrekServiceParser(PointTopologyParserMixin, GeotrekParser):
     """Geotrek parser for Service"""
 
     fill_empty_translated_fields = True
     url = None
+    model = Service
     constant_fields = {
         "deleted": False,
     }
@@ -332,6 +320,7 @@ class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
         "structure": "name",
         "type": "name",
     }
+    natural_keys = {"structure": "name", "type": "name"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -343,11 +332,12 @@ class GeotrekServiceParser(BaseServiceParser, GeotrekParser):
         return geom
 
 
-class GeotrekPOIParser(BasePOIParser, GeotrekParser):
+class GeotrekPOIParser(PointTopologyParserMixin, GeotrekParser):
     """Geotrek parser for GeotrekPOI"""
 
     fill_empty_translated_fields = True
     url = None
+    model = POI
     constant_fields = {
         "deleted": False,
     }
@@ -357,6 +347,10 @@ class GeotrekPOIParser(BasePOIParser, GeotrekParser):
         "type": "poi_type",
     }
     categories_keys_api_v2 = {
+        "structure": "name",
+        "type": "label",
+    }
+    natural_keys = {
         "structure": "name",
         "type": "label",
     }
@@ -1238,7 +1232,10 @@ class ApidaeTrekAccessibilityParser(ApidaeReferenceElementParser):
     name_field = "name"
 
 
-class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
+class ApidaePOIParser(
+    AttachmentParserMixin, PointTopologyParserMixin, ApidaeBaseTrekkingParser
+):
+    model = POI
     eid = "eid"
     separator = None
 
@@ -1266,6 +1263,9 @@ class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
         "geom": "localisation.geolocalisation.geoJson",
         "eid": "id",
         "type": "type",
+    }
+    natural_keys = {
+        "type": "label",
     }
     field_options = {
         "type": {"create": True},
@@ -1296,7 +1296,8 @@ class ApidaePOIParser(BasePOIParser, ApidaeBaseTrekkingParser):
         return rv
 
 
-class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
+class ApidaeServiceParser(PointTopologyParserMixin, ApidaeBaseParser):
+    model = Service
     eid = "eid"
     service_type = None
 
@@ -1308,6 +1309,9 @@ class ApidaeServiceParser(BaseServiceParser, ApidaeBaseParser):
     fields = {
         "eid": "id",
         "geom": "localisation.geolocalisation.geoJson",
+    }
+    natural_keys = {
+        "type": "name",
     }
     field_options = {
         "type": {"create": True},
@@ -1642,11 +1646,12 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
 
 
 class OpenStreetMapPOIParser(
-    OpenStreetMapAttachmentsParserMixin, BasePOIParser, OpenStreetMapParser
+    OpenStreetMapAttachmentsParserMixin, PointTopologyParserMixin, OpenStreetMapParser
 ):
     """Parser to import POI from OpenStreetMap"""
 
     type = None
+    model = POI
     eid = "eid"
 
     fields = {
@@ -1657,6 +1662,9 @@ class OpenStreetMapPOIParser(
     }
     constant_fields = {
         "published": True,
+    }
+    natural_keys = {
+        "type": "label",
     }
     field_options = {"geom": {"required": True}, "type": {"required": True}}
 
