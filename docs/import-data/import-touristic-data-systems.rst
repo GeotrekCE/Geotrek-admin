@@ -458,7 +458,7 @@ To import cities from OpenStreetMap, edit the ``var/conf/parsers.py`` file with 
 
     from geotrek.zoning.parsers import OpenStreetMapCityParser
 
-    class CityParser(OpenStreetMapDistrictParser):
+    class CityParser(OpenStreetMapCitiesParser):
         provider = "OpenStreetMap"
         tags = [
             [{"boundary": "administrative"}, {"admin_level": "8"}],

@@ -116,7 +116,7 @@ class OpenStreetMapRestrictedAreaParser(OpenStreetMapZoningParserMixin):
 
 
 class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
-    """Parser to import restricted areas from OpenStreetMap"""
+    """Parser to import cities from OpenStreetMap"""
 
     model = City
     fields = {
