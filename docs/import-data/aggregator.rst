@@ -17,8 +17,7 @@ A usecase for this is to aggregate data from several Geotrek-admin instances.
 
 .. important::
 
- Importing data from a remote Geotrek-admin instance does not work with dynamic segmentation, your instance where you import data
-    must have :ref:`dynamic segmentation disabled <configuration-dynamic-segmentation>`.
+ Importing data from a remote Geotrek-admin instance does not work with dynamic segmentation, your instance where you import data must have :ref:`dynamic segmentation disabled <configuration-dynamic-segmentation>`.
 
 .. seealso::
 
