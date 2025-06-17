@@ -5,7 +5,6 @@ from django.utils.translation import gettext as _
 from geotrek.common.parsers import (
     DownloadImportError,
     GlobalImportError,
-    ImproperlyConfigured,
     OpenStreetMapParser,
     RowImportError,
     ShapeParser,
@@ -133,6 +132,3 @@ class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
         super().__init__(*args, **kwargs)
         if self.code_tag:
             self.fields["code"] = f"tags.{self.code_tag}"
-        else:
-            msg = _("No code tag provided")
-            raise ImproperlyConfigured(msg)

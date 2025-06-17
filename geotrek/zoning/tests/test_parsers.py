@@ -7,7 +7,6 @@ from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
 from django.core.management import CommandError, call_command
 from django.test import TestCase
 
-from geotrek.common.parsers import ImproperlyConfigured
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 from geotrek.zoning.parsers import (
     CityParser,
@@ -290,14 +289,9 @@ class TestCityOpenStreetMapParser(OpenStreetMapCityParser):
     code_tag = "ref:INSEE"
 
 
-class TestCityOpenStreetMapParserWithoutCodeTag(OpenStreetMapCityParser):
-    provider = "OpenStreetMap"
-    tags = [[{"boundary": "administrative"}, {"admin_level": "8"}]]
-
-
 class OpenStreetMapCityParserTests(TestCase):
     @mock.patch("geotrek.common.parsers.requests.get")
-    def import_cities(self, parser, nominatim_file, status_code, mocked):
+    def import_cities(self, nominatim_file, status_code, mocked):
         def mocked_json_overpass():
             filename = os.path.join(os.path.dirname(__file__), "data", "city_OSM.json")
             with open(filename) as f:
@@ -324,7 +318,7 @@ class OpenStreetMapCityParserTests(TestCase):
         output = StringIO()
         call_command(
             "import",
-            f"geotrek.zoning.tests.test_parsers.{parser}",
+            "geotrek.zoning.tests.test_parsers.TestCityOpenStreetMapParser",
             verbosity=2,
             stdout=output,
         )
@@ -336,7 +330,7 @@ class OpenStreetMapCityParserTests(TestCase):
         nominatim_file = os.path.join(
             os.path.dirname(__file__), "data", "OSM_multipolygon.json"
         )
-        self.import_cities("TestCityOpenStreetMapParser", nominatim_file, 200)
+        self.import_cities(nominatim_file, 200)
 
         self.assertEqual(self.cities.count(), 1)
         self.assertEqual(type(self.cities[0].geom), MultiPolygon)
@@ -361,7 +355,7 @@ class OpenStreetMapCityParserTests(TestCase):
         nominatim_file = os.path.join(
             os.path.dirname(__file__), "data", "OSM_polygon.json"
         )
-        self.import_cities("TestCityOpenStreetMapParser", nominatim_file, 200)
+        self.import_cities(nominatim_file, 200)
 
         self.assertEqual(self.cities.count(), 1)
         self.assertEqual(type(self.cities[0].geom), MultiPolygon)
@@ -379,7 +373,7 @@ class OpenStreetMapCityParserTests(TestCase):
         nominatim_file = os.path.join(
             os.path.dirname(__file__), "data", "OSM_polygon.json"
         )
-        self.import_cities("TestCityOpenStreetMapParser", nominatim_file, 404)
+        self.import_cities(nominatim_file, 404)
 
         self.assertEqual(self.cities.count(), 0)
 
@@ -392,7 +386,7 @@ class OpenStreetMapCityParserTests(TestCase):
         nominatim_file = os.path.join(
             os.path.dirname(__file__), "data", "OSM_polygon.json"
         )
-        self.import_cities("TestCityOpenStreetMapParser", nominatim_file, 200)
+        self.import_cities(nominatim_file, 200)
 
         self.assertEqual(self.cities.count(), 1)
 
@@ -401,12 +395,3 @@ class OpenStreetMapCityParserTests(TestCase):
             self.cities[0].code,
             "86187",
         )
-
-    def test_no_code_tag_provided(self):
-        nominatim_file = os.path.join(
-            os.path.dirname(__file__), "data", "OSM_polygon.json"
-        )
-        with self.assertRaisesMessage(ImproperlyConfigured, "No code tag provided"):
-            self.import_cities(
-                "TestCityOpenStreetMapParserWithoutCodeTag", nominatim_file, 200
-            )
