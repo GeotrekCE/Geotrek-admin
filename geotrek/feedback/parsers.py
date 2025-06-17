@@ -136,7 +136,7 @@ class SuricateParser(SuricateGestionRequestManager):
             # Parse provider
             rep_provider, created = Provider.objects.get_or_create(name="Suricate")
             if created:
-                logger.info("Created new provider - name: %s", "Suricate")
+                logger.info("Created new provider - name: Suricate")
 
             # Create report object
             fields = {

@@ -486,7 +486,9 @@ class Provider(TimeStampedModelMixin):
         default="",
         help_text=_("HTML template for external source links"),
     )
-    copyright = models.CharField(max_length=1024, blank=True, default="", verbose_name="Copyright")
+    copyright = models.CharField(
+        max_length=1024, blank=True, default="", verbose_name="Copyright"
+    )
 
     class Meta:
         verbose_name = _("Provider")
