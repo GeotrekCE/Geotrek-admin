@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                     "link_template",
                     models.TextField(
                         blank=True,
-                        null=True,
+                        default="",
                         help_text="HTML template for external source links",
                         verbose_name="Link template",
                     ),
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 (
                     "copyright",
                     models.CharField(
-                        max_length=1024, null=True, blank=True, verbose_name="Copyright"
+                        max_length=1024, blank=True, default="", verbose_name="Copyright"
                     ),
                 ),
             ],
