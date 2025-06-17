@@ -254,20 +254,16 @@ class POIParserTests(TestCase):
         poi = POI.objects.all().last()
         self.assertEqual(poi.name, "pont")
         poi.reload()
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, path)
+            self.assertEqual(poi.topo_object.kind, "POI")
+            self.assertAlmostEqual(poi.topo_object.offset, 944460.127, places=2)
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertEqual(WKTWriter(precision=4).write(poi.geom), WKT_POI)
         self.assertEqual(poi.geom, poi.geom_3d)
-
-        # if settings.TREKKING_TOPOLOGY_ENABLED:
-        #     print(poi.topo_object.offset)
-        #     print(poi.geom.x, poi.geom.y)
-        #     poi_path = poi.topo_object.paths.get()
-        #     self.assertEqual(poi_path, path)
-        #     self.assertEqual(poi.topo_object.kind, "POI")
-        #     self.assertAlmostEqual(poi.topo_object.offset, 944460.127, places=2)
-        # self.assertEqual(poi.geom.geom_type, "Point")
-        # self.assertEqual(poi.geom.srid, settings.SRID)
-        # self.assertAlmostEqual(poi.geom.x, 944460.127, places=2)
-        # self.assertAlmostEqual(poi.geom.y, 6433418.985, places=2)
 
 
 class TestGeotrekTrekParser(GeotrekTrekParser):
@@ -2012,6 +2008,9 @@ class ApidaePOIParserTests(TestCase):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = PathFactory.create()
 
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     @mock.patch("requests.get")
     def test_import_cmd_raises_error_when_no_path(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get("a_poi.json")
@@ -2045,7 +2044,6 @@ class ApidaePOIParserTests(TestCase):
         self.assertEqual(poi.description_en, "The short description in english.")
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            print(poi.topo_object.offset)
             poi_path = poi.topo_object.paths.get()
             self.assertEqual(poi_path, self.path)
             self.assertEqual(poi.topo_object.kind, "POI")
@@ -2179,7 +2177,6 @@ class ApidaeServiceParserTests(TestCase):
         self.assertEqual(service.eid, "1")
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            print(service.topo_object.offset)
             service_path = service.topo_object.paths.get()
             self.assertEqual(service_path, self.path)
             self.assertEqual(service.topo_object.kind, "SERVICE")
