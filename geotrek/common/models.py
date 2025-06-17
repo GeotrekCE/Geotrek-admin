@@ -483,6 +483,7 @@ class Provider(TimeStampedModelMixin):
     link_template = models.TextField(
         verbose_name=_("Link template"),
         blank=True,
+        null=True,
         help_text=_("HTML template for external source links"),
     )
     copyright = models.CharField(max_length=1024, blank=True, verbose_name="Copyright")
