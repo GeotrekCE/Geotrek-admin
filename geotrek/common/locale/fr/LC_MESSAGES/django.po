@@ -331,10 +331,10 @@ msgid "Access means"
 msgstr "Moyens d'accès"
 
 msgid "Link template"
-msgstr ""
+msgstr "Modèle du lien"
 
 msgid "HTML template for external source links"
-msgstr ""
+msgstr "Modèle HTML pour les liens sources externes"
 
 msgid "Provider"
 msgstr "Fournisseur"
