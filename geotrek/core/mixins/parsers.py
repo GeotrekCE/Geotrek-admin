@@ -23,7 +23,6 @@ class PointTopologyParserMixin(ABC):
         """
         Should be implemented by the subclass to convert source data to a GEOSGeometry that will be used in the filter_geom method.
         """
-        ...
 
     def generate_topology_from_geometry(self, geometry):
         if geometry.geom_type != "Point":
