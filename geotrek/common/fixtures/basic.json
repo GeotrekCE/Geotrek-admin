@@ -248,5 +248,15 @@
             "date_update": "2014-02-12T11:21:48.961Z",
             "date_insert": "2014-02-12T11:21:48.961Z"
         }
+    },
+    {
+        "pk": 2,
+        "model": "common.provider",
+        "fields": {
+            "name": "Apidae",
+            "link_template": "<a href=\"https://base.apidae-tourisme.com/consulter/objet-touristique/{{ object.eid|safe }}\" target=\"_blank\">{{ object.eid|safe }}</a>",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
     }
 ]
