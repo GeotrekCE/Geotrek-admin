@@ -386,7 +386,7 @@ class Parser:
         if operation == "created":
             if (
                 hasattr(self.model, "provider")
-                and self.provider # do not allow "" provider, because not provider should be attached in this case 
+                and self.provider # do not allow "" provider, because not provider should be attached in this case
                 and not self.obj.provider
             ):
                 self.obj.provider, created = Provider.objects.get_or_create(

@@ -5,6 +5,8 @@ CHANGELOG
 2.116.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+- Change provider Charfield for a foreign key
 
 
 2.116.0    (2025-07-03)
