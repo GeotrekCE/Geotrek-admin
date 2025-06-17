@@ -85,7 +85,7 @@ class TestInfrastructureOpenStreetMapParser(OpenStreetMapInfrastructureParser):
     type = "Test"
 
 
-class OpenStreetMapInfrastructureParser(TestCase):
+class OpenStreetMapInfrastructureParserTests(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_Infrastructure(cls, mocked):
@@ -159,6 +159,8 @@ class OpenStreetMapInfrastructureParser(TestCase):
             self.assertEqual(infrastructure_path, self.path)
             self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
+        self.assertEqual(infrastructure.geom.geom_type, "Point")
+        self.assertEqual(infrastructure.geom.srid, settings.SRID)
         self.assertAlmostEqual(infrastructure.geom.x, 958978.005, places=2)
         self.assertAlmostEqual(infrastructure.geom.y, 6422555.230, places=2)
 
@@ -173,6 +175,8 @@ class OpenStreetMapInfrastructureParser(TestCase):
             self.assertEqual(infrastructure_path, self.path)
             self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
+        self.assertEqual(infrastructure.geom.geom_type, "Point")
+        self.assertEqual(infrastructure.geom.srid, settings.SRID)
         self.assertAlmostEqual(infrastructure.geom.x, 962840.506, places=2)
         self.assertAlmostEqual(infrastructure.geom.y, 6425568.935, places=2)
 
@@ -187,6 +191,8 @@ class OpenStreetMapInfrastructureParser(TestCase):
             self.assertEqual(infrastructure_path, self.path)
             self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
+        self.assertEqual(infrastructure.geom.geom_type, "Point")
+        self.assertEqual(infrastructure.geom.srid, settings.SRID)
         self.assertAlmostEqual(infrastructure.geom.x, 917407.272, places=2)
         self.assertAlmostEqual(infrastructure.geom.y, 6458702.232, places=2)
 
@@ -201,5 +207,7 @@ class OpenStreetMapInfrastructureParser(TestCase):
             self.assertEqual(infrastructure_path, self.path)
             self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
+        self.assertEqual(infrastructure.geom.geom_type, "Point")
+        self.assertEqual(infrastructure.geom.srid, settings.SRID)
         self.assertAlmostEqual(infrastructure.geom.x, 962840.506, places=2)
         self.assertAlmostEqual(infrastructure.geom.y, 6425568.935, places=2)
