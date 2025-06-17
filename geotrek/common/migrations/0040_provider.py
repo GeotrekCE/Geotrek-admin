@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 (
                     "copyright",
                     models.CharField(
-                        max_length=1024, blank=True, verbose_name="Copyright"
+                        max_length=1024, null=True, blank=True, verbose_name="Copyright"
                     ),
                 ),
             ],
