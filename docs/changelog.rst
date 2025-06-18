@@ -15,6 +15,7 @@ CHANGELOG
 - Add OpenStreetMap parser for infrastructures
 - Add OpenStreetMap parser for touristic contents
 - Add OpenStreetMap parser for Outdoor Sites
+- All parsers for point topology objects now generate the topology
 
 **Bug fixes**
 
