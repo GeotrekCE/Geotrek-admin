@@ -65,25 +65,43 @@ Available attributs
 General architecture
 ====================
 
-.. mermaid::
+.. graphviz::
 
-   flowchart TD
-       PARSE["PARSE<br/>starts data import"] --> START["START<br/>lists database objects"]
-       PARSE --> NEXT_ROW["NEXT_ROW<br/>iterates over input rows"]
-       PARSE --> PARSE_ROW["PARSE_ROW<br/>handles full row import"]
-       PARSE --> END["END<br/>deletes outdated objects"]
-       PARSE_ROW --> PARSE_OBJ["PARSE_OBJ<br/>creates/updates object"]
-       PARSE_ROW --> GET_EID_KWARGS["GET_EID_KWARGS<br/>gets unique ID"]
-       PARSE_OBJ --> PARSE_FIELDS["PARSE_FIELDS<br/>handles all object fields"]
-       PARSE_FIELDS --> PARSE_FIELD["PARSE_FIELD<br/>individual field import"]
-       PARSE_FIELD --> GET_VAL["GET_VAL<br/>gets field values"]
-       PARSE_FIELD --> PARSE_TRANSLATION_FIELD["PARSE_TRANSLATION_FIELD<br/>updates translated field"]
-       PARSE_FIELD --> PARSE_REAL_FIELD["PARSE_REAL_FIELD<br/>updates real field"]
-       PARSE_FIELD --> PARSE_NON_FIELD["PARSE_NON_FIELD<br/>handles special fields"]
-       GET_VAL --> GET_PART["GET_PART<br/>extract nested data"]
-       PARSE_TRANSLATION_FIELD --> SET_VALUE["SET_VALUE<br/>save value"]
-       PARSE_REAL_FIELD --> SET_VALUE
-       PARSE_REAL_FIELD --> APPLY_FILTER["APPLY_FILTER<br/>filter fk/m2m"]
+   digraph {
+       PARSE    [label="PARSE\nstarts data import"]
+       START    [label="START\nlists database objects"]
+       NEXT_ROW [label="NEXT_ROW\niterates over input rows"]
+       PARSE_ROW [label="PARSE_ROW\nhandles full row import"]
+       END      [label="END\ndeletes outdated objects"]
+       PARSE_OBJ [label="PARSE_OBJ\ncreates/updates object"]
+       GET_EID_KWARGS [label="GET_EID_KWARGS\ngets unique ID"]
+       PARSE_FIELDS [label="PARSE_FIELDS\nhandles all object fields"]
+       PARSE_FIELD [label="PARSE_FIELD\nindividual field import"]
+       GET_VAL  [label="GET_VAL\ngets field values"]
+       PARSE_TRANSLATION_FIELD [label="PARSE_TRANSLATION_FIELD\nupdates translated field"]
+       PARSE_REAL_FIELD [label="PARSE_REAL_FIELD\nupdates real field"]
+       PARSE_NON_FIELD [label="PARSE_NON_FIELD\nhandles special fields"]
+       GET_PART [label="GET_PART\nextract nested data"]
+       SET_VALUE [label="SET_VALUE\nsave value"]
+       APPLY_FILTER [label="APPLY_FILTER\nfilter fk/m2m"]
+
+       PARSE -> START
+       PARSE -> NEXT_ROW
+       PARSE -> PARSE_ROW
+       PARSE -> END
+       PARSE_ROW -> PARSE_OBJ
+       PARSE_ROW -> GET_EID_KWARGS
+       PARSE_OBJ -> PARSE_FIELDS
+       PARSE_FIELDS -> PARSE_FIELD
+       PARSE_FIELD -> GET_VAL
+       PARSE_FIELD -> PARSE_TRANSLATION_FIELD
+       PARSE_FIELD -> PARSE_REAL_FIELD
+       PARSE_FIELD -> PARSE_NON_FIELD
+       GET_VAL -> GET_PART
+       PARSE_TRANSLATION_FIELD -> SET_VALUE
+       PARSE_REAL_FIELD -> SET_VALUE
+       PARSE_REAL_FIELD -> APPLY_FILTER
+   }
 
 .. _overloadable-existing-parsers:
 
