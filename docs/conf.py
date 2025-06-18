@@ -5,7 +5,8 @@ root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 extensions = [
     'sphinx.ext.todo',
-    "sphinx_immaterial"
+    "sphinx_immaterial",
+    "sphinx.ext.graphviz"
 ]
 
 html_theme = 'sphinx_immaterial'
@@ -87,7 +88,6 @@ html_theme_options = {
         "toc.sticky",
         "content.tabs.link",
         "announce.dismiss",
-        "mermaid"
     ],
     "palette": [
         {
