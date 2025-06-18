@@ -88,6 +88,7 @@ html_theme_options = {
         "toc.sticky",
         "content.tabs.link",
         "announce.dismiss",
+        "mermaid"
     ],
     "palette": [
         {

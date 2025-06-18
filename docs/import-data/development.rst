@@ -65,7 +65,25 @@ Available attributs
 General architecture
 ====================
 
-.. graphviz:: Parser_class_diagram.dot
+.. mermaid::
+
+   flowchart TD
+       PARSE["PARSE<br/>starts data import"] --> START["START<br/>lists database objects"]
+       PARSE --> NEXT_ROW["NEXT_ROW<br/>iterates over input rows"]
+       PARSE --> PARSE_ROW["PARSE_ROW<br/>handles full row import"]
+       PARSE --> END["END<br/>deletes outdated objects"]
+       PARSE_ROW --> PARSE_OBJ["PARSE_OBJ<br/>creates/updates object"]
+       PARSE_ROW --> GET_EID_KWARGS["GET_EID_KWARGS<br/>gets unique ID"]
+       PARSE_OBJ --> PARSE_FIELDS["PARSE_FIELDS<br/>handles all object fields"]
+       PARSE_FIELDS --> PARSE_FIELD["PARSE_FIELD<br/>individual field import"]
+       PARSE_FIELD --> GET_VAL["GET_VAL<br/>gets field values"]
+       PARSE_FIELD --> PARSE_TRANSLATION_FIELD["PARSE_TRANSLATION_FIELD<br/>updates translated field"]
+       PARSE_FIELD --> PARSE_REAL_FIELD["PARSE_REAL_FIELD<br/>updates real field"]
+       PARSE_FIELD --> PARSE_NON_FIELD["PARSE_NON_FIELD<br/>handles special fields"]
+       GET_VAL --> GET_PART["GET_PART<br/>extract nested data"]
+       PARSE_TRANSLATION_FIELD --> SET_VALUE["SET_VALUE<br/>save value"]
+       PARSE_REAL_FIELD --> SET_VALUE
+       PARSE_REAL_FIELD --> APPLY_FILTER["APPLY_FILTER<br/>filter fk/m2m"]
 
 .. _overloadable-existing-parsers:
 
