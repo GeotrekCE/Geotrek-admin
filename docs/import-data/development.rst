@@ -10,105 +10,337 @@ Available attributs
 ===================
 
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| **Parameter**              | **Type**| **Description**                                                                                                                                 |
+| **Parameter**              | **Type** | **Description**                                                                                                                                |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| label                      | str     | Display name shown in the interface to identify this parser.                                                                                    |
+| label                      | str      | Display name shown in the interface to identify this parser.                                                                                   |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| model                      | str     | Name of the data model where the information should be saved.                                                                                   |
+| model                      | str      | Name of the data model where the information should be saved.                                                                                  |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| filename                   | str     | Name of the source file containing the data to import.                                                                                          |
+| filename                   | str      | Name of the source file containing the data to import.                                                                                         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| url                        | str     | API address where the data comes from.                                                                                                          |
+| url                        | str      | API address where the data comes from.                                                                                                         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| simplify_tolerance         | float   | Minimum distance (in meters) between two points of a geographic shape. Points that are too close may be removed to simplify the shape.          |
+| simplify_tolerance         | float    | Minimum distance (in meters) between two points of a geographic shape. Points that are too close may be removed to simplify the shape.         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| update_only                | bool    | If enabled, only existing data can be updated. No new object will be created.                                                                   |
+| update_only                | bool     | If enabled, only existing data can be updated. No new object will be created.                                                                  |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| delete                     | bool    | If enabled, objects no longer present in the new data will be deleted.                                                                          |
+| delete                     | bool     | If enabled, objects no longer present in the new data will be deleted.                                                                         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| duplicate_eid_allowed      | bool    | If enabled, multiple objects can have the same external identifier.                                                                             |
+| duplicate_eid_allowed      | bool     | If enabled, multiple objects can have the same external identifier.                                                                            |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| fill_empty_translated_fields | bool  | Automatically fills in empty translation fields. *(Description may need refinement as per context.)*                                            |
+| fill_empty_translated_fields | bool   | Automatically fills in empty translation fields. *(Description may need refinement as per context.)*                                           |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| warn_on_missing_fields     | bool    | Shows a warning message if expected fields are missing from the imported data.                                                                  |
+| warn_on_missing_fields     | bool     | Shows a warning message if expected fields are missing from the imported data.                                                                 |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| warn_on_missing_objects    | bool    | Shows a warning message if expected objects are not found in the imported data.                                                                 |
+| warn_on_missing_objects    | bool     | Shows a warning message if expected objects are not found in the imported data.                                                                |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| separator                  | str     | Character used to separate multiple values in a single cell (e.g., a comma).                                                                    |
+| separator                  | str      | Character used to separate multiple values in a single cell (e.g., a comma).                                                                   |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| eid                        | str     | Name of the field that contains the unique external identifier for each object.                                                                 |
+| eid                        | str      | Name of the field that contains the unique external identifier for each object.                                                                |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| provider                   | str     | Name of the source the data comes from (e.g., a partner or an API name).                                                                        |
+| provider                   | str      | Name of the source the data comes from (e.g., a partner or an API name).                                                                       |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| fields                     | dict    | Mapping between model fields and source fields. A model field can be linked to multiple source fields.                                          |
+| fields                     | dict     | Mapping between model fields and source fields. A model field can be linked to multiple source fields.                                         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| constant_fields            | dict    | Assigns fixed values to specific model fields for every imported object.                                                                        |
+| constant_fields            | dict     | Assigns fixed values to specific model fields for every imported object.                                                                       |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| m2m_fields                 | dict    | Mapping between model's many-to-many fields and those from the source.                                                                          |
+| m2m_fields                 | dict     | Mapping between model's many-to-many fields and those from the source.                                                                         |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| m2m_constant_fields        | dict    | Fixed values to be assigned to many-to-many fields for each object.                                                                             |
+| m2m_constant_fields        | dict     | Fixed values to be assigned to many-to-many fields for each object.                                                                            |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| m2m_aggregate_fields       | list    | List of many-to-many fields where new data should be added without removing existing data.                                                      |
+| m2m_aggregate_fields       | list     | List of many-to-many fields where new data should be added without removing existing data.                                                     |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| non_fields                 | dict    | Mapping of source data to fields not part of the main model (e.g., ancillary data).                                                             |
+| non_fields                 | dict     | Mapping of source data to fields not part of the main model (e.g., ancillary data).                                                            |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| natural_keys               | dict    | Indicates which field to use to identify related objects (e.g., for foreign key relationships).                                                 |
+| natural_keys               | dict     | Indicates which field to use to identify related objects (e.g., for foreign key relationships).                                                |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| field_options              | dict    | Extra parameters for each field, such as "required" or "create if not exists".                                                                  |
+| field_options              | dict     | Extra parameters for each field, such as "required" or "create if not exists".                                                                 |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| default_language           | str     | Default language used for imported data.                                                                                                        |
+| default_language           | str      | Default language used for imported data.                                                                                                       |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
-| intersection_geom          | dict    | Geographic area to restricts imported objects (e.g., a City or District).                                                                       |
+| intersection_geom          | dict     | Geographic area to restricts imported objects (e.g., a City or District).                                                                      |
 +-----------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------+
 .. _general-architecture:
 
 General architecture
 ====================
 
-.. graphviz::
-
-   digraph {
-       PARSE    [label="PARSE\nstarts data import"]
-       START    [label="START\nlists database objects"]
-       NEXT_ROW [label="NEXT_ROW\niterates over input rows"]
-       PARSE_ROW [label="PARSE_ROW\nhandles full row import"]
-       END      [label="END\ndeletes outdated objects"]
-       PARSE_OBJ [label="PARSE_OBJ\ncreates/updates object"]
-       GET_EID_KWARGS [label="GET_EID_KWARGS\ngets unique ID"]
-       PARSE_FIELDS [label="PARSE_FIELDS\nhandles all object fields"]
-       PARSE_FIELD [label="PARSE_FIELD\nindividual field import"]
-       GET_VAL  [label="GET_VAL\ngets field values"]
-       PARSE_TRANSLATION_FIELD [label="PARSE_TRANSLATION_FIELD\nupdates translated field"]
-       PARSE_REAL_FIELD [label="PARSE_REAL_FIELD\nupdates real field"]
-       PARSE_NON_FIELD [label="PARSE_NON_FIELD\nhandles special fields"]
-       GET_PART [label="GET_PART\nextract nested data"]
-       SET_VALUE [label="SET_VALUE\nsave value"]
-       APPLY_FILTER [label="APPLY_FILTER\nfilter fk/m2m"]
-
-       PARSE -> START
-       PARSE -> NEXT_ROW
-       PARSE -> PARSE_ROW
-       PARSE -> END
-       PARSE_ROW -> PARSE_OBJ
-       PARSE_ROW -> GET_EID_KWARGS
-       PARSE_OBJ -> PARSE_FIELDS
-       PARSE_FIELDS -> PARSE_FIELD
-       PARSE_FIELD -> GET_VAL
-       PARSE_FIELD -> PARSE_TRANSLATION_FIELD
-       PARSE_FIELD -> PARSE_REAL_FIELD
-       PARSE_FIELD -> PARSE_NON_FIELD
-       GET_VAL -> GET_PART
-       PARSE_TRANSLATION_FIELD -> SET_VALUE
-       PARSE_REAL_FIELD -> SET_VALUE
-       PARSE_REAL_FIELD -> APPLY_FILTER
-   }
-
 .. _overloadable-existing-parsers:
 
 Overloadable existing parsers
 =============================
 
+OpenStreetMap
+-------------
 
+OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
+
+By default, the parser uses the German Overpass server:
+``https://overpass-api.de/api/interpreter/``.
+
+You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
+
+Query configuration
+~~~~~~~~~~~~~~~~~~~
+
+Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
+
+* ``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the query bounding box. It expands the area by a fraction of its width to ensure surrounding features are included. (exemple: if bbox_margin is 0.05 then the bbox will be expanded by 5%)
+
+* ``osm_element_type`` (default: ``nwr``): Specifies the types of elements to retrieve: ``"node"``, ``"way"``, ``"relation"``, or ``"nwr"`` (all three).
+
+* ``output`` (default: ``"geom"``): Specifies the data returned by the Overpass API.
+    * ``geom``: return the object type, the object ID, the tags and the geometry
+    * ``tags``: return the object type, the object ID and the tags
+
+The ``tags`` attribute defines the set of tag filters to be used with the Overpass API.
+It is a list where each element is either:
+
+* A **dictionary**: representing a single tag filter (e.g., ``{"highway": "bus_stop"}``)
+
+* A **list of dictionaries**: representing a logical AND across all contained tags
+            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+
+The Overpass query will return the UNION of all top-level items.
+
+For example:
+
+::
+
+    self.tags = [
+        [{"boundary": "administrative"}, {"admin_level": "4"}],
+        {"highway": "bus_stop"}
+    ]
+
+*means*: return objects that either have both ``boundary=administrative`` AND ``admin_level=4``, OR have ``highway=bus_stop``.
+
+All the objects parsed by the ``OpenStreetMap`` parsers will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+You can change the bounding box by overriding ``get_bbox_str()``.
+
+Handling translated fields
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
+
+During import, the parser maps translated fields (e.g., ``name``, ``description``) based on the model and the languages defined in ``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a mapping such as ``name_fr`` → ``name:fr``.
+
+For the default language (``settings.MODELTRANSLATION_DEFAULT_LANGUAGE``), a special mapping is applied: it includes a fallback to the base tag (e.g., ``name``) and maps it to the base Geotrek field name (e.g., ``name``). This allows for filtering operations without relying directly on the default language code.
+
+If a translation is missing, the field remains unset unless a fallback value is provided in ``default_fields_values`` using the pattern ``{field}_{lang}``.
+
+When no translation exists for the default language, the base OpenStreetMap tag (e.g., ``name``) is used. This can lead to incorrect language display if the OSM default does not match the Geotrek instance’s default language.
+
+Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
+
+Attachments
+~~~~~~~~~~~
+``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
+A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
+
+For more information on how attachments work, consult :ref:`this section <import-attachments>`.
+
+
+.. md-tab-set::
+    :name: importdata-osm-tabs
+
+    .. md-tab-item:: information desks
+
+         To import information desks from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.tourism.parsers import InformationDeskOpenStreetMapParser
+
+            class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
+                provider = "OpenStreetMap"
+                tags = [{"amenity": "ranger_station"}]
+                default_fields_values = {"name": "Maison du Parc"}
+                type = "Maisons du parc"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: touristic contents
+
+        To import touristic content from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.tourism.parsers import OpenStreetMapTouristicContentParser
+
+            class RestaurantParser(OpenStreetMapTouristicContentParser):
+                provider = "OpenStreetMap"
+                tags = [{"amenity": "restaurant"}]
+                default_fields_values = {"name": "restaurant"}
+                category = "Restaurants"
+                type1 = "Restaurant"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: ``type1 = ["Restaurant", "Hotel"]``)
+        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be assigned (ex: ``portal = ["portal 1", "portal 2"]``)
+        * ``source`` to select the data source. Multiple sources can be assigned (ex: ``source = ["source 1", "source 2"]``)
+        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be assigned (ex: ``themes = ["theme 1", "theme 2"]``)
+        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+
+    .. md-tab-item:: points of interest
+
+        To import point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.trekking.parsers import OpenStreetMapPOIParser
+
+            class HistoryParser(OpenStreetMapPOIParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    {"historic": "yes"},
+                    {"historic": "castel"},
+                    {"historic": "memorial"},
+                    {"historic": "fort"},
+                    {"historic": "bunker"},
+                    {"building": "chapel"},
+                    {"building": "bunker"},
+                ]
+                default_fields_values = {"name": "Historic spot"}
+                type = "Histoire"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
+
+        The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+        You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: districts
+
+        To import districts from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.zoning.parsers import OpenStreetMapDistrictParser
+
+            class DistrictParser(OpenStreetMapDistrictParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    [{"boundary": "administrative"}, {"admin_level": "6"}], # departement
+                    [{"boundary": "administrative"}, {"admin_level": "4"}], # region
+                ]
+                default_fields_values = {"name": "district"}
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+        The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+
+    .. md-tab-item:: restricted areas
+
+        To import restricted areas from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.zoning.parsers import OpenStreetMapRestrictedAreaParser
+
+            class RegionalNatureParkParser(OpenStreetMapDistrictParser):
+                provider = "OpenStreetMap"
+                tags = [{"protection_title"="parc naturel régional"}]
+                default_fields_values = {"name": "parc naturel régional"}
+                area_type = "Inconnu"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``area_type`` to specify the restricted area type for imported objects
+        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+        the parsed objects will be those that intersect the ``settings.SPATIAL_EXTENT`` bounding box.
+
+    .. md-tab-item:: signage
+
+        To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.signage.parsers import OpenStreetMapSignageParser
+
+            class DirectionalParser(OpenStreetMapSignageParser):
+                provider = "OpenStreetMap"
+                tags = [{"information": "guidepost"}]
+                default_fields_values = {"name": "guidepost"}
+                type = "Directionelle"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
+
+    .. md-tab-item:: infrastructures
+
+        To import infrastructures from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.infrastructure.parsers import OpenStreetMapInfrastructureParser
+
+            class TableParser(OpenStreetMapInfrastructureParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    {"leisure": "picnic_table"},
+                    {"tourism": "picnic_table"}
+                ]
+                default_fields_values = {"name": "picnic table"}
+                type = "Table"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: outdoor sites
+
+        To import outdoor sites from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.outdoor.parsers import OpenStreetMapOutdoorSiteParser
+
+            class ClimbingSiteParser(OpenStreetMapOutdoorSiteParser):
+                provider = "OpenStreetMap"
+                tags = [{"sports": "climbing"}]
+                default_fields_values = {"name": "climbing site"}
+                practice = "Escalade"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``practice`` to select in which Geotrek practice imported objects should go.
+        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
+        * ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
+        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be affected (ex: themes = ["theme 1", "theme 2"])
+        * See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
 
 
 .. _importing-from-multiple-sources:
