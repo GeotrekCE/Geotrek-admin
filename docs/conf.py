@@ -6,7 +6,6 @@ root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 extensions = [
     'sphinx.ext.todo',
     "sphinx_immaterial",
-    "sphinx.ext.graphviz"
 ]
 
 html_theme = 'sphinx_immaterial'
