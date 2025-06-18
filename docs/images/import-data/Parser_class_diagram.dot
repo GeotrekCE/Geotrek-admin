@@ -1,0 +1,47 @@
+digraph flowchart {
+    rankdir=TB;
+
+    // Default node style
+    node [shape=box, style=filled, fontname="Helvetica"];
+
+    // Node definitions with appropriate fill colors
+    "PARSE\nstarts data import" [fillcolor="#f3e5f5", color="#4a148c"];  // process
+    "START\nlists database objects" [fillcolor="#f3e5f5", color="#4a148c"];
+    "NEXT_ROW\niterates over input rows" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_ROW\nhandles full import of a row" [fillcolor="#f3e5f5", color="#4a148c"];
+    "END\ndeletes non-updated objects" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_OBJ\ncreates or updates an object in DB" [fillcolor="#f3e5f5", color="#4a148c"];
+    "GET_EID_KWARGS\nfinds unique object identifier" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_FIELDS\nhandles import of all fields" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_FIELD\nhandles import of an individual field" [fillcolor="#f3e5f5", color="#4a148c"];
+    "GET_VAL\nfinds field values" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_TRANSLATION_FIELD\nupdates a translated model field" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_REAL_FIELD\nmodifies a real model field" [fillcolor="#f3e5f5", color="#4a148c"];
+    "PARSE_NON_FIELD\nhandles special non-model fields" [fillcolor="#f3e5f5", color="#4a148c"];
+    "GET_PART\nretrieves data from nested structure" [fillcolor="#f3e5f5", color="#4a148c"];
+    "SET_VALUE\nstores a value in the object" [fillcolor="#f3e5f5", color="#4a148c"];
+    "APPLY_FILTER\nfilters fk and m2m fields" [fillcolor="#f3e5f5", color="#4a148c"];
+
+    // Edges (arrows between nodes)
+    "PARSE\nstarts data import" -> "START\nlists database objects";
+    "PARSE\nstarts data import" -> "NEXT_ROW\niterates over input rows";
+    "PARSE\nstarts data import" -> "PARSE_ROW\nhandles full import of a row";
+    "PARSE\nstarts data import" -> "END\ndeletes non-updated objects";
+
+    "PARSE_ROW\nhandles full import of a row" -> "PARSE_OBJ\ncreates or updates an object in DB";
+    "PARSE_ROW\nhandles full import of a row" -> "GET_EID_KWARGS\nfinds unique object identifier";
+
+    "PARSE_OBJ\ncreates or updates an object in DB" -> "PARSE_FIELDS\nhandles import of all fields";
+    "PARSE_FIELDS\nhandles import of all fields" -> "PARSE_FIELD\nhandles import of an individual field";
+
+    "PARSE_FIELD\nhandles import of an individual field" -> "GET_VAL\nfinds field values";
+    "PARSE_FIELD\nhandles import of an individual field" -> "PARSE_TRANSLATION_FIELD\nupdates a translated model field";
+    "PARSE_FIELD\nhandles import of an individual field" -> "PARSE_REAL_FIELD\nmodifies a real model field";
+    "PARSE_FIELD\nhandles import of an individual field" -> "PARSE_NON_FIELD\nhandles special non-model fields";
+
+    "GET_VAL\nfinds field values" -> "GET_PART\nretrieves data from nested structure";
+
+    "PARSE_TRANSLATION_FIELD\nupdates a translated model field" -> "SET_VALUE\nstores a value in the object";
+    "PARSE_REAL_FIELD\nmodifies a real model field" -> "SET_VALUE\nstores a value in the object";
+    "PARSE_REAL_FIELD\nmodifies a real model field" -> "APPLY_FILTER\nfilters fk and m2m fields";
+}
