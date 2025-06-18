@@ -23,6 +23,7 @@ CHANGELOG
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+- Add new authors and improve copyright details
 
 
 2.115.1    (2025-05-21)
