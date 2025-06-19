@@ -216,6 +216,8 @@ Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
 1. ``cd <install directory>`` 
 2. ``docker compose run --rm web update.sh``
 
+.. _loading-fixtures:
+
 Load fixtures
 --------------
 
@@ -234,6 +236,10 @@ To load minimal fixtures, run this command **only once during setup**:
   - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable
   
   - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
+
+.. seealso::
+
+	Refer to :ref:`this section <fixture-import>` to learn more about every fixtures command included in the ``load_data.sh`` script.
 
 Create a superuser
 ------------------

@@ -871,22 +871,10 @@ Like the tourism intersection margin, it can help limit the number of associated
 Land
 -----
 
-You can insert circulation and authorization types using this command:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-circulation-tabs
+	To insert Land minimal data refer to :ref:`this section <fixture-land>`.
 
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/land/fixtures/circulations.json
 
 Show labels
 ~~~~~~~~~~~~~~~~
@@ -939,22 +927,9 @@ Then run:
     
                 docker compose run --rm web update.sh
 
-To insert Outdoor minimal data:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-outdoor-minimal-data-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/outdoor/fixtures/basic.json
+	To insert Outdoor minimal data refer to :ref:`this section <fixture-outdoor>`.
 
 After installing the Outdoor module, you need to add permissions to user groups for outdoor sites and courses.
 
@@ -982,24 +957,9 @@ To enable the Sensitivity module, add the following code to the custom settings 
 
     INSTALLED_APPS += ('geotrek.sensitivity', )
 
-To insert sensitivity area rules:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-sensitivity-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-                cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata rules
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/sensitivity/fixtures/basic.json
+	To insert Sensitivity minimal data refer to :ref:`this section <fixture-sensitivity>`.
 
 Sensitivity default radius
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

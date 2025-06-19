@@ -23,6 +23,7 @@ CHANGELOG
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+- Reorganize import data chapter (#4769
 - Add new authors and improve copyright details
 
 
