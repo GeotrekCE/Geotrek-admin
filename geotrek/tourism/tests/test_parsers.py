@@ -315,7 +315,7 @@ class ParserTests(TestCase):
         # Parser with provider creates objects with provider
         call_command("import", "geotrek.tourism.tests.test_parsers.Provider1Parser")
         self.assertEqual(TouristicContent.objects.count(), 1)
-        self.assertEqual(TouristicContent.objects.first().provider, "Provider1")
+        self.assertEqual(TouristicContent.objects.first().provider.name, "Provider1")
         mocked.return_value.json = mocked_json2
         # Parser with provider does not delete other providers' objects
         call_command("import", "geotrek.tourism.tests.test_parsers.Provider2Parser")

@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
 
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.managers import TopologyManager
 
 
@@ -14,7 +14,7 @@ class TrekOrderedChildManager(models.Manager):
         return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
 
-class TrekManager(TopologyManager, ProviderChoicesMixin):
+class TrekManager(TopologyManager):
     pass
 
 
@@ -23,9 +23,9 @@ class WebLinkManager(models.Manager):
         return super().get_queryset().select_related("category")
 
 
-class POIManager(NoDeleteManager, ProviderChoicesMixin):
+class POIManager(NoDeleteManager):
     pass
 
 
-class ServiceManager(NoDeleteManager, ProviderChoicesMixin):
+class ServiceManager(NoDeleteManager):
     pass
