@@ -92,7 +92,7 @@ starlette==0.46.2
     # via sphinx-autobuild
 tomli==2.2.1
     # via sphinx
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   anyio
     #   pydantic
