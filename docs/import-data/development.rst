@@ -67,10 +67,276 @@ Available attributs
 General architecture
 ====================
 
+.. graphviz::
+
+   digraph {
+       PARSE    [label="PARSE\nstarts data import"]
+       START    [label="START\nlists database objects"]
+       NEXT_ROW [label="NEXT_ROW\niterates over input rows"]
+       PARSE_ROW [label="PARSE_ROW\nhandles full row import"]
+       END      [label="END\ndeletes outdated objects"]
+       PARSE_OBJ [label="PARSE_OBJ\ncreates/updates object"]
+       GET_EID_KWARGS [label="GET_EID_KWARGS\ngets unique ID"]
+       PARSE_FIELDS [label="PARSE_FIELDS\nhandles all object fields"]
+       PARSE_FIELD [label="PARSE_FIELD\nindividual field import"]
+       GET_VAL  [label="GET_VAL\ngets field values"]
+       PARSE_TRANSLATION_FIELD [label="PARSE_TRANSLATION_FIELD\nupdates translated field"]
+       PARSE_REAL_FIELD [label="PARSE_REAL_FIELD\nupdates real field"]
+       PARSE_NON_FIELD [label="PARSE_NON_FIELD\nhandles special fields"]
+       GET_PART [label="GET_PART\nextract nested data"]
+       SET_VALUE [label="SET_VALUE\nsave value"]
+       APPLY_FILTER [label="APPLY_FILTER\nfilter fk/m2m"]
+
+       PARSE -> START
+       PARSE -> NEXT_ROW
+       PARSE -> PARSE_ROW
+       PARSE -> END
+       PARSE_ROW -> PARSE_OBJ
+       PARSE_ROW -> GET_EID_KWARGS
+       PARSE_OBJ -> PARSE_FIELDS
+       PARSE_FIELDS -> PARSE_FIELD
+       PARSE_FIELD -> GET_VAL
+       PARSE_FIELD -> PARSE_TRANSLATION_FIELD
+       PARSE_FIELD -> PARSE_REAL_FIELD
+       PARSE_FIELD -> PARSE_NON_FIELD
+       GET_VAL -> GET_PART
+       PARSE_TRANSLATION_FIELD -> SET_VALUE
+       PARSE_REAL_FIELD -> SET_VALUE
+       PARSE_REAL_FIELD -> APPLY_FILTER
+   }
+
 .. _overloadable-existing-parsers:
 
 Overloadable existing parsers
 =============================
+
+.. _apidae-parsers:
+
+APIDAE
+------
+.. md-tab-set::
+    :name: importdata-apidae-tabs
+
+    .. md-tab-item:: Touristic content
+
+        To import touristic content from APIDAE (ex-SITRA), edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.tourism.parsers import TouristicContentApidaeParser
+
+            class HebergementParser(TouristicContentApidaeParser):
+                label = "Hébergements"
+                api_key = 'xxxxxxxx'
+                project_id = 9999
+                selection_id = 99999
+                category = "Hébergement"
+                type1 = ["Camping"]
+                type2 = ["3 étoiles", "Tourisme et Handicap"]  # just remove this line if no type2
+
+        Then set up appropriate values:
+
+        * ``label`` at your convenience,
+        * ``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE (ex-SITRA) configuration
+        * ``category``, ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go
+        * You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal, provider...)
+        * You can also use the class ``HebergementParser`` if you only import accomodations
+        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class. Each class must have a different name.
+
+        To apply changes, you may have to run ``sudo service geotrek restart``.
+
+    .. md-tab-item:: Treks
+
+        A parser implementation is available to import Treks from APIDAE. Use it by defining a subclass of ``geotrek.trekking.parsers.ApidaeTrekParser`` in your ``var/conf/parsers.py`` configuration file as shown above.
+
+        You'll have to configure how to access your APIDAE data: ``api_key``, ``project_id`` and ``selection_id`` (those are setting attributes from the APIDAE base parser).
+
+        The ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` attributes define default mapping with the trekking module data fixture. You may override this to match your own types of Trek Practice.
+
+        Example of a parser configuration :
+
+        ::
+
+            class ImportTreksApidae(ApidaeTrekParser):
+                label = "Import trek with eid"
+                label_fr = "Import itinéraires avec identifiant externe"
+                label_en = "Import trek with eid"
+                eid = 'eid'
+
+    .. md-tab-item:: Services
+
+        To import services from APIDAE, define a subclass of ``geotrek.trekking.parsers.ApidaeServiceParser`` in your ``var/conf/parsers.py`` configuration file.
+
+        In addition to the usual attributes, the service type name (``type``) must be specified. This type will be assigned to all objects imported through the parser.
+
+        Example of an APIDAE service parser configuration:
+
+        ::
+
+            class DrinkingWaterPoint(ApidaeServiceParser):
+                label = "Drinking water points"
+                provider = "Apidae"
+                selection_id = 12345
+                type = "Drinking water point"
+
+
+
+.. _tourinsoft-parsers:
+
+Tourinsoft
+----------
+
+Tourinsoft is a Tourism Information System developed by the company Ingénie for tourism organizations in France, such as Departmental Tourism Committees (CDT), Tourism Development Agencies (ADT), and Tourist Offices. This system allows for the centralization, management, and standardized dissemination of tourism-related information.
+
+Example of a parser configuration :
+
+::
+
+    class RestaurationParser(TouristicContentTourinsoftParser):
+        """Restauration parsers"""
+        label = "Restauration"
+        category = "Restauration"
+        url = "<Touristic content data feed URL"  # In the form https://api-v3.tourinsoft.com/api/syndications/decibelles-data.tourinsoft.com/<id>?format=json"
+
+
+.. _cirkwi-parsers:
+
+Cirkwi
+------
+
+The functionality for importing treks and touristic content from Cirkwi was developed and integrated into `version 2.111.0 of Geotrek-admin <https://github.com/GeotrekCE/Geotrek-admin/releases/tag/2.111.0/>`_.
+
+.. note ::
+
+    - By default, imported content is automatically published.
+    - To enable the integration of this data, you need to modify the `parsers.py` file to create a dedicated parser and query a feed provided by Cirkwi.
+
+The following parsers have been developed to facilitate data import from Cirkwi into Geotrek-admin:
+
+.. md-tab-set::
+    :name: importdata-cirkwi-tabs
+
+    .. md-tab-item:: Treks
+
+        Allows the integration of treks from Cirkwi into Geotrek. This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only.
+
+        Example of a parser configuration :
+
+        ::
+
+            class ImportTreksCirkwi(CirkwiTrekParser):
+                url = "<Treks data feed URL>"  # In the form https://ws.cirkwi.com/flux/<user>/<code>/circuits.php?widget-id=<id>
+                user = "<Username>"
+                password = "<Password>"
+                auth = (user, password)
+                label = "Cirkwi's treks"
+                delete = True
+                create = True
+                provider = "Cirkwi"
+
+    .. md-tab-item:: Touristic contents
+
+        Enables the import of touristic content from Cirkwi into Geotrek.
+
+        Example of a parser configuration :
+
+        ::
+
+            class ImportTouristicContentCirkwi(CirkwiTouristicContentParser):
+                url = "<Treks data feed URL>"  # In the form https://ws.cirkwi.com/flux/<user>/<code>/circuits.php?widget-id=<id>"
+                user = "<Username>"
+                password = "<Password>"
+                auth = (user, password)
+                label = "Cirkwi's touristic content"
+                delete = True
+                create = True
+                provider = "Cirkwi"
+                # results_path = "circuit/pois/poi"  # Uncomment this line if the touristic content to be imported come from the same feed as  treks
+
+.. seealso::
+
+  To import Geotrek treks and POIs into Cirkwi's format you can check :ref:`this section (french)  <geotrek-ignrando-cirkwi-api>`.
+
+
+.. _lei-parsers:
+
+LEI
+---
+
+.. md-tab-set::
+    :name: importdata-lei-tabs
+
+    .. md-tab-item:: Touristic contents
+
+        To import touristic content from LEI , create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.tourism.parsers import LEITouristicContentParser
+
+            class XXXLEIEventParser(LEITouristicEventParser):
+                label = "LEI TouristicEvent"
+                url = "https://url.asp"
+
+    .. md-tab-item:: Touristic contents
+
+        To import touristic event from LEI , create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            from geotrek.tourism.parsers import LEITouristicEventParser
+
+            class XXXLEIEventParser(LEITouristicEventParser):
+                label = "LEI TouristicEvent"
+                url = "https://url.asp"
+
+
+.. _marque-esprit-parc-parsers:
+
+Marque Esprit Parc
+------------------
+
+To import **touristic content** from Esprit Parc national database, create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.tourism.parsers import EspritParcParser
+
+    class XXXEspritParcParser(EspritParcParser):
+        label = "Marque Esprit Parc"
+        url = "https://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
+
+Then set up appropriate values:
+
+* ``XXX`` by unique national park code (ex: PNE)
+
+You can duplicate the class. Each class must have a different name.
+
+In this case categories and types in Geotrek database have to be the same as in Esprit parc database. Otherwise missing categories and types will be created in Geotrek database.
+
+Imported contents will be automatically published and approved (certified).
+
+If you use an url that filters a unique category, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
+
+::
+
+    class MielEspritParcParser(EspritParcParser):
+        label = "Miel Esprit Parc national"
+        url = "https://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX&typologie=API"
+        constant_fields = {
+            'category': "GeotrekCategoryName",
+            'published': True,
+            'approved': True,
+            'deleted': False,
+        }
+        m2m_constant_fields = {
+            'type1': "GeotrekTypeName",
+        }
+
+
+.. _osm-parsers:
 
 OpenStreetMap
 -------------
@@ -145,9 +411,9 @@ For more information on how attachments work, consult :ref:`this section <import
 .. md-tab-set::
     :name: importdata-osm-tabs
 
-    .. md-tab-item:: information desks
+    .. md-tab-item:: Information desks
 
-         To import information desks from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+        To import information desks from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
         ::
 
@@ -168,7 +434,7 @@ For more information on how attachments work, consult :ref:`this section <import
 
         You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-    .. md-tab-item:: touristic contents
+    .. md-tab-item:: Touristic contents
 
         To import touristic content from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -194,7 +460,7 @@ For more information on how attachments work, consult :ref:`this section <import
         * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
 
 
-    .. md-tab-item:: points of interest
+    .. md-tab-item:: Points of interest
 
         To import point of interest (POI) from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -226,7 +492,7 @@ For more information on how attachments work, consult :ref:`this section <import
         The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
         You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
 
-    .. md-tab-item:: districts
+    .. md-tab-item:: Districts
 
         To import districts from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -250,7 +516,7 @@ For more information on how attachments work, consult :ref:`this section <import
 
         The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 
-    .. md-tab-item:: restricted areas
+    .. md-tab-item:: Restricted areas
 
         To import restricted areas from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -273,7 +539,7 @@ For more information on how attachments work, consult :ref:`this section <import
 
         the parsed objects will be those that intersect the ``settings.SPATIAL_EXTENT`` bounding box.
 
-    .. md-tab-item:: signage
+    .. md-tab-item:: Signage
 
         To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -294,7 +560,7 @@ For more information on how attachments work, consult :ref:`this section <import
         * ``type`` to specify the Geotrek type for imported objects
         * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
 
-    .. md-tab-item:: infrastructures
+    .. md-tab-item:: Infrastructures
 
         To import infrastructures from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 
@@ -320,7 +586,7 @@ For more information on how attachments work, consult :ref:`this section <import
 
         You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
 
-    .. md-tab-item:: outdoor sites
+    .. md-tab-item:: Outdoor sites
 
         To import outdoor sites from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
 

@@ -5,6 +5,7 @@ root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 extensions = [
     'sphinx.ext.todo',
+    "sphinx.ext.graphviz",
     "sphinx_immaterial",
     "sphinx_design",
     "sphinx.ext.graphviz"

@@ -3,3 +3,4 @@ sphinx>=4.0.0
 sphinx-autobuild
 sphinx-intl
 sphinx-design
+graphviz
