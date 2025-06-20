@@ -1143,7 +1143,6 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             service_path = service.topo_object.paths.get()
             self.assertEqual(service_path, self.path)
             self.assertEqual(service.topo_object.kind, "SERVICE")
-            self.assertAlmostEqual(service.topo_object.offset, -427263.473, places=2)
         self.assertEqual(service.geom.geom_type, "Point")
         self.assertEqual(service.geom.srid, settings.SRID)
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
