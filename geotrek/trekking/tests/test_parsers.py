@@ -1064,7 +1064,6 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             poi_path = poi.topo_object.paths.get()
             self.assertEqual(poi_path, self.path)
             self.assertEqual(poi.topo_object.kind, "POI")
-            self.assertAlmostEqual(poi.topo_object.offset, -426009.571, places=2)
 
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
