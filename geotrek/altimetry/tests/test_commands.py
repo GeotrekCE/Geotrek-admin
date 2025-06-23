@@ -100,7 +100,7 @@ class CommandLoadDemTest(TransactionTestCase):
         )
         with self.assertNumQueries(
             23
-        ):  # 5 for loaddem initial + 17 with selects and update geom
+        ):  # 5 for loaddem initial + 17 with selects and update geom + 1 for PointTopologyTestModel
             call_command(
                 "loaddem",
                 filename,
