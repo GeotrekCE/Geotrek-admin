@@ -423,6 +423,9 @@ class RelatedObjectsTest(TestCase):
         city2 = CityFactory.create(
             geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
         )
+        trek = Trek.objects.get(
+            pk=trek.pk
+        )  # Refresh trek instance and invalidate cached_property
         self.assertEqual([city for city in trek.cities], [city1, city2])
         self.assertEqual(trek.city_departure, str(city1))
 
