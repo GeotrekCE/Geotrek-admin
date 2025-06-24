@@ -440,7 +440,7 @@ class TouristicContent(
         if self.pk:
             from geotrek.zoning.models import City
 
-            return City.objects.all().filter(geom__intersects=self.geom).first()
+            return City.objects.all().filter(geom__contains=self.geom).first()
         return None
 
     @classmethod
