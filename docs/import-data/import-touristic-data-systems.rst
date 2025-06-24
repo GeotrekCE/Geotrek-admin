@@ -792,11 +792,12 @@ The link template should contain the `{{object.eid}}` placeholder, which will be
 
    <a href="https://example.com/objects/{{object.eid}}" target="_blank">{{object.eid}}</a>
 
-Fixtures are available for two providers: **OpenStreetMap** and **Apidae**. These predefined Provider records can be loaded during a new installation using the standard `loaddata` command.
+Fixtures are available for two providers: **OpenStreetMap** and **Apidae**. These predefined Provider records can be loaded during a new installation.
+See the :ref:`fixture documentation <load-fixtures>` to see more about fixtures.
 
 .. note::
 
-   These fixtures are intended for new installations only. When upgrading an existing system, Provider records will be created automatically based on the existing `provider` field in the database. After upgrading, you must manually fill in the link template and copyright.
+    These fixtures are intended for new installations only. When upgrading an existing system, Provider records will be created automatically based on the existing `provider` field in the database. After upgrading, you must manually fill in the link template and copyright.
 
-You can reuse the link templates provided in the fixture files, available here:
-`Provider fixtures on GitHub <https://github.com/GeotrekCE/Geotrek-admin/tree/master/geotrek/common/fixtures/basic.json#L242>`_
+    You can reuse the link templates provided in the fixture files, available here:
+    `Provider fixtures on GitHub <https://github.com/GeotrekCE/Geotrek-admin/tree/master/geotrek/common/fixtures/basic.json#L242>`_
