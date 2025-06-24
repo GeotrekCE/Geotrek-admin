@@ -32,6 +32,7 @@ class TrekManager(TopologyManager, ProviderChoicesMixin):
                         then=StartPoint(GeometryN("geom", 0)),
                     ),
                     default=None,
+                    output_field=models.PointField(),
                 )
             )
         )

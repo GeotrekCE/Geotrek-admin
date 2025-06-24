@@ -923,7 +923,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return get_translation_or_dict("departure", self, obj)
 
         def get_departure_geom(self, obj):
-            return self.get_first_point(obj.geom3d_transformed)[:2]
+            return obj.start_point.coords if obj.start_point else None
 
         def get_arrival(self, obj):
             return get_translation_or_dict("arrival", self, obj)
@@ -1006,10 +1006,14 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return [label.pk for label in obj.published_labels]
 
         def get_departure_city(self, obj):
-            return obj.city.id if obj.city else None
+            return obj.city_departure.id if obj.city_departure else None
 
         def get_departure_city_code(self, obj):
-            return obj.city.code if obj.city and obj.city.code else None
+            return (
+                obj.city_departure.code
+                if obj.city_departure and obj.city_departure.code
+                else None
+            )
 
         def _replace_image_paths_with_urls(self, data):
             def replace(html_content):

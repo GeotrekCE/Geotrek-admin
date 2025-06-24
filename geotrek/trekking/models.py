@@ -496,10 +496,10 @@ class Trek(
     def web_links_display(self):
         return ", ".join([str(n) for n in self.web_links.all()])
 
-    @property
+    @cached_property
     def city_departure(self):
         cities = self.published_cities
-        return str(cities[0]) if len(cities) > 0 else ""
+        return cities[0] if cities else ""
 
     def kml(self):
         """Exports trek into KML format, add geometry as linestring and POI
