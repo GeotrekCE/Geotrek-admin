@@ -8,14 +8,14 @@ from geotrek.core.models import Path, Topology
 
 
 class PointTopologyParserMixin(ABC):
+    topology = None
+
     def start(self):
         if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            raise GlobalImportError(
-                _(
-                    "You need to add a network of paths before importing '%(model)s' objects"
-                )
-                % {"model": self.model.__name__}
-            )
+            msg = _(
+                "You need to add a network of paths before importing '%(model)s' objects"
+            ) % {"model": self.model.__name__}
+            raise GlobalImportError(msg)
         super().start()
 
     @abstractmethod
@@ -26,11 +26,10 @@ class PointTopologyParserMixin(ABC):
 
     def generate_topology_from_geometry(self, geometry):
         if geometry.geom_type != "Point":
-            raise RowImportError(
-                _("Invalid geometry type: should be 'Point', not '{geom_type}'").format(
-                    geom_type=geometry.geom_type
-                )
-            )
+            msg = _("Invalid geometry type: should be 'Point', not '%(geom_type)s'") % {
+                "geom_type": geometry.geom_type
+            }
+            raise RowImportError(msg)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
@@ -40,15 +39,15 @@ class PointTopologyParserMixin(ABC):
 
     def filter_geom(self, src, val):
         if val is None:
-            raise RowImportError(_("Cannot import object: geometry is None"))
+            msg = _("Cannot import object: geometry is None")
+            raise RowImportError(msg)
         try:
             if hasattr(super(), "filter_geom"):
                 super().filter_geom(src, val)
             geom = self.build_geos_geometry(src, val)
         except Exception:
-            raise RowImportError(
-                _("Could not parse geometry from value '{value}'").format(value=val)
-            )
+            msg = _("Could not parse geometry from value '%(value)s'") % {"value": val}
+            raise RowImportError(msg)
         self.generate_topology_from_geometry(geom)
         geom.transform(settings.SRID)
         return geom
