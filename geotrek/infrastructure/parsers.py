@@ -1,11 +1,11 @@
-from django.contrib.gis.geos import Point, GEOSGeometry
-
-from geotrek.common.parsers import GeotrekParser, OpenStreetMapParser
-from geotrek.trekking.parsers import ApidaeBaseParser
-from geotrek.core.mixins.parsers import PointTopologyParserMixin
-from geotrek.infrastructure.models import Infrastructure
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
+
+from geotrek.common.parsers import GeotrekParser, OpenStreetMapParser
+from geotrek.core.mixins.parsers import PointTopologyParserMixin
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.trekking.parsers import ApidaeBaseParser
 
 
 class GeotrekInfrastructureParser(GeotrekParser):
@@ -50,15 +50,16 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
         "eid": "id",
         "geom": "localisation.geolocalisation.geoJson",
         "name": "nom.libelleFr",
-        "description": ("presentation.descriptifCourt.libelleFr", "presentation.descriptifDetaille.libelleFr"),
+        "description": (
+            "presentation.descriptifCourt.libelleFr",
+            "presentation.descriptifDetaille.libelleFr",
+        ),
         "accessibility": "prestations.tourismesAdaptes",
     }
     natural_keys = {
         "type": "label",
     }
-    field_options = {
-        "type": {"create": True}
-    }
+    field_options = {"type": {"create": True}}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -66,7 +67,9 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
             self.constant_fields = self.constant_fields.copy()
             self.constant_fields["type"] = self.infrastructure_type
         else:
-            msg = _("An infrastructure type must be specified in the parser configuration.")
+            msg = _(
+                "An infrastructure type must be specified in the parser configuration."
+            )
             raise ImproperlyConfigured(msg)
 
     def build_geos_geometry(self, src, val):
@@ -77,7 +80,7 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
         return detailed_descr or short_descr
 
     def filter_accessibility(self, src, val):
-        accessibilities = [a.get('libelleFr') for a in val]
+        accessibilities = [a.get("libelleFr") for a in val]
         return "\n".join(accessibilities)
 
 

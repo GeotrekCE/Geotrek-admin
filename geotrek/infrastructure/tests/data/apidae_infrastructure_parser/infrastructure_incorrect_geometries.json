@@ -2,7 +2,6 @@
     "numFound" : 3,
     "objetsTouristiques" : [
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 1,
             "localisation" : {
                 "geolocalisation" : {
@@ -10,10 +9,12 @@
                         "coordinates" : [ 0, 0 ]
                     }
                 }
+            },
+            "nom" : {
+                "libelleFr" : "A basic infrastructure object"
             }
         },
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 2,
             "localisation" : {
                 "geolocalisation" : {
@@ -21,15 +22,34 @@
                         "type" : "Point"
                     }
                 }
+            },
+            "nom" : {
+                "libelleFr" : "A basic infrastructure object"
             }
         },
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 3,
             "localisation" : {
                 "geolocalisation" : {
                     "geoJson" : null
                 }
+            },
+            "nom" : {
+                "libelleFr" : "A basic infrastructure object"
+            }
+        },
+        {
+            "id" : 4,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "type" : "Point",
+                        "coordinates" : [ 0, 0 ]
+                    }
+                }
+            },
+            "nom" : {
+                "libelleFr" : "A basic infrastructure object"
             }
         }
     ]
