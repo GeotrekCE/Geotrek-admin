@@ -2110,7 +2110,7 @@ class ApidaeServiceParserTests(TestCase):
     def test_no_service_type(self):
         with self.assertRaisesMessage(
             ImproperlyConfigured,
-            "A service type must be defined in parser configuration.",
+            "A service type must be specified in the parser configuration.",
         ):
             TestApidaeServiceParserMissingType()
 
