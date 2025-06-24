@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.test import TestCase
 
+from geotrek.core.models import Path
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.tests.factories import (
@@ -62,15 +63,14 @@ class ZoningPropertiesMixinTest(TestCase):
         # Check reverse order
         self.path.reverse()
         self.path.save()
+        path = Path.objects.get(pk=self.path.pk)
 
+        self.assertListEqual([c.name for c in path.cities], [city.name, self.city.name])
+        self.assertEqual(len(path.cities), 2)
         self.assertListEqual(
-            [c.name for c in self.path.cities], [city.name, self.city.name]
+            [c.name for c in path.published_cities], [city.name, self.city.name]
         )
-        self.assertEqual(len(self.path.cities), 2)
-        self.assertListEqual(
-            [c.name for c in self.path.published_cities], [city.name, self.city.name]
-        )
-        self.assertEqual(len(self.path.published_cities), 2)
+        self.assertEqual(len(path.published_cities), 2)
 
     def test_districts(self):
         district = DistrictFactory.create(published=False, geom=self.geom_2_wkt)
@@ -97,17 +97,18 @@ class ZoningPropertiesMixinTest(TestCase):
         # Check reverse order
         self.path.reverse()
         self.path.save()
+        path = Path.objects.get(pk=self.path.pk)
 
         self.assertListEqual(
-            [d.name for d in self.path.published_districts],
+            [d.name for d in path.published_districts],
             [district.name, self.district.name],
         )
-        self.assertEqual(len(self.path.districts), 2)
+        self.assertEqual(len(path.districts), 2)
         self.assertListEqual(
-            [d.name for d in self.path.published_districts],
+            [d.name for d in path.published_districts],
             [district.name, self.district.name],
         )
-        self.assertEqual(len(self.path.published_districts), 2)
+        self.assertEqual(len(path.published_districts), 2)
 
     def test_areas(self):
         area = RestrictedAreaFactory.create(published=False, geom=self.geom_2_wkt)
@@ -130,9 +131,11 @@ class ZoningPropertiesMixinTest(TestCase):
         self.path.reverse()
         self.path.save()
 
-        self.assertListEqual([a.pk for a in self.path.areas], [area.pk, self.area.pk])
-        self.assertEqual(len(self.path.areas), 2)
+        path = Path.objects.get(pk=self.path.pk)
+
+        self.assertListEqual([a.pk for a in path.areas], [area.pk, self.area.pk])
+        self.assertEqual(len(path.areas), 2)
         self.assertListEqual(
-            [a.pk for a in self.path.published_areas], [area.pk, self.area.pk]
+            [a.pk for a in path.published_areas], [area.pk, self.area.pk]
         )
-        self.assertEqual(len(self.path.published_areas), 2)
+        self.assertEqual(len(path.published_areas), 2)

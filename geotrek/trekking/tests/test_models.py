@@ -405,7 +405,10 @@ class RelatedObjectsTest(TestCase):
             geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
         )
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, str(city1))
+        trek = Trek.objects.get(
+            pk=trek.pk
+        )  # Refresh trek instance and invalidate cached_property
+        self.assertEqual(trek.city_departure, city1)
 
     @skipIf(
         settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
