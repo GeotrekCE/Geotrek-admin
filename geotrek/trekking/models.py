@@ -14,6 +14,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import get_language, gettext
 from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
@@ -597,6 +598,12 @@ class Trek(
             "child__id", flat=True
         )
         return children
+
+    @cached_property
+    def departure_city(self):
+        from geotrek.zoning.models import City
+
+        return City.objects.all().filter(geom__contains=self.start_point).first()
 
     def previous_id_for(self, parent):
         children_id = list(parent.children_id)

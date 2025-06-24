@@ -12,6 +12,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.formats import date_format
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -432,6 +433,15 @@ class TouristicContent(
     @property
     def extent(self):
         return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
+
+    @cached_property
+    def city(self):
+        """Return the municipality of the content"""
+        if self.pk:
+            from geotrek.zoning.models import City
+
+            return City.objects.all().filter(geom__intersects=self.geom).first()
+        return None
 
     @classmethod
     def topology_touristic_contents(cls, topology, queryset=None):

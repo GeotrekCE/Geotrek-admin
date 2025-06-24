@@ -53,3 +53,7 @@ class Area(GeoFunc):
 
 class IsSimple(GeoFunc):
     output_field = BooleanField()
+
+
+class GeometryN(GeomOutputGeoFunc):
+    """ST_GeometryN postgis function"""
