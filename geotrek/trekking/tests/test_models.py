@@ -427,7 +427,7 @@ class RelatedObjectsTest(TestCase):
             pk=trek.pk
         )  # Refresh trek instance and invalidate cached_property
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, str(city1))
+        self.assertEqual(trek.city_departure, city1)
 
 
 class TrekUpdateGeomTest(TestCase):
