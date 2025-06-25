@@ -200,7 +200,6 @@ class ApidaeInfrastructureParserTests(TestCase):
         infra = Infrastructure.objects.get(eid=1)
         self.assertEqual(infra.name, "Un objet avec un minimum de données")
         self.assertEqual(infra.type.label, "Foo")
-        self.assertEqual(infra.eid, "1")
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
             infra_path = infra.topo_object.paths.get()
