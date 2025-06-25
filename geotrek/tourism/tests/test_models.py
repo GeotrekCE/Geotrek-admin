@@ -194,13 +194,15 @@ class TouristicEventModelTest(TestCase):
 
 
 class TouristicContentModelTest(TestCase):
-    def tests_type_poi_mobilev1(self):
-        self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
-        self.content = tourism_factories.TouristicContentFactory(
-            geom=f"SRID={settings.SRID};POINT(1 1)", category=self.category
-        )
+    def test_type_attribute_category(self):
+        """Touristic content type attribute return category"""
+        content = tourism_factories.TouristicContentFactory(category__label="Test")
+        self.assertEqual(str(content.type), "Test")
 
-        self.assertEqual(str(self.content.type), "Test")
+    def test_city_is_empty(self):
+        """Touristic content city attribute return None if no city intersecting"""
+        content = tourism_factories.TouristicContentFactory()
+        self.assertIsNone(content.city)
 
 
 class TouristicEventCancellationReasonModelTest(TestCase):
