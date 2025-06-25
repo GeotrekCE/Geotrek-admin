@@ -16,6 +16,16 @@
         {
             "name": "test3",
             "geometry": null
+        },
+        {
+            "name": "Correct object",
+            "geometry":{
+                "type": "Point",
+                "coordinates": [
+                    4.0,
+                    46.0
+                ]
+            }
         }
     ]
 }

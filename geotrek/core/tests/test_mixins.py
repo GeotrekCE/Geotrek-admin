@@ -24,10 +24,19 @@ class PointTopologyTestModelParser(PointTopologyParserMixin, JSONParser):
 
 class PointTopologyTestModelParserMissingMethod(PointTopologyParserMixin, JSONParser):
     model = PointTopologyTestModel
-    fields = {"geom": "geometry"}
+    fields = {"name": "name", "geom": "geometry"}
 
 
 class PointTopologyParserMixinTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create(
+                geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
+            )
+
+
     def get_test_data_file_path(self, filename):
         return os.path.join(os.path.dirname(__file__), "data", filename)
 
@@ -39,6 +48,7 @@ class PointTopologyParserMixinTest(TestCase):
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
     def test_parsing_fails_without_path_in_dynamic_segmentation_mode(self):
+        self.path.delete()
         filename = self.get_test_data_file_path(
             "point_topology_test_model_objects.json"
         )
@@ -54,8 +64,6 @@ class PointTopologyParserMixinTest(TestCase):
             )
 
     def test_object_parsing_fails_when_geom_is_incorrect(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            PathFactory.create()
         output = StringIO()
         filename = self.get_test_data_file_path(
             "point_topology_test_model_wrong_geom.json"
@@ -76,13 +84,13 @@ class PointTopologyParserMixinTest(TestCase):
             "Could not parse geometry from value '{'type': 'Point'}'",
             output.getvalue(),
         )
-        self.assertEqual(len(PointTopologyTestModel.objects.all()), 0)
+
+        # Check that the last object, which is correct, has been parsed despite the previous errors:
+        self.assertEqual(len(PointTopologyTestModel.objects.all()), 1)
+        PointTopologyTestModel.objects.get(name="Correct object")
+
 
     def test_object_parsing_succeeds_when_geom_is_a_point_several_objects(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create(
-                geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
-            )
         filename = self.get_test_data_file_path(
             "point_topology_test_model_objects.json"
         )
@@ -99,7 +107,7 @@ class PointTopologyParserMixinTest(TestCase):
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
             obj_1_path = obj_1.topo_object.paths.get()
-            self.assertEqual(obj_1_path, path)
+            self.assertEqual(obj_1_path, self.path)
             self.assertEqual(obj_1.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
             self.assertAlmostEqual(obj_1.topo_object.offset, -55184.442, places=2)
         self.assertEqual(obj_1.geom.geom_type, "Point")
@@ -109,7 +117,7 @@ class PointTopologyParserMixinTest(TestCase):
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
             obj_2_path = obj_2.topo_object.paths.get()
-            self.assertEqual(obj_2_path, path)
+            self.assertEqual(obj_2_path, self.path)
             self.assertEqual(obj_2.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
             self.assertAlmostEqual(obj_2.topo_object.offset, -28914.952, places=2)
         self.assertEqual(obj_2.geom.geom_type, "Point")
