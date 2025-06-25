@@ -1,0 +1,25 @@
+{
+    "numFound" : 1,
+    "objetsTouristiques" : [
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 1,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "type" : "Point",
+                        "coordinates" : [ 0, 0 ]
+                    }
+                }
+            },
+            "nom" : {
+                "libelleFr" : "Un objet avec une courte description"
+            },
+            "presentation" : {
+                "descriptifCourt" : {
+                    "libelleFr" : "Une courte description"
+                }
+            }
+        }
+    ]
+}
