@@ -1,13 +1,17 @@
+import requests
+import json
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models.query import Prefetch
 from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView
+from django.utils.translation import gettext as _
+from django.views.generic import CreateView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (
@@ -22,6 +26,9 @@ from mapentity.views import (
     MapEntityMapImage,
     MapEntityUpdate,
 )
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.layout import Button
+from mapentity.forms import SubmitButton
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
@@ -38,6 +45,7 @@ from geotrek.common.models import (
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.common.utils.translation import get_translated_fields
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.infrastructure.models import Infrastructure
@@ -467,6 +475,119 @@ class POIViewSet(GeotrekMapentityViewSet):
             qs = qs.select_related("type", "structure")
             qs = qs.prefetch_related("attachments")
         return qs
+
+class POIOSMCompare(DetailView):
+    model = POI
+    template_name = "trekking/poi_osm_comparaison.html"
+
+    mapping = {
+        "name": "name",
+        "description": "description",
+    }
+
+    def translation(self):
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+
+        for field in get_translated_fields(self.model):
+            tags = self.mapping.get(field)
+            if not tags:
+                continue
+
+            is_str = isinstance(tags, str)
+            tags = [tags] if is_str else list(tags)
+
+            # Protect the class from multiple translation mappings as field is a static attribute
+            is_translated = [tag for tag in tags if tag.endswith(f":{default_lang}")]
+            if is_translated:
+                continue
+
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                if lang != default_lang:
+                    geotrek_field = f"{field}_{lang}"
+                    translated = [tag + ":" + lang for tag in tags]
+                    self.mapping[geotrek_field] = (
+                        translated[0] if is_str else tuple(translated)
+                    )
+
+            translated = [f"{tag}:{default_lang}" for tag in tags]
+            self.mapping[field] = (
+                (translated[0], tags[0]) if is_str else tuple(translated + tags)
+            )
+
+    def get_osm_object(self, geotrek_object, **kwargs):
+        eid = geotrek_object.eid
+
+        type = "node" if eid[0] == "N" else \
+               "way" if eid[0] == "W" else \
+               "relation"
+        id = eid[1:]
+
+        response = requests.get(f"https://master.apis.dev.openstreetmap.org/api/0.6/{type}/{id}.json")
+        if response.status_code == 404:
+            raise Exception(f"OpenStreetMap object {type}({id}) not found")
+        elif response.status_code == 410:
+            raise Exception(f"OpenStreetMap object {type}({id}) has been deleted")
+
+        return response.json()['elements'][0]
+
+    def map_fields(self, geotrek, osm):
+        osm_tags = osm.get("tags", {})
+        context = [{
+            "geotrek_field": "eid",
+            "geotrek_value": geotrek.eid,
+            "osm_field": "ID",
+            "osm_value": f"{osm.get('type')}({osm.get('id')})"
+        }]
+
+        for geotrek_field, osm_fields in sorted(self.mapping.items()):
+            fields = (osm_fields,) if isinstance(osm_fields, str) else osm_fields
+            osm_value, osm_field = next(
+                ((value, field) for field in fields if (value := osm_tags.get(field))),
+                ("", fields[0])
+            )
+
+            context.append({
+                "geotrek_field": geotrek_field,
+                "geotrek_value": getattr(geotrek, geotrek_field, ""),
+                "osm_field": osm_field,
+                "osm_value": osm_value
+            })
+
+        return context
+
+    def get_context_data(self, **kwargs):
+        # add translation fields
+        self.translation()
+
+        # get geotrek object
+        geotrek_object = self.model.objects.get(pk=self.kwargs["pk"])
+
+        # get OpenStreetMap object
+        osm_object = self.get_osm_object(geotrek_object)
+
+        # create context
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "objects": self.map_fields(geotrek_object, osm_object),
+            "osm_object_serialized": json.dumps(osm_object),
+        })
+
+        return context
+
+
+def POIOSMValidate(request, pk):
+    template_name = "trekking/poi_osm_validation.html"
+
+    osm_object = json.loads(request.GET.get("osm_object"))
+
+    for field in request.GET:
+        if field != "osm_object":
+            tag, value = request.GET.get(field).split("|", 1)
+            osm_value = value or osm_object["tags"].get(tag)
+            if osm_value:
+                osm_object["tags"][tag] = osm_value
+
+    return render(request, template_name, context={"object": osm_object, "pk": pk})
 
 
 class TrekPOIViewSet(viewsets.ModelViewSet):

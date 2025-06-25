@@ -16,6 +16,8 @@ from .views import (
     TrekPOIViewSet,
     TrekServiceViewSet,
     WebLinkCreatePopup,
+    POIOSMCompare,
+    POIOSMValidate
 )
 
 register_converter(LangConverter, "lang")
@@ -48,6 +50,8 @@ urlpatterns = [
         TrekMapImage.as_view(),
         name="trek_map_image",
     ),
+    path("poi/<int:pk>/osm/", POIOSMCompare.as_view(), name="poi_osm_compare"),
+    path("poi/<int:pk>/osm/validate", POIOSMValidate, name="poi_osm_validate"),
 ]
 
 
