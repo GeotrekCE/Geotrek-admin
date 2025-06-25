@@ -1006,12 +1006,12 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return [label.pk for label in obj.published_labels]
 
         def get_departure_city(self, obj):
-            return obj.city_departure.id if obj.city_departure else None
+            return obj.departure_city.id if obj.departure_city else None
 
         def get_departure_city_code(self, obj):
             return (
-                obj.city_departure.code
-                if obj.city_departure and obj.city_departure.code
+                obj.departure_city.code
+                if obj.departure_city and obj.departure_city.code
                 else None
             )
 

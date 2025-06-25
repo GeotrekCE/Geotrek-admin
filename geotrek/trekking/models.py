@@ -497,7 +497,7 @@ class Trek(
         return ", ".join([str(n) for n in self.web_links.all()])
 
     @cached_property
-    def city_departure(self):
+    def departure_city(self):
         cities = self.published_cities
         return cities[0] if cities else ""
 
@@ -598,12 +598,6 @@ class Trek(
             "child__id", flat=True
         )
         return children
-
-    @cached_property
-    def departure_city(self):
-        from geotrek.zoning.models import City
-
-        return City.objects.all().filter(geom__contains=self.start_point).first()
 
     def previous_id_for(self, parent):
         children_id = list(parent.children_id)
