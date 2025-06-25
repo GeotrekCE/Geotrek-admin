@@ -8,7 +8,11 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer, TouristicContent
+from geotrek.tourism.models import (
+    TouristicContent,
+    TouristicContentType,
+    TouristicEventOrganizer,
+)
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
