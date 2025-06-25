@@ -23,7 +23,7 @@ brotli==1.1.0
     # via fonttools
 btrees==6.1
     # via zodb
-cachetools==6.0.0
+cachetools==6.1.0
     # via large-image
 cairocffi==1.7.1
     # via
@@ -108,6 +108,7 @@ django==4.2.23
     #   django-leaflet
     #   django-modelcluster
     #   django-modeltranslation
+    #   django-tinymce
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
@@ -154,7 +155,7 @@ django-modeltranslation==0.19.15
     # via mapentity
 django-mptt==0.17.0
     # via geotrek (setup.py)
-django-tinymce==3.5.0
+django-tinymce==4.1.0
     # via mapentity
 django-treebeard==4.7.1
     # via geotrek (setup.py)
@@ -230,7 +231,7 @@ kombu==5.5.4
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.32.9
+large-image==1.32.10
     # via
     #   django-large-image
     #   large-image-source-vips
@@ -396,7 +397,7 @@ uritemplate==4.2.0
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   requests
     #   sentry-sdk

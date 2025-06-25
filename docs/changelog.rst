@@ -5,9 +5,15 @@ CHANGELOG
 2.115.1+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+- API v2 city references now city internal ID instead of code, because of codes are not used in every countries.
+- Due to change in public API, we recommend you to clear caches after update.
+
 **Improvements**
 
-- move primary key of City model on a new column ID
+- move primary key of City model on a new column ID.
+- add city_code and city_codes fields in API v2 responses.
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
@@ -24,6 +30,7 @@ CHANGELOG
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+- Add new authors and improve copyright details
 
 
 2.115.1    (2025-05-21)

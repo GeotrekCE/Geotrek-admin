@@ -4,7 +4,7 @@ import logging
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.contrib.gis.geos import GEOSGeometry, MultiLineString, Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import F
 from django.urls import reverse
 from django.utils.html import escape
@@ -515,6 +515,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         accessibility = serializers.SerializerMethodField()
         external_id = serializers.CharField(source="eid")
         cities = serializers.SerializerMethodField()
+        city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
@@ -535,6 +536,9 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.id for city in obj.published_cities]
 
+        def get_city_codes(self, obj):
+            return [city.code for city in obj.published_cities if city.code]
+
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
 
@@ -550,6 +554,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
     class TouristicContentSerializer(TouristicModelSerializer):
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
         departure_city = serializers.SerializerMethodField()
+        departure_city_code = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
@@ -566,11 +571,13 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "description",
                 "description_teaser",
                 "departure_city",
+                "departure_city_code",
                 "geometry",
                 "label_accessibility",
                 "practical_info",
                 "url",
                 "cities",
+                "city_codes",
                 "districts",
                 "external_id",
                 "name",
@@ -599,10 +606,10 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             }
 
         def get_departure_city(self, obj):
-            city = (
-                zoning_models.City.objects.all().filter(geom__contains=obj.geom).first()
-            )
-            return city.id if city else None
+            return obj.city.id if obj.city else None
+
+        def get_departure_city_code(self, obj):
+            return obj.city.code if obj.city and obj.city.code else None
 
     class TouristicEventSerializer(TouristicModelSerializer):
         organizers = serializers.SerializerMethodField()
@@ -670,6 +677,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "cancelled",
                 "capacity",
                 "cities",
+                "city_codes",
                 "contact",
                 "description",
                 "description_teaser",
@@ -865,8 +873,10 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         previous = serializers.ReadOnlyField(source="previous_id")
         next = serializers.ReadOnlyField(source="next_id")
         cities = serializers.SerializerMethodField()
+        city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         departure_city = serializers.SerializerMethodField()
+        departure_city_code = serializers.SerializerMethodField()
         labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
@@ -918,15 +928,12 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_departure(self, obj):
             return get_translation_or_dict("departure", self, obj)
 
-        def get_first_point(self, geom):
-            if isinstance(geom, Point):
-                return geom
-            if isinstance(geom, MultiLineString):
-                return Point(geom[0][0])
-            return Point(geom[0])
-
         def get_departure_geom(self, obj):
-            return self.get_first_point(obj.geom3d_transformed)[:2]
+            return (
+                obj.start_point.transform(settings.API_SRID, clone=True).coords
+                if obj.start_point
+                else None
+            )
 
         def get_arrival(self, obj):
             return get_translation_or_dict("arrival", self, obj)
@@ -999,6 +1006,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.id for city in obj.published_cities]
 
+        def get_city_codes(self, obj):
+            return [city.code for city in obj.published_cities if city.code]
+
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
 
@@ -1006,9 +1016,14 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return [label.pk for label in obj.published_labels]
 
         def get_departure_city(self, obj):
-            geom = self.get_first_point(obj.geom)
-            city = zoning_models.City.objects.all().filter(geom__contains=geom).first()
-            return city.id if city else None
+            return obj.departure_city.id if obj.departure_city else None
+
+        def get_departure_city_code(self, obj):
+            return (
+                obj.departure_city.code
+                if obj.departure_city and obj.departure_city.code
+                else None
+            )
 
         def _replace_image_paths_with_urls(self, data):
             def replace(html_content):
@@ -1054,9 +1069,11 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "attachments_accessibility",
                 "children",
                 "cities",
+                "city_codes",
                 "create_datetime",
                 "departure",
                 "departure_city",
+                "departure_city_code",
                 "departure_geom",
                 "descent",
                 "description",
@@ -1523,6 +1540,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         parent_uuid = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField("get_pdf_url")
         cities = serializers.SerializerMethodField()
+        city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         labels = serializers.SerializerMethodField()
         web_links = WebLinkSerializer(many=True)
@@ -1552,6 +1570,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.id for city in obj.published_cities]
+
+        def get_city_codes(self, obj):
+            return [city.code for city in obj.published_cities if city.code]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1602,6 +1623,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "ambiance",
                 "attachments",
                 "cities",
+                "city_codes",
                 "children",
                 "children_uuids",
                 "description",
@@ -1665,6 +1687,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField()
         pdf = serializers.SerializerMethodField("get_pdf_url")
         cities = serializers.SerializerMethodField()
+        city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
@@ -1682,6 +1705,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.id for city in obj.published_cities]
+
+        def get_city_codes(self, obj):
+            return [city.code for city in obj.published_cities if city.code]
 
         def get_districts(self, obj):
             return [district.pk for district in obj.published_districts]
@@ -1768,6 +1794,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "children",
                 "children_uuids",
                 "cities",
+                "city_codes",
                 "description",
                 "districts",
                 "duration",
