@@ -2,7 +2,7 @@ from django.contrib.gis.db import models
 from django.db.models import Case, Q, When
 
 from geotrek.common.functions import GeometryN, GeometryType, StartPoint
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.managers import TopologyManager
 
 
