@@ -1324,7 +1324,7 @@ class ApidaeServiceParser(PointTopologyParserMixin, ApidaeBaseParser):
             self.constant_fields["type"] = self.service_type
         else:
             raise ImproperlyConfigured(
-                _("A service type must be defined in parser configuration.")
+                _("A service type must be specified in the parser configuration.")
             )
 
     def build_geos_geometry(self, src, val):
