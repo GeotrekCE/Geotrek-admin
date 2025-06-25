@@ -154,9 +154,13 @@ class ApidaeInfrastructureParserTests(TestCase):
             "Could not parse geometry from value '{'type': 'Point'}'",
             output.getvalue(),
         )
-        nb_of_geom_none_warnings = output.getvalue().count("Cannot import object: geometry is None")
+        nb_of_geom_none_warnings = output.getvalue().count(
+            "Cannot import object: geometry is None"
+        )
         self.assertEqual(nb_of_geom_none_warnings, 3)
-        nb_of_missing_field_warnings = output.getvalue().count("Missing required field 'localisation.geolocalisation.geoJson'")
+        nb_of_missing_field_warnings = output.getvalue().count(
+            "Missing required field 'localisation.geolocalisation.geoJson'"
+        )
         self.assertEqual(nb_of_missing_field_warnings, 3)
 
         # Check that the last object, which has correct data, has been parsed despite the previous errors:
@@ -174,7 +178,9 @@ class ApidaeInfrastructureParserTests(TestCase):
             stdout=output,
         )
 
-        nb_of_missing_field_warnings = output.getvalue().count("Missing required field 'nom.libelleFr'")
+        nb_of_missing_field_warnings = output.getvalue().count(
+            "Missing required field 'nom.libelleFr'"
+        )
         self.assertEqual(nb_of_missing_field_warnings, 2)
 
         # Check that the last object, which has correct data, has been parsed despite the previous errors:
