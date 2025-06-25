@@ -1,0 +1,53 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags static %}
+
+{% block extrabody %}
+
+    <div class="container">
+        <div class="comparaison_table">
+
+            <h1>Validation de l'objet {{ object.type }}({{ object.id }})</h1>
+
+                <table class="table-striped table-bordered table">
+                    {% for key, value in object.tags.items %}
+                    <tr>
+                        <th>{{ key }}</th>
+                        <td>{{ value }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+            {{ block.super }}
+
+            <form action={% url 'trekking:poi_list' %} method="get" name="export_osm_obj">
+                {% csrf_token %}
+
+                <label>Avez-vous l'autorisation de publier ces données sur OpenStreetMap, et confirmez-vous qu'elles ne sont pas soumises à une protection de propriété privée ?</label>
+                <br>
+                <input type="checkbox" id="copyright" name="copyright"><br>
+
+                <label>Commentaire*:</label><br>
+                <textarea type="text" id="comment" name="comment" cols="75" rows="3"></textarea><br>
+
+                <div class="form-actions">
+                    <input type="button" name="cancel" value="Annuler" class="btn btn btn-light ml-auto mr-2" id="button-id-cancel">
+                    <button type="submit" id="save_changes" class="btn btn-success" onclick="this.form.submit();"> <i class="bi bi-check-circle-fill"></i> Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .container {
+            display: block;
+            margin-top: 50px;
+        }
+        .comparaison_table {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    </style>
+
+{% endblock extrabody %}

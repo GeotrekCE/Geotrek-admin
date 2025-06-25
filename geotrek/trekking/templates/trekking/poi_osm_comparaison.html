@@ -1,0 +1,61 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags static %}
+
+<link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+
+{% block extrabody %}
+    <div class="container">
+        <div class="comparaison_table">
+
+            <h1>Tables de comparaison</h1>
+
+            <form action={% url 'trekking:poi_osm_validate' object.id %} method="get" name="export_osm_obj">
+
+                <table class="table-striped table-bordered table">
+                    <tr>
+                        <td colspan="2" align="center"><strong>Geotrek</strong></td>
+                        <td></td>
+                        <td colspan="2" align="center"><strong>OSM</strong></td>
+                    </tr>
+                    {% for row in objects %}
+                        <tr>
+                            <th>{{ object|verbose:row.geotrek_field }}</th>
+                            <td>{{ row.geotrek_value|striptags }}</td>
+                            <td align="center">
+                                <p>
+                                    <input type="checkbox" id={{ row.geotrek_field }} name={{ row.geotrek_field }} value="{{ row.osm_field }}|{{ row.geotrek_value|striptags }}">
+                                </p>
+                            </td>
+                            <th>{{ row.osm_field }}</th>
+                            <td>{{ row.osm_value }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                <input type="hidden" id="osm_object" name="osm_object" value="{{ osm_object_serialized }}" />
+
+                <div class="form-actions">
+                    <input type="button" name="cancel" value="Annuler" class="btn btn btn-light ml-auto mr-2" id="button-id-cancel">
+                    <button type="submit" id="save_changes" class="btn btn-success" onclick="this.form.submit();"> <i class="bi bi-check-circle-fill"></i> Sauvegarder</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    {{ block.super }}
+
+    <style>
+        .container {
+            display: block;
+            margin-top: 50px;
+        }
+        .comparaison_table {
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    </style>
+
+{% endblock extrabody %}
