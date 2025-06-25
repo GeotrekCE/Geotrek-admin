@@ -23,6 +23,7 @@ CHANGELOG
 - Add OpenStreetMap parser for Outdoor Sites
 - All parsers for point topology objects now generate the topology
 - Add OpenStreetMap parser for Cities
+- Add Apidae parser for Infrastructure
 
 **Bug fixes**
 
