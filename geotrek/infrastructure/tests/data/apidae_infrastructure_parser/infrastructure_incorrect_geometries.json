@@ -1,5 +1,5 @@
 {
-    "numFound" : 3,
+    "numFound" : 9,
     "objetsTouristiques" : [
         {
             "id" : 1,
@@ -11,7 +11,7 @@
                 }
             },
             "nom" : {
-                "libelleFr" : "A basic infrastructure object"
+                "libelleFr" : "No geom type"
             }
         },
         {
@@ -24,7 +24,7 @@
                 }
             },
             "nom" : {
-                "libelleFr" : "A basic infrastructure object"
+                "libelleFr" : "No coordinates"
             }
         },
         {
@@ -35,11 +35,49 @@
                 }
             },
             "nom" : {
-                "libelleFr" : "A basic infrastructure object"
+                "libelleFr" : "geoJson is null"
             }
         },
         {
             "id" : 4,
+            "localisation" : {
+                "geolocalisation" : {}
+            },
+            "nom" : {
+                "libelleFr" : "geolocalisation is empty"
+            }
+        },
+        {
+            "id" : 5,
+            "localisation" : {
+                "geolocalisation" : null
+            },
+            "nom" : {
+                "libelleFr" : "geolocalisation is null"
+            }
+        },
+        {
+            "id" : 6,
+            "localisation" : {},
+            "nom" : {
+                "libelleFr" : "localisation is empty"
+            }
+        },
+        {
+            "id" : 7,
+            "localisation" : null,
+            "nom" : {
+                "libelleFr" : "localisation is null"
+            }
+        },
+        {
+            "id" : 8,
+            "nom" : {
+                "libelleFr" : "localisation field is missing"
+            }
+        },
+        {
+            "id" : 9,
             "localisation" : {
                 "geolocalisation" : {
                     "geoJson" : {
