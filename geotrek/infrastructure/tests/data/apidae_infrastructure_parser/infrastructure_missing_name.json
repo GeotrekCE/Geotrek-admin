@@ -1,4 +1,5 @@
 {
+    "numFound" : 3,
     "objetsTouristiques" : [
         {
             "id" : 1,
@@ -21,36 +22,10 @@
                     }
                 }
             },
-            "nom" : null
-        },
-        {
-            "id" : 3,
-            "localisation" : {
-                "geolocalisation" : {
-                    "geoJson" : {
-                        "type" : "Point",
-                        "coordinates" : [ 0, 0 ]
-                    }
-                }
-            },
             "nom" : {}
         },
         {
-            "id" : 4,
-            "localisation" : {
-                "geolocalisation" : {
-                    "geoJson" : {
-                        "type" : "Point",
-                        "coordinates" : [ 0, 0 ]
-                    }
-                }
-            },
-            "nom" : {
-                "libelleFr" : null
-            }
-        },
-        {
-            "id" : 5,
+            "id" : 3,
             "localisation" : {
                 "geolocalisation" : {
                     "geoJson" : {

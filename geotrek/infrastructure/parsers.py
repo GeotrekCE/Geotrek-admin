@@ -59,7 +59,11 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
     natural_keys = {
         "type": "label",
     }
-    field_options = {"type": {"create": True}}
+    field_options = {
+        "type": {"create": True},
+        "name": {"required": True},
+        "geom": {"required": True}
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
