@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-10 11:20+0200\n"
+"POT-Creation-Date: 2025-06-24 14:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -433,17 +433,6 @@ msgid ""
 "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
-msgid "You need to add a network of paths before importing POIs"
-msgstr ""
-
-msgid "Invalid geometry"
-msgstr ""
-
-#, python-brace-format
-msgid ""
-"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
-msgstr ""
-
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -470,10 +459,6 @@ msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr ""
 
 msgid "A service type must be defined in parser configuration."
-msgstr ""
-
-#, python-brace-format
-msgid "Could not parse geometry from value '{value}'"
 msgstr ""
 
 msgid "Trek geometry is None"

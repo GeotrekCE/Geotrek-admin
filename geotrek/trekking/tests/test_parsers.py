@@ -204,7 +204,8 @@ class POIParserTests(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing POIs"
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
         ):
             call_command(
                 "import", "geotrek.trekking.parsers.POIParser", filename, verbosity=0
@@ -223,7 +224,7 @@ class POIParserTests(TestCase):
         )
         self.assertEqual(POI.objects.count(), 0)
         self.assertIn(
-            "Invalid geometry type for field 'GEOM'. Should be Point, not LineString,",
+            "Invalid geometry type: should be 'Point', not 'LineString',",
             output.getvalue(),
         )
 
@@ -245,7 +246,7 @@ class POIParserTests(TestCase):
             self.assertIn("Invalid geometry", log.output[-1])
 
     def test_create(self):
-        PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
+        path = PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
         filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
         call_command(
             "import", "geotrek.trekking.parsers.POIParser", filename, verbosity=0
@@ -253,6 +254,14 @@ class POIParserTests(TestCase):
         poi = POI.objects.all().last()
         self.assertEqual(poi.name, "pont")
         poi.reload()
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, path)
+            self.assertEqual(poi.topo_object.kind, "POI")
+            self.assertAlmostEqual(poi.topo_object.offset, 944460.127, places=2)
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertEqual(WKTWriter(precision=4).write(poi.geom), WKT_POI)
         self.assertEqual(poi.geom, poi.geom_3d)
 
@@ -973,13 +982,44 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     app_label = "trekking"
 
     @classmethod
     def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    @mock.patch("requests.get")
+    @mock.patch("requests.head")
+    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [
+            ("trekking", "structure.json"),
+            ("trekking", "poi_type.json"),
+            ("trekking", "poi_ids.json"),
+            ("trekking", "poi.json"),
+        ]
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b""
+        mocked_head.return_value.status_code = 200
+
+        self.path.delete()
+        with self.assertRaisesRegex(
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestGeotrekPOIParser",
+                verbosity=0,
+            )
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -1019,17 +1059,56 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(poi.published_es, False)
         self.assertEqual(str(poi.structure), "Struct3")
         self.assertEqual(str(poi.type), "Peak")
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, self.path)
+            self.assertEqual(poi.topo_object.kind, "POI")
+
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 572298.7056448072, places=5)
         self.assertAlmostEqual(poi.geom.y, 6193580.839504813, places=5)
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     app_label = "trekking"
 
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create()
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    @mock.patch("requests.get")
+    @mock.patch("requests.head")
+    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [
+            ("trekking", "structure.json"),
+            ("trekking", "service_type.json"),
+            ("trekking", "service_ids.json"),
+            ("trekking", "service.json"),
+        ]
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b""
+        mocked_head.return_value.status_code = 200
+
+        self.path.delete()
+        with self.assertRaisesRegex(
+            CommandError,
+            "You need to add a network of paths before importing 'Service' objects",
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestGeotrekServiceParser",
+                verbosity=0,
+            )
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -1058,6 +1137,14 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         service = Service.objects.all().first()
         self.assertEqual(str(service.type), "Eau potable")
         self.assertEqual(str(service.structure), "Struct3")
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            service_path = service.topo_object.paths.get()
+            self.assertEqual(service_path, self.path)
+            self.assertEqual(service.topo_object.kind, "SERVICE")
+            self.assertAlmostEqual(service.topo_object.offset, -427263.473, places=2)
+        self.assertEqual(service.geom.geom_type, "Point")
+        self.assertEqual(service.geom.srid, settings.SRID)
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
         self.assertAlmostEqual(service.geom.y, 6192330.15779677, places=5)
 
@@ -1905,7 +1992,6 @@ class TestApidaePOIParser(ApidaePOIParser):
     selection_id = 654321
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class ApidaePOIParserTests(TestCase):
     @staticmethod
     def make_dummy_get(apidae_data_file):
@@ -1918,6 +2004,26 @@ class ApidaePOIParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create()
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    @mock.patch("requests.get")
+    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get("a_poi.json")
+
+        self.path.delete()
+        with self.assertRaisesRegex(
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestApidaePOIParser",
+                verbosity=0,
+            )
 
     @mock.patch("requests.get")
     def test_POI_is_imported(self, mocked_get):
@@ -1936,6 +2042,13 @@ class ApidaePOIParserTests(TestCase):
         self.assertEqual(poi.description_fr, "La description courte en français.")
         self.assertEqual(poi.description_en, "The short description in english.")
 
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, self.path)
+            self.assertEqual(poi.topo_object.kind, "POI")
+            self.assertAlmostEqual(poi.topo_object.offset, -126355.067, places=2)
+
+        self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.coords[0], 729136.5, delta=0.1)
         self.assertAlmostEqual(poi.geom.coords[1], 6477050.1, delta=0.1)
@@ -1981,6 +2094,11 @@ class TestApidaeServiceParserMissingType(ApidaeServiceParser):
 
 
 class ApidaeServiceParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path = PathFactory.create()
+
     @staticmethod
     def make_dummy_get(apidae_data_file):
         return make_dummy_apidae_get(
@@ -1995,6 +2113,24 @@ class ApidaeServiceParserTests(TestCase):
             "A service type must be defined in parser configuration.",
         ):
             TestApidaeServiceParserMissingType()
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    @mock.patch("requests.get")
+    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
+        mocked_get.side_effect = self.make_dummy_get("service.json")
+
+        self.path.delete()
+        with self.assertRaisesRegex(
+            CommandError,
+            "You need to add a network of paths before importing 'Service' objects",
+        ):
+            call_command(
+                "import",
+                "geotrek.trekking.tests.test_parsers.TestApidaeServiceParser",
+                verbosity=0,
+            )
 
     @mock.patch("requests.get")
     def test_skip_row_and_continue_when_wrong_geometry(self, mocked_get):
@@ -2019,6 +2155,10 @@ class ApidaeServiceParserTests(TestCase):
             "Could not parse geometry from value '{'type': 'Point'}'",
             output.getvalue(),
         )
+        self.assertIn(
+            "Cannot import object: geometry is None",
+            output.getvalue(),
+        )
 
     @mock.patch("requests.get")
     def test_service_is_imported(self, mocked_get):
@@ -2034,6 +2174,14 @@ class ApidaeServiceParserTests(TestCase):
         service = Service.objects.all().first()
         self.assertEqual(service.type.name, "Foo")
         self.assertEqual(service.eid, "1")
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            service_path = service.topo_object.paths.get()
+            self.assertEqual(service_path, self.path)
+            self.assertEqual(service.topo_object.kind, "SERVICE")
+            self.assertAlmostEqual(service.topo_object.offset, 298317.556, places=2)
+        self.assertEqual(service.geom.geom_type, "Point")
+        self.assertEqual(service.geom.srid, settings.SRID)
         self.assertAlmostEqual(service.geom.coords[0], 813833.6, delta=0.1)
         self.assertAlmostEqual(service.geom.coords[1], 6324255.0, delta=0.1)
 
@@ -2463,7 +2611,7 @@ class TestPOIOpenStreetMapParser(OpenStreetMapPOIParser):
     type = "Test"
 
 
-class OpenStreetMapPOIParser(TestCase):
+class OpenStreetMapPOIParserTest(TestCase):
     @classmethod
     @mock.patch("geotrek.common.parsers.requests.get")
     def import_POI(cls, mocked):
@@ -2498,7 +2646,8 @@ class OpenStreetMapPOIParser(TestCase):
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
-            CommandError, "You need to add a network of paths before importing POIs"
+            CommandError,
+            "You need to add a network of paths before importing 'POI' objects",
         ):
             call_command(
                 "import",
@@ -2521,19 +2670,16 @@ class OpenStreetMapPOIParser(TestCase):
         poi3 = self.objects.get(eid="W3")
         self.assertEqual(poi3.name, "Test")
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_topology_point(self):
+    def test_imported_object_point(self):
         poi = self.objects.get(eid="N1")
-        self.assertAlmostEqual(poi.topo_object.offset, 6437.493, places=2)
-        self.assertEqual(poi.topo_object.paths.count(), 1)
-        poi_path = poi.topo_object.paths.get()
-        self.assertEqual(poi_path, self.path)
-        self.assertEqual(poi.topo_object.kind, "POI")
-
-    def test_topology_point_no_dynamic_segmentation(self):
-        poi = self.objects.get(eid="N1")
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertAlmostEqual(poi.topo_object.offset, 6437.493, places=2)
+            self.assertEqual(poi.topo_object.paths.count(), 1)
+            poi_path = poi.topo_object.paths.get()
+            self.assertEqual(poi_path, self.path)
+            self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 924596.692, places=2)
         self.assertAlmostEqual(poi.geom.y, 6412498.122, places=2)
 
@@ -2544,6 +2690,8 @@ class OpenStreetMapPOIParser(TestCase):
             poi_path = poi.topo_object.paths.get()
             self.assertEqual(poi_path, self.path)
             self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 926882.120, places=2)
         self.assertAlmostEqual(poi.geom.y, 6403317.111, places=2)
 
@@ -2554,7 +2702,8 @@ class OpenStreetMapPOIParser(TestCase):
             poi_path = poi.topo_object.paths.get()
             self.assertEqual(poi_path, self.path)
             self.assertEqual(poi.topo_object.kind, "POI")
-
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 933496.557, places=2)
         self.assertAlmostEqual(poi.geom.y, 6410675.089, places=2)
 
@@ -2565,6 +2714,8 @@ class OpenStreetMapPOIParser(TestCase):
             poi_path = poi.topo_object.paths.get()
             self.assertEqual(poi_path, self.path)
             self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertEqual(poi.geom.geom_type, "Point")
+        self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 930902.933, places=2)
         self.assertAlmostEqual(poi.geom.y, 6406011.138, places=2)
 
