@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
+from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer, TouristicContent
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
@@ -202,6 +202,11 @@ class TouristicContentModelTest(TestCase):
     def test_city_is_empty(self):
         """Touristic content city attribute return None if no city intersecting"""
         content = tourism_factories.TouristicContentFactory()
+        self.assertIsNone(content.city)
+
+    def test_city_is_empty_if_not_saved(self):
+        """Touristic content city attribute return None if not saved"""
+        content = TouristicContent()
         self.assertIsNone(content.city)
 
 
