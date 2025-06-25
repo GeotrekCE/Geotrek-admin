@@ -62,7 +62,7 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
     field_options = {
         "type": {"create": True},
         "name": {"required": True},
-        "geom": {"required": True}
+        "geom": {"required": True},
     }
 
     def __init__(self, *args, **kwargs):
