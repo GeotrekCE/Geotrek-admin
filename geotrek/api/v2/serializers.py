@@ -923,7 +923,11 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return get_translation_or_dict("departure", self, obj)
 
         def get_departure_geom(self, obj):
-            return obj.start_point.transform(settings.API_SRID, clone=True).coords if obj.start_point else None
+            return (
+                obj.start_point.transform(settings.API_SRID, clone=True).coords
+                if obj.start_point
+                else None
+            )
 
         def get_arrival(self, obj):
             return get_translation_or_dict("arrival", self, obj)
