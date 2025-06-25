@@ -382,7 +382,7 @@ class Parser:
                 update_fields.remove("id")  # Can't update primary key
         except RowImportError as warnings:
             self.add_warning(str(warnings))
-            return
+            return False
         if operation == "created":
             if (
                 hasattr(self.model, "provider")
@@ -402,6 +402,7 @@ class Parser:
             self.nb_updated += 1
         else:
             self.nb_unmodified += 1
+        return True
 
     def get_eid_kwargs(self, row):
         try:
