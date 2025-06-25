@@ -28,14 +28,12 @@ class PointTopologyTestModelParserMissingMethod(PointTopologyParserMixin, JSONPa
 
 
 class PointTopologyParserMixinTest(TestCase):
-
     @classmethod
     def setUpTestData(cls):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = PathFactory.create(
                 geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
             )
-
 
     def get_test_data_file_path(self, filename):
         return os.path.join(os.path.dirname(__file__), "data", filename)
@@ -88,7 +86,6 @@ class PointTopologyParserMixinTest(TestCase):
         # Check that the last object, which is correct, has been parsed despite the previous errors:
         self.assertEqual(len(PointTopologyTestModel.objects.all()), 1)
         PointTopologyTestModel.objects.get(name="Correct object")
-
 
     def test_object_parsing_succeeds_when_geom_is_a_point_several_objects(self):
         filename = self.get_test_data_file_path(

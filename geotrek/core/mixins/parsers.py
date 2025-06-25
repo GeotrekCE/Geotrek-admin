@@ -54,5 +54,10 @@ class PointTopologyParserMixin(ABC):
 
     def parse_obj(self, row, operation):
         obj_was_parsed = super().parse_obj(row, operation)
-        if obj_was_parsed and settings.TREKKING_TOPOLOGY_ENABLED and self.obj.geom and self.topology:
+        if (
+            obj_was_parsed
+            and settings.TREKKING_TOPOLOGY_ENABLED
+            and self.obj.geom
+            and self.topology
+        ):
             self.obj.mutate(self.topology)
