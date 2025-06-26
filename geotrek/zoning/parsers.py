@@ -113,3 +113,22 @@ class OpenStreetMapRestrictedAreaParser(OpenStreetMapZoningParserMixin):
         super().__init__(*args, **kwargs)
         if self.area_type:
             self.constant_fields["area_type"] = self.area_type
+
+
+class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
+    """Parser to import cities from OpenStreetMap"""
+
+    model = City
+    fields = {
+        "name": "tags.name",
+        "geom": ("type", "id"),
+    }
+    constant_fields = {
+        "published": True,
+    }
+    code_tag = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.code_tag:
+            self.fields["code"] = f"tags.{self.code_tag}"
