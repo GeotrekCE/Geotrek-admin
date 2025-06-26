@@ -32,6 +32,10 @@ CHANGELOG
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
 - Add new authors and improve copyright details
 
+**Minor fixes**
+
+- Fix mobile api settings name for touristic content categories
+
 
 2.115.1    (2025-05-21)
 ----------------------------
