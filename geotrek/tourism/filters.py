@@ -2,9 +2,10 @@ import django_filters.rest_framework
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
-from django_filters.filters import ChoiceFilter, ModelMultipleChoiceFilter
+from django_filters.filters import ModelMultipleChoiceFilter
 
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import (
@@ -31,11 +32,9 @@ class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     type2 = TypeFilter(
         queryset=TouristicContentType2.objects.select_related("category").all()
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: TouristicContent.objects.provider_choices(),
+        queryset=Provider.objects.filter(touristiccontent__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -86,11 +85,9 @@ class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         label=_("Before"), lookup_expr="lte", field_name="begin_date"
     )
     completed = CompletedFilter(label=_("Completed"))
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: TouristicEvent.objects.provider_choices(),
+        queryset=Provider.objects.filter(touristicevent__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

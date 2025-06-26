@@ -6744,7 +6744,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                     "url": "http://url.com",
                 },
             ],
-            "provider": "",
+            "provider": None,
             "structure": self.structure.pk,
             "published": True,
         }

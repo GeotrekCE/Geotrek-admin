@@ -1,7 +1,7 @@
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 
 
-class InfrastructureGISManager(NoDeleteManager, ProviderChoicesMixin):
+class InfrastructureGISManager(NoDeleteManager):
     """Override default typology mixin manager"""
 
     def implantation_year_choices(self):

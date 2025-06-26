@@ -21,6 +21,7 @@ CHANGELOG
 - Add OpenStreetMap parser for infrastructures
 - Add OpenStreetMap parser for touristic contents
 - Add OpenStreetMap parser for Outdoor Sites
+- Change provider Charfield for a foreign key
 - Add OpenStreetMap parser for Cities
 
 **Bug fixes**

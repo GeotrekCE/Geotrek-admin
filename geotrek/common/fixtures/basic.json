@@ -238,5 +238,27 @@
             "date_update": "2014-02-12T11:21:48.961Z",
             "date_insert": "2014-02-12T11:21:48.961Z"
         }
+    },
+    {
+        "pk": 1,
+        "model": "common.provider",
+        "fields": {
+            "name": "OpenStreetMap",
+            "link_template": "{% if object.eid.0 ==\"N\" %}<a href=\"https://www.openstreetmap.org/node/{{ object.eid|slice:\"1:\"|safe }}\" target=\"_blank\">{{ object.eid|safe }}</a>{% elif object.eid.0 == \"W\" %}<a href=\"https://www.openstreetmap.org/way/{{ object.eid|slice:\"1:\"|safe }}\" target=\"_blank\">{{ object.eid|safe }}</a>{% elif object.eid.0 == \"R\" %}<a href=\"https://www.openstreetmap.org/relation/{{ object.eid|slice:\"1:\"|safe }}\" target=\"_blank\">{{ object.eid|safe }}</a>{% endif %}",
+            "copyright": "© OpenStreetMap contributors",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "common.provider",
+        "fields": {
+            "name": "Apidae",
+            "link_template": "<a href=\"https://base.apidae-tourisme.com/consulter/objet-touristique/{{ object.eid|safe }}\" target=\"_blank\">{{ object.eid|safe }}</a>",
+            "copyright": "",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
     }
 ]
