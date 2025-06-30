@@ -434,7 +434,7 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==5.0
     # via persistent
-zope-event==5.0
+zope-event==5.1
     # via gevent
 zope-interface==7.2
     # via
