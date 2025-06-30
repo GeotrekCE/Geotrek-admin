@@ -51,7 +51,7 @@ urlpatterns = [
         name="trek_map_image",
     ),
     path("poi/<int:pk>/osm/", POIOSMCompare.as_view(), name="poi_osm_compare"),
-    path("poi/<int:pk>/osm/validate", POIOSMValidate, name="poi_osm_validate"),
+    path("poi/<int:pk>/osm/validate", POIOSMValidate.as_view(), name="poi_osm_validate"),
 ]
 
 

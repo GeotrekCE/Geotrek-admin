@@ -41,4 +41,7 @@
     </table>
 
     {{ block.super }}
+
+    <a class="btn btn-primary ml-auto" href={% url "trekking:poi_osm_compare" poi.pk %}>{% trans "Comparer avec OSM" %}</a>
+
 {% endblock attributes %}
