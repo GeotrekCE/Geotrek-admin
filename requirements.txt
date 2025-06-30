@@ -63,7 +63,7 @@ click==8.1.8
     #   fiona
 click-didyoumean==0.3.1
     # via celery
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via
     #   celery
     #   fiona
