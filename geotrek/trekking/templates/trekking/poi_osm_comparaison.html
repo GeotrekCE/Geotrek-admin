@@ -5,7 +5,7 @@
 
 {% block extrabody %}
     <div class="container">
-        <div class="comparaison_table">
+        <div class="form-panel">
 
             <h1>Tables de comparaison</h1>
 
@@ -19,15 +19,17 @@
                     </tr>
                     {% for row in objects %}
                         <tr>
-                            <th>{{ object|verbose:row.geotrek_field }}</th>
-                            <td>{{ row.geotrek_value|striptags }}</td>
-                            <td align="center">
-                                <p>
-                                    <input type="checkbox" id={{ row.geotrek_field }} name={{ row.geotrek_field }} value="{{ row.osm_field }}|{{ row.geotrek_value|striptags }}">
-                                </p>
+                            <th style="width:14%">{{ object|verbose:row.geotrek_field }}</th>
+                            <td style="width:35%">{{ row.geotrek_value|striptags|safe }}</td>
+                            <td align="center" style="width:2%">
+                                {% if row.geotrek_value != row.osm_value and row.geotrek_field != "eid" %}
+                                    <p>
+                                        <input type="checkbox" id={{ row.geotrek_field }} name={{ row.geotrek_field }} value="{{ row.osm_field }}|{{ row.geotrek_value|slice:"255"|striptags|safe }}">
+                                    </p>
+                                {% endif %}
                             </td>
-                            <th>{{ row.osm_field }}</th>
-                            <td>{{ row.osm_value }}</td>
+                            <th style="width:14%">{{ row.osm_field }}</th>
+                            <td style="width:35%">{{ row.osm_value }}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -49,11 +51,6 @@
         .container {
             display: block;
             margin-top: 50px;
-        }
-        .comparaison_table {
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
         }
 
     </style>

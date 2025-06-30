@@ -627,3 +627,15 @@ class HDViewPointAnnotationForm(forms.ModelForm):
     class Meta:
         model = HDViewPoint
         fields = ("annotations", "annotations_categories")
+
+
+class OSMForm(forms.Form):
+    copyright = forms.BooleanField(
+        label=_("Do you have permission to publish this data on OpenStreetMap, and can you confirm that it is not subject to private property protection?"),
+        required=True,
+    )
+    comment = forms.CharField(
+        label=_("Comment"),
+        widget=forms.Textarea(attrs={"cols": "80", "rows": "3"}),
+        required=True,
+    )
