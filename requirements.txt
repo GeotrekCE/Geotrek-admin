@@ -23,7 +23,7 @@ brotli==1.1.0
     # via fonttools
 btrees==6.1
     # via zodb
-cachetools==6.0.0
+cachetools==6.1.0
     # via large-image
 cairocffi==1.7.1
     # via
@@ -48,11 +48,11 @@ cffi==1.17.1
     #   pyvips
     #   weasyprint
 chardet==5.2.0
-    # via
-    #   geotrek (setup.py)
-    #   reportlab
+    # via geotrek (setup.py)
 charset-normalizer==3.4.2
-    # via requests
+    # via
+    #   reportlab
+    #   requests
 click==8.1.8
     # via
     #   celery
@@ -63,7 +63,7 @@ click==8.1.8
     #   fiona
 click-didyoumean==0.3.1
     # via celery
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via
     #   celery
     #   fiona
@@ -231,7 +231,7 @@ kombu==5.5.4
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.32.9
+large-image==1.32.10
     # via
     #   django-large-image
     #   large-image-source-vips
@@ -243,7 +243,7 @@ lxml==4.9.3
     #   svglib
 mapentity==8.13.0
     # via geotrek (setup.py)
-markdown==3.8
+markdown==3.8.2
     # via geotrek (setup.py)
 markupsafe==3.0.2
     # via jinja2
@@ -305,7 +305,7 @@ pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
-python-dotenv==1.1.0
+python-dotenv==1.1.1
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
@@ -327,7 +327,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.4.1
+reportlab==4.4.2
     # via
     #   easy-thumbnails
     #   svglib
@@ -347,7 +347,7 @@ ruamel-yaml==0.18.14
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.30.0
+sentry-sdk==2.32.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -434,7 +434,7 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==5.0
     # via persistent
-zope-event==5.0
+zope-event==5.1
     # via gevent
 zope-interface==7.2
     # via

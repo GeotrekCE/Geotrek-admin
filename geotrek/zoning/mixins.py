@@ -1,6 +1,7 @@
 import hashlib
 
 from django.core.cache import cache
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.utils import intersecting, uniquify
@@ -85,19 +86,19 @@ class ZoningPropertiesMixin:
         cache.set(cache_key, cities)
         return cities
 
-    @property
+    @cached_property
     def published_areas(self):
         if not hasattr(self, "published"):
             return self.areas
         return [area for area in self.areas if area.published]
 
-    @property
+    @cached_property
     def published_districts(self):
         if not hasattr(self, "published"):
             return self.districts
         return [district for district in self.districts if district.published]
 
-    @property
+    @cached_property
     def published_cities(self):
         if not hasattr(self, "published"):
             return self.cities
