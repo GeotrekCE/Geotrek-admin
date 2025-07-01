@@ -291,7 +291,7 @@ class SettingsView(APIView):
             },
             {
                 "id": "touristiccontent_categories",
-                "name": _("Touristic event types"),
+                "name": _("Touristic content categories"),
                 "values": api_serializers.TouristicContentCategorySerializer(
                     TouristicContentCategory.objects.all().order_by("order"),
                     many=True,
