@@ -28,7 +28,6 @@ from django.contrib.gis.geos import (
     LineString,
     Point,
     Polygon,
-    WKBWriter,
     fromstr,
 )
 from django.contrib.gis.geos.collections import MultiPolygon
@@ -48,7 +47,7 @@ from requests.auth import HTTPBasicAuth
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import Attachment, FileType, License, RecordSource
-from geotrek.common.utils.parsers import add_http_prefix
+from geotrek.common.utils.parsers import add_http_prefix, force_geom_to_2d
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.settings.base import api_bbox
 
@@ -383,7 +382,7 @@ class Parser:
                 update_fields.remove("id")  # Can't update primary key
         except RowImportError as warnings:
             self.add_warning(str(warnings))
-            return
+            return False
         if operation == "created":
             if (
                 hasattr(self.model, "provider")
@@ -403,6 +402,7 @@ class Parser:
             self.nb_updated += 1
         else:
             self.nb_unmodified += 1
+        return True
 
     def get_eid_kwargs(self, row):
         try:
@@ -1887,8 +1887,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     def filter_geom(self, src, val):
         geom = GEOSGeometry(json.dumps(val))
         geom.transform(settings.SRID)
-        geom = WKBWriter().write(geom)
-        geom = GEOSGeometry(geom)
+        geom = force_geom_to_2d(geom)
         return geom
 
     def get_url_params(self):

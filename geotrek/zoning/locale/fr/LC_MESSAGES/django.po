@@ -51,7 +51,7 @@ msgid "Visible on Geotrek-rando"
 msgstr "Visible sur Geotrek-rando"
 
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
 msgid "Cities"
 msgstr "Communes"

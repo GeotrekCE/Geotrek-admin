@@ -414,6 +414,8 @@ msgid ""
 "%(street)s\n"
 "%(city)s"
 msgstr ""
+"%(street)s\n"
+"%(city)s"
 
 msgid "Add a new touristic content"
 msgstr "Ajouter un contenu touristique"
