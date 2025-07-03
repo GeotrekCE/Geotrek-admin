@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:22+0200\n"
+"POT-Creation-Date: 2025-06-25 12:14+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -458,19 +458,6 @@ msgstr ""
 "Valeur '%(val)s' erronée pour le champ %(src)s. Devrait être similaire à "
 "'2h30', '2,5' ou '2.5'"
 
-msgid "You need to add a network of paths before importing POIs"
-msgstr "Tu as besoin d'ajouter un réseau de tronçons avant d'importer des POIs"
-
-msgid "Invalid geometry"
-msgstr "Geométrie invalide"
-
-#, python-brace-format
-msgid ""
-"Invalid geometry type for field '{src}'. Should be Point, not {geom_type}"
-msgstr ""
-"Le type de géométrie du champ '{src}' est invalide. Il devrait être un "
-"Point, pas {geom_type}"
-
 #, python-brace-format
 msgid ""
 "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -499,6 +486,10 @@ msgstr ""
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
+
+msgid "A service type must be specified in the parser configuration."
+msgstr ""
+"Un type de service doit être spécifié dans la configuration du parseur."
 
 msgid "Trek geometry is None"
 msgstr "La valeur de la géométrie de l'itinéraire est None"

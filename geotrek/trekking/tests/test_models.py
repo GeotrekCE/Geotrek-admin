@@ -393,10 +393,10 @@ class RelatedObjectsTest(TestCase):
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
     )
-    def test_city_departure(self):
+    def test_departure_city(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
         trek = TrekFactory.create(paths=[p1])
-        self.assertEqual(trek.city_departure, "")
+        self.assertEqual(trek.departure_city, "")
 
         city1 = CityFactory.create(
             geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3), (-1, 3), (-1, -1))))
@@ -405,14 +405,17 @@ class RelatedObjectsTest(TestCase):
             geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
         )
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, str(city1))
+        trek = Trek.objects.get(
+            pk=trek.pk
+        )  # Refresh trek instance and invalidate cached_property
+        self.assertEqual(trek.departure_city, city1)
 
     @skipIf(
         settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
     )
     def test_city_departure_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
-        self.assertEqual(trek.city_departure, "")
+        self.assertEqual(trek.departure_city, "")
 
         city1 = CityFactory.create(
             geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3), (-1, 3), (-1, -1))))
@@ -420,8 +423,11 @@ class RelatedObjectsTest(TestCase):
         city2 = CityFactory.create(
             geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
         )
+        trek = Trek.objects.get(
+            pk=trek.pk
+        )  # Refresh trek instance and invalidate cached_property
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, str(city1))
+        self.assertEqual(trek.departure_city, city1)
 
 
 class TrekUpdateGeomTest(TestCase):

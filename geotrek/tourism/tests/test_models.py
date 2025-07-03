@@ -8,7 +8,11 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.core.tests import factories as core_factories
-from geotrek.tourism.models import TouristicContentType, TouristicEventOrganizer
+from geotrek.tourism.models import (
+    TouristicContent,
+    TouristicContentType,
+    TouristicEventOrganizer,
+)
 from geotrek.tourism.tests import factories as tourism_factories
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
@@ -194,13 +198,20 @@ class TouristicEventModelTest(TestCase):
 
 
 class TouristicContentModelTest(TestCase):
-    def tests_type_poi_mobilev1(self):
-        self.category = tourism_factories.TouristicContentCategoryFactory(label="Test")
-        self.content = tourism_factories.TouristicContentFactory(
-            geom=f"SRID={settings.SRID};POINT(1 1)", category=self.category
-        )
+    def test_type_attribute_category(self):
+        """Touristic content type attribute return category"""
+        content = tourism_factories.TouristicContentFactory(category__label="Test")
+        self.assertEqual(str(content.type), "Test")
 
-        self.assertEqual(str(self.content.type), "Test")
+    def test_city_is_empty(self):
+        """Touristic content city attribute return None if no city intersecting"""
+        content = tourism_factories.TouristicContentFactory()
+        self.assertIsNone(content.city)
+
+    def test_city_is_empty_if_not_saved(self):
+        """Touristic content city attribute return None if not saved"""
+        content = TouristicContent()
+        self.assertIsNone(content.city)
 
 
 class TouristicEventCancellationReasonModelTest(TestCase):

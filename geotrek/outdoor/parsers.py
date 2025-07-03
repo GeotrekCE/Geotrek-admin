@@ -1,6 +1,13 @@
 from django.conf import settings
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
+from django.contrib.gis.geos.collections import GeometryCollection
 
-from geotrek.common.parsers import GeotrekParser
+from geotrek.common.parsers import (
+    BypassRow,
+    GeotrekParser,
+    OpenStreetMapAttachmentsParserMixin,
+    OpenStreetMapParser,
+)
 from geotrek.outdoor.models import (
     Course,
     CourseType,
@@ -12,6 +19,7 @@ from geotrek.outdoor.models import (
     Site,
     SiteType,
 )
+from geotrek.trekking.models import WebLink
 
 
 class GeotrekOutdoorParser(GeotrekParser):
@@ -315,3 +323,109 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
                     parent=parent_course, child=child_course, defaults={"order": i}
                 )
         super().end()
+
+
+class OpenStreetMapOutdoorSiteParser(
+    OpenStreetMapAttachmentsParserMixin, OpenStreetMapParser
+):
+    """Parser to import outdoor sites from OpenStreetMap"""
+
+    url_polygons = "https://polygons.openstreetmap.fr/get_wkt.py"
+
+    practice = None
+    themes = None
+    portal = None
+    source = None
+    model = Site
+    eid = "eid"
+
+    fields = {
+        "eid": ("type", "id"),  # ids are unique only for object of the same type,
+        "name": "tags.name",
+        "description": "tags.description",
+        "geom": ("type", "id", "lon", "lat", "geometry", "members"),
+        "practice": "tags.leisure",
+    }
+    constant_fields = {}
+    m2m_constant_fields = {}
+    m2m_fields = {"web_links": ("tags.website", "tags.contact:website")}
+    natural_keys = {
+        "practice": "name",
+        "themes": "label",
+        "source": "name",
+        "portal": "name",
+        "web_links": "url",
+    }
+    field_options = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        self.field_options = self.field_options.copy()
+        if self.themes is not None:
+            self.m2m_constant_fields["themes"] = self.themes
+        if self.portal is not None:
+            self.m2m_constant_fields["portal"] = self.portal
+        if self.source is not None:
+            self.m2m_constant_fields["source"] = self.source
+
+    def way(self, geometry):
+        coordinates = [[point["lon"], point["lat"]] for point in geometry]
+        if coordinates[0] != coordinates[-1]:
+            geom = LineString(coordinates, srid=self.osm_srid)
+        else:
+            geom = Polygon(coordinates)
+        return geom
+
+    def filter_geom(self, src, val):
+        type, id, lng, lat, geometry, geometry_members = val
+        geom_members = []
+        if type == "node":
+            geom = Point(float(lng), float(lat), srid=self.osm_srid)
+            geom_members.append(geom)
+        elif type == "way":
+            geom_members.append(self.way(geometry))
+        elif type == "relation":
+            try:
+                geom = self.get_polygon_from_API(id)
+
+                if isinstance(geom, MultiPolygon):
+                    # Multipolygon are not supported in the database
+                    polygons_list = [polygon for polygon in geom]
+                    geom_members = polygons_list
+                else:
+                    geom_members.append(geom)
+
+            except Exception:
+                for member in geometry_members:
+                    if member["type"] == "node":
+                        lng = member["lon"]
+                        lat = member["lat"]
+                        geom_members.append(
+                            Point(float(lng), float(lat), srid=self.osm_srid)
+                        )
+                    elif member["type"] == "way":
+                        geom_members.append(self.way(member["geometry"]))
+
+        geom_collection = GeometryCollection(geom_members, srid=self.osm_srid)
+        geom_collection.transform(settings.SRID)
+
+        return geom_collection
+
+    def filter_practice(self, src, val):
+        if val == "sports_centre":
+            msg = "This object is an indoor site."
+            raise BypassRow(msg)
+
+        practice = self.filter_fk(
+            src, self.practice, Practice, self.natural_keys["practice"]
+        )
+        return practice
+
+    def filter_web_links(self, src, val):
+        url = next((item for item in val if item is not None), None)
+        weblink = []
+        if url:
+            weblink.append(WebLink.objects.create(name=url, url=url))
+        return weblink

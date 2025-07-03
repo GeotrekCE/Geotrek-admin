@@ -14,6 +14,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import get_language, gettext
 from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
@@ -495,10 +496,10 @@ class Trek(
     def web_links_display(self):
         return ", ".join([str(n) for n in self.web_links.all()])
 
-    @property
-    def city_departure(self):
+    @cached_property
+    def departure_city(self):
         cities = self.published_cities
-        return str(cities[0]) if len(cities) > 0 else ""
+        return cities[0] if cities else ""
 
     def kml(self):
         """Exports trek into KML format, add geometry as linestring and POI

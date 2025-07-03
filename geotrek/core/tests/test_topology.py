@@ -373,7 +373,7 @@ class TopologyPointTest(TestCase):
         p1.geom = LineString((0, 0), (0, 5))
         p1.save()
         poitopo.reload()
-        self.assertAlmostEqual(11.180339887, poitopo.offset, places=6)
+        self.assertAlmostEqual(-11.180339887, poitopo.offset, places=6)
         # Not moved:
         self.assertAlmostEqual(10, poitopo.geom.x, places=6)
         self.assertAlmostEqual(10, poitopo.geom.y, places=6)
