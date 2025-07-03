@@ -4,26 +4,25 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0039_alter_recordsource_website_and_more'),
+        ("common", "0039_alter_recordsource_website_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='targetportal',
-            name='facebook_id',
+            model_name="targetportal",
+            name="facebook_id",
         ),
         migrations.RemoveField(
-            model_name='targetportal',
-            name='facebook_image_height',
+            model_name="targetportal",
+            name="facebook_image_height",
         ),
         migrations.RemoveField(
-            model_name='targetportal',
-            name='facebook_image_url',
+            model_name="targetportal",
+            name="facebook_image_url",
         ),
         migrations.RemoveField(
-            model_name='targetportal',
-            name='facebook_image_width',
+            model_name="targetportal",
+            name="facebook_image_width",
         ),
     ]

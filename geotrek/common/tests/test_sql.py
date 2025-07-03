@@ -14,7 +14,6 @@ from geotrek.common.models import (
     AccessibilityAttachment,
     Attachment,
     Label,
-    TargetPortal,
 )
 from geotrek.common.tests.factories import FileTypeFactory
 from geotrek.common.utils.postgresql import load_sql_files
