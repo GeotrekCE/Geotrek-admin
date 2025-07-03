@@ -2,13 +2,13 @@
 CHANGELOG
 =========
 
-2.115.1+dev    (XXXX-XX-XX)
+2.116.0    (2025-07-03)
 ----------------------------
 
 **Breaking changes**
 
-- API v2 city references now city internal ID instead of code, because of codes are not used in every countries.
-- Due to change in public API, we recommend you to clear caches after update.
+- API v2 city now references the city's internal ID instead of its code, since codes are not used in all countries.
+- Due to changes in the public API, we recommend clearing caches after updating.
 
 **Improvements**
 
