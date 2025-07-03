@@ -2,34 +2,40 @@
     "numFound" : 3,
     "objetsTouristiques" : [
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 1,
             "localisation" : {
                 "geolocalisation" : {
                     "geoJson" : {
+                        "type" : "Point",
                         "coordinates" : [ 0, 0 ]
                     }
                 }
             }
         },
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 2,
             "localisation" : {
                 "geolocalisation" : {
                     "geoJson" : {
-                        "type" : "Point"
+                        "type" : "Point",
+                        "coordinates" : [ 0, 0 ]
                     }
                 }
-            }
+            },
+            "nom" : {}
         },
         {
-            "type" : "COMMERCE_ET_SERVICE",
             "id" : 3,
             "localisation" : {
                 "geolocalisation" : {
-                    "geoJson" : null
+                    "geoJson" : {
+                        "type" : "Point",
+                        "coordinates" : [ 0, 0 ]
+                    }
                 }
+            },
+            "nom" : {
+                "libelleFr" : "Bar"
             }
         }
     ]
