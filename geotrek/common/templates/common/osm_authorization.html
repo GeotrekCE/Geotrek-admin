@@ -1,0 +1,19 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags static %}
+
+<link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+
+{% block extrabody %}
+
+    <div class="container" style="display: block; margin-top: 50px;">
+        <h1>{% trans "Connexion to OpenStreetMap API" %}</h1>
+        {% if succeed %}
+            <p>{% trans "You are connected to OpenStreetMap API" %}</p>
+            <a class="btn btn-primary ml-auto" href={% url comparison_url pk %}>{% trans "Continue" %}</a>
+        {% else %}
+            <p>{% trans "An error appear" %}</p>
+            <a class="btn btn-primary ml-auto" href={% url detail_url pk %}>{% trans "Go back" %}</a>
+        {% endif %}
+    </div>
+
+{% endblock %}

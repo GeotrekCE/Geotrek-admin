@@ -46,6 +46,7 @@ urlpatterns = [
         views.delete_attachment_accessibility,
         name="delete_attachment_accessibility",
     ),
+    path("osm/authorize", views.OSMAuthorize, name="osm_authorize"),
 ]
 
 if settings.DEBUG or settings.MAPENTITY_CONFIG["SENDFILE_HTTP_HEADER"]:

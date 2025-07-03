@@ -1,0 +1,8 @@
+{% load i18n %}
+
+{% if osm_user_credential_available %}
+    <a class="btn btn-primary ml-auto" href="{{ osm_redirect_url }}"
+            {% if infotip %}title="{% trans "You must connect to OpenStreetMap before comparing objects" %}"{% endif %}>
+        {% trans "Compare with OpenStreetMap" %}
+    </a>
+{% endif %}

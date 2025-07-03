@@ -55,6 +55,7 @@ setup(
         "pyopenair",
         "django-treebeard",
         'easy-thumbnails[svg]',
+        "requests-oauthlib",
         # prod,
         'gunicorn[gevent]',
         'sentry-sdk',

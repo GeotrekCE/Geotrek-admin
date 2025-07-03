@@ -1,0 +1,76 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags static %}
+
+<link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+
+{% block extrabody %}
+    <div class="container" style="display: block; margin-top: 50px;">
+        <div class="form-panel">
+
+            <h1>Tables de comparaison</h1>
+
+            <form action={% url validation_url object.id %} method="get" name="export_osm_obj">
+
+                <table class="table-striped table-bordered table">
+                    <tr>
+                        <td colspan="2" align="center"><strong>Geotrek</strong></td>
+                        <td></td>
+                        <td colspan="2" align="center"><strong>OSM</strong></td>
+                    </tr>
+                    {% for row in objects %}
+                        <tr>
+                            <th style="width:14%">{{ object|verbose:row.geotrek_field }}</th>
+                            <td style="width:35%">{{ row.geotrek_value|striptags|safe }}</td>
+                            <td align="center" style="width:2%">
+                                {% if row.geotrek_value != row.osm_value and row.geotrek_field != "eid" %}
+                                    <label class="arrow-toggle">
+                                        <input type="checkbox" id={{ row.geotrek_field }} name={{ row.geotrek_field }} value="{{ row.osm_field }}|{{ row.geotrek_value|slice:"255"|striptags|safe }}" {% if row.geotrek_value|length > 255 %}title="{% trans "The value will be cropped to 255 caracters" %}"{% endif %}>
+                                        <span class="arrow">➜</span>
+                                    </label>
+                                {% else %}
+                                    <span style='font-size:20px;color:grey;' {% if row.geotrek_field != "eid" %}title="{% trans "Fields are identical" %}{% endif %}">&#10005;</span>
+                                {% endif %}
+                            </td>
+                            <th style="width:14%">{{ row.osm_field }}</th>
+                            <td style="width:35%">{{ row.osm_value }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                <input type="hidden" id="osm_object" name="osm_object" value="{{ osm_object_serialized }}" />
+
+                <div class="form-actions">
+                    <input type="button" name="cancel" value="Annuler" class="btn btn btn-light ml-auto mr-2" id="button-id-cancel">
+                    <button type="submit" id="save_changes" class="btn btn-success" onclick="this.form.submit();"> <i class="bi bi-check-circle-fill"></i> {% trans "Save" %}</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    {{ block.super }}
+
+    <style>
+        .arrow-toggle input {
+          display: none;
+        }
+
+        .arrow {
+          font-size: 1.2em;
+          color: black;
+          background-color: #dedede;
+          padding: 2px 5px;
+          border-radius: 4px;
+          transition: background-color 0.3s, color 0.3s;
+          transition: color 0.3s;
+          cursor: pointer;
+        }
+
+        .arrow-toggle input:checked + .arrow {
+          color: white;
+          background-color: green;
+        }
+    </style>
+
+
+{% endblock extrabody %}
