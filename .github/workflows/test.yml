@@ -527,7 +527,7 @@ jobs:
           cd docker/install
           mkdir -p geotrek/var
           cp * ./geotrek 2>/dev/null || :
-          zip -r ../install-docker.zip geotrek/
+          zip -r ../../install-docker.zip geotrek/
 
       - name: Attach zip archive as release binary
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
