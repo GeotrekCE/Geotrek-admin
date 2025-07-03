@@ -254,6 +254,8 @@ numpy==2.2.4
     #   large-image
     #   large-image-source-vips
     #   shapely
+oauthlib==3.3.1
+    # via requests-oauthlib
 packaging==25.0
     # via
     #   drf-extensions
@@ -337,6 +339,9 @@ requests==2.32.4
     #   django-embed-video
     #   landez
     #   mapentity
+    #   requests-oauthlib
+requests-oauthlib==2.0.0
+    # via geotrek (setup.py)
 rjsmin==1.2.2
     # via django-compressor
 rpds-py==0.25.1

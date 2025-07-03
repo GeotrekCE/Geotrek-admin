@@ -17,7 +17,7 @@ from .views import (
     TrekServiceViewSet,
     WebLinkCreatePopup,
     POIOSMCompare,
-    POIOSMValidate
+    POIOSMValidate,
 )
 
 register_converter(LangConverter, "lang")

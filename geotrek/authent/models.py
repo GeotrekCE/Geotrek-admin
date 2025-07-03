@@ -106,6 +106,7 @@ class UserProfile(StructureRelated):
     extended_username = models.CharField(
         blank=True, max_length=200, default="", verbose_name=_("Extended username")
     )
+    osm_token = models.CharField(blank=True, max_length=256, default="", verbose_name=_("OSM token"))
 
     class Meta:
         verbose_name = _("User's profile")

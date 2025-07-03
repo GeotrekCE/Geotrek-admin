@@ -1,19 +1,35 @@
 import os
+import requests
+import json
 from io import BytesIO
 
 from django.conf import settings
+from django.contrib import messages
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.functional import classproperty
+from django.urls import reverse
 from django.views import static
+from django.views.generic import DetailView, FormView
 from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
 
+from geotrek.authent.models import UserProfile
+from geotrek.common.forms import OSMForm
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
+from geotrek.common.utils.translation import get_translated_fields
+from geotrek.common.utils.openstreetmapAPI import (
+    create_changeset,
+    get_element,
+    update_element,
+    close_changeset,
+    get_osm_oauth_uri,
+)
+
 
 
 class CustomColumnsMixin:
@@ -232,3 +248,215 @@ class CompletenessMixin:
                 obj._meta.get_field(field).verbose_name for field in completeness_fields
             ]
         return context
+
+
+class OSMDetailMixin:
+
+    def get_osm_context_data(self):
+        app_name = self.get_model()._meta.app_label.lower()
+        model = self.get_model()._meta.verbose_name.lower()
+
+        user_id = self.request.user.id
+        token = UserProfile.objects.get(user_id=user_id).osm_token
+        osm_configured = all(
+            hasattr(settings, key) for key in (
+                "OSM_CLIENT_ID", "OSM_CLIENT_SECRET"
+            )
+        )
+
+        if token:
+            redirect_url = reverse(f"{app_name}:{model}_osm_compare", args=[self.object.pk])
+
+        elif osm_configured:
+            redirect_uri = self.request.build_absolute_uri(reverse('common:osm_authorize'))
+            uri, state = get_osm_oauth_uri(redirect_uri)
+
+            self.request.session["osm_state"] = state
+            self.request.session["object_id"] = self.object.pk
+            self.request.session["object_model"] = model
+            self.request.session["object_app"] = app_name
+
+            redirect_url = uri
+        else:
+            redirect_url = ""
+
+        return {
+            "osm_redirect_url": redirect_url,
+            "osm_user_credential_available": osm_configured,
+            "infotip": not(token)
+        }
+
+
+class OSMComparisonViewMixin(DetailView):
+    template_name = "common/osm_comparison.html"
+
+    type_map = {"N": "node", "W": "way", "R": "relation"}
+    base_url = "https://master.apis.dev.openstreetmap.org/api/0.6"
+
+    osm_object = None
+
+    def translation(self):
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+
+        for field in get_translated_fields(self.model):
+            osm_keys = self.mapping.get(field)
+            if not osm_keys:
+                continue
+
+            is_str = isinstance(osm_keys, str)
+            osm_keys = [osm_keys] if is_str else list(osm_keys)
+
+            # Protect the class from multiple translation mappings as field is a static attribute
+            is_translated = [tag for tag in osm_keys if tag.endswith(f":{default_lang}")]
+            if is_translated:
+                continue
+
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                if lang != default_lang:
+                    geotrek_field = f"{field}_{lang}"
+                    translated = [tag + ":" + lang for tag in osm_keys]
+                    self.mapping[geotrek_field] = (
+                        translated[0] if is_str else tuple(translated)
+                    )
+
+            translated = [f"{tag}:{default_lang}" for tag in osm_keys]
+            self.mapping[field] = (
+                (translated[0], osm_keys[0]) if is_str else tuple(translated + osm_keys)
+            )
+
+    def get_osm_id(self):
+        eid = self.object.eid
+        osm_type = self.type_map.get(eid[0], None)
+        osm_id = eid[1:]
+
+        return osm_type, osm_id
+
+    def map_fields(self, geotrek, osm):
+        osm_keys = osm.get("tags", {})
+        context = [{
+            "geotrek_field": "eid",
+            "geotrek_value": geotrek.eid,
+            "osm_field": "ID",
+            "osm_value": f"{osm.get('type')}({osm.get('id')})"
+        }]
+
+        for geotrek_field, osm_fields in sorted(self.mapping.items()):
+            fields = (osm_fields,) if isinstance(osm_fields, str) else osm_fields
+            osm_value, osm_field = next(
+                ((value, field) for field in fields if (value := osm_keys.get(field))),
+                ("", fields[0])
+            )
+
+            context.append({
+                "geotrek_field": geotrek_field,
+                "geotrek_value": getattr(geotrek, geotrek_field, ""),
+                "osm_field": osm_field,
+                "osm_value": osm_value
+            })
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # add translation fields
+        self.translation()
+
+        # get OpenStreetMap object
+        osm_type, osm_id = self.get_osm_id()
+
+        try:
+            self.osm_object = get_element(self.base_url, osm_type, osm_id)
+        except requests.exceptions.RequestException as e:
+            messages.error(request, str(e))
+
+            app_name = self.model._meta.app_label.lower()
+            model = self.model._meta.verbose_name.lower()
+            pk = self.object.pk
+            return redirect(f"{app_name}:{model}_detail", pk=pk)
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        app_name = self.model._meta.app_label.lower()
+        model = self.model._meta.verbose_name.lower()
+
+        context = super().get_context_data(**kwargs)
+
+        # create context
+        context.update({
+            "objects": self.map_fields(self.object, self.osm_object),
+            "osm_object_serialized": json.dumps(self.osm_object),
+            "validation_url": f"{app_name}:{model}_osm_validate"
+        })
+
+        return context
+
+
+class OSMValidationViewMixin(FormView):
+    form_class = OSMForm
+    base_url = 'https://master.apis.dev.openstreetmap.org/api/0.6'
+
+    def get_updated_osm_object(self):
+        osm_object_serialized = self.request.GET.get("osm_object", "{}")
+        osm_object = json.loads(osm_object_serialized)
+
+        for key, value in self.request.GET.items():
+            if key != "osm_object":
+                try:
+                    tag, val = value.split("|", 1)
+                    osm_object["tags"][tag] = val or osm_object["tags"].get(tag)
+                except ValueError:
+                    continue
+
+        return osm_object_serialized, osm_object
+
+    def get_context_data(self, **kwargs):
+        osm_object_serialized, osm_object = self.get_updated_osm_object()
+
+        context = super().get_context_data(**kwargs)
+
+        context.update({
+            "object": osm_object,
+            "osm_object_serialized": osm_object_serialized
+        })
+        return context
+
+    def get_success_url(self):
+        pk = self.kwargs["pk"]
+        model_name = self.model._meta.verbose_name.lower()
+        return f"/{model_name}/{pk}"
+
+    def form_valid(self, form):
+        user_id = self.request.user.id
+        token = UserProfile.objects.get(user_id=user_id).osm_token
+        user_agent = f"{settings.APPLICATION_NAME}/0.1"
+
+        _, osm_object = self.get_updated_osm_object()
+
+        # create changeset
+        try:
+            comment = self.request.GET.get("comment", "")
+            changeset_id = create_changeset(self.base_url, token, user_agent, comment)
+        except requests.exceptions.RequestException as e:
+            messages.error(self.request, e)
+            return super().form_valid(form)
+
+        # update object
+        try:
+            update_element(self.base_url, token, changeset_id, osm_object)
+        except requests.exceptions.RequestException as e:
+            messages.error(self.request, e)
+            return super().form_valid(form)
+
+        # close changeset
+        try:
+            close_changeset(self.base_url, token, changeset_id)
+        except requests.exceptions.RequestException as e:
+            messages.error(self.request, e)
+            return super().form_valid(form)
+
+
+        msg = _("Saved")
+        messages.success(self.request, msg)
+        return super().form_valid(form)
