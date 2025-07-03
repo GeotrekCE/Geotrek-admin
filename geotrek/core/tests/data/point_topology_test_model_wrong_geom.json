@@ -1,0 +1,31 @@
+{
+    "features": [
+        {
+            "name": "test1",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [[0, 0],[0, 4]]
+            }
+        },
+        {
+            "name": "test2",
+            "geometry": {
+                "type": "Point"
+            }
+        },
+        {
+            "name": "test3",
+            "geometry": null
+        },
+        {
+            "name": "Correct object",
+            "geometry":{
+                "type": "Point",
+                "coordinates": [
+                    4.0,
+                    46.0
+                ]
+            }
+        }
+    ]
+}

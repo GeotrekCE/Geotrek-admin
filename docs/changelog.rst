@@ -2,13 +2,18 @@
 CHANGELOG
 =========
 
-2.115.1+dev    (XXXX-XX-XX)
+2.116.0+dev    (XXXX-XX-XX)
+----------------------------
+
+
+
+2.116.0    (2025-07-03)
 ----------------------------
 
 **Breaking changes**
 
-- API v2 city references now city internal ID instead of code, because of codes are not used in every countries.
-- Due to change in public API, we recommend you to clear caches after update.
+- API v2 city now references the city's internal ID instead of its code, since codes are not used in all countries.
+- Due to changes in the public API, we recommend clearing caches after updating.
 
 **Improvements**
 
@@ -22,7 +27,9 @@ CHANGELOG
 - Add OpenStreetMap parser for touristic contents
 - Add OpenStreetMap parser for Outdoor Sites
 - Change provider Charfield for a foreign key
+- All parsers for point topology objects now generate the topology
 - Add OpenStreetMap parser for Cities
+- Add Apidae parser for Infrastructure
 
 **Bug fixes**
 
@@ -32,6 +39,10 @@ CHANGELOG
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
 - Add new authors and improve copyright details
+
+**Minor fixes**
+
+- Fix mobile api settings name for touristic content categories
 
 
 2.115.1    (2025-05-21)

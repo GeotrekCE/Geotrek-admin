@@ -2,7 +2,7 @@ import os
 from shutil import copy as copyfile
 
 from django.conf import settings
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GeometryCollection, GEOSGeometry, MultiPoint, Point
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
@@ -13,6 +13,7 @@ from ..utils.import_celery import create_tmp_destination, subclasses
 from ..utils.parsers import (
     GeomValueError,
     add_http_prefix,
+    force_geom_to_2d,
     get_geom_from_gpx,
     get_geom_from_kml,
     maybe_fix_encoding_to_utf8,
@@ -252,6 +253,57 @@ class KmlToGeomTests(SimpleTestCase):
 
         with self.assertRaises(GeomValueError):
             get_geom_from_kml(kml)
+
+
+class ForceGeomTo2dTests(TestCase):
+    def test_error_when_geom_is_none(self):
+        with self.assertRaisesMessage(ValueError, "Input geometry cannot be None"):
+            force_geom_to_2d(None)
+
+    def test_succeed_when_geom_is_empty(self):
+        empty_geom = GEOSGeometry("POINT EMPTY")
+        result = force_geom_to_2d(empty_geom)
+        self.assertTrue(result.empty)
+        self.assertEqual(result.geom_type, "Point")
+        self.assertFalse(result.hasz)
+
+    def test_succeed_when_geom_is_empty_geometry_collection(self):
+        empty_collection = GeometryCollection()
+        result = force_geom_to_2d(empty_collection)
+        self.assertTrue(result.empty)
+        self.assertEqual(result.geom_type, "GeometryCollection")
+        self.assertFalse(result.hasz)
+
+    def test_succeed_when_geom2d_to_geom2d(self):
+        geom = Point(3.0, 4.0)
+        original_wkt = geom.wkt
+        result = force_geom_to_2d(geom)
+        self.assertEqual(result.geom_type, "Point")
+        self.assertFalse(result.hasz)
+        self.assertEqual(result.coords, (3.0, 4.0))
+        self.assertTrue(result.valid)
+        self.assertEqual(geom.wkt, original_wkt)
+
+    def test_succeed_when_geom3d_to_geom2d(self):
+        geom = Point(3.0, 4.0, 5.0)
+        original_wkt = geom.wkt
+        result = force_geom_to_2d(geom)
+        self.assertEqual(result.geom_type, "Point")
+        self.assertFalse(result.hasz)
+        self.assertEqual(result.coords, (3.0, 4.0))
+        self.assertTrue(result.valid)
+        self.assertEqual(geom.wkt, original_wkt)
+
+    def test_succeed_when_mixed_geom2d_geom3d_to_geom2d(self):
+        geom = MultiPoint(Point(1.0, 2.0), Point(1.0, 2.0, 3.0))
+        original_wkt = geom.wkt
+        result = force_geom_to_2d(geom)
+        self.assertEqual(result.geom_type, "MultiPoint")
+        self.assertEqual(len(result), 2)
+        for point in result:
+            self.assertFalse(point.hasz)
+        self.assertTrue(result.valid)
+        self.assertEqual(geom.wkt, original_wkt)
 
 
 class TestConvertEncodingFiles(TestCase):

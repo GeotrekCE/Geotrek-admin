@@ -63,7 +63,7 @@ click==8.1.8
     #   fiona
 click-didyoumean==0.3.1
     # via celery
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via
     #   celery
     #   fiona
@@ -231,7 +231,7 @@ kombu==5.5.4
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.32.10
+large-image==1.32.11
     # via
     #   django-large-image
     #   large-image-source-vips
@@ -275,7 +275,7 @@ persistent==6.1.1
     # via
     #   btrees
     #   zodb
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   geotrek (setup.py)
     #   cairosvg
@@ -305,7 +305,7 @@ pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
-python-dotenv==1.1.0
+python-dotenv==1.1.1
     # via geotrek (setup.py)
 python-magic==0.4.27
     # via paperclip
@@ -347,7 +347,7 @@ ruamel-yaml==0.18.14
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.30.0
+sentry-sdk==2.32.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -434,7 +434,7 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==5.0
     # via persistent
-zope-event==5.0
+zope-event==5.1
     # via gevent
 zope-interface==7.2
     # via
