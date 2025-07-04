@@ -3,13 +3,13 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     CharFilter,
-    ChoiceFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.maintenance.models import Intervention
 from geotrek.zoning.filters import ZoningFilterSet
@@ -52,11 +52,9 @@ class InfrastructureFilterSet(
         queryset=InfrastructureUsageDifficultyLevel.objects.all(),
         label=_("Usage difficulty"),
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Infrastructure.objects.provider_choices(),
+        queryset=Provider.objects.filter(infrastructure__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

@@ -27,12 +27,10 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if poi.eid %}{{ poi.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
+            <td>{{ poi.get_eid }}</td>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if poi.provider %}{{ poi.provider|safe }}
+            <td>{% if poi.provider %}{{ poi.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

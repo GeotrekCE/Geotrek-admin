@@ -21,6 +21,7 @@ from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     PicturesMixin,
@@ -199,6 +200,7 @@ class Site(
     TimeStampedModelMixin,
     MPTTModel,
     ExcludedPOIsMixin,
+    ExternalSourceMixin,
 ):
     ORIENTATION_CHOICES = (
         ("N", _("↑ N")),
@@ -316,12 +318,6 @@ class Site(
         verbose_name=_("Type"),
         null=True,
         blank=True,
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     managers = models.ManyToManyField(Organism, verbose_name=_("Managers"), blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -562,6 +558,7 @@ class Course(
     AltimetryMixin,
     TimeStampedModelMixin,
     ExcludedPOIsMixin,
+    ExternalSourceMixin,
 ):
     geom = models.GeometryCollectionField(
         verbose_name=_("Location"), srid=settings.SRID
@@ -594,12 +591,6 @@ class Course(
         Rating, related_name="courses", blank=True, verbose_name=_("Ratings")
     )
     height = models.IntegerField(verbose_name=_("Height"), blank=True, null=True)
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
     type = models.ForeignKey(
         CourseType,
         related_name="courses",
