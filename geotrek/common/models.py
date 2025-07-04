@@ -291,29 +291,6 @@ class TargetPortal(TimeStampedModelMixin, models.Model):
         help_text=_("Description on Geotrek Rando"),
         default="",
     )
-    facebook_id = models.CharField(
-        verbose_name=_("Facebook ID"),
-        max_length=20,
-        help_text=_("Facebook ID for Geotrek Rando"),
-        blank=True,
-        default=settings.FACEBOOK_APP_ID,
-    )
-    facebook_image_url = models.CharField(
-        verbose_name=_("Facebook image url"),
-        max_length=256,
-        help_text=_("Url of the facebook image"),
-        default=settings.FACEBOOK_IMAGE,
-    )
-    facebook_image_width = models.IntegerField(
-        verbose_name=_("Facebook image width"),
-        help_text=_("Facebook image's width"),
-        default=settings.FACEBOOK_IMAGE_WIDTH,
-    )
-    facebook_image_height = models.IntegerField(
-        verbose_name=_("Facebook image height"),
-        help_text=_("Facebook image's height"),
-        default=settings.FACEBOOK_IMAGE_HEIGHT,
-    )
 
     class Meta:
         verbose_name = _("Target portal")

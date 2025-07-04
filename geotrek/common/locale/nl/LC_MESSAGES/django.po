@@ -250,30 +250,6 @@ msgstr ""
 msgid "Description on Geotrek Rando"
 msgstr ""
 
-msgid "Facebook ID"
-msgstr ""
-
-msgid "Facebook ID for Geotrek Rando"
-msgstr ""
-
-msgid "Facebook image url"
-msgstr ""
-
-msgid "Url of the facebook image"
-msgstr ""
-
-msgid "Facebook image width"
-msgstr ""
-
-msgid "Facebook image's width"
-msgstr ""
-
-msgid "Facebook image height"
-msgstr ""
-
-msgid "Facebook image's height"
-msgstr ""
-
 msgid "Target portal"
 msgstr ""
 

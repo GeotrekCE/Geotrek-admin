@@ -226,7 +226,6 @@ class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    facebook_image_url = serializers.SerializerMethodField()
 
     def get_title(self, obj):
         return get_translation_or_dict("title", self, obj)
@@ -234,18 +233,11 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_description(self, obj):
         return get_translation_or_dict("description", self, obj)
 
-    def get_facebook_image_url(self, obj):
-        return build_url(self, obj.facebook_image_url) if obj.facebook_image_url else ""
-
     class Meta:
         model = common_models.TargetPortal
         fields = (
             "id",
             "description",
-            "facebook_id",
-            "facebook_image_height",
-            "facebook_image_url",
-            "facebook_image_width",
             "name",
             "title",
             "website",
