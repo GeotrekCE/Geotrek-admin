@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name="facebook_id",
             field=models.CharField(
                 blank=True,
-                default=True,
+                default=1,
                 help_text="Facebook ID for Geotrek Rando",
                 max_length=20,
                 null=True,
