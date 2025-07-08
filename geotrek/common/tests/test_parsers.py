@@ -15,6 +15,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from django.test import TestCase
 from django.test.utils import override_settings
 from requests import Response
+from requests.exceptions import ChunkedEncodingError
 
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import (
@@ -53,8 +54,6 @@ from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.models import District
-
-from requests.exceptions import ChunkedEncodingError
 
 
 class OrganismParser(ExcelParser):
@@ -144,6 +143,7 @@ class JSONParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
 
 class OrganismWithAttachmentJSONParser(AttachmentParserMixin, JSONParser):
     model = Organism
@@ -270,7 +270,9 @@ class ParserTests(TestCase):
 
     @override_settings(PARSER_NUMBER_OF_TRIES=0)
     def test_init_fails_if_parser_nb_of_tries_is_zero(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_one_image.json"
+        )
         with self.assertRaisesMessage(
             ImproperlyConfigured,
             "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
@@ -284,7 +286,9 @@ class ParserTests(TestCase):
 
     @override_settings(PARSER_NUMBER_OF_TRIES=-1)
     def test_init_fails_if_parser_nb_of_tries_is_negative(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_one_image.json"
+        )
         with self.assertRaisesMessage(
             ImproperlyConfigured,
             "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
@@ -296,10 +300,11 @@ class ParserTests(TestCase):
             )
         self.assertEqual(Organism.objects.count(), 0)
 
-
     @override_settings(PARSER_NUMBER_OF_TRIES="foo")
     def test_init_fails_if_parser_nb_of_tries_is_a_string(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_one_image.json"
+        )
         with self.assertRaisesMessage(
             ImproperlyConfigured,
             "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
@@ -1149,10 +1154,11 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_head.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
-
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
-    def test_retry_when_http_download_fails_with_retry_http_status_sucess(self, mocked_get):
+    def test_retry_when_http_download_fails_with_retry_http_status_sucess(
+        self, mocked_get
+    ):
         """Image download fails with HTTP error set as retry code in settings, then succeeds."""
         bad_status_mock = mock.Mock()
         bad_status_mock.status_code = settings.PARSER_RETRY_HTTP_STATUS[0]
@@ -1162,7 +1168,9 @@ class AttachmentParserTests(TestCase):
         success_mock.content = b""
         mocked_get.side_effect = [bad_status_mock, success_mock]
 
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_one_image.json"
+        )
         with self.assertLogs("geotrek.common.parsers", level="INFO") as cm:
             call_command(
                 "import",
@@ -1173,14 +1181,16 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(len(cm.output), 1)
         self.assertEqual(mocked_get.call_count, 2)
-        self.assertIn("Failed to fetch https://foo.com. Status code: 503. Retrying...", cm.output[0])
-
+        self.assertIn(
+            "Failed to fetch https://foo.com. Status code: 503. Retrying...",
+            cm.output[0],
+        )
 
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
     def test_retry_when_http_download_fails_with_specific_exception(self, mocked_get):
         """Image download fails with a specific exception, then succeeds.
-           (ChunkedEncodingError and ConnectionError from the requests library)
+        (ChunkedEncodingError and ConnectionError from the requests library)
         """
         success_mock = mock.Mock()
         success_mock.status_code = 200
@@ -1193,7 +1203,9 @@ class AttachmentParserTests(TestCase):
             requests.exceptions.ConnectionError("Bar"),
             success_mock,
         ]
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_one_image.json"
+        )
 
         with self.assertLogs("geotrek.common.parsers", level="INFO") as cm1:
             call_command(
@@ -1205,7 +1217,10 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(len(cm1.output), 1)
         self.assertEqual(mocked_get.call_count, 2)
-        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...", cm1.output[0])
+        self.assertIn(
+            "Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...",
+            cm1.output[0],
+        )
         Organism.objects.all().delete()
         Attachment.objects.all().delete()
 
@@ -1219,7 +1234,10 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(len(cm2.output), 1)
         self.assertEqual(mocked_get.call_count, 4)
-        self.assertIn("Failed to fetch https://foo.com. ConnectionError: Bar. Retrying...", cm2.output[0])
+        self.assertIn(
+            "Failed to fetch https://foo.com. ConnectionError: Bar. Retrying...",
+            cm2.output[0],
+        )
 
     @mock.patch("requests.get")
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
@@ -1234,23 +1252,30 @@ class AttachmentParserTests(TestCase):
             # 2nd image
             success_mock,
         ]
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_two_images.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_two_images.json"
+        )
 
         output = StringIO()
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
             filename,
-            stdout=output
+            stdout=output,
         )
         self.assertEqual(Organism.objects.count(), 1)
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(mocked_get.call_count, 2)
-        self.assertIn("Failed to load attachment: Failed to fetch https://foo.com. Exception: An error message", output.getvalue())
+        self.assertIn(
+            "Failed to load attachment: Failed to fetch https://foo.com. Exception: An error message",
+            output.getvalue(),
+        )
 
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
-    def test_continue_parsing_when_http_download_fails_after_max_retries(self, mocked_get):
+    def test_continue_parsing_when_http_download_fails_after_max_retries(
+        self, mocked_get
+    ):
         """Image download fails after max retries, then proceeds to next image."""
         success_mock = mock.Mock()
         success_mock.status_code = 200
@@ -1262,7 +1287,9 @@ class AttachmentParserTests(TestCase):
             # 2nd image
             success_mock,
         ]
-        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_two_images.json")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_two_images.json"
+        )
 
         output = StringIO()
         with self.assertLogs("geotrek.common.parsers", level="INFO") as cm:
@@ -1276,10 +1303,18 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(len(cm.output), 3)
         self.assertEqual(mocked_get.call_count, 3)
-        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...", cm.output[0])
-        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Bar. Retrying...", cm.output[1])
+        self.assertIn(
+            "Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...",
+            cm.output[0],
+        )
+        self.assertIn(
+            "Failed to fetch https://foo.com. ChunkedEncodingError: Bar. Retrying...",
+            cm.output[1],
+        )
         self.assertIn("Failed to fetch https://foo.com after 2 attempts", cm.output[2])
-        self.assertIn("Failed to fetch https://foo.com after 2 attempts", output.getvalue())
+        self.assertIn(
+            "Failed to fetch https://foo.com after 2 attempts", output.getvalue()
+        )
 
     @mock.patch("requests.get")
     @mock.patch("geotrek.common.parsers.urlparse")
@@ -1296,7 +1331,8 @@ class AttachmentParserTests(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Failed to load attachment: Failed to fetch http://toto.tata/titi.png. DownloadImportError: An error message", output.getvalue()
+            "Failed to load attachment: Failed to fetch http://toto.tata/titi.png. DownloadImportError: An error message",
+            output.getvalue(),
         )
         self.assertEqual(mocked_get.call_count, 1)
 
@@ -2139,16 +2175,14 @@ class OpenStreetMapTestParser(TestCase):
         ]
 
         call_command(
-            "import",
-            "geotrek.common.tests.test_parsers.OpenStreetMapTest",
-            verbosity=0
+            "import", "geotrek.common.tests.test_parsers.OpenStreetMapTest", verbosity=0
         )
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest"
+                "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest",
             )
 
     @mock.patch(

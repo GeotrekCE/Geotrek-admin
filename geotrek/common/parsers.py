@@ -137,8 +137,14 @@ class Parser:
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
 
-        if not (isinstance(settings.PARSER_NUMBER_OF_TRIES, int) and settings.PARSER_NUMBER_OF_TRIES > 0):
-            raise ImproperlyConfigured("Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.")
+        if not (
+            isinstance(settings.PARSER_NUMBER_OF_TRIES, int)
+            and settings.PARSER_NUMBER_OF_TRIES > 0
+        ):
+            msg = _(
+                "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+            )
+            raise ImproperlyConfigured(msg)
 
         if self.fields is None:
             self.fields = {
@@ -710,30 +716,43 @@ class Parser:
 
     def request_or_retry(self, url, verb="get", **kwargs):
         def prepare_retry(error_msg):
-            logger.info(_("Failed to fetch %(url)s. %(error_msg)s. Retrying...") % {"url": url, "error_msg": error_msg})
+            logger.info(_("Failed to fetch %s. %s. Retrying..."), url, error_msg)
             sleep(settings.PARSER_RETRY_SLEEP_TIME)
 
         def format_exception(e):
-            return _("%(error_name)s: %(error_msg)s") % {"error_name": e.__class__.__name__, "error_msg": e}
+            return _("%(error_name)s: %(error_msg)s") % {
+                "error_name": e.__class__.__name__,
+                "error_msg": e,
+            }
 
         action = getattr(requests, verb)
         try_get = 0
         while try_get < settings.PARSER_NUMBER_OF_TRIES:
             try_get += 1
             try:
-                response = action(url, headers=self.headers, allow_redirects=True, **kwargs)
+                response = action(
+                    url, headers=self.headers, allow_redirects=True, **kwargs
+                )
                 if response.status_code == 200:
                     return response
                 elif response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
-                    prepare_retry(_("Status code: %(code)s") % {"code": response.status_code})
+                    prepare_retry(
+                        _("Status code: %(code)s") % {"code": response.status_code}
+                    )
                 else:
                     break
             except (ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
                 prepare_retry(format_exception(e))
             except Exception as e:
-                raise DownloadImportError(_("Failed to fetch %(url)s. %(error)s" % {'url': url, "error": format_exception(e)}))
+                raise DownloadImportError(
+                    _("Failed to fetch %(url)s. %(error)s")
+                    % {"url": url, "error": format_exception(e)}
+                )
 
-        msg = _("Failed to fetch %(url)s after %(try_get)s attempts.") % {"url": url, "try_get": try_get}
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempts.") % {
+            "url": url,
+            "try_get": try_get,
+        }
         logger.warning(msg)
         raise DownloadImportError(msg)
 
@@ -997,7 +1016,7 @@ class AttachmentParserMixin:
             try:
                 response = self.request_or_retry(url)
             except Exception as e:
-                self.add_warning(_("Failed to load attachment: %(e)s" % {"e": e}))
+                self.add_warning(_("Failed to load attachment: %(e)s") % {"e": e})
                 return None
             return response.read() if is_ftp else response.content
         return None
