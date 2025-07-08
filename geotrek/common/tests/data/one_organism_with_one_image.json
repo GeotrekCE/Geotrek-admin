@@ -1,0 +1,8 @@
+{
+    "features": [
+        {
+            "name": "foo",
+            "image": "https://foo.com"
+        }
+    ]
+}

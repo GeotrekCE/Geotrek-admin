@@ -54,6 +54,8 @@ from geotrek.trekking.parsers import GeotrekTrekParser
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.models import District
 
+from requests.exceptions import ChunkedEncodingError
+
 
 class OrganismParser(ExcelParser):
     model = Organism
@@ -109,7 +111,7 @@ class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
     eid = "name"
 
 
-class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
+class OrganismWithAttachmentExcelParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
 
 
@@ -118,11 +120,11 @@ class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
     default_license_label = "Creative Commons"
 
 
-class WarnAttachmentParser(AttachmentParser):
+class WarnAttachmentParser(OrganismWithAttachmentExcelParser):
     warn_on_missing_fields = True
 
 
-class AttachmentLegendParser(AttachmentParser):
+class AttachmentLegendParser(OrganismWithAttachmentExcelParser):
     def filter_attachments(self, src, val):
         (url, legend, author) = val.split(", ")
         return [(url, legend, author)]
@@ -142,6 +144,12 @@ class JSONParser(Parser):
 
     def normalize_field_name(self, name):
         return name
+
+class OrganismWithAttachmentJSONParser(AttachmentParserMixin, JSONParser):
+    model = Organism
+    fields = {"organism": "name"}
+    non_fields = {"attachments": "image"}
+    separator = " "
 
 
 class JSONParserIntersectionGeomTest(JSONParser):
@@ -259,6 +267,49 @@ class ParserTests(TestCase):
                 "find_me/I_am_not_there.shp",
                 verbosity=0,
             )
+
+    @override_settings(PARSER_NUMBER_OF_TRIES=0)
+    def test_init_fails_if_parser_nb_of_tries_is_zero(self):
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 0)
+
+    @override_settings(PARSER_NUMBER_OF_TRIES=-1)
+    def test_init_fails_if_parser_nb_of_tries_is_negative(self):
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 0)
+
+
+    @override_settings(PARSER_NUMBER_OF_TRIES="foo")
+    def test_init_fails_if_parser_nb_of_tries_is_a_string(self):
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        with self.assertRaisesMessage(
+            ImproperlyConfigured,
+            "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer.",
+        ):
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 0)
 
     @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "data"))
     def test_custom_parser(self):
@@ -774,7 +825,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -791,24 +842,6 @@ class AttachmentParserTests(TestCase):
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
     @mock.patch("requests.get")
-    def test_attachment_connection_error(self, mocked):
-        mocked.return_value.status_code = 200
-        mocked.side_effect = requests.exceptions.ConnectionError("Error connection")
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
-        output = StringIO()
-        output_3 = StringIO()
-        call_command(
-            "import",
-            "geotrek.common.tests.test_parsers.WarnAttachmentParser",
-            filename,
-            verbosity=2,
-            stdout=output,
-            stderr=output_3,
-        )
-        self.assertFalse(Attachment.objects.exists())
-        self.assertIn("Failed to load attachment: Error connection", output.getvalue())
-
-    @mock.patch("requests.get")
     @override_settings(PAPERCLIP_MAX_BYTES_SIZE_IMAGE=20)
     def test_attachment_bigger_size(self, mocked):
         mocked.return_value.status_code = 200
@@ -816,7 +849,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -826,7 +859,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.AttachmentParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
                 filename,
                 verbosity=0,
             )
@@ -840,7 +873,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -850,7 +883,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.AttachmentParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
                 filename,
                 verbosity=0,
             )
@@ -864,7 +897,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -874,7 +907,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.AttachmentParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
                 filename,
                 verbosity=0,
             )
@@ -887,7 +920,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism3.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -948,7 +981,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -975,7 +1008,7 @@ class AttachmentParserTests(TestCase):
         ):
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.AttachmentParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
                 filename,
                 verbosity=0,
             )
@@ -990,7 +1023,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -998,7 +1031,7 @@ class AttachmentParserTests(TestCase):
         old_name = attachment.attachment_file.name
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1018,7 +1051,7 @@ class AttachmentParserTests(TestCase):
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename_no_legend,
             verbosity=0,
         )
@@ -1050,7 +1083,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1059,7 +1092,7 @@ class AttachmentParserTests(TestCase):
         os.remove(attachment.attachment_file.path)
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1079,13 +1112,13 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1102,13 +1135,13 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1116,11 +1149,143 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_head.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
+
+    @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
+    @mock.patch("requests.get")
+    def test_retry_when_http_download_fails_with_retry_http_status_sucess(self, mocked_get):
+        """Image download fails with HTTP error set as retry code in settings, then succeeds."""
+        bad_status_mock = mock.Mock()
+        bad_status_mock.status_code = settings.PARSER_RETRY_HTTP_STATUS[0]
+        bad_status_mock.content = b""
+        success_mock = mock.Mock()
+        success_mock.status_code = 200
+        success_mock.content = b""
+        mocked_get.side_effect = [bad_status_mock, success_mock]
+
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+        with self.assertLogs("geotrek.common.parsers", level="INFO") as cm:
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(len(cm.output), 1)
+        self.assertEqual(mocked_get.call_count, 2)
+        self.assertIn("Failed to fetch https://foo.com. Status code: 503. Retrying...", cm.output[0])
+
+
+    @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
+    @mock.patch("requests.get")
+    def test_retry_when_http_download_fails_with_specific_exception(self, mocked_get):
+        """Image download fails with a specific exception, then succeeds.
+           (ChunkedEncodingError and ConnectionError from the requests library)
+        """
+        success_mock = mock.Mock()
+        success_mock.status_code = 200
+        success_mock.content = b""
+        mocked_get.side_effect = [
+            # 1st run
+            ChunkedEncodingError("Foo"),
+            success_mock,
+            # 2nd run
+            requests.exceptions.ConnectionError("Bar"),
+            success_mock,
+        ]
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_one_image.json")
+
+        with self.assertLogs("geotrek.common.parsers", level="INFO") as cm1:
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(len(cm1.output), 1)
+        self.assertEqual(mocked_get.call_count, 2)
+        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...", cm1.output[0])
+        Organism.objects.all().delete()
+        Attachment.objects.all().delete()
+
+        with self.assertLogs("geotrek.common.parsers", level="INFO") as cm2:
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+            )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(len(cm2.output), 1)
+        self.assertEqual(mocked_get.call_count, 4)
+        self.assertIn("Failed to fetch https://foo.com. ConnectionError: Bar. Retrying...", cm2.output[0])
+
+    @mock.patch("requests.get")
+    @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
+    def test_dont_retry_when_http_download_fails_with_other_exception(self, mocked_get):
+        """Image download fails with an exception, then proceeds to next image."""
+        success_mock = mock.Mock()
+        success_mock.status_code = 200
+        success_mock.content = b""
+        mocked_get.side_effect = [
+            # 1st image
+            Exception("An error message"),
+            # 2nd image
+            success_mock,
+        ]
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_two_images.json")
+
+        output = StringIO()
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+            filename,
+            stdout=output
+        )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(mocked_get.call_count, 2)
+        self.assertIn("Failed to load attachment: Failed to fetch https://foo.com. Exception: An error message", output.getvalue())
+
+    @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
+    @mock.patch("requests.get")
+    def test_continue_parsing_when_http_download_fails_after_max_retries(self, mocked_get):
+        """Image download fails after max retries, then proceeds to next image."""
+        success_mock = mock.Mock()
+        success_mock.status_code = 200
+        success_mock.content = b""
+        mocked_get.side_effect = [
+            # 1st image
+            ChunkedEncodingError("Foo"),
+            ChunkedEncodingError("Bar"),
+            # 2nd image
+            success_mock,
+        ]
+        filename = os.path.join(os.path.dirname(__file__), "data", "one_organism_with_two_images.json")
+
+        output = StringIO()
+        with self.assertLogs("geotrek.common.parsers", level="INFO") as cm:
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+                stdout=output,
+            )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(len(cm.output), 3)
+        self.assertEqual(mocked_get.call_count, 3)
+        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Foo. Retrying...", cm.output[0])
+        self.assertIn("Failed to fetch https://foo.com. ChunkedEncodingError: Bar. Retrying...", cm.output[1])
+        self.assertIn("Failed to fetch https://foo.com after 2 attempts", cm.output[2])
+        self.assertIn("Failed to fetch https://foo.com after 2 attempts", output.getvalue())
+
     @mock.patch("requests.get")
     @mock.patch("geotrek.common.parsers.urlparse")
-    def test_attachment_download_fail(self, mocked_urlparse, mocked_get):
+    def test_attachment_ftp_download_fail(self, mocked_urlparse, mocked_get):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
-        mocked_get.side_effect = DownloadImportError("DownloadImportError")
+        mocked_get.side_effect = DownloadImportError("An error message")
         mocked_urlparse.return_value = urlparse("ftp://test.url.com/organism.xls")
         output = StringIO()
         call_command(
@@ -1131,7 +1296,7 @@ class AttachmentParserTests(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Failed to load attachment: DownloadImportError", output.getvalue()
+            "Failed to load attachment: Failed to fetch http://toto.tata/titi.png. DownloadImportError: An error message", output.getvalue()
         )
         self.assertEqual(mocked_get.call_count, 1)
 
@@ -1154,7 +1319,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1168,7 +1333,7 @@ class AttachmentParserTests(TestCase):
         output = StringIO()
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=2,
             stdout=output,
@@ -1190,7 +1355,7 @@ class AttachmentParserTests(TestCase):
         output = StringIO()
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=2,
             stdout=output,
@@ -1245,7 +1410,7 @@ class AttachmentParserTests(TestCase):
 
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.AttachmentParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
             filename,
             verbosity=0,
         )
@@ -1976,15 +2141,14 @@ class OpenStreetMapTestParser(TestCase):
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OpenStreetMapTest",
-            verbosity=2,
+            verbosity=0
         )
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(ImproperlyConfigured, "Tags must be defined"):
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest",
-                verbosity=2,
+                "geotrek.common.tests.test_parsers.OpenStreetMapInitialisationTest"
             )
 
     @mock.patch(
