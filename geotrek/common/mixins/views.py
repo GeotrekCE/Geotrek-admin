@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.functional import classproperty
+from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.views import static
 from django.views.generic import DetailView, FormView
@@ -260,7 +261,7 @@ class OSMDetailMixin:
         token = UserProfile.objects.get(user_id=user_id).osm_token
         osm_configured = all(
             hasattr(settings, key) for key in (
-                "OSM_CLIENT_ID", "OSM_CLIENT_SECRET"
+                "OSM_CLIENT_ID", "OSM_CLIENT_SECRET", "OSM_APPLICATION_NAME"
             )
         )
 
@@ -291,7 +292,7 @@ class OSMComparisonViewMixin(DetailView):
     template_name = "common/osm_comparison.html"
 
     type_map = {"N": "node", "W": "way", "R": "relation"}
-    base_url = "https://master.apis.dev.openstreetmap.org/api/0.6"
+    base_url = "https://master.apis.dev.openstreetmap.org/api/0.6" # WARNING: use https://openstreetmap.org/api/0.6/ in production
 
     osm_object = None
 
@@ -384,18 +385,26 @@ class OSMComparisonViewMixin(DetailView):
         context = super().get_context_data(**kwargs)
 
         # create context
+        objects = self.map_fields(self.object, self.osm_object)
         context.update({
-            "objects": self.map_fields(self.object, self.osm_object),
+            "objects": objects,
             "osm_object_serialized": json.dumps(self.osm_object),
             "validation_url": f"{app_name}:{model}_osm_validate"
         })
+
+        # if geotrek object have values longer than 255 caracters display a warning message
+        has_long_values = any(len(item['geotrek_value']) > 255 for item in objects)
+        if has_long_values:
+            msg = _("OpenStreetMap only accepts values up to 255 characters. Any values exceeding this limit will be truncated.")
+            messages.warning(self.request,msg)
 
         return context
 
 
 class OSMValidationViewMixin(FormView):
     form_class = OSMForm
-    base_url = 'https://master.apis.dev.openstreetmap.org/api/0.6'
+    template_name = "common/osm_validation.html"
+    base_url = 'https://master.apis.dev.openstreetmap.org/api/0.6' # WARNING: use https://openstreetmap.org/api/0.6/ in production
 
     def get_updated_osm_object(self):
         osm_object_serialized = self.request.GET.get("osm_object", "{}")
@@ -430,9 +439,9 @@ class OSMValidationViewMixin(FormView):
     def form_valid(self, form):
         user_id = self.request.user.id
         token = UserProfile.objects.get(user_id=user_id).osm_token
-        user_agent = f"{settings.APPLICATION_NAME}/0.1"
+        user_agent = f"{settings.OSM_APPLICATION_NAME}/0.1"
 
-        _, osm_object = self.get_updated_osm_object()
+        osm_object_serialized, osm_object = self.get_updated_osm_object()
 
         # create changeset
         try:

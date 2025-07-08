@@ -25,7 +25,7 @@
                                 {% if row.geotrek_value != row.osm_value and row.geotrek_field != "eid" %}
                                     <label class="arrow-toggle">
                                         <input type="checkbox" id={{ row.geotrek_field }} name={{ row.geotrek_field }} value="{{ row.osm_field }}|{{ row.geotrek_value|slice:"255"|striptags|safe }}" {% if row.geotrek_value|length > 255 %}title="{% trans "The value will be cropped to 255 caracters" %}"{% endif %}>
-                                        <span class="arrow">➜</span>
+                                        <span class="arrow {% if row.geotrek_value|length <= 255 %}arrow-good{% else %}arrow-warning{% endif %}">➜</span>
                                     </label>
                                 {% else %}
                                     <span style='font-size:20px;color:grey;' {% if row.geotrek_field != "eid" %}title="{% trans "Fields are identical" %}{% endif %}">&#10005;</span>
@@ -66,9 +66,14 @@
           cursor: pointer;
         }
 
-        .arrow-toggle input:checked + .arrow {
+        .arrow-toggle input:checked + .arrow-good {
           color: white;
-          background-color: green;
+          background-color: #28a745;
+        }
+
+        .arrow-toggle input:checked + .arrow-warning {
+          color: white;
+          background-color: #ff8c00;
         }
     </style>
 

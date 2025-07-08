@@ -486,7 +486,7 @@ class POIOSMCompare(OSMComparisonViewMixin):
 
 
 class POIOSMValidate(OSMValidationViewMixin):
-    template_name = "trekking/poi_osm_validation.html"
+    model = POI
 
 
 class TrekPOIViewSet(viewsets.ModelViewSet):

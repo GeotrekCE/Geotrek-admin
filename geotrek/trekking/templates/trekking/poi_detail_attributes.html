@@ -29,6 +29,11 @@
             <th>{% trans "External id" %}</th>
             <td>{{ poi.get_eid }}</td>
         <tr>
+            <th>{% trans "OpenStreetMap id" %}</th>
+            <td>{% if poi.osm_id %}{{ poi.osm_id|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        <tr>
             <th>{% trans "Provider" %}</th>
             <td>{% if poi.provider %}{{ poi.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}

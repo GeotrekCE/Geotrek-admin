@@ -5,7 +5,7 @@
     <div class="container">
         <div class="form-panel">
 
-            <h1>Validation de l'objet {{ object.type }}({{ object.id }})</h1>
+            <h1>{% trans "Validation de l'objet " %}{{ object.type }}({{ object.id }})</h1>
 
                 <table class="table-striped table-bordered table">
                     {% for key, value in object.tags.items %}
@@ -20,13 +20,18 @@
 
             <form method="post" action="">
                 {% csrf_token %}
-                {{ form.as_p }}
+                <p class="form-input">
+                    {{ form.copyright }}{{ form.copyright.label_tag }}
+                </p>
+                <p class="form-input">
+                    {{ form.comment.label_tag }}{{ form.comment }}
+                </p>
 
                 <input type="hidden" id="osm_object" name="osm_object" value="{{ osm_object_serialized }}" />
 
                 <div class="form-actions">
                     <input type="button" name="cancel" value="Annuler" class="btn btn btn-light ml-auto mr-2" id="button-id-cancel">
-                    <button type="submit" id="save_changes" class="btn btn-success"> <i class="bi bi-check-circle-fill"></i> Sauvegarder</button>
+                    <button type="submit" id="save_changes" class="btn btn-success"> <i class="bi bi-check-circle-fill"></i> {% trans "Sauvegarder" %}</button>
                 </div>
             </form>
         </div>
@@ -38,6 +43,11 @@
             margin-top: 50px;
         }
 
+        .form-input{
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+        }
     </style>
 
 {% endblock extrabody %}

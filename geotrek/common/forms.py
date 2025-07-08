@@ -630,8 +630,10 @@ class HDViewPointAnnotationForm(forms.ModelForm):
 
 
 class OSMForm(forms.Form):
+
     copyright = forms.BooleanField(
-        label=_("Do you have permission to publish this data on OpenStreetMap, and can you confirm that it is not subject to private property protection?"),
+        label=_("I confirm that this data is free of rights and can be published on OpenStreetMap"),
+        widget=forms.CheckboxInput(),
         required=True,
     )
     comment = forms.CharField(

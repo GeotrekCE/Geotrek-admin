@@ -44,10 +44,8 @@ def get_osm_token(code, state_client, state_server, redirect_uri, user_id):
                               code=code,
                               client_secret=client_secret)
 
-    print("\n\n\n", token, "\n\n\n")
-
     user = UserProfile.objects.get(user_id=user_id)
-    user.osm_token = f"Bearer - {token.get('access_token')}"
+    user.osm_token = f"Bearer {token.get('access_token')}"
     user.save()
 
 
@@ -66,8 +64,8 @@ def create_changeset(base_url, token, user_agent, comment):
 
     # header
     headers = {
-        'Authorization': f'Bearer {token}',
-        'User-Agent': f"{settings.APPLICATION_NAME}/0.1",
+        'Authorization': token,
+        'User-Agent': f"{settings.OSM_APPLICATION_NAME}/0.1",
         'Content-Type': 'text/xml'
     }
 
@@ -80,6 +78,7 @@ def create_changeset(base_url, token, user_agent, comment):
         match response.status_code:
             case 400: msg = _("Bad Request: Changeset")
             case 405: msg = _("Method Not Allowed: Changeset")
+            case _: msg = _(f"Error {response.status_code}")
         raise requests.exceptions.RequestException(msg)
 
     changeset_id = response.content.decode()
@@ -96,6 +95,7 @@ def get_element(base_url, type, id):
             match response.status_code:
                 case 404: msg = _(f"OpenStreetMap object {type}({id}) not found")
                 case 410: msg = _(f"OpenStreetMap object {type}({id}) has been deleted")
+                case _: msg = _(f"Error {response.status_code}")
             raise requests.exceptions.RequestException(msg)
 
         return response.json()['elements'][0]
@@ -135,8 +135,8 @@ def update_element(base_url, token, changeset_id, object):
 
     # header
     headers = {
-        'Authorization': f'Bearer {token}',
-        'User-Agent': f"{settings.APPLICATION_NAME}/0.1",
+        'Authorization': token,
+        'User-Agent': f"{settings.OSM_APPLICATION_NAME}/0.1",
         'Content-Type': 'text/xml'
     }
 
@@ -152,6 +152,7 @@ def update_element(base_url, token, changeset_id, object):
             case 409: msg = _("Changeset closed")
             case 412: msg = _(f"Nodes/Ways that compose the element does not exist")
             case 429: msg = _("Too Many Requests")
+            case _: msg = _(f"Error {response.status_code}")
         raise requests.exceptions.RequestException(msg)
 
 def close_changeset(base_url, token, changeset_id):
@@ -159,8 +160,8 @@ def close_changeset(base_url, token, changeset_id):
 
     # header
     headers = {
-        'Authorization': f'Bearer {token}',
-        'User-Agent': f"{settings.APPLICATION_NAME}/0.1",
+        'Authorization': token,
+        'User-Agent': f"{settings.OSM_APPLICATION_NAME}/0.1",
     }
 
     response = requests.put(url, headers=headers)
@@ -171,4 +172,5 @@ def close_changeset(base_url, token, changeset_id):
             case 404: msg = _("Changeset not found")
             case 405: msg = _("Method Not Allowed: Changeset")
             case 409: msg = _("Changeset already closed")
+            case _: msg = _(f"Error {response.status_code}")
         raise requests.exceptions.RequestException(msg)

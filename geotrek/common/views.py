@@ -585,19 +585,20 @@ def OSMAuthorize(request):
     try:
         get_osm_token(code, state_client, state_server, redirect_uri, user_id)
     except Exception:
+        msg = _("Connexion error")
+        messages.error(request, msg)
         succeed = False
 
     app_name = request.session['object_app']
     model = request.session['object_model']
     pk = request.session['object_id']
 
-    context = {
-        "succeed": succeed,
-        "comparison_url": f"{app_name}:{model}_osm_compare",
-        "detail_url": f"{app_name}:{model}_detail",
-        "pk": pk,
-    }
+    if succeed:
+        url_name = f"{app_name}:{model}_osm_compare"
+    else:
+        url_name = f"{app_name}:{model}_detail"
 
-    return render(request, "common/osm_authorization.html", context)
+    return HttpResponseRedirect(reverse(url_name, kwargs={'pk': pk}))
+
 
 home = last_list
