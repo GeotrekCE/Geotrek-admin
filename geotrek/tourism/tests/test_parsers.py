@@ -381,7 +381,7 @@ class ParserTests(TestCase):
         TouristicContentType1Factory(label="Type B")
         with self.assertRaisesRegex(
             CommandError,
-            f"Failed to download {EauViveParser.url}. HTTP status code 503",
+            f"Failed to download {EauViveParser.url} after 3 attempts.",
         ):
             call_command("import", "geotrek.tourism.tests.test_parsers.EauViveParser")
             self.assertTrue(mocked.called)

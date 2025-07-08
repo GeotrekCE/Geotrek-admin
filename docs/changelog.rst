@@ -5,6 +5,9 @@ CHANGELOG
 2.116.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix parser crash after exception during attachment download (refs #4807)
 
 
 2.116.0    (2025-07-03)

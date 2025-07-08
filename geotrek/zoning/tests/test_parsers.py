@@ -267,7 +267,7 @@ class OpenStreetMapRestrictedAreaParserTests(TestCase):
         self.assertEqual(self.restricted_areas.count(), 0)
 
         self.assertIn(
-            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921. HTTP status code 404",
+            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921 after 1 attempts.",
             self.output,
         )
 
@@ -378,7 +378,7 @@ class OpenStreetMapCityParserTests(TestCase):
         self.assertEqual(self.cities.count(), 0)
 
         self.assertIn(
-            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921. HTTP status code 404",
+            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921 after 1 attempts.",
             self.output,
         )
 

@@ -286,7 +286,7 @@ class BiodivParserTests(TestCase):
         mocked.side_effect = side_effect
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/",
+            "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/ after 1 attempts.",
         ):
             call_command(
                 "import",
@@ -309,7 +309,7 @@ class BiodivParserTests(TestCase):
         mocked.side_effect = side_effect
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to download https://rhododendron.com. HTTP status code 404",
+            "Failed to download https://rhododendron.com after 1 attempts.",
         ):
             call_command(
                 "import",
