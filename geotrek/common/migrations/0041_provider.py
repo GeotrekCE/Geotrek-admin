@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("common", "0039_alter_recordsource_website_and_more"),
+        ("common", "0040_remove_targetportal_facebook_id_and_more"),
     ]
 
     operations = [

@@ -31,7 +31,7 @@ def backward_fill_provider(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("common", "0040_provider"),
+        ("common", "0041_provider"),
         ("core", "0040_path_core_path_geom_is_valid_and_more"),
     ]
 

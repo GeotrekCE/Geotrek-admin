@@ -31,7 +31,7 @@ def backward_fill_provider(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("common", "0040_provider"),
+        ("common", "0041_provider"),
         ("sensitivity", "0028_alter_sensitivearea_structure"),
     ]
 
