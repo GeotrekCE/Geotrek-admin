@@ -1312,7 +1312,9 @@ class AttachmentParserTests(TestCase):
             "Failed to fetch https://foo.com. ChunkedEncodingError: Bar. Retrying...",
             cm.output[1],
         )
-        self.assertIn("Failed to fetch https://foo.com after 2 attempt(s)", cm.output[2])
+        self.assertIn(
+            "Failed to fetch https://foo.com after 2 attempt(s)", cm.output[2]
+        )
         self.assertIn(
             "Failed to fetch https://foo.com after 2 attempt(s)", output.getvalue()
         )
