@@ -726,6 +726,7 @@ class Parser:
             }
 
         action = getattr(requests, verb)
+        response = None
         try_get = 0
         while try_get < settings.PARSER_NUMBER_OF_TRIES:
             try_get += 1
@@ -746,10 +747,12 @@ class Parser:
             except Exception as e:
                 raise DownloadImportError(
                     _("Failed to fetch %(url)s. %(error)s")
-                    % {"url": url, "error": format_exception(e)}
+                    % {
+                        "url": url,
+                        "error": format_exception(e),
+                    }
                 )
-
-        msg = _("Failed to fetch %(url)s after %(try_get)s attempts.") % {
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {
             "url": url,
             "try_get": try_get,
         }

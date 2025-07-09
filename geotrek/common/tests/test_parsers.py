@@ -1163,6 +1163,7 @@ class AttachmentParserTests(TestCase):
         bad_status_mock = mock.Mock()
         bad_status_mock.status_code = settings.PARSER_RETRY_HTTP_STATUS[0]
         bad_status_mock.content = b""
+        bad_status_mock.url = "https://foo.com"
         success_mock = mock.Mock()
         success_mock.status_code = 200
         success_mock.content = b""
@@ -1311,9 +1312,9 @@ class AttachmentParserTests(TestCase):
             "Failed to fetch https://foo.com. ChunkedEncodingError: Bar. Retrying...",
             cm.output[1],
         )
-        self.assertIn("Failed to fetch https://foo.com after 2 attempts", cm.output[2])
+        self.assertIn("Failed to fetch https://foo.com after 2 attempt(s)", cm.output[2])
         self.assertIn(
-            "Failed to fetch https://foo.com after 2 attempts", output.getvalue()
+            "Failed to fetch https://foo.com after 2 attempt(s)", output.getvalue()
         )
 
     @mock.patch("requests.get")

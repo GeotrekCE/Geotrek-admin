@@ -198,9 +198,6 @@ class OpenStreetMapRestrictedAreaParserTests(TestCase):
         response2 = mock.Mock()
         response2.json = mocked_json_nominatim
         response2.status_code = status_code
-        response2.url = (
-            "https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921"
-        )
 
         mocked.side_effect = [response1, response2]
 
@@ -267,7 +264,7 @@ class OpenStreetMapRestrictedAreaParserTests(TestCase):
         self.assertEqual(self.restricted_areas.count(), 0)
 
         self.assertIn(
-            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921 after 1 attempts.",
+            "Failed to fetch https://nominatim.openstreetmap.org/lookup after 1 attempt(s).",
             self.output,
         )
 
@@ -309,9 +306,6 @@ class OpenStreetMapCityParserTests(TestCase):
         response2 = mock.Mock()
         response2.json = mocked_json_nominatim
         response2.status_code = status_code
-        response2.url = (
-            "https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921"
-        )
 
         mocked.side_effect = [response1, response2]
 
@@ -378,7 +372,7 @@ class OpenStreetMapCityParserTests(TestCase):
         self.assertEqual(self.cities.count(), 0)
 
         self.assertIn(
-            "Failed to download https://nominatim.openstreetmap.org/ui/details.html?osmtype=R&osmid=68921 after 1 attempts.",
+            "Failed to fetch https://nominatim.openstreetmap.org/lookup after 1 attempt(s).",
             self.output,
         )
 
