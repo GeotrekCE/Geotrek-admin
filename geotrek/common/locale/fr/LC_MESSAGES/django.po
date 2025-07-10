@@ -420,7 +420,8 @@ msgstr "Echec lors de la récupération de %(url)s. %(error)s"
 
 #, python-format
 msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
-msgstr "La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
+msgstr ""
+"La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
