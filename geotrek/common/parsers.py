@@ -1022,7 +1022,6 @@ class AttachmentParserMixin:
                 self.add_warning(_("Failed to load attachment: %(e)s") % {"e": e})
                 return None
             return response.read() if is_ftp else response.content
-        return None
 
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
