@@ -1,16 +1,15 @@
-import os
-import requests
 import json
+import os
 from io import BytesIO
-from urllib.parse import urljoin
 
+import requests
 from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.views import static
 from django.views.generic import DetailView, FormView
 from mapentity import views as mapentity_views
@@ -22,16 +21,15 @@ from geotrek.authent.models import UserProfile
 from geotrek.common.forms import OSMForm
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils import logger
-from geotrek.common.utils.portals import smart_get_template_by_portal
-from geotrek.common.utils.translation import get_translated_fields
 from geotrek.common.utils.openstreetmap_api import (
+    close_changeset,
     create_changeset,
     get_element,
-    update_element,
-    close_changeset,
     get_osm_oauth_uri,
+    update_element,
 )
-
+from geotrek.common.utils.portals import smart_get_template_by_portal
+from geotrek.common.utils.translation import get_translated_fields
 
 
 class CustomColumnsMixin:
@@ -253,7 +251,6 @@ class CompletenessMixin:
 
 
 class OSMDetailMixin:
-
     def get_osm_context_data(self):
         app_name = self.get_model()._meta.app_label.lower()
         model = self.get_model()._meta.verbose_name.lower()
@@ -261,16 +258,19 @@ class OSMDetailMixin:
         user_id = self.request.user.id
         token = UserProfile.objects.get(user_id=user_id).osm_token
         osm_configured = all(
-            hasattr(settings, key) for key in (
-                "OSM_CLIENT_ID", "OSM_CLIENT_SECRET", "OSM_APPLICATION_NAME"
-            )
+            hasattr(settings, key)
+            for key in ("OSM_CLIENT_ID", "OSM_CLIENT_SECRET", "OSM_APPLICATION_NAME")
         )
 
         if token:
-            redirect_url = reverse(f"{app_name}:{model}_osm_compare", args=[self.object.pk])
+            redirect_url = reverse(
+                f"{app_name}:{model}_osm_compare", args=[self.object.pk]
+            )
 
         elif osm_configured:
-            redirect_uri = self.request.build_absolute_uri(reverse('common:osm_authorize'))
+            redirect_uri = self.request.build_absolute_uri(
+                reverse("common:osm_authorize")
+            )
             uri, state = get_osm_oauth_uri(redirect_uri)
 
             self.request.session["osm_state"] = state
@@ -285,7 +285,7 @@ class OSMDetailMixin:
         return {
             "osm_redirect_url": redirect_url,
             "osm_user_credential_available": osm_configured,
-            "infotip": not(token)
+            "infotip": not (token),
         }
 
 
@@ -307,7 +307,9 @@ class OSMComparisonViewMixin(DetailView):
             osm_keys = [osm_keys] if is_str else list(osm_keys)
 
             # Protect the class from multiple translation mappings as field is a static attribute
-            is_translated = [tag for tag in osm_keys if tag.endswith(f":{default_lang}")]
+            is_translated = [
+                tag for tag in osm_keys if tag.endswith(f":{default_lang}")
+            ]
             if is_translated:
                 continue
 
@@ -335,29 +337,32 @@ class OSMComparisonViewMixin(DetailView):
             msg = _("The object does not have OpenStreetMap provider")
             raise Exception(msg)
 
-
     def map_fields(self, geotrek, osm):
         osm_keys = osm.get("tags", {})
-        context = [{
-            "geotrek_field": "eid",
-            "geotrek_value": geotrek.eid,
-            "osm_field": "ID",
-            "osm_value": f"{osm.get('type')}({osm.get('id')})"
-        }]
+        context = [
+            {
+                "geotrek_field": "eid",
+                "geotrek_value": geotrek.eid,
+                "osm_field": "ID",
+                "osm_value": f"{osm.get('type')}({osm.get('id')})",
+            }
+        ]
 
         for geotrek_field, osm_fields in sorted(self.mapping.items()):
             fields = (osm_fields,) if isinstance(osm_fields, str) else osm_fields
             osm_value, osm_field = next(
                 ((value, field) for field in fields if (value := osm_keys.get(field))),
-                ("", fields[0])
+                ("", fields[0]),
             )
 
-            context.append({
-                "geotrek_field": geotrek_field,
-                "geotrek_value": getattr(geotrek, geotrek_field, ""),
-                "osm_field": osm_field,
-                "osm_value": osm_value
-            })
+            context.append(
+                {
+                    "geotrek_field": geotrek_field,
+                    "geotrek_value": getattr(geotrek, geotrek_field, ""),
+                    "osm_field": osm_field,
+                    "osm_value": osm_value,
+                }
+            )
 
         return context
 
@@ -389,17 +394,21 @@ class OSMComparisonViewMixin(DetailView):
 
         # create context
         objects = self.map_fields(self.object, self.osm_object)
-        context.update({
-            "objects": objects,
-            "osm_object_serialized": json.dumps(self.osm_object),
-            "validation_url": f"{app_name}:{model}_osm_validate"
-        })
+        context.update(
+            {
+                "objects": objects,
+                "osm_object_serialized": json.dumps(self.osm_object),
+                "validation_url": f"{app_name}:{model}_osm_validate",
+            }
+        )
 
         # if geotrek object have values longer than 255 caracters display a warning message
-        has_long_values = any(len(item['geotrek_value']) > 255 for item in objects)
+        has_long_values = any(len(item["geotrek_value"]) > 255 for item in objects)
         if has_long_values:
-            msg = _("OpenStreetMap only accepts values up to 255 characters. Any values exceeding this limit will be truncated.")
-            messages.warning(self.request,msg)
+            msg = _(
+                "OpenStreetMap only accepts values up to 255 characters. Any values exceeding this limit will be truncated."
+            )
+            messages.warning(self.request, msg)
 
         return context
 
@@ -427,10 +436,9 @@ class OSMValidationViewMixin(FormView):
 
         context = super().get_context_data(**kwargs)
 
-        context.update({
-            "object": osm_object,
-            "osm_object_serialized": osm_object_serialized
-        })
+        context.update(
+            {"object": osm_object, "osm_object_serialized": osm_object_serialized}
+        )
         return context
 
     def get_success_url(self):
@@ -447,7 +455,7 @@ class OSMValidationViewMixin(FormView):
 
         # create changeset
         try:
-            comment = form.cleaned_data.get("comment","")
+            comment = form.cleaned_data.get("comment", "")
             changeset_id = create_changeset(token, user_agent, comment)
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)
@@ -466,7 +474,6 @@ class OSMValidationViewMixin(FormView):
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)
             return super().form_valid(form)
-
 
         msg = _("Saved")
         messages.success(self.request, msg)

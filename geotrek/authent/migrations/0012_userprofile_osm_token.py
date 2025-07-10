@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('authent', '0011_alter_userprofile_structure'),
+        ("authent", "0011_alter_userprofile_structure"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='osm_token',
-            field=models.CharField(blank=True, default='', max_length=256, verbose_name='OSM token'),
+            model_name="userprofile",
+            name="osm_token",
+            field=models.CharField(
+                blank=True, default="", max_length=256, verbose_name="OSM token"
+            ),
         ),
     ]

@@ -31,7 +31,6 @@ from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.defaults import page_not_found
 from django.views.generic import TemplateView, UpdateView, View
-from django.views.generic.edit import ProcessFormView
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
@@ -46,9 +45,9 @@ from rest_framework import mixins, viewsets
 from geotrek import __version__
 from geotrek.altimetry.models import Dem
 from geotrek.celery import app as celery_app
+from geotrek.common.utils.openstreetmap_api import get_osm_token
 from geotrek.core.models import Path
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.common.utils.openstreetmap_api import get_osm_token
 
 from .filters import HDViewPointFilterSet
 from .forms import (
@@ -572,13 +571,13 @@ def delete_attachment_accessibility(request, attachment_pk):
         messages.error(request, error_msg)
     return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments")
 
-def OSMAuthorize(request):
 
+def OSMAuthorize(request):
     # save OSM token
     code = request.GET.get("code")
     state_client = request.session["osm_state"]
     state_server = request.GET.get("state")
-    redirect_uri = request.build_absolute_uri(reverse('common:osm_authorize'))
+    redirect_uri = request.build_absolute_uri(reverse("common:osm_authorize"))
     user_id = request.user.id
     succeed = True
 
@@ -589,16 +588,16 @@ def OSMAuthorize(request):
         messages.error(request, msg)
         succeed = False
 
-    app_name = request.session['object_app']
-    model = request.session['object_model']
-    pk = request.session['object_id']
+    app_name = request.session["object_app"]
+    model = request.session["object_model"]
+    pk = request.session["object_id"]
 
     if succeed:
         url_name = f"{app_name}:{model}_osm_compare"
     else:
         url_name = f"{app_name}:{model}_detail"
 
-    return HttpResponseRedirect(reverse(url_name, kwargs={'pk': pk}))
+    return HttpResponseRedirect(reverse(url_name, kwargs={"pk": pk}))
 
 
 home = last_list

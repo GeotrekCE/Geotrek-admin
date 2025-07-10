@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, FormView, View
+from django.views.generic import CreateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (
@@ -30,9 +30,9 @@ from geotrek.common.forms import AttachmentAccessibilityForm
 from geotrek.common.mixins.views import (
     CompletenessMixin,
     CustomColumnsMixin,
-    OSMDetailMixin,
     OSMComparisonViewMixin,
-    OSMValidationViewMixin
+    OSMDetailMixin,
+    OSMValidationViewMixin,
 )
 from geotrek.common.models import (
     Attachment,
