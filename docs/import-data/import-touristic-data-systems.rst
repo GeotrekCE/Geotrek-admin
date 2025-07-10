@@ -778,7 +778,7 @@ The following example would cause ``NoProviderParser`` to delete objects from ``
 Linking Source Objects via `eid`
 ================================
 
-Starting with **Geotrek-admin 2.115.2**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
+Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
 
 To enable this, a new database model called **Provider** has been added. This model can be managed through the Django admin interface and includes the following fields:
 
