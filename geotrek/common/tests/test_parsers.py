@@ -1161,7 +1161,6 @@ class AttachmentParserTests(TestCase):
         bad_status_mock = mock.Mock()
         bad_status_mock.status_code = settings.PARSER_RETRY_HTTP_STATUS[0]
         bad_status_mock.content = b""
-        bad_status_mock.url = "https://foo.com"
         success_mock = mock.Mock()
         success_mock.status_code = 200
         success_mock.content = b""
@@ -1185,11 +1184,52 @@ class AttachmentParserTests(TestCase):
             cm.output[0],
         )
 
+    @mock.patch("requests.get")
+    def test_dont_retry_when_http_download_fails_with_no_retry_http_status(
+        self, mocked_get
+    ):
+        """Image download fails with HTTP error not set as retry code in settings, then proceeds to next image."""
+        bad_status_mock = mock.Mock()
+        bad_status_mock.status_code = 404
+        bad_status_mock.content = b""
+        success_mock = mock.Mock()
+        success_mock.status_code = 200
+        success_mock.content = b""
+        mocked_get.side_effect = [
+            bad_status_mock,
+            success_mock,
+        ]
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "one_organism_with_two_images.json"
+        )
+
+        output = StringIO()
+        with self.assertLogs("geotrek.common.parsers", level="WARNING") as cm:
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentJSONParser",
+                filename,
+                stdout=output,
+            )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Attachment.objects.count(), 1)
+        self.assertEqual(mocked_get.call_count, 2)
+        self.assertEqual(len(cm.output), 1)
+        self.assertIn(
+            "Failed to fetch https://foo.com after 1 attempt(s).",
+            cm.output[0],
+        )
+        self.assertIn(
+            "Failed to fetch https://foo.com after 1 attempt(s).",
+            output.getvalue(),
+        )
+
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
     def test_retry_when_http_download_fails_with_specific_exception(self, mocked_get):
-        """Image download fails with a specific exception, then succeeds.
-        (ChunkedEncodingError and ConnectionError from the requests library)
+        """For both runs, image download fails with a specific exception, then succeeds.
+        - 1st run: ChunkedEncodingError
+        - 2nd run: ConnectionError from the requests library
         """
         success_mock = mock.Mock()
         success_mock.status_code = 200
@@ -1239,17 +1279,14 @@ class AttachmentParserTests(TestCase):
         )
 
     @mock.patch("requests.get")
-    @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     def test_dont_retry_when_http_download_fails_with_other_exception(self, mocked_get):
         """Image download fails with an exception, then proceeds to next image."""
         success_mock = mock.Mock()
         success_mock.status_code = 200
         success_mock.content = b""
         mocked_get.side_effect = [
-            # 1st image
-            Exception("An error message"),
-            # 2nd image
-            success_mock,
+            Exception("An error message"),  # 1st image
+            success_mock,  # 2nd image
         ]
         filename = os.path.join(
             os.path.dirname(__file__), "data", "one_organism_with_two_images.json"
