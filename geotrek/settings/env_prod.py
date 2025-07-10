@@ -14,3 +14,6 @@ CACHES['default']['LOCATION'] = '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memc
                                                os.getenv('MEMCACHED_PORT', '11211'))
 
 LOGGING['loggers']['']['handlers'] = ('mail_admins', 'console', 'log_file')
+
+# OpenStreetMap API configuration
+OSM_API_BASE_URL = "https://www.openstreetmap.org/"

@@ -40,3 +40,6 @@ LOGGING['loggers']['']['level'] = 'DEBUG'
 LOGGING['handlers']['console']['level'] = 'INFO'
 
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.locmem.LocMemCache'
+
+# OpenStreetMap API configuration
+OSM_API_BASE_URL = "https://master.apis.dev.openstreetmap.org/"

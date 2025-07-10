@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from io import BytesIO
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib import messages
@@ -292,8 +293,6 @@ class OSMComparisonViewMixin(DetailView):
     template_name = "common/osm_comparison.html"
 
     type_map = {"N": "node", "W": "way", "R": "relation"}
-    base_url = "https://master.apis.dev.openstreetmap.org/api/0.6" # WARNING: use https://openstreetmap.org/api/0.6/ in production
-
     osm_object = None
 
     def translation(self):
@@ -371,7 +370,7 @@ class OSMComparisonViewMixin(DetailView):
         # get OpenStreetMap object
         try:
             osm_type, osm_id = self.get_osm_id()
-            self.osm_object = get_element(self.base_url, osm_type, osm_id)
+            self.osm_object = get_element(osm_type, osm_id)
         except Exception as e:
             messages.error(request, str(e))
 
@@ -408,7 +407,6 @@ class OSMComparisonViewMixin(DetailView):
 class OSMValidationViewMixin(FormView):
     form_class = OSMForm
     template_name = "common/osm_validation.html"
-    base_url = 'https://master.apis.dev.openstreetmap.org/api/0.6' # WARNING: use https://openstreetmap.org/api/0.6/ in production
 
     def get_updated_osm_object(self):
         osm_object_serialized = self.request.GET.get("osm_object", "{}")
@@ -450,21 +448,21 @@ class OSMValidationViewMixin(FormView):
         # create changeset
         try:
             comment = form.cleaned_data.get("comment","")
-            changeset_id = create_changeset(self.base_url, token, user_agent, comment)
+            changeset_id = create_changeset(token, user_agent, comment)
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)
             return super().form_valid(form)
 
         # update object
         try:
-            update_element(self.base_url, token, changeset_id, osm_object)
+            update_element(token, changeset_id, osm_object)
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)
             return super().form_valid(form)
 
         # close changeset
         try:
-            close_changeset(self.base_url, token, changeset_id)
+            close_changeset(token, changeset_id)
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)
             return super().form_valid(form)
