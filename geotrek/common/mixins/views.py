@@ -23,7 +23,7 @@ from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
 from geotrek.common.utils.translation import get_translated_fields
-from geotrek.common.utils.openstreetmapAPI import (
+from geotrek.common.utils.openstreetmap_api import (
     create_changeset,
     get_element,
     update_element,
@@ -326,11 +326,16 @@ class OSMComparisonViewMixin(DetailView):
             )
 
     def get_osm_id(self):
-        eid = self.object.eid
-        osm_type = self.type_map.get(eid[0], None)
-        osm_id = eid[1:]
+        if self.object.provider.name.startswith("OpenStreetMap"):
+            eid = self.object.eid
+            osm_type = self.type_map.get(eid[0], None)
+            osm_id = eid[1:]
 
-        return osm_type, osm_id
+            return osm_type, osm_id
+        else:
+            msg = _("The object does not have OpenStreetMap provider")
+            raise Exception(msg)
+
 
     def map_fields(self, geotrek, osm):
         osm_keys = osm.get("tags", {})
@@ -364,11 +369,10 @@ class OSMComparisonViewMixin(DetailView):
         self.translation()
 
         # get OpenStreetMap object
-        osm_type, osm_id = self.get_osm_id()
-
         try:
+            osm_type, osm_id = self.get_osm_id()
             self.osm_object = get_element(self.base_url, osm_type, osm_id)
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             messages.error(request, str(e))
 
             app_name = self.model._meta.app_label.lower()
@@ -445,7 +449,7 @@ class OSMValidationViewMixin(FormView):
 
         # create changeset
         try:
-            comment = self.request.GET.get("comment", "")
+            comment = form.cleaned_data.get("comment","")
             changeset_id = create_changeset(self.base_url, token, user_agent, comment)
         except requests.exceptions.RequestException as e:
             messages.error(self.request, e)

@@ -49,7 +49,6 @@ def get_osm_token(code, state_client, state_server, redirect_uri, user_id):
     user.save()
 
 
-
 def create_changeset(base_url, token, user_agent, comment):
     # API url
     url = f"{base_url}/changeset/create"
@@ -86,19 +85,19 @@ def create_changeset(base_url, token, user_agent, comment):
 
 
 def get_element(base_url, type, id):
-        url = f"{base_url}/{type}/{id}.json"
+    url = f"{base_url}/{type}/{id}.json"
 
-        response = requests.get(url)
+    response = requests.get(url)
 
-        # handle errors
-        if response.status_code != 200:
-            match response.status_code:
-                case 404: msg = _(f"OpenStreetMap object {type}({id}) not found")
-                case 410: msg = _(f"OpenStreetMap object {type}({id}) has been deleted")
-                case _: msg = _(f"Error {response.status_code}")
-            raise requests.exceptions.RequestException(msg)
+    # handle errors
+    if response.status_code != 200:
+        match response.status_code:
+            case 404: msg = _(f"OpenStreetMap object {type}({id}) not found")
+            case 410: msg = _(f"OpenStreetMap object {type}({id}) has been deleted")
+            case _: msg = _(f"Error {response.status_code}")
+        raise requests.exceptions.RequestException(msg)
 
-        return response.json()['elements'][0]
+    return response.json()['elements'][0]
 
 
 def update_element(base_url, token, changeset_id, object):

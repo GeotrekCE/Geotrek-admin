@@ -48,7 +48,7 @@ from geotrek.altimetry.models import Dem
 from geotrek.celery import app as celery_app
 from geotrek.core.models import Path
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.common.utils.openstreetmapAPI import get_osm_token
+from geotrek.common.utils.openstreetmap_api import get_osm_token
 
 from .filters import HDViewPointFilterSet
 from .forms import (

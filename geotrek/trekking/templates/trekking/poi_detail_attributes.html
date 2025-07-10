@@ -27,15 +27,12 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{{ poi.get_eid }}</td>
-        <tr>
-            <th>{% trans "OpenStreetMap id" %}</th>
-            <td>{% if poi.osm_id %}{{ poi.osm_id|safe }}
+            <td>{% if poi.eid %}{{ poi.eid|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if poi.provider %}{{ poi.provider.name|safe }}
+            <td>{% if poi.provider %}{{ poi.provider|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -48,5 +45,4 @@
     {{ block.super }}
 
     {% include "common/osm_button.html" %}
-
 {% endblock attributes %}
