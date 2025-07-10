@@ -818,7 +818,6 @@ class MultilangParserTests(TestCase):
         self.assertEqual(theme_imported.label_fr, theme_imported.label_en)
         self.assertEqual(theme_imported.label_fr, "filtered Paysages")
 
-
 class AttachmentParserTests(TestCase):
     def setUp(self):
         self.filetype = FileType.objects.create(type="Photographie")
@@ -1156,7 +1155,7 @@ class AttachmentParserTests(TestCase):
 
     @override_settings(PARSER_NUMBER_OF_TRIES=2, PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
-    def test_retry_when_http_download_fails_with_retry_http_status_sucess(
+    def test_retry_when_http_download_fails_with_retry_http_status(
         self, mocked_get
     ):
         """Image download fails with HTTP error set as retry code in settings, then succeeds."""

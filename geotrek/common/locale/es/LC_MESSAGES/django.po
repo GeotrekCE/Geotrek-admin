@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
+"POT-Creation-Date: 2025-07-10 13:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivia Duval <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,6 +322,9 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+msgstr ""
+
 #, python-format
 msgid "Line %(line)s"
 msgstr ""
@@ -389,6 +392,18 @@ msgstr ""
 msgid "File does not exists at: {filename}"
 msgstr ""
 
+#, python-format
+msgid "%(error_name)s: %(error_msg)s"
+msgstr ""
+
+#, python-format
+msgid "Failed to fetch %(url)s. %(error)s"
+msgstr ""
+
+#, python-format
+msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
+msgstr ""
+
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr ""
@@ -400,8 +415,8 @@ msgstr ""
 msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
 msgstr ""
 
-#, python-brace-format
-msgid "Failed to download '{url}'"
+#, python-format
+msgid "Failed to load attachment: %(e)s"
 msgstr ""
 
 #, python-format
@@ -443,6 +458,10 @@ msgstr ""
 msgid ""
 "Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
 "created"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
 msgstr ""
 
 msgid "Import from web."

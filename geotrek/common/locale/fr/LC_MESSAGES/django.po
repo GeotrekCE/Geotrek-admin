@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
+"POT-Creation-Date: 2025-07-10 14:11+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -330,6 +330,10 @@ msgstr "Moyen d'accès"
 msgid "Access means"
 msgstr "Moyens d'accès"
 
+msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+msgstr ""
+"Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
+
 #, python-format
 msgid "Line %(line)s"
 msgstr "Ligne %(line)s"
@@ -406,6 +410,18 @@ msgstr "Un nom de fichier ou une url est requis"
 msgid "File does not exists at: {filename}"
 msgstr "Le fichier à l'emplacement {filename} n'existe pas"
 
+#, python-format
+msgid "%(error_name)s: %(error_msg)s"
+msgstr "%(error_name)s : %(error_msg)s"
+
+#, python-format
+msgid "Failed to fetch %(url)s. %(error)s"
+msgstr "Echec lors de la récupération de %(url)s. %(error)s"
+
+#, python-format
+msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
+msgstr "La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
+
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
@@ -419,9 +435,9 @@ msgstr ""
 "Le type de fichier '{name}' n'existe pas dans Geotrek-Admin. Merci de "
 "l'ajouter"
 
-#, python-brace-format
-msgid "Failed to download '{url}'"
-msgstr "Impossible de télécharger '{url}'"
+#, python-format
+msgid "Failed to load attachment: %(e)s"
+msgstr "Echec lors de la récupération du fichier : %(e)s"
 
 #, python-format
 msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
@@ -449,10 +465,9 @@ msgid ""
 "'%(mimetype)s' is not allowed for %(ext)s."
 msgstr ""
 
-#, fuzzy, python-format
-#| msgid "File does not exists at: {filename}"
+#, python-format
 msgid "File does not exists at: %(filename)s"
-msgstr "Le fichier à l'emplacement {filename} n'existe pas"
+msgstr "Le fichier à l'emplacement %(filename)s n'existe pas"
 
 #, python-format
 msgid "Model %(model)s"
@@ -461,16 +476,17 @@ msgstr ""
 msgid "Geotrek-admin"
 msgstr ""
 
-#, fuzzy, python-format
-#| msgid ""
-#| "Source '{name}' did not exist in Geotrek-Admin and was automatically "
-#| "created"
+#, python-format
 msgid ""
 "Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
 "created"
 msgstr ""
-"Source '{name}' n'existait pas dans Geotrek-Admin. Elle a été créée "
+"La source '%(name)s' n'existait pas dans Geotrek-Admin. Elle a été créée "
 "automatiquement"
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
+msgstr "Impossible de télécharger '{url}'"
 
 msgid "Import from web."
 msgstr "Importer du web."

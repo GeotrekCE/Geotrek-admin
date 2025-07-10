@@ -716,7 +716,7 @@ class Parser:
 
     def request_or_retry(self, url, verb="get", **kwargs):
         def prepare_retry(error_msg):
-            logger.info(_("Failed to fetch %s. %s. Retrying..."), url, error_msg)
+            logger.info("Failed to fetch %s. %s. Retrying...", url, error_msg)
             sleep(settings.PARSER_RETRY_SLEEP_TIME)
 
         def format_exception(e):
@@ -738,7 +738,7 @@ class Parser:
                     return response
                 elif response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                     prepare_retry(
-                        _("Status code: %(code)s") % {"code": response.status_code}
+                        "Status code: %(code)s" % {"code": response.status_code}
                     )
                 else:
                     break
@@ -752,11 +752,8 @@ class Parser:
                         "error": format_exception(e),
                     }
                 )
-        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {
-            "url": url,
-            "try_get": try_get,
-        }
-        logger.warning(msg)
+        logger.warning("Failed to fetch %s after %s attempt(s).", url, try_get)
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {"url": url, "try_get": try_get}
         raise DownloadImportError(msg)
 
     def start_intersect_geom(self):
