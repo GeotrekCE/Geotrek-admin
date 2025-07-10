@@ -737,9 +737,7 @@ class Parser:
                 if response.status_code == 200:
                     return response
                 elif response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
-                    prepare_retry(
-                        "Status code: %(code)s" % {"code": response.status_code}
-                    )
+                    prepare_retry(f"Status code: {response.status_code}")
                 else:
                     break
             except (ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
@@ -753,7 +751,10 @@ class Parser:
                     }
                 )
         logger.warning("Failed to fetch %s after %s attempt(s).", url, try_get)
-        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {"url": url, "try_get": try_get}
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {
+            "url": url,
+            "try_get": try_get,
+        }
         raise DownloadImportError(msg)
 
     def start_intersect_geom(self):
