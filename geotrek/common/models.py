@@ -22,6 +22,7 @@ from paperclip.validators import FileMimetypeValidator
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.common.utils.validators import validate_html_template
 
 from .managers import AccessibilityAttachmentManager
 from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
@@ -485,6 +486,7 @@ class Provider(TimeStampedModelMixin):
         blank=True,
         default="",
         help_text=_("HTML template for external source links"),
+        validators=[validate_html_template],
     )
     copyright = models.CharField(
         max_length=1024, blank=True, default="", verbose_name="Copyright"
