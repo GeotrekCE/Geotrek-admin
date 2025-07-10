@@ -1110,7 +1110,7 @@ class AttachmentParserTests(TestCase):
     @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch("requests.get")
     @mock.patch("requests.head")
-    def test_attachment_request_fail(self, mocked_head, mocked_get):
+    def test_attachment_head_request_fail(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 503
@@ -1133,7 +1133,7 @@ class AttachmentParserTests(TestCase):
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
-    def test_attachment_request_except(self, mocked_head, mocked_get):
+    def test_attachment_head_request_except(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b""
         mocked_head.side_effect = DownloadImportError()
