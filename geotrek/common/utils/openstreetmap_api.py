@@ -10,6 +10,9 @@ from geotrek.authent.models import UserProfile
 
 
 def get_osm_oauth_uri(redirect_uri):
+    """
+    Generate the OpenStreetMap OAuth2 URI
+    """
     client_id = settings.OSM_CLIENT_ID
     scope = "write_api"
 
@@ -22,6 +25,9 @@ def get_osm_oauth_uri(redirect_uri):
 
 
 def get_osm_token(code, state_client, state_server, redirect_uri, user_id):
+    """
+    Get a token for the OpenStreetMap API and save it in database.
+    """
     if not code or not state_server:
         msg = _("code or state is missing")
         raise Exception(msg)

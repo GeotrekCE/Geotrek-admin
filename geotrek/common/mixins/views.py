@@ -251,6 +251,16 @@ class CompletenessMixin:
 
 
 class OSMDetailMixin:
+    """
+    Mixin for detail views integrating OpenStreetMap comparison functionality.
+
+    Manages OSM comparison button display based on the following conditions:
+    - Requires OSM configuration (OSM_CLIENT_ID, OSM_CLIENT_SECRET, OSM_APPLICATION_NAME)
+    - If user has OSM token: redirects to comparison page
+    - If no token but OSM configured: redirects to OSM authorization
+    - If OSM not configured or provider name doesn't start with "OpenStreetMap": button hidden
+    """
+
     def get_osm_context_data(self):
         app_name = self.get_model()._meta.app_label.lower()
         model = self.get_model()._meta.verbose_name.lower()
@@ -273,6 +283,7 @@ class OSMDetailMixin:
             )
             uri, state = get_osm_oauth_uri(redirect_uri)
 
+            # save information to be able to redirect the user on the comparison page after OSM connexion
             self.request.session["osm_state"] = state
             self.request.session["object_id"] = self.object.pk
             self.request.session["object_model"] = model
@@ -290,6 +301,14 @@ class OSMDetailMixin:
 
 
 class OSMComparisonViewMixin(DetailView):
+    """
+    Mixin for detail views that handles field mapping comparison between Geotrek and OpenStreetMap.
+
+    Fetches OSM objects via the OpenStreetMap API v0.6 and compares field values based on a mapping
+    configuration defined in the main view. Handles field translations and displays side-by-side
+    comparison for validation purposes.
+    """
+
     template_name = "common/osm_comparison.html"
 
     type_map = {"N": "node", "W": "way", "R": "relation"}
@@ -414,11 +433,24 @@ class OSMComparisonViewMixin(DetailView):
 
 
 class OSMValidationViewMixin(FormView):
+    """
+    Mixin for form views that handles validation and submission of OpenStreetMap object updates.
+
+    Processes field modifications from comparison view and submits changes to OpenStreetMap
+    using the standard changeset workflow (create → update → close). Handles user authentication
+    via OSM token and provides feedback through Django messages.
+
+    Requires:
+        - User with valid OSM token in UserProfile
+        - OSM configuration (OSM_APPLICATION_NAME)
+        - POST parameters: osm_object (serialized) and field updates as "tag|value"
+    """
+
     form_class = OSMForm
     template_name = "common/osm_validation.html"
 
     def get_updated_osm_object(self):
-        osm_object_serialized = self.request.GET.get("osm_object", "{}")
+        osm_object_serialized = self.request.POST.get("osm_object", "{}")
         osm_object = json.loads(osm_object_serialized)
 
         for key, value in self.request.GET.items():

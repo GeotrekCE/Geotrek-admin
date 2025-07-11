@@ -573,6 +573,13 @@ def delete_attachment_accessibility(request, attachment_pk):
 
 
 def OSMAuthorize(request):
+    """
+    OAuth2 callback handler for OpenStreetMap API authentication.
+
+    Since OAuth2 requires a fixed redirect URI, this view serves as a central callback
+    endpoint that redirects users to the appropriate page based on authentication status.
+    Handles both successful authorization (stores token) and error cases (displays messages).
+    """
     # save OSM token
     code = request.GET.get("code")
     state_client = request.session["osm_state"]
@@ -592,9 +599,11 @@ def OSMAuthorize(request):
     model = request.session["object_model"]
     pk = request.session["object_id"]
 
-    if succeed:
+    if (
+        succeed
+    ):  # if the connxion succeed then the user is redirected to the comparison page
         url_name = f"{app_name}:{model}_osm_compare"
-    else:
+    else:  # if the connexion failed the user is redirected to the detail sheet of the object
         url_name = f"{app_name}:{model}_detail"
 
     return HttpResponseRedirect(reverse(url_name, kwargs={"pk": pk}))

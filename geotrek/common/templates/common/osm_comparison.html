@@ -9,7 +9,8 @@
 
             <h1>Tables de comparaison</h1>
 
-            <form action={% url validation_url object.id %} method="get" name="export_osm_obj">
+            <form action={% url validation_url object.id %} method="post" name="export_osm_obj">
+                {% csrf_token %}
 
                 <table class="table-striped table-bordered table">
                     <tr>
