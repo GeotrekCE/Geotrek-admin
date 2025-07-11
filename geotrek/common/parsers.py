@@ -44,6 +44,7 @@ from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 from PIL import Image, UnidentifiedImageError
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import ChunkedEncodingError
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import Attachment, FileType, License, Provider, RecordSource
@@ -135,6 +136,15 @@ class Parser:
         self.structure = (user and user.profile.structure) or default_structure()
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
+
+        if not (
+            isinstance(settings.PARSER_NUMBER_OF_TRIES, int)
+            and settings.PARSER_NUMBER_OF_TRIES > 0
+        ):
+            msg = _(
+                "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+            )
+            raise ImproperlyConfigured(msg)
 
         if self.fields is None:
             self.fields = {
@@ -711,30 +721,47 @@ class Parser:
             self.end()
 
     def request_or_retry(self, url, verb="get", **kwargs):
-        try_get = settings.PARSER_NUMBER_OF_TRIES
-        assert try_get > 0
-        while try_get:
-            action = getattr(requests, verb)
-            response = action(url, headers=self.headers, allow_redirects=True, **kwargs)
-            if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
-                logger.info("Failed to fetch url %s. Retrying ...", url)
-                sleep(settings.PARSER_RETRY_SLEEP_TIME)
-                try_get -= 1
-            elif response.status_code == 200:
-                return response
-            else:
-                break
-        logger.warning(
-            "Failed to fetch %s after %s times. Status code : %s.",
-            url,
-            settings.PARSER_NUMBER_OF_TRIES,
-            response.status_code,
-        )
-        raise DownloadImportError(
-            _("Failed to download {url}. HTTP status code {status_code}").format(
-                url=response.url, status_code=response.status_code
-            )
-        )
+        def prepare_retry(error_msg):
+            logger.info("Failed to fetch %s. %s. Retrying...", url, error_msg)
+            sleep(settings.PARSER_RETRY_SLEEP_TIME)
+
+        def format_exception(e):
+            return _("%(error_name)s: %(error_msg)s") % {
+                "error_name": e.__class__.__name__,
+                "error_msg": e,
+            }
+
+        action = getattr(requests, verb)
+        response = None
+        try_get = 0
+        while try_get < settings.PARSER_NUMBER_OF_TRIES:
+            try_get += 1
+            try:
+                response = action(
+                    url, headers=self.headers, allow_redirects=True, **kwargs
+                )
+                if response.status_code == 200:
+                    return response
+                elif response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
+                    prepare_retry(f"Status code: {response.status_code}")
+                else:
+                    break
+            except (ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+                prepare_retry(format_exception(e))
+            except Exception as e:
+                raise DownloadImportError(
+                    _("Failed to fetch %(url)s. %(error)s")
+                    % {
+                        "url": url,
+                        "error": format_exception(e),
+                    }
+                )
+        logger.warning("Failed to fetch %s after %s attempt(s).", url, try_get)
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {
+            "url": url,
+            "try_get": try_get,
+        }
+        raise DownloadImportError(msg)
 
     def start_intersect_geom(self):
         if self.intersection_geom:
@@ -991,25 +1018,14 @@ class AttachmentParserMixin:
 
     def download_attachment(self, url):
         parsed_url = urlparse(url)
-        if parsed_url.scheme == "ftp":
+        is_ftp = parsed_url.scheme == "ftp"
+        if is_ftp or self.download_attachments:
             try:
                 response = self.request_or_retry(url)
-            except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                msg = f"Failed to load attachment: {e}"
-                raise ValueImportError(msg)
-            return response.read()
-        else:
-            if self.download_attachments:
-                try:
-                    response = self.request_or_retry(url)
-                except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                    msg = f"Failed to load attachment: {e}"
-                    raise ValueImportError(msg)
-                if response.status_code != requests.codes.ok:
-                    self.add_warning(_("Failed to download '{url}'").format(url=url))
-                    return None
-                return response.content
-            return None
+            except Exception as e:
+                self.add_warning(_("Failed to load attachment: %(e)s") % {"e": e})
+                return None
+            return response.read() if is_ftp else response.content
 
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
