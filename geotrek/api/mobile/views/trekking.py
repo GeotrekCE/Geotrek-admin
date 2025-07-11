@@ -98,6 +98,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         qs = qs.prefetch_related("attachments").annotate(
             geom2d_transformed=Transform(F("geom"), settings.API_SRID)
         )
+        qs = qs.order_by("category")
         data = api_serializers_tourism.TouristicContentListSerializer(
             qs, many=True, context={"root_pk": root_pk}
         ).data
