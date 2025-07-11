@@ -5,6 +5,10 @@ CHANGELOG
 2.116.0+dev    (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- In the ``mobile`` API, a trek's touristic contents are now ordered by category
+
 **Bug fixes**
 
 - Fix parser crash after exception during attachment download (refs #4807)
