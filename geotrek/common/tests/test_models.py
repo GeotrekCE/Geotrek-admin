@@ -108,11 +108,7 @@ class ProviderTest(TestCase):
             "<a href='http://test/object/{{object.eid|safe}}'>{{object.eid|safe}}</a>"
         )
         provider = Provider(name="foo", link_template=template)
-
-        try:
-            provider.full_clean()
-        except ValidationError as e:
-            self.fail(f"Validation should not fail for a correct template: {e}")
+        provider.full_clean()
 
         self.assertEqual(provider.link_template, template)
 
