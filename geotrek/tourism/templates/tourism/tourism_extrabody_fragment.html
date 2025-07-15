@@ -10,24 +10,24 @@
 </script>
 
 <script type="text/javascript">
-    MapEntity.i18n['Tourism'] = "{% trans "Tourism" %}";
-    MapEntity.i18n['Data sources'] = "{% trans "Data sources" %}";
-
-    MapEntity.i18n['No result'] = "{% trans "No result" %}";
-    MapEntity.i18n['Choose value(s)'] = "{% trans "Choose value(s)" %}";
-
-    MapEntity.i18n['touristiccontent'] = "{% trans "Touristic content" %}";
-    MapEntity.i18n['touristicevent'] = "{% trans "Touristic event" %}";
+    {#MapEntity.i18n['Tourism'] = "{% trans "Tourism" %}";#}
+    {#MapEntity.i18n['Data sources'] = "{% trans "Data sources" %}";#}
+    {##}
+    {#MapEntity.i18n['No result'] = "{% trans "No result" %}";#}
+    {#MapEntity.i18n['Choose value(s)'] = "{% trans "Choose value(s)" %}";#}
+    {##}
+    {#MapEntity.i18n['touristiccontent'] = "{% trans "Touristic content" %}";#}
+    {#MapEntity.i18n['touristicevent'] = "{% trans "Touristic event" %}";#}
 
     window.SETTINGS.urls['touristiccontent_layer'] = "{% url "tourism:touristiccontent-drf-list" format="geojson" %}";
     window.SETTINGS.urls['touristicevent_layer'] = "{% url "tourism:touristicevent-drf-list" format="geojson" %}";
 </script>
 
 {% if modelname == "touristiccontent" %}
-    <script type="application/json" id="categories-types">
-        {% touristic_content_categories as categories %}
-        {{ categories|safe }}
-    </script>
+{#    <script type="application/json" id="categories-types">#}
+{#        {% touristic_content_categories as categories %}#}
+{#        {{ categories|safe }}#}
+{#    </script>#}
 {% endif %}
 
 {% endif %}
