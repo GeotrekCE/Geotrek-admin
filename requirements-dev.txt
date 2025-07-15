@@ -2,13 +2,13 @@
 #    uv pip compile requirements-dev.in -o requirements-dev.txt
 asgiref==3.8.1
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   django
 coverage==7.9.2
     # via -r requirements-dev.in
 django==4.2.23
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   django-debug-toolbar
     #   django-extensions
 django-debug-toolbar==5.2.0
@@ -19,33 +19,33 @@ factory-boy==3.3.3
     # via -r requirements-dev.in
 faker==19.3.1
     # via factory-boy
-freezegun==1.5.2
+freezegun==1.5.3
     # via -r requirements-dev.in
 lxml==4.9.3
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   faker
     #   freezegun
 ruff==0.12.3
     # via -r requirements-dev.in
 six==1.17.0
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   python-dateutil
 sqlparse==0.5.3
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   django
     #   django-debug-toolbar
 tblib==3.1.0
     # via -r requirements-dev.in
 typing-extensions==4.14.0
     # via
-    #   -c requirements.txt
+    #   -c /home/dependabot/dependabot-updater/tmp/20250715-1354-j38szz/dependabot_20250715-1354-rpu6aw/requirements.txt
     #   asgiref
 uv==0.7.20
     # via -r requirements-dev.in
