@@ -30,7 +30,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
-ruff==0.12.2
+ruff==0.12.3
     # via -r requirements-dev.in
 six==1.17.0
     # via
@@ -47,5 +47,5 @@ typing-extensions==4.14.0
     # via
     #   -c requirements.txt
     #   asgiref
-uv==0.7.19
+uv==0.7.20
     # via -r requirements-dev.in

@@ -2,17 +2,28 @@
 CHANGELOG
 =========
 
-2.116.0+dev    (XXXX-XX-XX)
+2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Improvements**
 
 - Change provider Charfield for a foreign key
 
+
+2.116.1    (2025-07-15)
+----------------------------
+
+**Improvements**
+
+- In the ``mobile`` API, a trek's touristic contents are now ordered by category
+
 **Bug fixes**
 
 - Fix parser crash after exception during attachment download (refs #4807)
 
+**Documentation**
+
+- Update README.rst
 
 
 2.116.0    (2025-07-03)

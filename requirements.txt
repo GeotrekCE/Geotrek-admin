@@ -36,7 +36,7 @@ celery==5.5.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2025.6.15
+certifi==2025.7.14
     # via
     #   fiona
     #   requests
@@ -145,13 +145,13 @@ django-filter==25.1
     #   mapentity
 django-js-asset==3.1.2
     # via django-mptt
-django-large-image==0.10.0
+django-large-image==0.10.1
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
 django-modelcluster==6.4
     # via geotrek (setup.py)
-django-modeltranslation==0.19.15
+django-modeltranslation==0.19.16
     # via mapentity
 django-mptt==0.17.0
     # via geotrek (setup.py)
