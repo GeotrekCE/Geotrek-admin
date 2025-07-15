@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.116.0+dev    (XXXX-XX-XX)
+2.116.1    (2025-07-15)
 ----------------------------
 
 **Improvements**
@@ -16,6 +16,7 @@ CHANGELOG
 **Documentation**
 
 - Update README.rst
+
 
 2.116.0    (2025-07-03)
 ----------------------------
