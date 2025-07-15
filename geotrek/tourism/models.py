@@ -12,6 +12,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.formats import date_format
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -20,6 +21,7 @@ from paperclip.validators import FileMimetypeValidator
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     OptionalPictogramMixin,
@@ -70,13 +72,7 @@ class LabelAccessibility(TimeStampedModelMixin, PictogramMixin):
         return self.label
 
 
-class InformationDesk(TimeStampedModelMixin, models.Model):
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
+class InformationDesk(TimeStampedModelMixin, ExternalSourceMixin, models.Model):
     name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(
         InformationDeskType,
@@ -304,6 +300,7 @@ class TouristicContent(
     TimeStampedModelMixin,
     PicturesMixin,
     NoDeleteMixin,
+    ExternalSourceMixin,
 ):
     """A generic touristic content (accommodation, museum, etc.) in the park"""
 
@@ -374,12 +371,6 @@ class TouristicContent(
         blank=True,
         null=True,
     )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
     reservation_system = models.ForeignKey(
         ReservationSystem,
         verbose_name=_("Reservation system"),
@@ -432,6 +423,15 @@ class TouristicContent(
     @property
     def extent(self):
         return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
+
+    @cached_property
+    def city(self):
+        """Return the municipality of the content"""
+        if self.pk:
+            from geotrek.zoning.models import City
+
+            return City.objects.all().filter(geom__contains=self.geom).first()
+        return None
 
     @classmethod
     def topology_touristic_contents(cls, topology, queryset=None):
@@ -541,6 +541,7 @@ class TouristicEvent(
     PicturesMixin,
     TimeStampedModelMixin,
     NoDeleteMixin,
+    ExternalSourceMixin,
 ):
     """A touristic event (conference, workshop, etc.) in the park"""
 
@@ -622,12 +623,6 @@ class TouristicEvent(
         blank=True,
         related_name="touristicevents",
         verbose_name=_("Portal"),
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

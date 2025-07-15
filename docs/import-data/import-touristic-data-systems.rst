@@ -447,6 +447,35 @@ Then set up appropriate values:
 The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
 You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
 
+.. _import-cities-osm :
+
+Import cities
+-----------------
+
+To import cities from OpenStreetMap, edit the ``var/conf/parsers.py`` file with the following content:
+
+::
+
+    from geotrek.zoning.parsers import OpenStreetMapCityParser
+
+    class CityParser(OpenStreetMapCitiesParser):
+        provider = "OpenStreetMap"
+        tags = [
+            [{"boundary": "administrative"}, {"admin_level": "8"}],
+        ]
+        default_fields_values = {"name": "city"}
+        code_tag = "ref:INSEE"
+
+Then set up appropriate values:
+
+* ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+* ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+* ``code_tag`` to specify the OpenStreetMap tag that contains the code information (e.g., in France, code_tag = "ref:INSEE"). If no value is defined, the code will not be included.
+* See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+The parsed objects will be those contained in the ``settings.SPATIAL_EXTENT`` bounding box.
+
+
 .. _import-district:
 
 Import districts
@@ -745,3 +774,30 @@ The following example would cause ``NoProviderParser`` to delete objects from ``
 .. seealso::
 
   To set up automatic commands you can check the :ref:`Automatic commands section <automatic-commands>`.
+
+Linking Source Objects via `eid`
+================================
+
+Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
+
+To enable this, a new database model called **Provider** has been added. This model can be managed through the Django admin interface and includes the following fields:
+
+- **Name**
+- **Link template** (an HTML snippet used to build the link using the `eid`)
+- **Copyright**
+
+The link template should contain the `{{object.eid}}` placeholder, which will be replaced by the actual external ID. For example:
+
+.. code-block:: html
+
+   <a href="https://example.com/objects/{{object.eid}}" target="_blank">{{object.eid}}</a>
+
+Fixtures are available for two providers: **OpenStreetMap** and **Apidae**. These predefined Provider records can be loaded during a new installation.
+See the :ref:`fixture documentation <load-fixtures>` to see more about fixtures.
+
+.. note::
+
+    These fixtures are intended for new installations only. When upgrading an existing system, Provider records will be created automatically based on the existing `provider` field in the database. After upgrading, you must manually fill in the link template and copyright.
+
+    You can reuse the link templates provided in the fixture files, available here:
+    `Provider fixtures on GitHub <https://github.com/GeotrekCE/Geotrek-admin/tree/master/geotrek/common/fixtures/basic.json#L242>`_

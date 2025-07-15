@@ -30,9 +30,11 @@ from geotrek.core.tests.factories import PathFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
 from geotrek.sensitivity.tests.factories import SensitiveAreaFactory
+from geotrek.tourism.models import TouristicContent
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
     InformationDeskTypeFactory,
+    TouristicContentCategoryFactory,
     TouristicContentFactory,
     TouristicEventFactory,
 )
@@ -756,6 +758,46 @@ class SyncMobileTreksTest(VarTmpTestCase):
             te_geojson = json.load(f)
             # Two because factory do not generate a portal for touristic events
             self.assertEqual(len(te_geojson["features"]), 2)
+
+    def test_touristic_contents_of_treks_are_ordered_by_category(self):
+        TouristicContent.objects.all().delete()
+        categ_1 = TouristicContentCategoryFactory(order=1)
+        categ_2 = TouristicContentCategoryFactory(order=2)
+        # The touristic content with the `categ_2` category is created first to check
+        # that contents are not ordered by id:
+        TouristicContentFactory(
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
+            published=True,
+            category=categ_2,
+            name="A",
+        )
+        TouristicContentFactory(
+            geom=f"SRID={settings.SRID};POINT(700001 6600001)",
+            published=True,
+            category=categ_1,
+            name="Z",
+        )
+
+        output = StringIO()
+        management.call_command(
+            "sync_mobile",
+            self.sync_directory,
+            url="http://localhost:8000",
+            skip_tiles=True,
+            stdout=output,
+        )
+        with open(
+            os.path.join(
+                self.sync_directory,
+                settings.LANGUAGE_CODE,
+                str(self.trek_1.pk),
+                "touristic_contents.geojson",
+            ),
+        ) as f:
+            tc_geojson = json.load(f)
+            self.assertEqual(len(tc_geojson["features"]), 2)
+            self.assertEqual(tc_geojson["features"][0]["properties"]["name"], "Z")
+            self.assertEqual(tc_geojson["features"][1]["properties"]["name"], "A")
 
     def test_sync_pois_by_treks(self):
         output = StringIO()

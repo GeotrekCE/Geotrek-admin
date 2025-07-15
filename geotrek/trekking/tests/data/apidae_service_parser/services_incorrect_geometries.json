@@ -1,5 +1,5 @@
 {
-    "numFound" : 2,
+    "numFound" : 3,
     "objetsTouristiques" : [
         {
             "type" : "COMMERCE_ET_SERVICE",
@@ -20,6 +20,15 @@
                     "geoJson" : {
                         "type" : "Point"
                     }
+                }
+            }
+        },
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 3,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : null
                 }
             }
         }

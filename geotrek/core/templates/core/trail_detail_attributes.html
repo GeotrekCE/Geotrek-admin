@@ -37,13 +37,11 @@
         {% include "mapentity/trackinfo_fragment.html" %}
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if trail.eid %}{{ trail.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
+            <td>{{ trail.get_eid }}</td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if trail.provider %}{{ trail.provider|safe }}
+            <td>{% if trail.provider %}{{ trail.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

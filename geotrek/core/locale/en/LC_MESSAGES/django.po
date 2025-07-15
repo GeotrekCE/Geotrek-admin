@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2025-06-24 14:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -83,6 +83,21 @@ msgid "Geometry is not valid."
 msgstr ""
 
 msgid "Certifications"
+msgstr ""
+
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgstr ""
+
+#, python-format
+msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
+msgstr ""
+
+msgid "Cannot import object: geometry is None"
+msgstr ""
+
+#, python-format
+msgid "Could not parse geometry from value '%(value)s'"
 msgstr ""
 
 msgid "Validity"

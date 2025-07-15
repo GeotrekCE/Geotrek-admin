@@ -48,10 +48,10 @@ class CirkwiParser(AttachmentParserMixin, Parser):
         self.updated_after = None
         if (
             self.update_only
-            and self.model.objects.filter(provider__exact=self.provider).exists()
+            and self.model.objects.filter(provider__name__exact=self.provider).exists()
         ):
             last_update_timestamp = (
-                self.model.objects.filter(provider__exact=self.provider)
+                self.model.objects.filter(provider__name__exact=self.provider)
                 .latest("date_update")
                 .date_update.timestamp()
             )

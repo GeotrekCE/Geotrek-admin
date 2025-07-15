@@ -2,12 +2,42 @@
 CHANGELOG
 =========
 
-2.115.1+dev    (XXXX-XX-XX)
+2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Improvements**
 
-- move primary key of City model on a new column ID
+- Change provider Charfield for a foreign key
+
+
+2.116.1    (2025-07-15)
+----------------------------
+
+**Improvements**
+
+- In the ``mobile`` API, a trek's touristic contents are now ordered by category
+
+**Bug fixes**
+
+- Fix parser crash after exception during attachment download (refs #4807)
+
+**Documentation**
+
+- Update README.rst
+
+
+2.116.0    (2025-07-03)
+----------------------------
+
+**Breaking changes**
+
+- API v2 city now references the city's internal ID instead of its code, since codes are not used in all countries.
+- Due to changes in the public API, we recommend clearing caches after updating.
+
+**Improvements**
+
+- move primary key of City model on a new column ID.
+- add city_code and city_codes fields in API v2 responses.
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
@@ -15,6 +45,9 @@ CHANGELOG
 - Add OpenStreetMap parser for infrastructures
 - Add OpenStreetMap parser for touristic contents
 - Add OpenStreetMap parser for Outdoor Sites
+- All parsers for point topology objects now generate the topology
+- Add OpenStreetMap parser for Cities
+- Add Apidae parser for Infrastructure
 
 **Bug fixes**
 
@@ -23,6 +56,11 @@ CHANGELOG
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+- Add new authors and improve copyright details
+
+**Minor fixes**
+
+- Fix mobile api settings name for touristic content categories
 
 
 2.115.1    (2025-05-21)

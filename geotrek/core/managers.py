@@ -1,10 +1,10 @@
 from django.contrib.gis.db import models
 
 from geotrek.common.functions import Length
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 
 
-class PathManager(models.Manager, ProviderChoicesMixin):
+class PathManager(models.Manager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
 
@@ -38,5 +38,5 @@ class PathAggregationManager(models.Manager):
         return super().get_queryset().order_by("order")
 
 
-class TrailManager(TopologyManager, ProviderChoicesMixin):
+class TrailManager(TopologyManager):
     pass
