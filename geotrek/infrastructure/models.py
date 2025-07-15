@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins.models import (
     BasePublishableMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
@@ -116,7 +117,9 @@ class InfrastructureUsageDifficultyLevel(TimeStampedModelMixin, StructureOrNoneR
         return self.label
 
 
-class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
+class BaseInfrastructure(
+    BasePublishableMixin, ExternalSourceMixin, Topology, StructureRelated
+):
     """A generic infrastructure in the park"""
 
     topo_object = models.OneToOneField(
@@ -138,12 +141,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     )
     implantation_year = models.PositiveSmallIntegerField(
         verbose_name=_("Implantation year"), null=True
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, default=""
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
 
     class Meta:

@@ -3,7 +3,7 @@ from django.db.models import Q
 from modeltranslation.manager import MultilingualManager
 from modeltranslation.utils import build_localized_fieldname
 
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 
 
 class TouristicContentTypeFilteringManager(MultilingualManager):
@@ -67,9 +67,9 @@ class TouristicContentType2Manager(MultilingualManager):
         return super().get_queryset().filter(in_list=2)
 
 
-class TouristicContentManager(NoDeleteManager, ProviderChoicesMixin):
+class TouristicContentManager(NoDeleteManager):
     pass
 
 
-class TouristicEventManager(NoDeleteManager, ProviderChoicesMixin):
+class TouristicEventManager(NoDeleteManager):
     pass

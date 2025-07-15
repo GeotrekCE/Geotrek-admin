@@ -322,6 +322,18 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Link template"
+msgstr ""
+
+msgid "HTML template for external source links"
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Providers"
+msgstr ""
+
 msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
 msgstr ""
 

@@ -178,6 +178,11 @@ class AccessAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "label"
 
 
+class ProviderAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
@@ -190,3 +195,4 @@ admin.site.register(common_models.Label, LabelAdmin)
 admin.site.register(common_models.License, LicenseAdmin)
 admin.site.register(common_models.HDViewPoint, HDViewPointAdmin)
 admin.site.register(common_models.AccessMean, AccessAdmin)
+admin.site.register(common_models.Provider, ProviderAdmin)

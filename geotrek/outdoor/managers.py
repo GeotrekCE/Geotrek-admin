@@ -2,10 +2,8 @@ from django.contrib.gis.db import models
 from django.db.models import Manager
 from mptt.managers import TreeManager
 
-from geotrek.common.mixins.managers import ProviderChoicesMixin
 
-
-class SiteManager(TreeManager, ProviderChoicesMixin):
+class SiteManager(TreeManager):
     pass
 
 
@@ -17,5 +15,5 @@ class CourseOrderedChildManager(models.Manager):
         return super().get_queryset().select_related("parent", "child")
 
 
-class CourseManager(Manager, ProviderChoicesMixin):
+class CourseManager(Manager):
     pass

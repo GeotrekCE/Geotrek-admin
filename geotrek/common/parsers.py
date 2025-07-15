@@ -47,7 +47,7 @@ from requests.auth import HTTPBasicAuth
 from requests.exceptions import ChunkedEncodingError
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import Attachment, FileType, License, RecordSource
+from geotrek.common.models import Attachment, FileType, License, Provider, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix, force_geom_to_2d
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.settings.base import api_bbox
@@ -396,10 +396,16 @@ class Parser:
         if operation == "created":
             if (
                 hasattr(self.model, "provider")
-                and self.provider is not None
+                and self.provider  # do not allow "" provider, because not provider should be attached in this case
                 and not self.obj.provider
             ):
-                self.obj.provider = self.provider
+                self.obj.provider, created = Provider.objects.get_or_create(
+                    name=self.provider
+                )
+                if created:
+                    self.add_warning(
+                        f"Provider '{self.provider}' did not exist in Geotrek-Admin and was automatically created"
+                    )
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
@@ -450,7 +456,7 @@ class Parser:
                 return
             objects = self.model.objects.filter(**eid_kwargs)
             if hasattr(self.model, "provider") and self.provider is not None:
-                objects = objects.filter(provider__exact=self.provider)
+                objects = objects.filter(provider__name__exact=self.provider)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
                 self.add_warning(
@@ -666,7 +672,7 @@ class Parser:
             except field.remote_field.model.DoesNotExist:
                 return None
         if hasattr(self.model, "provider") and self.provider is not None:
-            kwargs["provider__exact"] = self.provider
+            kwargs["provider__name__exact"] = self.provider
         return kwargs
 
     def start(self):
@@ -1922,11 +1928,11 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         available_fields = [field.name for field in self.model._meta.get_fields()]
         if (
             not self.all_datas
-            and self.model.objects.filter(provider__exact=self.provider).exists()
+            and self.model.objects.filter(provider__name__exact=self.provider).exists()
             and "date_update" in available_fields
         ):
             updated_after = (
-                self.model.objects.filter(provider__exact=self.provider)
+                self.model.objects.filter(provider__name__exact=self.provider)
                 .latest("date_update")
                 .date_update.strftime("%Y-%m-%d")
             )

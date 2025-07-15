@@ -330,9 +330,20 @@ msgstr "Moyen d'accès"
 msgid "Access means"
 msgstr "Moyens d'accès"
 
+msgid "Link template"
+msgstr "Modèle du lien"
+
+msgid "HTML template for external source links"
+msgstr "Modèle HTML pour les liens sources externes"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Providers"
+msgstr "Fournisseurs"
+
 msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
-msgstr ""
-"Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
+msgstr "Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
 
 #, python-format
 msgid "Line %(line)s"

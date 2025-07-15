@@ -1,7 +1,8 @@
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter, MultipleChoiceFilter
+from django_filters import ModelMultipleChoiceFilter, MultipleChoiceFilter
 from mapentity.filters import MapEntityFilterSet
 
+from geotrek.common.models import Provider
 from geotrek.zoning.filters import ZoningFilterSet
 
 from .models import Report
@@ -18,11 +19,9 @@ class ReportFilterSet(ZoningFilterSet, MapEntityFilterSet):
         field_name="date_update__year",
         choices=lambda: Report.objects.year_update_choices(),
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Report.objects.provider_choices(),
+        queryset=Provider.objects.filter(report__isnull=False).distinct(),
     )
 
     class Meta(MapEntityFilterSet.Meta):

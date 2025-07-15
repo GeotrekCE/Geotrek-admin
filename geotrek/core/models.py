@@ -27,6 +27,7 @@ from geotrek.common.functions import IsSimple
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
     CheckBoxActionMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     TimeStampedModelMixin,
@@ -52,6 +53,7 @@ class Path(
     GeotrekMapEntityMixin,
     AltimetryMixin,
     TimeStampedModelMixin,
+    ExternalSourceMixin,
     StructureRelated,
     ClusterableModel,
 ):
@@ -124,12 +126,6 @@ class Path(
     )
     networks = models.ManyToManyField(
         "Network", blank=True, related_name="paths", verbose_name=_("Networks")
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -1108,7 +1104,7 @@ class Network(StructureOrNoneRelated):
         return self.network
 
 
-class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
+class Trail(GeotrekMapEntityMixin, ExternalSourceMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
     )
@@ -1123,13 +1119,6 @@ class Trail(GeotrekMapEntityMixin, Topology, StructureRelated):
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
-
     certifications_verbose_name = _("Certifications")
     geometry_types_allowed = ["LINESTRING"]
 

@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
     PicturesMixin,
@@ -130,6 +131,7 @@ class Report(
     NoDeleteMixin,
     AddPropertyMixin,
     ZoningPropertiesMixin,
+    ExternalSourceMixin,
 ):
     """User reports, submitted via *Geotrek-rando* or parsed from Suricate API."""
 
@@ -185,9 +187,6 @@ class Report(
         editable=False, unique=True, null=True, verbose_name=_("Identifier")
     )
     uuid = models.UUIDField(default=uuid4, editable=False, unique=True)
-    eid = models.CharField(
-        blank=True, max_length=1024, default="", verbose_name=_("External id")
-    )
     locked = models.BooleanField(default=False, verbose_name=_("Locked"))
     origin = models.CharField(
         blank=True,
@@ -243,9 +242,6 @@ class Report(
         help_text=_(
             "A notification email could not be sent. Please contact an administrator"
         ),
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
 
     objects = ReportManager()

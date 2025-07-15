@@ -2,9 +2,12 @@
 CHANGELOG
 =========
 
-2.116.1+dev    (XXXX-XX-XX)
+2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+- Change provider Charfield for a foreign key
 
 
 2.116.1    (2025-07-15)

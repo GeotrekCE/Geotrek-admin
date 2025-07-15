@@ -1,13 +1,12 @@
 from django.db.models import Q
 from django.utils.translation import gettext as _
 from django_filters.filters import (
-    ChoiceFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
 
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, Provider
 from geotrek.outdoor.models import Course, Practice, Sector, Site
 from geotrek.zoning.filters import ZoningFilterSet
 
@@ -26,11 +25,9 @@ class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     managers = ModelMultipleChoiceFilter(
         queryset=Organism.objects.all(), method="filter_manager", label=_("Manager")
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Site.objects.provider_choices(),
+        queryset=Provider.objects.filter(site__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -83,11 +80,9 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     wind = MultipleChoiceFilter(
         choices=Site.WIND_CHOICES, method="filter_orientation", label=_("Wind")
     )
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Course.objects.provider_choices(),
+        queryset=Provider.objects.filter(course__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

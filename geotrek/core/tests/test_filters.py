@@ -5,6 +5,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.models import Provider
 from geotrek.core.filters import PathFilterSet, TopologyFilter, TrailFilterSet
 from geotrek.core.models import Topology
 from geotrek.land.tests.test_filters import LandFiltersTest
@@ -187,17 +188,19 @@ class PathFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        path1 = PathFactory.create(provider="my_provider1")
-        path2 = PathFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        path1 = PathFactory.create(provider=provider1)
+        path2 = PathFactory.create(provider=provider2)
 
         filter_set = PathFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(path1, filter_set.qs)
@@ -216,17 +219,19 @@ class TrailFilterTest(TestCase):
         self.assertEqual(0, filter_set.qs.count())
 
     def test_provider_filter_with_providers(self):
-        trail1 = TrailFactory.create(provider="my_provider1")
-        trail2 = TrailFactory.create(provider="my_provider2")
+        provider1 = Provider.objects.create(name="Provider1")
+        provider2 = Provider.objects.create(name="Provider2")
+        trail1 = TrailFactory.create(provider=provider1)
+        trail2 = TrailFactory.create(provider=provider2)
 
         filter_set = TrailFilterSet()
         filter_form = filter_set.form
 
         self.assertIn(
-            '<option value="my_provider1">my_provider1</option>', filter_form.as_p()
+            f'<option value="{provider1.pk}">Provider1</option>', filter_form.as_p()
         )
         self.assertIn(
-            '<option value="my_provider2">my_provider2</option>', filter_form.as_p()
+            f'<option value="{provider2.pk}">Provider2</option>', filter_form.as_p()
         )
 
         self.assertIn(trail1, filter_set.qs)
