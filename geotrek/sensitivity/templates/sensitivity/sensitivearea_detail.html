@@ -18,9 +18,9 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script type="text/javascript">
-    L.ObjectsLayer.pointToLayer = function (geojson, latlng) {
-        return new L.Circle(latlng, {{ object.species.radius }});
-    };
-    </script>
+{#    <script type="text/javascript">#}
+{#    L.ObjectsLayer.pointToLayer = function (geojson, latlng) {#}
+{#        return new L.Circle(latlng, {{ object.species.radius }});#}
+{#    };#}
+{#    </script>#}
 {% endblock extrabody %}
