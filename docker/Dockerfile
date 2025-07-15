@@ -92,6 +92,7 @@ ENV UV_PYTHON=/opt/venv/bin/python
 ENV UV_LINK_MODE=copy
 ENV UV_CACHE_DIR=/opt/geotrek-admin/var/cache/
 
+COPY --chown=geotrek:geotrek django-mapentity/ django-mapentity/
 RUN --mount=type=bind,src=./requirements.txt,dst=/requirements.txt \
     --mount=type=cache,target=/opt/geotrek-admin/var/cache/,sharing=locked,uid=1001,gid=1001 \
     uv pip install -r /requirements.txt

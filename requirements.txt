@@ -241,7 +241,9 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.13.0
+
+-e /opt/geotrek-admin/django-mapentity
+#mapentity==8.13.0
     # via geotrek (setup.py)
 markdown==3.8.2
     # via geotrek (setup.py)
