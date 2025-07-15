@@ -32,35 +32,35 @@
 {% endif %}
 
 {% if bbox_cities or bbox_districts or bbox_areas %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {
-            var mainmap = window.maps[0],
-                bboxval = $(this).val();
-
-            // Clear other filters, but keep this one of course
-            var self = this;
-            $('#bbox_cities, #bbox_districts, #bbox_areas').each(function() {
-                if (self != this) {
-                    $(this).val('');
-                    $(this).removeClass('filter-set');
-                }
-            });
-
-            // Fit selected bbox, or whole map
-            if (bboxval) {
-                var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy
-                mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
-                $(this).addClass('filter-set');
-            }
-            else {
-                if(mainmap.options.maxBounds) {
-                    mainmap.fitBounds(mainmap.options.maxBounds);
-                }
-                $(this).removeClass('filter-set');
-            }
-        });
-    });
-</script>
+{#<script type="text/javascript">#}
+{#    $(document).ready(function() {#}
+{#        $('#bbox_cities, #bbox_districts, #bbox_areas').on('change', function() {#}
+{#            var mainmap = window.maps[0],#}
+{#                bboxval = $(this).val();#}
+{##}
+{#            // Clear other filters, but keep this one of course#}
+{#            var self = this;#}
+{#            $('#bbox_cities, #bbox_districts, #bbox_areas').each(function() {#}
+{#                if (self != this) {#}
+{#                    $(this).val('');#}
+{#                    $(this).removeClass('filter-set');#}
+{#                }#}
+{#            });#}
+{##}
+{#            // Fit selected bbox, or whole map#}
+{#            if (bboxval) {#}
+{#                var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy#}
+{#                mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);#}
+{#                $(this).addClass('filter-set');#}
+{#            }#}
+{#            else {#}
+{#                if(mainmap.options.maxBounds) {#}
+{#                    mainmap.fitBounds(mainmap.options.maxBounds);#}
+{#                }#}
+{#                $(this).removeClass('filter-set');#}
+{#            }#}
+{#        });#}
+{#    });#}
+{#</script>#}
 {% endif %}
 <!-- end land/bbox.html -->
