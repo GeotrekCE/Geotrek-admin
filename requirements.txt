@@ -27,8 +27,8 @@ cachetools==6.2.0
     # via large-image
 cairocffi==1.7.1
     # via
-    #   cairosvg
     #   geotrek (setup.py)
+    #   cairosvg
     #   mapentity
 cairosvg==2.8.2
     # via geotrek (setup.py)
