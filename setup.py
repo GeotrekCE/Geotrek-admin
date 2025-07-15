@@ -16,7 +16,7 @@ setup(
     description="Geotrek",
     scripts=['manage.py'],
     install_requires=[
-        'Django==5.2b1',
+        'Django==5.2.3',
         'mapentity',
         'chardet',
         'cairosvg',
