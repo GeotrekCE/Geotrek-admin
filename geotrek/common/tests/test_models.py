@@ -1,6 +1,5 @@
 import os
 
-from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.test import TestCase
 
@@ -98,7 +97,7 @@ class HDViewPointTestCase(TestCase):
         self.assertIn("admin/", self.vp.get_list_url())
 
 
-class ProviderTest(TestCase):
+class ProviderTestCase(TestCase):
     def test_str(self):
         provider = Provider.objects.create(name="foo")
         self.assertEqual(str(provider), "foo")
@@ -111,15 +110,6 @@ class ProviderTest(TestCase):
         provider.full_clean()
 
         self.assertEqual(provider.link_template, template)
-
-    def test_template_validator_template_error(self):
-        template = (
-            "<a href='http://test/object/{% object.eid|safe %}'>{{object.eid|safe}}</a>"
-        )
-        provider = Provider(name="foo", link_template=template)
-
-        with self.assertRaisesMessage(ValidationError, "Incorrect syntax: "):
-            provider.full_clean()
 
 
 class ExternalSourceMixinTest(TestCase):

@@ -22,7 +22,7 @@ from paperclip.validators import FileMimetypeValidator
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
-from geotrek.common.utils.validators import validate_html_template
+from geotrek.common.validators import validate_html_template
 
 from .managers import AccessibilityAttachmentManager
 from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
@@ -48,7 +48,7 @@ class License(StructureOrNoneRelated, BaseLicense):
 
 
 class AccessibilityAttachment(TimeStampedModelMixin):
-    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
+    # Remember to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = "slope", _("Slope")
         WIDTH = "width", _("Width")

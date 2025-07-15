@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-import geotrek.common.utils.validators
+import geotrek.common.validators
 
 
 class Migration(migrations.Migration):
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 default="",
                 help_text="HTML template for external source links",
-                validators=[geotrek.common.utils.validators.validate_html_template],
+                validators=[geotrek.common.validators.validate_html_template],
                 verbose_name="Link template",
             ),
         ),
