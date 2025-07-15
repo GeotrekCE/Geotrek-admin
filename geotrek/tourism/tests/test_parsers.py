@@ -315,7 +315,7 @@ class ParserTests(TestCase):
         # Parser with provider creates objects with provider
         call_command("import", "geotrek.tourism.tests.test_parsers.Provider1Parser")
         self.assertEqual(TouristicContent.objects.count(), 1)
-        self.assertEqual(TouristicContent.objects.first().provider, "Provider1")
+        self.assertEqual(TouristicContent.objects.first().provider.name, "Provider1")
         mocked.return_value.json = mocked_json2
         # Parser with provider does not delete other providers' objects
         call_command("import", "geotrek.tourism.tests.test_parsers.Provider2Parser")
@@ -379,9 +379,9 @@ class ParserTests(TestCase):
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
-        with self.assertRaisesRegex(
+        with self.assertRaisesMessage(
             CommandError,
-            f"Failed to download {EauViveParser.url}. HTTP status code 503",
+            f"Failed to fetch {EauViveParser.url} after 3 attempt(s).",
         ):
             call_command("import", "geotrek.tourism.tests.test_parsers.EauViveParser")
             self.assertTrue(mocked.called)
@@ -1068,7 +1068,7 @@ class LEIParserTest(TestCase):
             return response
 
         mocked.side_effect = mocked_requests_get
-        with self.assertRaisesRegex(
+        with self.assertRaisesMessage(
             CommandError,
             f"Failed to download {RestaurantALEIParser.url}. HTTP status code 404",
         ):

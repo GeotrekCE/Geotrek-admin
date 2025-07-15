@@ -216,6 +216,8 @@ Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
 1. ``cd <install directory>`` 
 2. ``docker compose run --rm web update.sh``
 
+.. _load-fixtures:
+
 Load fixtures
 --------------
 

@@ -56,11 +56,11 @@ Geotrek-Admin is a powerful web mapping application designed for managing trekki
 - **Data synchronization**: interconnect with external platforms like Suricate, Apidae, and Tourinsoft for real-time data updates.
 - **Publishing tools**:  
   - create public websites with [Geotrek-rando](https://github.com/GeotrekCE/Geotrek-rando-v3) (e.g., [Destination Écrins](https://rando.ecrins-parcnational.fr), [Alpes Rando](https://alpesrando.net/)).
-  - embed trek information into existing websites with [Geotrek-widget](https://github.com/GeotrekCE/Geotrek-rando-widget) for flexible and lightweight integration (e.g., [Sidobre Vallée Tourisme](https://sidobre-vallees-tourisme.com/type_activite/balades-et-randonnees-sidobre-vallees/), [la Toscane Occitane](https://www.la-toscane-occitane.com/a-voir-a-faire/balades-randonnees))..
+  - embed trek information into existing websites with [Geotrek-widget](https://github.com/GeotrekCE/Geotrek-rando-widget) for flexible and lightweight integration (e.g., [Sidobre Vallée Tourisme](https://sidobre-vallees-tourisme.com/type_activite/balades-et-randonnees-sidobre-vallees/), [la Toscane Occitane](https://www.la-toscane-occitane.com/activites/balades-randonnees/))..
   - deploy mobile applications with [Geotrek-mobile](https://github.com/GeotrekCE/Geotrek-mobile) (e.g., [Grand Carcasssonne](https://play.google.com/store/apps/details?id=io.geotrek.grandcarcassonne), [Jura outdoor](https://apps.apple.com/app/jura-outdoor/id6446137384)).
 - **Customizable outputs**: export data in various formats (PDF, GPX, KML) for offline use and tailored user experiences. 
 - **Interactive mapping**: enable users to visualize and explore data-rich maps with detailed elevation profiles.
-- **Documentation and support**: access comprehensive documentation, best practices and community support for all your needs in the ([official documentation](https://geotrek.readthedocs.io/en/2.111.0/usage/overview.html)).
+- **Documentation and support**: access comprehensive documentation, best practices and community support for all your needs in the ([official documentation](https://geotrek.readthedocs.io/en/latest/)).
 
 Learn more on the [Geotrek product website](http://geotrek.fr).  
 
@@ -99,7 +99,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 This project is under the BSD License. See the [LICENSE](Geotrek-admin/blob/main/LICENSE) for details.
 
 - OpenSource - BSD
-- Copyright (c) 2012-2024 - Makina Corpus Territoires / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+- Copyright (c) 2012-2025 - Makina Corpus Territoires / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
 <a href="https://territoires.makina-corpus.com/"><img src="https://geotrek.fr/assets/img/logo_makina.svg" alt="Logo de Makina Corpus Territoires" width="115"></a>
 [![Alt text](https://geotrek.fr/assets/img/logo_autonomens-h120m.png "Logo Autonomens")](https://datatheca.com/)

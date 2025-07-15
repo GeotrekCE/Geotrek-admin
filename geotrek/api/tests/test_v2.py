@@ -276,10 +276,6 @@ TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted(
         "website",
         "title",
         "description",
-        "facebook_id",
-        "facebook_image_url",
-        "facebook_image_height",
-        "facebook_image_width",
     ]
 )
 
@@ -6744,7 +6740,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                     "url": "http://url.com",
                 },
             ],
-            "provider": "",
+            "provider": None,
             "structure": self.structure.pk,
             "published": True,
         }

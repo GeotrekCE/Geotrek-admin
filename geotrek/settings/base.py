@@ -818,11 +818,6 @@ PASSWORD_HASHERS = [
 
 EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
 
-FACEBOOK_APP_ID = ""
-FACEBOOK_IMAGE = "/images/logo-geotrek.png"
-FACEBOOK_IMAGE_WIDTH = 200
-FACEBOOK_IMAGE_HEIGHT = 200
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.

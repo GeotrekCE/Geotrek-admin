@@ -774,3 +774,30 @@ The following example would cause ``NoProviderParser`` to delete objects from ``
 .. seealso::
 
   To set up automatic commands you can check the :ref:`Automatic commands section <automatic-commands>`.
+
+Linking Source Objects via `eid`
+================================
+
+Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
+
+To enable this, a new database model called **Provider** has been added. This model can be managed through the Django admin interface and includes the following fields:
+
+- **Name**
+- **Link template** (an HTML snippet used to build the link using the `eid`)
+- **Copyright**
+
+The link template should contain the `{{object.eid}}` placeholder, which will be replaced by the actual external ID. For example:
+
+.. code-block:: html
+
+   <a href="https://example.com/objects/{{object.eid}}" target="_blank">{{object.eid}}</a>
+
+Fixtures are available for two providers: **OpenStreetMap** and **Apidae**. These predefined Provider records can be loaded during a new installation.
+See the :ref:`fixture documentation <load-fixtures>` to see more about fixtures.
+
+.. note::
+
+    These fixtures are intended for new installations only. When upgrading an existing system, Provider records will be created automatically based on the existing `provider` field in the database. After upgrading, you must manually fill in the link template and copyright.
+
+    You can reuse the link templates provided in the fixture files, available here:
+    `Provider fixtures on GitHub <https://github.com/GeotrekCE/Geotrek-admin/tree/master/geotrek/common/fixtures/basic.json#L242>`_

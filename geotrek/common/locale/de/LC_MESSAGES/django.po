@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
+"POT-Creation-Date: 2025-07-10 13:39+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -250,30 +250,6 @@ msgstr ""
 msgid "Description on Geotrek Rando"
 msgstr ""
 
-msgid "Facebook ID"
-msgstr ""
-
-msgid "Facebook ID for Geotrek Rando"
-msgstr ""
-
-msgid "Facebook image url"
-msgstr ""
-
-msgid "Url of the facebook image"
-msgstr ""
-
-msgid "Facebook image width"
-msgstr ""
-
-msgid "Facebook image's width"
-msgstr ""
-
-msgid "Facebook image height"
-msgstr ""
-
-msgid "Facebook image's height"
-msgstr ""
-
 msgid "Target portal"
 msgstr ""
 
@@ -346,6 +322,21 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Link template"
+msgstr ""
+
+msgid "HTML template for external source links"
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Providers"
+msgstr ""
+
+msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+msgstr ""
+
 #, python-format
 msgid "Line %(line)s"
 msgstr ""
@@ -413,6 +404,18 @@ msgstr ""
 msgid "File does not exists at: {filename}"
 msgstr ""
 
+#, python-format
+msgid "%(error_name)s: %(error_msg)s"
+msgstr ""
+
+#, python-format
+msgid "Failed to fetch %(url)s. %(error)s"
+msgstr ""
+
+#, python-format
+msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
+msgstr ""
+
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr ""
@@ -424,8 +427,8 @@ msgstr ""
 msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
 msgstr ""
 
-#, python-brace-format
-msgid "Failed to download '{url}'"
+#, python-format
+msgid "Failed to load attachment: %(e)s"
 msgstr ""
 
 #, python-format
@@ -467,6 +470,10 @@ msgstr ""
 msgid ""
 "Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
 "created"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
 msgstr ""
 
 msgid "Import from web."

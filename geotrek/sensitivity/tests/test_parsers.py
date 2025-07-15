@@ -284,9 +284,9 @@ class BiodivParserTests(TestCase):
             return response
 
         mocked.side_effect = side_effect
-        with self.assertRaisesRegex(
+        with self.assertRaisesMessage(
             CommandError,
-            "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/",
+            "Failed to fetch https://biodiv-sports.fr/api/v2/sportpractice/ after 1 attempt(s).",
         ):
             call_command(
                 "import",
@@ -300,16 +300,15 @@ class BiodivParserTests(TestCase):
             response = requests.Response()
             if params and params.get("in_bbox", None):
                 response.status_code = 404
-                response.url = "https://rhododendron.com"
             else:
                 response.status_code = 200
                 response.json = lambda: {"results": []}
             return response
 
         mocked.side_effect = side_effect
-        with self.assertRaisesRegex(
+        with self.assertRaisesMessage(
             CommandError,
-            "Failed to download https://rhododendron.com. HTTP status code 404",
+            "Failed to fetch https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore after 1 attempt(s).",
         ):
             call_command(
                 "import",
