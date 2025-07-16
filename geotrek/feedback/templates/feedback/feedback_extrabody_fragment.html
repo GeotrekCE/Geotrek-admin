@@ -4,10 +4,10 @@
 {% enable_report_colors_per_status as enable_report_colors_per_status %}
 
 {% if enable_report_colors_per_status or suricate_workflow_enabled %}
-{#    <script type="application/json" id="status_ids_and_colors">#}
-{#        {% status_ids_and_colors as status_ids_and_colors %}#}
-{#        {{ status_ids_and_colors|safe }}#}
-{#    </script>#}
+    <script type="application/json" id="status_ids_and_colors">
+        {% status_ids_and_colors as status_ids_and_colors %}
+        {{ status_ids_and_colors|safe }}
+    </script>
 {% endif %}
 
 {% if enable_report_colors_per_status %}
@@ -15,6 +15,7 @@
 {#        MapEntity.i18n['Statuses'] = "{% trans "Statuses" %}";#}
 {#        MapEntity.i18n['Legend'] = "{% trans "Legend" %}";#}
 {#    </script>#}
+
 {#    <script type="text/javascript" src="{% static "feedback/status_colors.js" %}"></script>#}
     <link rel="stylesheet" href="{% static "feedback/style.css" %}" />
 {% endif %}
