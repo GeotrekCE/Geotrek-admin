@@ -1,92 +1,40 @@
-//
-// Touristic Content
-//
-/*
-var drawnItems;
-PublicLayerGeometryField = L.GeometryField.extend({
-    // override _editionLayer to get the feature group (drawItems) global and make it accessible outside the leaflet draw event
-    _editionLayer: function () {
-        var type = 'featureGroup',
-            constructor = L[type];
-        if (typeof (constructor) != 'function') {
-            throw 'Unsupported geometry type: ' + type;
-        }
-        drawnItems = constructor([], {})
-        return drawnItems;
-    }
-});
+window.addEventListener('entity:map', (event) => {
+    const { map } = event.detail;
+    let loadedEvent = false;
+    let loadedTouristic = false;
 
-$(window).on('entity:map:update entity:map:add', function (e, data) {
-    var map = data.map;
-    var placeLayer = null;
-    $("#id_place").change(function () {
-        // remove leaflet draw marker
-        drawnItems.eachLayer((layer) => {
-            drawnItems.removeLayer(layer);
-        });
-        // if change place remove previous one
-        if (placeLayer) {
-            map.removeLayer(placeLayer);
-        }
-        var placesCoords = JSON.parse($('#places-coords').text());
-        var currentCoordsPlace = placesCoords[this.value];
-        if (currentCoordsPlace) {
-            placeLayer = L.marker(currentCoordsPlace.reverse());
-            placeLayer.addTo(map);
-            // TODO : parametrize zoom level ?
-            map.setView(placeLayer.getLatLng(), 12);
-            // synchronize place geom with the form 
-            L.FieldStore.prototype.initialize("id_geom");
-            L.FieldStore.prototype.save(placeLayer);
-        }
-    })
+    ['touristiccontent', 'touristicevent'].forEach((modelname) => {
+        const layername = `${modelname}_layer`;
+        const layerUrl = window.SETTINGS.urls[layername];
+        const style = window.SETTINGS.map.styles[modelname] || {};
 
-    map.on('draw:created', function (e) {
-        // on leaflet draw event : delete previous place marker
-        if (placeLayer) {
-            map.removeLayer(placeLayer);
-        }
-        // empty the place input
-        $("#id_place").val(null);
-
-    });
-});
-
-$(window).on('entity:map', function (e, data) {
-
-    var map = data.map;
-    var loaded_event = false;
-    var loaded_touristic = false;
-
-    // Show tourism layer in application maps
-    $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
-        var style = L.Util.extend({ clickable: true },
-            window.SETTINGS.map.styles[modelname] || {});
-        var layer = new L.ObjectsLayer(null, {
+        // Show touristic content and events layers in application maps
+        const objectsLayer = new MaplibreObjectsLayer(null, {
+            style,
             modelname: modelname,
-            style: style,
+            readonly: false
         });
-        if (data.modelname != modelname){
-            map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
-        };
-        map.on('layeradd', function(e){
-            var options = e.layer.options || {'modelname': 'None'};
-            if (! loaded_event){
-                if (options.modelname == 'touristicevent' && options.modelname != data.modelname){
-                    e.layer.load(window.SETTINGS.urls.touristicevent_layer);
-                    loaded_event = true;
-                }
-            }
-            if (! loaded_touristic){
-                if (options.modelname == 'touristiccontent' && options.modelname != data.modelname){
-                    e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
-                    loaded_touristic = true;
-                }
-        }
-    });
+
+        // if (event.detail.modelname !== modelname) {
+        //     map.layerscontrol.addOverlay(objectsLayer, tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)), tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)));
+        // }
+
+        // map.getMap().on('layeradd', (e) => {
+        //     const options = e.layer.options || { 'modelname': 'None' };
+        //     if (!loadedEvent && modelname === 'touristicevent') {
+        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
+        //             e.layer.load(layerUrl);
+        //             loadedEvent = true;
+        //         }
+        //     } else if (!loadedTouristic && modelname === 'touristiccontent') {
+        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
+        //             e.layer.load(layerUrl);
+        //             loadedTouristic = true;
+        //         }
+        //     }
+        // });
     });
 });
-
 
 $(window).on('entity:view:filter', function (e, data) {
 
@@ -104,7 +52,6 @@ $(window).on('entity:view:filter', function (e, data) {
     var $addButton = $("#list-panel .btn-toolbar .btn.btn-success").first();
     var addUrl = $addButton.attr('href');
 });
-
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
     // Date picker
@@ -155,7 +102,6 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#id_category').trigger('change');
 });
 
-
 function update_touristiccontent_types(n) {
     var categories = JSON.parse($('#categories-types').text());
     var category = $('#id_category').val();
@@ -183,4 +129,3 @@ function update_touristiccontent_types(n) {
     }
     $select.trigger('chosen:updated');
 }
-*/
