@@ -23,27 +23,27 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script type="text/javascript">
-        $(window).ready(function () {
-            $('#id_date').datepicker({
-                autoclose: true,
-                language: '{{ request.LANGUAGE_CODE }}',
-                format: window.SETTINGS.date_format
-            });
-
-            // TODO: do this with crispyforms !
-            $("fieldset.formset").detach().appendTo('#mainform fieldset');
-
-            $(".clearfix").removeClass("clearfix");
-
-            $('.form-row.inline').formset({
-                prefix: '{{ blade_formset.prefix }}',
-                keepFieldValues: "[name='csrfmiddlewaretoken']",
-                addCssClass: 'btn btn-success add-row',
-                deleteCssClass: 'delete-row',
-                addText: '{% trans "Add" %}',
-                deleteText: '{% trans "Remove" %}',
-            });
-        });
-    </script>
+{#    <script type="text/javascript">#}
+{#        $(window).ready(function () {#}
+{#            $('#id_date').datepicker({#}
+{#                autoclose: true,#}
+{#                language: '{{ request.LANGUAGE_CODE }}',#}
+{#                format: window.SETTINGS.date_format#}
+{#            });#}
+{##}
+{#            // TODO: do this with crispyforms !#}
+{#            $("fieldset.formset").detach().appendTo('#mainform fieldset');#}
+{##}
+{#            $(".clearfix").removeClass("clearfix");#}
+{##}
+{#            $('.form-row.inline').formset({#}
+{#                prefix: '{{ blade_formset.prefix }}',#}
+{#                keepFieldValues: "[name='csrfmiddlewaretoken']",#}
+{#                addCssClass: 'btn btn-success add-row',#}
+{#                deleteCssClass: 'delete-row',#}
+{#                addText: '{% trans "Add" %}',#}
+{#                deleteText: '{% trans "Remove" %}',#}
+{#            });#}
+{#        });#}
+{#    </script>#}
 {% endblock extrabody %}
