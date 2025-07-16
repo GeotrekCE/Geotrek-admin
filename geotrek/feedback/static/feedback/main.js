@@ -2,6 +2,7 @@
 // Feedback / reports
 //
 
+/*
 $(window).on('entity:map', function (e, data) {
     var modelname = 'report';
     var layername = `${modelname}_layer`;
@@ -31,3 +32,5 @@ $(window).on('entity:map', function (e, data) {
         }
     });
 });
+
+ */
