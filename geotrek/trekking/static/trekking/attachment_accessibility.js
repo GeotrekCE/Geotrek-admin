@@ -9,11 +9,11 @@
         var updateUrl = $this.data('update-url');
         console.log(updateUrl);
         var $form = $('.file-attachment-accessibility-form');
-        var spinner = new Spinner({length: 3, radius: 5, width: 2}).spin($form[0]);
+        // var spinner = new Spinner({length: 3, radius: 5, width: 2}).spin($form[0]);
         $.get(updateUrl, function (html) {
             $form.find('.create').remove();
             $form.find('.update').html(html);
-            spinner.stop();
+            // spinner.stop();
             // Update title on file change
             watchFileInput();
             // On cancel, restore Create form
