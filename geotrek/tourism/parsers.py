@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import datetime
 import os
 from mimetypes import guess_type
@@ -31,7 +32,6 @@ from geotrek.tourism.models import (
 from geotrek.trekking.models import Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
 
-
 class TouristicContentMixin:
     # Mixin which handle multiple type1/2 with the same name in different categories
     def get_to_delete_kwargs(self):
@@ -53,7 +53,11 @@ class TouristicContentMixin:
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
-            filters = {natural_key: subval for subval in val}
+            if isinstance(val, Iterable) and not isinstance(val, str):
+                values = val
+            else:
+                values = [val]
+            filters = {natural_key: subval for subval in values}
             if not filters:
                 continue
             if dst in ("type1", "type2"):
