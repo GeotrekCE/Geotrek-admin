@@ -1,6 +1,6 @@
-from collections.abc import Iterable
 import datetime
 import os
+from collections.abc import Iterable
 from mimetypes import guess_type
 from urllib.parse import urlparse
 
@@ -31,6 +31,7 @@ from geotrek.tourism.models import (
 )
 from geotrek.trekking.models import Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
+
 
 class TouristicContentMixin:
     # Mixin which handle multiple type1/2 with the same name in different categories
