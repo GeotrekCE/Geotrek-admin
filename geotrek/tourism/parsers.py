@@ -1,5 +1,6 @@
 import datetime
 import os
+from collections.abc import Iterable
 from mimetypes import guess_type
 from urllib.parse import urlparse
 
@@ -53,7 +54,11 @@ class TouristicContentMixin:
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
-            filters = {natural_key: subval for subval in val}
+            if isinstance(val, Iterable) and not isinstance(val, str):
+                values = val
+            else:
+                values = [val]
+            filters = {natural_key: subval for subval in values}
             if not filters:
                 continue
             if dst in ("type1", "type2"):

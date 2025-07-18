@@ -5,9 +5,13 @@ CHANGELOG
 2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix deletion of touristic content objects in parsers when an m2m constant field is not a list
+
 **Improvements**
 
-- Change provider Charfield for a foreign key
+- Change provider Charfield to a foreign key
 
 
 2.116.1    (2025-07-15)
