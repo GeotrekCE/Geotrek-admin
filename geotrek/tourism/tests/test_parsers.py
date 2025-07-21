@@ -54,6 +54,7 @@ class TestTouristicContentMixinJSONParser(TouristicContentMixin, JSONParser):
     fields = {"eid": "id"}
     constant_fields = {"geom": Point(0, 0), "category": "foo"}
     natural_keys = {"category": "label", "type1": "label"}
+    field_options = {"type1": {"fk": "category"}}
 
 
 class TestTouristicContentMixinDeleteM2MListJSONParser(
@@ -293,7 +294,7 @@ class TouristicContentMixinTests(TestCase):
             verbosity=0,
         )
         self.assertEqual(len(TouristicContent.objects.all()), 2)
-        # FIXME: type1 values are not correctly assigned
+        # FIXME: type1 values are not correctly assigned - this test passes even without the fix
         filename = os.path.join(
             os.path.dirname(__file__),
             "data",
@@ -322,7 +323,7 @@ class TouristicContentMixinTests(TestCase):
             verbosity=0,
         )
         self.assertEqual(len(TouristicContent.objects.all()), 2)
-        # FIXME: type1 values are not correctly assigned
+        # FIXME: type1 values are not correctly assigned - this test passes even without the fix
         filename = os.path.join(
             os.path.dirname(__file__),
             "data",
