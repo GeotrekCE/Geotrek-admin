@@ -1,21 +1,37 @@
 window.addEventListener('entity:map', (event) => {
     const { map } = event.detail;
-    let loaded_site = false;
-    let loaded_course = false;
+    // let loaded_site = false;
+    // let loaded_course = false;
 
     ['site', 'course'].forEach((modelname) => {
         const layername = `${modelname}_layer`;
         const layerUrl = window.SETTINGS.urls[layername];
-        const style = window.SETTINGS.map.styles[modelname] || {};
+        const style = {
+            color: 'blue',
+            weight: 2,
+            opacity: 0.5,
+            fillColor: '#FF0000',
+            fillOpacity: 0.1
+        };
+        const nameHTML = tr(modelname);
+        const category = tr('Outdoor');
 
         // Show site and course layers in application maps
         const objectsLayer = new MaplibreObjectsLayer(null, {
             style,
             modelname: modelname,
-            readonly: false
+            readonly: false,
+            nameHTML: nameHTML,
+            category: category
         });
 
-        // if (event.detail.modelname !== modelname) {
+        objectsLayer.initialize(map.getMap());
+        objectsLayer.load(layerUrl);
+
+    });
+});
+
+// if (event.detail.modelname !== modelname) {
         //     map.layerscontrol.addOverlay(objectsLayer, tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)), tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)));
         // }
 
@@ -33,6 +49,3 @@ window.addEventListener('entity:map', (event) => {
         //         }
         //     }
         // });
-    });
-
-})

@@ -4,16 +4,31 @@
 window.addEventListener("entity:map", (e) => {
     const { map } = e.detail;
     const modelname = 'intervention';
-    const layername = `${modelname}_layer`;
-
+    const layername = 'intervention_layer';
     const layerUrl = window.SETTINGS.urls[layername];
 
-    const style = window.SETTINGS.map.styles[modelname] || {};
+    const style = {
+        color: 'blue',
+        weight: 2,
+        opacity: 0.5,
+        fillColor: '#FF0000',
+        fillOpacity: 0.1
+    };
+
+    const nameHTML = tr('Intervention');
+    const category = tr('Maintenance');
+
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false
+        readonly: false,
+        nameHTML: nameHTML,
+        category: category
     });
+
+    objectsLayer.initialize(map.getMap());
+    objectsLayer.load(layerUrl);
+});
 
     // if(e.detail.modelname !== modelname) {
     //     e.detail.map.layerscontrol.addOverlay(objectsLayer, tr('Intervention'), tr('Maintenance'));
@@ -27,7 +42,6 @@ window.addEventListener("entity:map", (e) => {
     //         objectsLayer.load(layerUrl);
     //     }
     // });
-});
 
 
 // Date picker with placeholder on input
