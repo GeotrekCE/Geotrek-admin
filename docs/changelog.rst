@@ -5,6 +5,10 @@ CHANGELOG
 2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**New features**
+
+- Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+
 **Improvements**
 
 - Change provider Charfield for a foreign key
