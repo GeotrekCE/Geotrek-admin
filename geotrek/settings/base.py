@@ -259,7 +259,12 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "geotrek.authent.middleware.CorsMiddleware",
     "mapentity.middleware.AutoLoginMiddleware",
+    "maintenance_mode.middleware.MaintenanceModeMiddleware",
 )
+
+MAINTENANCE_MODE_IGNORE_URLS = (r"/api/v2",)  # IGNORE /api/v2 from maintenance
+MAINTENANCE_MODE_STATE_BACKEND = "maintenance_mode.backends.StaticStorageBackend"
+
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != "" else None
 ADMIN_MEDIA_PREFIX = f"{ROOT_URL}/static/admin/"
 
@@ -308,6 +313,7 @@ PROJECT_APPS += (
     "colorfield",
     "mptt",
     "treebeard",
+    "maintenance_mode",
 )
 
 INSTALLED_APPS = (
