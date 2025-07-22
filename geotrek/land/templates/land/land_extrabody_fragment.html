@@ -1,18 +1,18 @@
 {% load static i18n %}
 <script type="text/javascript">
-    MapEntity.i18n['Land edges'] = "{% trans "Land edges" %}";
-    MapEntity.i18n['Circulation edges'] = "{% trans "Circulation edges" %}";
-    MapEntity.i18n['Status'] = "{% trans "Status" %}";
-    MapEntity.i18n['Land type'] = "{% trans "Land type" %}";
-    MapEntity.i18n['Circulation type'] = "{% trans "Circulation type" %}";
-    MapEntity.i18n['Authorization type'] = "{% trans "Authorization type" %}";
-    MapEntity.i18n['Physical type'] = "{% trans "Physical type" %}";
-    MapEntity.i18n['Competence'] = "{% trans "Competence" %}";
-    MapEntity.i18n['Signage management edge'] = "{% trans "Signage management edge" %}";
-    MapEntity.i18n['Signage management edges'] = "{% trans "Signage management edges" %}";
-    MapEntity.i18n['Work management edge'] = "{% trans "Work management edge" %}";
-    MapEntity.i18n['Work management edges'] = "{% trans "Work management edges" %}";
-    MapEntity.i18n['Land'] = "{% trans "Land" %}";
+    {#MapEntity.i18n['Land edges'] = "{% trans "Land edges" %}";#}
+    {#MapEntity.i18n['Circulation edges'] = "{% trans "Circulation edges" %}";#}
+    {#MapEntity.i18n['Status'] = "{% trans "Status" %}";#}
+    {#MapEntity.i18n['Land type'] = "{% trans "Land type" %}";#}
+    {#MapEntity.i18n['Circulation type'] = "{% trans "Circulation type" %}";#}
+    {#MapEntity.i18n['Authorization type'] = "{% trans "Authorization type" %}";#}
+    {#MapEntity.i18n['Physical type'] = "{% trans "Physical type" %}";#}
+    {#MapEntity.i18n['Competence'] = "{% trans "Competence" %}";#}
+    {#MapEntity.i18n['Signage management edge'] = "{% trans "Signage management edge" %}";#}
+    {#MapEntity.i18n['Signage management edges'] = "{% trans "Signage management edges" %}";#}
+    {#MapEntity.i18n['Work management edge'] = "{% trans "Work management edge" %}";#}
+    {#MapEntity.i18n['Work management edges'] = "{% trans "Work management edges" %}";#}
+    {#MapEntity.i18n['Land'] = "{% trans "Land" %}";#}
 
     window.SETTINGS.urls['landedge_layer'] = "{% url "land:landedge-drf-list" format="geojson" %}";
     window.SETTINGS.urls['physicaledge_layer'] = "{% url "land:physicaledge-drf-list" format="geojson" %}";
