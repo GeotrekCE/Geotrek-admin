@@ -5,6 +5,10 @@ CHANGELOG
 2.117.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**New features**
+
+- Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+
 
 2.117.0         (2025-07-28)
 ----------------------------
