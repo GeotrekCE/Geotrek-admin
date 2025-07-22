@@ -1,11 +1,11 @@
 window.addEventListener("entity:map", (e) => {
     const {map} = e.detail;
-    const modelname = 'dive';
+    const modelname = 'trail';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
 
-    const nameHTML = tr('Diving');
-    const category = tr('Diving');
+    const nameHTML = tr('Trails');
+    const category = tr('Trail');
 
     const style = {
         color: 'blue',
