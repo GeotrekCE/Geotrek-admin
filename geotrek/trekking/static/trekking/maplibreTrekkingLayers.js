@@ -17,10 +17,29 @@ window.addEventListener("entity:map", function (event) {
 
     // Show tourism layer in application maps
     trekkingLayers.forEach(function (trekkingLayer) {
+        const nameHTML = tr(trekkingLayer.name);
+        const category = tr('Trekking');
+
+        const style = {
+            color: 'blue',
+            weight: 2,
+            opacity: 0.5,
+            fillColor: '#FF0000',
+            fillOpacity: 0.1
+        };
+
         const layer = new MaplibreObjectsLayer(null, {
             modelname: trekkingLayer.id,
-            style: window.SETTINGS.map.styles[trekkingLayer.id] || {},
+            style: style,
+            readonly: false,
+            nameHTML: nameHTML,
+            category: category
         });
+
+        layer.initialize(map.getMap());
+        layer.load(trekkingLayer.url);
+    });
+});
 
         // if (event.detail.modelname !== trekkingLayer.id) {
         //     map.layerscontrol.addOverlay(layer, tr(trekkingLayer.name), tr('Trekking'));
@@ -35,5 +54,3 @@ window.addEventListener("entity:map", function (event) {
         //         }
         //     }
         // });
-    });
-});
