@@ -7,17 +7,33 @@ window.addEventListener('entity:map', (event) => {
     const modelname = 'sensitivearea';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
-    let loaded_sensitivearea = false;
+    // let loaded_sensitivearea = false;
 
     // Show sensitivearea layer in application maps
-    const style =  window.SETTINGS.map.styles[modelname] ;
+    const style = {
+        color: 'blue',
+        weight: 2,
+        opacity: 0.5,
+        fillColor: '#FF0000',
+        fillOpacity: 0.1
+    };
+
+    const nameHTML = tr('sensitivearea');
+    const category = tr('Sensitivity');
+
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false
+        readonly: false,
+        nameHTML: nameHTML,
+        category: category
     });
 
-    // if (event.detail.modelname !== modelname) {
+    objectsLayer.initialize(map.getMap());
+    objectsLayer.load(layerUrl);
+});
+
+// if (event.detail.modelname !== modelname) {
     //     map.layerscontrol.addOverlay(objectsLayer, tr('sensitivearea'), tr('Sensitivity'));
     // }
 
@@ -30,4 +46,3 @@ window.addEventListener('entity:map', (event) => {
     //         }
     //     }
     // });
-});
