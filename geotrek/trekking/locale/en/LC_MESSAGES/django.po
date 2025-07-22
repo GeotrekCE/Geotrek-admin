@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 12:14+0000\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -296,9 +296,6 @@ msgstr ""
 msgid "Labels"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Second external id"
 msgstr ""
 
@@ -487,6 +484,9 @@ msgid "None"
 msgstr ""
 
 msgid "Thumbnail"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Elevation"

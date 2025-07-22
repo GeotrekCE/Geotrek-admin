@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-10 11:20+0200\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,9 +75,6 @@ msgid "Label accessibility"
 msgstr ""
 
 msgid "Labels accessibility"
-msgstr ""
-
-msgid "External id"
 msgstr ""
 
 msgid "Title"
@@ -434,6 +431,9 @@ msgid "yes,no"
 msgstr ""
 
 msgid "None"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Thumbnail"

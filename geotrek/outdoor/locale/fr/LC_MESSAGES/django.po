@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 17:51+0200\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -217,9 +217,6 @@ msgstr "Accessibilité"
 msgid "Type"
 msgstr "Type"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Managers"
 msgstr "Gestionnaires"
 
@@ -318,6 +315,9 @@ msgstr "Enfant de :"
 
 msgid "Parent of:"
 msgstr "Parent de :"
+
+msgid "External id"
+msgstr "ID externe"
 
 msgid "No result"
 msgstr "Pas de résultat"
