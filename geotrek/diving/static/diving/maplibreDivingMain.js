@@ -1,11 +1,12 @@
-window.addEventListener("entity:map", (e) => {
-    const {map} = e.detail;
+window.addEventListener("entity:map", () => {
+    const map = window.MapEntity.currentMap.map;
     const modelname = 'dive';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
 
     const nameHTML = tr('Diving');
     const category = tr('Diving');
+    const primaryKey = generateUniqueId();
 
     const style = {
         color: 'blue',
@@ -18,27 +19,14 @@ window.addEventListener("entity:map", (e) => {
     const objectsLayer = new MaplibreObjectsLayer(null, {
             style,
             modelname: modelname,
-            readonly: false,
+            readonly: true,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: layerUrl,
+            isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-// if (data.modelname != modelname){
-	//     map.layerscontrol.addOverlay(layer, tr('Diving'), tr('Diving'));
-    // };
-
-     // Charger les objets depuis le backend
-    // map.getMap().on('layeradd', function (e) {
-    //     let options = e.layer.options || { 'modelname': 'None' };
-    //     if (! loaded_dive) {
-    //         if(options.modelname === modelname && options.modelname !== e.detail.modelname) {
-    //             e.layer.load(layerUrl);
-    //             objectsLayer.load(layerUrl);
-    //             loaded_dive = true;
-    //         }
-    //     }
-    // });

@@ -1,5 +1,5 @@
-window.addEventListener('entity:map', (event) => {
-    const { map } = event.detail;
+window.addEventListener('entity:map', () => {
+    const map = window.MapEntity.currentMap.map;
     const colorspools = window.SETTINGS.map.colorspool || {};
 
     // Regroupement des couches de terrain (districts, villes + zones restreintes)
@@ -30,33 +30,24 @@ window.addEventListener('entity:map', (event) => {
 
         const nameHTML = `<span style="color: ${style.color};">&#x2B24;</span>&nbsp;${landLayer.name}`;
         const category = tr('Zoning');
+        let primaryKey = generateUniqueId();
 
         const layer = new MaplibreObjectsLayer(null, {
             modelname: landLayer.name,
             style: style,
+            readonly: true,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: landLayer.url,
+            isLazy: true
         });
 
         layer.initialize(map.getMap());
-        layer.load(landLayer.url);
+        layer.registerLazyLayer(landLayer.name, category, nameHTML, primaryKey, landLayer.url);
 
     });
 });
-
-    // Ajouter en tant qu’overlay dans le contrôle de couches
-    // map.layerscontrol.addOverlay(layer, nameHTML, category);
-    // map.getMap().on('layeradd', (e) => {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     for (let i = 0; i < landLayers.length; i++) {
-    //         if (!landLayers[i].isActive) {
-    //             if (options.modelname === landLayers[i].name) {
-    //                 e.layer.load(landLayers[i].url);
-    //                 landLayers[i].isActive = true;
-    //             }
-    //         }
-    //     }
-    // });
 
 function refresh_selector_with_areas($select, areas, selected) {
     $select.empty();

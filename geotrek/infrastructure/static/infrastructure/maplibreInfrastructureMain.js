@@ -1,5 +1,5 @@
 window.addEventListener("entity:map", function (event) {
-    const { map } = event.detail;
+    const map = window.MapEntity.currentMap.map;
 
     const modelname = 'infrastructure';
     const layername = `${modelname}_layer`;
@@ -7,6 +7,7 @@ window.addEventListener("entity:map", function (event) {
 
     const nameHTML = tr('Infrastructure');
     const category = tr('Infrastructure');
+    const primaryKey = generateUniqueId();
 
     const style = {
         color: 'blue',
@@ -19,28 +20,14 @@ window.addEventListener("entity:map", function (event) {
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style: style,
         modelname: modelname,
-        readonly: false,
+        readonly: true,
         nameHTML: nameHTML,
-        category: category
+        category: category,
+        primaryKey: primaryKey,
+        dataUrl: layerUrl,
+        isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-
-    // if (data.modelname != modelname){
-	//     map.layerscontrol.addOverlay(layer, tr('Intervention'), tr('Maintenance'));
-    // }
-
-
-    // map.getMap().on('layeradd', function (e) {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     if (! loaded_infrastructure) {
-    //         if(options.modelname === modelname && options.modelname !== event.detail.modelname) {
-    //             e.layer.load(url);
-    //             objectsLayer.load(layerUrl);
-    //             loaded_infrastructure = true;
-    //         }
-    //     }
-    // });
