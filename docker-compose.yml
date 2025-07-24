@@ -16,7 +16,7 @@ x-images:
 
 services:
   postgres:
-    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:12-3.0-3.0.0}
+    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:14-3.5-3.7}
     env_file:
       - .env
     ports:
