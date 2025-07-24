@@ -1,7 +1,5 @@
-window.addEventListener('entity:map', (event) => {
-    const { map } = event.detail;
-    // let loaded_site = false;
-    // let loaded_course = false;
+window.addEventListener('entity:map', () => {
+    const map = window.MapEntity.currentMap.map;
 
     ['site', 'course'].forEach((modelname) => {
         const layername = `${modelname}_layer`;
@@ -15,6 +13,7 @@ window.addEventListener('entity:map', (event) => {
         };
         const nameHTML = tr(modelname);
         const category = tr('Outdoor');
+        let primaryKey = generateUniqueId();
 
         // Show site and course layers in application maps
         const objectsLayer = new MaplibreObjectsLayer(null, {
@@ -22,30 +21,14 @@ window.addEventListener('entity:map', (event) => {
             modelname: modelname,
             readonly: false,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: layerUrl,
+            isLazy: true
         });
 
         objectsLayer.initialize(map.getMap());
-        objectsLayer.load(layerUrl);
+        objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 
     });
 });
-
-// if (event.detail.modelname !== modelname) {
-        //     map.layerscontrol.addOverlay(objectsLayer, tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)), tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)));
-        // }
-
-        // map.getMap().on('layeradd', (e) => {
-        //     const options = e.layer.options || { 'modelname': 'None' };
-        //     if (!loaded_site && modelname === 'site') {
-        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-        //             e.layer.load(layerUrl);
-        //             loaded_site = true;
-        //         }
-        //     } else if (!loaded_course && modelname === 'course') {
-        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-        //             e.layer.load(layerUrl);
-        //             loaded_course = true;
-        //         }
-        //     }
-        // });
