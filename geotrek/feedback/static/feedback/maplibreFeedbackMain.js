@@ -2,14 +2,15 @@
 // Feedback / reports
 //
 
-window.addEventListener('entity:map', function (event) {
-    const { map } = event.detail;
+window.addEventListener('entity:map', function () {
+    const map = window.MapEntity.currentMap.map;
     const modelname = 'report';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
 
     const nameHTML = tr('Report');
     const category = tr('Feedback');
+    const primaryKey = generateUniqueId();
 
     const style = {
         color: 'blue',
@@ -22,26 +23,14 @@ window.addEventListener('entity:map', function (event) {
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false,
+        readonly: true,
         nameHTML: nameHTML,
-        category: category
+        category: category,
+        primaryKey: primaryKey,
+        dataUrl: layerUrl,
+        isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-    // if (event.detail.modelname !== modelname) {
-    //     map.layerscontrol.addOverlay(objectsLayer, tr('Report'), tr('Feedback'));
-    // }
-
-    // map.getMap().on('layeradd', function (e) {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     if (!loadedFeedback) {
-    //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-    //             e.layer.load(layerUrl);
-    //             objectsLayer.load(layerUrl);
-    //             loadedFeedback = true;
-    //         }
-    //     }
-    // });

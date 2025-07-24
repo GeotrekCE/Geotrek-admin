@@ -1,5 +1,6 @@
-window.addEventListener("entity:map", (e) => {
-    const { map } = e.detail;
+window.addEventListener("entity:map", () => {
+    const map = window.MapEntity.currentMap.map;
+
 
     const managementLayers = [
         { url: window.SETTINGS.urls.landedge_layer, name: tr('Land type'), id: 'land' },
@@ -20,7 +21,6 @@ window.addEventListener("entity:map", (e) => {
     };
 
     const category = tr('Status');
-    const objectsLayers = [];
 
     for (const managementLayer of managementLayers) {
         let nameHTML = '';
@@ -32,33 +32,19 @@ window.addEventListener("entity:map", (e) => {
         }
 
         nameHTML += `&nbsp;${managementLayer.name}`;
-
+        let primaryKey = generateUniqueId();
         const layer = new MaplibreObjectsLayer(null, {
             modelname: managementLayer.name,
             style: style,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            readonly: true,
+            primaryKey: primaryKey,
+            dataUrl: managementLayer.url,
+            isLazy: true
         });
 
         layer.initialize(map.getMap());
-        layer.load(managementLayer.url);
-        managementLayer.isActive = true;
-
-        objectsLayers.push(layer);
+        layer.registerLazyLayer(managementLayer.name, category, nameHTML, primaryKey, managementLayer.url);
     }
 });
-
-    // Ajoute dans la légende de la carte
-    // map.layerscontrol.addOverlay(layer, nameHTML, category);
-
-    // map.getMap().on('layeradd', (e) => {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     for (let managementLayer of managementLayers) {
-    //         if (!managementLayer.isActive) {
-    //             if (options.modelname === managementLayer.name) {
-    //                 e.layer.load(managementLayer.url);
-    //                 managementLayer.isActive = true;
-    //             }
-    //         }
-    //     }
-    // });
