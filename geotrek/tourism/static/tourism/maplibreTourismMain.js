@@ -1,5 +1,5 @@
 window.addEventListener('entity:map', (event) => {
-    const { map } = event.detail;
+    const map = window.MapEntity.currentMap.map;
 
     ['touristiccontent', 'touristicevent'].forEach((modelname) => {
         const layername = `${modelname}_layer`;
@@ -15,39 +15,24 @@ window.addEventListener('entity:map', (event) => {
 
         const nameHTML = tr(modelname);
         const category = tr('Tourism');
+        let primaryKey = generateUniqueId();
 
         // Show touristic content and events layers in application maps
         const objectsLayer = new MaplibreObjectsLayer(null, {
             style,
             modelname: modelname,
-            readonly: false,
+            readonly: true,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: layerUrl,
+            isLazy: true
         });
 
         objectsLayer.initialize(map.getMap());
-        objectsLayer.load(layerUrl);
+        objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
     });
 });
-
-// if (event.detail.modelname !== modelname) {
-        //     map.layerscontrol.addOverlay(objectsLayer, tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)), tr(modelname.charAt(0).toUpperCase() + modelname.slice(1)));
-        // }
-
-        // map.getMap().on('layeradd', (e) => {
-        //     const options = e.layer.options || { 'modelname': 'None' };
-        //     if (!loadedEvent && modelname === 'touristicevent') {
-        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-        //             e.layer.load(layerUrl);
-        //             loadedEvent = true;
-        //         }
-        //     } else if (!loadedTouristic && modelname === 'touristiccontent') {
-        //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-        //             e.layer.load(layerUrl);
-        //             loadedTouristic = true;
-        //         }
-        //     }
-        // });
 
 $(window).on('entity:view:filter', function (e, data) {
 

@@ -3,7 +3,7 @@
 //
 
 window.addEventListener("entity:map", function (event) {
-    const { map } = event.detail;
+    const map = window.MapEntity.currentMap.map;
 
     let trekkingLayers = [
         { url: window.SETTINGS.urls.trek_layer, name: tr('Treks'), id: 'trek' },
@@ -28,29 +28,20 @@ window.addEventListener("entity:map", function (event) {
             fillOpacity: 0.1
         };
 
+        let primaryKey = generateUniqueId();
+
         const layer = new MaplibreObjectsLayer(null, {
-            modelname: trekkingLayer.id,
+            modelname: trekkingLayer.name,
             style: style,
-            readonly: false,
+            readonly: true,
             nameHTML: nameHTML,
-            category: category
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: trekkingLayer.url,
+            isLazy: true
         });
 
         layer.initialize(map.getMap());
-        layer.load(trekkingLayer.url);
+        layer.registerLazyLayer(trekkingLayer.name, category, nameHTML, primaryKey, trekkingLayer.url);
     });
 });
-
-        // if (event.detail.modelname !== trekkingLayer.id) {
-        //     map.layerscontrol.addOverlay(layer, tr(trekkingLayer.name), tr('Trekking'));
-        // }
-        //
-        // map.getMap().on('layeradd', function (e) {
-        //     const options = e.layer.options || {'modelname': 'None'};
-        //     if (! trekkingLayer.isActive) {
-        //         if (options.modelname === trekkingLayer.id && options.modelname !== event.detail.modelname) {
-        //             e.layer.load(trekkingLayer.url);
-        //             trekkingLayer.isActive = true;
-        //         }
-        //     }
-        // });

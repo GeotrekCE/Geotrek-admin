@@ -2,12 +2,11 @@
 // Sensitivity
 //
 
-window.addEventListener('entity:map', (event) => {
-    const { map } = event.detail;
+window.addEventListener('entity:map', () => {
+    const map = window.MapEntity.currentMap.map;
     const modelname = 'sensitivearea';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
-    // let loaded_sensitivearea = false;
 
     // Show sensitivearea layer in application maps
     const style = {
@@ -20,29 +19,19 @@ window.addEventListener('entity:map', (event) => {
 
     const nameHTML = tr('sensitivearea');
     const category = tr('Sensitivity');
+    const primaryKey = generateUniqueId();
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false,
+        readonly: true,
         nameHTML: nameHTML,
-        category: category
+        category: category,
+        primaryKey: primaryKey,
+        dataUrl: layerUrl,
+        isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-// if (event.detail.modelname !== modelname) {
-    //     map.layerscontrol.addOverlay(objectsLayer, tr('sensitivearea'), tr('Sensitivity'));
-    // }
-
-    // map.getMap().on('layeradd', function (e) {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     if (!loaded_sensitivearea) {
-    //         if (options.modelname === modelname && options.modelname !== e.detail.modelname) {
-    //             e.layer.load(layerUrl);
-    //             loaded_sensitivearea = true;
-    //         }
-    //     }
-    // });

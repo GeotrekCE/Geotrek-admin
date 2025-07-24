@@ -2,8 +2,8 @@
 // Signage
 //
 
-window.addEventListener('entity:map', (event) => {
-    const { map } = event.detail;
+window.addEventListener('entity:map', () => {
+    const map = window.MapEntity.currentMap.map;
     const modelname = 'signage';
     const layername = `${modelname}_layer`;
     const layerUrl = window.SETTINGS.urls[layername];
@@ -19,30 +19,19 @@ window.addEventListener('entity:map', (event) => {
 
     const nameHTML = tr('Signage');
     const category = tr('Signage');
+    const primaryKey = generateUniqueId();
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false,
+        readonly: true,
         nameHTML: nameHTML,
-        category: category
+        category: category,
+        primaryKey: primaryKey,
+        dataUrl: layerUrl,
+        isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-// if (event.detail.modelname !== modelname) {
-    //     map.layerscontrol.addOverlay(objectsLayer, tr('Signages'), tr('Signage'));
-    // }
-
-    // map.getMap().on('layeradd', (e) => {
-    //     const options = e.layer.options || { 'modelname': 'None' };
-    //     if (!loadedSignage) {
-    //         if (options.modelname === modelname && options.modelname !== event.detail.modelname) {
-    //             e.layer.load(layerUrl);
-    //             objectsLayer.load(layerUrl);
-    //             loadedSignage = true;
-    //         }
-    //     }
-    // });

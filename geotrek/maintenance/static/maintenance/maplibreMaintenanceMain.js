@@ -1,8 +1,8 @@
 //
 // Maintenance / interventions
 //
-window.addEventListener("entity:map", (e) => {
-    const { map } = e.detail;
+window.addEventListener("entity:map", () => {
+    const map = window.MapEntity.currentMap.map;
     const modelname = 'intervention';
     const layername = 'intervention_layer';
     const layerUrl = window.SETTINGS.urls[layername];
@@ -17,32 +17,22 @@ window.addEventListener("entity:map", (e) => {
 
     const nameHTML = tr('Intervention');
     const category = tr('Maintenance');
+    const primaryKey = generateUniqueId();
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style,
         modelname: modelname,
-        readonly: false,
+        readonly: true,
         nameHTML: nameHTML,
-        category: category
+        category: category,
+        primaryKey: primaryKey,
+        dataUrl: layerUrl,
+        isLazy: true
     });
 
     objectsLayer.initialize(map.getMap());
-    objectsLayer.load(layerUrl);
+    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
 });
-
-    // if(e.detail.modelname !== modelname) {
-    //     e.detail.map.layerscontrol.addOverlay(objectsLayer, tr('Intervention'), tr('Maintenance'));
-    // }
-
-    // Load objects from the backend
-    // map.getMap().on('layeradd', function (event) {
-    //     const options = event.layer.options || { 'modelname': 'None' };
-    //     if (options.modelname === modelname && options.modelname !== e.detail.modelname) {
-    //         event.layer.load(layerUrl);
-    //         objectsLayer.load(layerUrl);
-    //     }
-    // });
-
 
 // Date picker with placeholder on input
 function setDatePickerConfig(idList) {
