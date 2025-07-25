@@ -1203,6 +1203,12 @@ For each module, use the following syntax to configure fields to hide in the cre
 Hideable form fields
 ^^^^^^^^^^^^^^^^^^^^^
 
+A field can be hidden only if it meets **all** the following conditions:
+
+- It is included in the form's ``fields`` list  
+- It is **not required**  
+- It is **not** in the form's ``not_hideable_fields`` list
+
 .. warning::
 
    There are exceptions, for example if a **Suricate workflow** is enabled.
@@ -1210,12 +1216,6 @@ Hideable form fields
    Be careful with the *recommended* fields required to publish an object 
    (``COMPLETENESS_FIELDS`` and ``COMPLETENESS_LEVEL`` settings).  
    They will indeed be hidden, but this can raise an **error** or a **warning** when saving.
-
-   A field can be hidden only if it meets **all** the following conditions:
-
-   - It is included in the form's ``fields`` list  
-   - It is **not required**  
-   - It is **not** in the form's ``not_hideable_fields`` list
 
 .. example:: Exhaustive list of form fields hideable in each module
     :collapsible:
