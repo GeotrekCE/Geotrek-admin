@@ -139,7 +139,7 @@ PostgreSQL
 
   Geotrek-admin support **PostgreSQL 12+**, **PostGIS 2.5+** and **PgRouting 3.0+** for now.
 
-  We recommend to upgrade to **PostgreSQL 16**, **PostGIS 3.4** and **PgRouting 3.7**.
+  We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and **PgRouting 3.7.0**.
 
 You can check your versions with the following command:
 

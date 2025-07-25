@@ -9,6 +9,10 @@ CHANGELOG
 
 - Change provider Charfield for a foreign key
 
+**Documentation**
+
+- Update hidden form fields list and postgres version recommandations (refs #4846)
+
 
 2.116.1    (2025-07-15)
 ----------------------------
