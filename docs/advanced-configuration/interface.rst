@@ -1211,7 +1211,7 @@ Hideable form fields
    (``COMPLETENESS_FIELDS`` and ``COMPLETENESS_LEVEL`` settings).  
    They will indeed be hidden, but this can raise an **error** or a **warning** when saving.
 
-   To summarize, a field can be hidden only if it meets **all** the following conditions:
+   A field can be hidden only if it meets **all** the following conditions:
 
    - It is included in the form's ``fields`` list  
    - It is **not required**  
