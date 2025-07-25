@@ -20,13 +20,7 @@ window.addEventListener("entity:map", function (event) {
         const nameHTML = tr(trekkingLayer.name);
         const category = tr('Trekking');
 
-        const style = {
-            color: 'blue',
-            weight: 2,
-            opacity: 0.5,
-            fillColor: '#FF0000',
-            fillOpacity: 0.1
-        };
+       let style = window.SETTINGS.map.styles[trekkingLayer.id] ?? window.SETTINGS.map.styles['autres'];
 
         let primaryKey = generateUniqueId();
 
