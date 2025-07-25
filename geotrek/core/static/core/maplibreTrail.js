@@ -7,17 +7,10 @@ window.addEventListener("entity:map", () => {
     const nameHTML = tr('Trails');
     const category = tr('Trail');
     const primaryKey = generateUniqueId();
-
-    const style = {
-        color: 'blue',
-        weight: 2,
-        opacity: 0.5,
-        fillColor: '#FF0000',
-        fillOpacity: 0.1
-    };
+    const style = window.SETTINGS.map.styles['path'] ?? window.SETTINGS.map.styles['autres'];
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
-            style,
+            style: style,
             modelname: modelname,
             readonly: true,
             nameHTML: nameHTML,

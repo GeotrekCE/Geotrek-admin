@@ -12,14 +12,6 @@ window.addEventListener("entity:map", () => {
     ];
 
     const colorspools = window.SETTINGS.map?.colorspool || {};
-    const style = {
-        color: 'blue',
-        weight: 2,
-        opacity: 0.5,
-        fillColor: '#FF0000',
-        fillOpacity: 0.1
-    };
-
     const category = tr('Status');
 
     for (const managementLayer of managementLayers) {
@@ -33,6 +25,8 @@ window.addEventListener("entity:map", () => {
 
         nameHTML += `&nbsp;${managementLayer.name}`;
         let primaryKey = generateUniqueId();
+
+        let style = window.SETTINGS.map.styles[managementLayer.id] ?? window.SETTINGS.map.styles['autres'];
         const layer = new MaplibreObjectsLayer(null, {
             modelname: managementLayer.name,
             style: style,
