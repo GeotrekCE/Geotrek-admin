@@ -1205,7 +1205,7 @@ Hideable form fields
 
 .. warning::
 
-   There may be other exceptions, for example if a **Suricate workflow** is enabled.
+   There are exceptions, for example if a **Suricate workflow** is enabled.
 
    Be careful with the *recommended* fields required to publish an object 
    (``COMPLETENESS_FIELDS`` and ``COMPLETENESS_LEVEL`` settings).  
