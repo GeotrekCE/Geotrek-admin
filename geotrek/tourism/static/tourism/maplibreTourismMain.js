@@ -5,13 +5,7 @@ window.addEventListener('entity:map', (event) => {
         const layername = `${modelname}_layer`;
         const layerUrl = window.SETTINGS.urls[layername];
 
-        const style = {
-            color: 'blue',
-            weight: 2,
-            opacity: 0.5,
-            fillColor: '#FF0000',
-            fillOpacity: 0.1
-        };
+        let style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
 
         const nameHTML = tr(modelname);
         const category = tr('Tourism');
