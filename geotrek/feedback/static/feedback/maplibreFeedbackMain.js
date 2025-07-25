@@ -11,17 +11,10 @@ window.addEventListener('entity:map', function () {
     const nameHTML = tr('Report');
     const category = tr('Feedback');
     const primaryKey = generateUniqueId();
-
-    const style = {
-        color: 'blue',
-        weight: 2,
-        opacity: 0.5,
-        fillColor: '#FF0000',
-        fillOpacity: 0.1
-    };
+    const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
-        style,
+        style: style,
         modelname: modelname,
         readonly: true,
         nameHTML: nameHTML,
