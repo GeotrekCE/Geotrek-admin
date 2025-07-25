@@ -1215,6 +1215,7 @@ Hideable form fields
 
    - It is included in the form's ``fields`` list  
    - It is **not required**  
+   - It is **not** in the form's ``not_hideable_fields`` list
 
 .. example:: Exhaustive list of form fields hideable in each module
     :collapsible:
