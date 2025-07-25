@@ -13,14 +13,7 @@ window.addEventListener('entity:map', () => {
     });
 
     landLayers.forEach((landLayer, i) => {
-        const style = {
-            color: 'blue',
-            weight: 2,
-            opacity: 0.5,
-            fillColor: '#FF0000',
-            fillOpacity: 0.1
-        };
-
+        const style = window.SETTINGS.map.styles[landLayer.id] ?? window.SETTINGS.map.styles['autres'];
         // Couleur personnalisée par colorspool
         const pool = colorspools[landLayer.id];
         if (pool) {
