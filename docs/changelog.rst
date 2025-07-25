@@ -9,6 +9,9 @@ CHANGELOG
 
 - Change provider Charfield for a foreign key
 
+**Documentation**
+
+- Update make serve_docs command in makefile (refs #4847)
 
 2.116.1    (2025-07-15)
 ----------------------------
