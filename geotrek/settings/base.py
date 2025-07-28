@@ -262,7 +262,7 @@ MIDDLEWARE = (
     "maintenance_mode.middleware.MaintenanceModeMiddleware",
 )
 
-MAINTENANCE_MODE_IGNORE_URLS = (r"/api/v2",)  # IGNORE /api/v2 from maintenance
+MAINTENANCE_MODE_IGNORE_URLS = (r"/api", )  # IGNORE /api/v2 from maintenance
 MAINTENANCE_MODE_STATE_BACKEND = "maintenance_mode.backends.StaticStorageBackend"
 
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != "" else None
