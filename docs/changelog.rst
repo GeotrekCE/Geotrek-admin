@@ -5,9 +5,14 @@ CHANGELOG
 2.116.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+- The ``mobile`` API now references the city's internal ID instead of its code, since codes are not used in all countries.
+
 **Improvements**
 
-- Change provider Charfield for a foreign key
+- Change provider Charfield to a foreign key
+- The ``mobile`` API now references the city's internal ID instead of its code
 
 
 2.116.1    (2025-07-15)
