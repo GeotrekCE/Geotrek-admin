@@ -48,14 +48,14 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             qs = City.objects.filter(published=True)
             cities = qs.filter(geom__intersects=(obj.geom, 0))
-            return cities.values_list("code", flat=True)
+            return cities.values_list("id", flat=True)
 
         def get_departure_city(self, obj):
             qs = City.objects.filter(published=True)
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
                 if city:
-                    return city.code
+                    return city.id
             return None
 
         def get_districts(self, obj):
@@ -143,7 +143,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             if obj.end_point:
                 city = qs.filter(geom__covers=(obj.end_point, 0)).first()
                 if city:
-                    return city.code
+                    return city.id
             return None
 
         def get_information_desks(self, obj):
