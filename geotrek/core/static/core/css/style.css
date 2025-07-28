@@ -1,17 +1,17 @@
 
 .cursor-topo-start {
-    cursor: url('images/marker-source-snap.png') 13 40, w-resize;
+    cursor: url('../images/marker-source-snap.png') 13 40, w-resize;
 }
 
 .cursor-topo-end {
-    cursor: url('images/marker-target-snap.png') 13 40, e-resize;
+    cursor: url('../images/marker-target-snap.png') 13 40, e-resize;
 }
 
 /* Point topology */
 .marker-point {
     padding-left: 25px;
     padding-top: 41px;
-    background-image: url('images/marker-add.png') ;
+    background-image: url('../images/marker-add.png') ;
     background-repeat: no-repeat;
     height: 0px !important;
     width: 0px !important;
@@ -19,7 +19,7 @@
 }
 
 .marker-point.marker-snapped {
-    background-image: url('images/marker-snap.png');
+    background-image: url('../images/marker-snap.png');
 }
 
 
@@ -30,7 +30,7 @@
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('images/marker-source.png');
+    background-image: url('../images/marker-source.png');
 }
 
 .marker-drag {
@@ -43,7 +43,7 @@
     margin-left: -9px !important;
     margin-top: -9px !important;
 
-    background-image: url('images/marker-drag.png');
+    background-image: url('../images/marker-drag.png');
 }
 
 .marker-target {
@@ -53,44 +53,44 @@
     height: 0px !important;
     width: 0px !important;
 
-    background-image: url('images/marker-target.png');
+    background-image: url('../images/marker-target.png');
 }
 
 .marker-source.marker-disabled {
-    background-image: url('images/marker-bound-disabled.png');
+    background-image: url('../images/marker-bound-disabled.png');
 }
 
 .marker-target.marker-disabled {
-    background-image: url('images/marker-bound-disabled.png');
+    background-image: url('../images/marker-bound-disabled.png');
 }
 
 .marker-drag.marker-disabled {
-    background-image: url('images/marker-drag-disabled.png');
+    background-image: url('../images/marker-drag-disabled.png');
 }
 
 .marker-drag.marker-highlighted {
-    background-image: url('images/marker-drag-highlighted.png'); 
+    background-image: url('../images/marker-drag-highlighted.png');
 }
 
 .marker-source.marker-snapped {
-    background-image: url('images/marker-source-snap.png');
+    background-image: url('../images/marker-source-snap.png');
 }
 
 .marker-target.marker-snapped {
-    background-image: url('images/marker-target-snap.png');
+    background-image: url('../images/marker-target-snap.png');
 }
 
-.marker-drag { background-image: url('images/marker-drag.png') }
+.marker-drag { background-image: url('../images/marker-drag.png') }
 .marker-drag.marker-snapped {
-    background-image: url('images/marker-drag-snap.png');
+    background-image: url('../images/marker-drag-snap.png');
 }
 
 .linetopology-control {
-    background-image: url(images/linetopology-control.png);
+    background-image: url(../images/linetopology-control.png);
 }
 
 .pointtopology-control {
-    background-image: url(images/pointtopology-control.png);
+    background-image: url(../images/pointtopology-control.png);
 }
 
 .details-panel td.paths li {
