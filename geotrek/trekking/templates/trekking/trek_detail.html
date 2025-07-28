@@ -191,4 +191,238 @@
 {##}
 {#        });#}
 {#    </script>#}
+
+    <script type="text/javascript">
+        // Supposons que 'map' est votre instance MapLibre GL JS déjà initialisée
+        window.addEventListener('entity:map:detail', function (e) {
+            console.log('event : ', e.detail);
+            const map = e.detail.map.getMap(); // Instance MapLibre GL JS
+
+            // Fonction utilitaire pour créer des markers HTML personnalisés
+            function createCustomMarker(feature, iconSize, className, showPopup = false) {
+                const el = document.createElement('div');
+                el.className = `custom-marker ${className}`;
+                el.style.width = `${iconSize}px`;
+                el.style.height = `${iconSize}px`;
+
+                // Créer l'image
+                const img = document.createElement('img');
+                img.src = feature.properties.type.pictogram;
+                img.style.width = '100%';
+                img.style.height = '100%';
+
+                // Définir le title/tooltip selon le type
+                let title = '';
+                if (className === 'poi-marker') {
+                    const category = feature.properties.type.label;
+                    const name = feature.properties.name;
+                    title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
+                } else if (className === 'service-marker') {
+                    title = feature.properties.type.name;
+                } else if (className === 'infrastructure-marker' || className === 'signage-marker') {
+                    const category = feature.properties.type.label;
+                    const name = feature.properties.name;
+                    title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
+                }
+
+                img.title = title;
+                el.appendChild(img);
+
+                // Ajouter un popup pour les POIs avec thumbnail
+                if (showPopup && feature.properties.thumbnail) {
+                    const popup = new maplibregl.Popup({ offset: 25 })
+                        .setHTML(`<img src="${feature.properties.thumbnail}" width="110" height="110">`);
+
+                    el.addEventListener('click', () => {
+                        popup.setLngLat(feature.geometry.coordinates).addTo(map);
+                    });
+                }
+
+                return el;
+            }
+
+            // Fonction pour ajouter une couche de markers
+            function addMarkerLayer(url, layerName, displayName, groupName, iconSize, className, doubleClickUrl) {
+                $.getJSON(url, function (data) {
+                    // Ajouter les markers individuellement
+                    data.features.forEach(feature => {
+                        const marker = new maplibregl.Marker({
+                            element: createCustomMarker(feature, iconSize, className, className === 'poi-marker')
+                        })
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+
+                        // Gérer le double-clic pour la navigation
+                        if (doubleClickUrl) {
+                            marker.getElement().addEventListener('dblclick', function(e) {
+                                e.stopPropagation();
+                                window.location = doubleClickUrl.replace('0', feature.properties.pk || feature.properties.id);
+                            });
+                        }
+
+                        // Stocker une référence au marker pour pouvoir le contrôler plus tard
+                        if (!map._customMarkers) map._customMarkers = {};
+                        if (!map._customMarkers[layerName]) map._customMarkers[layerName] = [];
+                        map._customMarkers[layerName].push(marker);
+                    });
+
+                    // Ajouter une classe CSS pour indiquer que la couche est chargée
+                    $('.map-panel').addClass(`${layerName}_loaded`);
+                });
+            }
+
+            //
+            // Parking
+            {% if object.parking_location %}
+                const parkingEl = document.createElement('div');
+                parkingEl.className = 'parking-marker';
+                parkingEl.style.width = '{{ view.icon_sizes.parking }}px';
+                parkingEl.style.height = '{{ view.icon_sizes.parking }}px';
+                parkingEl.style.backgroundImage = 'url("{% static "trekking/img/parking.png" %}")';
+                parkingEl.style.backgroundSize = 'contain';
+                parkingEl.style.backgroundRepeat = 'no-repeat';
+
+                const point = {{object.parking_location.geojson|safe}};
+                const location = [point.coordinates[0], point.coordinates[1]]; // Pas besoin de reverse avec MapLibre
+
+                const parkingMarker = new maplibregl.Marker({ element: parkingEl })
+                    .setLngLat(location)
+                    .addTo(map);
+
+                // Ajouter popup
+                const parkingPopup = new maplibregl.Popup({ offset: 25 })
+                    .setHTML("{{ object.advised_parking|default:_("None") }}");
+
+                parkingEl.addEventListener('click', () => {
+                    parkingPopup.setLngLat(location).addTo(map);
+                });
+
+                // Ajuster les bounds pour inclure le parking
+                const bounds = map.getBounds();
+                bounds.extend(location);
+                map.fitBounds(bounds);
+            {% endif %}
+
+            //
+            // Trek POIs layer
+            addMarkerLayer(
+                '{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type',
+                'poi',
+                tr('POIs'),
+                tr('Objects'),
+                {{ view.icon_sizes.POI }},
+                'poi-marker',
+                "{% url 'trekking:poi_detail' 0 %}"
+            );
+
+            // Fonction pour afficher l'énumération des POIs (équivalent de showEnumeration)
+            setTimeout(() => {
+                $('.map-panel').addClass('poi_enum_loaded');
+            }, 1000);
+
+            //
+            // Trek services layer
+            addMarkerLayer(
+                '{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}',
+                'services',
+                tr('Services'),
+                tr('Objects'),
+                {{ view.icon_sizes.service }},
+                'service-marker',
+                "{% url 'trekking:service_detail' 0 %}"
+            );
+
+            //
+            // Trek signage layer
+            addMarkerLayer(
+                '{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}',
+                'signages',
+                tr('Signages'),
+                tr('Objects'),
+                {{ view.icon_sizes.signage }},
+                'signage-marker',
+                "{% url 'signage:signage_detail' 0 %}"
+            );
+
+            //
+            // Trek infrastructure layer
+            addMarkerLayer(
+                '{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}',
+                'infrastructures',
+                tr('Infrastructures'),
+                tr('Objects'),
+                {{ view.icon_sizes.infrastructure }},
+                'infrastructure-marker',
+                "{% url 'infrastructure:infrastructure_detail' 0 %}"
+            );
+
+            //
+            // Trek information desks layer
+            $.getJSON('{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+                data.features.forEach(feature => {
+                    if (feature.properties.type.pictogram) {
+                        const infoDeskEl = document.createElement('div');
+                        infoDeskEl.className = 'info-desk-marker';
+                        infoDeskEl.style.width = '{{ view.icon_sizes.information_desk }}px';
+                        infoDeskEl.style.height = '{{ view.icon_sizes.information_desk }}px';
+
+                        const img = document.createElement('img');
+                        img.src = feature.properties.type.pictogram;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        infoDeskEl.appendChild(img);
+
+                        new maplibregl.Marker({ element: infoDeskEl })
+                            .setLngLat(feature.geometry.coordinates)
+                            .addTo(map);
+                    }
+                });
+                $('.map-panel').addClass('info_desks_loaded');
+            });
+
+            //
+            // Points of reference
+            (function (map) {
+                var data = {{ object.points_reference.geojson|safe|default:'null' }};
+                if (data && data.features) {
+                    let counter = 1;
+                    data.features.forEach(feature => {
+                        const refPointEl = document.createElement('div');
+                        refPointEl.className = 'point-reference';
+                        refPointEl.textContent = counter++;
+                        refPointEl.style.width = '30px';
+                        refPointEl.style.height = '30px';
+                        refPointEl.style.backgroundColor = 'white';
+                        refPointEl.style.border = '2px solid #333';
+                        refPointEl.style.borderRadius = '50%';
+                        refPointEl.style.display = 'flex';
+                        refPointEl.style.alignItems = 'center';
+                        refPointEl.style.justifyContent = 'center';
+                        refPointEl.style.fontWeight = 'bold';
+                        refPointEl.style.fontSize = '12px';
+                        refPointEl.style.zIndex = '9999';
+
+                        new maplibregl.Marker({
+                            element: refPointEl,
+                            anchor: 'center'
+                        })
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+                    });
+                }
+                $('.map-panel').addClass('ref_points_loaded');
+            })(map);
+
+            // Fonction utilitaire pour contrôler la visibilité des couches
+            map.toggleLayerVisibility = function(layerName, visible) {
+                if (this._customMarkers && this._customMarkers[layerName]) {
+                    this._customMarkers[layerName].forEach(marker => {
+                        const element = marker.getElement();
+                        element.style.display = visible ? 'block' : 'none';
+                    });
+                }
+            };
+
+        });
+    </script>
 {% endblock extrabody %}
