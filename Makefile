@@ -28,8 +28,8 @@ purge_docs:
 	rm -rf docs/_build
 
 serve_docs: purge_docs
-	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -p ${SPHINX_PORT}:8800 -v ./var/cache:/.cache web bash -c
-	"sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -p ${SPHINX_PORT}:8800 -v ./var/cache:/.cache web bash \
+    -c "sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
 
 build_docs: purge_docs
 	$(docker_compose) run --rm -w /opt/geotrek-admin/docs web bash -c "make html SPHINXOPTS=\"-W\""
