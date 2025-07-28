@@ -13,12 +13,12 @@
 </script>
 {% if modelname == "trek" %}
 {#    <script type="text/javascript" src="{% static 'trekking/main.js' %}"></script>#}
-{#    <script type="application/json" id="practices">#}
-{#        {% trek_practices as practices %}#}
-{#        {{ practices|safe }}#}
-{#    </script>#}
-{#    <script type="application/json" id="all-ratings-scales">#}
-{#        {% all_ratings_scales as scales %}#}
-{#        {{ scales|safe }}#}
-{#    </script>#}
+    <script type="application/json" id="practices">
+        {% trek_practices as practices %}
+        {{ practices|safe }}
+    </script>
+    <script type="application/json" id="all-ratings-scales">
+        {% all_ratings_scales as scales %}
+        {{ scales|safe }}
+    </script>
 {% endif %}
