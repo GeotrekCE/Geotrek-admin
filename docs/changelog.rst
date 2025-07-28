@@ -12,6 +12,8 @@ CHANGELOG
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+- Update hidden form fields list and postgres version recommandations (refs #4846)
+
 
 2.116.1    (2025-07-15)
 ----------------------------

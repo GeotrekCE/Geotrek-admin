@@ -327,7 +327,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.4.2
+reportlab==4.4.3
     # via
     #   easy-thumbnails
     #   svglib
@@ -347,7 +347,7 @@ ruamel-yaml==0.18.14
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.33.0
+sentry-sdk==2.33.2
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -408,7 +408,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-weasyprint==65.1
+weasyprint==66.0
     # via
     #   geotrek (setup.py)
     #   django-weasyprint
@@ -434,7 +434,7 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==5.0
     # via persistent
-zope-event==5.1
+zope-event==5.1.1
     # via gevent
 zope-interface==7.2
     # via
