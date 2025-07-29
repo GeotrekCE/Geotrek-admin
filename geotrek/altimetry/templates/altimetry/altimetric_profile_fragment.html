@@ -3,14 +3,14 @@
 <div id="altitudegraph">
     <a class="toggle" title="{% trans "Toggle altimetric profile" %}">&nbsp;</a><h4>{% trans "Altitude profile" %}</h4>
 </div>
-{#<script type="text/javascript">#}
-{#    $(document).ready(function () {#}
-{#        $('#altitudegraph a.toggle').click(function (e) {#}
-{#            $('#altitudegraph').toggleClass('colapsed');#}
-{#        });#}
-{#    });#}
-{##}
-{#    $(window).on('detailmap:ready', function () {#}
-{#        $('#altitudegraph').append('<img src="{% url profile_url LANGUAGE_CODE object.pk %}">');#}
-{#    });#}
-{#</script>#}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#altitudegraph a.toggle').click(function (e) {
+            $('#altitudegraph').toggleClass('colapsed');
+        });
+    });
+
+    $(window).on('entity:map:detail', function (e) {
+        $('#altitudegraph').append('<img src="{% url profile_url LANGUAGE_CODE object.pk %}">');
+    });
+</script>
