@@ -1,3 +1,4 @@
+/*
 $(window).on('entity:map', function (e, data) {
     var modelname = 'trail';
     var layername = `${modelname}_layer`;
@@ -26,3 +27,5 @@ $(window).on('entity:map', function (e, data) {
         }
     });
 });
+
+ */

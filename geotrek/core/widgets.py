@@ -38,7 +38,7 @@ class BaseTopologyWidget(MapWidget):
     """A widget allowing to create topologies on a map."""
 
     template_name = "core/topology_widget_fragment.html"
-    geometry_field_class = "MapEntity.GeometryField.TopologyField"
+    # geometry_field_class = "MapEntity.GeometryField.TopologyField"
     is_line_topology = False
     is_point_topology = False
 
@@ -77,7 +77,7 @@ class PointTopologyWidget(BaseTopologyWidget):
     is_point_topology = True
 
 
-class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
+class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget, MapWidget):
     """A widget allowing to point a position with a marker or a list of paths."""
-
+    modifiable = True
     pass
