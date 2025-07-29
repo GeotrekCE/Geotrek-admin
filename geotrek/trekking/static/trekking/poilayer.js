@@ -1,5 +1,5 @@
+/*
 var POILayer = L.GeoJSON.extend({
-
     initialize: function (poisData, options) {
         options = options || {};
         options.pointToLayer = this.poisMarker.bind(this);
@@ -41,4 +41,6 @@ var POILayer = L.GeoJSON.extend({
         return marker;
     }
  });
- 
+
+ */
+

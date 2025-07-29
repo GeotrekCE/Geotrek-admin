@@ -1,3 +1,4 @@
+/*
 $(window).on('entity:map', function (e, data) {
 
     var map = data.map;
@@ -84,3 +85,4 @@ $(window).on('entity:view:filter', function () {
         }
     });
 });
+*/
