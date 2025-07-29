@@ -195,7 +195,6 @@
     <script type="text/javascript">
         // Supposons que 'map' est votre instance MapLibre GL JS déjà initialisée
         window.addEventListener('entity:map:detail', function (e) {
-            console.log('event : ', e.detail);
             const map = e.detail.map.getMap(); // Instance MapLibre GL JS
 
             // Fonction utilitaire pour créer des markers HTML personnalisés
@@ -210,9 +209,25 @@
                 img.src = feature.properties.type.pictogram;
                 img.style.width = '100%';
                 img.style.height = '100%';
+                // Gestion de l’erreur de chargement (404, etc.)
+                // TODO : switch case className
+                img.onerror = function () {
+                    if (className === 'poi-marker') {
+                        this.src = "{% static 'trekking/img/default-poi.png' %}";
+                    } else if (className === 'service-marker') {
+                        this.src = "{% static 'trekking/img/default-service.png' %}";
+                    } else if (className === 'signage-marker') {
+                        this.src = "{% static 'trekking/img/default-signage.png' %}";
+                    } else if (className === 'infrastructure-marker') {
+                        this.src = "{% static 'trekking/img/default-infra.png' %}";
+                    } else {
+                        this.src = "{% static 'trekking/img/default-marker.png' %}";
+                    }
+                };
 
                 // Définir le title/tooltip selon le type
                 let title = '';
+                 // TODO : switch case className
                 if (className === 'poi-marker') {
                     const category = feature.properties.type.label;
                     const name = feature.properties.name;
@@ -244,6 +259,7 @@
             // Fonction pour ajouter une couche de markers
             function addMarkerLayer(url, layerName, displayName, groupName, iconSize, className, doubleClickUrl) {
                 $.getJSON(url, function (data) {
+                    console.log(`${layerName} data:`, data);
                     // Ajouter les markers individuellement
                     data.features.forEach(feature => {
                         const marker = new maplibregl.Marker({
@@ -252,18 +268,13 @@
                         .setLngLat(feature.geometry.coordinates)
                         .addTo(map);
 
-                        // Gérer le double-clic pour la navigation
-                        if (doubleClickUrl) {
-                            marker.getElement().addEventListener('dblclick', function(e) {
-                                e.stopPropagation();
-                                window.location = doubleClickUrl.replace('0', feature.properties.pk || feature.properties.id);
-                            });
-                        }
-
-                        // Stocker une référence au marker pour pouvoir le contrôler plus tard
-                        if (!map._customMarkers) map._customMarkers = {};
-                        if (!map._customMarkers[layerName]) map._customMarkers[layerName] = [];
-                        map._customMarkers[layerName].push(marker);
+                        // aucune interaction par défaut autorisée sur la page détail
+                        {#if (doubleClickUrl) {#}
+                        {#    marker.getElement().addEventListener('dblclick', function(e) {#}
+                        {#        e.stopPropagation();#}
+                        {#        window.location = doubleClickUrl.replace('0', feature.properties.pk || feature.properties.id);#}
+                        {#    });#}
+                        {# } #}
                     });
 
                     // Ajouter une classe CSS pour indiquer que la couche est chargée
@@ -360,6 +371,7 @@
             // Trek information desks layer
             $.getJSON('{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 data.features.forEach(feature => {
+                    console.log('Information Desk Feature:', feature);
                     if (feature.properties.type.pictogram) {
                         const infoDeskEl = document.createElement('div');
                         infoDeskEl.className = 'info-desk-marker';
@@ -412,16 +424,6 @@
                 }
                 $('.map-panel').addClass('ref_points_loaded');
             })(map);
-
-            // Fonction utilitaire pour contrôler la visibilité des couches
-            map.toggleLayerVisibility = function(layerName, visible) {
-                if (this._customMarkers && this._customMarkers[layerName]) {
-                    this._customMarkers[layerName].forEach(marker => {
-                        const element = marker.getElement();
-                        element.style.display = visible ? 'block' : 'none';
-                    });
-                }
-            };
 
         });
     </script>

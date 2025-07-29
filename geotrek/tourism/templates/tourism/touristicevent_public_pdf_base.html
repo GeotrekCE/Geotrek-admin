@@ -6,7 +6,7 @@
 <html lang="en">
   <head>
     {% block style %}
-      <style type="text/css">
+      <style>
         {% include template_css %}
 
         .intro-left .teaser,
@@ -45,7 +45,7 @@
       </header>
       <div class="gray">
         <div class="main-icon category-E">
-          <img src="file://{{ STATIC_ROOT }}/tourism/touristicevent.svg" alt="">
+          <img src="file://{{ STATIC_ROOT }}/tourism/img/touristicevent.svg" alt="">
         </div>
         {% if object.approved %}
           {% block trademark %}
