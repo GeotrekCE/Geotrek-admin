@@ -1,37 +1,31 @@
-$(window).on('entity:map', function (e, data) {
+window.addEventListener('entity:map', () => {
+    const map = window.MapEntity.currentMap.map;
 
-    var map = data.map;
-    var loaded_site = false;
-    var loaded_course = false;
-    // Show outdoor layers in application maps
-    $.each(['site', 'course'], function (i, modelname) {
-        var style = L.Util.extend({ clickable: false },
-            window.SETTINGS.map.styles[modelname] || {});
-        var layer = new L.ObjectsLayer(null, {
-            modelname: modelname,
+    ['site', 'course'].forEach((modelname) => {
+        const layername = `${modelname}_layer`;
+        const layerUrl = window.SETTINGS.urls[layername];
+        let style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
+        const nameHTML = tr(modelname);
+        const category = tr('Outdoor');
+        let primaryKey = generateUniqueId();
+
+        // Show site and course layers in application maps
+        const objectsLayer = new MaplibreObjectsLayer(null, {
             style: style,
+            modelname: modelname,
+            readonly: false,
+            nameHTML: nameHTML,
+            category: category,
+            primaryKey: primaryKey,
+            dataUrl: layerUrl,
+            isLazy: true
         });
-        if (data.modelname != modelname) {
-            map.layerscontrol.addOverlay(layer, tr(modelname), tr('Outdoor'));
-        };
-        map.on('layeradd', function (e) {
-            var options = e.layer.options || { 'modelname': 'None' };
-            if (!loaded_site) {
-                if (options.modelname == 'site' && options.modelname != data.modelname) {
-                    e.layer.load(window.SETTINGS.urls.site_layer);
-                    loaded_site = true;
-                }
-            }
-            if (!loaded_course) {
-                if (options.modelname == 'course' && options.modelname != data.modelname) {
-                    e.layer.load(window.SETTINGS.urls.course_layer);
-                    loaded_course = true;
-                }
-            }
-        });
+
+        objectsLayer.initialize(map.getMap());
+        objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
+
     });
 });
-
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
     if (data.modelname == 'site') {

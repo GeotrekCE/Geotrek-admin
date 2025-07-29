@@ -1,11 +1,11 @@
 {% extends "leaflet/widget.html" %}
 {% block map %}
-    {{ block.super }}
+{#    {{ block.super }}#}
     {% include "core/toast_wrong_topology_route.html" %}
 {% endblock map %}
 
 {% block vars %}
-    {{ block.super }}
+{#    {{ block.super }}#}
     {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
     {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
 {% endblock vars %}
