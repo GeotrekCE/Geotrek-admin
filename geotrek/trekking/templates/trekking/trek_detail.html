@@ -52,6 +52,147 @@
 
 {% block extrabody %}
     {{ block.super }}
+{#    <script src="{% static "trekking/poilayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/servicelayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/signagelayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/infrastructurelayer.js" %}"></script>#}
+{#    <script type="text/javascript">#}
+{#        $(window).on('detailmap:ready', function (e, data) {#}
+{#            var map = data.map;#}
+{##}
+{#            //#}
+{#            // Parking#}
+{#            {% if object.parking_location %}#}
+{#                var parkingIcon = L.icon({#}
+{#                    iconUrl: "{% static "trekking/parking.png" %}",#}
+{#                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],#}
+{#                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],#}
+{#                });#}
+{#                var point = {{object.parking_location.geojson|safe}};#}
+{#                var location = point.coordinates.reverse();#}
+{#                L.marker(location, {icon: parkingIcon})#}
+{#                 .bindPopup("{{ object.advised_parking|default:_("None") }}")#}
+{#                 .addTo(map);#}
+{##}
+{#                // Make sure parking icon is visible on the map#}
+{#                var bounds = map.getBounds();#}
+{#                bounds.extend(location);#}
+{#                map.fitBounds(bounds);#}
+{#            {% endif %}#}
+{##}
+{#            //#}
+{#            // Trek POIs layer#}
+{#            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type', function (data) {#}
+{#                var pois = new POILayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.POI }}#}
+{#                });#}
+{##}
+{#                var poiUrl = "{% url 'trekking:poi_detail' 0 %}";#}
+{#                pois.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = poiUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));#}
+{#                map.addLayer(pois);#}
+{##}
+{#                pois.showEnumeration();#}
+{#                $('.map-panel').addClass('poi_enum_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek services layer#}
+{#            $.getJSON('{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var services = new ServiceLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.service }}#}
+{#                });#}
+{##}
+{#                var serviceUrl = "{% url 'trekking:service_detail' 0 %}";#}
+{#                services.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = serviceUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(services, tr('Services'), tr('Objects'));#}
+{#                map.addLayer(services);#}
+{#                $('.map-panel').addClass('services_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek signage layer#}
+{#            $.getJSON('{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var signages = new SignagesLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.signage }}#}
+{#                });#}
+{##}
+{#                var signageUrl = "{% url 'signage:signage_detail' 0 %}";#}
+{#                signages.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = signageUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(signages, tr('Signages'), tr('Objects'));#}
+{#                map.addLayer(signages);#}
+{#                $('.map-panel').addClass('signages_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek infrastructure layer#}
+{#            $.getJSON('{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var infrastructures = new InfrastructuresLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.infrastructure }}#}
+{#                });#}
+{##}
+{#                var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";#}
+{#                infrastructures.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = infrastructureUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(infrastructures, tr('Infrastructures'), tr('Objects'));#}
+{#                map.addLayer(infrastructures);#}
+{#                $('.map-panel').addClass('services_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek information desks layer#}
+{#            $.getJSON('{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                L.geoJson(data, {#}
+{#                    pointToLayer: function (feature, latlng) {#}
+{#                        var infoDeskIcon = L.icon({#}
+{#                            iconUrl: feature.properties.type.pictogram,#}
+{#                            iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],#}
+{#                            iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],#}
+{#                        });#}
+{#                        return L.marker(latlng, feature.properties.type.pictogram ? {icon: infoDeskIcon} : {});#}
+{#                    }#}
+{#                }).addTo(map);#}
+{#                $('.map-panel').addClass('info_desks_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Points of reference#}
+{#            (function (map) {#}
+{#                var data = {{ object.points_reference.geojson|safe|default:'null' }};#}
+{#                L.geoJson(data, {#}
+{#                    pointToLayer: (function () {#}
+{#                        var counter = 1;#}
+{#                        return function (featureData, latlng) {#}
+{#                            var icon = L.divIcon({html: counter++,#}
+{#                                                  className: 'point-reference'});#}
+{#                            return L.marker(latlng, {#}
+{#                                clickable: false,#}
+{#                                icon: icon,#}
+{#                                zIndexOffset: 9999#}
+{#                            }).addTo(map);#}
+{#                        };#}
+{#                    })()#}
+{#                }).addTo(map);#}
+{#                $('.map-panel').addClass('ref_points_loaded');#}
+{#            })(map);#}
+{##}
+{#        });#}
+{#    </script>#}
 
     <script type="text/javascript">
         // Supposons que 'map' est votre instance MapLibre GL JS déjà initialisée
@@ -256,7 +397,7 @@
             //
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference.geojson|safe|default:'null' }};
+                const data = {{ object.points_reference.geojson|safe|default:'null' }};
                 if (data && data.features) {
                     let counter = 1;
                     data.features.forEach(feature => {
