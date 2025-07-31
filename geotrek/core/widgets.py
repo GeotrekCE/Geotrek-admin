@@ -17,7 +17,7 @@ from .models import Topology
 
 
 class SnappedLineStringWidget(MapWidget):
-    geometry_field_class = "MapEntity.GeometryField.GeometryFieldSnap"
+    # geometry_field_class = "MapEntity.GeometryField.GeometryFieldSnap"
 
     def serialize(self, value):
         geojson = super().serialize(value)
@@ -77,7 +77,7 @@ class PointTopologyWidget(BaseTopologyWidget):
     is_point_topology = True
 
 
-class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget, MapWidget):
+class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
     """A widget allowing to point a position with a marker or a list of paths."""
-    modifiable = True
+
     pass
