@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+2.117.0+dev    (XXXX-XX-XX)
+----------------------------
+
+**Bug fixes**
+
+- Update nginx configuration with Access-Control-Allow-Origin for static folder (refs #4859)
+
 2.117.0    (2025-07-28)
 ----------------------------
 
