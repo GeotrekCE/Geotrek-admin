@@ -2,7 +2,11 @@
 CHANGELOG
 =========
 
-2.117.0    (2025-07-28)
+2.117.0+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.117.0         (2025-07-28)
 ----------------------------
 
 **Breaking changes**
@@ -19,7 +23,7 @@ CHANGELOG
 - Update hidden form fields list and postgres version recommandations (refs #4846)
 
 
-2.116.1    (2025-07-15)
+2.116.1         (2025-07-15)
 ----------------------------
 
 **Improvements**
@@ -35,7 +39,7 @@ CHANGELOG
 - Update README.rst
 
 
-2.116.0    (2025-07-03)
+2.116.0         (2025-07-03)
 ----------------------------
 
 **Breaking changes**
@@ -72,7 +76,7 @@ CHANGELOG
 - Fix mobile api settings name for touristic content categories
 
 
-2.115.1    (2025-05-21)
+2.115.1         (2025-05-21)
 ----------------------------
 
 **Improvements**
@@ -100,7 +104,7 @@ CHANGELOG
 - Fix signage fixture typo
 
 
-2.115.0    (2025-04-29)
+2.115.0         (2025-04-29)
 ----------------------------
 
 **Warnings**
@@ -129,7 +133,7 @@ CHANGELOG
 - Update documentation with missing parameters from base.py (#4676)
 
 
-2.114.0     (2025-03-13)
+2.114.0         (2025-03-13)
 ----------------------------
 
 **Breaking changes**
