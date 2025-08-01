@@ -30,6 +30,7 @@ server {
     location /static {
         expires 1d;
         alias /opt/geotrek-admin/var/static;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
     }
 
     location ~ ^/mobile/(.*)$ {
