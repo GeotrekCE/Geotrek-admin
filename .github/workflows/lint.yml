@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install -y gettext
-          uv pip install -r requirements-dev.txt
+          uv pip install -r requirements.txt -r requirements-dev.txt
           mkdir -p var/static var/conf/extra_static var/media/upload var/cache/sessions var/cache/api_v2 var/cache/fat var/log var/conf/extra_templates var/conf/extra_locale var/tmp
 
       - name: Check translations
