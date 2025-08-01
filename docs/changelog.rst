@@ -20,6 +20,7 @@ CHANGELOG
 
 **Documentation**
 
+- Update make serve_docs command in makefile (refs #4847)
 - Update hidden form fields list and postgres version recommandations (refs #4846)
 
 
