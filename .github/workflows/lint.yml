@@ -50,13 +50,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/python-cache-requirements
+      - uses: astral-sh/setup-uv@v6
         with:
-          requirements: requirements.txt
+            version: "latest"
+            python-version: "3.10"
+            enable-cache: true
+            cache-suffix: "ruff"
+            activate-environment: true
+
       - name: Install dependencies
         run: |
           sudo apt-get install -y gettext
-          pip3 install -r dev-requirements.txt
+          uv pip install -r dev-requirements.txt
           mkdir -p var/static var/conf/extra_static var/media/upload var/cache/sessions var/cache/api_v2 var/cache/fat var/log var/conf/extra_templates var/conf/extra_locale var/tmp
 
       - name: Check translations
@@ -69,7 +74,7 @@ jobs:
         id: verify-changed-files
         with:
           files: |
-            **/*.po
+            "**/*.po"
 
       - name: Verify translation files changed
         if: steps.verify-changed-files.outputs.files_changed == 'true'
