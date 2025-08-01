@@ -2,7 +2,7 @@
 Maintenance
 ===========
 
-.. _maintenance-mode:
+.. _maintenance:
 
 Maintenance mode
 ================
@@ -14,7 +14,6 @@ This will display a message to users indicating that the application is temporar
     :name: maintenance-mode
 
     .. md-tab-item:: With Debian
-
 
             .. code-block:: bash
 
