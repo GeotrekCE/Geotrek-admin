@@ -55,7 +55,13 @@ build_deb:
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version) -D RELEASED"
+	docker stop geotrek_release
+	docker rm geotrek_release
+
+back_to_dev:
+	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release"
 	docker stop geotrek_release
 	docker rm geotrek_release
 
