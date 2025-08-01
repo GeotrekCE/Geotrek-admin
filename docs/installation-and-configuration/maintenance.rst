@@ -2,6 +2,31 @@
 Maintenance
 ===========
 
+.. _maintenance:
+
+Maintenance mode
+================
+
+If you want to block access to your application while you are performing maintenance tasks, you can activate the maintenance mode.
+This will display a message to users indicating that the application is temporarily unavailable.
+
+.. md-tab-set::
+    :name: maintenance-mode
+
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+
+                sudo geotrek maintenance_mode on # activate maintenance mode
+                sudo geotrek maintenance_mode off # deactivate maintenance mode
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web ./manage.py maintenance_mode on # activate maintenance mode
+                docker compose run --rm web ./manage.py maintenance_mode off # deactivate maintenance mode
+
 .. _application-backup:
 
 Application backup

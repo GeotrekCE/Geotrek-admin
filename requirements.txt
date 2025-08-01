@@ -149,6 +149,8 @@ django-large-image==0.10.1
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
+django-maintenance-mode==0.22.0
+    # via geotrek (setup.py)
 django-modelcluster==6.4
     # via geotrek (setup.py)
 django-modeltranslation==0.19.16
@@ -307,6 +309,8 @@ python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.1.1
     # via geotrek (setup.py)
+python-fsutil==0.15.0
+    # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
 pytz==2025.2

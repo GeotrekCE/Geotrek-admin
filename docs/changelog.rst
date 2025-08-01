@@ -5,6 +5,14 @@ CHANGELOG
 2.117.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**New features**
+
+- Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+
+**Documentation**
+
+- Update make serve_docs command in makefile (refs #4847)
+
 
 2.117.0         (2025-07-28)
 ----------------------------
@@ -20,7 +28,6 @@ CHANGELOG
 
 **Documentation**
 
-- Update make serve_docs command in makefile (refs #4847)
 - Update hidden form fields list and postgres version recommandations (refs #4846)
 
 
