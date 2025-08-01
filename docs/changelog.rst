@@ -9,6 +9,10 @@ CHANGELOG
 
 - Update nginx configuration with Access-Control-Allow-Origin for static folder (refs #4859)
 
+**New features**
+
+- Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-10 11:20+0200\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -77,9 +77,6 @@ msgstr ""
 
 msgid "Labels accessibility"
 msgstr ""
-
-msgid "External id"
-msgstr "Externer Identifikator"
 
 msgid "Title"
 msgstr "Titel"
@@ -440,6 +437,9 @@ msgstr "Ja, nein,"
 
 msgid "None"
 msgstr "Keine"
+
+msgid "External id"
+msgstr "Externer Identifikator"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
