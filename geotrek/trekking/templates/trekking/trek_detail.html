@@ -212,35 +212,46 @@
                 img.style.width = '100%';
                 img.style.height = '100%';
 
-                // TODO : switch case className
+
                 img.onerror = function () {
-                    if (className === 'poi-marker') {
-                        this.src = "{% static 'trekking/img/default-poi.png' %}";
-                    } else if (className === 'service-marker') {
-                        this.src = "{% static 'trekking/img/default-service.png' %}";
-                    } else if (className === 'signage-marker') {
-                        this.src = "{% static 'trekking/img/default-signage.png' %}";
-                    } else if (className === 'infrastructure-marker') {
-                        this.src = "{% static 'trekking/img/default-infra.png' %}";
-                    } else {
-                        this.src = "{% static 'trekking/img/default-marker.png' %}";
+                    switch (className) {
+                        case 'poi-marker':
+                            this.src = "{% static 'trekking/img/default-poi.png' %}";
+                            break;
+                        case 'service-marker':
+                            this.src = "{% static 'trekking/img/default-service.png' %}";
+                            break;
+                        case 'signage-marker':
+                            this.src = "{% static 'trekking/img/default-signage.png' %}";
+                            break;
+                        case 'infrastructure-marker':
+                            this.src = "{% static 'trekking/img/default-infra.png' %}";
+                            break;
+                        default:
+                            this.src = "{% static 'trekking/img/default-marker.png' %}";
+                            break;
                     }
                 };
 
+
                 // Définir le title/tooltip selon le type
                 let title = '';
-                 // TODO : switch case className
-                if (className === 'poi-marker') {
-                    const category = feature.properties.type.label;
-                    const name = feature.properties.name;
-                    title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
-                } else if (className === 'service-marker') {
-                    title = feature.properties.type.name;
-                } else if (className === 'infrastructure-marker' || className === 'signage-marker') {
-                    const category = feature.properties.type.label;
-                    const name = feature.properties.name;
-                    title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
+
+                switch (className) {
+                    case 'poi-marker':
+                    case 'infrastructure-marker':
+                    case 'signage-marker': {
+                        const category = feature.properties.type.label;
+                        const name = feature.properties.name;
+                        title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
+                        break;
+                    }
+                    case 'service-marker': {
+                        title = feature.properties.type.name;
+                        break;
+                    }
                 }
+
 
                 img.title = title;
                 el.appendChild(img);
