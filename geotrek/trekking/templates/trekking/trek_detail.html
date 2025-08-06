@@ -197,7 +197,7 @@
     <script type="text/javascript">
         // Supposons que 'map' est votre instance MapLibre GL JS déjà initialisée
         window.addEventListener('entity:map:detail', function (e) {
-            const map = e.detail.map.getMap(); // Instance MapLibre GL JS
+            const map = e.detail.map.getMap();
 
             // Fonction utilitaire pour créer des markers HTML personnalisés
             function createCustomMarker(feature, iconSize, className, showPopup = false) {
@@ -206,12 +206,12 @@
                 el.style.width = `${iconSize}px`;
                 el.style.height = `${iconSize}px`;
 
-                // Créer l'image
+
                 const img = document.createElement('img');
                 img.src = feature.properties.type.pictogram;
                 img.style.width = '100%';
                 img.style.height = '100%';
-                // Gestion de l’erreur de chargement (404, etc.)
+
                 // TODO : switch case className
                 img.onerror = function () {
                     if (className === 'poi-marker') {
