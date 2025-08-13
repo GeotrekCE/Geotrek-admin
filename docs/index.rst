@@ -27,6 +27,38 @@ You can explore **Geotrek-admin** in action through the demonstration website:
 .. seealso::
     Learn more about Geotrek-admin in the :ref:`general documentation (french) <qu-est-ce-que-geotrek>`.
 
+.. _cards-clickable:
+
+Clickable cards
+...............
+
+Using the ``link`` and ``link-type`` options, you can turn an entire card into a clickable link. Try hovering over then clicking on the cards below:
+
+.. card:: Clickable Card (external)
+    :link: https://example.com
+
+    The entire card can be clicked to navigate to https://example.com.
+
+.. card:: Clickable Card (external)
+    :link: https://example.com
+    :link-alt: example.com
+
+    The entire card can be clicked to navigate to https://example.com.
+
+.. card:: Clickable Card (internal)
+    :link: cards-clickable
+    :link-type: ref
+
+    The entire card can be clicked to navigate to the ``cards-clickable`` reference target.
+
+.. card:: Clickable Card (internal)
+    :link: cards-clickable
+    :link-type: ref
+    :link-alt: clickable cards
+
+    The entire card can be clicked to navigate to the ``cards-clickable`` reference target.
+
+
 .. toctree::
     :caption: 💡 A propos
     :hidden:
