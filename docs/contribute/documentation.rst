@@ -19,6 +19,33 @@ To test documentation build, run:
 
     make build_docs
 
+Add extension
+--------------
+
+Follow these steps to add the ``sphinx-design`` extension to the documentation:
+
+1. **Enable the extension** in ``docs/conf.py``:
+
+   Example::
+
+       extensions = [
+           "new-extension",
+       ]
+
+2. **Add the extension to** ``requirements.in``:
+
+   Example::
+
+       new-extension
+
+3. **Generate the new requirements version** ``requirements.txt``::
+
+       pip-compile requirements.in -o requirements.txt
+
+4. **Build the documentation** to download the new package (using Docker)::
+
+       docker compose build
+
 
 Translate documentation
 -----------------------

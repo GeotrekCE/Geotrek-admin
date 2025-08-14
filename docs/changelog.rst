@@ -16,6 +16,7 @@ CHANGELOG
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+- Add main section blocks in landing page (refs #4883)
 
 
 2.117.0         (2025-07-28)
