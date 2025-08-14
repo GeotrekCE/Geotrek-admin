@@ -32,9 +32,10 @@ You can explore **Geotrek-admin** in action through the demonstration website:
 Main sections
 ...............
 
-.. grid:: 2  
+.. grid:: 2
+    :gutter: 2
 
-    .. card:: Explore what Geotrek can do
+    .. grid-item-card:: Explore what Geotrek can do
         :link: qu-est-ce-que-geotrek
         :link-type: ref
         :link-alt: what is Geotrek
@@ -47,7 +48,7 @@ Main sections
         +++
         Introduction to Geotrek
 
-    .. card:: Learn how to use Geotrek
+    .. grid-item-card:: Learn how to use Geotrek
         :link: user-manual
         :link-type: ref
         :link-alt: user manual
@@ -60,9 +61,10 @@ Main sections
         +++
         Functional documentation
 
-.. grid:: 2  
+.. grid:: 2
+    :gutter: 2  
 
-    .. card:: Follow step-by-step tutorials
+    .. grid-item-card:: Follow step-by-step tutorials
         :link: visualiser-les-donnees-dans-qgis
         :link-type: ref
         :link-alt: visualize your data in Qgis
@@ -75,7 +77,7 @@ Main sections
         +++
         Learn by doing
 
-    .. card:: Set up and configure your environment
+    .. grid-item-card::  Set up and configure your environment
         :link: basic-configuration-update
         :link-type: ref
         :link-alt: basic configuration
@@ -88,9 +90,10 @@ Main sections
         +++
         Technical setup
 
-.. grid:: 2  
+.. grid:: 2
+    :gutter: 2
 
-    .. card:: Customize and optimize Geotrek
+    .. grid-item-card::  Customize and optimize Geotrek
         :link: application-settings
         :link-type: ref
         :link-alt: application settings
@@ -103,7 +106,7 @@ Main sections
         +++
         Power user options
 
-    .. card:: Import and update your data
+    .. grid-item-card::  Import and update your data
         :link: minimal-initial-data
         :link-type: ref
         :link-alt: minimal initial data
@@ -116,9 +119,10 @@ Main sections
         +++
         Data management
 
-.. grid:: 2  
+.. grid:: 2
+    :gutter: 2 
 
-    .. card:: Get involved in the project
+    .. grid-item-card::  Get involved in the project
         :link: contributing
         :link-type: ref
         :link-alt: contributing
@@ -131,7 +135,7 @@ Main sections
         +++
         Community contributions
 
-    .. card:: Access extra resources
+    .. grid-item-card::  Access extra resources
         :link: troubleshooting
         :link-type: ref
         :link-alt: troubleshooting
