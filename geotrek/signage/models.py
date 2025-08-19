@@ -315,12 +315,6 @@ class Blade(
     conditions = models.ManyToManyField(
         BladeCondition, related_name="blades", verbose_name=_("Condition"), blank=True
     )
-    topology = models.ForeignKey(
-        Topology,
-        related_name="blades_set",
-        verbose_name=_("Blades"),
-        on_delete=models.CASCADE,
-    )
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
@@ -345,12 +339,6 @@ class Blade(
         return settings.BLADE_CODE_FORMAT.format(
             signagecode=self.signage.code, bladenumber=self.number
         )
-
-    def set_topology(self, topology):
-        self.topology = topology
-        if not self.is_signage:
-            msg = "Expecting a signage"
-            raise ValueError(msg)
 
     @property
     def conditions_display(self):
@@ -432,12 +420,6 @@ class Blade(
     def distance(self, to_cls):
         """Distance to associate this blade to another class"""
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
-
-
-@receiver(pre_delete, sender=Topology)
-def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
-    # Blade are deleted when Topology are deleted
-    log_cascade_deletion(sender, instance, Blade, "topology")
 
 
 @receiver(pre_delete, sender=Signage)
