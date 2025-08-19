@@ -58,7 +58,6 @@ ALTER TABLE signage_bladetype ALTER COLUMN date_update SET DEFAULT now();
 -- type
 -- color
 -- condition
--- topology
 ALTER TABLE signage_blade ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE signage_blade ALTER COLUMN date_update SET DEFAULT now();
 
