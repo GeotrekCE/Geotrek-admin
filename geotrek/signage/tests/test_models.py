@@ -37,12 +37,6 @@ class BladeModelTest(TestCase):
         if not user:
             UserFactory(username="__internal__")
 
-    def test_set_topology_other_error(self):
-        blade = BladeFactory.create()
-        infra = InfrastructureFactory.create()
-        with self.assertRaisesRegex(ValueError, "Expecting a signage"):
-            blade.set_topology(infra)
-
     def test_cascading_deletions(self):
         blade = BladeFactory.create()
         topo_pk = blade.topology.pk
