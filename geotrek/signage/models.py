@@ -333,6 +333,7 @@ class Blade(
 
     @classproperty
     def geomfield(cls):
+        # TODO: ensure this keeps working
         return Topology._meta.get_field("geom")
 
     def __str__(self):
@@ -350,16 +351,18 @@ class Blade(
     def paths(self):
         return self.signage.paths.all()
 
-    @property
-    def is_signage(self):
-        if self.topology:
-            return self.topology.kind == Signage.KIND
-        return False
+    # TODO: deprecate this method instead of removing it?
+    # @property
+    # def is_signage(self):
+    #     if self.topology:
+    #         return self.topology.kind == Signage.KIND
+    #     return False
 
     @property
     def geom(self):
         return self.signage.geom
 
+    # TODO
     @geom.setter
     def geom(self, value):
         self._geom = value

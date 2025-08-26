@@ -32,6 +32,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- TODO: this function is never called
+-- Its trigger was removed in this PR: https://github.com/GeotrekCE/Geotrek-admin/pull/2218
 CREATE FUNCTION {{ schema_geotrek }}.delete_related_intervention_blade() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id AND target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'blade');
