@@ -365,6 +365,10 @@ class Blade(
         self._geom = value
 
     @property
+    def topology(self):
+        return self.signage.topo_object
+
+    @property
     def signage_display(self):
         return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
 
