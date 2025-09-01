@@ -173,6 +173,11 @@ class SettingsView(APIView):
                     Practice.objects.filter(
                         pk__in=Trek.objects.existing()
                         .filter(published=True)
+                        .filter(
+                            Q(portal__name=request.GET["portal"]) | Q(portal=None)
+                            if "portal" in request.GET
+                            else Q()
+                        )
                         .values_list("practice_id", flat=True)
                     ).order_by("order", "name"),
                     many=True,
