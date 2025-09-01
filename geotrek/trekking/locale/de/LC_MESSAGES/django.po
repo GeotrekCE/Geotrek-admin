@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-25 12:14+0000\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -304,9 +304,6 @@ msgstr "Portal-Portal"
 msgid "Labels"
 msgstr ""
 
-msgid "External id"
-msgstr "Externe Id"
-
 msgid "Second external id"
 msgstr "Zweite externe ID"
 
@@ -504,6 +501,9 @@ msgstr "Keine"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
+
+msgid "External id"
+msgstr "Externe Id"
 
 msgid "Elevation"
 msgstr "Elevation"

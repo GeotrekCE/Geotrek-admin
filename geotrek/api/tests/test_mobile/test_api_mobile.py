@@ -337,10 +337,10 @@ class APIAccessTestCase(BaseApiTest):
             0, json_response.get("properties").get("parking_location")[0]
         )
         self.assertEqual(len(json_response["properties"]["districts"]), 1)
-        self.assertEqual(len(json_response["properties"]["cities"]), 1)
-        self.assertEqual(json_response["properties"]["departure_city"], self.city.code)
+        self.assertListEqual(json_response["properties"]["cities"], [self.city.id])
+        self.assertEqual(json_response["properties"]["departure_city"], self.city.id)
         self.assertEqual(
-            json_response["properties"]["arrival_city"], self.city.code, json_response
+            json_response["properties"]["arrival_city"], self.city.id, json_response
         )
 
     def test_trek_detail_no_parking_location(self):
@@ -473,6 +473,14 @@ class APIAccessTestCase(BaseApiTest):
         )
         self.assertIsNone(
             json_response.get("features")[0].get("properties").get("description_teaser")
+        )
+        self.assertEqual(
+            json_response.get("features")[0].get("properties").get("departure_city"),
+            self.city.id,
+        )
+        self.assertListEqual(
+            json_response.get("features")[0].get("properties").get("cities"),
+            [self.city.id],
         )
 
     def test_poi_list(self):

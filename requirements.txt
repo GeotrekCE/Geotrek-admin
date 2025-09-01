@@ -6,7 +6,7 @@ appy==1.0.19
     # via django-appypod
 argdispatch==1.4.0
     # via pdfimpose
-asgiref==3.8.1
+asgiref==3.9.1
     # via django
 async-timeout==5.0.1
     # via redis
@@ -15,7 +15,7 @@ attrs==25.3.0
     #   fiona
     #   jsonschema
     #   referencing
-beautifulsoup4==4.13.4
+beautifulsoup4==4.13.5
     # via mapentity
 billiard==4.2.1
     # via celery
@@ -23,7 +23,7 @@ brotli==1.1.0
     # via fonttools
 btrees==6.1
     # via zodb
-cachetools==6.1.0
+cachetools==6.2.0
     # via large-image
 cairocffi==1.7.1
     # via
@@ -36,7 +36,7 @@ celery==5.5.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   fiona
     #   requests
@@ -149,6 +149,8 @@ django-large-image==0.10.1
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
+django-maintenance-mode==0.22.0
+    # via geotrek (setup.py)
 django-modelcluster==6.4
     # via geotrek (setup.py)
 django-modeltranslation==0.19.16
@@ -176,7 +178,7 @@ djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.2.0
     # via mapentity
-docutils==0.21.2
+docutils==0.22
     # via geotrek (setup.py)
 drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
@@ -186,24 +188,24 @@ drf-spectacular==0.28.0
     # via django-large-image
 drf-yasg==1.21.5
     # via geotrek (setup.py)
-easy-thumbnails==2.10
+easy-thumbnails==2.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-filelock==3.18.0
+filelock==3.19.1
     # via django-large-image
 fiona==1.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
-fonttools==4.58.5
+fonttools==4.59.2
     # via weasyprint
 geojson==3.2.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==25.5.1
+gevent==25.8.2
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
@@ -223,7 +225,7 @@ itypes==1.2.0
     # via coreapi
 jinja2==3.1.6
     # via coreschema
-jsonschema==4.24.0
+jsonschema==4.25.1
     # via drf-spectacular
 jsonschema-specifications==2025.4.1
     # via jsonschema
@@ -241,7 +243,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.13.0
+mapentity==8.13.2
     # via geotrek (setup.py)
 markdown==3.8.2
     # via geotrek (setup.py)
@@ -297,7 +299,7 @@ pygal==3.0.5
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.26.3
+pymupdf==1.26.4
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -307,6 +309,8 @@ python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.1.1
     # via geotrek (setup.py)
+python-fsutil==0.15.0
+    # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
 pytz==2025.2
@@ -327,7 +331,7 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.4.2
+reportlab==4.4.3
     # via
     #   easy-thumbnails
     #   svglib
@@ -339,7 +343,7 @@ requests==2.32.4
     #   mapentity
 rjsmin==1.2.2
     # via django-compressor
-rpds-py==0.26.0
+rpds-py==0.27.1
     # via
     #   jsonschema
     #   referencing
@@ -347,7 +351,7 @@ ruamel-yaml==0.18.14
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.32.0
+sentry-sdk==2.35.1
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -363,7 +367,7 @@ simplekml==1.3.6
     # via geotrek (setup.py)
 six==1.17.0
     # via python-dateutil
-soupsieve==2.7
+soupsieve==2.8
     # via beautifulsoup4
 sqlparse==0.5.3
     # via django
@@ -381,7 +385,7 @@ tinyhtml5==2.0.0
     # via weasyprint
 transaction==5.0
     # via zodb
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   asgiref
     #   beautifulsoup4
@@ -408,7 +412,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.13
     # via prompt-toolkit
-weasyprint==65.1
+weasyprint==66.0
     # via
     #   geotrek (setup.py)
     #   django-weasyprint
@@ -432,9 +436,9 @@ zodb==6.0.1
     # via appy
 zodbpickle==4.2
     # via zodb
-zope-deferredimport==5.0
+zope-deferredimport==5.1
     # via persistent
-zope-event==5.1
+zope-event==5.1.1
     # via gevent
 zope-interface==7.2
     # via

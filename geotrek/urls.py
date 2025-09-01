@@ -40,6 +40,7 @@ urlpatterns += [
     path("admin/clearcache/", include("clearcache.urls")),
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("maintenance-mode/", include("maintenance_mode.urls")),
 ]
 
 if "geotrek.core" in settings.INSTALLED_APPS:
