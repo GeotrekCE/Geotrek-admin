@@ -12,10 +12,15 @@ CHANGELOG
 **New features**
 
 - Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+- Locate control on each map (via mapentity 8.14.0 update)
 
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+
+**Maintenance**
+
+- Bump to django-mapentity 8.14.0
 
 
 2.117.0         (2025-07-28)
