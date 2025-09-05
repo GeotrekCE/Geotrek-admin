@@ -1,12 +1,8 @@
-"""
-Unit tests
-"""
-
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from mapentity.tests.factories import SuperUserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 
 @override_settings(LOGIN_URL="/login/")
@@ -18,19 +14,14 @@ class LoginTestCase(TestCase):
 
 
 class UserProfileTest(TestCase):
-    def setUp(self):
-        self.user = SuperUserFactory(password="Bar")
-        success = self.client.login(username=self.user.username, password="Bar")
-        self.assertTrue(success)
+    def test_link_to_admin_site_visible_to_staff(self):
+        user_staff = UserFactory(is_staff=True)
+        self.client.force_login(user_staff)
+        response = self.client.get("/")
+        self.assertContains(response, '<a class="dropdown-item" href="/admin/">')
 
-    def test_link_to_adminsite_visible_to_staff(self):
-        self.assertTrue(self.user.is_staff)
+    def test_link_to_admin_site_not_visible_to_others(self):
+        user = UserFactory()
+        self.client.force_login(user)
         response = self.client.get(reverse("core:path_list"))
-        self.assertContains(response, '<a href="/admin/">Admin</a>')
-
-    def test_link_to_adminsite_not_visible_to_others(self):
-        self.user.is_staff = False
-        self.user.save()
-        self.client.login(username=self.user.username, password="Bar")
-        response = self.client.get(reverse("core:path_list"))
-        self.assertNotContains(response, '<a href="/admin/">Admin</a>')
+        self.assertNotContains(response, 'href="/admin/"')
