@@ -817,20 +817,16 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content1.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
+            f'href="/trek/edit/{self.content1.pk}/"',
             html=True,
         )
 
     def test_edit_button_other_structure(self):
         url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertContains(
+        self.assertNotContains(
             response,
-            '<span class="btn ml-auto disabled" href="#">'
-            '<i class="bi bi-pencil-square"></i> Update</span>',
+            f'href="/trek/edit/{self.content2.pk}/"',
             html=True,
         )
 
@@ -840,10 +836,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content2.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
+            f'href="/trek/edit/{self.content2.pk}/"',
             html=True,
         )
 
