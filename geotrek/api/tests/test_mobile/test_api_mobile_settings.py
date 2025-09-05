@@ -576,3 +576,76 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(category_item), TouristicContentCategory.objects.count())
         self.assertEqual(category_item[0].get("name"), category.label)
         self.assertIsNone(category_item[0].get("pictogram"))
+
+    def test_settings_practice_portal_filtering(self):
+        """Test that practices are filtered by portal when portal parameter is provided"""
+        # Create portals
+        portal_a = common_factories.TargetPortalFactory()
+        portal_b = common_factories.TargetPortalFactory()
+        
+        # Create practices
+        practice_a = trekking_factories.PracticeFactory()
+        practice_b = trekking_factories.PracticeFactory()
+        practice_c = trekking_factories.PracticeFactory()
+        
+        # Create treks with different portal configurations
+        trek_portal_a = trekking_factories.TrekFactory.create(
+            practice=practice_a, published_fr=True, portals=(portal_a,)
+        )
+        trek_portal_b = trekking_factories.TrekFactory.create(
+            practice=practice_b, published_fr=True, portals=(portal_b,)
+        )
+        trek_no_portal = trekking_factories.TrekFactory.create(
+            practice=practice_c, published_fr=True
+        )
+
+        # Test without portal parameter - should include all practices
+        response = self.get_settings()
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        practice_item = next(
+            (
+                item.get("values")
+                for item in json_response.get("data")
+                if item["id"] == "practice"
+            ),
+            None,
+        )
+        practice_names = [p.get("name") for p in practice_item]
+        self.assertIn(practice_a.name, practice_names)
+        self.assertIn(practice_b.name, practice_names)
+        self.assertIn(practice_c.name, practice_names)
+
+        # Test with portal_a - should only include practice_a and practice_c (no portal constraint)
+        response = self.get_settings({"portal": portal_a.name})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        practice_item = next(
+            (
+                item.get("values")
+                for item in json_response.get("data")
+                if item["id"] == "practice"
+            ),
+            None,
+        )
+        practice_names = [p.get("name") for p in practice_item]
+        self.assertIn(practice_a.name, practice_names)
+        self.assertNotIn(practice_b.name, practice_names)
+        self.assertIn(practice_c.name, practice_names)
+
+        # Test with portal_b - should only include practice_b and practice_c (no portal constraint)
+        response = self.get_settings({"portal": portal_b.name})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        practice_item = next(
+            (
+                item.get("values")
+                for item in json_response.get("data")
+                if item["id"] == "practice"
+            ),
+            None,
+        )
+        practice_names = [p.get("name") for p in practice_item]
+        self.assertNotIn(practice_a.name, practice_names)
+        self.assertIn(practice_b.name, practice_names)
+        self.assertIn(practice_c.name, practice_names)
