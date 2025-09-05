@@ -57,7 +57,8 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         POIFactory.create(paths=[(path_1, 0, 0)])
         response = self.client.get(reverse("core:path_list"))
         self.assertContains(
-            response, '<a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">'
+            response,
+            '<a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">',
         )
 
     def test_delete_view_multiple_path(self):
