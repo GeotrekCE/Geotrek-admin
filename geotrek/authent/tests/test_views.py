@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+from mapentity.tests.factories import UserFactory
 
 
 @override_settings(LOGIN_URL="/login/")
