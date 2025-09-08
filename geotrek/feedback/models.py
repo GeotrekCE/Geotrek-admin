@@ -375,8 +375,8 @@ class Report(
             )
         except Exception as e:
             success = 0  # 0 mails successfully sent
-            msg = f"Email could not be sent to report's assigned user: {e}"
-            logger.exception(msg)  # This sends an email to admins :)
+            logger.error("Email could not be sent to report's assigned user.")
+            logger.exception(e)  # This sends an email to admins :)
             # Save failed email to database
             PendingEmail.objects.create(
                 recipient=recipient[0],

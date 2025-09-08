@@ -151,7 +151,7 @@ class TestPendingEmail(SuricateTests):
                 Exception, report.notify_current_user("A nice and useful message")
             )
             mocked.error.assert_called_with(
-                "Email could not be sent to report's assigned user: Fake problem 2"
+                "Email could not be sent to report's assigned user."
             )
             self.assertEqual(PendingEmail.objects.count(), 1)
             report.refresh_from_db()
