@@ -801,9 +801,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         cls.content2 = TrekFactory.create(structure=structure)
 
     def setUp(self):
-        profile = UserProfileFactory.create(
-            user__username="homer", user__password="dooh"
-        )
+        profile = UserProfileFactory()
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.force_login(user=self.user)
