@@ -813,20 +813,13 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
     def test_edit_button_same_structure(self):
         url = f"/trek/{self.content1.pk}/"
         response = self.client.get(url)
-        self.assertContains(
-            response,
-            f'href="/trek/edit/{self.content1.pk}/"',
-            html=True,
-        )
+
+        self.assertContains(response, f'href="/trek/edit/{self.content1.pk}/"')
 
     def test_edit_button_other_structure(self):
         url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertNotContains(
-            response,
-            f'href="/trek/edit/{self.content2.pk}/"',
-            html=True,
-        )
+        self.assertNotContains(response, f'href="/trek/edit/{self.content2.pk}/"')
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
@@ -835,7 +828,6 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.assertContains(
             response,
             f'href="/trek/edit/{self.content2.pk}/"',
-            html=True,
         )
 
     def test_can_edit_same_structure(self):
