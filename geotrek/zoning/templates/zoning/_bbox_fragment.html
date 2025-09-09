@@ -25,10 +25,6 @@
 <label for="bbox_areas"></label>
 <select id="bbox_areas" class="chzn-select">
     <option value="" selected>{% trans "Restricted Area" %}</option>
-    {% for bbox in bbox_areas %}
-        <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</option>
-    {% endfor %}
-</select>
 {% endif %}
 
 {% if bbox_cities or bbox_districts or bbox_areas %}
