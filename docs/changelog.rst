@@ -2,8 +2,12 @@
 CHANGELOG
 =========
 
-2.117.0+dev    (XXXX-XX-XX)
+2.117.0+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Improvements**
+
+- Responsive design through mapentity. Navbar header, side bar, buttons in list views, detail views, user menu.
 
 **Bug fixes**
 
@@ -20,7 +24,7 @@ CHANGELOG
 
 **Maintenance**
 
-- Bump to django-mapentity 8.14.0
+- Bump to django-mapentity 8.14.2
 
 
 2.117.0         (2025-07-28)
