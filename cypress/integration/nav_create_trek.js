@@ -65,6 +65,7 @@ describe('Create trek', () => {
                 cy.visit(href)
             })
         cy.get("div.alert-warning").contains("Waiting for publication").should('have.length', 1);
+        cy.get("a.dropdown-toggle").contains('Actions').click();
         cy.get("a").contains("Edit").click();
         cy.get("input[id='id_review']").check();
         cy.get("input[name='published_en']").click({force: true});
