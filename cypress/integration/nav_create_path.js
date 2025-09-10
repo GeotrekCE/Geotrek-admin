@@ -52,7 +52,7 @@ describe('Create path', () => {
     })
     it('Path action delete multiple without path', () => {
         cy.visit('/path/list');
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#delete']").click();
         cy.url().should('include', '/path/list/');
         cy.get("a[title='Path number 1']").should('have.length', 2);
@@ -62,7 +62,7 @@ describe('Create path', () => {
         cy.visit('/path/list');
         cy.get("input[name='path[]'][value='1']").click();
         cy.get("input[name='path[]'][value='2']").click();
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#delete']").click();
         cy.get("input[type='submit']").click();
         cy.url().should('include', '/path/list/');
@@ -74,7 +74,7 @@ describe('Create path', () => {
         cy.visit('/path/list');
         cy.get("input[name='path[]'][value='3']").click();
         cy.get("input[name='path[]'][value='4']").click();
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#confirm-merge']").click();
         cy.get("button").contains('Merge').click();
         cy.url().should('include', '/path/list/');

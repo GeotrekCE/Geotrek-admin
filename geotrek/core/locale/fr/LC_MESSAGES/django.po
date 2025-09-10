@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -321,6 +321,9 @@ msgstr "Sélectionner deux tronçons pour les fusionner"
 
 msgid "Are you sure you want to merge these paths ?"
 msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
+
+msgid "Actions"
+msgstr "Actions"
 
 msgid "Merge"
 msgstr "Fusionner"

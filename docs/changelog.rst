@@ -2,8 +2,16 @@
 CHANGELOG
 =========
 
-2.117.0+dev    (XXXX-XX-XX)
+2.118.0+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.118.0         (2025-09-09)
+----------------------------
+
+**Improvements**
+
+- Responsive design through mapentity. Navbar header, side bar, buttons in list views, detail views, user menu.
 
 **Bug fixes**
 
@@ -12,10 +20,15 @@ CHANGELOG
 **New features**
 
 - Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+- Locate control on each map (via mapentity 8.14.0 update)
 
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+
+**Maintenance**
+
+- Bump to django-mapentity 8.14.2
 
 
 2.117.0         (2025-07-28)

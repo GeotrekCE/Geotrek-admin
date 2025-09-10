@@ -4,10 +4,9 @@
 
 {% block download %}
     {{ block.super }}
-  </div>
-
-  <div class="btn-group pull-right">
-    <a class="btn btn-light btn-sm" href="{% url 'tourism:touristicevent_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="dropdown-item" href="{% url 'tourism:touristicevent_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank">
+        <i class="bi bi-file-pdf text-danger"></i> {% trans "Print" %}
+    </a>
 {% endblock download %}
 
 

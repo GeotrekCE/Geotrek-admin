@@ -1,7 +1,11 @@
 {% load i18n %}
 
-<li class="dropdown-item"><a href="{% url 'common:import_dataset' %}">{% trans "Imports" %}</a></li>
+<a class="dropdown-item"href="{% url 'common:import_dataset' %}">
+    <i class="bi bi-file-arrow-down"></i> {% trans "Imports" %}
+</a>
 
 {% if user.is_superuser %}
-    <li class="dropdown-item"><a href="{% url 'apimobile:sync_mobiles_view' %}">{% trans "Sync mobile" %}</a></li>
+   <a class="dropdown-item" href="{% url 'apimobile:sync_mobiles_view' %}">
+       <i class="bi bi-arrow-repeat"></i> {% trans "Sync mobile" %}
+   </a>
 {% endif %}

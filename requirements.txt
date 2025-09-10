@@ -49,7 +49,7 @@ cffi==1.17.1
     #   weasyprint
 chardet==5.2.0
     # via geotrek (setup.py)
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via
     #   reportlab
     #   requests
@@ -91,7 +91,7 @@ datetime==5.5
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.3
+django==5.2.6
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -155,7 +155,7 @@ django-modelcluster==6.4
     # via geotrek (setup.py)
 django-modeltranslation==0.19.16
     # via mapentity
-django-mptt==0.17.0
+django-mptt==0.18.0
     # via geotrek (setup.py)
 django-tinymce==4.1.0
     # via mapentity
@@ -165,7 +165,7 @@ django-weasyprint==2.4.0
     # via
     #   geotrek (setup.py)
     #   mapentity
-djangorestframework==3.16.0
+djangorestframework==3.16.1
     # via
     #   django-large-image
     #   djangorestframework-datatables
@@ -209,7 +209,7 @@ gevent==25.8.2
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.2.3
+greenlet==3.2.4
     # via gevent
 gunicorn==23.0.0
     # via geotrek (setup.py)
@@ -227,7 +227,7 @@ jinja2==3.1.6
     # via coreschema
 jsonschema==4.25.1
     # via drf-spectacular
-jsonschema-specifications==2025.4.1
+jsonschema-specifications==2025.9.1
     # via jsonschema
 kombu==5.5.4
     # via celery
@@ -243,9 +243,9 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.13.2
+mapentity==8.14.2
     # via geotrek (setup.py)
-markdown==3.8.2
+markdown==3.9
     # via geotrek (setup.py)
 markupsafe==3.0.2
     # via jinja2
@@ -287,7 +287,7 @@ pillow==11.3.0
     #   paperclip
     #   reportlab
     #   weasyprint
-prompt-toolkit==3.0.51
+prompt-toolkit==3.0.52
     # via click-repl
 psycopg2==2.9.10
     # via geotrek (setup.py)
@@ -325,7 +325,7 @@ pyyaml==6.0.2
     # via drf-spectacular
 rcssmin==1.1.2
     # via django-compressor
-redis==6.2.0
+redis==6.4.0
     # via geotrek (setup.py)
 referencing==0.36.2
     # via
@@ -335,7 +335,7 @@ reportlab==4.4.3
     # via
     #   easy-thumbnails
     #   svglib
-requests==2.32.4
+requests==2.32.5
     # via
     #   coreapi
     #   django-embed-video
@@ -347,11 +347,11 @@ rpds-py==0.27.1
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.14
+ruamel-yaml==0.18.15
     # via drf-yasg
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-sentry-sdk==2.35.1
+sentry-sdk==2.37.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -385,7 +385,7 @@ tinyhtml5==2.0.0
     # via weasyprint
 transaction==5.0
     # via zodb
-typing-extensions==4.14.1
+typing-extensions==4.15.0
     # via
     #   asgiref
     #   beautifulsoup4
@@ -424,7 +424,7 @@ webencodings==0.5.1
     #   tinyhtml5
 xlrd==2.0.2
     # via geotrek (setup.py)
-xmltodict==0.14.2
+xmltodict==0.15.0
     # via tif2geojson
 zc-lockfile==3.0.post1
     # via zodb
