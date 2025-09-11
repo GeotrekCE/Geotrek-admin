@@ -506,10 +506,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "access": "localisation.geolocalisation.complement",
         "difficulty": "prestations.typesClientele",
         "practice": "informationsEquipement.activites",
-        "duration": (
-            "informationsEquipement.itineraire.dureeJournaliere",
-            "informationsEquipement.itineraire.dureeItinerance",
-        ),
+        "duration": ("ouverture.dureeSeance", "ouverture.nombreJours"),
         "advice": "informationsEquipement.itineraire.passagesDelicats",
         "route": "informationsEquipement.itineraire.itineraireType",
         "accessibility_covering": "informationsEquipement.itineraire.naturesTerrain.*",
