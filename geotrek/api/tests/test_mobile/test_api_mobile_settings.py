@@ -582,22 +582,20 @@ class SettingsMobileTest(TestCase):
         # Create portals
         portal_a = common_factories.TargetPortalFactory()
         portal_b = common_factories.TargetPortalFactory()
-        
+
         # Create practices
         practice_a = trekking_factories.PracticeFactory()
         practice_b = trekking_factories.PracticeFactory()
         practice_c = trekking_factories.PracticeFactory()
-        
+
         # Create treks with different portal configurations
-        trek_portal_a = trekking_factories.TrekFactory.create(
+        trekking_factories.TrekFactory.create(
             practice=practice_a, published_fr=True, portals=(portal_a,)
         )
-        trek_portal_b = trekking_factories.TrekFactory.create(
+        trekking_factories.TrekFactory.create(
             practice=practice_b, published_fr=True, portals=(portal_b,)
         )
-        trek_no_portal = trekking_factories.TrekFactory.create(
-            practice=practice_c, published_fr=True
-        )
+        trekking_factories.TrekFactory.create(practice=practice_c, published_fr=True)
 
         # Test without portal parameter - should include all practices
         response = self.get_settings()
