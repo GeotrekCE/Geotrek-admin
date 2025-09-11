@@ -14,8 +14,10 @@ Geotrek-admin is a Django-based geospatial web application for managing trekking
 - **Do not attempt** `docker compose build` - it will fail after ~2 minutes with network timeout
 - **Alternative**: Use Ubuntu package installation method for full functionality
 
-### Development Setup (Network-Limited Environment)
-Use these **validated commands** in order:
+### Development Setup
+
+#### Recommended: Development Target (Full Environment)
+The `docker-compose.yml` at root is configured for development with `target: dev`. Use this for full development functionality:
 
 ```bash
 # 1. Setup environment and permissions
@@ -24,35 +26,47 @@ mkdir -p var/{log,cache,media,static,tmp,conf}
 chmod -R 777 var
 echo "127.0.0.1 geotrek.local" | sudo tee -a /etc/hosts
 
-# 2. Pull pre-built image and tag for local use
+# 2. Build and start the development environment
+docker compose build  # NEVER CANCEL: Takes 5-10+ minutes, set timeout to 15+ minutes
+docker compose up -d   # NEVER CANCEL: Takes 2-3 minutes, set timeout to 10+ minutes
+
+# 3. Initialize the development environment
+docker compose run --rm web update.sh     # NEVER CANCEL: Takes 2-5 minutes, set timeout to 15+ minutes
+docker compose run --rm web load_data.sh  # NEVER CANCEL: Takes 5-15 minutes, set timeout to 30+ minutes
+```
+
+**TIMING**: Complete setup takes 15-30+ minutes. NEVER CANCEL during any step.
+
+#### Alternative: Network-Limited Environment
+If Docker build fails due to network restrictions, use the production image workaround:
+
+```bash
+# 1. Setup environment and permissions (same as above)
+cp .env.dist .env
+mkdir -p var/{log,cache,media,static,tmp,conf}
+chmod -R 777 var
+echo "127.0.0.1 geotrek.local" | sudo tee -a /etc/hosts
+
+# 2. Pull pre-built production image and tag for local use
 docker pull geotrekce/admin:latest
 docker tag geotrekce/admin:latest geotrek:latest
 
-# 3. Start services (supporting containers work fine)
+# 3. Start supporting services only
 docker compose up postgres redis convertit screamshotter -d
 # Wait for postgres to be healthy (about 30 seconds)
 
-# 4. Note: Full development environment setup currently blocked by network limitations
-# Web container cannot start properly due to missing development dependencies in production image
+# Note: Web container may not start properly with production image due to missing dev dependencies
 ```
 
 **TIMING**: Service startup takes ~30-45 seconds. NEVER CANCEL during startup phase.
 
-### Alternative Installation Methods
-For full functionality, use one of these alternatives:
+#### Alternative Installation Methods
+For full functionality when Docker is not suitable:
 
 1. **Ubuntu Package Installation** (Recommended for production-like setup):
    ```bash
    # Follow instructions from docs/installation-and-configuration/installation.rst
    bash -c "$(curl -fsSL https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh)"
-   ```
-
-2. **Manual Dependencies Setup** (If Docker build works in your environment):
-   ```bash
-   # Only try if network allows GitHub downloads
-   docker compose build  # Takes 5-10+ minutes, often fails
-   docker compose run --rm web update.sh  # Takes 2-5 minutes
-   docker compose run --rm web load_data.sh  # Takes 5-15 minutes
    ```
 
 ## Testing
@@ -70,16 +84,16 @@ make test_nds  # NEVER CANCEL: Non-dynamic segmentation tests, ~15 minutes, set 
 make tests     # NEVER CANCEL: Both test and test_nds, ~30 minutes, set timeout to 60+ minutes
 ```
 
-**Note**: Tests require fully built development environment, which may not work due to network limitations documented above.
+**Note**: Tests work with the development target (`target: dev` in docker-compose.yml). They may not work with the production image workaround due to missing development dependencies.
 
-### Code Quality (Requires Development Environment)
+### Code Quality 
 ```bash
-make quality   # ❌ Currently fails: ruff not found in production image
-make lint      # ❌ Currently fails: ruff not found in production image  
-make format    # ❌ Currently fails: ruff not found in production image
+make quality   # ✅ Works with development target (dev), ❌ Fails with production image
+make lint      # ✅ Works with development target (dev), ❌ Fails with production image  
+make format    # ✅ Works with development target (dev), ❌ Fails with production image
 ```
 
-**Note**: Quality commands require development environment with ruff installed. Use alternative installation method for full functionality.
+**Note**: Quality commands work with the development target (`target: dev` in docker-compose.yml) which includes ruff and other dev tools. They fail with the production image workaround due to missing development dependencies.
 
 ### End-to-End Tests (Cypress)
 **CRITICAL**: Requires complete setup with loaded data. Takes 10-15 minutes. **NEVER CANCEL.**
@@ -152,14 +166,25 @@ curl -f http://geotrek.local:8000/api/settings.json
 
 ## What Actually Works in Network-Limited Environments
 
-### ✅ Verified Working Commands
+### ✅ Working Commands (Development Target)
+```bash
+# Full development environment (if network allows)
+docker compose build                      # Works when network allows GitHub downloads
+docker compose up -d                     # Full development environment 
+docker compose run --rm web update.sh    # Works with dev target
+make test                                # Works with dev target
+make lint                                # Works with dev target (includes ruff)
+make quality                             # Works with dev target (includes ruff)
+```
+
+### ✅ Working Commands (Network-Limited Environments)  
 ```bash
 # Service management
 docker compose up postgres redis convertit screamshotter -d
 docker compose down
 docker compose ps
 
-# Image management  
+# Production image workaround
 docker pull geotrekce/admin:latest
 docker tag geotrekce/admin:latest geotrek:latest
 
@@ -172,38 +197,38 @@ chmod -R 777 var
 curl -I https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/install.sh
 ```
 
-### ❌ Known Failing Commands
+### ❌ Known Failing Commands (Network-Limited)
 ```bash
-# Development environment setup
-docker compose build                    # Network timeout
-docker compose run --rm web update.sh   # Missing dependencies  
-make test                               # Requires dev environment
-make lint                               # Missing ruff in production image
+# Development environment setup when network is restricted
+docker compose build                    # Network timeout during Python download
+docker compose run --rm web update.sh   # Only works with dev target, not production image
+make test                               # Only works with dev target 
+make lint                               # Only works with dev target (missing ruff in production image)
 ```
 
 ### 🔄 Recommended Workflow for Coding Agents
 
-1. **Always start with what works**: Pull official images and set up supporting services
-2. **Document network limitations** clearly in any changes
-3. **Use Ubuntu package installation** for full development environment
-4. **Focus on file-based changes** that don't require running the full application
-5. **Test with alternative installation methods** when full validation is needed
+1. **Try development target first**: Use `docker compose build` and `docker compose up` for full development environment with all tools (linting, testing, dev dependencies)
+2. **Fall back to production image workaround** if network restrictions prevent Docker builds from source
+3. **Use Ubuntu package installation** for production-like setup when Docker is not suitable
+4. **Focus on file-based changes** that don't require running the full application when development environment is not available
+5. **Test with full development environment** when possible for comprehensive validation
 
 ## Verified Command Timings
 
 **Based on actual testing - use these timeout values:**
 
-| Command | Duration | Recommended Timeout | Status |
-|---------|----------|-------------------|---------|
-| `docker compose build` | ~2 minutes | ❌ FAILS | Network timeout |
-| `docker compose up postgres` | ~30 seconds | 120 seconds | ✅ Works |
-| `docker pull geotrekce/admin:latest` | ~2-3 minutes | 600 seconds | ✅ Works |
-| `make quality` | ~30 seconds | 120 seconds | ❌ Missing ruff |
-| `make lint` | ~15 seconds | 60 seconds | ❌ Missing ruff |
-| `make format` | ~10 seconds | 60 seconds | ❌ Missing ruff |
-| `make test` | ~15+ minutes | 1800+ seconds | ❌ Needs dev env |
-| `make coverage` | ~20-30 minutes | 2700+ seconds | ❌ Needs dev env |
-| Cypress tests | ~10-15 minutes | 1200+ seconds | ❌ Needs dev env |
+| Command | Duration | Recommended Timeout | With Dev Target | With Prod Image |
+|---------|----------|-------------------|-----------------|-----------------|
+| `docker compose build` | ~5-10 minutes | 900+ seconds | ✅ Works (if network allows) | ❌ Not applicable |
+| `docker compose up postgres` | ~30 seconds | 120 seconds | ✅ Works | ✅ Works |
+| `docker pull geotrekce/admin:latest` | ~2-3 minutes | 600 seconds | Not needed | ✅ Works |
+| `make quality` | ~30 seconds | 120 seconds | ✅ Works | ❌ Missing ruff |
+| `make lint` | ~15 seconds | 60 seconds | ✅ Works | ❌ Missing ruff |
+| `make format` | ~10 seconds | 60 seconds | ✅ Works | ❌ Missing ruff |
+| `make test` | ~15+ minutes | 1800+ seconds | ✅ Works | ❌ Needs dev env |
+| `make coverage` | ~20-30 minutes | 2700+ seconds | ✅ Works | ❌ Needs dev env |
+| Cypress tests | ~10-15 minutes | 1200+ seconds | ✅ Works | ❌ Needs dev env |
 
 **Key**: ✅ = Verified working, ❌ = Known to fail or missing dependencies
 
@@ -219,11 +244,13 @@ make lint                               # Missing ruff in production image
 │   ├── tourism/      # Tourism models  
 │   └── ...           # Other Django apps
 ├── docker/           # Docker configuration
+│   └── Dockerfile    # Multi-stage build with dev/prod targets
 ├── docs/             # Sphinx documentation
 ├── cypress/          # E2E tests
 ├── requirements.txt  # Python dependencies
+├── requirements-dev.txt  # Development dependencies (ruff, testing tools)
 ├── Makefile         # Build shortcuts
-└── docker-compose.yml
+└── docker-compose.yml  # ⭐ Configured for development (target: dev)
 ```
 
 ### Key Files to Monitor
