@@ -5,6 +5,10 @@ CHANGELOG
 2.118.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Maintenance**
+
+- Update ``ApidaeTrekParser`` to handle deprecated trek duration fields in Apidae API responses (refs #4621)
+
 
 2.118.0         (2025-09-09)
 ----------------------------
