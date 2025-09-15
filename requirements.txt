@@ -436,7 +436,7 @@ zodb==6.0.1
     # via appy
 zodbpickle==4.2
     # via zodb
-zope-deferredimport==5.1
+zope-deferredimport==6.0
     # via persistent
 zope-event==6.0
     # via gevent
