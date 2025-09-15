@@ -424,7 +424,7 @@ webencodings==0.5.1
     #   tinyhtml5
 xlrd==2.0.2
     # via geotrek (setup.py)
-xmltodict==0.15.0
+xmltodict==1.0.0
     # via tif2geojson
 zc-lockfile==3.0.post1
     # via zodb
