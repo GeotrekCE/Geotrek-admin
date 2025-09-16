@@ -714,10 +714,8 @@ class Parser:
                     break
                 try:
                     self.parse_row(row)
-                except (DatabaseError, RowImportError, ValueImportError) as e:
-                    self.add_warning(str(e))
                 except Exception as e:
-                    raise e
+                    self.add_warning(str(e))
             self.end()
 
     def request_or_retry(self, url, verb="get", **kwargs):
