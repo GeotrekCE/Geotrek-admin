@@ -4,7 +4,7 @@ from io import StringIO
 from unittest import mock
 
 from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
-from django.core.management import CommandError, call_command
+from django.core.management import call_command
 from django.test import TestCase
 
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
@@ -35,7 +35,13 @@ class CityParserTest(TestCase):
     def test_wrong_geom(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "line.geojson")
         output = StringIO()
-        call_command("import", "geotrek.zoning.parsers.CityParser", filename, verbosity=2, stdout=output)
+        call_command(
+            "import",
+            "geotrek.zoning.parsers.CityParser",
+            filename,
+            verbosity=2,
+            stdout=output,
+        )
         self.assertEqual(City.objects.count(), 0)
         self.assertIn(
             "Invalid geometry type for field 'GEOM'. Should be (Multi)Polygon, not LineString",

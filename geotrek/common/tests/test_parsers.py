@@ -159,7 +159,8 @@ class OrganismWithAttachmentJSONParser(AttachmentParserMixin, OrganismJSONParser
 class RowExceptionTestParser(OrganismJSONParser):
     def filter_organism(self, src, val):
         if val == "foo":
-            raise ParserTestCustomError('An error message')
+            msg = "An error message"
+            raise ParserTestCustomError(msg)
         return val
 
 
@@ -241,7 +242,8 @@ class JSONParserIntersectionGeomValidDeleteTest(JSONParserIntersectionGeomTest):
     delete = True
 
 
-class ParserTestCustomError(Exception): pass
+class ParserTestCustomError(Exception):
+    pass
 
 
 class ParserTests(TestCase):
@@ -446,9 +448,7 @@ class ParserTests(TestCase):
 
     def test_exception_during_row_parsing(self):
         """If any exception is raised when parsing a row, proceed to the next object."""
-        filename = os.path.join(
-            os.path.dirname(__file__), "data", "two_organisms.json"
-        )
+        filename = os.path.join(os.path.dirname(__file__), "data", "two_organisms.json")
         output = StringIO()
         call_command(
             "import",
