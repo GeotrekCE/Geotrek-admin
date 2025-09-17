@@ -5,6 +5,10 @@ CHANGELOG
 2.118.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix parser crash when a row fails with any error
+
 **Maintenance**
 
 - Update ``ApidaeTrekParser`` to handle deprecated trek duration fields in Apidae API responses (refs #4621)
