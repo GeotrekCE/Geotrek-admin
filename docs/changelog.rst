@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix parser crash when a row fails with any error
+- Fix map loading if instance has restricted areas
 
 **Maintenance**
 
