@@ -56,7 +56,7 @@ build_deb:
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version) -D RELEASED -m \"New package release\""
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version) -D RELEASED --force-distribution -m \"New package release\""
 	echo "$(version)" > geotrek/VERSION
 	sed -i "s/.*+dev/$(version)+dev/g" docs/changelog.rst
 	sed -i 's/+dev/    /g' docs/changelog.rst
