@@ -28,14 +28,23 @@ jobs:
         run: |
           echo "Preparing release ${{ github.event.inputs.version }}"
           make release version=${{ github.event.inputs.version }}
-      - name: commit changes
+
+      - name: Commit prepare release changes
         run: |
           git config --local user.email "
           git config --local user.name "github-actions[bot]"
           git add .
           git commit -m "Release ${{ github.event.inputs.version }}"
 
-      #- name: Make release
+#       - name: Tag, push and create associated new release with auto generated notes
+#         run: |
+#           git tag ${{ github.event.inputs.version }}
+#           git push origin HEAD --tags
+#           gh release create ${{ github.event.inputs.version }} --title "Release ${{ github.event.inputs.version }}"
+#         #  env:
+#         #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#
+#       #- name: Make release
       #  uses: ncipollo/release-action@v1
       #  with:
       #    tag: ${{ github.event.inputs.version }}
