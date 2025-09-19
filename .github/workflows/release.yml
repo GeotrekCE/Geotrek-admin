@@ -1,4 +1,4 @@
-name: Realese process
+name: Release process
 
 on:
   workflow_run:
@@ -18,9 +18,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  run_other_workflows:
+    name: Run other workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Test CI workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: Linting'
+            repo: ${{ github.repository }}
+            ref: 'master'
+            token: ${{ secrets.GITHUB_TOKEN }}
+
   deploy:
     name: Publish
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: [run_other_workflows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

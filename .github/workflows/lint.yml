@@ -1,6 +1,7 @@
 name: Linting
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'geotrek/**'  # if geotrek code change
