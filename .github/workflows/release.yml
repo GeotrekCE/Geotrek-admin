@@ -24,8 +24,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Make release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.event.inputs.version }}
-          name: Release ${{ github.event.inputs.version }}
+      - name: Prepare release
+        run: |
+          echo "Preparing release ${{ github.event.inputs.version }}"
+          make release version=${{ github.event.inputs.version }}
+      - name: commit changes
+        run: |
+          git config --local user.email "
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Release ${{ github.event.inputs.version }}"
+
+      #- name: Make release
+      #  uses: ncipollo/release-action@v1
+      #  with:
+      #    tag: ${{ github.event.inputs.version }}
+      #    name: Release ${{ github.event.inputs.version }}
