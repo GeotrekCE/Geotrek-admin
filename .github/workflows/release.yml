@@ -25,7 +25,7 @@ jobs:
       - name: Trigger Test CI workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-            workflow: Linting'
+            workflow: 'Linting'
             repo: ${{ github.repository }}
             ref: 'master'
             token: ${{ secrets.GITHUB_TOKEN }}
