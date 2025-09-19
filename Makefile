@@ -56,7 +56,7 @@ build_deb:
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version) -D RELEASED"
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version) -D RELEASED --force-distribution -m \"New package release\""
 	echo "$(version)" > geotrek/VERSION
 	sed -i "s/.*+dev/$(version)+dev/g" docs/changelog.rst
 	sed -i 's/+dev/    /g' docs/changelog.rst
@@ -66,7 +66,7 @@ release:
 
 back_to_dev:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release"
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release -m \"Merging improvements\""
 	echo "$(version)+dev" > geotrek/VERSION
 	sed -i '4a $(version)+dev     (XXXX-XX-XX)\n----------------------------\n\n' docs/changelog.rst
 	docker stop geotrek_release
