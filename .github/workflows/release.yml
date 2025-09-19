@@ -1,11 +1,6 @@
 name: Release process
 
 on:
-  workflow_run:
-    workflows: ["Test CI"]
-    types:
-      - completed
-
   workflow_dispatch:
     inputs:
       version:
@@ -22,10 +17,18 @@ jobs:
     name: Run other workflows
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Test CI workflow
+      - name: Trigger Linting workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
             workflow: 'Linting'
+            repo: ${{ github.repository }}
+            ref: 'master'
+            token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Docs workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: 'Documentation'
             repo: ${{ github.repository }}
             ref: 'master'
             token: ${{ secrets.GITHUB_TOKEN }}
@@ -35,9 +38,10 @@ jobs:
     needs: [run_other_workflows]
     runs-on: ubuntu-latest
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
       contents: write
+      packages: write
+      actions: write
+
     steps:
       - uses: actions/checkout@v5
       - name: Prepare release
@@ -52,16 +56,21 @@ jobs:
             # Defaults to "Apply automatic changes"
             commit_message: "Prepare release ${{ github.event.inputs.version }}"
             tagging_message: ${{ github.event.inputs.version }}
-#       - name: Tag, push and create associated new release with auto generated notes
-#         run: |
-#           git tag ${{ github.event.inputs.version }}
-#           git push origin HEAD --tags
-#           gh release create ${{ github.event.inputs.version }} --title "Release ${{ github.event.inputs.version }}"
-#         #  env:
-#         #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#
-#       #- name: Make release
-      #  uses: ncipollo/release-action@v1
-      #  with:
-      #    tag: ${{ github.event.inputs.version }}
-      #    name: Release ${{ github.event.inputs.version }}
+
+      - name: Create GitHub Release
+        run : |
+          gh release create ${{ github.event.inputs.version }} --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
+      - name: Back to dev
+        run: |
+          echo "Back to development"
+          make back_to_dev version=${{ github.event.inputs.version }}
+
+      - name: Commit back to development changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Back to development"

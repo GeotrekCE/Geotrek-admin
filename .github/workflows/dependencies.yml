@@ -21,8 +21,14 @@ jobs:
         os: ['ubuntu-latest']
         python-version: ['3.10']
 
+    permissions:
+      contents: write
+      actions: write
+
     steps:
       - uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.PAT }}
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -49,4 +55,12 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          # core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+
+      - name: Commit files changed
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Fix deps"
