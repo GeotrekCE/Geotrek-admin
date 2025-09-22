@@ -267,8 +267,12 @@ class SplitPathTest(TestCase):
             |
             + D
         """
-        cd = PathFactory.create(name="CD", geom=LineString((1.2, 1), (1.2, -1), srid=settings.SRID))
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (10000000, 0), srid=settings.SRID))
+        cd = PathFactory.create(
+            name="CD", geom=LineString((1.2, 1), (1.2, -1), srid=settings.SRID)
+        )
+        ab = PathFactory.create(
+            name="AB", geom=LineString((0, 0), (10000000, 0), srid=settings.SRID)
+        )
         ab.reload()
         cd.reload()
         self.assertEqual(ab.geom, LineString((0, 0), (1.2, 0), srid=settings.SRID))
