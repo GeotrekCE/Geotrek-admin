@@ -5,7 +5,7 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - ../../requirements-dev.txt
+      - requirements-dev.txt
       - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
