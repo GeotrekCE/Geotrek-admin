@@ -17,7 +17,7 @@ attrs==25.3.0
     #   referencing
 beautifulsoup4==4.13.5
     # via mapentity
-billiard==4.2.1
+billiard==4.2.2
     # via celery
 brotli==1.1.0
     # via fonttools
