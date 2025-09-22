@@ -1143,7 +1143,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
-            verbosity=0,
+            verbosity=2,
         )
         self.assertIn(
             pictogram_name_before,
