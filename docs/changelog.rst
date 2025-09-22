@@ -5,6 +5,16 @@ CHANGELOG
 2.118.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+* Due to upgrade to Django 5.2 LTS, minimal PostgreSQL version is now 14.
+* Please Check your version and upgrade your database if needed before upgrading to this version.
+  * https://geotrek.readthedocs.io/en/latest/others/troubleshooting.html#show-main-packages-versions
+
+**Maintenance**
+
+* Upgrade to Django 5.2 LTS
+
 
 2.118.1         (2025-09-18)
 ----------------------------
