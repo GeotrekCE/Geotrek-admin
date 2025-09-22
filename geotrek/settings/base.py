@@ -819,7 +819,11 @@ SENSITIVITY_OPENAIR_SPORT_PRACTICES = [
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+    "geotrek.authent.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
 ]
 
 EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
