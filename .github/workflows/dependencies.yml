@@ -61,7 +61,7 @@ jobs:
           # core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
 
       - name: Commit files changed
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v6
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         with:
             # Optional. Commit message for the created commit.
