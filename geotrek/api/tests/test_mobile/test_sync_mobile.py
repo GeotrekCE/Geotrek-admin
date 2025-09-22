@@ -1138,12 +1138,14 @@ class SyncMobileTreksTest(VarTmpTestCase):
         pictogram_name_before = os.path.basename(
             self.touristic_event.type.pictogram.name
         )
+        output = StringIO()
         management.call_command(
             "sync_mobile",
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            stdout=output,
         )
         self.assertIn(
             pictogram_name_before,
