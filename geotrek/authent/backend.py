@@ -101,9 +101,6 @@ class DatabaseBackend(ModelBackend):
         if not settings.AUTHENT_DATABASE:
             msg = "Database backend is used, without AUTHENT_DATABASE setting."
             raise ImproperlyConfigured(msg)
-        if not settings.AUTHENT_TABLENAME:
-            msg = "Database backend is used, without AUTHENT_TABLENAME setting."
-            raise ImproperlyConfigured(msg)
         try:
             result = None
             with connections[settings.AUTHENT_DATABASE].cursor() as cursor:
