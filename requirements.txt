@@ -426,7 +426,7 @@ xlrd==2.0.2
     # via geotrek (setup.py)
 xmltodict==1.0.0
     # via tif2geojson
-zc-lockfile==3.0.post1
+zc-lockfile==4.0
     # via zodb
 zconfig==4.2
     # via zodb
