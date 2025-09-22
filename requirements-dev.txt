@@ -4,7 +4,7 @@ asgiref==3.9.1
     # via
     #   -c requirements.txt
     #   django
-coverage==7.10.6
+coverage==7.10.7
     # via -r requirements-dev.in
 django==4.2.24
     # via
@@ -30,7 +30,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
-ruff==0.13.0
+ruff==0.13.1
     # via -r requirements-dev.in
 six==1.17.0
     # via
@@ -47,5 +47,5 @@ typing-extensions==4.15.0
     # via
     #   -c requirements.txt
     #   asgiref
-uv==0.8.17
+uv==0.8.19
     # via -r requirements-dev.in
