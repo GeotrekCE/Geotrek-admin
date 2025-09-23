@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 11:40+0200\n"
+"POT-Creation-Date: 2025-09-23 12:05+0200\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -273,6 +273,21 @@ msgstr "Pas d'information"
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
 
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Merge"
+msgstr "Fusionner"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Merge paths"
+msgstr "Fusionner les tronçons"
+
+msgid "Cancel"
+msgstr "Annuler"
+
 #, python-format
 msgid "%(obj)s has changed state to draft. "
 msgstr "%(obj)s a été mis en brouillon."
@@ -321,21 +336,6 @@ msgstr "Sélectionner deux tronçons pour les fusionner"
 
 msgid "Are you sure you want to merge these paths ?"
 msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
-
-msgid "Actions"
-msgstr "Actions"
-
-msgid "Merge"
-msgstr "Fusionner"
-
-msgid "Delete"
-msgstr "Supprimer"
-
-msgid "Merge paths"
-msgstr "Fusionner les tronçons"
-
-msgid "Cancel"
-msgstr "Annuler"
 
 msgid "Warning"
 msgstr "Attention"
