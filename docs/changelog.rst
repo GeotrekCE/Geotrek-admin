@@ -10,6 +10,7 @@ CHANGELOG
 * Due to upgrade to Django 5.2 LTS, minimal PostgreSQL version is now 14.
 * Please Check your version and upgrade your database if needed before upgrading to this version.
   * https://geotrek.readthedocs.io/en/latest/others/troubleshooting.html#show-main-packages-versions
+  * https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.rst
 * For developpers, you need to upgrade your database. ``make flush`` cand help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
   * By using this command, you will lose local data.
 
