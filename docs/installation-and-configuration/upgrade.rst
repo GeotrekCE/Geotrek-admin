@@ -360,7 +360,7 @@ Now, install newest version of PostgreSQL and PostGIS:
     Installing many PostgreSQL versions on the same system will use another port than default 5432.
     You can check the newest port with ``pg_lsclusters`` command. For next lines, we consider new port is 5433.
 
-.. _recreate-user-database:
+.. _recreate-user-database-focal:
 
 Recreate user and database:
 
