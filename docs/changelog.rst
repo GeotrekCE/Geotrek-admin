@@ -5,6 +5,14 @@ CHANGELOG
 2.118.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Fix translations in Add buttons on lists. (refs #4963)
+
+**Improvements**
+
+- Improve title in navbar (refs #4965)
+
 
 2.118.1         (2025-09-18)
 ----------------------------

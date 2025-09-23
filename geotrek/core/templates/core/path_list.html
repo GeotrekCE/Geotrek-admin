@@ -71,57 +71,8 @@
 
 {% block mainactions %}
 
-    <div class="btn-group mr-2">
-        {% if perms.core.add_path or perms.core.add_draft_path %}
-            <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> <span
-                    class="d-none d-sm-inline">{{ create_label }}</span></a>
-        {% else %}
-            <span class="btn disabled d-none d-sm-inline" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
-        {% endif %}
-        {% if perms.core.change_path %}
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-gear-fill"></i> <span class="d-none d-sm-inline">{% trans "Actions" %}</span>
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
-                    <i class="bi bi-bezier"></i> {% trans "Merge" %}
-                </a>
-                <a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">
-                        <i class="bi bi-trash"></i> {% trans "Delete" %}
-                </a>
-            </div>
-        </div>
-        {% endif %}
-        <div id="wait_lightbox" style="display: none;">
-            <div class="progress progress-striped active">
-                <div class="bar" style="width: 100%;"></div>
-            </div>
-        </div>
-
-    <div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4>{% trans "Merge paths" %}</h4>
-                </div>
-                <div class="modal-body">
-                    <h4></h4>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        {% trans "Cancel" %}
-                    </button>
-                    <button type="button" id="btn-confirm" class="btn btn-success success">
-                        {% trans "Merge" %}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% if perms.core.add_path or perms.core.add_draft_path %}
+        {{ block.super }}
+    {% endif %}
 
 {% endblock mainactions %}
-
-{% block mainlist %}
-    {{ block.super }}
-{% endblock %}
