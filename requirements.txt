@@ -6,7 +6,7 @@ appy==1.0.19
     # via django-appypod
 argdispatch==1.4.0
     # via pdfimpose
-asgiref==3.9.1
+asgiref==3.9.2
     # via django
 async-timeout==5.0.1
     # via redis
