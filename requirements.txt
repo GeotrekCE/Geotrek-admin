@@ -359,7 +359,6 @@ setuptools==80.9.0
     #   zc-lockfile
     #   zope-deferredimport
     #   zope-event
-    #   zope-interface
     #   zope-proxy
 shapely==2.0.7
     # via pyopenair
@@ -440,7 +439,7 @@ zope-deferredimport==6.0
     # via persistent
 zope-event==6.0
     # via gevent
-zope-interface==8.0
+zope-interface==8.0.1
     # via
     #   btrees
     #   datetime
