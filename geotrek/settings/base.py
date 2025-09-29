@@ -482,6 +482,11 @@ PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge paths
 
+# pgRouting's snapping tolerance of disconnected edges/coincident points (in projection unit).
+# Consult the Geotrek-admin's documentation section that refers to this setting before modifying
+# it, as regenerating pgRouting's network topology is required for the change to take effect.
+PGROUTING_TOLERANCE = 0.001
+
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
 ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
