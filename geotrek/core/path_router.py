@@ -28,7 +28,7 @@ class PathRouter:
                         'id'
                     )
                 """
-        cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
+        cursor.execute(query, [settings.PGROUTING_TOLERANCE])
         return ("OK",) == cursor.fetchone()
 
     def get_route(self, steps):
@@ -45,7 +45,8 @@ class PathRouter:
         line_strings, serialized_topology = self.compute_all_steps_routes()
         if line_strings == []:
             return None
-
+        if not all(ls.geom_type == "LineString" for ls in line_strings):
+            return None
         multi_line_string = GeometryCollection(line_strings, srid=settings.SRID)
         multi_line_string.transform(settings.API_SRID)
         geojson = json.loads(multi_line_string.geojson)

@@ -481,6 +481,7 @@ PATHS_LINE_MARKER = "dotL"
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge paths
+PGROUTING_TOLERANCE = 0.001  # Snapping tolerance of disconnected edges/coincident points (in projection unit)
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
