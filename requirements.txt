@@ -321,7 +321,7 @@ pyvips==3.0.0
     # via large-image-source-vips
 pyxdg==0.28
     # via pdfimpose
-pyyaml==6.0.2
+pyyaml==6.0.3
     # via drf-spectacular
 rcssmin==1.1.2
     # via django-compressor
