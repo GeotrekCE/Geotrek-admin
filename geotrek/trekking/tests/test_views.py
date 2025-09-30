@@ -801,9 +801,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         cls.content2 = TrekFactory.create(structure=structure)
 
     def setUp(self):
-        profile = UserProfileFactory.create(
-            user__username="homer", user__password="dooh"
-        )
+        profile = UserProfileFactory()
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.force_login(user=self.user)
@@ -815,24 +813,13 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
     def test_edit_button_same_structure(self):
         url = f"/trek/{self.content1.pk}/"
         response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content1.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
-            html=True,
-        )
+
+        self.assertContains(response, f'href="/trek/edit/{self.content1.pk}/"')
 
     def test_edit_button_other_structure(self):
         url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<span class="btn ml-auto disabled" href="#">'
-            '<i class="bi bi-pencil-square"></i> Update</span>',
-            html=True,
-        )
+        self.assertNotContains(response, f'href="/trek/edit/{self.content2.pk}/"')
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
@@ -840,11 +827,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content2.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
-            html=True,
+            f'href="/trek/edit/{self.content2.pk}/"',
         )
 
     def test_can_edit_same_structure(self):

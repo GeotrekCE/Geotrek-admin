@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -540,12 +540,6 @@ msgstr ""
 "Vos images doivent avoir le même ratio (height/width) pour une meilleure "
 "integration dans le portail public."
 
-msgid "GPX"
-msgstr "GPX"
-
-msgid "KML"
-msgstr "KML"
-
 msgid "Public print"
 msgstr "Impression grand public"
 
@@ -557,6 +551,12 @@ msgstr "Impression livret grand public"
 
 msgid "Print booklet"
 msgstr "Impr. livret"
+
+msgid "GPX"
+msgstr "GPX"
+
+msgid "KML"
+msgstr "KML"
 
 msgid "Itinerancy"
 msgstr "Itinérance"

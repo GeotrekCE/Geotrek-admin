@@ -1,0 +1,76 @@
+name: Release process
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number'
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_other_workflows:
+    name: Run other workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Linting workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: 'Linting'
+            repo: ${{ github.repository }}
+            ref: 'master'
+            token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Docs workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+            workflow: 'Documentation'
+            repo: ${{ github.repository }}
+            ref: 'master'
+            token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: Publish
+    needs: [run_other_workflows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare release
+        run: |
+          echo "Preparing release ${{ github.event.inputs.version }}"
+          make release version=${{ github.event.inputs.version }}
+
+      - name: Commit prepare release changes
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Prepare release ${{ github.event.inputs.version }}"
+            tagging_message: ${{ github.event.inputs.version }}
+
+      - name: Create GitHub Release
+        run : |
+          gh release create ${{ github.event.inputs.version }} --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
+      - name: Back to dev
+        run: |
+          echo "Back to development"
+          make back_to_dev version=${{ github.event.inputs.version }}
+
+      - name: Commit back to development changes
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Back to development"

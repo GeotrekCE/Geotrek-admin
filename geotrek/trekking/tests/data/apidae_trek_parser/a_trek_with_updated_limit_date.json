@@ -17,7 +17,6 @@
           }
         ],
         "itineraire": {
-          "dureeJournaliere": 150,
           "referencesCartographiques": {
             "libelleFr": "TOP 25 IGN 3531 OT",
             "libelleEn": "Map IGN3531OT Top 25"
@@ -148,6 +147,7 @@
         "libelleEn": "A great hike to test"
       },
       "ouverture": {
+        "dureeSeance": 150,
         "periodeEnClair": {
           "libelleFr": "Ouvert toute l'année\n\nFermeture exceptionnelle en cas de pluie forte",
           "libelleEn": "Open all year long\n\nExceptionally closed during heavy rain"

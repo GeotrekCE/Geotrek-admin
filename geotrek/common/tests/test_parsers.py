@@ -146,11 +146,22 @@ class JSONParser(Parser):
         return name
 
 
-class OrganismWithAttachmentJSONParser(AttachmentParserMixin, JSONParser):
+class OrganismJSONParser(JSONParser):
     model = Organism
     fields = {"organism": "name"}
-    non_fields = {"attachments": "image"}
     separator = " "
+
+
+class OrganismWithAttachmentJSONParser(AttachmentParserMixin, OrganismJSONParser):
+    non_fields = {"attachments": "image"}
+
+
+class RowExceptionTestParser(OrganismJSONParser):
+    def filter_organism(self, src, val):
+        if val == "foo":
+            msg = "An error message"
+            raise ParserTestCustomError(msg)
+        return val
 
 
 class JSONParserIntersectionGeomTest(JSONParser):
@@ -229,6 +240,10 @@ class JSONParserIntersectionGeomValidDeleteTest(JSONParserIntersectionGeomTest):
         "object_filter": {"name": "test"},
     }
     delete = True
+
+
+class ParserTestCustomError(Exception):
+    pass
 
 
 class ParserTests(TestCase):
@@ -430,6 +445,22 @@ class ParserTests(TestCase):
             stdout=output,
         )
         self.assertIn("foo bar", output.getvalue())
+
+    def test_exception_during_row_parsing(self):
+        """If any exception is raised when parsing a row, proceed to the next object."""
+        filename = os.path.join(os.path.dirname(__file__), "data", "two_organisms.json")
+        output = StringIO()
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.RowExceptionTestParser",
+            filename,
+            verbosity=2,
+            stdout=output,
+        )
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.first().organism, "bar")
+        output = output.getvalue()
+        self.assertIn("An error message", output)
 
     def test_fk_not_in_natural_keys(self):
         output = StringIO()
