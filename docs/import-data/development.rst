@@ -832,7 +832,7 @@ The ``object_filter`` must return exactly one object:
 - If multiple objects are returned, only the **first** will be used, which may cause unexpected behavior.
 
 Conditional Deletion with ``delete = True``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 If ``delete`` attribut is set to ``True``, the parser will automatically **delete existing objects** of the current model
 that **do not intersect** the reference geometry.
@@ -842,7 +842,7 @@ that **do not intersect** the reference geometry.
    Deletion only affects objects of the model handled by the current parser. Other models are not impacted.
 
 Linking Source Objects via `eid`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
 
