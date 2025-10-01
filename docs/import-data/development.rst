@@ -672,6 +672,27 @@ For more information on how attachments work, consult :ref:`this section <import
         * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be affected (ex: themes = ["theme 1", "theme 2"])
         * See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
 
+    .. md-tab-item:: Cities
+
+        To import cities from OpenStreetMap, define a subclass of ``geotrek.zoning.parsers.OpenStreetMapCityParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class CityParser(OpenStreetMapCityParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    [{"boundary": "administrative"}, {"admin_level": "8"}],
+                ]
+                default_fields_values = {"name": "city"}
+                code_tag = "ref:INSEE"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``code_tag`` to specify the OpenStreetMap tag that contains the code information (e.g., in France, code_tag = "ref:INSEE"). If no value is defined, the code will not be included.
+        * See the `geotrek/zoning/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py>`_ file for details about parsers
+
 
 .. _importing-from-multiple-sources:
 
