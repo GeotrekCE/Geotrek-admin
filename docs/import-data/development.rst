@@ -1,7 +1,7 @@
 .. _development-parser-import:
 
 ======================
-Development 
+Development
 ======================
 
 .. _available-attributs:
@@ -172,11 +172,11 @@ To apply changes, you may have to run ``sudo service geotrek restart``.
 
         Then set up appropriate values:
 
-        * ``label`` at your convenience,
+        * ``label`` at your convenience
         * ``category``, ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go
         * You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal, provider...)
         * You can also use the class ``HebergementParser`` if you only import accommodations
-        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+        * See the `geotrek/tourism/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py>`_ file for details about parsers
 
         You can duplicate the class. Each class must have a different name.
 
@@ -205,9 +205,9 @@ To apply changes, you may have to run ``sudo service geotrek restart``.
 
         Then set up appropriate values:
 
-        * ``label`` at your convenience,
-        * ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` define default mapping with the trekking module data fixture.
-        * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
+        * ``label`` at your convenience
+        * ``practices_mapped_with_activities_ids`` and ``practices_mapped_with_default_activities_ids`` define default mapping with the trekking module data fixture
+        * See the `geotrek/trekking/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py>`_ file for details about parsers
 
     .. md-tab-item:: Services
 
@@ -219,13 +219,31 @@ To apply changes, you may have to run ``sudo service geotrek restart``.
                 label = "Drinking water points"
                 provider = "Apidae"
                 selection_id = 12345
-                type = "Drinking water point"
+                service_type = "Drinking water point"
 
         Then set up appropriate values:
 
-        * ``label`` at your convenience,
-        * ``type`` to specify type for imported objects. This type will be assigned to all objects imported through the parser.
-        * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
+        * ``label`` at your convenience
+        * ``service_type`` to specify type for imported objects. This type will be assigned to all objects imported through the parser
+        * See the `geotrek/trekking/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py>`_ file for details about parsers
+
+    .. md-tab-item:: Infrastructure
+
+        To import infrastructure from APIDAE (ex-SITRA), define a subclass of ``geotrek.infrastructure.parsers.ApidaeInfrastructureParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class PicNicTable(ApidaeInfrastructureParser):
+                label = "Picnic tables"
+                provider = "Apidae"
+                selection_id = 12345
+                infrastructure_type = "Picnic table"
+
+        Then set up appropriate values:
+
+        * ``label`` at your convenience
+        * ``infrastructure_type`` to specify type for imported objects. This type will be assigned to all objects imported through the parser
+        * See the `geotrek/infrastructure/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py>`_ file for details about parsers
 
 
 .. _tourinsoft-parsers:
