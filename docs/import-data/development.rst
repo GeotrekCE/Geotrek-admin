@@ -426,13 +426,218 @@ OpenStreetMap
 
 `OpenStreetMap <https://www.openstreetmap.org/>`_ (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
+Basic configuration of OSM parsers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. md-tab-set::
+    :name: importdata-osm-tabs
+
+    .. md-tab-item:: Information desks
+
+        To import information desks from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.InformationDeskOpenStreetMapParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
+                provider = "OpenStreetMap"
+                tags = [{"amenity": "ranger_station"}]
+                default_fields_values = {"name": "Maison du Parc"}
+                type = "Maisons du parc"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: Touristic contents
+
+        To import touristic contents from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapTouristicContentParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class RestaurantParser(OpenStreetMapTouristicContentParser):
+                provider = "OpenStreetMap"
+                tags = [{"amenity": "restaurant"}]
+                default_fields_values = {"name": "restaurant"}
+                category = "Restaurants"
+                type1 = "Restaurant"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: ``type1 = ["Restaurant", "Hotel"]``)
+        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be assigned (ex: ``portal = ["portal 1", "portal 2"]``)
+        * ``source`` to select the data source. Multiple sources can be assigned (ex: ``source = ["source 1", "source 2"]``)
+        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be assigned (ex: ``themes = ["theme 1", "theme 2"]``)
+        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
+
+
+    .. md-tab-item:: Points of interest
+
+        To import point of interest (POI) from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapPOIParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class HistoryParser(OpenStreetMapPOIParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    {"historic": "yes"},
+                    {"historic": "castel"},
+                    {"historic": "memorial"},
+                    {"historic": "fort"},
+                    {"historic": "bunker"},
+                    {"building": "chapel"},
+                    {"building": "bunker"},
+                ]
+                default_fields_values = {"name": "Historic spot"}
+                type = "Histoire"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: Districts
+
+        To import districts from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapDistrictParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class DistrictParser(OpenStreetMapDistrictParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    [{"boundary": "administrative"}, {"admin_level": "6"}], # departement
+                    [{"boundary": "administrative"}, {"admin_level": "4"}], # region
+                ]
+                default_fields_values = {"name": "district"}
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+    .. md-tab-item:: Restricted areas
+
+        To import restricted areas from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapRestrictedAreaParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class RegionalNatureParkParser(OpenStreetMapDistrictParser):
+                provider = "OpenStreetMap"
+                tags = [{"protection_title"="parc naturel régional"}]
+                default_fields_values = {"name": "parc naturel régional"}
+                area_type = "Inconnu"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``area_type`` to specify the restricted area type for imported objects
+        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
+
+    .. md-tab-item:: Signage
+
+        To import signage from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapSignageParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class DirectionalParser(OpenStreetMapSignageParser):
+                provider = "OpenStreetMap"
+                tags = [{"information": "guidepost"}]
+                default_fields_values = {"name": "guidepost"}
+                type = "Directionelle"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
+
+    .. md-tab-item:: Infrastructures
+
+        To import infrastructures from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapInfrastructureParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class TableParser(OpenStreetMapInfrastructureParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    {"leisure": "picnic_table"},
+                    {"tourism": "picnic_table"}
+                ]
+                default_fields_values = {"name": "picnic table"}
+                type = "Table"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``type`` to specify the Geotrek type for imported objects
+        * See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
+
+        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
+
+    .. md-tab-item:: Outdoor sites
+
+        To import outdoor sites from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapOutdoorSiteParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class ClimbingSiteParser(OpenStreetMapOutdoorSiteParser):
+                provider = "OpenStreetMap"
+                tags = [{"sports": "climbing"}]
+                default_fields_values = {"name": "climbing site"}
+                practice = "Escalade"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``practice`` to select in which Geotrek practice imported objects should go.
+        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
+        * ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
+        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be affected (ex: themes = ["theme 1", "theme 2"])
+        * See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
+
+    .. md-tab-item:: Cities
+
+        To import cities from OpenStreetMap, define a subclass of ``geotrek.zoning.parsers.OpenStreetMapCityParser`` in your ``var/conf/parsers.py`` file with the following content:
+
+        ::
+
+            class CityParser(OpenStreetMapCityParser):
+                provider = "OpenStreetMap"
+                tags = [
+                    [{"boundary": "administrative"}, {"admin_level": "8"}],
+                ]
+                default_fields_values = {"name": "city"}
+                code_tag = "ref:INSEE"
+
+        Then set up appropriate values:
+
+        * ``tags`` to filter the objects imported from OpenStreetMap (for more information, see the documentation for OSM parsers query configuration below)
+        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
+        * ``code_tag`` to specify the OpenStreetMap tag that contains the code information (e.g., in France, code_tag = "ref:INSEE"). If no value is defined, the code will not be included.
+        * See the `geotrek/zoning/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py>`_ file for details about parsers
+
+Query configuration
+~~~~~~~~~~~~~~~~~~~
+
 By default, the parser uses the German Overpass server:
 ``https://overpass-api.de/api/interpreter/``.
 
 You can override this by setting a custom URL in the ``url`` attribute of the ``OpenStreetMapParser`` class.
-
-Query configuration
-~~~~~~~~~~~~~~~~~~~
 
 Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query configuration is handled through the ``query_settings`` attribute, which includes:
 
@@ -444,13 +649,12 @@ Overpass queries are written in `Overpass QL <https://wiki.openstreetmap.org/wik
     * ``geom``: return the object type, the object ID, the tags and the geometry
     * ``tags``: return the object type, the object ID and the tags
 
-The ``tags`` attribute defines the set of tag filters to be used with the Overpass API.
+The ``tags`` attribute defines the set of tag filters to be used with the Overpass API (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features>`_  to get a list of existing tags).
 It is a list where each element is either:
 
 * A **dictionary**: representing a single tag filter (e.g., ``{"highway": "bus_stop"}``)
 
-* A **list of dictionaries**: representing a logical AND across all contained tags
-            (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
+* A **list of dictionaries**: representing a logical AND across all contained tags (e.g., [{"boundary": "administrative"}, {"admin_level": "4"}] means the object must have both tags).
 
 The Overpass query will return the UNION of all top-level items.
 
@@ -489,209 +693,6 @@ Attachments
 A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
 
 For more information on how attachments work, consult :ref:`this section <import-attachments>`.
-
-
-.. md-tab-set::
-    :name: importdata-osm-tabs
-
-    .. md-tab-item:: Information desks
-
-        To import information desks from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.InformationDeskOpenStreetMapParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class MaisonDuParcParser(InformationDeskOpenStreetMapParser):
-                provider = "OpenStreetMap"
-                tags = [{"amenity": "ranger_station"}]
-                default_fields_values = {"name": "Maison du Parc"}
-                type = "Maisons du parc"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``type`` to specify the Geotrek type for imported objects
-        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
-
-        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
-
-    .. md-tab-item:: Touristic contents
-
-        To import touristic contents from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapTouristicContentParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class RestaurantParser(OpenStreetMapTouristicContentParser):
-                provider = "OpenStreetMap"
-                tags = [{"amenity": "restaurant"}]
-                default_fields_values = {"name": "restaurant"}
-                category = "Restaurants"
-                type1 = "Restaurant"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go. ``type1`` and ``type2`` can have multiple values (ex: ``type1 = ["Restaurant", "Hotel"]``)
-        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be assigned (ex: ``portal = ["portal 1", "portal 2"]``)
-        * ``source`` to select the data source. Multiple sources can be assigned (ex: ``source = ["source 1", "source 2"]``)
-        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be assigned (ex: ``themes = ["theme 1", "theme 2"]``)
-        * See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for details about parsers
-
-
-    .. md-tab-item:: Points of interest
-
-        To import point of interest (POI) from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapPOIParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class HistoryParser(OpenStreetMapPOIParser):
-                provider = "OpenStreetMap"
-                tags = [
-                    {"historic": "yes"},
-                    {"historic": "castel"},
-                    {"historic": "memorial"},
-                    {"historic": "fort"},
-                    {"historic": "bunker"},
-                    {"building": "chapel"},
-                    {"building": "bunker"},
-                ]
-                default_fields_values = {"name": "Historic spot"}
-                type = "Histoire"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``type`` to specify the Geotrek type for imported objects
-        * See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for details about parsers
-
-        You can duplicate the class to import different types of points of interest. In that case, each class must have a unique name and provider label.
-
-    .. md-tab-item:: Districts
-
-        To import districts from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapDistrictParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class DistrictParser(OpenStreetMapDistrictParser):
-                provider = "OpenStreetMap"
-                tags = [
-                    [{"boundary": "administrative"}, {"admin_level": "6"}], # departement
-                    [{"boundary": "administrative"}, {"admin_level": "4"}], # region
-                ]
-                default_fields_values = {"name": "district"}
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
-
-    .. md-tab-item:: Restricted areas
-
-        To import restricted areas from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapRestrictedAreaParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class RegionalNatureParkParser(OpenStreetMapDistrictParser):
-                provider = "OpenStreetMap"
-                tags = [{"protection_title"="parc naturel régional"}]
-                default_fields_values = {"name": "parc naturel régional"}
-                area_type = "Inconnu"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``area_type`` to specify the restricted area type for imported objects
-        * See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for details about parsers
-
-    .. md-tab-item:: Signage
-
-        To import signage from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapSignageParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class DirectionalParser(OpenStreetMapSignageParser):
-                provider = "OpenStreetMap"
-                tags = [{"information": "guidepost"}]
-                default_fields_values = {"name": "guidepost"}
-                type = "Directionelle"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``type`` to specify the Geotrek type for imported objects
-        * See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for details about parsers
-
-    .. md-tab-item:: Infrastructures
-
-        To import infrastructures from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapInfrastructureParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class TableParser(OpenStreetMapInfrastructureParser):
-                provider = "OpenStreetMap"
-                tags = [
-                    {"leisure": "picnic_table"},
-                    {"tourism": "picnic_table"}
-                ]
-                default_fields_values = {"name": "picnic table"}
-                type = "Table"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``type`` to specify the Geotrek type for imported objects
-        * See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file for details about parsers
-
-        You can duplicate the class to import different types of information desks. In that case, each class must have a unique name and provider label.
-
-    .. md-tab-item:: Outdoor sites
-
-        To import outdoor sites from OpenStreetMap, define a subclass of ``geotrek.tourism.parsers.OpenStreetMapOutdoorSiteParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class ClimbingSiteParser(OpenStreetMapOutdoorSiteParser):
-                provider = "OpenStreetMap"
-                tags = [{"sports": "climbing"}]
-                default_fields_values = {"name": "climbing site"}
-                practice = "Escalade"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``practice`` to select in which Geotrek practice imported objects should go.
-        * ``portal`` to select in which portal(s) the objects should appear. Multiple portals can be affected (ex: portal = ["portal 1", "portal 2"])
-        * ``source`` to select the data source. Multiple sources can be affected (ex: source = ["source 1", "source 2"])
-        * ``themes`` to select the corresponding theme(s) of the parsed objects. Multiple themes can be affected (ex: themes = ["theme 1", "theme 2"])
-        * See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for details about parsers
-
-    .. md-tab-item:: Cities
-
-        To import cities from OpenStreetMap, define a subclass of ``geotrek.zoning.parsers.OpenStreetMapCityParser`` in your ``var/conf/parsers.py`` file with the following content:
-
-        ::
-
-            class CityParser(OpenStreetMapCityParser):
-                provider = "OpenStreetMap"
-                tags = [
-                    [{"boundary": "administrative"}, {"admin_level": "8"}],
-                ]
-                default_fields_values = {"name": "city"}
-                code_tag = "ref:INSEE"
-
-        Then set up appropriate values:
-
-        * ``tags`` to filter the objects imported from OpenStreetMap (see `MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to get a list of existing tags)
-        * ``default_fields_values`` to define a value that will be assigned to a specific field when the external object does not contain the corresponding tag
-        * ``code_tag`` to specify the OpenStreetMap tag that contains the code information (e.g., in France, code_tag = "ref:INSEE"). If no value is defined, the code will not be included.
-        * See the `geotrek/zoning/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py>`_ file for details about parsers
 
 
 .. _importing-from-multiple-sources:
