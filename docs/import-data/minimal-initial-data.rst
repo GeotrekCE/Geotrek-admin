@@ -323,7 +323,7 @@ Load paths
 Get OpenStreetMap paths
 ------------------------
 
-You can use the ``osm-paths`` tool to download OSM paths data via the overpass API. This tool converts paths to into linestrings and exports them to GeoJSON.
+You can use the ``osm-paths`` tool to download OSM paths data via the overpass API. This tool converts paths into linestrings and exports them to GeoJSON.
 
 For more information, refer to the `osm-paths documentation <https://github.com/makinacorpus/osm-paths>`_
 
