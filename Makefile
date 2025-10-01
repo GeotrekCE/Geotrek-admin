@@ -32,7 +32,7 @@ serve_docs: purge_docs
     -c "sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
 
 build_docs: purge_docs
-	$(docker_compose) run --rm -w /opt/geotrek-admin/docs web bash -c "make html SPHINXOPTS=\"-W\""
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -v ./var/cache:/.cache web bash -c "make html SPHINXOPTS=\"-W\""
 
 build_doc_translations:
 	$(docker_compose) run -w /opt/geotrek-admin/docs --rm web bash -c "make gettext && sphinx-intl update -p _build/locale -l fr"
