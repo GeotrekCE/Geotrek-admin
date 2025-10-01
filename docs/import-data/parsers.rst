@@ -37,7 +37,7 @@ The import interface in Geotrek-admin is divided into two sections:
   :alt: Import data UI
   :align: center
 
-During the import process, a progress bar is displayed to indicate the current status. Once the import is complete, a summary report appears at the bottom of the screen. 
+During the import process, a progress bar is displayed to indicate the current status. Once the import is complete, a summary report appears at the bottom of the screen.
 
 It provides details on :
 
@@ -87,7 +87,7 @@ Just run:
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import  HebergementParser
 
 Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
@@ -131,11 +131,15 @@ There are several default parsers, which are more or less generic scripts that h
 +-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
 | Signage           |        |            |     |             | X             |          |              |
 +-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
-| Infrastructure    |        |            |     |             | X             |          |              |
+| Infrastructure    | X      |            |     |             | X             |          |              |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| Service           | X      |            |     |             |               |          |              |
 +-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
 | Sensitive areas   |        |            |     |             |               |          | X            |
 +-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
 | Sensitive species |        |            |     |             |               |          | X            |
++-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
+| City              |        |            |     |             | X             |          | X            |
 +-------------------+--------+------------+-----+-------------+---------------+----------+--------------+
 
 
@@ -202,7 +206,7 @@ From the command line
     .. md-tab-item:: Example with Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import  geotrek.sensitivity.parsers.BiodivParser
 
 Import from a Shapefile
@@ -268,7 +272,7 @@ From the command line
     .. md-tab-item:: Example with Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import  geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.zip>
 
 - For regulatory sensitive areas:
@@ -285,7 +289,7 @@ From the command line
     .. md-tab-item:: Example with Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.zip>
 
 
@@ -338,7 +342,7 @@ Real-time integration
 
 Geotrek-admin integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
 
-These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.). 
+These imported data elements are automatically linked to nearby treks, regardless of activity type (trekking, trail running, mountain biking, cycling, gravel, climbing, rafting, etc.).
 
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
