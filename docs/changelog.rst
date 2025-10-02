@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix translations in Add buttons on lists. (refs #4963)
+- Fix Makefile's build_doc cache
 
 **Improvements**
 
