@@ -46,9 +46,10 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
         qs = (
             super()
             .get_queryset()
+            .alias(transform=Transform("geom", 4326))
             .annotate(
-                coord_x=ST_X(Transform("geom", 4326)),
-                coord_y=ST_Y(Transform("geom", 4326)),
+                coord_x=ST_X("transform"),
+                coord_y=ST_Y("transform"),
             )
         )  # Filtered by FilterSet
         if (
