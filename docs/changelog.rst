@@ -17,6 +17,7 @@ CHANGELOG
 **Improvements**
 
 - Improve title in navbar (refs #4965)
+- Add cities and coordinates in the report CSV export (refs #4631)
 
 
 2.118.1         (2025-09-18)
