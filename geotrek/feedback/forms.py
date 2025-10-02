@@ -101,7 +101,7 @@ class ReportForm(CommonForm):
                     identifier__in=next_statuses
                 )
                 # current_user
-                if self.old_status.identifier not in ["filed"]:
+                if self.old_status.identifier not in ["filed", "waiting"]:
                     self.fields["current_user"].widget = HiddenInput()
                 # message for sentinel
                 self.fields["message_sentinel"] = CharField(
