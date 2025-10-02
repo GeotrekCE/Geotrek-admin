@@ -5,6 +5,10 @@ CHANGELOG
 2.118.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Documentation**
+
+- Reorganize import data chapter (#4769)
+
 
 2.118.2         (2025-09-23)
 ----------------------------
