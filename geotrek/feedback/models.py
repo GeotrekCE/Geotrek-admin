@@ -359,13 +359,14 @@ class Report(
             date=date, report=self, author=author, content=content, type=type
         )
 
-    def try_send_email(self, subject, message):
+    def try_send_email(self, subject, message, recipient=None):
         try:
-            recipient = (
-                [self.current_user.email]
-                if self.current_user
-                else [x[1] for x in settings.MANAGERS]
-            )
+            if not recipient:
+                recipient = (
+                    [self.current_user.email]
+                    if self.current_user
+                    else [x[1] for x in settings.MANAGERS]
+                )
             success = send_mail(
                 subject,
                 message,
@@ -407,6 +408,17 @@ class Report(
             "feedback/affectation_email.txt", {"report": self, "message": message}
         )
         self.try_send_email(subject, message)
+
+    def notify_assigned_handler(self, message):
+        trad = _("Report has been reassigned")
+        subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
+        message = render_to_string(
+            "feedback/reassignment_email.txt", {"report": self, "message": message}
+        )
+        recipient = ([self.assigned_handler.email]
+                    if self.assigned_handler
+                    else [x[1] for x in settings.MANAGERS])
+        self.try_send_email(subject, message, recipient)
 
     def notify_late_report(self, status_id):
         trad = _("Late report processing")
