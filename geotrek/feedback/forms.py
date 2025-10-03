@@ -204,9 +204,7 @@ class ReportForm(CommonForm):
                 and report.status.identifier in ["waiting"]
                 and report.current_user
                 and report.current_user != WorkflowManager.objects.first().user
-                and report.current_user != report.assigned_handler
             ):
-                # send emails only if the new supervisor is different from the former one
                 msg_new_supervisor = self.cleaned_data.get("message_supervisor", "")
                 msg_former_supervisor = self.cleaned_data.get("message_former_supervisor", "")
                 report.notify_current_user(msg_new_supervisor)
