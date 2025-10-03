@@ -3,6 +3,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#div_id_message_administrators').prop('hidden', true);
     $('#div_id_message_sentinel_predefined').prop('hidden', true);
     $('#div_id_message_supervisor').prop('hidden', true);
+    $('#div_id_message_former_supervisor').prop('hidden', true);
     $('#div_id_uses_timers').prop('hidden', true);
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
@@ -50,6 +51,7 @@ function display_message_fields_on_supervisor_change() {
     $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager || !display_filed));
     $('#div_id_message_sentinel_predefined').prop('hidden', (selected == workflow_manager || !display_filed));
     $('#div_id_message_supervisor').prop('hidden', (selected == workflow_manager || !display_filed && !display_waiting));
+    $('#div_id_message_former_supervisor').prop('hidden', (selected == workflow_manager || !display_waiting));
     $('#div_id_uses_timers').prop('hidden', (selected == workflow_manager  || !display_filed));
     $('#div_id_status').prop('hidden', (selected != workflow_manager));
     if (selected == workflow_manager) {
