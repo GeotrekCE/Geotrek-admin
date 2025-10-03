@@ -54,15 +54,17 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report_2 = ReportFactory(
             status=cls.filed_status, external_uuid=uuid.uuid4()
         )
+        cls.user = UserFactory()
         cls.waiting_report = ReportFactory(
-            status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4()
+            status=cls.waiting_status,
+            uses_timers=True,
+            external_uuid=uuid.uuid4(),
+            current_user=cls.user,
+            assigned_handler=cls.user,
         )
         cls.intervention = ReportInterventionFactory(
             begin_date=datetime(year=1997, month=11, day=10).date(),
             end_date=datetime(year=1997, month=11, day=11).date(),
-        )
-        cls.waiting_report = ReportFactory(
-            status=cls.waiting_status, uses_timers=True, external_uuid=uuid.uuid4()
         )
         cls.solved_intervention_report = ReportFactory(
             status=cls.solved_intervention_status, external_uuid=uuid.uuid4()
@@ -111,6 +113,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
+        self.assertNotIn("message_former_supervisor", keys)
         self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)
@@ -133,6 +136,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
+        self.assertNotIn("message_former_supervisor", keys)
         self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
         self.assertFalse(form.errors)  # assert form is valid
@@ -158,6 +162,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertNotIn("message_administrators", keys)
         self.assertNotIn("message_sentinel_predefined", keys)
         self.assertNotIn("message_supervisor", keys)
+        self.assertNotIn("message_former_supervisor", keys)
         self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, HiddenInput)
 
@@ -177,6 +182,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn("message_administrators", keys)
         self.assertIn("message_sentinel_predefined", keys)
         self.assertIn("message_supervisor", keys)
+        self.assertIn("message_former_supervisor", keys)
         self.assertIsInstance(form.fields["current_user"].widget, Select)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
 
@@ -250,6 +256,38 @@ class TestSuricateForms(SuricateWorkflowTests):
         )
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
 
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_workflow_reassign_step(self, mocked_post):
+        mails_before = len(mail.outbox)
+        # When assigning a user to a report
+        data = {
+            "current_user": str(self.other_user.pk),
+            "geom": self.waiting_report.geom,
+            "message_supervisor": "New supervisor",
+            "message_former_supervisor": "Old supervisor",
+        }
+        form = ReportForm(instance=self.waiting_report, data=data)
+        form.save()
+
+        # Assert new assigned_handler is set up
+        self.assertEqual(self.waiting_report.assigned_handler, self.other_user)
+
+        # Assert user is notified
+        self.assertEqual(len(mail.outbox), mails_before + 2)
+        # New supervisor
+        self.assertEqual(
+            mail.outbox[-2].subject, "[Geotrek-Admin] New report to process"
+        )
+        self.assertEqual(mail.outbox[-2].to, [self.waiting_report.current_user.email])
+        # Former supervisor
+        self.assertEqual(
+            mail.outbox[-1].subject, "[Geotrek-Admin] Report has been reassigned"
+        )
+        self.assertEqual(mail.outbox[-1].to, [self.user.email])
+        # Assert Suricate is not notify
+        mocked_post.assert_not_called()
+
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(
         SURICATE_WORKFLOW_SETTINGS=SURICATE_WORKFLOW_SETTINGS_NO_MODERATION
@@ -282,6 +320,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertIn("message_administrators", keys)
         self.assertIn("message_sentinel_predefined", keys)
         self.assertIn("message_supervisor", keys)  # Will be hidden with JS
+        self.assertIn("message_former_supervisor", keys)  # Will be hidden with JS
         self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
         self.assertIsInstance(form.fields["uses_timers"].widget, CheckboxInput)
         self.assertFalse(form.errors)
