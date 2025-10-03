@@ -295,7 +295,7 @@ class Report(
     def comment_text(self):
         return html.unescape(self.comment)
 
-    def send_report_to_managers(self, template_name="feedback/report_email.txt"):
+    def send_report_to_managers(self, template_name="feedback/emails/report_email.txt"):
         if self.email:
             subject = _("Feedback from %(email)s") % {"email": self.email}
         else:
@@ -405,7 +405,7 @@ class Report(
         trad = _("New report to process")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
-            "feedback/affectation_email.txt", {"report": self, "message": message}
+            "feedback/emails/affectation_email.txt", {"report": self, "message": message}
         )
         self.try_send_email(subject, message)
 
@@ -413,7 +413,7 @@ class Report(
         trad = _("Report has been reassigned")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
-            "feedback/reassignment_email.txt", {"report": self, "message": message}
+            "feedback/emails/reassignment_email.txt", {"report": self, "message": message}
         )
         recipient = ([self.assigned_handler.email]
                     if self.assigned_handler
@@ -425,11 +425,11 @@ class Report(
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         if settings.SURICATE_WORKFLOW_ENABLED:
             message = render_to_string(
-                f"feedback/late_{status_id}_email.txt", {"report": self}
+                f"feedback/emails/late_{status_id}_email.txt", {"report": self}
             )
         else:
             message = render_to_string(
-                "feedback/late_report_email.txt", {"report": self}
+                "feedback/emails/late_report_email.txt", {"report": self}
             )
         self.try_send_email(subject, message)
 
@@ -807,7 +807,7 @@ class WorkflowManager(models.Model):
     def notify_report_to_solve(self, report):
         trad = _("A report must be solved")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
-        message = render_to_string("feedback/cloture_email.txt", {"report": report})
+        message = render_to_string("feedback/emails/cloture_email.txt", {"report": report})
         self.try_send_email(subject, message, report)
 
     def notify_new_reports(self, reports):
@@ -817,7 +817,7 @@ class WorkflowManager(models.Model):
         trad = _("New reports from Suricate")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
-            "feedback/reports_email.txt", {"reports_urls": reports_urls}
+            "feedback/emails/reports_email.txt", {"reports_urls": reports_urls}
         )
         self.try_send_email(subject, message)
 
