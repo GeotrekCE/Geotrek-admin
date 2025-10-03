@@ -51,6 +51,20 @@ class Area(GeoFunc):
     output_field = FloatField()
 
 
+class ST_X(GeoFunc):
+    """ST_X postgis function"""
+
+    output_field = FloatField()
+    function = "ST_X"
+
+
+class ST_Y(GeoFunc):
+    """ST_Y postgis function"""
+
+    output_field = FloatField()
+    function = "ST_Y"
+
+
 class IsSimple(GeoFunc):
     output_field = BooleanField()
 

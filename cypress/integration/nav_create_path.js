@@ -18,7 +18,7 @@ describe('Create path', () => {
     it('Create path', () => {
         cy.visit('/path/list');
         cy.wait('@tiles');
-        cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
+        cy.get("a.btn-success[href='/path/add/']").contains('Add').click();
         cy.get("a.leaflet-draw-draw-polyline").click();
         cy.get('.leaflet-map-pane')
             .click(390, 250)
@@ -34,7 +34,7 @@ describe('Create path', () => {
 
     it('Create path split', () => {
         cy.visit('/path/list');
-        cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
+        cy.get("a.btn-success[href='/path/add/']").contains('Add').click();
         cy.get("a.leaflet-draw-draw-polyline").click();
         cy.get('.leaflet-map-pane')
             .click(380, 220)

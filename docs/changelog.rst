@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.118.1+dev     (XXXX-XX-XX)
+2.118.2+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Breaking changes**
@@ -17,6 +17,20 @@ CHANGELOG
 **Maintenance**
 
 * Upgrade to Django 5.2 LTS
+
+
+2.118.2         (2025-09-23)
+----------------------------
+
+**Bug fixes**
+
+- Fix translations in Add buttons on lists. (refs #4963)
+- Fix Makefile's build_doc cache
+
+**Improvements**
+
+- Improve title in navbar (refs #4965)
+- Add cities and coordinates in the report CSV export (refs #4631)
 
 
 2.118.1         (2025-09-18)
