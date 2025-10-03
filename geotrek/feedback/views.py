@@ -12,6 +12,7 @@ from mapentity import views as mapentity_views
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from geotrek.common.functions import ST_X, ST_Y
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 
@@ -42,7 +43,15 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     searchable_columns = ["id", "eid"]
 
     def get_queryset(self):
-        qs = super().get_queryset()  # Filtered by FilterSet
+        qs = (
+            super()
+            .get_queryset()
+            .alias(transform=Transform("geom", 4326))
+            .annotate(
+                coord_x=ST_X("transform"),
+                coord_y=ST_Y("transform"),
+            )
+        )  # Filtered by FilterSet
         if (
             settings.SURICATE_WORKFLOW_ENABLED
             and not settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION")
@@ -96,6 +105,9 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
         "date_update",
         "current_user",
         "provider",
+        "cities",
+        "coord_x",
+        "coord_y",
     ]
 
     def get_columns(self):

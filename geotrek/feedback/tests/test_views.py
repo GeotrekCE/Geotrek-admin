@@ -6,6 +6,7 @@ from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.gis.geos import Point
 from django.core import mail
 from django.core.cache import caches
 from django.test import TestCase
@@ -21,6 +22,7 @@ from geotrek.maintenance.tests.factories import (
     InfrastructureInterventionFactory,
     ReportInterventionFactory,
 )
+from geotrek.zoning.models import City
 
 from ...common.tests import CommonTest
 from . import factories as feedback_factories
@@ -253,6 +255,46 @@ class ReportViewsTest(CommonTest):
                 )().columns,
                 ["id", "email", "comment", "advice"],
             )
+
+    @test_for_all_suricate_modes
+    def test_coordinates_in_export(self):
+        "Check X and Y coordinates in CSV exports"
+
+        x, y = 830872.1630, 6310365.1393
+        self.modelfactory(geom=Point(x, y, srid=2154))
+        response = self.client.get("/report/list/export/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get("Content-Type"), "text/csv")
+        reader = csv.DictReader(
+            StringIO(response.content.decode("utf-8")), delimiter=","
+        )
+        dict_from_csv = dict(next(iter(reader)))
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Coord_X", column_names)
+        self.assertIn("Coord_Y", column_names)
+        self.assertAlmostEqual(float(dict_from_csv["Coord_X"]), 4.62, 1)
+        self.assertAlmostEqual(float(dict_from_csv["Coord_Y"]), 43.88, 1)
+
+    @test_for_all_suricate_modes
+    def test_cities_in_export(self):
+        "Check cities in CSV exports"
+
+        self.modelfactory(geom=Point(5, 5, srid=2154))
+        city, created = City.objects.get_or_create(
+            code="30100",
+            name="Alès",
+            geom="SRID=2154;MULTIPOLYGON(((0 0, 0 10, 10 10, 10 0, 0 0)))",
+        )
+        response = self.client.get("/report/list/export/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get("Content-Type"), "text/csv")
+        reader = csv.DictReader(
+            StringIO(response.content.decode("utf-8")), delimiter=","
+        )
+        dict_from_csv = dict(next(iter(reader)))
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Cities", column_names)
+        self.assertEqual(dict_from_csv["Cities"], city.name)
 
     @freeze_time("2020-03-17")
     def test_api_datatables_list_for_model_in_suricate_mode(self):
