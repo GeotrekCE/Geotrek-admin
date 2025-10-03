@@ -39,7 +39,6 @@ function display_message_fields_on_status_change() {
 function display_predefined_email_in_email_field() {
     var predefined_emails = JSON.parse($('#predefined_emails').text());
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
-
     var selected = $('#id_message_sentinel_predefined').val() || null;
     if (selected == null) {
         $('#id_message_sentinel').val("");
