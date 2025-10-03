@@ -42,11 +42,15 @@ function display_message_fields_on_status_change() {
 function display_message_fields_on_supervisor_change() {
     var selected = $('#id_current_user').val() || null;
     var workflow_manager = JSON.parse($('#workflow_manager').text());
-    $('#div_id_message_sentinel').prop('hidden', (selected == workflow_manager));
-    $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager));
-    $('#div_id_message_sentinel_predefined').prop('hidden', (selected == workflow_manager));
-    $('#div_id_message_supervisor').prop('hidden', (selected == workflow_manager));
-    $('#div_id_uses_timers').prop('hidden', (selected == workflow_manager));
+    var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    var id_status = $('#id_status').val() || null;
+    display_filed = (status_ids_and_colors[id_status]['id'] == "filed")
+    display_waiting = (status_ids_and_colors[id_status]['id'] == "waiting")
+    $('#div_id_message_sentinel').prop('hidden', (selected == workflow_manager || !display_filed));
+    $('#div_id_message_administrators').prop('hidden', (selected == workflow_manager || !display_filed));
+    $('#div_id_message_sentinel_predefined').prop('hidden', (selected == workflow_manager || !display_filed));
+    $('#div_id_message_supervisor').prop('hidden', (selected == workflow_manager || !display_filed && !display_waiting));
+    $('#div_id_uses_timers').prop('hidden', (selected == workflow_manager  || !display_filed));
     $('#div_id_status').prop('hidden', (selected != workflow_manager));
     if (selected == workflow_manager) {
         $('#id_message_supervisor').val("");

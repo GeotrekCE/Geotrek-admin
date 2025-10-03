@@ -194,9 +194,24 @@ class ReportForm(CommonForm):
                 report.assigned_handler = self.user
                 report.save()
                 TimerEvent.objects.create(step=waiting_status, report=report)
+            # Reassign report through moderation step
+            elif (
+                self.old_status.identifier in ["waiting"]
+                and report.status.identifier in ["waiting"]
+                and report.current_user
+                and report.current_user != WorkflowManager.objects.first().user
+            ):
+                msg = self.cleaned_data.get("message_supervisor", "")
+                report.notify_current_user(msg)
+                report.assigned_handler = report.current_user
+                report.save()
+                TimerEvent.objects.create(step=waiting_status, report=report)
             if (
                 self.old_status.identifier != report.status.identifier
                 or self.old_user != report.current_user
+                # do not notify suricate when the supervisor is reassigned
+                and self.old_status.identifier in ["waiting"]
+                and report.status.identifier in ["waiting"]
             ):
                 msg_sentinel = self.cleaned_data.get("message_sentinel", "")
                 msg_admins = self.cleaned_data.get("message_administrators", "")
