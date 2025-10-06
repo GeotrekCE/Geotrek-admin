@@ -405,7 +405,8 @@ class Report(
         trad = _("New report to process")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
-            "feedback/emails/affectation_email.txt", {"report": self, "message": message}
+            "feedback/emails/affectation_email.txt",
+            {"report": self, "message": message},
         )
         self.try_send_email(subject, message)
 
@@ -413,11 +414,14 @@ class Report(
         trad = _("Report has been reassigned")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
         message = render_to_string(
-            "feedback/emails/reassignment_email.txt", {"report": self, "message": message}
+            "feedback/emails/reassignment_email.txt",
+            {"report": self, "message": message},
         )
-        recipient = ([self.assigned_handler.email]
-                    if self.assigned_handler
-                    else [x[1] for x in settings.MANAGERS])
+        recipient = (
+            [self.assigned_handler.email]
+            if self.assigned_handler
+            else [x[1] for x in settings.MANAGERS]
+        )
         self.try_send_email(subject, message, recipient)
 
     def notify_late_report(self, status_id):
@@ -807,7 +811,9 @@ class WorkflowManager(models.Model):
     def notify_report_to_solve(self, report):
         trad = _("A report must be solved")
         subject = f"{settings.EMAIL_SUBJECT_PREFIX}{trad}"
-        message = render_to_string("feedback/emails/cloture_email.txt", {"report": report})
+        message = render_to_string(
+            "feedback/emails/cloture_email.txt", {"report": report}
+        )
         self.try_send_email(subject, message, report)
 
     def notify_new_reports(self, reports):

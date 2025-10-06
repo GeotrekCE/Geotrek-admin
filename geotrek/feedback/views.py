@@ -60,7 +60,7 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
                 coord_x=ST_X("transform"),
                 coord_y=ST_Y("transform"),
                 intervention_scheduled_date=begin_date_subquery,
-                intervention_resolution_date=end_date_subquery
+                intervention_resolution_date=end_date_subquery,
             )
         )  # Filtered by FilterSet
         if (
