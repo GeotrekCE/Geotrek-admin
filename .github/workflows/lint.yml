@@ -1,6 +1,7 @@
 name: Linting
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'geotrek/**'  # if geotrek code change
@@ -16,7 +17,7 @@ jobs:
     name: Checking SRID in migrations files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
@@ -24,7 +25,7 @@ jobs:
     name: Checking lint rules
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
         with:
             version: "latest"

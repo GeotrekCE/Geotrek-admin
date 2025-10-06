@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -503,12 +503,6 @@ msgid ""
 "apparence in public portal."
 msgstr ""
 
-msgid "GPX"
-msgstr ""
-
-msgid "KML"
-msgstr ""
-
 msgid "Public print"
 msgstr ""
 
@@ -519,6 +513,12 @@ msgid "Public print booklet"
 msgstr ""
 
 msgid "Print booklet"
+msgstr ""
+
+msgid "GPX"
+msgstr ""
+
+msgid "KML"
 msgstr ""
 
 msgid "Itinerancy"

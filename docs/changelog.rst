@@ -2,8 +2,43 @@
 CHANGELOG
 =========
 
-2.117.0+dev    (XXXX-XX-XX)
+2.118.2+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.118.2         (2025-09-23)
+----------------------------
+
+**Bug fixes**
+
+- Fix translations in Add buttons on lists. (refs #4963)
+- Fix Makefile's build_doc cache
+
+**Improvements**
+
+- Improve title in navbar (refs #4965)
+- Add cities and coordinates in the report CSV export (refs #4631)
+
+
+2.118.1         (2025-09-18)
+----------------------------
+
+**Bug fixes**
+
+- Fix parser crash when a row fails with any error
+- Fix map loading if instance has restricted areas
+
+**Maintenance**
+
+- Update ``ApidaeTrekParser`` to handle deprecated trek duration fields in Apidae API responses (refs #4621)
+
+
+2.118.0         (2025-09-09)
+----------------------------
+
+**Improvements**
+
+- Responsive design through mapentity. Navbar header, side bar, buttons in list views, detail views, user menu.
 
 **Bug fixes**
 
@@ -12,11 +47,16 @@ CHANGELOG
 **New features**
 
 - Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+- Locate control on each map (via mapentity 8.14.0 update)
 
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
 - Add main section blocks in landing page (refs #4883)
+
+**Maintenance**
+
+- Bump to django-mapentity 8.14.2
 
 
 2.117.0         (2025-07-28)

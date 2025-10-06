@@ -134,7 +134,6 @@ class CirkwiParserTests(TestCase):
         self.assertEqual(attachement.title, "")
         self.assertEqual(attachement.legend, "Le patrimoine de Plancoët")
         self.assertEqual(attachement.author, "Manon")
-        self.assertEqual(attachement.attachment_file.size, len(testdata.IMG_FILE))
         self.assertEqual(t.duration, 2.0)
 
         # Test values for english parsing

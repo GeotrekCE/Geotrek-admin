@@ -199,7 +199,7 @@ msgid "Add a new signage"
 msgstr "Ajouter une signalétique"
 
 msgid "Edit"
-msgstr "Editer"
+msgstr "Modifier"
 
 msgid "Add"
 msgstr "Ajouter"

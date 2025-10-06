@@ -3,66 +3,65 @@
 {% load static %}
 
 {% block change_style %}
-<script>
-		style_others = window.SETTINGS.map.styles.others;
-		window.SETTINGS.map.styles.others = function(feature) {
-			if (feature.properties.draft){
-				return window.SETTINGS.map.styles.draftpath;
-			}
-			return style_others;
-		};
-	</script>
+    <script>
+        style_others = window.SETTINGS.map.styles.others;
+        window.SETTINGS.map.styles.others = function (feature) {
+            if (feature.properties.draft) {
+                return window.SETTINGS.map.styles.draftpath;
+            }
+            return style_others;
+        };
+    </script>
 {% endblock change_style %}
 
 {% block extrahead %}
 
-{% csrf_token %}
+    {% csrf_token %}
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-        $(function(){
-   	        $('#btn-merge').click(function() {
+        $(function () {
+            $('#btn-merge').click(function () {
                 if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
                     $('#btn-confirm').hide();
                     $('#confirm-merge .modal-body h4').html("{% trans 'Select two paths to merge them' %}");
-                }
-                else {
-                	$('#confirm-merge .modal-body h4').html('{% trans "Are you sure you want to merge these paths ?" %}');
-                	$('#btn-confirm').show();
+                } else {
+                    $('#confirm-merge .modal-body h4').html('{% trans "Are you sure you want to merge these paths ?" %}');
+                    $('#btn-confirm').show();
                 }
             });
 
-			var pathDelete = "{% url 'core:multiple_path_delete' "0,0" %}";
-			var pathsToDelete = [];
-            $('#btn-delete').click(function() {
-            for (const value of Object.values($('#objects-list input:checkbox:checked'))) {
-                pathsToDelete.push(value.value);
-            };
-            if (pathsToDelete.filter(Boolean).length != 0) {
-                window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
-            }
+            var pathDelete = "{% url 'core:multiple_path_delete' "0,0" %}";
+            var pathsToDelete = [];
+            $('#btn-delete').click(function () {
+                for (const value of Object.values($('#objects-list input:checkbox:checked'))) {
+                    pathsToDelete.push(value.value);
+                }
+                ;
+                if (pathsToDelete.filter(Boolean).length != 0) {
+                    window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
+                }
             });
 
-   	        $('#btn-confirm').click(function() {
-   	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
-   	                $('#btn-confirm').hide();
+            $('#btn-confirm').click(function () {
+                $('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
+                $('#btn-confirm').hide();
 
-   	        	$.post("{% url 'core:path-drf-merge-path' %}",
-	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+                $.post("{% url 'core:path-drf-merge-path' %}",
+                    $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
 
-	                function(response){
-	    		        $('#btn-confirm').show();
+                    function (response) {
+                        $('#btn-confirm').show();
 
-	                    if(response.error){
-	            	        $('#confirm-merge .modal-body h4').html(response.error);
-	            	        $('#btn-confirm').hide();
-	                    }
-	                    else {
-	           	            location.reload();
-	                    }
-	                }
+                        if (response.error) {
+                            $('#confirm-merge .modal-body h4').html(response.error);
+                            $('#btn-confirm').hide();
+                        } else {
+                            location.reload();
+                        }
+                    }
                 );
-   	        });
+            });
 
         });
 
@@ -72,59 +71,8 @@
 
 {% block mainactions %}
 
-<div class="btn-group mr-2">
-  {% if perms.core.add_path or perms.core.add_draft_path %}
-  <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> {{ create_label }}</a>
-  {% else %}
-  <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
-  {% endif %}
-
-  <div id="wait_lightbox" style="display: none;">
-    <div class="progress progress-striped active">
-      <div class="bar" style="width: 100%;"></div>
-    </div>
-  </div>
-</div>
-
-{% if perms.core.change_path %}
-<div class="btn-group btn-danger mr-2">
-  <a class="btn btn-primary" href="#"><i class="bi bi-gear-fill"></i> Actions</a>
-  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-  <ul class="dropdown-menu">
-    <li class="dropdown-item">
-      <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
-        <i class="bi bi-bezier"></i> {% trans "Merge" %}</a>
-    </li>
-    <li class="dropdown-item">
-      <a href="#delete" id="btn-delete" role="button">
-        <i class="bi bi-trash"></i> {% trans "Delete" %}</a>
-    </li>
-  </ul>
-</div>
-{% endif %}
-
-<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>{% trans "Merge paths" %}</h4>
-      </div>
-      <div class="modal-body">
-        <h4></h4>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">
-          {% trans "Cancel" %}
-        </button>
-        <button type="button" id="btn-confirm" class="btn btn-success success">
-          {% trans "Merge" %}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+    {% if perms.core.add_path or perms.core.add_draft_path %}
+        {{ block.super }}
+    {% endif %}
 
 {% endblock mainactions %}
-{% block mainlist %}
-{{ block.super }}
-{% endblock %}

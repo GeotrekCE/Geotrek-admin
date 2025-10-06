@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -521,12 +521,6 @@ msgstr ""
 "Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, um besser in "
 "das öffentliche Portal integriert werden zu können."
 
-msgid "GPX"
-msgstr "GPX"
-
-msgid "KML"
-msgstr "KML"
-
 msgid "Public print"
 msgstr "Öffentliches Drucken"
 
@@ -538,6 +532,12 @@ msgstr ""
 
 msgid "Print booklet"
 msgstr ""
+
+msgid "GPX"
+msgstr "GPX"
+
+msgid "KML"
+msgstr "KML"
 
 msgid "Itinerancy"
 msgstr "Roaming"

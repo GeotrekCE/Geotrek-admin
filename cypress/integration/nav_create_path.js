@@ -18,7 +18,7 @@ describe('Create path', () => {
     it('Create path', () => {
         cy.visit('/path/list');
         cy.wait('@tiles');
-        cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
+        cy.get("a.btn-success[href='/path/add/']").contains('Add').click();
         cy.get("a.leaflet-draw-draw-polyline").click();
         cy.get('.leaflet-map-pane')
             .click(390, 250)
@@ -34,7 +34,7 @@ describe('Create path', () => {
 
     it('Create path split', () => {
         cy.visit('/path/list');
-        cy.get("a.btn-success[href='/path/add/']").contains('Add a new path').click();
+        cy.get("a.btn-success[href='/path/add/']").contains('Add').click();
         cy.get("a.leaflet-draw-draw-polyline").click();
         cy.get('.leaflet-map-pane')
             .click(380, 220)
@@ -52,7 +52,7 @@ describe('Create path', () => {
     })
     it('Path action delete multiple without path', () => {
         cy.visit('/path/list');
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#delete']").click();
         cy.url().should('include', '/path/list/');
         cy.get("a[title='Path number 1']").should('have.length', 2);
@@ -62,7 +62,7 @@ describe('Create path', () => {
         cy.visit('/path/list');
         cy.get("input[name='path[]'][value='1']").click();
         cy.get("input[name='path[]'][value='2']").click();
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#delete']").click();
         cy.get("input[type='submit']").click();
         cy.url().should('include', '/path/list/');
@@ -74,7 +74,7 @@ describe('Create path', () => {
         cy.visit('/path/list');
         cy.get("input[name='path[]'][value='3']").click();
         cy.get("input[name='path[]'][value='4']").click();
-        cy.get("a.btn-primary[data-toggle='dropdown']").click();
+        cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("a[href='#confirm-merge']").click();
         cy.get("button").contains('Merge').click();
         cy.url().should('include', '/path/list/');

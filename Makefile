@@ -32,7 +32,7 @@ serve_docs: purge_docs
     -c "sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
 
 build_docs: purge_docs
-	$(docker_compose) run --rm -w /opt/geotrek-admin/docs web bash -c "make html SPHINXOPTS=\"-W\""
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -v ./var/cache:/.cache web bash -c "make html SPHINXOPTS=\"-W\""
 
 build_doc_translations:
 	$(docker_compose) run -w /opt/geotrek-admin/docs --rm web bash -c "make gettext && sphinx-intl update -p _build/locale -l fr"
@@ -56,7 +56,19 @@ build_deb:
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version) -D RELEASED --force-distribution -m \"New package release\""
+	echo "$(version)" > geotrek/VERSION
+	sed -i "s/.*+dev/$(version)+dev/g" docs/changelog.rst
+	sed -i 's/+dev/    /g' docs/changelog.rst
+	sed -i "s/XXXX-XX-XX/$(shell date +%Y-%m-%d)/g" docs/changelog.rst
+	docker stop geotrek_release
+	docker rm geotrek_release
+
+back_to_dev:
+	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release -m \"Merging improvements\""
+	echo "$(version)+dev" > geotrek/VERSION
+	sed -i '4a $(version)+dev     (XXXX-XX-XX)\n----------------------------\n\n' docs/changelog.rst
 	docker stop geotrek_release
 	docker rm geotrek_release
 
