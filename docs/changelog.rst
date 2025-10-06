@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.118.2+dev     (XXXX-XX-XX)
+2.119.0+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Breaking changes**
@@ -17,6 +17,19 @@ CHANGELOG
 **Maintenance**
 
 * Upgrade to Django 5.2 LTS
+
+
+2.119.0         (2025-10-06)
+----------------------------
+
+**Breaking changes**
+
+- Docker user : `GUNICORN_WORKERS` environment variable is now deprecated. Use `GUNICORN_CMD_ARGS` instead. (ex: `GUNICORN_CMD_ARGS=--workers=4` instead of `GUNICORN_WORKERS=4`)
+
+**Bug fixes**
+
+- Fix gunicorn configuration in Dockerfile
+
 
 
 2.118.2         (2025-09-23)
@@ -65,6 +78,7 @@ CHANGELOG
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+- Add main section blocks in landing page (refs #4883)
 
 **Maintenance**
 
