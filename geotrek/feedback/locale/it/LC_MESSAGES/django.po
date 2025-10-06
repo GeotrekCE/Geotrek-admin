@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-03 10:00+0000\n"
+"POT-Creation-Date: 2025-10-06 16:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -248,12 +248,6 @@ msgid ""
 "completed"
 msgstr ""
 
-msgid "Statuses"
-msgstr ""
-
-msgid "Legend"
-msgstr ""
-
 msgid "A report's processing is late on"
 msgstr ""
 
@@ -273,6 +267,42 @@ msgid "An intervention must be planned."
 msgstr ""
 
 msgid "You are no longer assigned to the report "
+msgstr ""
+
+#, python-format
+msgid "%(email)s has sent a feedback."
+msgstr ""
+
+msgid "A new feedback has been sent."
+msgstr ""
+
+#, python-format
+msgid "Comment : %(comment)s"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Report origin"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+msgstr ""
+
+msgid "New reports have been imported from Suricate."
+msgstr ""
+
+msgid "Please consult your reports in"
+msgstr ""
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Legend"
 msgstr ""
 
 msgid ""
@@ -312,37 +342,13 @@ msgstr ""
 msgid "No"
 msgstr ""
 
+msgid "Scheduled date of the intervention"
+msgstr ""
+
+msgid "Resolution date of the intervention"
+msgstr ""
+
 msgid "Map"
-msgstr ""
-
-#, python-format
-msgid "%(email)s has sent a feedback."
-msgstr ""
-
-msgid "A new feedback has been sent."
-msgstr ""
-
-#, python-format
-msgid "Comment : %(comment)s"
-msgstr ""
-
-msgid "Trek"
-msgstr ""
-
-msgid "Report origin"
-msgstr ""
-
-#, python-format
-msgid ""
-"\n"
-"Lat : %(lat)s / Lon : %(lng)s\n"
-"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
-msgstr ""
-
-msgid "New reports have been imported from Suricate."
-msgstr ""
-
-msgid "Please consult your reports in"
 msgstr ""
 
 msgid "Data to import from Suricate"

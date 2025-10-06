@@ -18,6 +18,7 @@ from rest_framework.reverse import reverse
 
 from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.feedback import models as feedback_models
+from geotrek.maintenance.models import Intervention
 from geotrek.maintenance.tests.factories import (
     InfrastructureInterventionFactory,
     ReportInterventionFactory,
@@ -295,6 +296,54 @@ class ReportViewsTest(CommonTest):
         column_names = list(dict_from_csv.keys())
         self.assertIn("Cities", column_names)
         self.assertEqual(dict_from_csv["Cities"], city.name)
+
+    @test_for_all_suricate_modes
+    def test_scheduled_date_in_export(self):
+        "Check intervention scheduled date in CSV exports"
+        if Intervention.objects.count() == 0:
+            intervention = ReportInterventionFactory()
+        else:
+            intervention = Intervention.objects.first()
+        response = self.client.get("/report/list/export/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get("Content-Type"), "text/csv")
+        reader = csv.DictReader(
+            StringIO(response.content.decode("utf-8")), delimiter=","
+        )
+        dict_from_csv = dict(next(iter(reader)))
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Intervention_Scheduled_Date", column_names)
+        begin_date = (
+            intervention.begin_date
+            if isinstance(intervention.begin_date, str)
+            else intervention.begin_date.strftime("%Y-%m-%d")
+        )
+        self.assertEqual(dict_from_csv["Intervention_Scheduled_Date"], begin_date)
+
+    @test_for_all_suricate_modes
+    def test_resolution_date_in_export(self):
+        "Check intervention scheduled date in CSV exports"
+        if Intervention.objects.count() == 0:
+            intervention = ReportInterventionFactory()
+            intervention.end_date = "2022-04-10"
+            intervention.save()
+        else:
+            intervention = Intervention.objects.first()
+        response = self.client.get("/report/list/export/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get("Content-Type"), "text/csv")
+        reader = csv.DictReader(
+            StringIO(response.content.decode("utf-8")), delimiter=","
+        )
+        dict_from_csv = dict(next(iter(reader)))
+        column_names = list(dict_from_csv.keys())
+        self.assertIn("Intervention_Resolution_Date", column_names)
+        end_date = (
+            intervention.end_date
+            if isinstance(intervention.end_date, str)
+            else intervention.end_date.strftime("%Y-%m-%d")
+        )
+        self.assertEqual(dict_from_csv["Intervention_Resolution_Date"], end_date)
 
     @freeze_time("2020-03-17")
     def test_api_datatables_list_for_model_in_suricate_mode(self):

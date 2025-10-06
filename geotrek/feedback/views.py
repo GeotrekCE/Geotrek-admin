@@ -2,8 +2,9 @@ import logging
 
 from crispy_forms.helper import FormHelper
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import CharField, F, Value
+from django.db.models import CharField, F, OuterRef, Subquery, Value
 from django.db.models.functions import Concat
 from django.urls.base import reverse
 from django.utils.translation import get_language
@@ -15,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from geotrek.common.functions import ST_X, ST_Y
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.maintenance.models import Intervention
 
 from . import models as feedback_models
 from . import serializers as feedback_serializers
@@ -43,6 +45,13 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
     searchable_columns = ["id", "eid"]
 
     def get_queryset(self):
+        report_content_type = ContentType.objects.get_for_model(feedback_models.Report)
+        intervention_subquery = Intervention.objects.filter(
+            target_type=report_content_type, target_id=OuterRef("pk")
+        )
+        begin_date_subquery = Subquery(intervention_subquery.values("begin_date")[:1])
+        end_date_subquery = Subquery(intervention_subquery.values("end_date")[:1])
+
         qs = (
             super()
             .get_queryset()
@@ -50,6 +59,8 @@ class ReportList(CustomColumnsMixin, mapentity_views.MapEntityList):
             .annotate(
                 coord_x=ST_X("transform"),
                 coord_y=ST_Y("transform"),
+                intervention_scheduled_date=begin_date_subquery,
+                intervention_resolution_date=end_date_subquery
             )
         )  # Filtered by FilterSet
         if (
@@ -108,6 +119,8 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
         "cities",
         "coord_x",
         "coord_y",
+        "intervention_scheduled_date",
+        "intervention_resolution_date",
     ]
 
     def get_columns(self):
@@ -196,3 +209,17 @@ class ReportViewSet(GeotrekMapentityViewSet):
                 self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
             )
         return geojson_lookup
+
+
+class ReportDetail(mapentity_views.MapEntityDetail):
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        report_content_type = ContentType.objects.get_for_model(feedback_models.Report)
+        try:
+            intervention = Intervention.objects.get(
+                target_type=report_content_type, target_id=self.kwargs["pk"]
+            )
+            context["intervention"] = intervention
+        except Intervention.DoesNotExist:
+            context["intervention"] = None
+        return context
