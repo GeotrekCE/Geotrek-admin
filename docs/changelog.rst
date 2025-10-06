@@ -52,6 +52,7 @@ CHANGELOG
 **Documentation**
 
 - Update make serve_docs command in makefile (refs #4847)
+- Add main section blocks in landing page (refs #4883)
 
 **Maintenance**
 
