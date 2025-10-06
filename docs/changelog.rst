@@ -5,6 +5,15 @@ CHANGELOG
 2.118.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+- Docker user : `GUNICORN_WORKERS` environment variable is now deprecated. Use `GUNICORN_CMD_ARGS` instead. (ex: `GUNICORN_CMD_ARGS=--workers=4` instead of `GUNICORN_WORKERS=4`)
+
+**Bug fixes**
+
+- Fix gunicorn configuration in Dockerfile
+
+
 
 2.118.2         (2025-09-23)
 ----------------------------
