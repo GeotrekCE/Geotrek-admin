@@ -18,6 +18,11 @@ CHANGELOG
 - Fix gunicorn configuration in Dockerfile
 
 
+**Improvements**
+- Add programmation and resolution dates in report detail sheet and CSV export (refs #4629)
+
+
+
 
 2.118.2         (2025-09-23)
 ----------------------------
