@@ -11,7 +11,16 @@ CHANGELOG
 * Please Check your version and upgrade your database if needed before upgrading to this version.
   * https://geotrek.readthedocs.io/en/latest/others/troubleshooting.html#show-main-packages-versions
   * https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.rst
-* For developpers, you need to upgrade your database. ``make flush`` cand help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
+
+**Warnings**
+
+* Geotrek-admin does not support anymore Ubuntu 18.04 since version 2.114.0 (march 2025).
+* Ubuntu 20.04, packaged by default with PostgreSQL 12, is still supported but not recommended since version 2.114.0 (march 2025).
+* It is recommended to upgrade your OS to Ubuntu 22.04 or 24.04, and PostgreSQL to version 14 minimum. Or to externalize your database on another server with the desired PostgreSQL version.
+
+**Developers**
+
+* For developers, you need to upgrade your database. ``make flush`` cand help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
   * By using this command, you will lose local data.
 
 **Maintenance**
