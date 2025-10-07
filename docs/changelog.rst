@@ -44,7 +44,11 @@ CHANGELOG
 **Bug fixes**
 
 - Fix gunicorn configuration in Dockerfile
+- Fix Makefile's build_doc cache
 
+**Improvements**
+
+- Add cities and coordinates in the report CSV export (refs #4631)
 
 
 2.118.2         (2025-09-23)
@@ -53,12 +57,10 @@ CHANGELOG
 **Bug fixes**
 
 - Fix translations in Add buttons on lists. (refs #4963)
-- Fix Makefile's build_doc cache
 
 **Improvements**
 
 - Improve title in navbar (refs #4965)
-- Add cities and coordinates in the report CSV export (refs #4631)
 
 
 2.118.1         (2025-09-18)
