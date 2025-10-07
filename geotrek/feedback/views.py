@@ -209,3 +209,17 @@ class ReportViewSet(GeotrekMapentityViewSet):
                 self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
             )
         return geojson_lookup
+
+
+class ReportDetail(mapentity_views.MapEntityDetail):
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        report_content_type = ContentType.objects.get_for_model(feedback_models.Report)
+        try:
+            intervention = Intervention.objects.get(
+                target_type=report_content_type, target_id=self.kwargs["pk"]
+            )
+            context["intervention"] = intervention
+        except Intervention.DoesNotExist:
+            context["intervention"] = None
+        return context
