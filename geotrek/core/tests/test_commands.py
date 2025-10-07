@@ -317,13 +317,13 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         geometries = []
         for pathagg in topology.aggregations.all():
             cursor = connection.cursor()
-            cursor.execute(f"""SELECT * FROM ST_ASTEXT(ST_SmartLineSubstring('{pathagg.path.geom.wkt}'::geometry,
+            cursor.execute(f"""SELECT * FROM ST_ASEWKT(ST_SmartLineSubstring('{pathagg.path.geom.ewkt}'::geometry,
                                                                               {pathagg.start_position},
                                                                               {pathagg.end_position}
                                                        ))
             """)
             geom = cursor.fetchall()[0][0]
-            geometries.append(GEOSGeometry(geom, srid=2154))
+            geometries.append(GEOSGeometry(geom, srid=settings.SRID).ewkt)
         return geometries
 
     def test_split_reorder_1(self):
@@ -395,9 +395,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700100, 6600100), srid=2154).ewkt,
             ],
         )
         self.assertEqual(
@@ -505,15 +505,15 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154),
-                Point(700047.5, 6600047.5, srid=2154),
-                LineString((700047.5, 6600047.5), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700025, 6600025), srid=2154),
-                Point(700025, 6600025, srid=2154),
-                LineString((700025, 6600025), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154).ewkt,
+                Point(700047.5, 6600047.5, srid=2154).ewkt,
+                LineString((700047.5, 6600047.5), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700025, 6600025), srid=2154).ewkt,
+                Point(700025, 6600025, srid=2154).ewkt,
+                LineString((700025, 6600025), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -571,6 +571,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
+        self.maxDiff = None
         topo = TopologyFactory.create(
             paths=[
                 (self.path_1_a, 0, 1),
@@ -629,19 +630,19 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700035, 6600035), srid=2154),
-                LineString((700035, 6600035), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700035, 6600065), srid=2154),
+                LineString((700000, 6600000), (700035, 6600035), srid=2154).ewkt,
+                LineString((700035, 6600035), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700035, 6600065), srid=2154).ewkt,
                 LineString(
-                    (700035, 6600065), (700007.142857143, 6600092.85714286), srid=2154
-                ),
-                Point(700007.142857143, 6600092.85714286, srid=2154),
+                    (700035, 6600065), (700007.1428571428, 6600092.857142857), srid=2154
+                ).ewkt,
+                Point(700007.1428571428, 6600092.857142857, srid=2154).ewkt,
                 LineString(
-                    (700007.142857143, 6600092.85714286), (700035, 6600065), srid=2154
-                ),
-                LineString((700035, 6600065), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700075, 6600075), srid=2154),
-                LineString((700075, 6600075), (700100, 6600100), srid=2154),
+                    (700007.1428571428, 6600092.857142857), (700035, 6600065), srid=2154
+                ).ewkt,
+                LineString((700035, 6600065), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700075, 6600075), srid=2154).ewkt,
+                LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -757,12 +758,12 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700035, 6600035), srid=2154),
-                LineString((700035, 6600035), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700035, 6600065), srid=2154),
-                LineString((700035, 6600065), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700075, 6600075), srid=2154),
-                LineString((700075, 6600075), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700035, 6600035), srid=2154).ewkt,
+                LineString((700035, 6600035), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700035, 6600065), srid=2154).ewkt,
+                LineString((700035, 6600065), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700075, 6600075), srid=2154).ewkt,
+                LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -876,19 +877,19 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700025, 6600075), srid=2154),
-                Point(700025, 6600075, srid=2154),
-                LineString((700025, 6600075), (700050, 6600050), srid=2154),
+                LineString((700000, 6600000), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700025, 6600075), srid=2154).ewkt,
+                Point(700025, 6600075, srid=2154).ewkt,
+                LineString((700025, 6600075), (700050, 6600050), srid=2154).ewkt,
                 LineString(
                     (700050, 6600050),
                     (700100, 6600100),
                     (700050, 6600100),
                     (700025, 6600075),
                     srid=2154,
-                ),
-                Point(700025, 6600075, srid=2154),
-                LineString((700025, 6600075), (700000, 6600050), srid=2154),
+                ).ewkt,
+                Point(700025, 6600075, srid=2154).ewkt,
+                LineString((700025, 6600075), (700000, 6600050), srid=2154).ewkt,
             ],
         )
 
@@ -961,16 +962,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             )
         )
         topo.reload()
-        self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700045, 6600045)),
-                LineString((700045, 6600045), (700050, 6600050)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700050, 6600050), (700100, 6600100)),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
+
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(

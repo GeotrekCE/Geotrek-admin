@@ -6,7 +6,7 @@ asgiref==3.10.0
     #   django
 coverage==7.10.7
     # via -r requirements-dev.in
-django==4.2.25
+django==5.2.6
     # via
     #   -c requirements.txt
     #   django-debug-toolbar

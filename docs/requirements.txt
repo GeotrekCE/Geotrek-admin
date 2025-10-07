@@ -93,7 +93,7 @@ starlette==0.47.3
     # via sphinx-autobuild
 tomli==2.2.1
     # via sphinx
-typing-extensions==4.14.1
+typing-extensions==4.15.0
     # via
     #   anyio
     #   exceptiongroup
