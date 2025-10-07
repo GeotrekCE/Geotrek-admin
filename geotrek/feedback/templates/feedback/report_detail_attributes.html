@@ -121,19 +121,6 @@
             <th>{{ report|verbose:"locked" }}</th>
             <td>{% if report.locked %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
         </tr>
-        <tr>
-            <th>{% trans "Scheduled date of the intervention" %}</th>
-            <td>
-                {% if intervention and intervention.begin_date %}{{ intervention.begin_date }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        <tr>
-            <th>{%  trans "Resolution date of the intervention" %}</th>
-            <td>
-                {% if intervention and intervention.end_date %}{{ intervention.end_date }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
         {% endif %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
