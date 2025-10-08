@@ -9,9 +9,6 @@ on:
       - 'requirements-dev.txt'  # if requirements-dev.txt change
       - 'ruff.toml'   # if lint tools configuration change
 
-env:
-  DEBIAN_FRONTEND: noninteractive
-
 jobs:
   migrations:
     name: Checking SRID in migrations files
@@ -21,7 +18,7 @@ jobs:
       - run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
-  flake8:
+  quality:
     name: Checking lint rules
     runs-on: ubuntu-latest
     steps:
@@ -45,3 +42,42 @@ jobs:
       - name: Check format
         run: |
           ruff format --check geotrek
+
+  translations:
+    name: Checking translations files are up-to-date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+            version: "latest"
+            python-version: "3.10"
+            enable-cache: true
+            cache-suffix: "ruff"
+            activate-environment: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y gettext
+          uv pip install -r requirements.txt -r requirements-dev.txt
+          mkdir -p var/static var/conf/extra_static var/media/upload var/cache/sessions var/cache/api_v2 var/cache/fat var/log var/conf/extra_templates var/conf/extra_locale var/tmp
+
+      - name: Check translations
+        run: |
+          ./manage.py makemessages -a --no-location --no-obsolete -v 3
+          cat geotrek/altimetry/locale/en/LC_MESSAGES/django.po
+
+      - uses: tj-actions/verify-changed-files@v20
+        id: verify-changed-files
+        with:
+          files: |
+            **/*.po
+
+      - name: Verify translation files changed
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        env:
+          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
+        run: |
+          echo "Changed files: $CHANGED_FILES"
+          git diff
+          core.setFailed('Please fix your translation files with ./manage.py makemessages -a --no-location --no-obsolete')
