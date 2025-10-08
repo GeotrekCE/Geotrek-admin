@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-08 12:40+0000\n"
+"PO-Revision-Date: 2025-10-08 14:40+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/common/fr/>\n"
@@ -286,7 +286,7 @@ msgid "Show this label as a filter in public portal"
 msgstr "Voir cette étiquette en tant que filtre sur le portail public"
 
 msgid "Label"
-msgstr "Étiquette"
+msgstr "Libellé"
 
 msgid "Labels"
 msgstr "Étiquettes"
@@ -459,10 +459,9 @@ msgstr "Echec lors de la récupération du fichier : %(e)s"
 msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
 msgstr ""
 
-#, fuzzy, python-format, python-brace-format
-#| msgid "The uploaded file is not wide enough"
+#, python-brace-format, python-format
 msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
-msgstr "L'image sélectionnée n'est pas assez large"
+msgstr "%(class)s #%(pk)s - {url} : le fichier téléchargé n'est pas assez large"
 
 #, fuzzy, python-format
 #| msgid "The uploaded file is not tall enough"
@@ -490,7 +489,7 @@ msgid "Model %(model)s"
 msgstr ""
 
 msgid "Geotrek-admin"
-msgstr ""
+msgstr "Geotrek-admin"
 
 #, python-format
 msgid ""
@@ -718,7 +717,7 @@ msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
 msgid "Invalid geometry value."
-msgstr "Pointeur de géométrie invalide."
+msgstr "Valeur de géométrie invalide."
 
 msgctxt "North"
 msgid "N"
