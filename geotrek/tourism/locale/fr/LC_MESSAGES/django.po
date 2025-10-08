@@ -404,7 +404,7 @@ msgstr "%(housenumber)s %(street)s"
 
 #, python-format
 msgid "%(postcode)s, %(city)s"
-msgstr "%(postcode)s,%(city)s"
+msgstr "%(postcode)s, %(city)s"
 
 #, python-format
 msgid ""
