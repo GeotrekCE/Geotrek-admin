@@ -272,7 +272,7 @@ class GeotrekTrekParser(GeotrekParser):
                     if not trek_parent_instance:
                         self.add_warning(
                             _(
-                                "Trying to retrieve children for missing trek : could not find trek with UUID %(key)s"
+                                "Trying to retrieve children for missing trek: could not find trek with UUID %(key)s"
                             )
                             % {"key": key}
                         )

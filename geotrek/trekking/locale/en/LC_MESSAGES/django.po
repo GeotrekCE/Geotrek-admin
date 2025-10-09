@@ -443,7 +443,7 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Trying to retrieve children for missing trek : could not find trek with UUID "
+"Trying to retrieve children for missing trek: could not find trek with UUID "
 "%(key)s"
 msgstr ""
 
