@@ -83,4 +83,4 @@ msgid "2D"
 msgstr "2D"
 
 msgid "Elevation"
-msgstr "Élévation"
+msgstr "Altitude"

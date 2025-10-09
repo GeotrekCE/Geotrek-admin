@@ -97,7 +97,7 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-msgid "Geotrek Rando"
+msgid "Geotrek-rando"
 msgstr ""
 
 msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
@@ -247,13 +247,13 @@ msgstr ""
 msgid "Title Rando"
 msgstr ""
 
-msgid "Title on Geotrek Rando"
+msgid "Title on Geotrek-rando"
 msgstr ""
 
 msgid "Description"
 msgstr ""
 
-msgid "Description on Geotrek Rando"
+msgid "Description on Geotrek-rando"
 msgstr ""
 
 msgid "Target portal"

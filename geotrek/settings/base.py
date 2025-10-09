@@ -798,7 +798,7 @@ SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
 """
 If true; displays the attached pois pictures in the Trek's geojson pictures property.
-In Geotrek Rando it enables correlated pictures to be displayed in the slideshow.
+In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
 """
 TREK_WITH_POIS_PICTURES = False
 

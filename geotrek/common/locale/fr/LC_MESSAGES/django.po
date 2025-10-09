@@ -102,7 +102,7 @@ msgstr "L'image sélectionnée n'est pas assez haute"
 msgid "Save changes"
 msgstr "Sauvegarder"
 
-msgid "Geotrek Rando"
+msgid "Geotrek-rando"
 msgstr "Geotrek-rando"
 
 msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
@@ -255,14 +255,14 @@ msgstr "Utilisé pour la synchro"
 msgid "Title Rando"
 msgstr "Titre Rando"
 
-msgid "Title on Geotrek Rando"
-msgstr "Titre sur Geotrek Rando"
+msgid "Title on Geotrek-rando"
+msgstr "Titre sur Geotrek-rando"
 
 msgid "Description"
 msgstr "Description"
 
-msgid "Description on Geotrek Rando"
-msgstr "Description sur Geotrek Rando"
+msgid "Description on Geotrek-rando"
+msgstr "Description sur Geotrek-rando"
 
 msgid "Target portal"
 msgstr "Portail cible"
