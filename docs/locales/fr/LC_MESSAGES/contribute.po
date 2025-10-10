@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.100\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/contribute/fr/>\n"
 "Language: fr\n"
@@ -940,7 +940,7 @@ msgstr ""
 
 #: ../../contribute/guidelines.rst:54
 msgid "Maintenance"
-msgstr ""
+msgstr "Maintenance"
 
 #: ../../contribute/guidelines.rst:54
 msgid "maint\\_"

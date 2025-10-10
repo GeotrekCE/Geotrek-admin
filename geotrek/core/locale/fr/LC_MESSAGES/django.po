@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-23 12:05+0200\n"
-"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/core/fr/>\n"
@@ -36,7 +36,7 @@ msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
 
 msgid "Linestring invalid snapping."
-msgstr "La ligne a un snapping invalide"
+msgstr "La ligne a un snapping invalide."
 
 msgid "Valid topology"
 msgstr "Topologie valide"
@@ -69,19 +69,19 @@ msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
 msgid "The path will be reversed once saved"
-msgstr "Le tronçon sera inversé une fois sauvegardé."
+msgstr "Le tronçon sera inversé une fois sauvegardé"
 
 msgid "Invalid snapped geometry."
-msgstr "La géométrie snappée est invalide"
+msgstr "La géométrie snappée est invalide."
 
 msgid "Geometry is not simple."
-msgstr "La géométrie est non simple"
+msgstr "La géométrie est non simple."
 
 msgid "Geometry overlaps another."
-msgstr "La géométrie en superpose une autre"
+msgstr "La géométrie en superpose une autre."
 
 msgid "Geometry is not valid."
-msgstr "La géométrie n'est pas valide"
+msgstr "La géométrie n'est pas valide."
 
 msgid "Certifications"
 msgstr "Labellisations"
@@ -353,13 +353,13 @@ msgid "No certification"
 msgstr "Aucune labellisation"
 
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 msgid "Remove"
 msgstr "Supprimer"
 
 msgid "This field is required."
-msgstr ""
+msgstr "Ce champ est requis."
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
@@ -369,7 +369,7 @@ msgid ""
 "Access to the requested resource is restricted by structure. You have been "
 "redirected."
 msgstr ""
-"L'accès à cette ressource est restreint selon la structure. Vous avez été "
+"L'accès à cette ressource est restreint par structure. Vous avez été "
 "redirigé."
 
 msgid "path"
@@ -394,4 +394,4 @@ msgid "No matching points to merge paths found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Paths merged successfully"
-msgstr "Les tronçons ont été fusionnés."
+msgstr "Les tronçons ont été fusionnés"
