@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-13 10:14+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2025-10-10 15:19+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/maintenance/fr/>\n"
 "Language: fr\n"
@@ -26,13 +26,13 @@ msgid "length 3d"
 msgstr "longueur 3d"
 
 msgid "ascent"
-msgstr "Dénivelé positif"
+msgstr "dénivelé positif"
 
 msgid "descent"
-msgstr "Dénivelé négatif"
+msgstr "dénivelé négatif"
 
 msgid "slope"
-msgstr "Pente"
+msgstr "pente"
 
 msgid "min"
 msgstr "min"
@@ -98,10 +98,10 @@ msgid "Restricted area"
 msgstr "Zone réglementaire"
 
 msgid "City"
-msgstr "Ville"
+msgstr "Commune"
 
 msgid "District"
-msgstr "District"
+msgstr "Secteur"
 
 msgid "Year of activity"
 msgstr "Année d'activité"
@@ -222,10 +222,10 @@ msgid "Display order"
 msgstr "Ordre d'affichage"
 
 msgid "Intervention's status"
-msgstr "Statut"
+msgstr "Statut d'intervention"
 
 msgid "Intervention's statuses"
-msgstr "Statuts"
+msgstr "Statuts d'intervention"
 
 msgid "Intervention's type"
 msgstr "Type d'intervention"
@@ -354,13 +354,13 @@ msgid "Dimensions"
 msgstr "Dimensions"
 
 msgid "H:"
-msgstr "h:"
+msgstr "h :"
 
 msgid "L:"
-msgstr "L:"
+msgstr "L :"
 
 msgid "W:"
-msgstr "l:"
+msgstr "l :"
 
 msgid "Add"
 msgstr "Ajouter"
