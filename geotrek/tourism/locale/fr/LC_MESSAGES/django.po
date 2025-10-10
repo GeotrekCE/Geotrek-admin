@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/tourism/fr/>\n"
 "Language: fr\n"
@@ -199,7 +199,7 @@ msgid "Themes"
 msgstr "Thèmes"
 
 msgid "Main theme(s)"
-msgstr "Thèmes principaux"
+msgstr "Thème(s) principal(aux)"
 
 msgid "Location"
 msgstr "Emplacement"
@@ -430,16 +430,16 @@ msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
 
 msgid "Public print"
-msgstr "Impression grand public"
+msgstr "Impression grand-public"
 
 msgid "Print"
-msgstr "Impr."
+msgstr "Impression"
 
 msgid "Public print booklet"
 msgstr "Impression livret grand public"
 
 msgid "Print booklet"
-msgstr "Impression livret"
+msgstr "Impr. livret"
 
 msgid "yes,no"
 msgstr "oui,non"
@@ -457,10 +457,10 @@ msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
 msgid "Attribution"
-msgstr "Crédits"
+msgstr "Crédit"
 
 msgid "Useful information"
-msgstr "Information pratique"
+msgstr "Infos pratiques"
 
 msgid "Geographical location"
 msgstr "Situation géographique"
