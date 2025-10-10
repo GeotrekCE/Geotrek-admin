@@ -284,12 +284,12 @@ class TargetPortal(TimeStampedModelMixin, models.Model):
     title = models.CharField(
         verbose_name=_("Title Rando"),
         max_length=50,
-        help_text=_("Title on Geotrek Rando"),
+        help_text=_("Title on Geotrek-rando"),
         default="",
     )
     description = models.TextField(
         verbose_name=_("Description"),
-        help_text=_("Description on Geotrek Rando"),
+        help_text=_("Description on Geotrek-rando"),
         default="",
     )
 

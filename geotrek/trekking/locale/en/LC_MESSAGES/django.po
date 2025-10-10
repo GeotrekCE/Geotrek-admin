@@ -443,7 +443,7 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Trying to retrieve children for missing trek : could not find trek with UUID "
+"Trying to retrieve children for missing trek: could not find trek with UUID "
 "%(key)s"
 msgstr ""
 
@@ -470,11 +470,11 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+"License '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
-msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
+msgid "License '{val}' does not exist in Geotrek-admin. Please add it"
 msgstr ""
 
 msgid "Attached files"

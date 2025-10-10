@@ -467,8 +467,8 @@ class OpenStreetMapOutdoorSiteParserTests(TestCase):
         self.assertEqual(outdoor_site.themes.all().count(), 2)
         self.assertEqual(outdoor_site.themes.first().label, "test theme1")
         warnings = [
-            "Theme 'test theme1' did not exist in Geotrek-Admin and was automatically created",
-            "Theme 'test theme2' did not exist in Geotrek-Admin and was automatically created",
+            "Theme 'test theme1' did not exist in Geotrek-admin and was automatically created",
+            "Theme 'test theme2' did not exist in Geotrek-admin and was automatically created",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)
@@ -483,8 +483,8 @@ class OpenStreetMapOutdoorSiteParserTests(TestCase):
         self.assertEqual(outdoor_site.source.all().count(), 2)
         self.assertEqual(outdoor_site.source.first().name, "test source1")
         warnings = [
-            "Record Source 'test source1' did not exist in Geotrek-Admin and was automatically created",
-            "Record Source 'test source2' did not exist in Geotrek-Admin and was automatically created",
+            "Record Source 'test source1' did not exist in Geotrek-admin and was automatically created",
+            "Record Source 'test source2' did not exist in Geotrek-admin and was automatically created",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)

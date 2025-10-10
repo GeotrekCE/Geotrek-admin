@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-04 11:40+0200\n"
-"PO-Revision-Date: 2020-09-22 15:57+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/trekking/fr/>\n"
+"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/trekking/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #, python-format
 msgid "Difficulty with id '%s' already exists"
@@ -200,13 +200,13 @@ msgid "Gear needed, adviced ..."
 msgstr "Matériel nécessaire, conseillé ..."
 
 msgid "Themes"
-msgstr "Thématiques"
+msgstr "Thèmes"
 
 msgid "Main theme(s)"
 msgstr "Thème(s) principal(aux)"
 
 msgid "Networks"
-msgstr "Réseaux de randonnée"
+msgstr "Réseaux"
 
 msgid "Hiking networks"
 msgstr "Réseaux de randonnée"
@@ -242,8 +242,8 @@ msgid ""
 "Beginner (Little drop – terrain without difficulties) / Experienced "
 "(Significant slope – Technical terrain, with obstacles)"
 msgstr ""
-"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté "
-"(Pente importante – Terrain technique, avec obstacles)"
+"Débutant (Peu de dénivelé – terrain sans de difficultés) / Expérimenté ("
+"Pente importante – Terrain technique, avec obstacles)"
 
 msgid "Accessibility exposure"
 msgstr "Exposition accessibilité"
@@ -308,7 +308,7 @@ msgid "Where to obtain information"
 msgstr "Où obtenir des informations"
 
 msgid "Points of reference"
-msgstr "Point de référence"
+msgstr "Points de référence"
 
 msgid "Source"
 msgstr "Source"
@@ -323,7 +323,7 @@ msgid "Second external id"
 msgstr "Deuxième id externe"
 
 msgid "Excluded POIs"
-msgstr "POI exclus"
+msgstr "POIs exclus"
 
 msgid "Reservation system"
 msgstr "Système de réservation"
@@ -410,13 +410,13 @@ msgid "Web link categories"
 msgstr "Catégories liens web"
 
 msgid "History, details,  ..."
-msgstr "Histoire, details"
+msgstr "Histoire, details."
 
 msgid "Type"
 msgstr "Type"
 
 msgid "POI"
-msgstr "POIs"
+msgstr "POI"
 
 msgid "Published POIs"
 msgstr "POIs publiés"
@@ -431,7 +431,7 @@ msgid "POI types"
 msgstr "Types de POI"
 
 msgid "Public name (Change carefully)"
-msgstr ""
+msgstr "Nom public (changez prudemment)"
 
 msgid "Service type"
 msgstr "Type de service"
@@ -472,21 +472,22 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Trying to retrieve children for missing trek : could not find trek with UUID "
+"Trying to retrieve children for missing trek: could not find trek with UUID "
 "%(key)s"
 msgstr ""
+"Tentative de récupération des étapes d'un itinéraire manquant : impossible "
+"de trouver l'itinéraire avec l'UUID %(key)s"
 
 #, python-format
 msgid "An error occurred in children generation: %(message)s"
-msgstr ""
+msgstr "Une erreur est survenue dans la génération des étapes : %(message)s"
 
 #, python-format
 msgid "APIDAE Trek #%(eid_val)s at line %(line)s"
 msgstr "Itinéraire APIDAE %(eid_val)s à la ligne %(line)s"
 
 msgid "A service type must be specified in the parser configuration."
-msgstr ""
-"Un type de service doit être spécifié dans la configuration du parseur."
+msgstr "Un type de service doit être spécifié dans la configuration du parseur."
 
 msgid "Trek geometry is None"
 msgstr "La valeur de la géométrie de l'itinéraire est None"
@@ -499,18 +500,18 @@ msgstr ""
 
 msgid "Bad value for parking geometry: should be a Point"
 msgstr ""
-"Valeur incorrecte pour la géométrie du parking: elle devrait être un Point"
+"Valeur incorrecte pour la géométrie du parking : elle devrait être un Point"
 
 #, python-brace-format
 msgid ""
-"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+"License '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
-"La licence '{val}' n'existait pas dans Geotrek-Admin. Elle a été créée "
+"La licence '{val}' n'existait pas dans Geotrek-admin. Elle a été créée "
 "automatiquement"
 
 #, python-brace-format
-msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
-msgstr "La license '{val} n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+msgid "License '{val}' does not exist in Geotrek-admin. Please add it"
+msgstr "La license '{val} n'existe pas dans Geotrek-admin. Merci de l'ajouter"
 
 msgid "Attached files"
 msgstr "Fichiers liés"
@@ -519,7 +520,7 @@ msgid "None"
 msgstr "Aucun(e)"
 
 msgid "Thumbnail"
-msgstr "Vignette"
+msgstr "Miniature"
 
 msgid "External id"
 msgstr "ID externe"
@@ -528,7 +529,7 @@ msgid "Elevation"
 msgstr "Élévation"
 
 msgid "Attribution"
-msgstr "Crédit photo"
+msgstr "Crédit"
 
 msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"
@@ -541,10 +542,10 @@ msgstr ""
 "integration dans le portail public."
 
 msgid "Public print"
-msgstr "Impression grand public"
+msgstr "Impression grand-public"
 
 msgid "Print"
-msgstr "Impr."
+msgstr "Impression"
 
 msgid "Public print booklet"
 msgstr "Impression livret grand public"
@@ -562,7 +563,7 @@ msgid "Itinerancy"
 msgstr "Itinérance"
 
 msgid "Child of:"
-msgstr "Enfant de:"
+msgstr "Enfant de :"
 
 msgid "Parent of:"
 msgstr "Parent de :"
@@ -592,7 +593,7 @@ msgid "Add relation"
 msgstr "Ajouter relation"
 
 msgid "Remove"
-msgstr "Enlever"
+msgstr "Supprimer"
 
 msgid "No result"
 msgstr "Pas de résultat"
@@ -631,10 +632,10 @@ msgid "Stages"
 msgstr "Étapes"
 
 msgid "On your path..."
-msgstr "Sur votre chemin..."
+msgstr "Sur votre route..."
 
 msgid "All useful information"
-msgstr "Toutes les infos pratiques"
+msgstr "Toutes les informations pratiques"
 
 msgid "Advices"
 msgstr "Recommandations"
@@ -676,15 +677,15 @@ msgstr ""
 "\n"
 "Le long de votre itinéraire, vous allez traverser des zones de sensibilité "
 "liées à la présence d’une espèce ou d’un milieu particulier. Dans ces zones, "
-"un comportement adapté permet de contribuer à leur préservation. Pour plus "
-"d’informations détaillées, des fiches spécifiques sont accessibles pour "
-"chaque zone."
+"un comportement adapté permet de contribuer à leur préservation. Pour plus d’"
+"informations détaillées, des fiches spécifiques sont accessibles pour chaque "
+"zone."
 
 msgid "Sensitivity period:"
 msgstr "Période de sensibilité :"
 
 msgid "Contact:"
-msgstr "Contact :"
+msgstr "Contact :"
 
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
@@ -703,7 +704,7 @@ msgid ""
 "regulations which must be known by all visitors."
 msgstr ""
 "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
-"réglementation qu’il est utile de connaître pour préparer son séjour"
+"réglementation qu’il est utile de connaître pour préparer son séjour."
 
 msgid "This hike is in the core of the national park"
 msgstr "Cet itinéraire est dans le cœur du Parc national"

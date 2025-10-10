@@ -816,6 +816,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en", LANGUAGE_CODE="en")
     def test_children_do_not_exist(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [
@@ -852,7 +853,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Trying to retrieve children for missing trek : could not find trek with UUID b2aea666-5e6e-4daa-a750-7d2ee52d3fe1",
+            "Trying to retrieve children for missing trek: could not find trek with UUID b2aea666-5e6e-4daa-a750-7d2ee52d3fe1",
             output.getvalue(),
         )
         treks = Trek.objects.all()
@@ -869,6 +870,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en", LANGUAGE_CODE="en")
     def test_wrong_children_error(self, mocked_head, mocked_get):
         self.mock_time = 0
         self.mock_json_order = [
@@ -2453,7 +2455,7 @@ class SchemaRandonneeParserTests(TestCase):
         self.assertEqual(trek.attachments.count(), 1)
         output_value = output.getvalue()
         self.assertIn(
-            "License 'New license' does not exist in Geotrek-Admin. Please add it",
+            "License 'New license' does not exist in Geotrek-admin. Please add it",
             output_value,
         )
 
@@ -2476,7 +2478,7 @@ class SchemaRandonneeParserTests(TestCase):
         self.assertEqual(attachment.license.label, "New license")
         output_value = output.getvalue()
         self.assertIn(
-            "License 'New license' did not exist in Geotrek-Admin and was automatically created",
+            "License 'New license' did not exist in Geotrek-admin and was automatically created",
             output_value,
         )
 

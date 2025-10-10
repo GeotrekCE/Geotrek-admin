@@ -21,11 +21,11 @@ class Command(BaseCommand):
             self.stdout.write(f"Lang : {lang}")
             with translation.override(lang, deactivate=True):
                 self.stdout.write("TargetPortal")
-                # 'Geotrek Rando' => TargetPortal title
+                # 'Geotrek-rando' => TargetPortal title
                 TargetPortal.objects.filter(
                     **{build_localized_fieldname("title", lang): ""}
                 ).update(
-                    **{build_localized_fieldname("title", lang): _("Geotrek Rando")}
+                    **{build_localized_fieldname("title", lang): _("Geotrek-rando")}
                 )
                 # 'Geotrek is a web app ...' => TargetPortal description
                 TargetPortal.objects.filter(
