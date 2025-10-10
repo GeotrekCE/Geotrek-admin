@@ -3,21 +3,21 @@
 # This file is distributed under the same license as the Geotrek package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2020-10-07 12:26+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-10 08:46+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/documentation/fr/>\n"
 "Language: fr\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects"
-"/geotrek-admin/documentation/fr/>\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../index.rst:163
@@ -350,4 +350,3 @@ msgid ""
 "Learn more about Geotrek-admin in the :ref:`general documentation "
 "(french) <qu-est-ce-que-geotrek>`."
 msgstr ""
-
