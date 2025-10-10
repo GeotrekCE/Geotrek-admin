@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/doc-advanced-configuration/fr/>\n"
 "Language: fr\n"
@@ -2632,7 +2632,7 @@ msgstr ""
 
 #: ../../advanced-configuration/modules-and-components.rst:914
 msgid "Outdoor"
-msgstr ""
+msgstr "Outdoor"
 
 #: ../../advanced-configuration/modules-and-components.rst:917
 msgid "Installed app for Outdoor"
