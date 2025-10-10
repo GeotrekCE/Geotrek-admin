@@ -20,7 +20,7 @@ from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManage
 from geotrek.feedback.tests.factories import (
     PredefinedEmailFactory,
     ReportFactory,
-    ReportStatusFactory,
+    ReportStatusFactory, WorkflowManagerFactory,
 )
 from geotrek.feedback.tests.test_suricate_sync import (
     SURICATE_WORKFLOW_SETTINGS_NO_MODERATION,
@@ -82,6 +82,14 @@ class TestSuricateForms(SuricateWorkflowTests):
         UserProfileFactory.create(
             user=cls.other_user,
             extended_username="Communauté des Communes des Communautés Communataires",
+        )
+        cls.manager = UserFactory()
+        UserProfileFactory.create(
+            user=cls.manager,
+            extended_username="Communauté des Communes des Communautés Communataires",
+        )
+        WorkflowManagerFactory.create(
+            user=cls.manager,
         )
         cls.district = DistrictFactory(
             geom="SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))"
@@ -183,7 +191,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_workflow_assign_step(self, mocked_post, mocked_get):
+    def test_workflow_assign_supervisor_step(self, mocked_post, mocked_get):
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
         mails_before = len(mail.outbox)
@@ -247,6 +255,76 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(
             mail.outbox[-1].subject, "[Geotrek-admin] New report to process"
+        )
+        self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
+
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_workflow_assign_manager_step(self, mocked_post, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
+        mails_before = len(mail.outbox)
+        # When assigning a user to a report
+        data = {
+            "current_user": str(self.manager.pk),
+            "email": "test@test.fr",
+            "geom": self.filed_report.geom,
+            "message_sentinel": "Your message",
+            "uses_timers": True,
+        }
+        form = ReportForm(instance=self.filed_report, data=data)
+        form.save()
+        # Assert report status changes
+        self.assertEqual(self.filed_report.status.identifier, "waiting")
+        self.assertEqual(self.filed_report.current_user, self.manager)
+        self.assertEqual(self.filed_report.assigned_handler, self.manager)
+        # Asser timer is created
+        self.assertEqual(
+            TimerEvent.objects.filter(
+                report=self.filed_report, step=self.waiting_status
+            ).count(),
+            1,
+        )
+        # Assert data forwarded to Suricate
+        check = md5(
+            (
+                    SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                    + SuricateMessenger().gestion_manager.ID_ORIGIN
+                    + str(self.filed_report.formatted_external_uuid)
+            ).encode()
+        ).hexdigest()
+        call1 = mock.call(
+            "http://suricate.wsmanagement.example.com/wsSendMessageSentinelle",
+            {
+                "id_origin": "geotrek",
+                "uid_alerte": self.filed_report.formatted_external_uuid,
+                "message": "Your message",
+                "check": check,
+            },
+            auth=("", ""),
+        )
+        call2 = mock.call(
+            "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+            {
+                "id_origin": "geotrek",
+                "uid_alerte": self.filed_report.formatted_external_uuid,
+                "statut": "waiting",
+                "txt_changestatut": "Your message",
+                "txt_changestatut_sentinelle": "Your message",
+                "check": check,
+            },
+            auth=("", ""),
+        )
+        mocked_post.assert_has_calls([call1, call2], any_order=True)
+        mocked_get.assert_called_once_with(
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+            auth=("", ""),
+        )
+        # Assert user is notified
+        self.assertEqual(len(mail.outbox), mails_before + 1)
+        self.assertEqual(
+            mail.outbox[-1].subject, "[Geotrek-Admin] New report to process"
         )
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
 
