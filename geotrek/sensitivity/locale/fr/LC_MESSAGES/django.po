@@ -33,7 +33,7 @@ msgid "Name"
 msgstr "Nom"
 
 msgid "Elevation"
-msgstr "Élévation"
+msgstr "Altitude"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
