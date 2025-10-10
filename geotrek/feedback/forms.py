@@ -14,7 +14,6 @@ from .models import (
     ReportStatus,
     TimerEvent,
     WorkflowDistrict,
-    WorkflowManager,
 )
 
 
@@ -55,14 +54,9 @@ class ReportForm(CommonForm):
         # {'current_status': ['allowed_next_status', 'other_allowed_status']}
         # Empty status should not be changed from this form
         suricate_workflow_steps = {
-            "filed": ["classified", "filed", "rejected"],
+            "filed": ["classified", "filed", "rejected", "waiting"],
             "solved_intervention": ["solved", "solved_intervention"],
         }
-        if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
-            suricate_workflow_steps = {
-                "filed": ["classified", "filed", "rejected", "waiting"],
-                "solved_intervention": ["solved", "solved_intervention"],
-            }
         super().__init__(*args, **kwargs)
         if (
             settings.SURICATE_WORKFLOW_ENABLED
@@ -158,11 +152,11 @@ class ReportForm(CommonForm):
                 self.fields["activity"].required = True
                 self.fields["category"].required = True
                 self.fields["problem_magnitude"].required = True
-                if settings.SURICATE_WORKFLOW_ENABLED:
-                    self.old_status = None
-                    self.old_user = None
-                    self.fields["current_user"].widget = HiddenInput()
-                    self.fields["uses_timers"].widget = HiddenInput()
+
+                self.old_status = None
+                self.old_user = None
+                self.fields["current_user"].widget = HiddenInput()
+                self.fields["uses_timers"].widget = HiddenInput()
         else:  # Do not use these fields outside of worflow
             self.fields["uses_timers"].widget = HiddenInput()
 
@@ -172,11 +166,7 @@ class ReportForm(CommonForm):
         if (not creation) and settings.SURICATE_WORKFLOW_ENABLED:
             waiting_status = ReportStatus.objects.get(identifier="waiting")
             # Assign report through moderation step
-            if (
-                self.old_status.identifier in ["filed"]
-                and report.current_user
-                and report.current_user != WorkflowManager.objects.first().user
-            ):
+            if self.old_status.identifier in ["filed"] and report.current_user:
                 msg = self.cleaned_data.get("message_supervisor", "")
                 report.notify_current_user(msg)
                 report.assigned_handler = report.current_user
