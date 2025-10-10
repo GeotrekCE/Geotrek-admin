@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/doc-advanced-configuration/fr/>\n"
@@ -400,7 +400,7 @@ msgstr ""
 
 #: ../../advanced-configuration/attachments.rst:5
 msgid "Attachments"
-msgstr ""
+msgstr "Pièce-jointes"
 
 #: ../../advanced-configuration/attachments.rst:8
 msgid "View attachments in the browser"
@@ -1725,7 +1725,7 @@ msgstr ""
 
 #: ../../advanced-configuration/interface.rst:1212
 msgid "Warning"
-msgstr ""
+msgstr "Attention"
 
 #: ../../advanced-configuration/interface.rst:1214
 msgid "There are exceptions, for example if a **Suricate workflow** is enabled."
@@ -2118,11 +2118,11 @@ msgstr ""
 
 #: ../../advanced-configuration/map-settings.rst:523
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: ../../advanced-configuration/map-settings.rst:554
 msgid "Altimetric profile"
-msgstr ""
+msgstr "Profil altimétrique"
 
 #: ../../advanced-configuration/map-settings.rst:594
 msgid ""
@@ -2318,7 +2318,7 @@ msgstr ""
 
 #: ../../advanced-configuration/modules-and-components.rst:402
 msgid "Paths"
-msgstr ""
+msgstr "Tronçons"
 
 #: ../../advanced-configuration/modules-and-components.rst:405
 msgid "Allow path deletion"
@@ -2386,7 +2386,7 @@ msgstr ""
 
 #: ../../advanced-configuration/modules-and-components.rst:529
 msgid "Interventions"
-msgstr ""
+msgstr "Interventions"
 
 #: ../../advanced-configuration/modules-and-components.rst:532
 msgid "Intervention intersection margin"
