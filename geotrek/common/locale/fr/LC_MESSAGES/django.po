@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/common/fr/>\n"
 "Language: fr\n"
@@ -457,16 +457,16 @@ msgstr "Echec lors de la récupération du fichier : %(e)s"
 
 #, python-format
 msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
-msgstr ""
+msgstr "%(class)s #%(pk)s - %(url)s: le fichier téléchargé est trop large"
 
 #, python-format, python-brace-format
 msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
 msgstr "%(class)s #%(pk)s - {url} : le fichier téléchargé n'est pas assez large"
 
-#, fuzzy, python-format
-#| msgid "The uploaded file is not tall enough"
+#, python-format
 msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
-msgstr "L'image sélectionnée n'est pas assez haute"
+msgstr ""
+"%(class)s #%(pk)s - %(url)s : le fichier téléchargé n'est pas assez haut"
 
 #, python-format
 msgid ""
@@ -486,7 +486,7 @@ msgstr "Le fichier à l'emplacement %(filename)s n'existe pas"
 
 #, python-format
 msgid "Model %(model)s"
-msgstr ""
+msgstr "Modèle %(model)s"
 
 msgid "Geotrek-admin"
 msgstr "Geotrek-admin"
@@ -519,7 +519,7 @@ msgid ""
 "from the same structure."
 msgstr ""
 "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet "
-"objet n'est pas de la même structure"
+"objet n'est pas de la même structure."
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
