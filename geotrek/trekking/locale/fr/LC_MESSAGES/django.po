@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-04 11:40+0200\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/trekking/fr/>\n"
 "Language: fr\n"
@@ -200,7 +200,7 @@ msgid "Gear needed, adviced ..."
 msgstr "Matériel nécessaire, conseillé ..."
 
 msgid "Themes"
-msgstr "Thématiques"
+msgstr "Thèmes"
 
 msgid "Main theme(s)"
 msgstr "Thème(s) principal(aux)"
@@ -308,7 +308,7 @@ msgid "Where to obtain information"
 msgstr "Où obtenir des informations"
 
 msgid "Points of reference"
-msgstr "Point de référence"
+msgstr "Points de référence"
 
 msgid "Source"
 msgstr "Source"
@@ -323,7 +323,7 @@ msgid "Second external id"
 msgstr "Deuxième id externe"
 
 msgid "Excluded POIs"
-msgstr "POI exclus"
+msgstr "POIs exclus"
 
 msgid "Reservation system"
 msgstr "Système de réservation"
@@ -529,7 +529,7 @@ msgid "Elevation"
 msgstr "Élévation"
 
 msgid "Attribution"
-msgstr "Crédits"
+msgstr "Crédit"
 
 msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"
@@ -542,16 +542,16 @@ msgstr ""
 "integration dans le portail public."
 
 msgid "Public print"
-msgstr "Impression grand public"
+msgstr "Impression grand-public"
 
 msgid "Print"
-msgstr "Impr."
+msgstr "Impression"
 
 msgid "Public print booklet"
 msgstr "Impression livret grand public"
 
 msgid "Print booklet"
-msgstr "Impression livret"
+msgstr "Impr. livret"
 
 msgid "GPX"
 msgstr "GPX"
@@ -605,7 +605,7 @@ msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
 msgid "Useful information"
-msgstr "Information pratique"
+msgstr "Infos pratiques"
 
 msgid "Length"
 msgstr "Longueur"
@@ -632,7 +632,7 @@ msgid "Stages"
 msgstr "Étapes"
 
 msgid "On your path..."
-msgstr "Sur votre chemin..."
+msgstr "Sur votre route..."
 
 msgid "All useful information"
 msgstr "Toutes les informations pratiques"
