@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-08 08:02+0000\n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
 "PO-Revision-Date: 2020-10-07 12:26+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language: fr\n"
@@ -18,36 +18,336 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.17.0\n"
 
-#: ../../index.rst:6
-msgid "User manual"
+#: ../../index.rst:163
+msgid "🏞️ A propos"
+msgstr ""
+
+#: ../../index.rst:169
+msgid "🚀 Manuel d'utilisation"
+msgstr ""
+
+#: ../../index.rst:182
+msgid "💡 Tutoriels"
+msgstr ""
+
+#: ../../index.rst:190
+msgid "🔧 Installation & configuration"
+msgstr ""
+
+#: ../../index.rst:201
+msgid "⚙️ Advanced configuration"
+msgstr ""
+
+#: ../../index.rst:214
+msgid "🗃️ Import data"
+msgstr ""
+
+#: ../../index.rst:226
+msgid "✨ Contribute"
+msgstr ""
+
+#: ../../index.rst:237
+msgid "📝 Others"
+msgstr ""
+
+#: ../../index.rst:-1
+#, fuzzy
+msgid "Welcome to the Geotrek-admin documentation!"
+msgstr "Bienvenue sur la documentation de Geotrek !"
+
+#: ../../index.rst:-1
+msgid "Bienvenue sur la documentation de Geotrek-admin!"
+msgstr ""
+
+#: ../../index.rst:-1
+#, fuzzy
+msgid "Geotrek-admin documentation"
+msgstr "Bienvenue sur la documentation de Geotrek !"
+
+#: ../../index.rst:7
+#, fuzzy
+msgid "Geotrek-admin's documentation"
+msgstr "Bienvenue sur la documentation de Geotrek !"
+
+#: ../../index.rst:17
+msgid "🏞️ **About Geotrek (fr)**"
+msgstr ""
+
+#: ../../index.rst:12
+msgid "Explore Geotrek"
+msgstr ""
+
+#: ../../index.rst:19
+msgid "Discover Geotrek’s main features and ecosystem."
+msgstr ""
+
+#: ../../index.rst:21
+msgid "Components & profiles"
 msgstr ""
 
 #: ../../index.rst:22
-msgid "Installation & configuration"
+msgid "Community & governance"
+msgstr ""
+
+#: ../../index.rst:23
+msgid "Open-source stack"
+msgstr ""
+
+#: ../../index.rst:25
+msgid "Introduction"
+msgstr ""
+
+#: ../../index.rst:32
+msgid "🚀 **User manual (fr)**"
+msgstr ""
+
+#: ../../index.rst:27
+msgid "Use Geotrek"
+msgstr ""
+
+#: ../../index.rst:34
+msgid "Step-by-step guide for all users."
+msgstr ""
+
+#: ../../index.rst:36
+msgid "Modules & views"
 msgstr ""
 
 #: ../../index.rst:37
-msgid "Contribute"
+msgid "Data & media"
 msgstr ""
 
-#: ../../index.rst:47
-msgid "Others"
+#: ../../index.rst:38
+msgid "API & menus"
 msgstr ""
 
-#: ../../index.rst:2
-msgid "Welcome to Geotrek's documentation!"
-msgstr "Bienvenue sur la documentation de Geotrek !"
+#: ../../index.rst:40
+msgid "Functional docs"
+msgstr ""
+
+#: ../../index.rst:50
+msgid "💡 **Tutorials (fr)**"
+msgstr ""
+
+#: ../../index.rst:45
+msgid "Tutorials"
+msgstr ""
+
+#: ../../index.rst:52
+msgid "Hands-on guides to learn by doing."
+msgstr ""
+
+#: ../../index.rst:54
+msgid "QGIS connection"
+msgstr ""
 
 #: ../../index.rst:55
-msgid "Indices and tables"
-msgstr "Index et tables"
+msgid "Basemaps setup"
+msgstr ""
 
-#: ../../index.rst:57
-msgid ":ref:`genindex`"
+#: ../../index.rst:56
+msgid "Fix topology"
 msgstr ""
 
 #: ../../index.rst:58
-msgid ":ref:`search`"
+msgid "Learn by doing"
 msgstr ""
+
+#: ../../index.rst:65
+msgid "🔧 **Installation**"
+msgstr ""
+
+#: ../../index.rst:60
+msgid "Install & Configure"
+msgstr ""
+
+#: ../../index.rst:67
+msgid "Set up and adapt Geotrek."
+msgstr ""
+
+#: ../../index.rst:69
+msgid "Ubuntu install"
+msgstr ""
+
+#: ../../index.rst:70
+msgid "Config & users"
+msgstr ""
+
+#: ../../index.rst:71
+msgid "Maintenance"
+msgstr ""
+
+#: ../../index.rst:73
+msgid "Technical setup"
+msgstr ""
+
+#: ../../index.rst:83
+msgid "⚙️ **Advanced config**"
+msgstr ""
+
+#: ../../index.rst:78
+msgid "Customize"
+msgstr ""
+
+#: ../../index.rst:85
+msgid "Fine-tune Geotrek’s settings."
+msgstr ""
+
+#: ../../index.rst:87
+msgid "Maps & APIs"
+msgstr ""
+
+#: ../../index.rst:88
+msgid "UI & PDF"
+msgstr ""
+
+#: ../../index.rst:89
+msgid "Mobile sync"
+msgstr ""
+
+#: ../../index.rst:91
+msgid "Power options"
+msgstr ""
+
+#: ../../index.rst:98
+msgid "🗃️ **Import data**"
+msgstr ""
+
+#: ../../index.rst:93 ../../index.rst:102
+msgid "Import data"
+msgstr ""
+
+#: ../../index.rst:100
+msgid "Import, update, and manage data."
+msgstr ""
+
+#: ../../index.rst:103
+msgid "Touristic data systems"
+msgstr ""
+
+#: ../../index.rst:104
+msgid "Aggregator"
+msgstr ""
+
+#: ../../index.rst:106
+msgid "Data management"
+msgstr ""
+
+#: ../../index.rst:116
+msgid "✨ **Contribute**"
+msgstr ""
+
+#: ../../index.rst:111
+msgid "Contribute"
+msgstr ""
+
+#: ../../index.rst:118
+msgid "Improve Geotrek together."
+msgstr ""
+
+#: ../../index.rst:120
+msgid "Code & docs"
+msgstr ""
+
+#: ../../index.rst:121
+msgid "Translations"
+msgstr ""
+
+#: ../../index.rst:122
+msgid "Guidelines"
+msgstr ""
+
+#: ../../index.rst:124
+msgid "Community"
+msgstr ""
+
+#: ../../index.rst:131
+msgid "📝 **Others**"
+msgstr ""
+
+#: ../../index.rst:126
+msgid "Extra"
+msgstr ""
+
+#: ../../index.rst:133
+msgid "Tips, fixes, and credits."
+msgstr ""
+
+#: ../../index.rst:135
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../index.rst:136
+msgid "Authors"
+msgstr ""
+
+#: ../../index.rst:137
+msgid "Changelog"
+msgstr ""
+
+#: ../../index.rst:139
+msgid "Resources"
+msgstr ""
+
+#: ../../index.rst:142
+msgid ""
+"**Geotrek-admin** is a web application designed to manage, centralize, "
+"and structure geographical and touristic information for your territory. "
+"It is the back-office application of the Geotrek ecosystem."
+msgstr ""
+
+#: ../../index.rst:144
+msgid "Interface de Geotrek-admin"
+msgstr ""
+
+#: ../../index.rst:148
+msgid "With **Geotrek-admin**, you can:"
+msgstr ""
+
+#: ../../index.rst:150
+msgid ""
+"Manage treks, touristic information, and related content (media, "
+"descriptions, etc.)."
+msgstr ""
+
+#: ../../index.rst:151
+msgid "Organize your data with maps, layers, and metadata."
+msgstr ""
+
+#: ../../index.rst:152
+msgid ""
+"Export content to various public interfaces, such as Geotrek-rando or "
+"printed topoguides."
+msgstr ""
+
+#: ../../index.rst:154
+msgid ""
+"You can explore **Geotrek-admin** in action through the demonstration "
+"website:"
+msgstr ""
+
+#: ../../index.rst:156
+msgid ""
+"`https://demo-admin.geotrek.fr/ <https://demo-admin.geotrek.fr/>`_ (demo "
+"/ demo)"
+msgstr ""
+
+#: ../../index.rst:158
+msgid ""
+"**Geotrek-admin** is built on Django and leverages a PostGIS database for"
+" handling geographical data. It serves as the data source for Geotrek-"
+"rando, Geotrek-widget, and other tools of the Geotrek ecosystem."
+msgstr ""
+
+#: ../../index.rst:160
+msgid "See also"
+msgstr ""
+
+#: ../../index.rst:161
+msgid ""
+"Learn more about Geotrek-admin in the :ref:`general documentation "
+"(french) <qu-est-ce-que-geotrek>`."
+msgstr ""
+
