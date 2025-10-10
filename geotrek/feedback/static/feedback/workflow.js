@@ -21,15 +21,18 @@ function display_message_fields_on_status_change() {
 
     status_is_classified = (status_ids_and_colors[selected]['id'] === "classified")
     status_is_waiting = (status_ids_and_colors[selected]['id'] === "waiting")
+    status_is_solved = (status_ids_and_colors[selected]['id'] === "solved")
+    status_is_rejected = (status_ids_and_colors[selected]['id'] === "rejected")
+    status_is_filed = (status_ids_and_colors[selected]['id'] === "filed")
 
-    $('#div_id_message_sentinel_predefined').prop('hidden', !(status_is_classified || status_is_waiting));
-    $('#div_id_message_sentinel').prop('hidden', !(status_is_classified || status_is_waiting));
-    $('#div_id_message_administrators').prop('hidden', !(status_is_classified || status_is_waiting));
-    $('#div_id_current_user').prop('hidden', !(status_is_waiting));
+    $('#div_id_message_sentinel_predefined').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
+    $('#div_id_message_sentinel').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
+    $('#div_id_message_administrators').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
+    $('#div_id_current_user').prop('hidden', !(status_is_waiting || status_is_solved));
     $('#div_id_message_supervisor').prop('hidden', !(status_is_waiting));
     $('#div_id_uses_timers').prop('hidden', !(status_is_waiting));
 
-    if (status_is_waiting || (status_ids_and_colors[selected]['id'] === "classified") || (status_ids_and_colors[selected]['id'] === "rejected")) {
+    if (status_is_waiting || status_is_classified || status_is_rejected) {
         $('#id_current_user').val(workflow_manager);
     }
 }
