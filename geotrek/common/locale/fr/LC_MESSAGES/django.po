@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: 2025-10-10 08:46+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/common/fr/>\n"
 "Language: fr\n"
@@ -461,8 +461,7 @@ msgstr ""
 
 #, python-format, python-brace-format
 msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
-msgstr ""
-"%(class)s #%(pk)s - {url} : le fichier téléchargé n'est pas assez large"
+msgstr "%(class)s #%(pk)s - {url} : le fichier téléchargé n'est pas assez large"
 
 #, fuzzy, python-format
 #| msgid "The uploaded file is not tall enough"
