@@ -177,7 +177,7 @@ msgid "Useful information"
 msgstr "Infos pratiques"
 
 msgid "All useful information"
-msgstr "Toutes les informations pratiques"
+msgstr "Toutes les infos pratiques"
 
 msgid "Advices"
 msgstr "Recommandations"
