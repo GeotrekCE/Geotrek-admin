@@ -1,0 +1,2587 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2025, Makina Corpus Territoires / Parc national des
+# Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+# This file is distributed under the same license as the Geotrek-admin
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek-admin \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../import-data/import-aggregator.rst:3
+msgid "From other Geotrek (aggregator)"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:5
+#: ../../import-data/import-areas.rst:5
+#: ../../import-data/import-dem-raster.rst:7
+#: ../../import-data/import-other-data.rst:5
+#: ../../import-data/import-paths.rst:7
+#: ../../import-data/import-touristic-data-systems.rst:7
+#: ../../import-data/minimal-initial-data.rst:7
+msgid "Keywords"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:7
+msgid "``aggregator``, ``agrégateur``, ``parser``, ``cron``"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:13
+msgid "Import data from an other Geotrek-admin (aggregator)"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:15
+msgid ""
+"Importing from a Geotrek-admin instance works the same way as from SIT. A"
+" usecase for this is to aggregate data from several Geotrek-admin "
+"instances."
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:18
+#: ../../import-data/import-dem-raster.rst:105
+#: ../../import-data/import-other-data.rst:535
+#: ../../import-data/import-paths.rst:19
+#: ../../import-data/import-touristic-data-systems.rst:752
+#: ../../import-data/minimal-initial-data.rst:12
+msgid "Important"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:19
+msgid ""
+"Importing data from a remote Geotrek-admin instance does not work with "
+"dynamic segmentation, your instance where you import data must have "
+":ref:`dynamic segmentation disabled <configuration-dynamic-"
+"segmentation>`."
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:23
+msgid "Import data from another instance"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:25
+msgid "Here is an example to import treks from another instance :"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:27
+#: ../../import-data/import-aggregator.rst:219
+msgid ""
+"Edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following "
+"content:"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:45
+#: ../../import-data/import-aggregator.rst:226
+msgid "Then run in command line:"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst
+#: ../../import-data/import-touristic-data-systems.rst
+msgid "With Debian"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst
+#: ../../import-data/import-touristic-data-systems.rst
+msgid "With Docker"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:62
+msgid "Treks are now imported into your own instance."
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:64
+#: ../../import-data/import-aggregator.rst:245
+#: ../../import-data/import-areas.rst:94 ../../import-data/import-areas.rst:210
+#: ../../import-data/import-areas.rst:227
+#: ../../import-data/import-areas.rst:320
+#: ../../import-data/import-other-data.rst:142
+#: ../../import-data/import-other-data.rst:340
+#: ../../import-data/import-other-data.rst:515
+#: ../../import-data/import-paths.rst:148
+#: ../../import-data/import-touristic-data-systems.rst:224
+#: ../../import-data/import-touristic-data-systems.rst:774
+#: ../../import-data/minimal-initial-data.rst:42
+#: ../../import-data/minimal-initial-data.rst:79
+#: ../../import-data/minimal-initial-data.rst:115
+#: ../../import-data/minimal-initial-data.rst:181
+#: ../../import-data/minimal-initial-data.rst:207
+msgid "See also"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:66
+#: ../../import-data/import-aggregator.rst:247
+#: ../../import-data/import-touristic-data-systems.rst:776
+msgid ""
+"To set up automatic commands you can check the :ref:`Automatic commands "
+"section <automatic-commands>`."
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:69
+msgid "Import from several Geotrek-admin instances"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:71
+msgid "Here is an example to import data from several instances :"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:73
+msgid "Create the aggregator configuration file"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:75
+msgid "Example of aggregator configuration file"
+msgstr ""
+
+#: ../../import-data/import-aggregator.rst:243
+msgid "Aggregate data are now imported into the Geotrek-admin aggregator."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:3
+#: ../../import-data/minimal-initial-data.rst:47
+msgid "Areas"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:7
+msgid ""
+"``Biodiv'Sport``, ``command line``, ``import en ligne de commande``, "
+"``shapefile``"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:13
+msgid "Load Cities"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:15
+msgid ""
+"Refer to :ref:`this section <cities-source-list>` to learn about the "
+"available downloadable data sources."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:17
+msgid "sudo geotrek help loadcities"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:62 ../../import-data/import-areas.rst:179
+#: ../../import-data/import-areas.rst:287
+#: ../../import-data/import-dem-raster.rst:29
+#: ../../import-data/import-other-data.rst:105
+#: ../../import-data/import-other-data.rst:266
+#: ../../import-data/import-other-data.rst:472
+#: ../../import-data/import-paths.rst:115
+#: ../../import-data/import-paths.rst:162
+#: ../../import-data/import-touristic-data-systems.rst:183
+#: ../../import-data/import-touristic-data-systems.rst:638
+#: ../../import-data/import-touristic-data-systems.rst:798
+msgid "Note"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:64
+msgid "**Optional fields** : Code, SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:65 ../../import-data/import-areas.rst:182
+msgid "**Required fields** : Name"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:66 ../../import-data/import-areas.rst:183
+#: ../../import-data/import-areas.rst:291
+msgid "**Geometric type** : Polygon"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:67 ../../import-data/import-areas.rst:184
+#: ../../import-data/import-areas.rst:292
+#: ../../import-data/import-other-data.rst:110
+#: ../../import-data/import-other-data.rst:271
+#: ../../import-data/import-other-data.rst:477
+#: ../../import-data/import-paths.rst:120
+msgid "**Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:68
+msgid "**Template** : :download:`cities.geojson <../files/import/cities.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:69 ../../import-data/import-areas.rst:186
+#: ../../import-data/import-areas.rst:294
+#: ../../import-data/import-other-data.rst:112
+#: ../../import-data/import-other-data.rst:273
+#: ../../import-data/import-other-data.rst:479
+#: ../../import-data/import-paths.rst:122
+msgid "**Good to know** :"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:70 ../../import-data/import-areas.rst:187
+#: ../../import-data/import-areas.rst:295
+#: ../../import-data/import-other-data.rst:480
+#: ../../import-data/import-paths.rst:123
+msgid "The default SRID code is 4326"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:71 ../../import-data/import-areas.rst:188
+#: ../../import-data/import-areas.rst:296
+#: ../../import-data/import-other-data.rst:114
+#: ../../import-data/import-other-data.rst:275
+#: ../../import-data/import-other-data.rst:481
+#: ../../import-data/import-paths.rst:124
+msgid "The default encoding is UTF-8"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:72
+msgid "Imported cities are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:73 ../../import-data/import-areas.rst:190
+#: ../../import-data/import-areas.rst:298
+#: ../../import-data/import-other-data.rst:116
+#: ../../import-data/import-other-data.rst:277
+#: ../../import-data/import-other-data.rst:483
+#: ../../import-data/import-paths.rst:125
+msgid "When importing a Geopackage, the first layer is always used"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:75 ../../import-data/import-areas.rst:192
+#: ../../import-data/import-areas.rst:301
+#: ../../import-data/import-dem-raster.rst:80
+#: ../../import-data/import-other-data.rst:123
+#: ../../import-data/import-other-data.rst:317
+#: ../../import-data/import-other-data.rst:490
+#: ../../import-data/import-paths.rst:128
+msgid "**Import command examples :**"
+msgstr ""
+
+#: ../../import-data/import-areas.rst ../../import-data/import-dem-raster.rst
+#: ../../import-data/import-other-data.rst ../../import-data/import-paths.rst
+msgid "Example with Debian"
+msgstr ""
+
+#: ../../import-data/import-areas.rst ../../import-data/import-dem-raster.rst
+#: ../../import-data/import-other-data.rst ../../import-data/import-paths.rst
+msgid "Example with Docker"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:95 ../../import-data/import-areas.rst:211
+#: ../../import-data/import-areas.rst:321
+#: ../../import-data/import-other-data.rst:143
+#: ../../import-data/import-other-data.rst:341
+#: ../../import-data/import-other-data.rst:516
+#: ../../import-data/import-paths.rst:149
+msgid ""
+"Refer to :ref:`this section <docker-container-path>` to learn more about "
+"container path in Docker commands"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:108
+#: ../../import-data/import-areas.rst:223
+#: ../../import-data/import-areas.rst:334
+msgid "Hint"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:110
+#: ../../import-data/import-areas.rst:225
+#: ../../import-data/import-areas.rst:336
+msgid ""
+"The ``--intersect`` option allows you to import features outside the "
+"spatial extent of the project."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:115
+msgid "Load Districts"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:117
+msgid ""
+"Refer to :ref:`this section <districts-source-list>` to learn about the "
+"available downloadable data sources."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:119
+msgid "sudo geotrek help loaddistricts"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:181
+#: ../../import-data/import-areas.rst:289
+msgid "**Optional fields** : SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:185
+msgid ""
+"**Template** : :download:`districts.geojson "
+"<../files/import/districts.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:189
+msgid "Imported districts are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:229
+msgid ""
+"Refer to :ref:`this section <import-district>` to import districts from "
+"OpenStreetMap."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:234
+msgid "Load Restricted areas"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:236
+msgid ""
+"Refer to :ref:`this section <restrictedareas-source-list>` to learn about"
+" the available downloadable data sources."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:238
+msgid "sudo geotrek help loadrestrictedareas"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:290
+msgid "**Required fields** : Name, Type zone"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:293
+msgid ""
+"**Template** : :download:`restrictedareas.geojson "
+"<../files/import/restrictedareas.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:297
+msgid "Imported restricted areas are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:299
+msgid "Only objects within the project bounding box can be imported"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:341
+msgid "Sensitive areas import"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:343
+msgid ""
+"Geotrek-admin provides tools to import sensitive areas data when the "
+"module is enabled. The imports can be done through the web interface or "
+"the command line. Below are the available options:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:346
+msgid "Import from Biodiv'Sports"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:348
+msgid "Automatically import sensitive areas from Biodiv'Sports:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:351
+#: ../../import-data/import-areas.rst:411
+msgid "From the web interface"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:353
+#: ../../import-data/import-areas.rst:413
+msgid "Click on the **user button** (top-right corner) and go to **Imports**."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:354
+msgid ""
+"Under **Data to import from network**, select **Biodiv'Sports** and click"
+" **Import**."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:355
+msgid "Wait for the import process to complete."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:356
+msgid "Check the Sensitivity module in Geotrek to view the imported data."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:358
+#: ../../import-data/import-areas.rst:389
+#: ../../import-data/import-areas.rst:407
+#: ../../import-data/import-dem-raster.rst:14
+#: ../../import-data/import-touristic-data-systems.rst:656
+msgid "Warning"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:359
+msgid ""
+"If no data appears, Biodiv'Sports might not have data for your region. "
+"Consider adding your data directly to Biodiv'Sports for shared access "
+"across users."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:362
+#: ../../import-data/import-areas.rst:426
+msgid "From the command line"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:380
+msgid "Import from a Shapefile"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:382
+msgid ""
+"Refer to :ref:`this section <sensitiveareas-source-list>` to learn about "
+"the available downloadable data sources."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:384
+msgid ""
+"Sensitive areas can also be imported from an ESRI Shapefile (zipped). "
+"Ensure the following:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:386
+msgid "The archive must include ``.shp``, ``.shx``, ``.dbf``, ``.prj``, etc."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:387
+msgid "Field names must be configured correctly, as detailed below."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:390
+msgid "Re-importing the same file will create duplicates."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:392
+msgid "**Species sensitive areas**:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:394
+msgid "``espece``: Species name (required, must exist in Biodiv'Sports)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:395
+#: ../../import-data/import-areas.rst:401
+msgid "``contact``: Optional contact information (text or HTML)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:396
+#: ../../import-data/import-areas.rst:402
+msgid "``descriptio``: Optional description (text or HTML)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:398
+msgid "**Regulatory sensitive areas**:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:400
+msgid "``name``: Area name (required)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:403
+msgid ""
+"``periode``: Months during which the area is sensitive (comma-separated, "
+"e.g., ``6,7,8`` for June-August)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:404
+msgid "``practices``: Practices associated with the area (comma-separated)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:405
+msgid "``url``: Optional URL for the record."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:408
+msgid ""
+"Field names in shapefiles are limited to 10 characters (e.g., "
+"``descriptio``)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:414
+msgid "Select the data type (**species** or **regulatory area**)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:415
+msgid ""
+"Upload the zipped shapefile and select the appropriate encoding (UTF-8 or"
+" Windows-1252)."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:416
+msgid "Click **Import** and monitor the progress."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:417
+msgid "View the import report for details."
+msgstr ""
+
+#: ../../import-data/import-areas.rst:419
+#: ../../import-data/import-areas.rst:423
+msgid "Import shapefile in user interface"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:428
+msgid "For species sensitive areas:"
+msgstr ""
+
+#: ../../import-data/import-areas.rst:445
+msgid "For regulatory sensitive areas:"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:5
+#: ../../import-data/minimal-initial-data.rst:18
+msgid "Altimetry (DEM)"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:9
+msgid "``DEM``, ``MNT``, ``raster``, ``QGIS``"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:12
+msgid ""
+"Refer to :ref:`this section <altimetry-dem-source-list>` to learn about "
+"the available downloadable data sources."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:16
+msgid ""
+"We recommend not importing a DEM with too precise resolution for "
+"performance reasons. For example, the BD Alti DEM with a 25m resolution "
+"is perfect to cover a department."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:17
+msgid ""
+"If you downloaded the BD Alti or RGE Alti, you will need to convert the "
+"``.asc`` DEM to ``.tif`` format (e.g. with QGIS) before uploading it on "
+"the server."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:19
+msgid ""
+"In `QGIS "
+"<http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,"
+" you can visualize your DEM, or merge several tiles together (in *Raster*"
+" > *Misc* > *Merge*)."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:22
+msgid ""
+"Generate a GeoTIFF, and upload both files (``.tif`` + ``.tfw``) on the "
+"server. And use the Geotrek-admin command to load it into PostGIS :"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:31
+msgid ""
+"This command makes use of *GDAL* and ``raster2pgsql`` internally. It "
+"therefore supports all GDAL raster input formats. You can list these "
+"formats with the command ``raster2pgsql -G``."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:32
+msgid ""
+"The elevation data of DEM must be integer values. If the elevation data "
+"are floating numbers, you can convert them in integer values with the "
+"Raster calculator processing of `SAGA in QGis "
+"<https://docs.qgis.org/3.34/en/docs/user_manual/processing/3rdParty.html#saga>`_"
+" (Processing > Toolbox > SAGA > Raster calculus > Raster calculator) with"
+" formula parameter set to ``int(a)``."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:33
+msgid ""
+"If you only have a ``.tif`` file, you can generate the ``.tfw`` file with"
+" the command ``gdal_translate -co \"TFW=YES\" in.tif out.tif``. It will "
+"generate a new ``.tif`` file with its ``.tfw`` metadata file."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:34
+msgid ""
+"If you want to  update the altimetry of the topologies you need to use "
+"the option ``--update-altimery``"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:39
+msgid "Load DEM"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:41
+msgid "sudo geotrek help loaddem"
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:106
+msgid ""
+"When running a command via Docker, all file paths must refer to locations"
+" **inside the container**, not on the host machine. The ``var`` folder is"
+" mounted as a volume in the container, with the following mapping: "
+"``/path-on-host/var`` → ``/opt/geotrek-admin/var``."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:109
+msgid ""
+"So you just need to place the file in the ``var`` directory on the host, "
+"and it will be accessible from inside the container at the expected path."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:111
+msgid ""
+"👉 In short: Docker commands in Geotrek use **container paths**. The `var`"
+" folder is shared between the host and the container, so any file placed "
+"in `var` can be accessed using either ``./var/...`` or ``/opt/geotrek-"
+"admin/var/...`` **inside the container**."
+msgstr ""
+
+#: ../../import-data/import-dem-raster.rst:115
+msgid "Example : ``./var/dem.tif`` or ``/opt/geotrek-admin/var/dem.tif``"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:3
+msgid "From a file"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:7
+msgid "``command line``, ``import en ligne de commande``"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:9
+msgid ""
+"You can add parsers in your custom `parsers.py` file (``/opt/geotrek-"
+"admin/var/conf/parsers.py``) which will allow you to import data from "
+"files directly in your admin (superusers only). For example, some parsers"
+" are not available by default but you can use them adding some lines in "
+"your parsers file :"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:18
+msgid ""
+"You can also use some of Geotrek commands to import data from a vector "
+"file handled by `GDAL <https://gdal.org/drivers/vector/index.html>`_ "
+"(e.g.: ESRI Shapefile, GeoJSON, GeoPackage etc.)"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:20
+msgid ""
+"Possible data are : POI, infrastructures, signages, cities, districts, "
+"restricted areas, paths."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:22
+msgid ""
+"You must use these commands to import spatial data because of the "
+":ref:`dynamic segmentation <configuration-dynamic-segmentation>`, which "
+"will not be computed if you enter the data manually."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:24
+msgid "Here are the Geotrek commands available to import data from file:"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:26
+msgid "``loadpoi``"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:27
+msgid "``loadinfrastructure``"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:28
+msgid "``loadsignage``"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:29
+msgid "``loadcities`` ==> See :ref:`in Areas section <import-cities>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:30
+msgid "``loaddistricts`` ==> See :ref:`in Areas section <import-districts>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:31
+msgid ""
+"``loadrestrictedareas`` ==> See :ref:`in Areas section <import-"
+"restricted-areas>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:33
+msgid ""
+"Usually, these commands come with ability to match file attributes to "
+"model fields."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:35
+msgid "To get help about a command:"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:44
+msgid "Load POIs"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:46
+#: ../../import-data/import-other-data.rst:160
+#: ../../import-data/import-other-data.rst:363
+msgid "🗺️ Data stored via dynamic segmentation when enabled"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:50
+msgid "sudo geotrek help loadpoi"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:107
+msgid "**Optional fields** : Description, SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:108
+msgid "**Required fields** : Name, Type"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:109
+#: ../../import-data/import-other-data.rst:270
+#: ../../import-data/import-other-data.rst:476
+msgid "**Geometric type** : Point"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:111
+msgid "**Template** : :download:`poi.geojson <../files/import/poi.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:113
+#: ../../import-data/import-other-data.rst:274
+msgid "The SRID must be 4326"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:115
+msgid "Imported POIs are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:118
+#: ../../import-data/import-other-data.rst:284
+#: ../../import-data/import-other-data.rst:485
+msgid "**Default values**"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:120
+msgid ""
+"When a default value is provided without a fieldname to import the "
+"default value is set for all POIs objects."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:121
+#: ../../import-data/import-other-data.rst:287
+#: ../../import-data/import-other-data.rst:488
+msgid ""
+"When a default value is provided in addition to a fieldname to import it "
+"is used as a fallback for entries without the specified import field."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:158
+msgid "Load Infrastructure"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:164
+msgid "sudo geotrek help loadinfrastructure"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:268
+msgid ""
+"**Optional fields** : Structure, Description, Status, Year, External ID, "
+"SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:269
+msgid "**Required fields** : Name, Type, Category"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:272
+msgid ""
+"**Template** : :download:`infrastructure.geojson "
+"<../files/import/infrastructure.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:276
+msgid "Imported infrastructures are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:278
+msgid ""
+"The command will select or create InfrastructureType values based on the "
+"`type-field` argument, taking the default value \"A\" for the category"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:280
+msgid "**Required fields**"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:282
+msgid ""
+"The following fields are mandatory to create an Infrastructure object: "
+"`name`, `type` and `category`. For each of those fields either an import "
+"field and/or a default value MUST be provided. If the command is unable "
+"to determine values for those fields for a given layer, the layer is "
+"skipped with an error message."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:286
+msgid ""
+"When a default value is provided without a fieldname to import the "
+"default value is set for all Infrastructure objects."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:289
+msgid "**Selection and addition of parameterized values**"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:291
+msgid ""
+"Infrastructure objects have several values from Geotrek's parameterized "
+"values sets :"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:293
+msgid ""
+"`type` from InfrastructureType values (and `category` which is implied by"
+" the `type` value),"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:294
+msgid "`condition` from InfrastructureCondition values."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:296
+msgid ""
+"New parameterized values are created and added to Geotrek Admin if "
+"necessary. The command checks if the imported `type` value already exists"
+" by looking for an InfrastructureType with the right `type` + `category`."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:298
+msgid "``A`` category value stands for Building"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:299
+msgid "``E`` category value stands for Equipment"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:361
+msgid "Load Signage"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:367
+msgid "sudo geotrek help loadsignage"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:474
+msgid "**Optional fields** : Comment, SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:475
+msgid "**Required fields** : Structure, Name"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:478
+msgid ""
+"**Template** : :download:`signage.geojson "
+"<../files/import/signage.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:482
+msgid "Imported signage are unpublished by default"
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:487
+msgid ""
+"When a default value is provided without a fieldname to import the "
+"default value is set for all Signage objects."
+msgstr ""
+
+#: ../../import-data/import-other-data.rst:537
+msgid ""
+"Blades are not yet supported, therefore this command only imports "
+"signages in the database."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:5
+msgid "Paths"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:9
+msgid "``command line``, ``import en ligne de commande``, ``QGIS``"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:12
+msgid "✨ Only available in dynamic segmentation"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:17
+msgid "Requirements"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:20
+msgid ""
+"With :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, "
+"importing paths is very risky if paths are already present in the same "
+"area in Geotrek, it is only safe for an area where no path is already "
+"created."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:23
+msgid ""
+"Indeed, if you import paths where there are existing paths, treks, POIs "
+"or trails linked topology might be impacted."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:25
+msgid "Before import paths layer, it is important to prepare them. Paths must be:"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:27
+msgid "valid geometry"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:28
+msgid "simple geometry (no intersection)"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:29
+msgid "all intersections must cut the paths"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:30
+msgid "not double or covering others"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:33
+msgid "Clean paths"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:35
+msgid ""
+"We use QGis to clean a path layer, with plugin Grass. Here are the "
+"operations:"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:38
+msgid "check the SRID (must be the same as in Geotrek)"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:40
+msgid "vectors → geometric tools → \"collect geometries\""
+msgstr ""
+
+#: ../../import-data/import-paths.rst:42
+msgid "vectors → geometric tools → \"group\""
+msgstr ""
+
+#: ../../import-data/import-paths.rst:44
+msgid "clean geometries"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:45
+msgid "search \"v_clean\" in \"Processing toolbox\""
+msgstr ""
+
+#: ../../import-data/import-paths.rst:46
+msgid ""
+"select following options in cleaning tool: break, snap, duplicate (ou "
+"rmdup), rmline, rmdangle, chdangle, bpol, prune"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:47
+msgid "in threshold enter 2,2,2,2,2,2,2,2 (2 meters for each option)"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:49
+msgid "delete duplicate geometries"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:50
+msgid "search \"duplicate\" in \"Processing toolbox\""
+msgstr ""
+
+#: ../../import-data/import-paths.rst:52
+msgid "regroup lines"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:53
+msgid "search \"v.build.polyline\" in \"Processing toolbox\")"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:54
+msgid "select \"first\" in \"Category number mode\""
+msgstr ""
+
+#: ../../import-data/import-paths.rst:56
+msgid ""
+"There are two ways to import path : importing your shapefile with command"
+" line, or `via QGis following this blog post <https://makina-corpus.com"
+"/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:59
+msgid ""
+"**To import a shapefile containing your paths, use the command** "
+"``loadpaths``"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:62
+msgid "Load paths"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:64
+msgid "sudo geotrek help loadpaths"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:117
+msgid "**Optional fields** : Name, Comment, SRID, Encoding"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:118
+msgid "**Required fields** : Structure"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:119
+msgid "**Geometric type** : Linestring"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:121
+msgid "**Template** : :download:`paths.geojson <../files/import/paths.geojson>`"
+msgstr ""
+
+#: ../../import-data/import-paths.rst:126
+msgid ""
+"The `--structure` requires an existing value and cannot retrieve it from "
+"a field in the file."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:164
+msgid ""
+"After importing a large quantity of paths, it is recommended to pre-"
+"generate the paths graph needed for the routing."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:166
+msgid ""
+"This action is not mandatory, but will reduce the time needed for the "
+"first routing following the import."
+msgstr ""
+
+#: ../../import-data/import-paths.rst:168
+msgid ""
+"To pre-generate the graph, use the ``generate_pgr_network_topology`` "
+"command:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:5
+msgid "Touristic Data Systems"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:9
+msgid "``SIT``, ``parser``, ``command line``, ``import en ligne de commande``"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:13
+msgid "Real-time integration"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:15
+msgid ""
+"Geotrek-admin integrates with various Tourism Information Systems (SIT) "
+"such as Apidae, Tourinsoft, and others, enabling real-time retrieval of "
+"data entered by tourism offices. This includes information on points of "
+"interest, accommodations, cultural heritage, and more."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:17
+msgid ""
+"These imported data elements are automatically linked to nearby treks, "
+"regardless of activity type (trekking, trail running, mountain biking, "
+"cycling, gravel, climbing, rafting, etc.)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:19
+msgid ""
+"This seamless integration enriches the descriptive pages of routes, "
+"ensuring that users benefit from comprehensive and up-to-date information"
+" with no additional effort required from administrators or agents."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:24
+msgid "Generic settings for your parser"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:26
+msgid "This settings may be overriden when you define a new parser:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:28
+msgid "``label`` parser display name (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:29
+msgid "``model`` import content with this model (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:30
+msgid "``filename`` file imported if no url (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:31
+msgid "``url`` flow url imported from if no filename (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:32
+msgid "``simplify_tolerance`` (default: ``0``)  # meters"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:33
+msgid "``update_only`` don't create new contents (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:34
+msgid "``delete`` (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:35
+msgid ""
+"``duplicate_eid_allowed`` if True, allows differents contents with same "
+"eid (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:36
+msgid ""
+"``fill_empty_translated_fields`` if True, fills empty translated fields "
+"with same value  (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:37
+msgid "``warn_on_missing_fields`` (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:38
+msgid "``warn_on_missing_objects`` (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:39
+msgid "``separator`` (default: ``'+'``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:40
+msgid "``eid`` field name for eid (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:41
+msgid "``provider`` (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:42
+msgid ""
+"``flexible_fields`` if ``True``, external source fields are flexible, "
+"meaning no error is thrown if a mapped field is missing in the API "
+"response (default: ``False``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:43
+msgid "``fields`` (default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:44
+#, python-brace-format
+msgid "``m2m_fields``  (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:45
+#, python-brace-format
+msgid "``constant_fields`` (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:46
+#, python-brace-format
+msgid "``m2m_constant_fields`` (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:47
+msgid "``m2m_aggregate_fields`` (default: ``[]``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:48
+#, python-brace-format
+msgid "``non_fields`` (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:49
+#, python-brace-format
+msgid "``natural_keys`` (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:50
+#, python-brace-format
+msgid "``field_options`` (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:51
+msgid ""
+"``default_language`` use another default language for this parser "
+"(default: ``None``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:52
+#, python-brace-format
+msgid "``default_fields_values`` sets default values for fields (default: ``{}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:57
+msgid "Start import from command line"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:59
+msgid "Just run:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:76
+msgid ""
+"Change ``HebergementParser`` to match one of the class names in "
+"``var/conf/parsers.py`` file. You can add ``-v2`` parameter to make the "
+"command more verbose (show progress). Thank to ``cron`` utility you can "
+"configure automatic imports."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:83
+msgid "Start import from Geotrek-admin UI"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:85
+msgid "Open the top right menu and clic on ``imports``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:90
+msgid "Import from APIDAE"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:93
+msgid "Import touristic content"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:95
+msgid ""
+"To import touristic content from APIDAE (ex-SITRA), edit ``/opt/geotrek-"
+"admin/var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:110
+#: ../../import-data/import-touristic-data-systems.rst:262
+#: ../../import-data/import-touristic-data-systems.rst:377
+#: ../../import-data/import-touristic-data-systems.rst:404
+#: ../../import-data/import-touristic-data-systems.rst:440
+#: ../../import-data/import-touristic-data-systems.rst:469
+#: ../../import-data/import-touristic-data-systems.rst:498
+#: ../../import-data/import-touristic-data-systems.rst:523
+#: ../../import-data/import-touristic-data-systems.rst:549
+#: ../../import-data/import-touristic-data-systems.rst:576
+#: ../../import-data/import-touristic-data-systems.rst:602
+msgid "Then set up appropriate values:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:112
+msgid "``label`` at your convenience,"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:113
+msgid ""
+"``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE"
+" (ex-SITRA) configuration"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:114
+msgid ""
+"``category``, ``type1`` and ``type2`` (optional) to select in which "
+"Geotrek category/type imported objects should go"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:115
+msgid ""
+"You can add ``delete = True`` in your class if you want to delete objects"
+" in Geotrek databases that has been deleted in your Apidae selection. It "
+"will only delete objects that match with your class settings (category, "
+"types, portal, provider...)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:116
+msgid ""
+"You can also use the class ``HebergementParser`` if you only import "
+"accomodations"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:117
+#: ../../import-data/import-touristic-data-systems.rst:382
+#: ../../import-data/import-touristic-data-systems.rst:412
+msgid ""
+"See the `geotrek/tourism/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/tourism/parsers.py/>`_  file for "
+"details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:119
+#: ../../import-data/import-touristic-data-systems.rst:266
+msgid "You can duplicate the class. Each class must have a different name."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:121
+msgid "To apply changes, you may have to run ``sudo service geotrek restart``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:124
+msgid "Import treks"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:126
+msgid ""
+"A parser implementation is available to import Treks from APIDAE. Use it "
+"by defining a subclass of ``geotrek.trekking.parsers.ApidaeTrekParser`` "
+"in your ``var/conf/parsers.py`` configuration file as shown above."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:128
+msgid ""
+"You'll have to configure how to access your APIDAE data: ``api_key``, "
+"``project_id`` and ``selection_id`` (those are setting attributes from "
+"the APIDAE base parser)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:130
+msgid ""
+"The ``practices_mapped_with_activities_ids`` and "
+"``practices_mapped_with_default_activities_ids`` attributes define "
+"default mapping with the trekking module data fixture. You may override "
+"this to match your own types of Trek Practice."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:132
+#: ../../import-data/import-touristic-data-systems.rst:166
+#: ../../import-data/import-touristic-data-systems.rst:192
+#: ../../import-data/import-touristic-data-systems.rst:209
+msgid "Example of a parser configuration :"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:143
+msgid "Import services"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:145
+msgid ""
+"To import services from APIDAE, define a subclass of "
+"``geotrek.trekking.parsers.ApidaeServiceParser`` in your "
+"``var/conf/parsers.py`` configuration file."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:147
+msgid ""
+"In addition to the usual attributes, the service type name (``type``) "
+"must be specified. This type will be assigned to all objects imported "
+"through the parser."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:149
+msgid "Example of an APIDAE service parser configuration:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:162
+msgid "Import from Tourinsoft"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:164
+msgid ""
+"Tourinsoft is a Tourism Information System developed by the company "
+"Ingénie for tourism organizations in France, such as Departmental Tourism"
+" Committees (CDT), Tourism Development Agencies (ADT), and Tourist "
+"Offices. This system allows for the centralization, management, and "
+"standardized dissemination of tourism-related information."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:179
+msgid "Import from Cirkwi"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:181
+msgid ""
+"The functionality for importing treks and touristic content from Cirkwi "
+"was developed and integrated into `version 2.111.0 of Geotrek-admin "
+"<https://github.com/GeotrekCE/Geotrek-admin/releases/tag/2.111.0/>`_."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:185
+msgid "By default, imported content is automatically published."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:186
+msgid ""
+"To enable the integration of this data, you need to modify the "
+"`parsers.py` file to create a dedicated parser and query a feed provided "
+"by Cirkwi."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:188
+msgid ""
+"The following parsers have been developed to facilitate data import from "
+"Cirkwi into Geotrek-admin:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:190
+msgid ""
+"**Trek Parser**: Allows the integration of treks from Cirkwi into "
+"Geotrek. This parser is compatible with instances operating in :ref:`Non-"
+"Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode "
+"only."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:207
+msgid ""
+"**Touristic content Parser**: Enables the import of touristic content "
+"from Cirkwi into Geotrek."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:226
+msgid ""
+"To import Geotrek treks and POIs into Cirkwi's format you can check "
+":ref:`this section (french)  <geotrek-ignrando-cirkwi-api>`."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:231
+msgid "Import from LEI"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:233
+msgid ""
+"To import touristic content or touristic event from LEI , create (or "
+"update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the "
+"following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:250
+msgid "Import from Marque Esprit Parc"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:252
+msgid ""
+"To import touristic content from Esprit Parc national database, create "
+"(or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the "
+"following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:264
+msgid "``XXX`` by unique national park code (ex: PNE)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:268
+msgid ""
+"In this case categories and types in Geotrek database have to be the same"
+" as in Esprit parc database. Otherwise missing categories and types will "
+"be created in Geotrek database."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:270
+msgid ""
+"Imported contents will be automatically published and approved "
+"(certified)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:272
+msgid ""
+"If you use an url that filters a unique category, you can change its "
+"name. Example to get only Honey products and set the Geotrek category and"
+" type in which import them:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:292
+msgid "Import from OpenStreetMap"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:294
+msgid ""
+"OpenStreetMap (OSM) is a collaborative, open-source mapping database that"
+" provides freely accessible geographic data, maintained by a global "
+"community of contributors. OpenStreetMap parsers retrieve OSM data using "
+"the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:296
+msgid ""
+"By default, the parser uses the German Overpass server: ``https"
+"://overpass-api.de/api/interpreter/``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:299
+msgid ""
+"You can override this by setting a custom URL in the ``url`` attribute of"
+" the ``OpenStreetMapParser`` class."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:302
+msgid "Query configuration"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:304
+msgid ""
+"Overpass queries are written in `Overpass QL "
+"<https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL>`_. Query "
+"configuration is handled through the ``query_settings`` attribute, which "
+"includes:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:306
+msgid ""
+"``bbox_margin`` (default: ``0.0``): A proportional buffer applied to the "
+"query bounding box. It expands the area by a fraction of its width to "
+"ensure surrounding features are included. (exemple: if bbox_margin is "
+"0.05 then the bbox will be expanded by 5%)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:308
+msgid ""
+"``osm_element_type`` (default: ``nwr``): Specifies the types of elements "
+"to retrieve: ``\"node\"``, ``\"way\"``, ``\"relation\"``, or ``\"nwr\"`` "
+"(all three)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:310
+msgid ""
+"``output`` (default: ``\"geom\"``): Specifies the data returned by the "
+"Overpass API."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:311
+msgid "``geom``: return the object type, the object ID, the tags and the geometry"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:312
+msgid "``tags``: return the object type, the object ID and the tags"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:314
+msgid ""
+"The ``tags`` attribute defines the set of tag filters to be used with the"
+" Overpass API. It is a list where each element is either:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:317
+#, python-brace-format
+msgid ""
+"A **dictionary**: representing a single tag filter (e.g., ``{\"highway\":"
+" \"bus_stop\"}``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:319
+msgid ""
+"A **list of dictionaries**: representing a logical AND across all "
+"contained tags"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:320
+#, python-brace-format
+msgid ""
+"(e.g., [{\"boundary\": \"administrative\"}, {\"admin_level\": \"4\"}] "
+"means the object must have both tags)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:322
+msgid "The Overpass query will return the UNION of all top-level items."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:324
+msgid "For example:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:333
+msgid ""
+"*means*: return objects that either have both ``boundary=administrative``"
+" AND ``admin_level=4``, OR have ``highway=bus_stop``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:335
+msgid ""
+"All the objects parsed by the ``OpenStreetMap`` parsers will be those "
+"contained in the ``settings.SPATIAL_EXTENT`` bounding box. You can change"
+" the bounding box by overriding ``get_bbox_str()``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:339
+msgid "Handling translated fields"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:341
+msgid ""
+"OpenStreetMap supports multilingual fields using tags like ``name:fr``, "
+"following the ISO 639-1 standard."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:343
+msgid ""
+"During import, the parser maps translated fields (e.g., ``name``, "
+"``description``) based on the model and the languages defined in "
+"``settings.MODELTRANSLATION_LANGUAGES``. For each language, it creates a "
+"mapping such as ``name_fr`` → ``name:fr``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:345
+msgid ""
+"For the default language "
+"(``settings.MODELTRANSLATION_DEFAULT_LANGUAGE``), a special mapping is "
+"applied: it includes a fallback to the base tag (e.g., ``name``) and maps"
+" it to the base Geotrek field name (e.g., ``name``). This allows for "
+"filtering operations without relying directly on the default language "
+"code."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:347
+#, python-brace-format
+msgid ""
+"If a translation is missing, the field remains unset unless a fallback "
+"value is provided in ``default_fields_values`` using the pattern "
+"``{field}_{lang}``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:349
+msgid ""
+"When no translation exists for the default language, the base "
+"OpenStreetMap tag (e.g., ``name``) is used. This can lead to incorrect "
+"language display if the OSM default does not match the Geotrek instance’s"
+" default language."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:351
+msgid ""
+"Translation logic can be customized in custom parsers by overriding the "
+"``translation_fields`` method."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:354
+msgid "Attachments"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:355
+msgid ""
+"``OpenStreetMapParser`` automatically attaches files from "
+"``wikimedia_commons`` and ``image`` tags found in the data. A ``CC BY-SA "
+"4.0`` license is assigned to each imported file, as specified by the "
+"OpenStreetMap license."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:358
+msgid ""
+"For more information on how attachments work, consult :ref:`this section "
+"<import-attachments>`."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:363
+msgid "Import information desks"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:365
+msgid ""
+"To import information desks from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:379
+#: ../../import-data/import-touristic-data-systems.rst:406
+#: ../../import-data/import-touristic-data-systems.rst:442
+#: ../../import-data/import-touristic-data-systems.rst:471
+#: ../../import-data/import-touristic-data-systems.rst:500
+#: ../../import-data/import-touristic-data-systems.rst:525
+#: ../../import-data/import-touristic-data-systems.rst:551
+#: ../../import-data/import-touristic-data-systems.rst:578
+#: ../../import-data/import-touristic-data-systems.rst:604
+msgid ""
+"``tags`` to filter the objects imported from OpenStreetMap (see "
+"`MapFeatures <https://wiki.openstreetmap.org/wiki/Map_features/>`_  to "
+"get a list of existing tags)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:380
+#: ../../import-data/import-touristic-data-systems.rst:407
+#: ../../import-data/import-touristic-data-systems.rst:443
+#: ../../import-data/import-touristic-data-systems.rst:472
+#: ../../import-data/import-touristic-data-systems.rst:501
+#: ../../import-data/import-touristic-data-systems.rst:526
+#: ../../import-data/import-touristic-data-systems.rst:552
+#: ../../import-data/import-touristic-data-systems.rst:579
+#: ../../import-data/import-touristic-data-systems.rst:605
+msgid ""
+"``default_fields_values`` to define a value that will be assigned to a "
+"specific field when the external object does not contain the "
+"corresponding tag"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:381
+#: ../../import-data/import-touristic-data-systems.rst:444
+#: ../../import-data/import-touristic-data-systems.rst:553
+#: ../../import-data/import-touristic-data-systems.rst:580
+msgid "``type`` to specify the Geotrek type for imported objects"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:384
+#: ../../import-data/import-touristic-data-systems.rst:583
+msgid ""
+"You can duplicate the class to import different types of information "
+"desks. In that case, each class must have a unique name and provider "
+"label."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:389
+msgid "Import touristic contents"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:391
+msgid ""
+"To import touristic content from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:408
+msgid ""
+"``category`` (mandatory), ``type1`` and ``type2`` (optional) to select in"
+" which Geotrek category/type imported objects should go. ``type1`` and "
+"``type2`` can have multiple values (ex: ``type1 = [\"Restaurant\", "
+"\"Hotel\"]``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:409
+msgid ""
+"``portal`` to select in which portal(s) the objects should appear. "
+"Multiple portals can be assigned (ex: ``portal = [\"portal 1\", \"portal "
+"2\"]``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:410
+msgid ""
+"``source`` to select the data source. Multiple sources can be assigned "
+"(ex: ``source = [\"source 1\", \"source 2\"]``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:411
+msgid ""
+"``themes`` to select the corresponding theme(s) of the parsed objects. "
+"Multiple themes can be assigned (ex: ``themes = [\"theme 1\", \"theme "
+"2\"]``)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:418
+msgid "Import points of interest (POIs)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:420
+msgid ""
+"To import point of interest (POI) from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:445
+msgid ""
+"See the `geotrek/trekking/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/trekking/parsers.py/>`_  file for "
+"details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:447
+msgid ""
+"The parsed objects will be those contained in the "
+"``settings.SPATIAL_EXTENT`` bounding box. You can duplicate the class to "
+"import different types of points of interest. In that case, each class "
+"must have a unique name and provider label."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:453
+msgid "Import cities"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:455
+msgid ""
+"To import cities from OpenStreetMap, edit the ``var/conf/parsers.py`` "
+"file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:473
+msgid ""
+"``code_tag`` to specify the OpenStreetMap tag that contains the code "
+"information (e.g., in France, code_tag = \"ref:INSEE\"). If no value is "
+"defined, the code will not be included."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:474
+#: ../../import-data/import-touristic-data-systems.rst:502
+#: ../../import-data/import-touristic-data-systems.rst:528
+msgid ""
+"See the `geotrek/zoning/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/zoning/parsers.py/>`_  file for "
+"details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:476
+#: ../../import-data/import-touristic-data-systems.rst:504
+msgid ""
+"The parsed objects will be those contained in the "
+"``settings.SPATIAL_EXTENT`` bounding box."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:482
+msgid "Import districts"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:484
+msgid ""
+"To import districts from OpenStreetMap, edit the ``var/conf/parsers.py`` "
+"file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:509
+msgid "Import restricted areas"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:511
+msgid ""
+"To import restricted areas from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:527
+msgid "``area_type`` to specify the restricted area type for imported objects"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:530
+msgid ""
+"the parsed objects will be those that intersect the "
+"``settings.SPATIAL_EXTENT`` bounding box."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:535
+msgid "Import signages"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:537
+msgid ""
+"To import signage from OpenStreetMap, edit the ``var/conf/parsers.py`` "
+"file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:554
+msgid ""
+"See the `geotrek/signage/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/signage/parsers.py/>`_  file for "
+"details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:559
+msgid "Import Infrastructures"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:561
+msgid ""
+"To import infrastructures from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:581
+msgid ""
+"See the `geotrek/infrastructure/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/infrastructure/parsers.py/>`_  file "
+"for details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:588
+msgid "Import outdoor sites"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:590
+msgid ""
+"To import outdoor sites from OpenStreetMap, edit the "
+"``var/conf/parsers.py`` file with the following content:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:606
+msgid ""
+"``practice`` to select in which Geotrek practice imported objects should "
+"go."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:607
+msgid ""
+"``portal`` to select in which portal(s) the objects should appear. "
+"Multiple portals can be affected (ex: portal = [\"portal 1\", \"portal "
+"2\"])"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:608
+msgid ""
+"``source`` to select the data source. Multiple sources can be affected "
+"(ex: source = [\"source 1\", \"source 2\"])"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:609
+msgid ""
+"``themes`` to select the corresponding theme(s) of the parsed objects. "
+"Multiple themes can be affected (ex: themes = [\"theme 1\", \"theme 2\"])"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:610
+msgid ""
+"See the `geotrek/outdoor/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/outdoor/parsers.py/>`_  file for "
+"details about parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:615
+msgid "Geometry filtering in Geotrek Parsers"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:617
+msgid ""
+"In some cases, you may want to restrict imported objects to a specific "
+"geographic area already defined in geotrek model instance (ex: a City or "
+"District). This can be done by defined the parser’s ``intersection_geom``"
+" attribute"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:620
+msgid "This attribute is a dictionary with the following keys:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:622
+msgid "``model``: The Django model containing the reference geometry object."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:623
+msgid "``app_label``: The Django application where the model is defined."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:624
+msgid "``geom_field``: The name of the geometry field in the model."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:625
+msgid ""
+"``object_filter``: A dictionary to identify the reference object (e.g., "
+"using an ID)."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:627
+msgid "The ``object_filter`` must return exactly one object:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:629
+msgid "If no object is found, the parser raises a **blocking error**."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:630
+msgid ""
+"If multiple objects are returned, only the **first** will be used, which "
+"may cause unexpected behavior."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:633
+msgid "Conditional Deletion with ``delete = True``"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:635
+msgid ""
+"If ``delete`` attribut is set to ``True``, the parser will automatically "
+"**delete existing objects** of the current model that **do not "
+"intersect** the reference geometry."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:640
+msgid ""
+"Deletion only affects objects of the model handled by the current parser."
+" Other models are not impacted."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:645
+msgid "Import attachments"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:647
+msgid ""
+"``AttachmentParserMixin`` lets a parser **link (and optionally download) "
+"media files** to any object it imports (signage, infrastructures, POIs, "
+"touristic content, events, etc). The mixin is located in "
+"``geotrek/common/parsers.py`` and must be inherited by your parser:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:658
+msgid ""
+"Use ``AttachmentParserMixin`` **only in base parsers**. Custom parsers "
+"should focus on configuration. Factor attachment logic into shared base "
+"classes to keep custom parsers clean and maintainable."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:663
+msgid "Attributes"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:665
+msgid "The following attributes can be customized:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:667
+msgid ""
+"``download_attachments`` (default: ``True``): Whether to download and "
+"store attachments via Paperclip. If set to ``False``, attachments are "
+"only linked. Requires ``PAPERCLIP_ENABLE_LINK = True`` in Django "
+"settings."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:671
+msgid ""
+"``base_url`` (default: ``\"\"``): Base URL prepended to each relative "
+"attachment path returned by ``filter_attachments``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:674
+msgid ""
+"``delete_attachments`` (default: ``True``): After the new attachments "
+"have been processed, **every existing attachment that is *not* present in"
+" the current feed (or whose file has been replaced)** is permanently "
+"removed."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:679
+msgid ""
+"``filetype_name`` (default: ``\"Photographie\"``): Label of the "
+"``FileType`` model assigned to all imported files. If it does not exist "
+"in the database, the import will fail with a warning:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:687
+#, python-brace-format
+msgid ""
+"``non_fields`` (default: ``{\"attachments\": _(\"Attachments\")}``): Maps"
+" the internal ``attachments`` field to the field name(s) containing "
+"attachments data in the external source."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:690
+msgid ""
+"``default_license_label`` (default: ``None``): If specified, this license"
+" will be assigned to all imported attachments. If the license does not "
+"exist, it will be created automatically."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:695
+msgid "Filtering attachments"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:697
+msgid ""
+"The ``filter_attachments`` method formats the external source data to "
+"match with the internal format."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:699
+msgid ""
+"If the attachment data has a different structure than the default "
+"``filter_attachments``, the method must be overridden."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:701
+msgid ""
+"See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE"
+"/Geotrek-admin/blob/master/geotrek/common/parsers.py/>`_ file to see more"
+" about attachments."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:706
+msgid "Multiple imports"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:708
+msgid ""
+"When you need to import data for the same object found in 2 different "
+"parsers, you can to force the aggregation of both values in many to many "
+"relationship case. It can be interesting with portals for example."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:711
+msgid "Parameters for the aggregation : ``m2m_aggregate_fields``"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:713
+msgid "Here is an example with 2 parsers :"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:724
+msgid ""
+"Then, when you import the first parser ``Portal_1Parser``, you get "
+"multiple objects with ``portal_1`` as portal. If any object of the "
+"``Portal_1Parser`` is also in ``AggregateParser``, fields in "
+"``m2m_aggregate_fields`` will have their values not be replaced but "
+"aggregated. Then your object in both portals will have as portal: "
+"``portal_1, portal_2``"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:728
+msgid ""
+"Here in this example whenever you import the first parser "
+"``Portal_1Parser``, portals are replaced because ``m2m_aggregate_fields``"
+" is not filled. Then, be careful to import parsers in the right order or "
+"add the param ``m2m_aggregate_fields`` on all parsers."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:730
+msgid ""
+"If you need to cancel the aggregation of portals, remove param "
+"``m2m_aggregate_fields``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:736
+msgid "Importing from multiple sources with deletion"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:738
+msgid ""
+"When importing data for the same model using two (or more) different "
+"sources, the ``provider`` field should be used to differenciate between "
+"sources, allowing to enable object deletion with ``delete = True`` "
+"without causing the last parser to delete objects created by preceeding "
+"parsers."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:740
+msgid ""
+"In the following example, ``Provider_1Parser`` and ``Provider_2Parser`` "
+"will each import their objects, set the ``provider`` field on these "
+"objects, and only delete objects that disappeared from their respective "
+"source since last parsing."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:754
+msgid "It is recommended to use ``provider`` from the first import."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:755
+msgid ""
+"Do not add a ``provider`` field to preexisting parsers that already "
+"imported objects, or you will have to manually set the same value for "
+"``provider`` on all objects already created by this parser."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:756
+msgid ""
+"If a parser does not have a ``provider`` value, it will not take "
+"providers into account, meaning that it could delete objects from "
+"preceeding parsers even if these other parsers do have a ``provider`` "
+"themselves."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:758
+msgid ""
+"The following example would cause ``NoProviderParser`` to delete objects "
+"from ``Provider_2Parser`` and ``Provider_1Parser``."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:779
+msgid "Linking Source Objects via `eid`"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:781
+msgid ""
+"Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field "
+"displayed on the object detail page can now include a clickable link to "
+"the original source object."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:783
+msgid ""
+"To enable this, a new database model called **Provider** has been added. "
+"This model can be managed through the Django admin interface and includes"
+" the following fields:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:785
+#: ../../import-data/minimal-initial-data.rst:26
+#: ../../import-data/minimal-initial-data.rst:60
+#: ../../import-data/minimal-initial-data.rst:94
+#: ../../import-data/minimal-initial-data.rst:130
+#: ../../import-data/minimal-initial-data.rst:196
+msgid "**Name**"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:786
+msgid "**Link template** (an HTML snippet used to build the link using the `eid`)"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:787
+msgid "**Copyright**"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:789
+msgid ""
+"The link template should contain the `{{object.eid}}` placeholder, which "
+"will be replaced by the actual external ID. For example:"
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:795
+msgid ""
+"Fixtures are available for two providers: **OpenStreetMap** and "
+"**Apidae**. These predefined Provider records can be loaded during a new "
+"installation. See the :ref:`fixture documentation <load-fixtures>` to see"
+" more about fixtures."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:800
+msgid ""
+"These fixtures are intended for new installations only. When upgrading an"
+" existing system, Provider records will be created automatically based on"
+" the existing `provider` field in the database. After upgrading, you must"
+" manually fill in the link template and copyright."
+msgstr ""
+
+#: ../../import-data/import-touristic-data-systems.rst:802
+msgid ""
+"You can reuse the link templates provided in the fixture files, available"
+" here: `Provider fixtures on GitHub <https://github.com/GeotrekCE"
+"/Geotrek-admin/tree/master/geotrek/common/fixtures/basic.json#L242>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:5
+msgid "Minimal initial data"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:9
+msgid "``IGN``, ``INPN``"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:13
+msgid ""
+"These data are the minimal initial data required to have a functional "
+"Geotrek-admin after completing the :ref:`installation <installation>`."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:20
+#: ../../import-data/minimal-initial-data.rst:54
+#: ../../import-data/minimal-initial-data.rst:88
+#: ../../import-data/minimal-initial-data.rst:124
+msgid "**Data sources recommandations**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:22
+msgid "Altimetric Data"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:27
+#: ../../import-data/minimal-initial-data.rst:61
+#: ../../import-data/minimal-initial-data.rst:95
+#: ../../import-data/minimal-initial-data.rst:131
+#: ../../import-data/minimal-initial-data.rst:197
+msgid "**Provider**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:28
+#: ../../import-data/minimal-initial-data.rst:62
+#: ../../import-data/minimal-initial-data.rst:96
+#: ../../import-data/minimal-initial-data.rst:132
+#: ../../import-data/minimal-initial-data.rst:198
+msgid "**Coverage**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:29
+msgid "**Resolution**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:30
+#: ../../import-data/minimal-initial-data.rst:64
+#: ../../import-data/minimal-initial-data.rst:98
+#: ../../import-data/minimal-initial-data.rst:133
+#: ../../import-data/minimal-initial-data.rst:199
+msgid "**Format**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:31
+msgid "`BD Alti <https://geoservices.ign.fr/bdalti>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:32
+#: ../../import-data/minimal-initial-data.rst:37
+#: ../../import-data/minimal-initial-data.rst:67
+#: ../../import-data/minimal-initial-data.rst:101
+msgid "IGN"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:33
+#: ../../import-data/minimal-initial-data.rst:38
+msgid "Departmental"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:34
+msgid "25 m"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:35
+#: ../../import-data/minimal-initial-data.rst:40
+msgid "``.asc``"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:36
+msgid "`RGE Alti <https://geoservices.ign.fr/rgealti#telechargement5m>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:39
+msgid "1 m or 5 m"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:44
+msgid ""
+"Refer to :ref:`this section <altimetry-dem>` to learn more about loading "
+"a DEM file in your Geotrek-admin."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:52
+msgid "Cities"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:56
+msgid "Administrative Boundaries Data"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:63
+#: ../../import-data/minimal-initial-data.rst:97
+msgid "**Scale**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:65
+#: ../../import-data/minimal-initial-data.rst:99
+#: ../../import-data/minimal-initial-data.rst:134
+#: ../../import-data/minimal-initial-data.rst:200
+msgid "**Update Frequency**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:66
+msgid ""
+"`Admin Express <https://geoservices.ign.fr/adminexpress#telechargement>`_"
+" (COMMUNE)"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:68
+#: ../../import-data/minimal-initial-data.rst:74
+#: ../../import-data/minimal-initial-data.rst:102
+#: ../../import-data/minimal-initial-data.rst:108
+#: ../../import-data/minimal-initial-data.rst:137
+#: ../../import-data/minimal-initial-data.rst:142
+#: ../../import-data/minimal-initial-data.rst:147
+#: ../../import-data/minimal-initial-data.rst:152
+#: ../../import-data/minimal-initial-data.rst:157
+#: ../../import-data/minimal-initial-data.rst:162
+#: ../../import-data/minimal-initial-data.rst:167
+#: ../../import-data/minimal-initial-data.rst:172
+#: ../../import-data/minimal-initial-data.rst:177
+#: ../../import-data/minimal-initial-data.rst:203
+msgid "Metropolitan France, Overseas Territories"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:69
+#: ../../import-data/minimal-initial-data.rst:75
+msgid "Municipality"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:70
+#: ../../import-data/minimal-initial-data.rst:104
+msgid "Geopackage, Shapefile"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:71
+#: ../../import-data/minimal-initial-data.rst:77
+#: ../../import-data/minimal-initial-data.rst:105
+#: ../../import-data/minimal-initial-data.rst:111
+#: ../../import-data/minimal-initial-data.rst:139
+#: ../../import-data/minimal-initial-data.rst:144
+#: ../../import-data/minimal-initial-data.rst:149
+#: ../../import-data/minimal-initial-data.rst:154
+#: ../../import-data/minimal-initial-data.rst:159
+#: ../../import-data/minimal-initial-data.rst:164
+#: ../../import-data/minimal-initial-data.rst:169
+#: ../../import-data/minimal-initial-data.rst:174
+#: ../../import-data/minimal-initial-data.rst:179
+#: ../../import-data/minimal-initial-data.rst:205
+msgid "Annually"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:72
+msgid ""
+"`Administrative Boundaries <https://github.com/datagouv/decoupage-"
+"administratif#via-des-urls>`_ ➡ `Communes <https://unpkg.com/@etalab"
+"/decoupage-administratif/data/communes.json>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:73
+#: ../../import-data/minimal-initial-data.rst:107
+msgid "Etalab"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:76
+#: ../../import-data/minimal-initial-data.rst:110
+msgid "GeoJSON"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:81
+msgid ""
+"Refer to :ref:`this section <import-cities>` to learn more about loading "
+"cities in your Geotrek-admin."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:86
+msgid "Districts"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:90
+msgid "Administrative Boundaries Data (EPCI)"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:100
+msgid ""
+"`Admin Express <https://geoservices.ign.fr/adminexpress#telechargement>`_"
+" (EPCI)"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:103
+#: ../../import-data/minimal-initial-data.rst:109
+msgid "EPCI"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:106
+msgid ""
+"`Administrative Boundaries <https://github.com/datagouv/decoupage-"
+"administratif#via-des-urls>`_ ➡ `EPCI <https://unpkg.com/@etalab"
+"/decoupage-administratif/data/epci.json>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:113
+msgid ""
+"Districts are not necessarily administrative boundaries. They can be "
+"intercommunalities, departments, parks, or natural regions. The advantage"
+" of importing them as Districts is that you will be able to filter them "
+"in Geotrek-rando, which will not be possible with Restricted areas."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:117
+msgid ""
+"Refer to :ref:`this section <import-districts>` to learn more about "
+"loading districts in your Geotrek-admin."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:122
+msgid "Restricted areas"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:126
+msgid "Protected Areas Data"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:135
+msgid ""
+"`Natura 2000 <https://inpn.mnhn.fr/telechargement/cartes-et-information-"
+"geographique/nat/natura>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:136
+#: ../../import-data/minimal-initial-data.rst:141
+#: ../../import-data/minimal-initial-data.rst:146
+#: ../../import-data/minimal-initial-data.rst:151
+#: ../../import-data/minimal-initial-data.rst:156
+#: ../../import-data/minimal-initial-data.rst:161
+#: ../../import-data/minimal-initial-data.rst:166
+#: ../../import-data/minimal-initial-data.rst:171
+#: ../../import-data/minimal-initial-data.rst:176
+#: ../../import-data/minimal-initial-data.rst:202
+msgid "INPN"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:138
+#: ../../import-data/minimal-initial-data.rst:143
+#: ../../import-data/minimal-initial-data.rst:148
+#: ../../import-data/minimal-initial-data.rst:153
+#: ../../import-data/minimal-initial-data.rst:158
+#: ../../import-data/minimal-initial-data.rst:163
+#: ../../import-data/minimal-initial-data.rst:168
+#: ../../import-data/minimal-initial-data.rst:173
+#: ../../import-data/minimal-initial-data.rst:178
+#: ../../import-data/minimal-initial-data.rst:204
+msgid "Shapefile"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:140
+msgid ""
+"`ZNIEFF1 <https://inpn.mnhn.fr/telechargement/cartes-et-information-"
+"geographique/inv/znieff1>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:145
+msgid ""
+"`ZNIEFF2 <https://inpn.mnhn.fr/telechargement/cartes-et-information-"
+"geographique/inv/znieff2>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:150
+msgid ""
+"`ZNIEFF1 Mer <https://inpn.mnhn.fr/telechargement/cartes-et-information-"
+"geographique/inv/znieff1_mer>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:155
+msgid ""
+"`ZNIEFF2 Mer <https://inpn.mnhn.fr/telechargement/cartes-et-information-"
+"geographique/inv/znieff2_mer>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:160
+msgid ""
+"`Biotope Protection Orders <https://inpn.mnhn.fr/telechargement/cartes-"
+"et-information-geographique/ep/apb>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:165
+msgid ""
+"`National Nature Reserves <https://inpn.mnhn.fr/telechargement/cartes-et-"
+"information-geographique/ep/rnn>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:170
+msgid ""
+"`Regional Nature Reserves <https://inpn.mnhn.fr/telechargement/cartes-et-"
+"information-geographique/ep/rnr>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:175
+msgid ""
+"`Biological Reserves <https://inpn.mnhn.fr/telechargement/cartes-et-"
+"information-geographique/ep/rb>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:183
+msgid ""
+"Refer to :ref:`this section <import-restricted-areas>` to learn more "
+"about loading restricted areas in your Geotrek-admin."
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:188
+msgid "Sensitive areas"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:190
+msgid "**Data source recommandation**"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:192
+msgid "Sensitive Natural Areas Data"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:201
+msgid ""
+"`Sensitive Natural Areas <https://inpn.mnhn.fr/telechargement/cartes-et-"
+"information-geographique/ap/ens>`_"
+msgstr ""
+
+#: ../../import-data/minimal-initial-data.rst:209
+msgid ""
+"Refer to :ref:`this section <sensitive-areas-import>` to learn more about"
+" loading sensitive areas in your Geotrek-admin."
+msgstr ""
+

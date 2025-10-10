@@ -1,0 +1,628 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2025, Makina Corpus Territoires / Parc national des
+# Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+# This file is distributed under the same license as the Geotrek-admin
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek-admin \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../tutorials/topologies-issues.rst:3
+msgid "Corriger les problèmes de topologie"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:6
+msgid "1. Diagnostic du problème"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:8
+msgid ""
+"Lorsque vous observez des anomalies dans l'affichage de votre itinéraire "
+"dans Geotrek, cela peut se manifester de différentes manières :"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:11
+msgid "Message d'erreur : \"L'objet est publié mais a une géométrie invalide\""
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:16
+msgid ""
+"Profil altimétrique incorrect : le profil ne correspond pas au terrain ou"
+" semble incohérent"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:22
+msgid "2. Causes possibles"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:24
+msgid ""
+"Si vous observez l'un des signes ci-dessus, vous êtes victime d'une "
+"modification non souhaitée des topologies dans Geotrek. Il s'agit d'un "
+"problème identifié dans le logiciel et pour lequel pour le moment aucun "
+"correctif définitif et global n'est disponible."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:26
+msgid ""
+"Un suivi détaillé de ce problème est consultable sur `ce ticket GitHub "
+"<https://github.com/GeotrekCE/Geotrek-admin/issues/2515>`_."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:28
+msgid "Info"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:30
+msgid ""
+"Le problème est lié au système de rattachement topologique des objets au "
+"réseau de tronçons. Lorsque le réseau de tronçons est fixe cela ne pose "
+"pas de problème mais dès qu'il est modifié, cela peu introduire des "
+"comportement imprévisibles dans les objets associés, particulièrement les"
+" objets linéaires (et donc les itinéraires)."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:33
+msgid "Résumé des actions pouvant causer le problème"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:35
+msgid "Suppression d'un tronçon utilisé par un itinéraire"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:37
+msgid ""
+"Lorsque vous supprimez un tronçon déjà utilisé par un itinéraire, un "
+"\"trou\" est créé dans la continuité des tronçons de l'itinéraire. Cela "
+"provoque une rupture immédiate du tracé de l'itinéraire, le rendant "
+"incorrect."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:39
+msgid ""
+"Pour corriger ce problème, il est nécessaire de recréer un tronçon à "
+"l'endroit du \"trou\" et de reconfigurer l'itinéraire afin qu'il intègre "
+"ce nouveau tronçon. De même, si vous modifiez l'extrémité d'un tronçon "
+"utilisé par un itinéraire, cette modification peut créer une "
+"discontinuité, rendant le tracé de l'itinéraire incohérent."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:42
+msgid "Ajout d'un tronçon intersectant un itinéraire existant"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:44
+msgid ""
+"Lorsque vous ajoutez un tronçon qui vient intercepter l’un des tronçons "
+"déjà utilisés par un itinéraire, cela ne provoque pas automatiquement de "
+"rupture de l’itinéraire, car Geotrek recalculera normalement la topologie"
+" des tronçons pour s’ajuster aux changements."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:46
+msgid ""
+"Toutefois, dès que vous ouvrez la fiche de l'itinéraire pour "
+"modification, son tracé est recalculé automatiquement en fonction des "
+"évènements récents sur les tronçons qu'il utilise."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:48
+msgid ""
+"Ainsi, l'ajout d'un nouveau tronçon peut amener Geotrek à recalculer un "
+"itinéraire différent, en privilégiant un chemin plus court entre les "
+"points intermédiaires du tracé initial, si ce raccourci est rendu "
+"possible par le nouveau tronçon ajouté."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:50
+msgid ""
+"Dans cette situation, même si seules les informations attributaires de "
+"l'itinéraire sont modifiées, un tracé révisé sera enregistré lors de "
+"l'enregistrement."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:52
+msgid ""
+"Ce problème devrait être prochainement résolu grâce à l’intégration d'un "
+"calcul de routage au niveau du backend, qui assurera un tracé stable lors"
+" des modifications (voir `le ticket GitHub correspondant "
+"<https://github.com/GeotrekCE/Geotrek-admin/issues/4286 pour plus de "
+"détails)>`_)."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:55
+msgid "3. Comment prévenir ce problème ?"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:57
+msgid "Hint"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:59
+msgid ""
+"Lorsque vous apportez des modifications au réseau de tronçons, il est "
+"conseillé de vérifier ensuite les objets associés (comme les itinéraires)"
+" pour s'assurer qu'ils n'ont pas été affectés de manière imprévue. Si des"
+" changements involontaires apparaissent, il faudra les corriger "
+"manuellement."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:61
+msgid ""
+"Dans la plupart des cas, les ajustements topologiques sont gérés "
+"automatiquement et tout fonctionne sans problème. Cependant, il arrive "
+"que ces modifications automatiques échouent de manière aléatoire, "
+"entraînant une rupture dans la topologie. Dans ces cas-là, on dit que la "
+"topologie est invalide. Malgré cela, l'affichage de l'itinéraire peut "
+"rester correct à l'écran, car seule la topologie est invalide, alors que "
+"la géométrie reste fonctionnelle. Dans ce cas précis il est possible de "
+"rattraper le problème via le lancement d'une commande (voir ci-dessous)."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:64
+msgid "4. Comment identifier les itinéraires qui peuvent être cassés ?"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:66
+msgid ""
+"Il est malheureusement plus facile de détecter les problèmes que de les "
+"corriger automatiquement. Aussi, il existe un filtre dans l'interface de "
+"Geotrek-admin, sur le module **Itinéraires** pour pouvoir lister les "
+"itinéraires qui comportent des topologies invalides ou des géométries "
+"invalides."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:71
+msgid "5. Comment corriger le problème ?"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:73
+msgid "Les solutions varient en fonction de la nature du problème :"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:76
+msgid ""
+"Géométrie invalide : Lorsque la géométrie d'un itinéraire est invalide, "
+"il n’existe pas de correction automatique. La seule solution consiste à "
+"retracer manuellement l'itinéraire."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:77
+msgid ""
+"Topologie invalide (géométrie intacte) : Si la topologie est invalide "
+"mais que la géométrie reste correcte, il est possible de lancer une "
+"commande pour réparer la topologie. La commande ``reorder_topologies`` "
+"est documentée :ref:`ici <reorder-topologies>`. Celle-ci peut corriger la"
+" plupart des erreurs de topologie. Pour toute assistance, n’hésitez pas à"
+" nous contacter pour lancer cette commande sur votre serveur."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:80
+msgid "6. Quelle suite pour ce sujet ?"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:82
+msgid ""
+"Voici les actions déjà entreprises pour limiter les impacts de ce "
+"problème structurel :"
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:84
+msgid "Création d'un filtre permettant d'identifier les itinéraires impactés."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:85
+msgid ""
+"Développement de la commande reorder topologies pour corriger "
+"automatiquement certaines erreurs de topologie."
+msgstr ""
+
+#: ../../tutorials/topologies-issues.rst:86
+msgid ""
+"Amélioration du système de calcul d'itinéraires pour éviter les "
+"modifications imprévues du tracé."
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:5
+msgid "Configuration des fonds de plan"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:7
+msgid "Dans Geotrek-admin, les fonds de plan sont configurés dans le fichier :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:13
+msgid ""
+"C'est donc ce fichier qu'il va falloir modifier pour paramétrer les "
+"nouveaux fonds."
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:16
+msgid "Configuration de Leaflet"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:18
+msgid ""
+"Les fonds sont configurés dans Leaflet, la brique utilisée pour gérer la "
+"carte. La configuration se fait ainsi :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:26
+msgid "Exemple : configuration de base pour OpenStreetMap dans Geotrek :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:35
+msgid "Ajout des fonds IGN"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:37
+msgid "Deux options s'offrent à vous pour mettre à jour les fonds IGN :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:40
+msgid "Option 1 : Aucun fond IGN configuré"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:42
+msgid ""
+"Si vous n'aviez aucun fond IGN ni aucun fond de paramétré dans votre "
+"fichier `custom.py`, ajoutez les lignes suivantes :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:94
+msgid "Vous aurez ainsi ajouté les fonds IGN suivants :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:96
+msgid "Orthophotos"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:97
+msgid "Plan IGN V2"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:98
+msgid "Cadastre"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:101
+msgid "Option 2 : Fonds déjà configurés"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:103
+msgid ""
+"Si des fonds sont déjà configurés, modifiez soigneusement la section "
+"`LEAFLET_CONFIG['TILES']` pour inclure les nouvelles configurations IGN :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:105
+msgid "**Plan IGN V2** ::"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:117
+msgid "**Orthophotos** ::"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:129
+msgid "**Cadastre** ::"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:142
+msgid "Bonus : Fond cadastral en surimpression"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:144
+msgid ""
+"Ajoutez les lignes suivantes pour permettre la surimpression du fond "
+"cadastral :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:161
+msgid "Validation des modifications"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:163
+msgid "Une fois les modifications effectuées :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:165
+msgid "Sauvegardez le fichier de configuration."
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:166
+msgid "Rechargez Geotrek-Admin avec la commande suivante :"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:172
+msgid ""
+"Lorsqu'on vous demande des informations, validez en appuyant sur "
+"**ENTRER** sans rien changer. Geotrek sera reconfiguré et relancé."
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:175
+msgid "Fonds de plan sélectionnables"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:177
+msgid ""
+"En lançant ensuite l'interface, les fonds configurés seront disponibles. "
+"Les fonds apparaissent en violet et le fond cadastral en bleu peut être "
+"coché pour une surimpression."
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:181
+msgid "See also"
+msgstr ""
+
+#: ../../tutorials/update-basemaps-layers.rst:183
+msgid ""
+"Des ressources complémentaires peuvent être trouvées sur `cet article "
+"<https://makina-corpus.com/logiciel-libre/bascule-ign-tutoriel-"
+"modification-fonds-plan-geotrek/>`_ ."
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:5
+msgid "Visualiser les données dans QGIS"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:10
+msgid "Création de vues SQL pour afficher des couches dans QGIS"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:12
+msgid ""
+"Des vues SQL ont été créées dans la base de données PostgreSQL de "
+"Geotrek-admin dans le but de les afficher dans QGIS ou autre (`voir cet "
+"article <https://makina-corpus.com/django/creer-vues-sql-django-et-"
+"afficher-dans-un-sig/>`_ ). Ces vues contiennent les informations "
+"essentielles que l'on retrouve dans Geotrek-admin au niveau de chaque "
+"module."
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:15
+msgid ""
+"Ces vues sont consultables en lecture seule dans QGIS sous forme de "
+"couche SIG."
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:17
+msgid ""
+"Les modifications se font directement dans Geotrek-admin pour chaque "
+"projet, et elles sont répercutées instantanément dans les vues SQL."
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:20
+msgid "Créer une connexion à la base de données PostgreSQL du projet"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:22
+msgid "Ouvrir le logiciel QGIS"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:23
+msgid "Créer une nouvelle connexion de base de données PostgreSQL"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:25
+msgid "Dans l'Explorateur > PostgreSQL > Nouvelle connexion"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:26
+msgid "Renseigner les informations suivantes :"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:28
+msgid "Nom de la connexion"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:29
+msgid "Hôte"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:30
+msgid "Port"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:31
+msgid "Base de données"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:32
+msgid "SSL mode : permet"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:33
+msgid "Nom d’utilisateur"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:34
+msgid "Mot de passe"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:36
+msgid "Cliquer sur « Tester la connexion »"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:37
+msgid "Si la connexion est réussi, cliquer sur OK pour enregistrer la connexion"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:42
+msgid "Créer un projet QGIS à partir des vues SQL"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:45
+msgid "Afficher une vue SQL sous forme de couche"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:47
+msgid ""
+"Dans l'Explorateur > PostgreSQL > Ouvrir la connexion précédemment créé >"
+" Schéma public"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:48
+msgid "Ajouter les vues : Clic droit sur l'objet > Ajouter la couche au projet"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:49
+msgid "Correspondance couches <> vues"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:50
+msgid "Sentiers <> `v_trails`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:51
+msgid "Aménagements <> `v_infrastructures`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:52
+msgid "Signalétiques <> `v_signages`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:53
+msgid "Interventions <> `v_interventions`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:54
+msgid "Chantiers <> `v_projects`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:55
+msgid "Itinéraires <> `v_treks`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:56
+msgid "POI's <> `v_pois`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:57
+msgid "Contenus touristiques <> `v_touristiccontents`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:58
+msgid "Évènements touristiques <> `v_touristicevents`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:59
+msgid "Signalement <> `v_reports`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:60
+msgid "Zones sensibles <> `v_sensitivearea_qgis`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:61
+msgid "Zones <> `v_districts`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:62
+msgid "Communes <> `v_cities`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:63
+msgid ""
+"Couches supplémentaires (dépend des projets) * Sites outdoor <> "
+"`v_outdoor_sites` * Parcours outdoor <> `v_outdoor_courses`"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:68
+msgid "Afficher un fond de plan OpenStreetMap"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:70
+msgid "Dans l'Explorateur > XYZ Tiles > OpenStreetMap"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:73
+msgid "Créer des groupes de couches"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:75
+msgid "Dans le panneau des couches > clic droit > Ajouter un groupe"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:77
+msgid ""
+"Il peut être utile de créer des groupes de couches dans le cas où "
+"certaines couches sont disponibles dans plusieurs types géométriques : "
+"exemple pour la couche Sentiers qui peut contenir des lignes et des "
+"points"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:82
+msgid "Changer le style d'une couche"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:84
+msgid "Clic droit sur la couche > Propriétés > Symbologie"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:86
+msgid ""
+"Selon le type géométrique de la couche (point, ligne, polygone), il est "
+"possible de changer à volonté la couleur de remplissage, la couleur de "
+"contour, la taille ou l'épaisseur."
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:89
+msgid "Dimensionner les colonnes de la table attributaire"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:91
+msgid ""
+"Le fait de dimensionner la taille des colonnes dans la table attributaire"
+" permet une permet lisibilité des noms de champs et des informations "
+"contenues à l'intérieur :"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:93
+msgid ""
+"Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur "
+"une colonne > Taille autom pour toutes les colonnes"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:95
+msgid ""
+"Certains champs texte peuvent être très larges (exemple _Description_ "
+"dans la couche **Zones sensibles**). Dans ce cas il est possible "
+"d'adapter manuellement la taille de la colonne :"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:97
+msgid ""
+"Clic droit sur la couche > Ouvrir la Table d'Attributs > clic droit sur "
+"la colonne > Largeur > Entrer une largeur de colonne (exemple : 200)"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:100
+msgid "Afficher le décompte des entités d'une couche"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:102
+msgid "Clic droit sur la couche > Afficher le nombre d'entités"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:105
+msgid "Zoomer sur l'emprise d'une couche"
+msgstr ""
+
+#: ../../tutorials/vizualize-data-in-qgis.rst:107
+msgid "Clic droit sur la couche > Zoomer sur la(les) couche(s)"
+msgstr ""
+
