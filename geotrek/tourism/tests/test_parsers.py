@@ -1595,7 +1595,7 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(touristic_content.type1.all().count(), 2)
         self.assertEqual(touristic_content.type1.first().label, "test type1.1")
         warning = (
-            "Type1 'test type1.3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+            "Type1 'test type1.3' n'existe pas dans Geotrek-admin. Merci de l'ajouter"
         )
         self.assertIn(warning, self.output)
 
@@ -1603,7 +1603,7 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         touristic_content = self.objects.first()
         self.assertEqual(touristic_content.type2.all().count(), 1)
         self.assertEqual(touristic_content.type2.first().label, "test type2")
-        warning = "Type2 'test type2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement"
+        warning = "Type2 'test type2' n'existait pas dans Geotrek-admin. Il a été créé automatiquement"
         self.assertIn(warning, self.output)
 
     def test_themes_touristic_content_OSM(self):
@@ -1611,8 +1611,8 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(touristic_content.themes.all().count(), 2)
         self.assertEqual(touristic_content.themes.first().label, "test theme1")
         warnings = [
-            "Thème 'test theme1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
-            "Thème 'test theme2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Thème 'test theme1' n'existait pas dans Geotrek-admin. Il a été créé automatiquement",
+            "Thème 'test theme2' n'existait pas dans Geotrek-admin. Il a été créé automatiquement",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)
@@ -1627,8 +1627,8 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(touristic_content.source.all().count(), 2)
         self.assertEqual(touristic_content.source.first().name, "test source1")
         warnings = [
-            "Source Des Fiches 'test source1' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
-            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement",
+            "Source Des Fiches 'test source1' n'existait pas dans Geotrek-admin. Il a été créé automatiquement",
+            "Source Des Fiches 'test source2' n'existait pas dans Geotrek-admin. Il a été créé automatiquement",
         ]
         self.assertIn(warnings[0], self.output)
         self.assertIn(warnings[1], self.output)

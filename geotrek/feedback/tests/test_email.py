@@ -80,7 +80,7 @@ class EmailSendingTest(SuricateTests):
             pending_mail.recipient, WorkflowManager.objects.first().user.email
         )
         self.assertEqual(
-            pending_mail.subject, "[Geotrek-Admin] New reports from Suricate"
+            pending_mail.subject, "[Geotrek-admin] New reports from Suricate"
         )
         self.assertEqual(pending_mail.error_message, "('Fake problem',)")
 
@@ -90,7 +90,7 @@ class EmailSendingTest(SuricateTests):
         )
         sent_mail = mail.outbox[0]
         self.assertEqual(
-            sent_mail.subject, "[Geotrek-Admin] Feedback from john.doe@nowhere.com"
+            sent_mail.subject, "[Geotrek-admin] Feedback from john.doe@nowhere.com"
         )
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)

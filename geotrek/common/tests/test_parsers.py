@@ -1041,7 +1041,7 @@ class AttachmentParserTests(TestCase):
         filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
         with self.assertRaisesRegex(
             CommandError,
-            "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it",
+            "FileType 'Photographie' does not exists in Geotrek-admin. Please add it",
         ):
             call_command(
                 "import",
@@ -1731,7 +1731,7 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(t.uuid), "58ed4fc1-645d-4bf6-b956-71f0a01a5eec")
         self.assertEqual(t.provider.name, "Provider1")
         self.assertIn(
-            "Provider 'Provider1' did not exist in Geotrek-Admin and was automatically created",
+            "Provider 'Provider1' did not exist in Geotrek-admin and was automatically created",
             output.getvalue(),
         )
         self.assertEqual(t.description_teaser, "Header")

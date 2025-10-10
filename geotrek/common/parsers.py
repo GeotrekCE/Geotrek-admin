@@ -120,7 +120,7 @@ class Parser:
     field_options = {}
     default_fields_values = {}
     default_language = None
-    headers = {"User-Agent": "Geotrek-Admin"}
+    headers = {"User-Agent": "Geotrek-admin"}
     intersection_geom = None
     _ref_geom = None
 
@@ -404,7 +404,7 @@ class Parser:
                 )
                 if created:
                     self.add_warning(
-                        f"Provider '{self.provider}' did not exist in Geotrek-Admin and was automatically created"
+                        f"Provider '{self.provider}' did not exist in Geotrek-admin and was automatically created"
                     )
             self.obj.save()
         else:
@@ -584,7 +584,7 @@ class Parser:
             if created:
                 self.add_warning(
                     _(
-                        "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                        "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
                     ).format(model=model._meta.verbose_name.title(), val=val)
                 )
             return val
@@ -593,7 +593,7 @@ class Parser:
         except model.DoesNotExist:
             self.add_warning(
                 _(
-                    "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                    "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                 ).format(model=model._meta.verbose_name.title(), val=val)
             )
             return None
@@ -629,7 +629,7 @@ class Parser:
                 if created:
                     self.add_warning(
                         _(
-                            "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                            "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
                         ).format(model=model._meta.verbose_name.title(), val=subval)
                     )
                 dst.append(subval)
@@ -639,7 +639,7 @@ class Parser:
             except model.DoesNotExist:
                 self.add_warning(
                     _(
-                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                        "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                     ).format(model=model._meta.verbose_name.title(), val=subval)
                 )
                 continue
@@ -973,7 +973,7 @@ class AttachmentParserMixin:
                 raise GlobalImportError(
                     _(
                         "FileType '{name}' does not exists in "
-                        "Geotrek-Admin. Please add it"
+                        "Geotrek-admin. Please add it"
                     ).format(name=self.filetype_name)
                 )
         self.creator, created = get_user_model().objects.get_or_create(
@@ -1967,7 +1967,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 if created:
                     self.add_warning(
                         _(
-                            "Source '%(name)s' did not exist in Geotrek-Admin and was automatically created"
+                            "Source '%(name)s' did not exist in Geotrek-admin and was automatically created"
                         )
                         % {"name": name}
                     )
@@ -2066,7 +2066,7 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
             url = f"{self.base_url_wikimedia}{filename}"
 
             # API request
-            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
+            response = requests.get(url, headers={"User-Agent": "Geotrek-admin"})
             if response.status_code == requests.codes.ok:
                 data = response.json()
                 file = data["original"]["url"]

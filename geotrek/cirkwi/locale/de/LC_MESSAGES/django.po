@@ -47,11 +47,11 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+"{model} '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
-msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+msgid "{model} '{val}' does not exists in Geotrek-admin. Please add it"
 msgstr ""
 
 #, python-brace-format

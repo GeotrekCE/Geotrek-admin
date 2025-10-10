@@ -192,13 +192,13 @@ class CirkwiTrekParser(CirkwiParser):
                 cirkwi_locomotion = CirkwiLocomotion.objects.create(name=label, eid=eid)
                 self.add_warning(
                     _(
-                        "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                        "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
                     ).format(model="Cirkwi Locomotion", val=label)
                 )
             else:
                 self.add_warning(
                     _(
-                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                        "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                     ).format(model="Cirkwi Locomotion", val=val)
                 )
                 raise RowImportError
@@ -235,7 +235,7 @@ class CirkwiTrekParser(CirkwiParser):
             except DifficultyLevel.DoesNotExist:
                 self.add_warning(
                     _(
-                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                        "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                     ).format(model=_("Difficulty Level with Cirkwi Level"), val=val)
                 )
         return difficulty

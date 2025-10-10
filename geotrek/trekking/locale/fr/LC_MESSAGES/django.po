@@ -505,13 +505,13 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"License '{val}' did not exist in Geotrek-Admin and was automatically created"
+"License '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 "La licence '{val}' n'existait pas dans Geotrek-admin. Elle a été créée "
 "automatiquement"
 
 #, python-brace-format
-msgid "License '{val}' does not exist in Geotrek-Admin. Please add it"
+msgid "License '{val}' does not exist in Geotrek-admin. Please add it"
 msgstr "La license '{val} n'existe pas dans Geotrek-admin. Merci de l'ajouter"
 
 msgid "Attached files"

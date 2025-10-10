@@ -1601,13 +1601,13 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                     license = License.objects.create(label=license_label)
                     self.add_warning(
                         _(
-                            "License '{val}' did not exist in Geotrek-Admin and was automatically created"
+                            "License '{val}' did not exist in Geotrek-admin and was automatically created"
                         ).format(val=license_label)
                     )
                 else:
                     self.add_warning(
                         _(
-                            "License '{val}' does not exist in Geotrek-Admin. Please add it"
+                            "License '{val}' does not exist in Geotrek-admin. Please add it"
                         ).format(val=license_label)
                     )
         return license

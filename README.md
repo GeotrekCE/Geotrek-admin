@@ -48,7 +48,7 @@ Learn more about Geotrek-admin in the [general documentation (French)](https://g
 
 ## Features
 
-Geotrek-Admin is a powerful web mapping application designed for managing trekking, outdoor and tourism data with ease. Tailored to support GIS features and extensive customization, it empowers organizations to manage, maintain, and publish their outdoor assets seamlessly:
+Geotrek-admin is a powerful web mapping application designed for managing trekking, outdoor and tourism data with ease. Tailored to support GIS features and extensive customization, it empowers organizations to manage, maintain, and publish their outdoor assets seamlessly:
 
 - **Management tool**: manage paths, interventions, signage, treks, POIs, touristic events, and much more.
 - **Maintenance tracking**: track the maintenance of equipment and infrastructures with precision.

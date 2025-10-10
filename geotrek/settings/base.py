@@ -47,7 +47,7 @@ USE_SSL = False
 
 CACHE_ROOT = os.path.join(VAR_DIR, "cache")
 
-TITLE = "Geotrek-Admin"
+TITLE = "Geotrek-admin"
 
 DEBUG = False
 TEST = "test" in sys.argv

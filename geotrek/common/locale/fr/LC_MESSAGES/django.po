@@ -409,14 +409,14 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+"{model} '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
-"{model} '{val}' n'existait pas dans Geotrek-Admin. Il a été créé "
+"{model} '{val}' n'existait pas dans Geotrek-admin. Il a été créé "
 "automatiquement"
 
 #, python-brace-format
-msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
-msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+msgid "{model} '{val}' does not exists in Geotrek-admin. Please add it"
+msgstr "{model} '{val}' n'existe pas dans Geotrek-admin. Merci de l'ajouter"
 
 msgid "Filename or url is required"
 msgstr "Un nom de fichier ou une url est requis"
@@ -446,9 +446,9 @@ msgid "Attachments"
 msgstr "Pièce-jointes"
 
 #, python-brace-format
-msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
+msgid "FileType '{name}' does not exists in Geotrek-admin. Please add it"
 msgstr ""
-"Le type de fichier '{name}' n'existe pas dans Geotrek-Admin. Merci de "
+"Le type de fichier '{name}' n'existe pas dans Geotrek-admin. Merci de "
 "l'ajouter"
 
 #, python-format
@@ -494,10 +494,10 @@ msgstr "Geotrek-admin"
 
 #, python-format
 msgid ""
-"Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
+"Source '%(name)s' did not exist in Geotrek-admin and was automatically "
 "created"
 msgstr ""
-"La source '%(name)s' n'existait pas dans Geotrek-Admin. Elle a été créée "
+"La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été créée "
 "automatiquement"
 
 #, python-brace-format

@@ -2455,7 +2455,7 @@ class SchemaRandonneeParserTests(TestCase):
         self.assertEqual(trek.attachments.count(), 1)
         output_value = output.getvalue()
         self.assertIn(
-            "License 'New license' does not exist in Geotrek-Admin. Please add it",
+            "License 'New license' does not exist in Geotrek-admin. Please add it",
             output_value,
         )
 
@@ -2478,7 +2478,7 @@ class SchemaRandonneeParserTests(TestCase):
         self.assertEqual(attachment.license.label, "New license")
         output_value = output.getvalue()
         self.assertIn(
-            "License 'New license' did not exist in Geotrek-Admin and was automatically created",
+            "License 'New license' did not exist in Geotrek-admin and was automatically created",
             output_value,
         )
 
