@@ -20,7 +20,8 @@ from geotrek.feedback.models import TimerEvent, WorkflowDistrict, WorkflowManage
 from geotrek.feedback.tests.factories import (
     PredefinedEmailFactory,
     ReportFactory,
-    ReportStatusFactory, WorkflowManagerFactory,
+    ReportStatusFactory,
+    WorkflowManagerFactory,
 )
 from geotrek.feedback.tests.test_suricate_sync import (
     SURICATE_WORKFLOW_SETTINGS_NO_MODERATION,
@@ -289,9 +290,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert data forwarded to Suricate
         check = md5(
             (
-                    SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
-                    + SuricateMessenger().gestion_manager.ID_ORIGIN
-                    + str(self.filed_report.formatted_external_uuid)
+                SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                + SuricateMessenger().gestion_manager.ID_ORIGIN
+                + str(self.filed_report.formatted_external_uuid)
             ).encode()
         ).hexdigest()
         call1 = mock.call(
