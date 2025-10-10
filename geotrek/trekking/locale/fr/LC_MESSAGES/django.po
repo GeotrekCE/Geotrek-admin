@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-04 11:40+0200\n"
-"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"PO-Revision-Date: 2025-10-10 15:19+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/trekking/fr/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 
 #, python-format
 msgid "Difficulty with id '%s' already exists"
-msgstr "Une difficulté avec l'id %s existe déjà"
+msgstr "Une difficulté avec l'id '%s' existe déjà"
 
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
@@ -72,12 +72,10 @@ msgid "Cannot add children because this trek is itself a child."
 msgstr ""
 "Impossible d'ajouter des enfants car cet itinéraire est lui-même un enfant."
 
-#, fuzzy, python-format
-#| msgid "Cannot use parent trek {child.name} as a child trek."
+#, python-format
 msgid "Cannot use parent trek %(name)s as a child trek."
 msgstr ""
-"Impossible d'utiliser l'itinéraire parent {child.name} comme itinéraire "
-"enfant."
+"Impossible d'utiliser l'itinéraire parent %(name)s comme itinéraire enfant."
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -107,7 +105,7 @@ msgid "Alphabetical order if blank"
 msgstr "Ordre alphabétique si vide"
 
 msgid "Color of the practice, only used in mobile."
-msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
+msgstr "Couleur de la pratique, utilisé uniquement pour l'app mobile."
 
 msgid "Practice"
 msgstr "Pratique"
