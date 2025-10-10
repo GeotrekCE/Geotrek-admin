@@ -174,7 +174,7 @@ msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 
 msgid "Useful information"
-msgstr "Information pratique"
+msgstr "Infos pratiques"
 
 msgid "All useful information"
 msgstr "Toutes les informations pratiques"
