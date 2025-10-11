@@ -54,7 +54,6 @@ LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 
 
 class BaseBladeForm(CommonForm):
-    geomfields = ["topology"]
 
     fieldslayout = (
         [
@@ -96,7 +95,6 @@ class BaseBladeForm(CommonForm):
             del self.fields["direction"]
 
     def save(self, *args, **kwargs):
-        self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
         return super(CommonForm, self).save(*args, **kwargs)
 
@@ -132,38 +130,9 @@ class BaseBladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BladeForm(BaseBladeForm):
-        topology = TopologyField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            self.fields["topology"].initial = self.signage
-            self.fields["topology"].widget.modifiable = True
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
-            )
-
-else:
-
-    class BladeForm(BaseBladeForm):
-        topology = GeometryField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            self.fields["topology"].initial = self.signage.geom
-            self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["topology"].widget.modifiable = False
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
-            )
+class BladeForm(BaseBladeForm):
+    # TODO: display uneditable map
+    ...
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
