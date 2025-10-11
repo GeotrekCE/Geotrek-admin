@@ -225,11 +225,17 @@ class InterventionForm(CommonForm):
             and isinstance(target, Report)
         ):
             # If this is an intervention programmed for a report, change report status
-            if "status" in self.changed_data and self.instance.status.order == 20:
+            if "status" in self.changed_data and self.instance.status.order in [
+                1,
+                10,
+                20,
+            ]:
                 programmed_status = ReportStatus.objects.get(identifier="programmed")
                 target.status = programmed_status
                 target.save()
-                TimerEvent.objects.create(step=programmed_status, report=target)
+                timer, created = TimerEvent.objects.get_or_create(
+                    step=programmed_status, report=target
+                )
             # If this is an intervention being resolved for a report, change report status and notify
             elif "status" in self.changed_data and self.instance.status.order == 30:
                 resolved_status = ReportStatus.objects.get(
