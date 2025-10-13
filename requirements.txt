@@ -289,7 +289,7 @@ pillow==11.3.0
     #   weasyprint
 prompt-toolkit==3.0.52
     # via click-repl
-psycopg2==2.9.10
+psycopg2==2.9.11
     # via geotrek (setup.py)
 pycparser==2.23
     # via cffi
