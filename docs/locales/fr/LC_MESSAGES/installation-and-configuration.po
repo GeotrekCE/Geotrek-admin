@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Geotrek-admin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"PO-Revision-Date: 2025-10-14 03:45+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/installation-and-configuration/fr/>\n"
@@ -104,7 +104,7 @@ msgstr ""
 #: ../../installation-and-configuration/upgrade.rst:399
 #: ../../installation-and-configuration/upgrade.rst:425
 msgid "Note"
-msgstr ""
+msgstr "Note"
 
 #: ../../installation-and-configuration/configuration.rst:77
 msgid ""
@@ -312,7 +312,7 @@ msgstr ""
 #: ../../installation-and-configuration/configuration.rst:225
 #: ../../installation-and-configuration/installation.rst:232
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: ../../installation-and-configuration/configuration.rst:227
 msgid ""
