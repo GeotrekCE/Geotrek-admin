@@ -273,7 +273,7 @@ papersize==1.6.0
     # via pdfimpose
 pdfimpose==2.7.0
     # via geotrek (setup.py)
-persistent==6.2
+persistent==6.3
     # via
     #   btrees
     #   zodb
