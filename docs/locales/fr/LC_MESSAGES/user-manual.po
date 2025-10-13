@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"PO-Revision-Date: 2025-10-14 03:45+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/doc-user-manual/fr/>\n"
@@ -321,7 +321,7 @@ msgstr ""
 #: ../../user-manual/static-pages.rst:155
 #: ../../user-manual/touristic-modules.rst:419
 msgid "Note"
-msgstr ""
+msgstr "Note"
 
 #: ../../user-manual/apis.rst:115
 msgid ""
