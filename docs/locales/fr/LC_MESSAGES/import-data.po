@@ -5,20 +5,21 @@
 # package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek-admin \n"
+"Project-Id-Version: Geotrek-admin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/import-data/fr/>\n"
 "Language: fr\n"
-"Language-Team: fr <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../import-data/import-aggregator.rst:3
@@ -412,7 +413,7 @@ msgstr ""
 #: ../../import-data/import-dem-raster.rst:14
 #: ../../import-data/import-touristic-data-systems.rst:656
 msgid "Warning"
-msgstr ""
+msgstr "Attention"
 
 #: ../../import-data/import-areas.rst:359
 msgid ""
@@ -904,7 +905,7 @@ msgstr ""
 
 #: ../../import-data/import-paths.rst:5
 msgid "Paths"
-msgstr ""
+msgstr "Tronçons"
 
 #: ../../import-data/import-paths.rst:9
 msgid "``command line``, ``import en ligne de commande``, ``QGIS``"
@@ -1657,7 +1658,7 @@ msgstr ""
 
 #: ../../import-data/import-touristic-data-systems.rst:354
 msgid "Attachments"
-msgstr ""
+msgstr "Pièce-jointes"
 
 #: ../../import-data/import-touristic-data-systems.rst:355
 msgid ""
@@ -2429,7 +2430,7 @@ msgstr ""
 
 #: ../../import-data/minimal-initial-data.rst:86
 msgid "Districts"
-msgstr ""
+msgstr "Secteurs"
 
 #: ../../import-data/minimal-initial-data.rst:90
 msgid "Administrative Boundaries Data (EPCI)"
@@ -2469,7 +2470,7 @@ msgstr ""
 
 #: ../../import-data/minimal-initial-data.rst:122
 msgid "Restricted areas"
-msgstr ""
+msgstr "Zones réglementaires"
 
 #: ../../import-data/minimal-initial-data.rst:126
 msgid "Protected Areas Data"
@@ -2584,4 +2585,3 @@ msgid ""
 "Refer to :ref:`this section <sensitive-areas-import>` to learn more about"
 " loading sensitive areas in your Geotrek-admin."
 msgstr ""
-
