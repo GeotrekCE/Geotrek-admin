@@ -91,7 +91,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 starlette==0.47.3
     # via sphinx-autobuild
-tomli==2.2.1
+tomli==2.3.0
     # via sphinx
 typing-extensions==4.15.0
     # via
