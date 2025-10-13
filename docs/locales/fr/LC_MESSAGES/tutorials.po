@@ -5,20 +5,21 @@
 # package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Geotrek-admin \n"
+"Project-Id-Version: Geotrek-admin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2025-10-14 03:45+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/tutorials/fr/>\n"
 "Language: fr\n"
-"Language-Team: fr <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../tutorials/topologies-issues.rst:3
@@ -65,7 +66,7 @@ msgstr ""
 
 #: ../../tutorials/topologies-issues.rst:28
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: ../../tutorials/topologies-issues.rst:30
 msgid ""
@@ -625,4 +626,3 @@ msgstr ""
 #: ../../tutorials/vizualize-data-in-qgis.rst:107
 msgid "Clic droit sur la couche > Zoomer sur la(les) couche(s)"
 msgstr ""
-
