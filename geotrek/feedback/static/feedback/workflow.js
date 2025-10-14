@@ -8,7 +8,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
     });
-    $('#div_id_message_sentinel_predefined').change(function () {
+    $('#id_message_sentinel_predefined').change(function () {
         display_predefined_email_in_email_field();
     });
     return;
@@ -19,11 +19,11 @@ function display_message_fields_on_status_change() {
     var workflow_manager = JSON.parse($('#workflow_manager').text());
     var selected = $('#id_status').val() || null;
 
-    status_is_classified = (status_ids_and_colors[selected]['id'] === "classified")
-    status_is_waiting = (status_ids_and_colors[selected]['id'] === "waiting")
-    status_is_solved = (status_ids_and_colors[selected]['id'] === "solved")
-    status_is_rejected = (status_ids_and_colors[selected]['id'] === "rejected")
-    status_is_filed = (status_ids_and_colors[selected]['id'] === "filed")
+    let status_is_classified = (status_ids_and_colors[selected]['id'] === "classified");
+    let status_is_waiting = (status_ids_and_colors[selected]['id'] === "waiting");
+    let status_is_solved = (status_ids_and_colors[selected]['id'] === "solved");
+    let status_is_rejected = (status_ids_and_colors[selected]['id'] === "rejected");
+    let status_is_filed = (status_ids_and_colors[selected]['id'] === "filed");
 
     $('#div_id_message_sentinel_predefined').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
     $('#div_id_message_sentinel').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
@@ -40,6 +40,7 @@ function display_message_fields_on_status_change() {
 function display_predefined_email_in_email_field() {
     var predefined_emails = JSON.parse($('#predefined_emails').text());
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
+
     var selected = $('#id_message_sentinel_predefined').val() || null;
     if (selected == null) {
         $('#id_message_sentinel').val("");
