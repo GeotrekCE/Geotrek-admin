@@ -59,9 +59,10 @@ describe('Nav reports workflow', () => {
         // Select an assigned user
         cy.get("#id_current_user").select("5")
         // Can use selectors for sentinel and supervisor messages
-        cy.get("#id_message_sentinel_predefined").should("be.visible")
-        cy.get("#id_message_sentinel").should("be.visible")
-        cy.get("#id_message_administrators").should("be.visible")
+        cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
+        cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
+        cy.get("#id_message_administrators").scrollIntoView().should("be.visible")
+        cy.get("#id_message_supervisor").scrollIntoView().should("be.visible")
         cy.get("#modelfields").scrollTo('bottom').get("#id_message_supervisor").should("be.visible")
         // Select a predefined email
         cy.get("#id_message_sentinel_predefined").select("2")
