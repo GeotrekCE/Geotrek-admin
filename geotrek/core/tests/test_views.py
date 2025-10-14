@@ -8,7 +8,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import UserFactory
@@ -1314,6 +1314,108 @@ class PathRouteViewTestCase(TestCase):
             ],
         }
         self.check_route_geometry_response(response.data, expected_data)
+
+    def test_route_geometry_fail_default_pgrouting_tolerance(self):
+        """
+        There are two paths that are 1 meter from each other. Default value of
+        PGROUTING_TOLERANCE is 0.001 meter, so a route cannot go through those two paths.
+
+          ─ : path
+          > : path direction
+          X : route step
+
+                       X end
+                       │
+                       │
+                       │
+                       ^ path2
+                       │
+                       │
+        start
+          X─────>──────
+              path1
+
+        """
+        pathGeom1 = LineString(
+            [
+                [569842, 6271111],
+                [574262, 6271111],
+            ],
+            srid=settings.SRID,
+        )
+        path1 = PathFactory(geom=pathGeom1)
+
+        pathGeom2 = LineString(
+            [
+                [574263, 6271111],
+                [574263, 6276940],
+            ],
+            srid=settings.SRID,
+        )
+        path2 = PathFactory(geom=pathGeom2)
+
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path1.pk, "positionOnPath": 0},
+                    {"path_id": path2.pk, "positionOnPath": 1},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get("error"), "No path between the given points")
+
+    @override_settings(PGROUTING_TOLERANCE=1)
+    def test_route_geometry_fail_high_pgrouting_tolerance(self):
+        """
+        There are two paths that are 1 meter from each other. PGROUTING_TOLERANCE
+        is set to 1 meter, so a route is found but an error is raised since it's
+        a MultiLineString.
+
+          ─ : path
+          > : path direction
+          X : route step
+
+                       X end
+                       │
+                       │
+                       │
+                       ^ path2
+                       │
+                       │
+        start
+          X─────>──────
+              path1
+
+        """
+        pathGeom1 = LineString(
+            [
+                [569842, 6271111],
+                [574262, 6271111],
+            ],
+            srid=settings.SRID,
+        )
+        path1 = PathFactory(geom=pathGeom1)
+
+        pathGeom2 = LineString(
+            [
+                [574263, 6271111],
+                [574263, 6276940],
+            ],
+            srid=settings.SRID,
+        )
+        path2 = PathFactory(geom=pathGeom2)
+
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path1.pk, "positionOnPath": 0},
+                    {"path_id": path2.pk, "positionOnPath": 1},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get("error"), "No path between the given points")
 
     def test_route_geometry_not_fail_with_via_point_one_path(self):
         """

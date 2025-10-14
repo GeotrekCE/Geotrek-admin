@@ -9,7 +9,7 @@ Map settings
 ===============
 
 .. info::
-  
+
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Leaflet configuration
@@ -26,8 +26,8 @@ You can customize or add more tiled basemap layers by specifying the tile URLs i
 
     LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
-.. note:: 
-  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the {z}/{x}/{y} format**. This means that **standard WMS services are not supported**.  
+.. note::
+  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the {z}/{x}/{y} format**. This means that **standard WMS services are not supported**.
 
   - Only **WMTS services or other XYZ tile providers** (like OpenStreetMap, OpenTopoMap, Mapbox, etc.) can be used. WMTS is a standard protocol that can provide such tiles, but not all XYZ tile providers follow WMTS – for example, OpenStreetMap does not.
 
@@ -40,7 +40,7 @@ You can customize or add more tiled basemap layers by specifying the tile URLs i
 
         .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['TILES'] = [
                     (
                         'OpenTopoMap',
@@ -65,7 +65,7 @@ You can customize or add more tiled basemap layers by specifying the tile URLs i
 
          .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['TILES'] = [
                 (
                     'IGN Plan V2',
@@ -132,7 +132,7 @@ Map overlays
 
         .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['OVERLAYS'] = [
                 (
                     'IGN Cadastre',
@@ -148,7 +148,7 @@ Map overlays
 
          .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['OVERLAYS'] = [
                 ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
                 ]
@@ -175,13 +175,13 @@ You can define the max_zoom the user can zoom for all tiles.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 LEAFLET_CONFIG['MAX_ZOOM'] = 19
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 LEAFLET_CONFIG['MAX_ZOOM'] = 20
 
 .. note::
@@ -284,7 +284,7 @@ Regarding colors that depend from database content, such as land layers (physica
 
         .. code-block:: python
 
-    
+
                 COLORS_POOL = {
                                'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                                'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
@@ -300,9 +300,9 @@ Regarding colors that depend from database content, such as land layers (physica
 
          .. code-block:: python
 
-    
+
                 COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
-.. note:: 
+.. note::
   - Each of the object types for Status module (``land``, ``physical``, ``competence``, ``signagemanagement``, ``workmanagement``...) should have values defined.
   - For ``restrictedarea``: add as many color there are restricted area types
 
@@ -361,7 +361,7 @@ Include objects in map screenshots:
           SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
     .. md-tab-item:: Example
-      
+
         .. code-block:: python
 
           SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
@@ -386,7 +386,7 @@ Path snapping distance
 
 .. ns-detail::
 
-    .. 
+    ..
 
 Minimum distance to merge two paths in unit of SRID.
 
@@ -396,13 +396,13 @@ Minimum distance to merge two paths in unit of SRID.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 PATH_SNAPPING_DISTANCE = 1 # Distance of path snapping in meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PATH_SNAPPING_DISTANCE = 2
 
 .. note::
@@ -419,13 +419,13 @@ Distance of snapping for the cursor in pixels on Leaflet map.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 SNAP_DISTANCE = 30 # Distance of snapping in pixels
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SNAP_DISTANCE = 15
 
 Path merge snapping distance
@@ -439,17 +439,17 @@ Minimum distance to merge two paths.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 PATH_MERGE_SNAPPING_DISTANCE = 2 # minimum distance to merge paths
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PATH_MERGE_SNAPPING_DISTANCE = 3
 
 .. note::
-  - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
+  - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``.
   - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
 Enable treks points of reference
@@ -463,13 +463,13 @@ Points of reference can be enabled in the forms for treks.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 TREK_POINTS_OF_REFERENCE_ENABLED = True
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREK_POINTS_OF_REFERENCE_ENABLED = False
 
 
@@ -484,13 +484,13 @@ Points of reference can be enabled in the forms for outdoor courses.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False
 
 .. _hd-views:
@@ -506,13 +506,13 @@ Enable or disable high-definition views in the interface:
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 ENABLE_HD_VIEWS = True
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ENABLE_HD_VIEWS = False
 
 Topology static offset
@@ -532,7 +532,7 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
         .. code-block:: python
 
-    
+
                 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                                         'physical': 0,
                                         'circulation': 15,
@@ -543,11 +543,11 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
          .. code-block:: python
 
-    
-                TOPOLOGY_STATIC_OFFSETS = {'land': -5, 
-                                        'physical': 0, 
-                                        'competence': 5, 
-                                        'signagemanagement': -10, 
+
+                TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+                                        'physical': 0,
+                                        'competence': 5,
+                                        'signagemanagement': -10,
                                         'workmanagement': 10}
 
 Altimetric profile
@@ -577,7 +577,7 @@ Altimetric profile
 
          .. code-block:: python
 
-          ALTIMETRIC_PROFILE_PRECISION = 30  
+          ALTIMETRIC_PROFILE_PRECISION = 30
           ALTIMETRIC_PROFILE_AVERAGE = 4  # nb of points for altimetry moving average
           ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
           ALTIMETRIC_PROFILE_BACKGROUND = 'white'
@@ -600,3 +600,34 @@ Altimetric profile
     cd /opt/geotrek-admin/var/media/profiles
     rm *
 
+Routing
+-------
+
+.. _pgrouting-tolerance:
+
+pgRouting's tolerance
+~~~~~~~~~~~~~~~~~~~~~
+
+Snapping tolerance of disconnected edges/coincident points (in projection unit).
+
+.. md-tab-set::
+    :name: pgrouting-tolerance-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+
+                PGROUTING_TOLERANCE = 0.001
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+                PGROUTING_TOLERANCE = 0.01
+
+.. warning::
+    After modifying this parameter, you must regenerate pgRouting's network topology for the change to take effect.
+    Use the ``generate_pgr_network_topology`` command with the ``--flush`` option. Refer to :ref:`this section <generate-pgrouting-network-topology>` to learn about this command.
+
+.. note::
+  For more information, consult pgRouting's documentation: https://docs.pgrouting.org/latest/en/index.html

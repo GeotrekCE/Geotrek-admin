@@ -1089,7 +1089,8 @@ class MergePathsTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class GeneratePgrNetworkTopologyTest(TestCase):
-    def test_generate_newtork_topology(self):
+    def test_generate_network_topology(self):
+        """Checks that the graph data is generated when running the command."""
         geom_1 = LineString(
             Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
         )
@@ -1103,5 +1104,33 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         path_2.refresh_from_db()
         self.assertIsNotNone(path_1.source_pgr)
         self.assertIsNotNone(path_1.target_pgr)
+        self.assertIsNotNone(path_2.source_pgr)
+        self.assertIsNotNone(path_2.target_pgr)
+
+    def test_regenerate_network_topology_with_flush(self):
+        """Checks that running the command with the flush option updates obsolete graph data and populates missing data."""
+        geom_1 = LineString(
+            Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+        )
+        geom_2 = LineString(
+            Point(700000, 6600100), Point(700100, 6600000), srid=settings.SRID
+        )
+        path_1 = PathFactory.create(geom=geom_1)
+        path_2 = PathFactory.create(geom=geom_2)
+        # Simulate obsolete data for path_1, that should be overwritten thanks to the flush option:
+        obsolete_path_1_source = 4653
+        obsolete_path_1_target = 4654
+        cursor = connection.cursor()
+        query = """UPDATE core_path SET source = %s, target = %s"""
+        cursor.execute(query, [obsolete_path_1_source, obsolete_path_1_target])
+        path_1.refresh_from_db()
+        self.assertEqual(path_1.source_pgr, obsolete_path_1_source)
+        self.assertEqual(path_1.target_pgr, obsolete_path_1_target)
+        # Finally, run the command and check the graph data
+        call_command("generate_pgr_network_topology", "--flush")
+        path_1.refresh_from_db()
+        path_2.refresh_from_db()
+        self.assertNotEqual(path_1.source_pgr, obsolete_path_1_source)
+        self.assertNotEqual(path_1.target_pgr, obsolete_path_1_target)
         self.assertIsNotNone(path_2.source_pgr)
         self.assertIsNotNone(path_2.target_pgr)

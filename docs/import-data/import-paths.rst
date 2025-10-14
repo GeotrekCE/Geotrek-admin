@@ -11,8 +11,8 @@ Paths
 
 .. ns-only::
 
-    .. 
-      
+    ..
+
 Requirements
 =============
 
@@ -57,6 +57,8 @@ There are two ways to import path : importing your shapefile with command line,
 or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.
 
 **To import a shapefile containing your paths, use the command** ``loadpaths``
+
+.. _load-paths:
 
 Load paths
 ===========
@@ -119,7 +121,7 @@ Load paths
     * **Geometric type** : Linestring
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * When importing a Geopackage, the first layer is always used
@@ -149,7 +151,7 @@ Load paths
 	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
-    
+
           docker compose run --rm web ./manage.py loadpaths \
           ./var/paths.geojson \
           --srid=2154 \
@@ -161,23 +163,8 @@ Load paths
 
 .. note::
 
-  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing. 
+  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing.
 
   This action is not mandatory, but will reduce the time needed for the first routing following the import.
 
-  To pre-generate the graph, use the ``generate_pgr_network_topology`` command:
-
-  .. md-tab-set::
-      :name: path-import-command-regenerate-topologytabs
-
-      .. md-tab-item:: Example with Debian
-
-          .. code-block:: bash
-
-            sudo geotrek generate_pgr_network_topology
-
-      .. md-tab-item:: Example with Docker
-
-          .. code-block:: bash
-      
-            docker compose run --rm web ./manage.py generate_pgr_network_topology
+  To pre-generate the graph, use the ``generate_pgr_network_topology`` command. Refer to :ref:`this section <generate-pgrouting-network-topology>` to learn about this command.
