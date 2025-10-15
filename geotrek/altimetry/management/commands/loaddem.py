@@ -29,6 +29,12 @@ class Command(BaseCommand):
             help="Replace existing DEM if any.",
         )
         parser.add_argument(
+            "--append",
+            action="store_true",
+            default=False,
+            help="Append DEM to existing.",
+        )
+        parser.add_argument(
             "--update-altimetry",
             action="store_true",
             default=False,
@@ -77,13 +83,14 @@ class Command(BaseCommand):
 
         # Obtain replace mode
         replace = options["replace"]
+        append = options["append"]
 
         # What to do with existing DEM (if any)
         if dem_exists and replace:
             # Drop table content
             Dem.objects.all().delete()
-        elif dem_exists and not replace:
-            msg = "DEM file exists, use --replace to overwrite"
+        elif dem_exists and not replace and not append:
+            msg = "DEM file exists, use --replace to overwrite or --append to append."
             raise CommandError(msg)
 
         if verbose:
