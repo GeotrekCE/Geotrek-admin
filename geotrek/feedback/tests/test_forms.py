@@ -193,6 +193,7 @@ class TestSuricateForms(SuricateWorkflowTests):
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_assign_supervisor_step(self, mocked_post, mocked_get):
+        print("test assign supervisor")
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
         mails_before = len(mail.outbox)
@@ -258,11 +259,13 @@ class TestSuricateForms(SuricateWorkflowTests):
             mail.outbox[-1].subject, "[Geotrek-admin] New report to process"
         )
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
+        print("end test")
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
     def test_workflow_assign_manager_step(self, mocked_post, mocked_get):
+        print("test assign manager")
         self.build_get_request_patch(mocked_get)
         self.build_post_request_patch(mocked_post)
         mails_before = len(mail.outbox)
@@ -325,9 +328,10 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Assert user is notified
         self.assertEqual(len(mail.outbox), mails_before + 1)
         self.assertEqual(
-            mail.outbox[-1].subject, "[Geotrek-Admin] New report to process"
+            mail.outbox[-1].subject, "[Geotrek-admin] New report to process"
         )
         self.assertEqual(mail.outbox[-1].to, [self.filed_report.current_user.email])
+        print("end test")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(

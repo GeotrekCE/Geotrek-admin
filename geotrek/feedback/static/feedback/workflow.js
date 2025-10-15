@@ -23,7 +23,6 @@ function display_message_fields_on_status_change() {
     let status_is_waiting = (status_ids_and_colors[selected]['id'] === "waiting");
     let status_is_solved = (status_ids_and_colors[selected]['id'] === "solved");
     let status_is_rejected = (status_ids_and_colors[selected]['id'] === "rejected");
-    let status_is_filed = (status_ids_and_colors[selected]['id'] === "filed");
 
     $('#div_id_message_sentinel_predefined').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
     $('#div_id_message_sentinel').prop('hidden', !(status_is_classified || status_is_waiting || status_is_solved));
