@@ -356,12 +356,12 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(len(mail.outbox), mails_before + 2)
         # New supervisor
         self.assertEqual(
-            mail.outbox[-2].subject, "[Geotrek-Admin] New report to process"
+            mail.outbox[-2].subject, "[Geotrek-admin] New report to process"
         )
         self.assertEqual(mail.outbox[-2].to, [self.waiting_report.current_user.email])
         # Former supervisor
         self.assertEqual(
-            mail.outbox[-1].subject, "[Geotrek-Admin] Report has been reassigned"
+            mail.outbox[-1].subject, "[Geotrek-admin] Report has been reassigned"
         )
         self.assertEqual(mail.outbox[-1].to, [self.user.email])
         # Assert Suricate is not notify

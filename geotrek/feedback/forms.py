@@ -203,7 +203,6 @@ class ReportForm(CommonForm):
                 self.old_status.identifier in ["waiting"]
                 and report.status.identifier in ["waiting"]
                 and report.current_user
-                and report.current_user != WorkflowManager.objects.first().user
             ):
                 msg_new_supervisor = self.cleaned_data.get("message_supervisor", "")
                 msg_former_supervisor = self.cleaned_data.get("message_former_supervisor", "")

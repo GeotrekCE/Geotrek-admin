@@ -1,13 +1,22 @@
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    $('#div_id_current_user').prop('hidden', true);
+    var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    var selected = $('#id_status').val() || null;
+
+    if (status_ids_and_colors[selected]['id'] != "waiting"){
+        $('#div_id_current_user').prop('hidden', true);
+    }
     $('#div_id_message_sentinel').prop('hidden', true);
     $('#div_id_message_administrators').prop('hidden', true);
     $('#div_id_message_sentinel_predefined').prop('hidden', true);
     $('#div_id_message_supervisor').prop('hidden', true);
     $('#div_id_message_former_supervisor').prop('hidden', true);
     $('#div_id_uses_timers').prop('hidden', true);
+
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
+    });
+    $('#id_current_user').change(function () {
+        display_message_fields_on_supervisor_change();
     });
     $('#id_message_sentinel_predefined').change(function () {
         display_predefined_email_in_email_field();
@@ -34,6 +43,16 @@ function display_message_fields_on_status_change() {
 
     if (status_is_waiting || status_is_classified || status_is_rejected) {
         $('#id_current_user').val(workflow_manager);
+    }
+}
+
+function display_message_fields_on_supervisor_change(){
+    let status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    let selected = $('#id_status').val() || null;
+
+    if (status_ids_and_colors[selected]['id'] === "waiting"){
+        $('#div_id_message_supervisor').prop('hidden', false);
+        $('#div_id_message_former_supervisor').prop('hidden', false);
     }
 }
 
