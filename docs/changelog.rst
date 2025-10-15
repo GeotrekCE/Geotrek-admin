@@ -38,6 +38,10 @@ CHANGELOG
 
 * Upgrade to Django 5.2 LTS
 
+**Improvements**
+
+- allow manager to self assign a report (refs #4627)
+
 
 2.119.0         (2025-10-06)
 ----------------------------
