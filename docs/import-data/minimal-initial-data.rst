@@ -173,23 +173,35 @@ Clean paths
 We use QGis to clean a path layer, with plugin Grass.
 Here are the operations:
 
-- check the SRID (must be the same as in Geotrek)
+1. Check the SRID (must be the same as in Geotrek)
 
-- vectors → geometric tools → "collect geometries"
+2. Use the **Geometric tools**:
+   
+   1. Go to `Vectors → Geometric tools → "Collect geometries"`.
+   2. Then go to `Vectors → Geometric tools → "Group"`.
 
-- vectors → geometric tools → "group"
+3. Clean geometries:
+   
+   1. Search for `v_clean` in the *Processing toolbox*.
+   2. Select the following options in the cleaning tool:
+      - `break`
+      - `snap`
+      - `duplicate` (or `rmdup`)
+      - `rmline`
+      - `rmdangle`
+      - `chdangle`
+      - `bpol`
+      - `prune`
+   3. In **threshold**, enter `2,2,2,2,2,2,2,2` (2 meters for each option).
 
-- clean geometries
-    - search "v_clean" in "Processing toolbox"
-    - select following options in cleaning tool: break, snap, duplicate (ou rmdup), rmline, rmdangle, chdangle, bpol, prune
-    - in threshold enter 2,2,2,2,2,2,2,2 (2 meters for each option)
+4. Delete duplicate geometries:
+   
+   1. Search for `duplicate` in the *Processing toolbox*.
 
-- delete duplicate geometries
-    - search "duplicate" in "Processing toolbox"
-
-- regroup lines
-    - search "v.build.polyline" in "Processing toolbox")
-    - select "first" in "Category number mode"
+5. Regroup lines:
+   
+   1. Search for `v.build.polyline` in the *Processing toolbox*.
+   2. Select `first` in *Category number mode*.
 
 There are two ways to import path : importing your shapefile with command line,
 or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.

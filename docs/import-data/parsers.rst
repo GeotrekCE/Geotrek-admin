@@ -292,14 +292,14 @@ From the command line
 
           docker compose run --rm web ./manage.py import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.zip>
 
+**Default import options:**
 
+- **Cities**, **Species sensitive areas**, and **Regulatory sensitive areas**: imported from Shapefile files.  
 
-Options d'import par défaut :
+- **Biodiv’Sport**: imported via data feed.
 
-communes, POI, treks, zones sensibles espece, zones sensibles règlementaire : avec fichiers shapefile. Préciser le modèle attendu (proposer modèles fichiers attendus)
-biodiv sport : via flux
-
-Attention, import itinéraires pas utilisables en segmentation dynamique.
+.. note::
+   Trek imports cannot be used with dynamic segmentation.
 
 Custom parsers
 ---------------

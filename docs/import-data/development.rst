@@ -1,13 +1,16 @@
 .. _development-parser-import:
 
 ======================
-Development
+Development 
 ======================
+
+Parsers
+====================
 
 .. _available-attributs:
 
 Available attributes
-====================
+----------------------
 
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | **Parameter**                 | **Type** | **Description**                                                                                                                                      |
@@ -68,7 +71,7 @@ Available attributes
 .. _general-architecture:
 
 General architecture
-====================
+---------------------
 
 .. graphviz::
 
@@ -111,16 +114,16 @@ General architecture
 .. _overloadable-existing-parsers:
 
 Overloadable existing parsers
-=============================
+-------------------------------
 
 .. _apidae-parsers:
 
 APIDAE
-------
+~~~~~~~~~~
 `Apidae <https://www.apidae-tourisme.com/>`_ is a collaborative network and a tourism information management platform. It enables tourist offices, local authorities, service providers, and private partners to share, structure, and distribute tourism data (accommodations, events, sites, services, etc.). It serves as a common reference system at the local, regional, and national levels.
 
 Configure APIDAE access
-~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 To access your APIDAE data, you must define the following attributes in your parser class (inherited from an APIDAE base parser):
 
 * ``api_key``: Your personal API key provided by APIDAE
@@ -130,7 +133,7 @@ To access your APIDAE data, you must define the following attributes in your par
 These values are required and should be filled in according to your APIDAE (formerly SITRA) configuration.
 
 Activate translations
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``expand_translations`` is an option that can be activated for a specific field in ``field_options``.
 It automatically fills the translated versions of the field using multilingual data from APIDAE.
@@ -148,7 +151,7 @@ Example:
 
 
 Apply parsers changes
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 To apply changes, you may have to run ``sudo service geotrek restart``.
 
@@ -249,9 +252,9 @@ To apply changes, you may have to run ``sudo service geotrek restart``.
 .. _tourinsoft-parsers:
 
 Tourinsoft
-----------
+~~~~~~~~~~~~~
 
-`Tourinsoft <https://www.tourinsoft.com/>`_ is a Tourism Information System developed by the company Ingénie for tourism organizations in France, such as Departmental Tourism Committees (CDT), Tourism Development Agencies (ADT), and Tourist Offices. This system allows for the centralization, management, and standardized dissemination of tourism-related information.
+`Tourinsoft <https://www.tourinsoft.com/>`_ is a Tourism Information System developed by the company `Ingénie <https://www.ingenie.fr/systeme-d-information-touristique.html>`_ for tourism organizations in France, such as Departmental Tourism Committees (CDT), Tourism Development Agencies (ADT), and Tourist Offices. This system allows for the centralization, management, and standardized dissemination of tourism-related information.
 
 .. md-tab-set::
     :name: importdata-tourinsoft-tabs
@@ -278,7 +281,7 @@ Tourinsoft
 .. _cirkwi-parsers:
 
 Cirkwi
-------
+~~~~~~~
 
 `Cirkwi <https://www.cirkwi.com/>`_ is a platform for distributing tourism content (treks, points of interest, digital guides) aimed at tourism professionals. It helps promote tourism data through websites, mobile apps, or interactive kiosks using widgets or APIs, relying on a library of shared or proprietary content.
 
@@ -338,7 +341,7 @@ Cirkwi
 .. _lei-parsers:
 
 LEI
----
+~~~~
 
 The **LEI** (Lieu d’Échanges et d’Informations) was the former shared tourism information system used in Alsace to centralize and distribute regional tourism data (accommodations, events, sites, etc.).
 
@@ -372,7 +375,7 @@ The **LEI** (Lieu d’Échanges et d’Informations) was the former shared touri
 .. _marque-esprit-parc-parsers:
 
 Marque Esprit Parc
-------------------
+~~~~~~~~~~~~~~~~~~~
 
 The `Esprit Parc <https://www.espritparcnational.com/>`_ brand promotes tourist offers committed to the preservation of nature and local know-how in national park areas.
 
@@ -422,12 +425,12 @@ The `Esprit Parc <https://www.espritparcnational.com/>`_ brand promotes tourist 
 .. _osm-parsers:
 
 OpenStreetMap
--------------
+~~~~~~~~~~~~~~~
 
 `OpenStreetMap <https://www.openstreetmap.org/>`_ (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
 
 Basic configuration of OSM parsers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. md-tab-set::
     :name: importdata-osm-tabs
@@ -632,7 +635,7 @@ Basic configuration of OSM parsers
         * See the `geotrek/zoning/parsers.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/zoning/parsers.py>`_ file for details about parsers
 
 Query configuration
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^
 
 By default, the parser uses the German Overpass server:
 ``https://overpass-api.de/api/interpreter/``.
@@ -673,7 +676,7 @@ All the objects parsed by the ``OpenStreetMap`` parsers will be those contained 
 You can change the bounding box by overriding ``get_bbox_str()``.
 
 Handling translated fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 OpenStreetMap supports multilingual fields using tags like ``name:fr``, following the ISO 639-1 standard.
 
@@ -688,7 +691,7 @@ When no translation exists for the default language, the base OpenStreetMap tag 
 Translation logic can be customized in custom parsers by overriding the ``translation_fields`` method.
 
 Attachments
-~~~~~~~~~~~
+^^^^^^^^^^^^^
 ``OpenStreetMapParser`` automatically attaches files from ``wikimedia_commons`` and ``image`` tags found in the data.
 A ``CC BY-SA 4.0`` license is assigned to each imported file, as specified by the OpenStreetMap license.
 
@@ -698,7 +701,7 @@ For more information on how attachments work, consult :ref:`this section <import
 .. _importing-from-multiple-sources:
 
 Import from multiple sources
-============================
+-----------------------------
 
 When importing data for the same model using two (or more) different sources, the ``provider`` field should be used to differenciate between sources, allowing to enable object deletion with ``delete = True`` without causing the last parser to delete objects created by preceeding parsers.
 
@@ -743,17 +746,17 @@ The following example would cause ``NoProviderParser`` to delete objects from ``
 .. _aggregators:
 
 Aggregators
-===========
+------------
 
 .. _further_information:
 
 Further information
-===================
+--------------------
 
 .. _import-attachments:
 
 Detailed operation of attachment parsing
-----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``AttachmentParserMixin`` lets a parser **link (and optionally download) media files** to any object it imports (signage, infrastructures, POIs, touristic content, events, etc).
 The mixin is located in ``geotrek/common/parsers.py`` and must be inherited by your parser:
@@ -771,7 +774,7 @@ The mixin is located in ``geotrek/common/parsers.py`` and must be inherited by y
    Factor attachment logic into shared base classes to keep custom parsers clean and maintainable.
 
 Attributes
-~~~~~~~~~~
+^^^^^^^^^^^^
 
 The following attributes can be customized:
 
@@ -803,7 +806,7 @@ The following attributes can be customized:
   If the license does not exist, it will be created automatically.
 
 Filtering attachments
-~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``filter_attachments`` method formats the external source data to match with the internal format.
 
@@ -813,8 +816,8 @@ See the `geotrek/common/parsers.py/ <https://github.com/GeotrekCE/Geotrek-admin/
 
 .. _geometry-filtering:
 
-Geometry filtering in Geotrek Parsers
--------------------------------------
+Geometry filtering in Geotrek parsers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In some cases, you may want to restrict imported objects to a specific geographic area already defined in geotrek model instance (ex: a City or District).
 This can be done by defined the parser’s ``intersection_geom`` attribute
@@ -831,8 +834,8 @@ The ``object_filter`` must return exactly one object:
 - If no object is found, the parser raises a **blocking error**.
 - If multiple objects are returned, only the **first** will be used, which may cause unexpected behavior.
 
-Conditional Deletion with ``delete = True``
--------------------------------------------
+Conditional deletion with ``delete = True``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If ``delete`` attribut is set to ``True``, the parser will automatically **delete existing objects** of the current model
 that **do not intersect** the reference geometry.
@@ -841,8 +844,8 @@ that **do not intersect** the reference geometry.
 
    Deletion only affects objects of the model handled by the current parser. Other models are not impacted.
 
-Linking Source Objects via `eid`
---------------------------------
+Linking source objects via `eid`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting with **Geotrek-admin 2.117.0**, the `eid` (external ID) field displayed on the object detail page can now include a clickable link to the original source object.
 
