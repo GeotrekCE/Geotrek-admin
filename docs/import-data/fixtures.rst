@@ -13,8 +13,8 @@ Import during initial installation
   - The ``load_data.sh`` script is intended only for the initial setup. Do not run it again after the first installation, especially in a production environment, as it will overwrite any manually entered or modified data (e.g., paths, infrastructure, zoning, practices, etc.).
   - Refer to :ref:`this section <loading-fixtures>` for instructions on how to use the global ``load_data.sh`` command.
 
-Import Authent
-~~~~~~~~~~~~~~~
+Authent imports
+~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
     :name: loaddata-authent-tabs
@@ -33,7 +33,7 @@ Import Authent
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/authent/fixtures/basic.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/authent/fixtures/minimal.json
 
-Import Cirkwi
+Cirkwi imports
 ~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -51,7 +51,7 @@ Import Cirkwi
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/cirkwi/fixtures/cirkwi.json
 
-Import Common
+Common imports
 ~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -72,7 +72,7 @@ Import Common
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/basic.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/licenses.json
 
-Import Core
+Core imports
 ~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -90,8 +90,8 @@ Import Core
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/core/fixtures/basic.json
 
-Import Feedback
-~~~~~~~~~~~~~~~
+Feedback imports
+~~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
     :name: loaddata-feedback-tabs
@@ -110,7 +110,7 @@ Import Feedback
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/feedback/fixtures/basic.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/feedback/fixtures/management_workflow.json
 
-Import Infrastructure
+Infrastructure imports
 ~~~~~~~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -132,7 +132,7 @@ Import Infrastructure
 
 .. _fixture-land:
 
-Import Land
+Land imports
 ~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -152,7 +152,7 @@ Import Land
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/land/fixtures/circulations.json
                 docker-compose run --rm web ./manage.py loaddata geotrek/land/fixtures/basic.json
 
-Import Maintenance
+Maintenance imports
 ~~~~~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -170,7 +170,7 @@ Import Maintenance
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/maintenance/fixtures/basic.json
 
-Import Signage
+Signage imports
 ~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -188,8 +188,8 @@ Import Signage
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/signage/fixtures/basic.json
 
-Import Tourism
-~~~~~~~~~~~~~~~
+Tourism imports
+~~~~~~~~~~~~~~~~
 .. md-tab-set::
     :name: loaddata-tourism-minimal-data-tabs
 
@@ -206,8 +206,8 @@ Import Tourism
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/tourism/fixtures/basic.json
 
-Import Trekking
-~~~~~~~~~~~~~~~~
+Trekking imports
+~~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
     :name: loaddata-zoning-minimal-data-tabs
@@ -225,7 +225,7 @@ Import Trekking
     
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/trekking/fixtures/basic.json
 
-Import Zoning
+Zoning imports
 ~~~~~~~~~~~~~~~
 
 .. md-tab-set::
@@ -252,8 +252,8 @@ Import after initial installation
 
 .. _fixture-outdoor:
 
-Import Outdoor
-~~~~~~~~~~~~~~~
+Outdoor imports
+~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
     :name: loaddata-outdoor-minimal-data-tabs
@@ -275,8 +275,8 @@ Import Outdoor
 
 .. _fixture-sensitivity:
 
-Import Sensitivity
-~~~~~~~~~~~~~~~~~~~
+Sensitivity imports
+~~~~~~~~~~~~~~~~~~~~
 
 .. md-tab-set::
     :name: loaddata-sensitivity-tabs
