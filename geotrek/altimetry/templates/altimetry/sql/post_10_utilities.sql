@@ -142,9 +142,14 @@ BEGIN
         RETURN geom;
     END IF;
 
-    SELECT ST_Value(rast, 1, geom)::integer INTO ele
-    FROM altimetry_dem
-    WHERE ST_Intersects(rast, geom);
+    SELECT val INTO ele FROM (
+        SELECT ST_Value(rast, 1, geom)::integer AS val
+        FROM altimetry_dem
+        WHERE ST_Intersects(rast, geom)
+    ) sub
+    WHERE val IS NOT NULL AND val <> 0
+    LIMIT 1;
+
     IF NOT FOUND OR ele IS NULL THEN
         ele := 0;
     END IF;
