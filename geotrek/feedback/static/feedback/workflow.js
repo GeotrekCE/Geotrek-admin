@@ -1,10 +1,10 @@
 $(window).on('entity:view:add entity:view:update', function (e, data) {
     var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     var selected = $('#id_status').val() || null;
+    let waiting_report = (status_ids_and_colors[selected]['id'] === "waiting"  && $('#id_status option').length === 1);
 
-    if (status_ids_and_colors[selected]['id'] != "waiting"){
-        $('#div_id_current_user').prop('hidden', true);
-    }
+    $('#div_id_current_user').prop('hidden', !(waiting_report));
+
     $('#div_id_message_sentinel').prop('hidden', true);
     $('#div_id_message_administrators').prop('hidden', true);
     $('#div_id_message_sentinel_predefined').prop('hidden', true);
@@ -50,7 +50,7 @@ function display_message_fields_on_supervisor_change(){
     let status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
     let selected = $('#id_status').val() || null;
 
-    if (status_ids_and_colors[selected]['id'] === "waiting"){
+    if (status_ids_and_colors[selected]['id'] === "waiting" && $('#id_status option').length === 1){
         $('#div_id_message_supervisor').prop('hidden', false);
         $('#div_id_message_former_supervisor').prop('hidden', false);
     }

@@ -14,6 +14,7 @@ from .models import (
     ReportStatus,
     TimerEvent,
     WorkflowDistrict,
+    WorkflowManager,
 )
 
 
@@ -57,12 +58,12 @@ class ReportForm(CommonForm):
             "filed": ["classified", "filed", "rejected", "waiting"],
             "solved_intervention": ["solved", "solved_intervention"],
         }
-        super().__init__(*args, **kwargs)
         if (
             settings.SURICATE_WORKFLOW_ENABLED
             and settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION")
         ):
             self.user = kwargs["user"]
+        super().__init__(*args, **kwargs)
         self.fields["geom"].required = True
         # Store current status
         if self.instance.pk:
@@ -95,7 +96,11 @@ class ReportForm(CommonForm):
                     identifier__in=next_statuses
                 )
                 # current_user
-                if self.old_status.identifier not in ["filed", "waiting"]:
+                if (
+                    self.old_status.identifier not in ["filed", "waiting"]
+                    or kwargs["user"] != WorkflowManager.objects.first().user
+                ):
+                    # only manager can reassign a report
                     self.fields["current_user"].widget = HiddenInput()
                 # message for sentinel
                 self.fields["message_sentinel"] = CharField(
@@ -122,9 +127,13 @@ class ReportForm(CommonForm):
                     required=False, widget=Textarea()
                 )
                 if self.old_status.identifier not in ["waiting"]:
-                    self.fields["message_supervisor"].label = _("Message for supervisor")
+                    self.fields["message_supervisor"].label = _(
+                        "Message for supervisor"
+                    )
                 else:
-                    self.fields["message_supervisor"].label = _("Message for new supervisor")
+                    self.fields["message_supervisor"].label = _(
+                        "Message for new supervisor"
+                    )
                 right_after_user_index = (
                     self.fieldslayout[0].fields.index("current_user") + 1
                 )
@@ -135,9 +144,11 @@ class ReportForm(CommonForm):
                 self.fields["message_former_supervisor"] = CharField(
                     required=False, widget=Textarea()
                 )
-                self.fields["message_former_supervisor"].label = _("Message for former supervisor")
+                self.fields["message_former_supervisor"].label = _(
+                    "Message for former supervisor"
+                )
                 right_after_supervisor_message_index = (
-                        self.fieldslayout[0].fields.index("message_supervisor") + 1
+                    self.fieldslayout[0].fields.index("message_supervisor") + 1
                 )
                 self.fieldslayout[0].insert(
                     right_after_supervisor_message_index, "message_former_supervisor"
@@ -205,7 +216,9 @@ class ReportForm(CommonForm):
                 and report.current_user
             ):
                 msg_new_supervisor = self.cleaned_data.get("message_supervisor", "")
-                msg_former_supervisor = self.cleaned_data.get("message_former_supervisor", "")
+                msg_former_supervisor = self.cleaned_data.get(
+                    "message_former_supervisor", ""
+                )
                 report.notify_current_user(msg_new_supervisor)
                 report.notify_assigned_handler(msg_former_supervisor)
                 report.assigned_handler = report.current_user

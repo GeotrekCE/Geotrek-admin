@@ -21,7 +21,6 @@ from geotrek.feedback.tests.factories import (
     PredefinedEmailFactory,
     ReportFactory,
     ReportStatusFactory,
-    WorkflowManagerFactory,
 )
 from geotrek.feedback.tests.test_suricate_sync import (
     SURICATE_WORKFLOW_SETTINGS_NO_MODERATION,
@@ -44,6 +43,8 @@ class TestSuricateForms(SuricateWorkflowTests):
     @classmethod
     def setUpTestData(cls):
         SuricateWorkflowTests.setUpTestData()
+        cls.user = UserFactory()
+        UserProfileFactory.create(user=cls.user)
         cls.filed_report = ReportFactory(
             status=cls.filed_status,
             external_uuid=uuid.uuid4(),
@@ -55,7 +56,6 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report_2 = ReportFactory(
             status=cls.filed_status, external_uuid=uuid.uuid4()
         )
-        cls.user = UserFactory()
         cls.waiting_report = ReportFactory(
             status=cls.waiting_status,
             uses_timers=True,
@@ -86,14 +86,6 @@ class TestSuricateForms(SuricateWorkflowTests):
             user=cls.other_user,
             extended_username="Communauté des Communes des Communautés Communataires",
         )
-        cls.manager = UserFactory()
-        UserProfileFactory.create(
-            user=cls.manager,
-            extended_username="Communauté des Communes des Communautés Communataires",
-        )
-        WorkflowManagerFactory.create(
-            user=cls.manager,
-        )
         cls.district = DistrictFactory(
             geom="SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))"
         )
@@ -108,7 +100,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             "email": "test@test.fr",
             "geom": Point(700000, 6600000, srid=settings.SRID),
         }
-        form = ReportForm(data)
+        form = ReportForm(data, user=self.user)
         keys = form.fields.keys()
         self.assertIsInstance(form.fields["geom"].widget, MapWidget)
         self.assertIsInstance(form.fields["email"].widget, EmailInput)
@@ -129,7 +121,7 @@ class TestSuricateForms(SuricateWorkflowTests):
 
     @test_for_report_and_basic_modes
     def test_update_form_common(self):
-        form = ReportForm(instance=self.filed_report)
+        form = ReportForm(instance=self.filed_report, user=self.user)
         keys = form.fields.keys()
         self.assertIsInstance(form.fields["geom"].widget, MapWidget)
         self.assertIsInstance(form.fields["email"].widget, EmailInput)
@@ -156,7 +148,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             "email": "test@test.fr",
             "geom": Point(700000, 6600000, srid=settings.SRID),
         }
-        form = ReportForm(data)
+        form = ReportForm(data, user=self.workflow_manager.user)
         keys = form.fields.keys()
 
         self.assertIsInstance(form.fields["geom"].widget, MapWidget)
@@ -177,7 +169,7 @@ class TestSuricateForms(SuricateWorkflowTests):
 
     @test_for_workflow_mode
     def test_update_form_specifics_2(self):
-        form = ReportForm(instance=self.filed_report)
+        form = ReportForm(instance=self.filed_report, user=self.workflow_manager.user)
         keys = form.fields.keys()
         self.assertIsInstance(form.fields["geom"].widget, MapWidget)
         self.assertIsInstance(form.fields["email"].widget, HiddenInput)
@@ -210,7 +202,9 @@ class TestSuricateForms(SuricateWorkflowTests):
             "message_sentinel": "Your message",
             "uses_timers": True,
         }
-        form = ReportForm(instance=self.filed_report, data=data)
+        form = ReportForm(
+            instance=self.filed_report, data=data, user=self.workflow_manager.user
+        )
         form.save()
         # Assert report status changes
         self.assertEqual(self.filed_report.status.identifier, "waiting")
@@ -274,18 +268,20 @@ class TestSuricateForms(SuricateWorkflowTests):
         mails_before = len(mail.outbox)
         # When assigning a user to a report
         data = {
-            "current_user": str(self.manager.pk),
+            "current_user": str(self.workflow_manager.user.pk),
             "email": "test@test.fr",
             "geom": self.filed_report.geom,
             "message_sentinel": "Your message",
             "uses_timers": True,
         }
-        form = ReportForm(instance=self.filed_report, data=data)
+        form = ReportForm(
+            instance=self.filed_report, data=data, user=self.workflow_manager.user
+        )
         form.save()
         # Assert report status changes
         self.assertEqual(self.filed_report.status.identifier, "waiting")
-        self.assertEqual(self.filed_report.current_user, self.manager)
-        self.assertEqual(self.filed_report.assigned_handler, self.manager)
+        self.assertEqual(self.filed_report.current_user, self.workflow_manager.user)
+        self.assertEqual(self.filed_report.assigned_handler, self.workflow_manager.user)
         # Asser timer is created
         self.assertEqual(
             TimerEvent.objects.filter(
@@ -337,7 +333,7 @@ class TestSuricateForms(SuricateWorkflowTests):
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_workflow_reassign_step(self, mocked_post):
+    def test_workflow_reassign_step_as_manager(self, mocked_post):
         mails_before = len(mail.outbox)
         # When assigning a user to a report
         data = {
@@ -346,7 +342,9 @@ class TestSuricateForms(SuricateWorkflowTests):
             "message_supervisor": "New supervisor",
             "message_former_supervisor": "Old supervisor",
         }
-        form = ReportForm(instance=self.waiting_report, data=data)
+        form = ReportForm(
+            instance=self.waiting_report, data=data, user=self.workflow_manager.user
+        )
         form.save()
 
         # Assert new assigned_handler is set up
@@ -366,6 +364,11 @@ class TestSuricateForms(SuricateWorkflowTests):
         self.assertEqual(mail.outbox[-1].to, [self.user.email])
         # Assert Suricate is not notify
         mocked_post.assert_not_called()
+
+    @test_for_workflow_mode
+    def test_workflow_reassign_step_as_supervisor(self):
+        form = ReportForm(instance=self.waiting_report, user=self.user)
+        self.assertIsInstance(form.fields["current_user"].widget, HiddenInput)
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @override_settings(
@@ -583,7 +586,11 @@ class TestSuricateForms(SuricateWorkflowTests):
             "message_sentinel": "Your message",
             "message_administrators": "Your message admins",
         }
-        form = ReportForm(instance=self.solved_intervention_report, data=data)
+        form = ReportForm(
+            instance=self.solved_intervention_report,
+            data=data,
+            user=self.workflow_manager.user,
+        )
         form.save()
         # Assert report status changes
         self.assertEqual(self.solved_intervention_report.status.identifier, "solved")
@@ -626,7 +633,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Relocate report inside of main district
         new_geom = Point(0, 0, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
-        form = ReportForm(instance=self.filed_report_1, data=data)
+        form = ReportForm(
+            instance=self.filed_report_1, data=data, user=self.workflow_manager.user
+        )
         form.save()
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
@@ -652,7 +661,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         # Relocate report outside of main district
         new_geom = Point(2, 2, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
-        form = ReportForm(instance=self.filed_report_1, data=data)
+        form = ReportForm(
+            instance=self.filed_report_1, data=data, user=self.workflow_manager.user
+        )
         form.save()
         # Assert relocation is forwarded to Suricate
         long, lat = new_geom.transform(4326, clone=True).coords
@@ -693,6 +704,7 @@ class TestSuricateForms(SuricateWorkflowTests):
                 "email": self.filed_report_2.email,
                 "status": self.rejected_status.pk,
             },
+            user=self.workflow_manager.user,
         )
         self.assertTrue(form.is_valid)
         form.save()
@@ -723,7 +735,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             "uses_timers": True,
         }
         # Test Timer is created when report is created
-        form = ReportForm(data=data)
+        form = ReportForm(data=data, user=self.workflow_manager.user)
         report = form.save()
         self.assertEqual(TimerEvent.objects.count(), 1)
         self.assertEqual(TimerEvent.objects.first().step.identifier, "timer3")
@@ -734,7 +746,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             "geom": new_geom,
             "uses_timers": True,
         }
-        form = ReportForm(instance=report, data=data)
+        form = ReportForm(instance=report, data=data, user=self.workflow_manager.user)
         form.save()
         # Test Timers are updated when report is updated
         self.assertEqual(TimerEvent.objects.count(), 2)
@@ -751,7 +763,7 @@ class TestSuricateForms(SuricateWorkflowTests):
             "geom": new_geom,
             "uses_timers": True,
         }
-        form = ReportForm(instance=report, data=data)
+        form = ReportForm(instance=report, data=data, user=self.workflow_manager.user)
         form.save()
         self.assertEqual(TimerEvent.objects.count(), 1)
         for timer in TimerEvent.objects.all():
