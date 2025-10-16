@@ -360,7 +360,7 @@ class LengthTest(TestCase):
             )
 
     def test_2dlength_is_preserved(self):
-        self.assertEqual(self.path.geom_3d.length, self.path.geom.length)
+        self.assertEqual(self.path.length, self.path.length_2d)
 
     def test_3dlength(self):
         # before smoothing: (1 101 0, 21 101 0, 41 101 0, 61 101 3, 81 101 5, 81 99 15)

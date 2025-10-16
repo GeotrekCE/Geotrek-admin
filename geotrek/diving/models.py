@@ -202,10 +202,6 @@ class Dive(
     def get_map_image_url(self):
         return reverse("diving:dive_map_image", args=[str(self.pk), get_language()])
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new dive")
-
     @property
     def levels_display(self):
         return ", ".join([str(level) for level in self.levels.all()])

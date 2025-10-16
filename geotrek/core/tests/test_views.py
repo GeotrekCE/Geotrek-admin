@@ -128,7 +128,7 @@ class PathViewsTest(CommonTest):
         "type": "LineString",
         "coordinates": [[3.0, 46.5], [3.001304, 46.5009004]],
     }
-    length = 141.4
+    length = 141.6
     extra_column_list = ["length_2d", "eid"]
     expected_column_list_extra = [
         "id",
@@ -150,8 +150,8 @@ class PathViewsTest(CommonTest):
         return {
             "checkbox": self.obj.checkbox_display,
             "id": self.obj.pk,
-            "length": 141.4,
-            "length_2d": 141.4,
+            "length": 141.6,
+            "length_2d": 141.6,
             "name": self.obj.name_display,
         }
 

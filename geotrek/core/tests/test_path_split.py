@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
+from geotrek.common.tests.utils import LineStringInBounds
 from geotrek.core.models import Path, Topology
 from geotrek.core.tests.factories import (
     NetworkFactory,
@@ -34,38 +35,46 @@ class SplitPathTest(TestCase):
                +      AB exists. Add CD.
                D
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (4, 0)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)))
+        self.assertAlmostEqual(cd.length, 2, places=2)
 
         # Make sure AB was split :
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 2)  # Length was also updated
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (2, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 2, places=2)  # Length was also updated
         # And a clone of AB was created
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         self.assertEqual(len(clones), 1)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab_2.length, 2)  # Length was also updated
+        self.assertEqual(
+            ab_2.geom, LineStringInBounds((2, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab_2.length, 2, places=2)  # Length was also updated
 
     def test_split_tee_2(self):
         """
         CD exists. Add AB.
         """
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        self.assertEqual(cd.length, 2)
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)))
+        self.assertAlmostEqual(cd.length, 2, places=2)
+        ab = PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (4, 0)))
 
         # Make sure AB was split :
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 2)  # Length was also updated
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (2, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 2, places=2)  # Length was also updated
 
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab_2.length, 2)  # Length was also updated
+        self.assertEqual(
+            ab_2.geom, LineStringInBounds((2, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab_2.length, 2, places=2)  # Length was also updated
 
     def test_split_cross(self):
         """
@@ -109,20 +118,20 @@ class SplitPathTest(TestCase):
 
                                     AB and CD exist. CD updated into CE.
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
-        cd = PathFactory.create(name="CD", geom=LineString((0, -2), (2, -2)))
-        self.assertEqual(ab.length, 4)
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (4, 0)))
+        cd = PathFactory.create(name="CD", geom=LineStringInBounds((0, -2), (2, -2)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        self.assertAlmostEqual(cd.length, 2, places=2)
 
-        cd.geom = LineString((0, -2), (2, -2), (2, 2))
+        cd.geom = LineStringInBounds((0, -2), (2, -2), (2, 2))
         cd.save()
         ab.reload()
-        self.assertEqual(ab.length, 2)
-        self.assertEqual(cd.length, 4)
+        self.assertAlmostEqual(ab.length, 2, places=2)
+        self.assertAlmostEqual(cd.length, 4, places=2)
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cd_2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(ab_2.length, 2)
-        self.assertEqual(cd_2.length, 2)
+        self.assertAlmostEqual(ab_2.length, 2, places=2)
+        self.assertAlmostEqual(cd_2.length, 2, places=2)
 
     def test_split_twice(self):
         """
@@ -135,49 +144,37 @@ class SplitPathTest(TestCase):
              +---+
 
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        ab = PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (4, 0)))
         cd = PathFactory.create(
-            name="CD", geom=LineString((1, 2), (1, -2), (3, -2), (3, 2))
+            name="CD", geom=LineStringInBounds((1, 2), (1, -2), (3, -2), (3, 2))
         )
         ab.reload()
-        self.assertEqual(ab.length, 1)
-        self.assertEqual(cd.length, 2)
+        self.assertAlmostEqual(ab.length, 1, places=2)
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab_clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         cd_clones = Path.objects.filter(name="CD").exclude(pk=cd.pk)
         self.assertEqual(len(ab_clones), 2)
         self.assertEqual(len(cd_clones), 2)
         # Depending on PostgreSQL fetch order
-        if ab_clones[0].geom == LineString((1, 0), (3, 0), srid=settings.SRID):
-            self.assertEqual(
-                ab_clones[0].geom, LineString((1, 0), (3, 0), srid=settings.SRID)
-            )
-            self.assertEqual(
-                ab_clones[1].geom, LineString((3, 0), (4, 0), srid=settings.SRID)
-            )
+        if ab_clones[0].geom == LineStringInBounds((1, 0), (3, 0)):
+            self.assertEqual(ab_clones[0].geom, LineStringInBounds((1, 0), (3, 0)))
+            self.assertEqual(ab_clones[1].geom, LineStringInBounds((3, 0), (4, 0)))
         else:
-            self.assertEqual(
-                ab_clones[0].geom, LineString((3, 0), (4, 0), srid=settings.SRID)
-            )
-            self.assertEqual(
-                ab_clones[1].geom, LineString((1, 0), (3, 0), srid=settings.SRID)
-            )
+            self.assertEqual(ab_clones[0].geom, LineStringInBounds((3, 0), (4, 0)))
+            self.assertEqual(ab_clones[1].geom, LineStringInBounds((1, 0), (3, 0)))
 
-        if cd_clones[0].geom == LineString((3, 0), (3, 2), srid=settings.SRID):
-            self.assertEqual(
-                cd_clones[0].geom, LineString((3, 0), (3, 2), srid=settings.SRID)
-            )
+        if cd_clones[0].geom == LineStringInBounds((3, 0), (3, 2)):
+            self.assertEqual(cd_clones[0].geom, LineStringInBounds((3, 0), (3, 2)))
             self.assertEqual(
                 cd_clones[1].geom,
-                LineString((1, 0), (1, -2), (3, -2), (3, 0), srid=settings.SRID),
+                LineStringInBounds((1, 0), (1, -2), (3, -2), (3, 0)),
             )
         else:
             self.assertEqual(
                 cd_clones[0].geom,
-                LineString((1, 0), (1, -2), (3, -2), (3, 0), srid=settings.SRID),
+                LineStringInBounds((1, 0), (1, -2), (3, -2), (3, 0)),
             )
-            self.assertEqual(
-                cd_clones[1].geom, LineString((3, 0), (3, 2), srid=settings.SRID)
-            )
+            self.assertEqual(cd_clones[1].geom, LineStringInBounds((3, 0), (3, 2)))
 
     def test_add_shortest_path(self):
         r"""
@@ -406,38 +403,23 @@ class SplitPathTest(TestCase):
                    + +
                    D H
         """
-        PathFactory.create(
-            name="AB", geom=LineString((0, 0), (300, 0), srid=settings.SRID)
-        )
-        PathFactory.create(
-            name="CD", geom=LineString((200, 100), (200, -200), srid=settings.SRID)
-        )
+        PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (300, 0)))
+        PathFactory.create(name="CD", geom=LineStringInBounds((200, 100), (200, -200)))
         ab_1, ab_2 = Path.objects.filter(name="AB")
         cd_1, cd_2 = Path.objects.filter(name="CD")
-        self.assertTrue(
-            (ab_1.length == 200 and ab_2.length == 100)
-            or (ab_1.length == 100 and ab_2.length == 200)
-        )
-        self.assertTrue(
-            (cd_1.length == 200 and cd_2.length == 100)
-            or (cd_1.length == 100 and cd_2.length == 200)
-        )
-        self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0), srid=settings.SRID))
-        self.assertEqual(
-            cd_1.geom, LineString((200, 100), (200, 0), srid=settings.SRID)
-        )
-        self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0), srid=settings.SRID))
-        self.assertEqual(
-            cd_2.geom, LineString((200, 0), (200, -200), srid=settings.SRID)
-        )
+        self.assertAlmostEqual(ab_1.length + ab_2.length, 300, places=0)
+        self.assertAlmostEqual(cd_1.length + cd_2.length, 300, places=0)
+
+        self.assertEqual(ab_1.geom, LineStringInBounds((0, 0), (200, 0)))
+        self.assertEqual(cd_1.geom, LineStringInBounds((200, 100), (200, 0)))
+        self.assertEqual(ab_2.geom, LineStringInBounds((200, 0), (300, 0)))
+        self.assertEqual(cd_2.geom, LineStringInBounds((200, 0), (200, -200)))
 
         PathFactory.create(
             name="EF",
-            geom=LineString((100, 100), (100, -100), (300, -100), srid=settings.SRID),
+            geom=LineStringInBounds((100, 100), (100, -100), (300, -100)),
         )
-        PathFactory.create(
-            name="GH", geom=LineString((50, 100), (250, -200), srid=settings.SRID)
-        )
+        PathFactory.create(name="GH", geom=LineStringInBounds((50, 100), (250, -200)))
 
         self.assertEqual(Path.objects.filter(name="AB").count(), 4)
         self.assertEqual(Path.objects.filter(name="CD").count(), 4)
@@ -453,13 +435,13 @@ class SplitPathTest(TestCase):
                D
         AB is not split
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(name="AB", geom=LineStringInBounds((0, 0), (4, 0)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)), draft=True)
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 4)
+        self.assertEqual(ab.geom, LineStringInBounds((0, 0), (4, 0)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
 
     def test_do_not_split_with_draft_2(self):
         """
@@ -470,13 +452,15 @@ class SplitPathTest(TestCase):
                D
         AB is not split
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(
+            name="AB", geom=LineStringInBounds((0, 0), (4, 0)), draft=True
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)))
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 4)
+        self.assertEqual(ab.geom, LineStringInBounds((0, 0), (4, 0)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
 
     def test_do_not_split_with_draft_3(self):
         """
@@ -487,13 +471,15 @@ class SplitPathTest(TestCase):
                D
         AB is not split
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(
+            name="AB", geom=LineStringInBounds((0, 0), (4, 0)), draft=True
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)), draft=True)
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 4)
+        self.assertEqual(ab.geom, LineStringInBounds((0, 0), (4, 0)))
+        self.assertAlmostEqual(ab.length, 4, places=2)
 
     def test_do_not_split_with_draft_4(self):
         """
@@ -506,23 +492,31 @@ class SplitPathTest(TestCase):
         Change CD to not draft
         AB is split
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=False)
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(
+            name="AB", geom=LineStringInBounds((0, 0), (4, 0)), draft=False
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)), draft=True)
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 4)
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
         cd.draft = False
         cd.save()
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 2)
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (2, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 2, places=2)
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         self.assertEqual(len(clones), 1)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab_2.length, 2)
+        self.assertEqual(
+            ab_2.geom, LineStringInBounds((2, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab_2.length, 2, places=2)
 
     def test_do_not_split_with_draft_5(self):
         """
@@ -535,22 +529,30 @@ class SplitPathTest(TestCase):
         Change AB to not draft
         AB is split
         """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
-        self.assertEqual(ab.length, 4)
-        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=False)
-        self.assertEqual(cd.length, 2)
+        ab = PathFactory.create(
+            name="AB", geom=LineStringInBounds((0, 0), (4, 0)), draft=True
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
+        cd = PathFactory.create(geom=LineStringInBounds((2, 0), (2, 2)), draft=False)
+        self.assertAlmostEqual(cd.length, 2, places=2)
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 4)
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 4, places=2)
         ab.draft = False
         ab.save()
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
-        self.assertEqual(ab.length, 2)
+        self.assertEqual(
+            ab.geom, LineStringInBounds((0, 0), (2, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab.length, 2, places=2)
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         self.assertEqual(len(clones), 1)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
-        self.assertEqual(ab_2.length, 2)
+        self.assertEqual(
+            ab_2.geom, LineStringInBounds((2, 0), (4, 0), srid=settings.SRID)
+        )
+        self.assertAlmostEqual(ab_2.length, 2, places=2)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -868,7 +870,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.4, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         ab3 = Path.objects.filter(name="AB").exclude(pk__in=[ab.pk, ab2.pk])[0]
-        if ab2.geom.length < ab3.geom.length:
+        if ab2.length_2d < ab3.length_2d:
             ab2, ab3 = ab3, ab2
         aggr_ab2 = ab2.aggregations.all()[0]
         aggr_ab3 = ab3.aggregations.all()[0]

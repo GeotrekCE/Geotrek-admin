@@ -778,10 +778,6 @@ class Project(
                     pks.append(topology["id"])
         return modelclass.objects.filter(pk__in=pks)
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new project")
-
 
 Path.add_property("projects", lambda self: Project.path_projects(self), _("Projects"))
 Topology.add_property(

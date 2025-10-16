@@ -12,7 +12,6 @@ from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
-from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
@@ -71,7 +70,6 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                 )
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
-                    length_3d_m=Length3D("geom_3d"),
                 )
                 .order_by("name")
             )  # Required for reliable pagination
