@@ -14,9 +14,9 @@
     },
     {
         "model": "feedback.workflowmanager",
-        "pk": 2,
+        "pk": 1,
         "fields": {
-            "user": 9
+            "user": 1
         }
     },
     {

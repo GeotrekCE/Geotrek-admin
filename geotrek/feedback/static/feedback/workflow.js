@@ -1,12 +1,22 @@
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    $('#div_id_current_user').prop('hidden', true);
+    var status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    var selected = $('#id_status').val() || null;
+    let waiting_report = (status_ids_and_colors[selected]['id'] === "waiting"  && $('#id_status option').length === 1);
+
+    $('#div_id_current_user').prop('hidden', !(waiting_report));
+
     $('#div_id_message_sentinel').prop('hidden', true);
     $('#div_id_message_administrators').prop('hidden', true);
     $('#div_id_message_sentinel_predefined').prop('hidden', true);
     $('#div_id_message_supervisor').prop('hidden', true);
+    $('#div_id_message_former_supervisor').prop('hidden', true);
     $('#div_id_uses_timers').prop('hidden', true);
+
     $('#id_status').change(function () {
         display_message_fields_on_status_change();
+    });
+    $('#id_current_user').change(function () {
+        display_message_fields_on_supervisor_change();
     });
     $('#id_message_sentinel_predefined').change(function () {
         display_predefined_email_in_email_field();
@@ -36,10 +46,19 @@ function display_message_fields_on_status_change() {
     }
 }
 
+function display_message_fields_on_supervisor_change(){
+    let status_ids_and_colors = JSON.parse($('#status_ids_and_colors').text());
+    let selected = $('#id_status').val() || null;
+
+    if (status_ids_and_colors[selected]['id'] === "waiting" && $('#id_status option').length === 1){
+        $('#div_id_message_supervisor').prop('hidden', false);
+        $('#div_id_message_former_supervisor').prop('hidden', false);
+    }
+}
+
 function display_predefined_email_in_email_field() {
     var predefined_emails = JSON.parse($('#predefined_emails').text());
     var resolved_intervention_info = JSON.parse($('#resolved_intervention_info').text());
-
     var selected = $('#id_message_sentinel_predefined').val() || null;
     if (selected == null) {
         $('#id_message_sentinel').val("");
