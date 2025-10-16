@@ -1,7 +1,7 @@
 describe('Nav reports workflow', () => {
     before(() => {
         const username = 'manager';
-        const password = 'manager';
+        const password = 'admin';
         cy.loginByCSRF(username, password)
             .then((resp) => {
                 expect(resp.status).to.eq(200)
@@ -55,9 +55,9 @@ describe('Nav reports workflow', () => {
         cy.get("#id_message_administrators").should("not.be.visible")
         cy.get("#id_message_supervisor").should("not.be.visible")
         // Change selected status to waiting
-        cy.get("#id_status").select("2")
+        cy.get("#id_status").select("4")
         // Select an assigned user
-        cy.get("#id_current_user").select("4")
+        cy.get("#id_current_user").select("5")
         // Can use selectors for sentinel and supervisor messages
         cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
         cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
@@ -74,7 +74,7 @@ describe('Nav reports workflow', () => {
         cy.get("#id_message_sentinel").should("have.value", "Ce probleme n'en sera bientot plus un")
         cy.get("#id_message_administrators").should("have.value", "Ce probleme n'en sera bientot plus un")
         // Select another assigned user
-        cy.get("#id_current_user").select("2")
+        cy.get("#id_current_user").select("9")
         // Can use selectors for sentinel and supervisor messages
         cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
         cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
