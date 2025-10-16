@@ -703,6 +703,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 "message_sentinel": "Problème déjà réglé",
                 "message_administrators": "Je ne fais rien",
             },
+            user=self.workflow_manager.user
         )
         self.assertTrue(form.is_valid)
         form.save()
@@ -736,6 +737,7 @@ class TestWorkflowFirstSteps(SuricateWorkflowTests):
                 "status": self.classified_status.pk,
                 "message_sentinel": "Problème déjà réglé",
             },
+            user=self.workflow_manager.user
         )
         self.assertTrue(form.is_valid)
         form.save()

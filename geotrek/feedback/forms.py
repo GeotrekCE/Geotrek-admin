@@ -97,7 +97,8 @@ class ReportForm(CommonForm):
                 )
                 # current_user
                 if (
-                    self.old_status.identifier not in ["filed", "waiting"]
+                    WorkflowManager.objects.first()
+                    and self.old_status.identifier not in ["filed", "waiting"]
                     or kwargs["user"] != WorkflowManager.objects.first().user
                 ):
                     # only manager can reassign a report
