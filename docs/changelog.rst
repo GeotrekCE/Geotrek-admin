@@ -40,6 +40,7 @@ CHANGELOG
 **Improvements**
 
 - allow manager to self assign a report (refs #4627)
+- allow report reassignment (refs #4624)
 
 
 2.119.0         (2025-10-06)
