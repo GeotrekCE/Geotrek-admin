@@ -153,7 +153,7 @@ msgstr "Nouveau Signalement à traiter"
 #, fuzzy
 #| msgid "You have been assigned a report on"
 msgid "Report has been reassigned"
-msgstr "Un signalement vous a été assigné sur"
+msgstr "Le signalement a été réassigné"
 
 msgid "Late report processing"
 msgstr "Signalement à traiter en retard"
@@ -289,7 +289,7 @@ msgstr "Une intervention doit être programmée."
 #, fuzzy
 #| msgid "You have been assigned a report on"
 msgid "You are no longer assigned to the report "
-msgstr "Un signalement vous a été assigné sur"
+msgstr "Vous n'être plus assigné au signalement"
 
 msgid ""
 "Some data could not be forwarded to Suricate yet - Please come back later"
