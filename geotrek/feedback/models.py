@@ -267,10 +267,6 @@ class Report(
         server_name = settings.SERVER_NAME
         return f"{scheme}://{server_name}{self.get_detail_url()}"
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new feedback")
-
     @property
     def geom_wgs84(self):
         return self.geom.transform(4326, clone=True)

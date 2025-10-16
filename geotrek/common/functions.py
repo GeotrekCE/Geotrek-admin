@@ -9,6 +9,10 @@ class Length(GeoFunc):
     output_field = FloatField()
 
 
+class LengthSpheroid(GeoFunc):
+    output_field = FloatField()
+
+
 class SimplifyPreserveTopology(GeomOutputGeoFunc):
     """ST_SimplifyPreserveTopology postgis function"""
 

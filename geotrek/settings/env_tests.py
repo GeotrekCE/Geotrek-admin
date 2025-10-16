@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 import os
 
 TEST = True
-
+SRID = 2154
 ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
