@@ -8,16 +8,15 @@
             "first_name": "",
             "last_name": "",
             "email": "manager@management.cool",
-            "password": "pbkdf2_sha256$10000$M7URcO1rPRGv$2vCwLDAnfwCvP6lyA3Qo6PQ5Zqrz0YkccetVIHByODU=",
             "is_staff": false,
             "is_active": true
         }
     },
     {
         "model": "feedback.workflowmanager",
-        "pk": 2,
+        "pk": 1,
         "fields": {
-            "user": 9
+            "user": 1
         }
     },
     {
