@@ -327,7 +327,7 @@ rcssmin==1.1.2
     # via django-compressor
 redis==6.4.0
     # via geotrek (setup.py)
-referencing==0.36.2
+referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
