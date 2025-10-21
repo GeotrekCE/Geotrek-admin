@@ -29,6 +29,7 @@ CHANGELOG
 * Add new parameter: ``PGROUTING_TOLERANCE``, which corresponds to pgrouting's tolerance for disconnected edges in the graph
 * Add a ``--flush`` option to the ``generate_pgr_network_topology`` command to reset the graph before regenerating it
 * Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM.
+* Length are now computed with Earth spheroïd. We can now support using SRID 3857 (Pseudo mercator) to cover - almost - all Earth surface.
 
 **Bug fixes**
 
