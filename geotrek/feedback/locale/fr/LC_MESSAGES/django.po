@@ -150,8 +150,6 @@ msgstr "Message de suivi généré par Geotrek"
 msgid "New report to process"
 msgstr "Nouveau Signalement à traiter"
 
-#, fuzzy
-#| msgid "You have been assigned a report on"
 msgid "Report has been reassigned"
 msgstr "Le signalement a été réassigné"
 
@@ -286,8 +284,6 @@ msgstr "jours."
 msgid "An intervention must be planned."
 msgstr "Une intervention doit être programmée."
 
-#, fuzzy
-#| msgid "You have been assigned a report on"
 msgid "You are no longer assigned to the report "
 msgstr "Vous n'être plus assigné au signalement"
 
