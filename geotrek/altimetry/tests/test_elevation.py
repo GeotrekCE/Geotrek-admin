@@ -6,6 +6,7 @@ from django.db import connection
 from django.test import TestCase
 
 from geotrek.altimetry.helpers import AltimetryHelper
+from geotrek.common.tests.utils import LineStringInBounds
 from geotrek.core.models import Path, Topology
 from geotrek.core.tests.factories import TopologyFactory
 
@@ -338,7 +339,7 @@ class LengthTest(TestCase):
         # Create a simple fake DEM
         with connection.cursor() as cur:
             cur.execute(
-                "INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))",
+                "INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 489353.59, 6587677.2, 25, -25, 0, 0, %s))",
                 [settings.SRID],
             )
             cur.execute("UPDATE altimetry_dem SET rast = ST_AddBand(rast, '16BSI')")
@@ -356,17 +357,17 @@ class LengthTest(TestCase):
                         [x + 1, y + 1, demvalues[y][x]],
                     )
             cls.path = Path.objects.create(
-                geom=LineString((1, 101), (81, 101), (81, 99))
+                geom=LineStringInBounds((1, 101), (81, 101), (81, 99))
             )
 
     def test_2dlength_is_preserved(self):
-        self.assertEqual(self.path.length, self.path.length_2d)
+        self.assertAlmostEqual(self.path.geom.length, self.path.geom_3d.length)
 
     def test_3dlength(self):
         # before smoothing: (1 101 0, 21 101 0, 41 101 0, 61 101 3, 81 101 5, 81 99 15)
         # after smoothing:  (1 101 0, 21 101 0, 41 101 0, 61 101 1, 81 101 3, 81 99  9)
         # length: 20 + 20 + (20 ** 2 + 1) ** .5 + (20 ** 2 + 2 ** 2) ** .5 + (2 ** 2 + 6 ** 2) ** .5
-        self.assertEqual(round(self.path.length, 9), 83.127128724)
+        self.assertEqual(round(self.path.length, 9), 83.203851919)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")

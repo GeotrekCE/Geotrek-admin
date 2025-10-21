@@ -7,12 +7,10 @@ from tempfile import TemporaryDirectory
 import os
 
 TEST = True
-SRID = 2154
+
 ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
-
-ALLOWED_HOSTS = ['localhost']
 
 INSTALLED_APPS += (
     'geotrek.diving',
@@ -43,7 +41,7 @@ CACHES['api_v2'] = {
 }
 
 
-class DisableMigrations():
+class DisableMigrations:
     def __contains__(self, item):
         return True
 
