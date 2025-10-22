@@ -50,9 +50,7 @@ msgid "Fields are missing to publish or review object: %(fields)s"
 msgstr "Ces champs doivent être renseignés pour publier ou réviser l'objet : %(fields)s"
 
 #, python-brace-format
-msgid ""
-"Please select a choice related to all structures (without brackets) or "
-"related to the structure {struc} (in brackets)"
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
 msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses) ou lié à la structure {struc} (entre parenthèses)"
 
 msgid "Data to import from network"
@@ -106,9 +104,7 @@ msgstr "Geotrek est une web app permettant de préparer à l'avance ses randonn�
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
 
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
+msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
 msgstr "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour."
 
 msgid "Merge"
@@ -369,14 +365,11 @@ msgid "Missing id field '{eid_src}'"
 msgstr "L'identifiant '{eid_src}' est manquant"
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
 msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet avec cet identifiant"
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
-"identifier"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier"
 msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets avec cet identifiant"
 
 #, python-brace-format
@@ -392,8 +385,7 @@ msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise parmi {values}"
 
 #, python-brace-format
-msgid ""
-"{model} '{val}' did not exist in Geotrek-admin and was automatically created"
+msgid "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr "{model} '{val}' n'existait pas dans Geotrek-admin. Il a été créé automatiquement"
 
 #, python-brace-format
@@ -447,15 +439,11 @@ msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
 msgstr "%(class)s #%(pk)s - %(url)s : le fichier téléchargé n'est pas assez haut"
 
 #, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' "
-"is not allowed."
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' is not allowed."
 msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : L'extension '%(ext)s' n'est pas autorisée."
 
 #, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type "
-"'%(mimetype)s' is not allowed for %(ext)s."
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type '%(mimetype)s' is not allowed for %(ext)s."
 msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : Le type mime du fichier '%(mimetype)s' n'est pas autorisé pour l'extension %(ext)s."
 
 #, python-format
@@ -470,9 +458,7 @@ msgid "Geotrek-admin"
 msgstr "Geotrek-admin"
 
 #, python-format
-msgid ""
-"Source '%(name)s' did not exist in Geotrek-admin and was automatically "
-"created"
+msgid "Source '%(name)s' did not exist in Geotrek-admin and was automatically created"
 msgstr "La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été créée automatiquement"
 
 #, python-brace-format
@@ -488,9 +474,7 @@ msgstr "Photos pour illustrer les informations liées à l'accessibilité des ra
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
 
-msgid ""
-"You are not allowed to modify attachments on this object, this object is not "
-"from the same structure."
+msgid "You are not allowed to modify attachments on this object, this object is not from the same structure."
 msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet objet n'est pas de la même structure."
 
 msgid "Accessibility type"
@@ -578,9 +562,7 @@ msgstr "Utilisateur"
 msgid "Full history"
 msgstr "Historique complet"
 
-msgid ""
-"Add very high resolution images that will be automatically tiled and add "
-"annotations on it (points, lines, polygons and text)"
+msgid "Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)"
 msgstr "Ajouter des images de très haute résolution qui seront tuilées automatiquement et ajouter des annotations sur celles-ci (points, lignes, polygones et texte)"
 
 msgid "Add a new HD view"
@@ -702,14 +684,10 @@ msgctxt "West"
 msgid "W"
 msgstr "O"
 
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
+msgid "Feature geometry cannot be converted to a single continuous LineString feature"
 msgstr "La géométrie de l'objet ne peut être convertie en une unique LineString continue"
 
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
+msgid "Geometries from various features cannot be converted to a single continuous LineString feature"
 msgstr "Les géométries de plusieurs objets ne peuvent être converties en une unique LineString continue"
 
 #, python-format

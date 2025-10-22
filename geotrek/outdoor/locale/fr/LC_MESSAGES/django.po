@@ -350,10 +350,7 @@ msgid "Add a brother site"
 msgstr "Ajouter un site frère"
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong> because it has child outdoor "
-"sites associated with it. Modify or delete these child outdoor sites before "
-"proceeding."
+msgid "You can't delete <strong>%(object)s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding."
 msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites 'outdoor' lui sont associés. Pour pouvoir supprimer un site parent, il faut au préalable supprimer ses sites 'outdoor' associés."
 
 msgid "Child outdoor sites linked to this site"

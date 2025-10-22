@@ -87,7 +87,7 @@ force_lint:
 quality: lint format
 
 messages:
-	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache
 
 compilemessages:
 	$(docker_compose) run --rm web ./manage.py compilemessages

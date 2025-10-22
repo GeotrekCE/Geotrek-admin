@@ -65,9 +65,7 @@ msgid "Invalid geometry for field '{src}'"
 msgstr "La geometria del campo '{src}' non è valida"
 
 #, python-brace-format
-msgid ""
-"Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not "
-"{geom_type}"
+msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Il tipo di geometria del campo '{src}' non è valido. Dovrebbe essere (Multi)Polygon, non {geom_type}"
 
 msgid "Restricted Area"

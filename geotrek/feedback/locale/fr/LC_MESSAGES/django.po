@@ -94,15 +94,13 @@ msgstr "Responsable actuel"
 msgid "Use timers"
 msgstr "Lancer les comptes à rebours"
 
-msgid ""
-"Launch timers to alert supervisor if report is not being treated on time"
+msgid "Launch timers to alert supervisor if report is not being treated on time"
 msgstr "Lancer des comptes à rebours pour notifier le gestionnaire si le signalement n'est pas traité dans les temps"
 
 msgid "Synchronisation error"
 msgstr "Erreur de synchronisation"
 
-msgid ""
-"Synchronisation with Suricate is currently pending due to connection problems"
+msgid "Synchronisation with Suricate is currently pending due to connection problems"
 msgstr "La synchronisation avec Suricate est en attente à cause d'un problème de connexion"
 
 msgid "Mail error"
@@ -184,9 +182,7 @@ msgstr "Indique si ce statut doit être affiché dans la légende du module sign
 msgid "Timer days"
 msgstr "Durée du compte à rebours"
 
-msgid ""
-"How many days to wait before sending an email alert to the assigned user for "
-"a report that has this status and enabled timers. 0 days disables the alerts"
+msgid "How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"
 msgstr "Nombre de jours à attendre avant d'envoyer un courriel d'alerte au gestionnaire d'un signalement qui a ce statut et la coche d'activation des comptes à rebours. La valeur 0 désactive les alertes"
 
 msgid "Suricate label"
@@ -234,9 +230,7 @@ msgstr "Message du responsable"
 msgid "A report on"
 msgstr "Un signalement sur"
 
-msgid ""
-"has to be marked as resolved, since the corresponding intervention was "
-"completed"
+msgid "has to be marked as resolved, since the corresponding intervention was completed"
 msgstr "est à clôturer suite à la résolution de l'intervention associée"
 
 msgid "Statuses"
@@ -263,8 +257,7 @@ msgstr "jours."
 msgid "An intervention must be planned."
 msgstr "Une intervention doit être programmée."
 
-msgid ""
-"Some data could not be forwarded to Suricate yet - Please come back later"
+msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"
 
 msgid "Intervention"
