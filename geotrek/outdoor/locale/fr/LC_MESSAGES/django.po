@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/outdoor/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -56,8 +56,7 @@ msgstr "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant
 
 #, python-format
 msgid "Cannot use parent course %(name)s as a child course."
-msgstr ""
-"Impossible d'utiliser le parcours parent %(name)s comme itinéraire enfant."
+msgstr "Impossible d'utiliser le parcours parent %(name)s comme itinéraire enfant."
 
 msgid "Name"
 msgstr "Nom"
