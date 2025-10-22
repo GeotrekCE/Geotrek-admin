@@ -19,11 +19,6 @@ CHANGELOG
 * It is recommended to upgrade your OS to Ubuntu 22.04 or 24.04, and PostgreSQL to version 14 minimum. Or to externalize your database on another server with the desired PostgreSQL version.
 * Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
 
-**Developers**
-
-* For developers, you need to upgrade your database. ``make flush`` can help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
-  * By using this command, you will lose local data.
-
 **Improvements**
 
 * Add new parameter: ``PGROUTING_TOLERANCE``, which corresponds to pgrouting's tolerance for disconnected edges in the graph
@@ -31,6 +26,7 @@ CHANGELOG
 * Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM.
 * Allow manager to self assign a report (refs #4627)
 * Allow report reassignment (refs #4624)
+* Related report status now auto-updates to “Planned” when intervention status is set to “To be verified”, “Requested”, or “Planned” (refs #4633)
 
 **Bug fixes**
 
@@ -40,9 +36,10 @@ CHANGELOG
 
 * Upgrade to Django 5.2 LTS
 
-**Improvements**
+**Developers**
 
-- Related report status now auto-updates to “Planned” when intervention status is set to “To be verified”, “Requested”, or “Planned” (refs #4633)
+* For developers, you need to upgrade your database. ``make flush`` can help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
+  * By using this command, you will lose local data.
 
 
 2.119.0         (2025-10-06)
