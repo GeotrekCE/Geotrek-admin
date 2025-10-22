@@ -8,10 +8,9 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 18:37+0000\n"
-"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/common/fr/>\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -48,17 +47,13 @@ msgstr "Ce champs est obligatoire pour réviser l'objet."
 
 #, python-format
 msgid "Fields are missing to publish or review object: %(fields)s"
-msgstr ""
-"Ces champs doivent être renseignés pour publier ou réviser l'objet : "
-"%(fields)s"
+msgstr "Ces champs doivent être renseignés pour publier ou réviser l'objet : %(fields)s"
 
 #, python-brace-format
 msgid ""
 "Please select a choice related to all structures (without brackets) or "
 "related to the structure {struc} (in brackets)"
-msgstr ""
-"Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses)"
-" ou lié à la structure {struc} (entre parenthèses)"
+msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses) ou lié à la structure {struc} (entre parenthèses)"
 
 msgid "Data to import from network"
 msgstr "Données à importer depuis le réseau"
@@ -106,8 +101,7 @@ msgid "Geotrek-rando"
 msgstr "Geotrek-rando"
 
 msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr ""
-"Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
+msgstr "Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
 
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
@@ -346,8 +340,7 @@ msgid "Providers"
 msgstr "Fournisseurs"
 
 msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
-msgstr ""
-"Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
+msgstr "Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
 
 #, python-format
 msgid "Line %(line)s"
@@ -380,17 +373,13 @@ msgstr "L'identifiant '{eid_src}' est manquant"
 #, python-brace-format
 msgid ""
 "Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
-msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet "
-"avec cet identifiant"
+msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet avec cet identifiant"
 
 #, python-brace-format
 msgid ""
 "Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
 "identifier"
-msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets "
-"avec cet identifiant"
+msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets avec cet identifiant"
 
 #, python-brace-format
 msgid "Bad ownership '{structure}' for object '{eid_val}'."
@@ -398,21 +387,16 @@ msgstr "Mauvaise appartenance de '{structure}' sur l'objet '{eid_val}'."
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
-msgstr ""
-"Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
+msgstr "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should be in {values}"
-msgstr ""
-"Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise "
-"parmi {values}"
+msgstr "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise parmi {values}"
 
 #, python-brace-format
 msgid ""
 "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
-msgstr ""
-"{model} '{val}' n'existait pas dans Geotrek-admin. Il a été créé "
-"automatiquement"
+msgstr "{model} '{val}' n'existait pas dans Geotrek-admin. Il a été créé automatiquement"
 
 #, python-brace-format
 msgid "{model} '{val}' does not exists in Geotrek-admin. Please add it"
@@ -435,8 +419,7 @@ msgstr "Echec lors de la récupération de %(url)s. %(error)s"
 
 #, python-format
 msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
-msgstr ""
-"La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
+msgstr "La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
@@ -447,9 +430,7 @@ msgstr "Pièce-jointes"
 
 #, python-brace-format
 msgid "FileType '{name}' does not exists in Geotrek-admin. Please add it"
-msgstr ""
-"Le type de fichier '{name}' n'existe pas dans Geotrek-admin. Merci de "
-"l'ajouter"
+msgstr "Le type de fichier '{name}' n'existe pas dans Geotrek-admin. Merci de l'ajouter"
 
 #, python-format
 msgid "Failed to load attachment: %(e)s"
@@ -499,9 +480,7 @@ msgstr "Geotrek-admin"
 msgid ""
 "Source '%(name)s' did not exist in Geotrek-admin and was automatically "
 "created"
-msgstr ""
-"La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été créée "
-"automatiquement"
+msgstr "La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été créée automatiquement"
 
 #, python-brace-format
 msgid "Failed to download '{url}'"
@@ -511,9 +490,7 @@ msgid "Import from web."
 msgstr "Importer du web."
 
 msgid "Photos to illustrate information related to the accessibility of treks."
-msgstr ""
-"Photos pour illustrer les informations liées à l'accessibilité des "
-"randonnées."
+msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
@@ -613,10 +590,7 @@ msgstr "Historique complet"
 msgid ""
 "Add very high resolution images that will be automatically tiled and add "
 "annotations on it (points, lines, polygons and text)"
-msgstr ""
-"Ajouter des images de très haute résolution qui seront tuilées "
-"automatiquement et ajouter des annotations sur celles-ci (points, lignes, "
-"polygones et texte)"
+msgstr "Ajouter des images de très haute résolution qui seront tuilées automatiquement et ajouter des annotations sur celles-ci (points, lignes, polygones et texte)"
 
 msgid "Add a new HD view"
 msgstr "Ajouter une nouvelle vue HD"
@@ -628,9 +602,7 @@ msgid "You are not allowed to see HD views."
 msgstr "Vous n'êtes pas autorisé à voir les vues HD."
 
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
-msgstr ""
-"Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans "
-"accents) pour les noms de fichier."
+msgstr "Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans accents) pour les noms de fichier."
 
 msgid "No parser available."
 msgstr "Aucun parser disponible."
@@ -742,16 +714,12 @@ msgstr "O"
 msgid ""
 "Feature geometry cannot be converted to a single continuous LineString "
 "feature"
-msgstr ""
-"La géométrie de l'objet ne peut être convertie en une unique LineString "
-"continue"
+msgstr "La géométrie de l'objet ne peut être convertie en une unique LineString continue"
 
 msgid ""
 "Geometries from various features cannot be converted to a single continuous "
 "LineString feature"
-msgstr ""
-"Les géométries de plusieurs objets ne peuvent être converties en une unique "
-"LineString continue"
+msgstr "Les géométries de plusieurs objets ne peuvent être converties en une unique LineString continue"
 
 #, python-format
 msgid "Incorrect syntax: %(error)s"
