@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 18:37+0000\n"
-"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/documentation/fr/>\n"
 "Language: fr\n"
@@ -53,23 +53,20 @@ msgid "📝 Others"
 msgstr ""
 
 #: ../../index.rst:-1
-#, fuzzy
 msgid "Welcome to the Geotrek-admin documentation!"
-msgstr "Bienvenue sur la documentation de Geotrek !"
+msgstr "Bienvenue sur la documentation de Geotrek-admin !"
 
 #: ../../index.rst:-1
 msgid "Bienvenue sur la documentation de Geotrek-admin!"
 msgstr ""
 
 #: ../../index.rst:-1
-#, fuzzy
 msgid "Geotrek-admin documentation"
-msgstr "Bienvenue sur la documentation de Geotrek !"
+msgstr "Documentation de Geotrek-admin"
 
 #: ../../index.rst:7
-#, fuzzy
 msgid "Geotrek-admin's documentation"
-msgstr "Bienvenue sur la documentation de Geotrek !"
+msgstr "Bienvenue sur la documentation de Geotrek-admin !"
 
 #: ../../index.rst:17
 msgid "🏞️ **About Geotrek (fr)**"

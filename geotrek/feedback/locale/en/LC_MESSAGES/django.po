@@ -100,15 +100,13 @@ msgstr ""
 msgid "Use timers"
 msgstr ""
 
-msgid ""
-"Launch timers to alert supervisor if report is not being treated on time"
+msgid "Launch timers to alert supervisor if report is not being treated on time"
 msgstr ""
 
 msgid "Synchronisation error"
 msgstr ""
 
-msgid ""
-"Synchronisation with Suricate is currently pending due to connection problems"
+msgid "Synchronisation with Suricate is currently pending due to connection problems"
 msgstr ""
 
 msgid "Mail error"
@@ -193,9 +191,7 @@ msgstr ""
 msgid "Timer days"
 msgstr ""
 
-msgid ""
-"How many days to wait before sending an email alert to the assigned user for "
-"a report that has this status and enabled timers. 0 days disables the alerts"
+msgid "How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts"
 msgstr ""
 
 msgid "Suricate label"
@@ -243,9 +239,7 @@ msgstr ""
 msgid "A report on"
 msgstr ""
 
-msgid ""
-"has to be marked as resolved, since the corresponding intervention was "
-"completed"
+msgid "has to be marked as resolved, since the corresponding intervention was completed"
 msgstr ""
 
 msgid "Statuses"
@@ -275,8 +269,7 @@ msgstr ""
 msgid "You are no longer assigned to the report "
 msgstr ""
 
-msgid ""
-"Some data could not be forwarded to Suricate yet - Please come back later"
+msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr ""
 
 msgid "Intervention"

@@ -40,6 +40,10 @@ CHANGELOG
 
 * Upgrade to Django 5.2 LTS
 
+**Improvements**
+
+- Related report status now auto-updates to “Planned” when intervention status is set to “To be verified”, “Requested”, or “Planned” (refs #4633)
+
 
 2.119.0         (2025-10-06)
 ----------------------------
