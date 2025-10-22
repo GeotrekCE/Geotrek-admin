@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -70,8 +70,7 @@ msgstr "Impossible d'ajouter des enfants car cet itinéraire est lui-même un en
 
 #, python-format
 msgid "Cannot use parent trek %(name)s as a child trek."
-msgstr ""
-"Impossible d'utiliser l'itinéraire parent %(name)s comme itinéraire enfant."
+msgstr "Impossible d'utiliser l'itinéraire parent %(name)s comme itinéraire enfant."
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -467,8 +466,7 @@ msgid "Invalid geometry for field '{src}'. Should contain coordinates"
 msgstr "La géométrie du champ '{src}' est invalide. Elle devrait contenir des coordonnées"
 
 msgid "Bad value for parking geometry: should be a Point"
-msgstr ""
-"Valeur incorrecte pour la géométrie du parking : elle devrait être un Point"
+msgstr "Valeur incorrecte pour la géométrie du parking : elle devrait être un Point"
 
 #, python-brace-format
 msgid ""
@@ -662,9 +660,7 @@ msgstr "Situation géographique"
 msgid ""
 "The national park is an unrestricted natural area but subjected to "
 "regulations which must be known by all visitors."
-msgstr ""
-"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
-"réglementation qu’il est utile de connaître pour préparer son séjour."
+msgstr "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour."
 
 msgid "This hike is in the core of the national park"
 msgstr "Cet itinéraire est dans le cœur du Parc national"
