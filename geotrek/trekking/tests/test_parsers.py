@@ -1385,13 +1385,17 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(old_description, trek.description)
 
     @mock.patch("requests.get")
-    def test_trek_import_multiple_times_ambiance_is_not_empty_then_updated(self, mocked_get):
+    def test_trek_import_multiple_times_ambiance_is_not_empty_then_updated(
+        self, mocked_get
+    ):
         """
         A trek is imported once. Its fields ambiance_fr and ambiance_en both have
         a value. When importing the trek again with new source data, ambiance_fr
         should have another value, and ambiance_en should be empty.
         """
-        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_and_en_not_empty.json")
+        mocked_get.side_effect = self.make_dummy_get(
+            "simple_trek_ambiance_fr_and_en_not_empty.json"
+        )
         call_command(
             "import",
             "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
@@ -1401,7 +1405,9 @@ class ApidaeTrekParserTests(TestCase):
         trek = Trek.objects.all().first()
         self.assertEqual(trek.ambiance_fr, "abc")
         self.assertEqual(trek.ambiance_en, "123")
-        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json")
+        mocked_get.side_effect = self.make_dummy_get(
+            "simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json"
+        )
         call_command(
             "import",
             "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
@@ -1413,13 +1419,17 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(trek.ambiance_en, "")
 
     @mock.patch("requests.get")
-    def test_trek_import_multiple_times_ambiance_is_empty_then_updated(self, mocked_get):
+    def test_trek_import_multiple_times_ambiance_is_empty_then_updated(
+        self, mocked_get
+    ):
         """
         A trek is imported once. Its fields ambiance_fr and ambiance_en are both
         empty. When importing the trek again with new source data, ambiance_fr
         should now have a value, and ambiance_en should still be empty.
         """
-        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_and_en_both_empty.json")
+        mocked_get.side_effect = self.make_dummy_get(
+            "simple_trek_ambiance_fr_and_en_both_empty.json"
+        )
         call_command(
             "import",
             "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
@@ -1429,7 +1439,9 @@ class ApidaeTrekParserTests(TestCase):
         trek = Trek.objects.all().first()
         self.assertEqual(trek.ambiance_fr, "")
         self.assertEqual(trek.ambiance_en, "")
-        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json")
+        mocked_get.side_effect = self.make_dummy_get(
+            "simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json"
+        )
         call_command(
             "import",
             "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
