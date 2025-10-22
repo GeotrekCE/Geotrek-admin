@@ -42,6 +42,12 @@ msgstr "Courriel prédéfini"
 msgid "Message for supervisor"
 msgstr "Message pour le gestionnaire"
 
+msgid "Message for new supervisor"
+msgstr "Message pour le nouveau gestionnaire"
+
+msgid "Message for former supervisor"
+msgstr "Message pour l'ancien gestionnaire"
+
 msgid "Message for administrators"
 msgstr "Message pour les administrateurs"
 
@@ -133,6 +139,9 @@ msgstr "Message de suivi généré par Geotrek"
 
 msgid "New report to process"
 msgstr "Nouveau Signalement à traiter"
+
+msgid "Report has been reassigned"
+msgstr "Le signalement a été réassigné"
 
 msgid "Late report processing"
 msgstr "Signalement à traiter en retard"
@@ -256,6 +265,9 @@ msgstr "jours."
 
 msgid "An intervention must be planned."
 msgstr "Une intervention doit être programmée."
+
+msgid "You are no longer assigned to the report "
+msgstr "Vous n'être plus assigné au signalement"
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"

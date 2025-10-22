@@ -14,9 +14,9 @@
     },
     {
         "model": "feedback.workflowmanager",
-        "pk": 2,
+        "pk": 1,
         "fields": {
-            "user": 9
+            "user": 1
         }
     },
     {
@@ -169,6 +169,19 @@
             "label_en": "Rejected",
             "label_fr": "Rejet\u00e9",
             "identifier": "rejected",
+            "color": "#4444444",
+            "date_update": "2014-02-12T11:21:48.961Z",
+            "date_insert": "2014-02-12T11:21:48.961Z"
+        }
+    },
+  {
+        "model": "feedback.reportstatus",
+        "pk": 4,
+        "fields": {
+            "label": "En cours de traitement",
+            "label_en": "Waiting",
+            "label_fr": "En cours de traitement",
+            "identifier": "waiting",
             "color": "#4444444",
             "date_update": "2014-02-12T11:21:48.961Z",
             "date_insert": "2014-02-12T11:21:48.961Z"
