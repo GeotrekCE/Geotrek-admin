@@ -23,7 +23,7 @@ brotli==1.1.0
     # via fonttools
 btrees==6.1
     # via zodb
-cachetools==6.2.0
+cachetools==6.2.1
     # via large-image
 cairocffi==1.7.1
     # via
@@ -49,7 +49,7 @@ cffi==2.0.0
     #   weasyprint
 chardet==5.2.0
     # via geotrek (setup.py)
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via
     #   reportlab
     #   requests
@@ -277,7 +277,7 @@ persistent==6.3
     # via
     #   btrees
     #   zodb
-pillow==11.3.0
+pillow==12.0.0
     # via
     #   geotrek (setup.py)
     #   cairosvg
@@ -327,7 +327,7 @@ rcssmin==1.1.2
     # via django-compressor
 redis==6.4.0
     # via geotrek (setup.py)
-referencing==0.36.2
+referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -351,7 +351,7 @@ ruamel-yaml==0.18.15
     # via drf-yasg
 ruamel-yaml-clib==0.2.14
     # via ruamel-yaml
-sentry-sdk==2.41.0
+sentry-sdk==2.42.1
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via

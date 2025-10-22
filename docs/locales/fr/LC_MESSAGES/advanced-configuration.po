@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-10 08:21+0000\n"
-"PO-Revision-Date: 2025-10-10 18:37+0000\n"
-"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/doc-advanced-configuration/fr/>\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../advanced-configuration/application-settings.rst:5
 msgid "Application settings"
-msgstr ""
+msgstr "Réglages de l'application"
 
 #: ../../advanced-configuration/application-settings.rst:7
 #: ../../advanced-configuration/attachments.rst:37
@@ -33,7 +33,7 @@ msgstr ""
 #: ../../advanced-configuration/modules-and-components.rst:7
 #: ../../advanced-configuration/settings-for-geotrek-mobile.rst:7
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: ../../advanced-configuration/application-settings.rst:9
 #: ../../advanced-configuration/attachments.rst:39
@@ -50,19 +50,19 @@ msgstr ""
 
 #: ../../advanced-configuration/application-settings.rst:14
 msgid "Email settings"
-msgstr ""
+msgstr "Réglages de courriel"
 
 #: ../../advanced-configuration/application-settings.rst:16
 msgid "Geotrek-admin will send emails:"
-msgstr ""
+msgstr "Geotrek-admin enverra des courriels :"
 
 #: ../../advanced-configuration/application-settings.rst:18
 msgid "to administrators when internal errors occur"
-msgstr ""
+msgstr "aux administrateurs lorsque des erreurs internes se produisent"
 
 #: ../../advanced-configuration/application-settings.rst:19
 msgid "to managers when a feedback report is created"
-msgstr ""
+msgstr "aux managers lorsque qu'un rapport de signalement est créé"
 
 #: ../../advanced-configuration/application-settings.rst:21
 msgid ""
@@ -70,6 +70,9 @@ msgid ""
 "admin/var/conf/custom.py``, where you control recipients emails "
 "(``ADMINS``, ``MANAGERS``) and email server configuration."
 msgstr ""
+"La configuration des courriels se fait dans ``/opt/geotrek-admin/var/conf/"
+"custom.py``, où vous pouvez specifier la liste des destinataires (``ADMINS``"
+", ``MANAGERS``) et la configuration du serveur d'envoi."
 
 #: ../../advanced-configuration/application-settings.rst
 #: ../../advanced-configuration/attachments.rst
@@ -159,7 +162,7 @@ msgstr ""
 #: ../../advanced-configuration/settings-for-geotrek-mobile.rst:150
 #: ../../advanced-configuration/settings-for-geotrek-mobile.rst:186
 msgid "Note"
-msgstr ""
+msgstr "Note"
 
 #: ../../advanced-configuration/application-settings.rst:111
 msgid ""
@@ -2413,7 +2416,7 @@ msgstr ""
 
 #: ../../advanced-configuration/modules-and-components.rst:576
 msgid "Report"
-msgstr ""
+msgstr "Signalement"
 
 #: ../../advanced-configuration/modules-and-components.rst:579
 msgid "Report intersection margin"
