@@ -13,6 +13,9 @@ CHANGELOG
 
 * Length are now computed with Earth spheroïd. We can now support using SRID 3857 (Pseudo mercator) to cover - almost - all Earth surface.
 
+**Bug fixes**
+
+* Fix trek's ``ambiance`` translated fields not being emptied by ApidaeTrekParser when the source data does not contain corresponding translations
 
 2.120.0         (2025-10-22)
 ----------------------------
