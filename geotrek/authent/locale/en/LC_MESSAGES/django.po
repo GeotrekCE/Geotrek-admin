@@ -21,9 +21,7 @@ msgstr ""
 msgid "Authent"
 msgstr ""
 
-msgid ""
-"Access to the requested resource is restricted by structure. You have been "
-"redirected."
+msgid "Access to the requested resource is restricted by structure. You have been redirected."
 msgstr ""
 
 msgid "algorithm"

@@ -8,10 +8,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 08:46+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: German <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/tourism/de/>\n"
+"Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,9 +49,7 @@ msgstr "tt/mm/jjjj"
 msgid "HH:MM"
 msgstr "ZZ:MM"
 
-msgid ""
-"Please add a participant category in admin interface in order to complete "
-"the number of participants."
+msgid "Please add a participant category in admin interface in order to complete the number of participants."
 msgstr ""
 
 msgid "Start time is unset"
@@ -377,19 +374,14 @@ msgstr "Veröffentlichte touristische Veranstaltungen"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
-"es hinzu"
+msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
-"es hinzu"
+msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
 
 #, python-format
-msgid ""
-"Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
+msgid "Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
 msgstr ""
 
 #, python-format
