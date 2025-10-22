@@ -30,6 +30,7 @@ CHANGELOG
 * Add a ``--flush`` option to the ``generate_pgr_network_topology`` command to reset the graph before regenerating it
 * Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM.
 * Allow manager to self assign a report (refs #4627)
+* Allow report reassignment (refs #4624)
 
 **Bug fixes**
 
