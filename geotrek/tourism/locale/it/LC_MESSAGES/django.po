@@ -8,10 +8,9 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 08:45+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Italian <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/tourism/it/>\n"
+"Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -376,15 +375,11 @@ msgstr "Pubblicato eventi turistici"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
-"aggiungerlo"
+msgstr "Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
-"aggiungerlo"
+msgstr "Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
 
 #, python-format
 msgid ""
