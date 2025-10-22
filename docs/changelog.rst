@@ -5,6 +5,10 @@ CHANGELOG
 2.120.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Length are now computed with Earth spheroïd. We can now support using SRID 3857 (Pseudo mercator) to cover - almost - all Earth surface.
+
 
 2.120.0         (2025-10-22)
 ----------------------------

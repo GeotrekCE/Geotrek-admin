@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests.factories import SuperUserFactory
 
+from geotrek.common.tests.utils import LineStringInBounds, PointInBounds
 from geotrek.core.models import PathAggregation, Topology
 from geotrek.core.tests.factories import (
     PathAggregationFactory,
@@ -184,23 +185,27 @@ class MergePathTest(TestCase):
 
         In case of AB == CD, matching B and C
         """
-        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
-        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
+        path_AB = PathFactory.create(
+            name="PATH_AB", geom=LineStringInBounds((0, 1), (10, 1))
+        )
+        path_CD = PathFactory.create(
+            name="PATH_CD", geom=LineStringInBounds((10, 1), (20, 1))
+        )
 
-        e1 = TopologyFactory.create(geom=Point(2, 2))
+        e1 = TopologyFactory.create(geom=PointInBounds(2, 2))
         a1 = PathAggregationFactory.create(path=path_AB, topo_object=e1)
 
-        e2 = TopologyFactory.create(geom=Point(6, 1))
+        e2 = TopologyFactory.create(geom=PointInBounds(6, 1))
         a2 = PathAggregationFactory.create(path=path_AB, topo_object=e2)
 
         e3 = TopologyFactory.create(
-            geom=LineString(
+            geom=LineStringInBounds(
                 (2, 1),
                 (3, 1),
             )
         )
         a3 = PathAggregationFactory.create(path=path_CD, topo_object=e3)
-        e4 = TopologyFactory.create(geom=Point(8, 2))
+        e4 = TopologyFactory.create(geom=PointInBounds(8, 2))
         a4 = PathAggregationFactory.create(path=path_CD, topo_object=e4)
 
         path_AB_original_length = path_AB.length
@@ -208,7 +213,8 @@ class MergePathTest(TestCase):
         path_AB.merge_path(path_CD)
 
         self.assertEqual(
-            path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID)
+            path_AB.geom,
+            LineStringInBounds((0, 1), (10, 1), (20, 1), srid=settings.SRID),
         )
 
         # reload updated objects
@@ -217,12 +223,12 @@ class MergePathTest(TestCase):
         a3_updated = PathAggregation.objects.get(pk=a3.pk)
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
-        # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
+        # test pk recompute on path_1: new pk = old pk * old_path_1_length / new_path_1_length
         self.assertEqual(
             a1_updated.start_position,
             a1.start_position * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
         )
@@ -231,32 +237,37 @@ class MergePathTest(TestCase):
             a2_updated.start_position,
             a2.start_position * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
+            places=2,
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.start_position,
             a3.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=2,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.end_position,
             a3.end_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=2,
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.start_position,
             a4.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=2,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.end_position,
             a4.end_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=2,
         )
 
     def test_path_aggregation(self):
@@ -325,42 +336,43 @@ class MergePathTest(TestCase):
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
         # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.start_position,
             (1 - a1.start_position) * (path_AB_original_length / path_AB.length),
+            places=2,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.end_position,
             (1 - a1.end_position) * (path_AB_original_length / path_AB.length),
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.start_position,
             (1 - a2.start_position) * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.end_position,
             (1 - a1.end_position) * (path_AB_original_length / path_AB.length),
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.start_position,
             a3.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.end_position,
             a3.end_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.start_position,
             a4.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.end_position,
             a4.end_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
@@ -413,42 +425,42 @@ class MergePathTest(TestCase):
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
         # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.start_position,
             a1.start_position * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.start_position,
             a2.start_position * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.start_position,
             (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.end_position,
             (1 - a3.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.start_position,
             (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.end_position,
             (1 - a4.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
@@ -501,42 +513,43 @@ class MergePathTest(TestCase):
         a4_updated = PathAggregation.objects.get(pk=a4.pk)
 
         # test pk recompute on path_1 : new pk = old pk * old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.start_position,
             (1 - a1.start_position) * (path_AB_original_length / path_AB.length),
+            places=2,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a1_updated.end_position,
             (1 - a1.end_position) * (path_AB_original_length / path_AB.length),
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.start_position,
             (1 - a2.start_position) * (path_AB_original_length / path_AB.length),
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a2_updated.end_position,
             (1 - a1.end_position) * (path_AB_original_length / path_AB.length),
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.start_position,
             (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a3_updated.end_position,
             (1 - a3.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
 
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.start_position,
             (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
         )
-        self.assertEqual(
+        self.assertAlmostEqual(
             a4_updated.end_position,
             (1 - a4.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,

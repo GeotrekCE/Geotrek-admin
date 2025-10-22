@@ -353,10 +353,6 @@ class Site(
         """Distance to associate this site to another class"""
         return settings.OUTDOOR_INTERSECTION_MARGIN
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new outdoor site")
-
     @property
     def published_children(self):
         if not settings.PUBLISHED_BY_LANG:
@@ -637,10 +633,6 @@ class Course(
     def distance(self, to_cls):
         """Distance to associate this course to another class"""
         return settings.OUTDOOR_INTERSECTION_MARGIN
-
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new outdoor course")
 
     @property
     def duration_pretty(self):

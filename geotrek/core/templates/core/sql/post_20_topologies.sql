@@ -136,7 +136,7 @@ BEGIN
         SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
         UPDATE core_topology SET geom = ST_Force2D(egeom),
                                  geom_3d = ST_Force3DZ(elevation.draped),
-                                 "length" = ST_3DLength(elevation.draped),
+                                 "length" = ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'),
                                  slope = elevation.slope,
                                  min_elevation = elevation.min_elevation,
                                  max_elevation = elevation.max_elevation,
@@ -187,7 +187,7 @@ BEGIN
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
-    NEW."length" := ST_3DLength(elevation.draped);
+    NEW."length" := ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]');
     NEW.slope := elevation.slope;
     NEW.min_elevation := elevation.min_elevation;
     NEW.max_elevation := elevation.max_elevation;

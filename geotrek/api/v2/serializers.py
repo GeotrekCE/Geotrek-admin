@@ -22,7 +22,6 @@ from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.api.v2.filters import get_published_filter_expression
-from geotrek.api.v2.functions import Length3D
 from geotrek.api.v2.mixins import (
     PDFSerializerMixin,
     PublishedRelatedObjectsSerializerMixin,
@@ -788,7 +787,7 @@ if "geotrek.core" in settings.INSTALLED_APPS:
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         def get_length_3d(self, obj):
-            return round(obj.length_3d_m, 1)
+            return round(obj.length, 1)
 
         class Meta:
             model = core_models.Path
@@ -936,7 +935,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             )
 
         def get_length_3d(self, obj):
-            return round(obj.length_3d_m, 1)
+            return round(obj.length, 1)
 
         def get_gpx_url(self, obj):
             return build_url(
@@ -1132,7 +1131,6 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 )
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
-                    length_3d_m=Length3D("geom_3d"),
                 )
             )
             FinalClass = override_serializer(

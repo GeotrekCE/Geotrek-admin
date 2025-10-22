@@ -12,8 +12,6 @@ ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
 
-ALLOWED_HOSTS = ['localhost']
-
 INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
@@ -43,7 +41,7 @@ CACHES['api_v2'] = {
 }
 
 
-class DisableMigrations():
+class DisableMigrations:
     def __contains__(self, item):
         return True
 
