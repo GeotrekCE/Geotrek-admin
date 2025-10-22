@@ -68,7 +68,7 @@ services:
     networks:
       default:
         aliases:
-          - ${SERVER_NAME}
+          - ${SERVER_NAME:-geotrek.local}
 
 volumes:
   postgres:
