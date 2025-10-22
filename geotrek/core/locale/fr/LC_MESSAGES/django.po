@@ -168,9 +168,6 @@ msgstr "Sentiers"
 msgid "None"
 msgstr "Aucun(e)"
 
-msgid "Add a new path"
-msgstr "Ajouter un tronçon"
-
 msgid "Treks"
 msgstr "Itinéraires"
 
