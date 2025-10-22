@@ -64,7 +64,7 @@ jobs:
 
       - name: Check translations
         run: |
-          ./manage.py makemessages -a --no-location --no-obsolete --no-wrapper --ignore var/cache -v 3
+          ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache -v 3
           cat geotrek/altimetry/locale/en/LC_MESSAGES/django.po
 
       - uses: tj-actions/verify-changed-files@v20
