@@ -1345,7 +1345,7 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(Attachment.objects.count(), 0)
 
     @mock.patch("requests.get")
-    def test_trek_import_multiple_time(self, mocked_get):
+    def test_trek_import_multiple_times_description_is_updated(self, mocked_get):
         RouteFactory(route="Boucle")
         mocked_get.side_effect = self.make_dummy_get("a_trek.json")
 
@@ -1383,6 +1383,62 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(trek.description_fr, "FOOBAR")
         self.assertEqual(old_description_en, trek.description_en)
         self.assertEqual(old_description, trek.description)
+
+    @mock.patch("requests.get")
+    def test_trek_import_multiple_times_ambiance_is_not_empty_then_updated(self, mocked_get):
+        """
+        A trek is imported once. Its fields ambiance_fr and ambiance_en both have
+        a value. When importing the trek again with new source data, ambiance_fr
+        should have another value, and ambiance_en should be empty.
+        """
+        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_and_en_not_empty.json")
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.ambiance_fr, "abc")
+        self.assertEqual(trek.ambiance_en, "123")
+        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json")
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.ambiance_fr, "cba")
+        self.assertEqual(trek.ambiance_en, "")
+
+    @mock.patch("requests.get")
+    def test_trek_import_multiple_times_ambiance_is_empty_then_updated(self, mocked_get):
+        """
+        A trek is imported once. Its fields ambiance_fr and ambiance_en are both
+        empty. When importing the trek again with new source data, ambiance_fr
+        should now have a value, and ambiance_en should still be empty.
+        """
+        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_and_en_both_empty.json")
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.ambiance_fr, "")
+        self.assertEqual(trek.ambiance_en, "")
+        mocked_get.side_effect = self.make_dummy_get("simple_trek_ambiance_fr_not_empty_ambiance_en_empty.json")
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 1)
+        trek = Trek.objects.all().first()
+        self.assertEqual(trek.ambiance_fr, "cba")
+        self.assertEqual(trek.ambiance_en, "")
 
     @mock.patch("requests.get")
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
