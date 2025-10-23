@@ -1,22 +1,22 @@
 .. command-load-import:
 
 ======================
-Command load
+The Load commands
 ======================
 
 You can use some of Geotrek commands to import data from a vector or a raster file handled by `GDAL <https://gdal.org/drivers/vector/index.html>`_ (e.g.: ESRI Shapefile, GeoJSON, GeoPackage, GeoTIFF, etc.)
 
 Possible data are : DEM, paths, cities, districts, restricted areas, POIs, infrastructures, signages.
 
-You must use these commands to import spatial data because of the :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, which will not be computed if you enter the data manually. 
+You must use these commands to import spatial data because of the :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, which will not be computed if you enter the data manually.
 
 Here are the Geotrek commands available to import data from file:
 
 - ``loaddem``
 - ``loadpaths``
-- ``loadcities`` 
-- ``loaddistricts`` 
-- ``loadrestrictedareas`` 
+- ``loadcities``
+- ``loaddistricts``
+- ``loadrestrictedareas``
 - ``loadpoi``
 - ``loadinfrastructure``
 - ``loadsignage``
@@ -35,7 +35,7 @@ To get help about a command:
 DEM
 ====
 
-Load DEM 
+Load DEM
 ----------
 
 .. example:: sudo geotrek help loaddem
@@ -43,7 +43,7 @@ Load DEM
 
     ::
 
-      usage: manage.py loaddem [-h] [--replace] 
+      usage: manage.py loaddem [-h] [--replace]
       					 [--update-altimetry]
       					 [--version]
                          [-v {0,1,2,3}] [--settings SETTINGS]
@@ -89,23 +89,39 @@ Load DEM
 		    sudo geotrek loaddem \
 		    ./var/dem.tif \
 		    --replace \
-		    --update-altimetry 
+		    --update-altimetry
 
     .. md-tab-item:: Example with Docker
 
          .. code-block:: bash
-    
+
 		    docker compose run --rm web ./manage.py loaddem \
 		    ./var/dem.tif \
 		    --replace \
-		    --update-altimetry 
+		    --update-altimetry
+
+.. _docker-container-path:
+
+.. IMPORTANT::
+   When running a command via Docker, all file paths must refer to locations **inside the container**, not on the host machine. The ``var`` folder is mounted as a volume in the container, with the following mapping:
+   ``/path-on-host/var`` → ``/opt/geotrek-admin/var``.
+
+   So you just need to place the file in the ``var`` directory on the host, and it will be accessible from inside the container at the expected path.
+
+   👉 In short:
+   Docker commands in Geotrek use **container paths**.
+   The `var` folder is shared between the host and the container, so any file placed in `var` can be accessed using either ``./var/...`` or ``/opt/geotrek-admin/var/...`` **inside the container**.
+
+   Example : ``./var/dem.tif`` or ``/opt/geotrek-admin/var/dem.tif``
+
+.. _import-paths:
 
 Paths
 =======
 
 .. ns-only::
 
-    .. 
+    ..
 
 Load Paths
 -----------
@@ -168,11 +184,11 @@ Load Paths
     * **Geometric type** : Linestring
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * When importing a Geopackage, the first layer is always used
-       * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
+       * The ``--structure`` option requires an explicit value and cannot retrieve it from a field in the file.
 
 **Import command examples :**
 
@@ -198,7 +214,7 @@ Load Paths
 	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
 
         .. code-block:: bash
-    
+
           docker compose run --rm web ./manage.py loadpaths \
           ./var/paths.geojson \
           --srid=2154 \
@@ -274,7 +290,7 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`cities.geojson <../files/import/cities.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported cities are unpublished by default
@@ -304,7 +320,7 @@ Refer to :ref:`this section <cities-source-list>` to learn about the available d
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loadcities \
           ./var/cities.geojson \
           --intersect \
@@ -391,7 +407,7 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`districts.geojson <../files/import/districts.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported districts are unpublished by default
@@ -420,7 +436,7 @@ Refer to :ref:`this section <districts-source-list>` to learn about the availabl
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loaddistricts \
           ./var/districts.geojson \
           --intersect \
@@ -499,7 +515,7 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
     * **Geometric type** : Polygon
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`restrictedareas.geojson <../files/import/restrictedareas.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported restricted areas are unpublished by default
@@ -530,7 +546,7 @@ Refer to :ref:`this section <restrictedareas-source-list>` to learn about the av
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loadrestrictedareas \
           ./var/restrictedareas.geojson \
           --intersect \
@@ -553,7 +569,7 @@ Load POI
 
 .. ns-detail::
 
-    .. 
+    ..
 
 .. example:: sudo geotrek help loadpoi
     :collapsible:
@@ -617,7 +633,7 @@ Load POI
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`poi.geojson <../files/import/poi.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The SRID must be 4326
        * The default encoding is UTF-8
        * Imported POIs are unpublished by default
@@ -625,8 +641,8 @@ Load POI
 
 **Default values**
 
-- When a default value is provided without a fieldname to import the default value is set for all POIs objects.
-- When a default value is provided in addition to a fieldname to import it is used as a fallback for entries without the specified import field.
+- When a default value is provided without a fieldname to import, the default value is set for all POIs objects.
+- When a default value is provided in addition to a fieldname to import, it is used as a fallback for entries without the specified import field.
 
 **Import command examples :**
 
@@ -642,7 +658,7 @@ Load POI
           --encoding latin1 \
           --name-field name --name-default "Point d'intérêt" \
           --type-field type --type-default "Faune" \
-          --description-field description 
+          --description-field description
 
 
     .. md-tab-item:: Example with Docker
@@ -652,13 +668,13 @@ Load POI
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loadpoi \
           ./var/poi.geojson \
           --encoding latin1 \
           --name-field name --name-default "Point d'intérêt" \
           --type-field type --type-default "Faune" \
-          --description-field description 
+          --description-field description
 
 .. _import-infrastructure:
 
@@ -670,7 +686,7 @@ Load Infrastructure
 
 .. ns-detail::
 
-    .. 
+    ..
 
 .. example:: sudo geotrek help loadinfrastructure
     :collapsible:
@@ -781,30 +797,30 @@ Load Infrastructure
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`infrastructure.geojson <../files/import/infrastructure.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The SRID must be 4326
        * The default encoding is UTF-8
        * Imported infrastructures are unpublished by default
        * When importing a Geopackage, the first layer is always used
-       * The command will select or create InfrastructureType values based on the `type-field` argument, taking the default value "A" for the category
+       * The command will select or create ``InfrastructureType`` values based on the ``type-field`` argument, taking the default value "A" for the category
 
 **Required fields**
 
-The following fields are mandatory to create an Infrastructure object: `name`, `type` and `category`. For each of those fields either an import field and/or a default value MUST be provided. If the command is unable to determine values for those fields for a given layer, the layer is skipped with an error message.
+The following fields are mandatory to create an Infrastructure object: ``name``, ``type`` and ``category``. For each of those fields either an import field and/or a default value MUST be provided. If the command is unable to determine values for those fields for a given layer, the layer is skipped with an error message.
 
 **Default values**
 
-- When a default value is provided without a fieldname to import the default value is set for all Infrastructure objects.
-- When a default value is provided in addition to a fieldname to import it is used as a fallback for entries without the specified import field.
+- When a default value is provided without a fieldname to import, the default value is set for all Infrastructure objects.
+- When a default value is provided in addition to a fieldname to import, it is used as a fallback for entries without the specified import field.
 
 **Selection and addition of parameterized values**
 
-Infrastructure objects have several values from Geotrek's parameterized values sets :
+Infrastructure objects have several values from Geotrek's parameterized value sets:
 
-- `type` from InfrastructureType values (and `category` which is implied by the `type` value),
-- `condition` from InfrastructureCondition values.
+- ``type`` from ``InfrastructureType`` values (and ``category`` which is implied by the ``type`` value),
+- ``condition`` from ``InfrastructureCondition`` values.
 
-New parameterized values are created and added to Geotrek Admin if necessary. The command checks if the imported `type` value already exists by looking for an InfrastructureType with the right `type` + `category`.
+New parameterized values are created and added to Geotrek-admin if necessary. The command checks if the imported ``type`` value already exists by looking for an ``InfrastructureType`` with the right ``type`` + ``category``.
 
 - ``A`` category value stands for Building
 - ``E`` category value stands for Equipment
@@ -821,10 +837,10 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
     .. md-tab-item:: Example with Docker
 
          .. code-block:: bash
-    
+
           docker compose run --rm web ./manage.py loadinfrastructure --type-field "type"  --category-field "cat" [...]
 
-**Import command examples :**
+**Import command examples:**
 
 .. md-tab-set::
     :name: infrastructures-import-command-tabs
@@ -852,7 +868,7 @@ New parameterized values are created and added to Geotrek Admin if necessary. Th
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loadinfrastructure \
           ./var/infrastructure.geojson \
           --encoding latin1 \
@@ -875,8 +891,8 @@ Load Signage
 
 .. ns-detail::
 
-    .. 
-      
+    ..
+
 .. example:: sudo geotrek help loadsignage
     :collapsible:
 
@@ -989,7 +1005,7 @@ Load Signage
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`signage.geojson <../files/import/signage.geojson>`
-    * **Good to know** : 
+    * **Good to know** :
        * The default SRID code is 4326
        * The default encoding is UTF-8
        * Imported signage are unpublished by default
@@ -997,10 +1013,10 @@ Load Signage
 
 **Default values**
 
-- When a default value is provided without a fieldname to import the default value is set for all Signage objects.
-- When a default value is provided in addition to a fieldname to import it is used as a fallback for entries without the specified import field.
+- When a default value is provided without a fieldname to import, the default value is set for all Signage objects.
+- When a default value is provided in addition to a fieldname to import, it is used as a fallback for entries without the specified import field.
 
-**Import command examples :**
+**Import command examples:**
 
 .. md-tab-set::
     :name: signage-import-command-tabs
@@ -1030,7 +1046,7 @@ Load Signage
 
         .. code-block:: bash
 
-    
+
           docker compose run --rm web ./manage.py loadsignage \
           ./var/signage.geojson \
           --encoding latin1 \
@@ -1047,5 +1063,5 @@ Load Signage
 
 .. important::
 
-    Blades are not yet supported, therefore this command only imports signages in the database. 
+    Blades are not yet supported, therefore this command only imports signages in the database.
 

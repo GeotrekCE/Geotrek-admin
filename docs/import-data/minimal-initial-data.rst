@@ -60,84 +60,10 @@ And use the Geotrek-admin command to load it into PostGIS :
     - If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
     - If you want to  update the altimetry of the topologies you need to use the option ``--update-altimery``
 
-.. _import-dem-altimetry:
-
 Load DEM
----------
+----------
 
-.. example:: sudo geotrek help loaddem
-    :collapsible:
-
-    ::
-
-      usage: manage.py loaddem [-h] [--replace]
-      					 [--update-altimetry]
-      					 [--version]
-                         [-v {0,1,2,3}] [--settings SETTINGS]
-                         [--pythonpath PYTHONPATH] [--traceback] [--no-color]
-                         [--force-color] [--skip-checks]
-                         dem_path
-
-	  Load DEM data (projecting and clipping it if necessary). You may need to create a GDAL Virtual Raster if your DEM is composed of several files.
-
-	  positional arguments:
-	      dem_path
-
-	  optional arguments:
-	  -h, --help            show this help message and exit
-	  --replace             Replace existing DEM if any.
-	  --update-altimetry    Update altimetry of all 3D geometries, /!\ This option
-		                        takes lot of time to perform
-	  --version             Show program's version number and exit.
-	  -v {0,1,2,3}, --verbosity {0,1,2,3}
-		                        Verbosity level; 0=minimal output, 1=normal output,
-		                        2=verbose output, 3=very verbose output
-	  --settings SETTINGS   The Python path to a settings module, e.g.
-		                        "myproject.settings.main". If this isn't provided, the
-		                        DJANGO_SETTINGS_MODULE environment variable will be
-		                        used.
-	  --pythonpath PYTHONPATH
-		                        A directory to add to the Python path, e.g.
-		                        "/home/djangoprojects/myproject".
-	  --traceback           Raise on CommandError exceptions.
-	  --no-color            Don't colorize the command output.
-	  --force-color         Force colorization of the command output.
-	  --skip-checks         Skip system checks.
-
-**Import command examples :**
-
-.. md-tab-set::
-    :name: dem-import-command-tabs
-
-    .. md-tab-item:: Example with Debian
-
-         .. code-block:: bash
-
-		    sudo geotrek loaddem \
-		    ./var/dem.tif \
-		    --update-altimetry
-
-    .. md-tab-item:: Example with Docker
-
-         .. code-block:: bash
-
-		    docker compose run --rm web ./manage.py loaddem \
-		    ./var/dem.tif \
-		    --update-altimetry
-
-.. _docker-container-path:
-
-.. IMPORTANT::
-   When running a command via Docker, all file paths must refer to locations **inside the container**, not on the host machine. The ``var`` folder is mounted as a volume in the container, with the following mapping:
-   ``/path-on-host/var`` → ``/opt/geotrek-admin/var``.
-
-   So you just need to place the file in the ``var`` directory on the host, and it will be accessible from inside the container at the expected path.
-
-   👉 In short:
-   Docker commands in Geotrek use **container paths**.
-   The `var` folder is shared between the host and the container, so any file placed in `var` can be accessed using either ``./var/...`` or ``/opt/geotrek-admin/var/...`` **inside the container**.
-
-   Example : ``./var/dem.tif`` or ``/opt/geotrek-admin/var/dem.tif``
+Refer to :ref:`this section <import-dem-altimetry>` to learn how to load DEM with the ``loaddem`` command.
 
 Paths
 =======
@@ -160,7 +86,7 @@ Requirements
 
     Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.
 
-Before import paths layer, it is important to prepare them. Paths must be:
+Before importing paths layer, it is important to prepare them. Paths must be:
 
 - valid geometry
 - simple geometry (no intersection)
@@ -176,12 +102,12 @@ Here are the operations:
 1. Check the SRID (must be the same as in Geotrek)
 
 2. Use the **Geometric tools**:
-   
+
    1. Go to `Vectors → Geometric tools → "Collect geometries"`.
    2. Then go to `Vectors → Geometric tools → "Group"`.
 
 3. Clean geometries:
-   
+
    1. Search for `v_clean` in the *Processing toolbox*.
    2. Select the following options in the cleaning tool:
       - `break`
@@ -195,149 +121,38 @@ Here are the operations:
    3. In **threshold**, enter `2,2,2,2,2,2,2,2` (2 meters for each option).
 
 4. Delete duplicate geometries:
-   
+
    1. Search for `duplicate` in the *Processing toolbox*.
 
 5. Regroup lines:
-   
+
    1. Search for `v.build.polyline` in the *Processing toolbox*.
    2. Select `first` in *Category number mode*.
 
-There are two ways to import path : importing your shapefile with command line,
+Import your cleaned paths
+-------------------------
+
+There are two ways to import paths: importing your shapefile with command line,
 or `via QGis following this blog post <https://makina-corpus.com/sig-webmapping/importer-une-couche-de-troncons-dans-geotrek>`_.
 
-**To import a shapefile containing your paths, use the command** ``loadpaths``
+**To import a shapefile containing your paths, use the command** ``loadpaths``. Refer to :ref:`this section <import-paths>` to learn how to use it.
 
-Load paths
------------
-
-.. example:: sudo geotrek help loadpaths
-    :collapsible:
-
-    ::
-
-      usage: manage.py loadpaths [-h] [--structure STRUCTURE]
-                             [--name-attribute NAME]
-                             [--comments-attribute [COMMENT [COMMENT ...]]]
-                             [--encoding ENCODING] [--srid SRID] [--intersect]
-                             [--fail] [--dry] [--version] [-v {0,1,2,3}]
-                             [--settings SETTINGS] [--pythonpath PYTHONPATH]
-                             [--traceback] [--no-color] [--force-color]
-                             [--skip-checks]
-                             file_path
-
-      Load a layer with point geometries in a model
-
-      positional arguments:
-        point_layer
-
-      optional arguments:
-      -h, --help            show this help message and exit
-      --structure STRUCTURE
-                            Define the structure
-      --name-attribute NAME, -n NAME
-                            Name of the name's attribute inside the file
-      --comments-attribute [COMMENT [COMMENT ...]], -c [COMMENT [COMMENT ...]]
-      --encoding ENCODING, -e ENCODING
-                            File encoding, default utf-8
-      --srid SRID, -s SRID  File's SRID
-      --intersect, -i       Check paths intersect spatial extent and not only
-                            within
-      --fail, -f            Allows to grant fails
-      --dry, -d             Do not change the database, dry run. Show the number
-                            of fail and objects potentially created
-      --version             Show program's version number and exit.
-      -v {0,1,2,3}, --verbosity {0,1,2,3}
-                            Verbosity level; 0=minimal output, 1=normal output,
-                            2=verbose output, 3=very verbose output
-      --settings SETTINGS   The Python path to a settings module, e.g.
-                            "myproject.settings.main". If this isn't provided, the
-                            DJANGO_SETTINGS_MODULE environment variable will be
-                            used.
-      --pythonpath PYTHONPATH
-                            A directory to add to the Python path, e.g.
-                            "/home/djangoprojects/myproject".
-      --traceback           Raise on CommandError exceptions.
-      --no-color            Don't colorize the command output.
-      --force-color         Force colorization of the command output.
-      --skip-checks         Skip system checks.
-
-.. note::
-
-    * **Optional fields** : Name, Comment, SRID, Encoding
-    * **Required fields** : Structure
-    * **Geometric type** : Linestring
-    * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
-    * **Template** : :download:`paths.geojson <../files/import/paths.geojson>`
-    * **Good to know** :
-       * The default SRID code is 4326
-       * The default encoding is UTF-8
-       * When importing a Geopackage, the first layer is always used
-       * The `--structure` requires an existing value and cannot retrieve it from a field in the file.
-
-**Import command examples :**
-
-.. md-tab-set::
-    :name: path-import-command-tabs
-
-    .. md-tab-item:: Example with Debian
-
-         .. code-block:: bash
-
-          sudo geotrek loadpaths \
-          ./var/paths.geojson \
-          --srid=2154 \
-          --encoding latin1 \
-          --structure "DEMO" \
-          --name-attribute id \
-          --comments-attribute commentaire
-
-
-    .. md-tab-item:: Example with Docker
-
-        .. seealso::
-	      Refer to :ref:`this section <docker-container-path>` to learn more about container path in Docker commands
-
-        .. code-block:: bash
-
-          docker compose run --rm web ./manage.py loadpaths \
-          ./var/paths.geojson \
-          --srid=2154 \
-          --encoding latin1 \
-          --structure "DEMO" \
-          --name-attribute id \
-          --comments-attribute commentaire
-
-
-.. note::
-
-  After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing.
-
-  This action is not mandatory, but will reduce the time needed for the first routing following the import.
-
-  To pre-generate the graph, use the ``generate_pgr_network_topology`` command:
-
-  .. md-tab-set::
-      :name: path-import-command-regenerate-topologytabs
-
-      .. md-tab-item:: Example with Debian
-
-          .. code-block:: bash
-
-            sudo geotrek generate_pgr_network_topology
-
-      .. md-tab-item:: Example with Docker
-
-          .. code-block:: bash
-
-            docker compose run --rm web ./manage.py generate_pgr_network_topology
-
-Get OpenStreetMap paths
-------------------------
+Import paths from OpenStreetMap
+-------------------------------
 
 You can use the ``osm-paths`` tool to download OSM paths data via the overpass API. This tool converts paths into linestrings and exports them to GeoJSON.
 
 For more information, refer to the `osm-paths documentation <https://github.com/makinacorpus/osm-paths>`_
+
+Pre-generate the path graph
+---------------------------
+
+After importing a large quantity of paths, it is recommended to pre-generate the paths graph needed for the routing.
+
+This action is not mandatory, but will reduce the time needed for the first routing following the import.
+
+To pre-generate the graph, use the ``generate_pgr_network_topology`` command. Refer to :ref:`this section <generate-pgrouting-network-topology>` to learn about this command.
+
 
 Areas
 =======

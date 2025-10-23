@@ -21,21 +21,37 @@ Parsers can be used in two ways:
 * **Through the web interface**, using the *Imports* section in the admin panel.
 * **Via the command line**, using a dedicated ``import`` command.
 
-Import options
-===============
+Parser import methods
+=====================
 
 Web interface
 -------------
 
+Access Geotrek-admin's import interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open the top-right menu and click on "Imports".
+
+.. figure:: ../images/import-data/access-import-interface.png
+   :alt: Accéder à l'interface d'import de Geotrek-admin
+   :align: center
+
+
+.. _start-import-from-geotrek-admin-ui:
+
+Start an import from Geotrek-admin's import interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The import interface in Geotrek-admin is divided into two sections:
 
-- Import from a local file : allows loading data from a shapefile.
+- Import from a local file: allows loading data from a shapefile.
 
-- Import from an online source : allows retrieving data via a feed (URL from a Tourism Information System).
+- Import from an online source: allows retrieving data via a feed (URL from a Tourism Information System).
 
 .. figure:: ../images/import-data/import-data-ui.png
   :alt: Import data UI
   :align: center
+
 
 During the import process, a progress bar is displayed to indicate the current status. Once the import is complete, a summary report appears at the bottom of the screen.
 
@@ -44,7 +60,9 @@ It provides details on :
 - the number of lines imported
 - the number of records updated
 - the number of records deleted
-- the number of records unchanged
+- the number of records left unchanged
+
+If any warnings or errors occur during the import, they are listed at the bottom of the report. Each entry specifies the line where the issue occurred and includes the corresponding message.
 
 .. figure:: ../images/import-data/import-sit1.png
   :alt: Progress bar during feed import
@@ -54,24 +72,13 @@ It provides details on :
   :alt: Completed progress bar and import summary
   :align: center
 
-.. _start-import-from-geotrek-admin-ui:
-
-Start import from Geotrek-admin UI
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Open the top right menu and clic on ``imports``.
-
-.. figure:: ../images/import-data/import-ui.png
-   :alt: Interface d'import de Geotrek-admin
-   :align: center
-
 Command line
 --------------
 
 .. _start-import-from-command-line:
 
-Start import from command line
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Start an import from the command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Just run:
 
@@ -82,31 +89,40 @@ Just run:
 
          .. code-block:: python
 
-          sudo geotrek import HebergementParser
+          sudo geotrek import <Parser>
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
 
-          docker compose run --rm web ./manage.py import  HebergementParser
+          docker compose run --rm web ./manage.py import <Parser>
 
-Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
-You can add ``-v2`` parameter to make the command more verbose (show progress).
-Thank to ``cron`` utility you can configure automatic imports.
+The ``Parser`` argument corresponds to:
+  - for custom parsers, the class name of the parser (e.g. ``PicNicTableParser``), which you can find in your ``var/conf/parsers.py`` file ;
+  - for default parsers, the fully qualified name of the parser class (e.g. ``geotrek.sensitivity.parsers.BiodivParser``). You can find the default parser classes in the ``parsers.py`` file of each Geotrek-admin app's source code directory.
 
-Cron jobs
-~~~~~~~~~~~
+Display logs when importing from the command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to schedule automated tasks to trigger parser imports at a defined frequency.
+You can use the ``-v2`` parameter to make the command more verbose: the logs will display the progress of the import, showing for each entry its number, the ID of the object being imported, and the completion percentage.
+
+Once the import is complete, a report is displayed, showing:
+  - the number of lines imported
+  - the number of records updated
+  - the number of records deleted
+  - the number of records left unchanged
+
+If any warnings or errors occur during the import, they are listed at the bottom of the report. Each entry specifies the line where the issue occurred and includes the corresponding message.
+
+Automate imports
+~~~~~~~~~~~~~~~~
+
+You can configure automatic imports at a defined frequency by scheduling tasks with the ``cron`` utility.
 
 .. seealso::
 
   For more information on configuring scheduled tasks (cron jobs), refer to :ref:`this section <automatic-commands>`.
 
-Logs and warnings
-~~~~~~~~~~~~~~~~~~
-
-**(To complete)**
 
 Types of parsers
 =================
@@ -294,7 +310,7 @@ From the command line
 
 **Default import options:**
 
-- **Cities**, **Species sensitive areas**, and **Regulatory sensitive areas**: imported from Shapefile files.  
+- **Cities**, **Species sensitive areas**, and **Regulatory sensitive areas**: imported from Shapefile files.
 
 - **Biodiv’Sport**: imported via data feed.
 
@@ -304,25 +320,47 @@ From the command line
 Custom parsers
 ---------------
 
-Adapt or create a parser class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Introduction
+~~~~~~~~~~~~
 
-You can add parsers in your custom ``parsers.py`` file (``/opt/geotrek-admin/var/conf/parsers.py``) which will allow you to import data from files directly in your admin (superusers only).
+You can add custom parsers to your Geotrek-admin instance. However, in most cases, these are not plug-and-play : they must be properly configured to suit the structure and format of your data source. You will need to adapt or create a parser class that can interpret your data and map it to the corresponding Geotrek-admin models.
 
-However, these parsers are not plug-and-play : they must be properly configured to suit the structure and format of your data source. In most cases, you will need to adapt or create a parser class that can interpret your data and map it to the corresponding Geotrek-admin models.
+Adding a custom parser
+~~~~~~~~~~~~~~~~~~~~~~
+
+Custom parser code must be added to the ``var/conf/parsers.py`` file.
 
 Some parsers are not available by default but you can use them adding some lines in your parsers file :
 
 .. code-block:: python
 
-    from geotrek.trekking.parsers import TrekParser # only without dynamic segmentation (`TREKKING_TOPOLOGY_ENABLED` = False)
+    from geotrek.trekking.parsers import TrekParser
     from geotrek.trekking.parsers import POIParser
 
+.. note::
 
-Additional setup for data sources
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Not all parsers support dynamic segmentation. For example, the ``TrekParser`` can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
 
-Some data sources, especially online feeds such as Apidae or Tourinsoft, require additional setup, like:
+Configuring built-in parsers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Data sources
+"""""""""""""
+
+Geotrek-admin includes built-in configurable parsers for various data sources, such as Apidae, Tourinsoft, OpenStreetMap, etc. Here is the list of touristic information systems and other sources managed for the moment:
+  - `Apidae <https://www.apidae-tourisme.com/>`_ is a collaborative network and a tourism information management platform. It enables tourist offices, local authorities, service providers, and private partners to share, structure, and distribute tourism data (accommodations, events, sites, services, etc.). It serves as a common reference system at the local, regional, and national levels.
+  - `Tourinsoft <https://www.tourinsoft.com/>`_ is a Tourism Information System developed by the company Ingénie for tourism organizations in France, such as Departmental Tourism Committees (CDT), Tourism Development Agencies (ADT), and Tourist Offices. This system allows for the centralization, management, and standardized dissemination of tourism-related information.
+  - `Cirkwi <https://www.cirkwi.com/>`_ is a platform for distributing tourism content (treks, points of interest, digital guides) aimed at tourism professionals. It helps promote tourism data through websites, mobile apps, or interactive kiosks using widgets or APIs, relying on a library of shared or proprietary content.
+  - LEI / Décibelles Data : The **LEI** (Lieu d’Échanges et d’Informations) was the former shared tourism information system used in Alsace to centralize and distribute regional tourism data (accommodations, events, sites, etc.). It has been replaced by `Décibelles Data <https://wiki.decibelles-data.com/>`_, the new regional database for the entire Bourgogne-Franche-Comté region. Décibelles Data enables collaborative management and multichannel distribution of tourism information, while also ensuring integration with national platforms such as DataTourisme.
+  - The `Esprit Parc <https://www.espritparcnational.com/>`_ brand promotes tourist offers committed to the preservation of nature and local know-how in national park areas.
+  - OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
+  - The `trek data schema <https://schema.data.gouv.fr/PnX-SI/schema_randonnee/>`_ is a national standard published on `schema.data.gouv.fr <schema.data.gouv.fr>`_, which aims to standardize the description of treks in France. It facilitates the exchange and dissemination of data between producers (tourist offices, natural parks, local authorities) and reusers (applications, websites, open data platforms).
+
+
+Setup for data sources
+""""""""""""""""""""""
+
+Some data sources, especially online feeds such as Apidae or Tourinsoft, require additional setup, such as:
 
 * an API key
 * URL endpoints
@@ -330,15 +368,12 @@ Some data sources, especially online feeds such as Apidae or Tourinsoft, require
 
 Depending on the source, you can configure your custom parser to:
 
-* load local files (e.g. zipped shapefile),
-* or retrieve data from a remote feed via URL.
+* load local files (e.g. zipped shapefile)
+* retrieve data from a remote feed via URL
 
-.. note::
-
-  Not all parsers support dynamic segmentation. For example, the ``TrekParser`` can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
 
 Real-time integration
-~~~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""
 
 Geotrek-admin integrates with various Tourism Information Systems (SIT) such as Apidae, Tourinsoft, and others, enabling real-time retrieval of data entered by tourism offices. This includes information on points of interest, accommodations, cultural heritage, and more.
 
@@ -346,53 +381,11 @@ These imported data elements are automatically linked to nearby treks, regardles
 
 This seamless integration enriches the descriptive pages of routes, ensuring that users benefit from comprehensive and up-to-date information with no additional effort required from administrators or agents.
 
-.. seealso::
+Building a parser from scratch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  If you want to implement your own parser or adapt an existing one, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
+If you want to implement your own parser or adapt an existing one, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
 
-Data sources
-~~~~~~~~~~~~~
-
-Here is the list of tourist information systems and other data sources managed for the moment:
-
-APIDAE
-""""""""
-
-`Apidae <https://www.apidae-tourisme.com/>`_ is a collaborative network and a tourism information management platform. It enables tourist offices, local authorities, service providers, and private partners to share, structure, and distribute tourism data (accommodations, events, sites, services, etc.). It serves as a common reference system at the local, regional, and national levels.
-
-Tourinsoft
-""""""""""""
-
-`Tourinsoft <https://www.tourinsoft.com/>`_ is a Tourism Information System developed by the company Ingénie for tourism organizations in France, such as Departmental Tourism Committees (CDT), Tourism Development Agencies (ADT), and Tourist Offices. This system allows for the centralization, management, and standardized dissemination of tourism-related information.
-
-Cirkwi
-""""""""
-
-`Cirkwi <https://www.cirkwi.com/>`_ is a platform for distributing tourism content (treks, points of interest, digital guides) aimed at tourism professionals. It helps promote tourism data through websites, mobile apps, or interactive kiosks using widgets or APIs, relying on a library of shared or proprietary content.
-
-LEI / Décibel Data
-"""""""""""""""""""
-
-The **LEI** (Lieu d’Échanges et d’Informations) was the former shared tourism information system used in Alsace to centralize and distribute regional tourism data (accommodations, events, sites, etc.).
-
-It has been replaced by `Décibelles Data <https://wiki.decibelles-data.com/>`_, the new regional database for the entire Bourgogne-Franche-Comté region. Décibelles Data enables collaborative management and multichannel distribution of tourism information, while also ensuring integration with national platforms such as DataTourisme.
-
-Esprit Parc
-""""""""""""""""
-
-The `Esprit Parc <https://www.espritparcnational.com/>`_ brand promotes tourist offers committed to the preservation of nature and local know-how in national park areas.
-
-OpenStreetMap
-""""""""""""""""
-
-OpenStreetMap (OSM) is a collaborative, open-source mapping database that provides freely accessible geographic data, maintained by a global community of contributors. OpenStreetMap parsers retrieve OSM data using the `Overpass API <https://wiki.openstreetmap.org/wiki/Overpass_API>`_.
-
-DataGouv
-""""""""""
-The `trek data schema <https://schema.data.gouv.fr/PnX-SI/schema_randonnee/>`_ is a national standard published on `schema.data.gouv.fr <schema.data.gouv.fr>`_, which aims to standardize the description of treks in France. It facilitates the exchange and dissemination of data between producers (tourist offices, natural parks, local authorities) and reusers (applications, websites, open data platforms).
-
-.. note::
-    If no data appears, Biodiv'Sports might not have data for your region. Consider adding your data directly to Biodiv'Sports for shared access across users.
 
 FAQ / Common errors
 =====================
