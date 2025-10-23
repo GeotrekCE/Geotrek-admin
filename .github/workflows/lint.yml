@@ -83,6 +83,7 @@ jobs:
             echo "::error:'fuzzy' keyword found in lines added to .po files"
             core.setFailed('You have suggested translations in your po files. Please fix them then run make messages')
           fi
+          echo "No fuzzy translations. continue..."
 
       - name: Commit translation file changed
         uses: stefanzweifel/git-auto-commit-action@v7
