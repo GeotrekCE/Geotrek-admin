@@ -51,6 +51,7 @@ jobs:
       - name: Check translations
         run: |
           cp .env.dist .env
+          mkdir var && chmod 777 var
           make messages
 
       - uses: tj-actions/verify-changed-files@v20
