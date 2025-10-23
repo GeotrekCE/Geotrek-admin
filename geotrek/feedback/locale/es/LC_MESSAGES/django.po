@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/feedback/es/>\n"
@@ -119,9 +119,6 @@ msgid "Report"
 msgstr ""
 
 msgid "Reports"
-msgstr ""
-
-msgid "Add a new feedback"
 msgstr ""
 
 #, python-format
@@ -242,12 +239,6 @@ msgstr ""
 msgid "has to be marked as resolved, since the corresponding intervention was completed"
 msgstr ""
 
-msgid "Statuses"
-msgstr ""
-
-msgid "Legend"
-msgstr ""
-
 msgid "A report's processing is late on"
 msgstr ""
 
@@ -267,6 +258,42 @@ msgid "An intervention must be planned."
 msgstr ""
 
 msgid "You are no longer assigned to the report "
+msgstr ""
+
+#, python-format
+msgid "%(email)s has sent a feedback."
+msgstr ""
+
+msgid "A new feedback has been sent."
+msgstr ""
+
+#, python-format
+msgid "Comment : %(comment)s"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Report origin"
+msgstr ""
+
+#, python-format
+msgid ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+msgstr ""
+
+msgid "New reports have been imported from Suricate."
+msgstr ""
+
+msgid "Please consult your reports in"
+msgstr ""
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Legend"
 msgstr ""
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
@@ -306,36 +333,6 @@ msgid "No"
 msgstr ""
 
 msgid "Map"
-msgstr ""
-
-#, python-format
-msgid "%(email)s has sent a feedback."
-msgstr ""
-
-msgid "A new feedback has been sent."
-msgstr ""
-
-#, python-format
-msgid "Comment : %(comment)s"
-msgstr ""
-
-msgid "Trek"
-msgstr ""
-
-msgid "Report origin"
-msgstr ""
-
-#, python-format
-msgid ""
-"\n"
-"Lat : %(lat)s / Lon : %(lng)s\n"
-"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
-msgstr ""
-
-msgid "New reports have been imported from Suricate."
-msgstr ""
-
-msgid "Please consult your reports in"
 msgstr ""
 
 msgid "Data to import from Suricate"
