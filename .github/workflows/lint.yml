@@ -52,13 +52,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check translations
+      - name: Build environment
         run: |
+          make build
           cp .env.dist .env
           sudo sed -i 's/UID=1000/UID=1001/' .env
           sudo sed -i 's/GID=1000/GID=1001/' .env
           cat .env
           mkdir var && chmod 777 var
+
+      - name: Check translations
+        run: |
           make messages
 
       - uses: tj-actions/verify-changed-files@v20
@@ -72,8 +76,6 @@ jobs:
         env:
           CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
         run: |
-          git --no-pager diff --unified=0 -- '*.po' || true
-
           # recherche 'fuzzy' uniquement dans les lignes ajoutées (ligne commençant par '+' mais pas '+++')
           if git --no-pager diff --unified=0 -- '*.po' | grep -E '^+[^+].*fuzzy' -n >/dev/null; then
             # affiche les occurrences pour faciliter la correction
