@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-23 12:05+0200\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -99,6 +99,9 @@ msgstr "Impossible d'importer l'objet : la géométrie est None"
 #, python-format
 msgid "Could not parse geometry from value '%(value)s'"
 msgstr "Impossible de parser la géométrie à partir de la valeur '%(value)s'"
+
+msgid "Length 2D"
+msgstr "Longueur 2D"
 
 msgid "Validity"
 msgstr "Validité"

@@ -76,9 +76,8 @@ jobs:
         env:
           CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
         run: |
-          # recherche 'fuzzy' uniquement dans les lignes ajoutées (ligne commençant par '+' mais pas '+++')
+          # search 'fuzzy' keywords in added lines (starting with '+' but not '+++')
           if git --no-pager diff --unified=0 -- '*.po' | grep -E '^+[^+].*fuzzy' -n >/dev/null; then
-            # affiche les occurrences pour faciliter la correction
             # git --no-pager diff --unified=0 -- '*.po' | grep -E '^+[^+].*fuzzy' -n >&2
             echo "Error: 'fuzzy' keyword found in lines added to .po files" >&2
             core.setFailed('You have suggested translations in your po files. Please fix them then run make messages')
