@@ -50,6 +50,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check translations
         run: |
+          cp .env.dist .env
           make messages
 
       - uses: tj-actions/verify-changed-files@v20
