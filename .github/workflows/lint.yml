@@ -76,10 +76,10 @@ jobs:
 
           # recherche 'fuzzy' uniquement dans les lignes ajoutées (ligne commençant par '+' mais pas '+++')
           if git --no-pager diff --unified=0 -- '*.po' | grep -E '^+[^+].*fuzzy' -n >/dev/null; then
-            echo "Erreur: 'fuzzy' trouvé dans les lignes ajoutées des fichiers .po" >&2
             # affiche les occurrences pour faciliter la correction
             git --no-pager diff --unified=0 -- '*.po' | grep -E '^+[^+].*fuzzy' -n >&2
-            core.setFailed('You have suggested tranbslations in your po files. Please fix them then run make messages')
+            echo "Error: 'fuzzy' keyword found in lines added to .po files" >&2
+            core.setFailed('You have suggested translations in your po files. Please fix them then run make messages')
           fi
 
       - name: Commit translation file changed
