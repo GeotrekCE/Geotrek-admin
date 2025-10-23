@@ -51,8 +51,8 @@ jobs:
       - name: Check translations
         run: |
           cp .env.dist .env
-          sudo sed -i 's/UID=/UID="$UID"/' .env
-          sudo sed -i 's/GID=/GID="$GID"/' .env
+          sudo sed -i 's/UID=1000/UID=1001/' .env
+          sudo sed -i 's/GID=1000/GID=1001/' .env
           cat .env
           mkdir var && chmod 777 var
           make messages
