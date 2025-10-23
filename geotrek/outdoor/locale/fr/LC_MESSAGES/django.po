@@ -18,7 +18,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 5.13.3\n"
 
-
 # fuzzy
 msgid "Color"
 msgstr "Couleur"
