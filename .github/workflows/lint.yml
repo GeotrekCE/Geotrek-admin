@@ -45,13 +45,23 @@ jobs:
 
   translations:
     name: Checking translations files are up-to-date
+
     permissions:
       contents: write
       actions: write
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/checkout@v5
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
       - name: Build environment
         run: |
           make build
