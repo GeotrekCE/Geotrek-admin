@@ -543,7 +543,6 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "labels": {"create": True},
         "name": {"expand_translations": True},
         "description_teaser": {"expand_translations": True},
-        "ambiance": {"expand_translations": True},
         "access": {"expand_translations": True},
         "difficulty": {"create": True},
         "related_treks": {"create": True},
@@ -903,6 +902,11 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 transform_func=ApidaeTrekParser._transform_description_to_html,
             )
         return self.apply_filter(dst="gear", src=src, val=tf)
+
+    def filter_ambiance(self, src, val):
+        tf = ApidaeTranslatedField()
+        tf.append(translated_value=val)
+        return self.apply_filter(dst="ambiance", src=src, val=tf)
 
     def _finalize_related_treks_association(self):
         for parent_id, children_eids in self._related_treks_mapping.items():
