@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/feedback/fr/>\n"
@@ -120,9 +120,6 @@ msgstr "Signalement"
 
 msgid "Reports"
 msgstr "Signalements"
-
-msgid "Add a new feedback"
-msgstr "Créer un signalement"
 
 #, python-format
 msgid "Feedback from %(email)s"
@@ -242,12 +239,6 @@ msgstr "Un signalement sur"
 msgid "has to be marked as resolved, since the corresponding intervention was completed"
 msgstr "est à clôturer suite à la résolution de l'intervention associée"
 
-msgid "Statuses"
-msgstr "Statuts"
-
-msgid "Legend"
-msgstr "Légende"
-
 msgid "A report's processing is late on"
 msgstr "Le traitement d'un Signalement est en retard sur"
 
@@ -268,6 +259,45 @@ msgstr "Une intervention doit être programmée."
 
 msgid "You are no longer assigned to the report "
 msgstr "Vous n'être plus assigné au signalement"
+
+#, python-format
+msgid "%(email)s has sent a feedback."
+msgstr "%(email)s a signalé un problème."
+
+msgid "A new feedback has been sent."
+msgstr "Un problème a été signalé."
+
+#, python-format
+msgid "Comment : %(comment)s"
+msgstr "Commentaire : %(comment)s"
+
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "Report origin"
+msgstr "Provenance du signalement"
+
+#, python-format
+msgid ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+msgstr ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+
+msgid "New reports have been imported from Suricate."
+msgstr "De nouveaux signalements ont été importés depuis Suricate."
+
+msgid "Please consult your reports in"
+msgstr "Consultez vos signalements sur"
+
+msgid "Statuses"
+msgstr "Statuts"
+
+msgid "Legend"
+msgstr "Légende"
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"
@@ -307,39 +337,6 @@ msgstr "Non"
 
 msgid "Map"
 msgstr "Carte"
-
-#, python-format
-msgid "%(email)s has sent a feedback."
-msgstr "%(email)s a signalé un problème."
-
-msgid "A new feedback has been sent."
-msgstr "Un problème a été signalé."
-
-#, python-format
-msgid "Comment : %(comment)s"
-msgstr "Commentaire : %(comment)s"
-
-msgid "Trek"
-msgstr "Itinéraire"
-
-msgid "Report origin"
-msgstr "Provenance du signalement"
-
-#, python-format
-msgid ""
-"\n"
-"Lat : %(lat)s / Lon : %(lng)s\n"
-"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
-msgstr ""
-"\n"
-"Lat : %(lat)s / Lon : %(lng)s\n"
-"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
-
-msgid "New reports have been imported from Suricate."
-msgstr "De nouveaux signalements ont été importés depuis Suricate."
-
-msgid "Please consult your reports in"
-msgstr "Consultez vos signalements sur"
 
 msgid "Data to import from Suricate"
 msgstr "Données à importer de Suricate"
