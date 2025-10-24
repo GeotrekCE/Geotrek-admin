@@ -27,7 +27,6 @@ setup(
         "coreapi",
         "psycopg2",
         "pdfimpose",
-        "docutils",
         "Pillow",
         "simplekml",
         "pygal",
