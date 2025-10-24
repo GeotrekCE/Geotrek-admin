@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 11:40+0200\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/de/>\n"
@@ -300,9 +300,6 @@ msgstr "Route"
 
 msgid "Formated duration"
 msgstr "Formatierte Dauer"
-
-msgid "Add a new trek"
-msgstr "Eine Route hinzufügen"
 
 msgid "Cannot use itself as child trek."
 msgstr "Es ist nicht möglich, eine Route als eigenes Kind zu benutzen."
@@ -620,6 +617,9 @@ msgstr "Empfindlichkeitszeitraum:"
 
 msgid "Contact:"
 msgstr "Kontakt:"
+
+msgid "Add a new trek"
+msgstr "Eine Route hinzufügen"
 
 msgid "Add a new poi"
 msgstr "Hinzufügen eine POI"

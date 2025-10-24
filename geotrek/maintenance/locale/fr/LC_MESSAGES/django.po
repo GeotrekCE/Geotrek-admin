@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-13 10:14+0000\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/maintenance/fr/>\n"
@@ -303,9 +303,6 @@ msgstr "Période"
 
 msgid "Interventions total cost"
 msgstr "Coût total des interventions"
-
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
 
 msgid "Project type"
 msgstr "Type de chantier"
