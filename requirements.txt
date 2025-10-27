@@ -305,7 +305,7 @@ pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
-python-dotenv==1.1.1
+python-dotenv==1.2.1
     # via geotrek (setup.py)
 python-fsutil==0.15.0
     # via django-maintenance-mode
