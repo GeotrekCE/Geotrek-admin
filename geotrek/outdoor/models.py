@@ -345,6 +345,10 @@ class Site(
     def name_display(self):
         return "- " * self.level + super().name_display
 
+    @property
+    def type_display(self):
+        return self.type.name if self.type else ""
+
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
         return settings.OUTDOOR_INTERSECTION_MARGIN
@@ -692,6 +696,10 @@ class Course(
     @property
     def parent_sites_display(self):
         return ", ".join(list(self.parent_sites.values_list("name", flat=True)))
+
+    @property
+    def type_display(self):
+        return self.type.name if self.type else ""
 
     @property
     def points_reference_geojson(self):
