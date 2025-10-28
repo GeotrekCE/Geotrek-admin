@@ -5,6 +5,10 @@ CHANGELOG
 2.120.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix trek's ``ambiance`` translated fields not being emptied by ApidaeTrekParser when the source data does not contain corresponding translations
+
 
 2.120.1         (2025-10-22)
 ----------------------------
