@@ -269,6 +269,9 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
             conditions_list = self.conditions.select_related("structure").all()
         return ", ".join([str(c) for c in conditions_list])
 
+    def type_display(self):
+        return self.type.label if self.type else ""
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         for trek in self.treks.all():

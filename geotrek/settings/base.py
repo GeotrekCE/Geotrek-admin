@@ -1040,3 +1040,23 @@ if (
     and "current_user" in HIDDEN_FORM_FIELDS["report"]
 ):
     HIDDEN_FORM_FIELDS["report"].remove("current_user")
+
+# Popup configuration
+LABEL_PER_MODEL = {
+    "trail": ["name"],
+    "path": ["name"],
+    "dive": ["name", "practice"],
+    "report": ["name", "category"],
+    "infrastructure": ["name", "type"],
+    "intervention": ["name", "type"],
+    "project": ["name", "type"],
+    "course": ["name", "type"],
+    "site": ["name", "type"],
+    "species": ["name"],
+    "sportpractice": ["name"],
+    "signage": ["name", "type"],
+    "touristiccontent": ["name", "category"],
+    "touristicevent": ["name", "type"],
+    "trek": ["name", "practice"],
+    "poi": ["name", "type"],
+}

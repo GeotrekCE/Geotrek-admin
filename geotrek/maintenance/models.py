@@ -329,6 +329,10 @@ class Intervention(
     def name_csv_display(self):
         return self.name
 
+    @property
+    def type_display(self):
+        return self.type.type if self.type else ""
+
     def __str__(self):
         return f"{self.name} ({self.begin_date})"
 
@@ -697,6 +701,10 @@ class Project(
     @property
     def interventions_csv_display(self):
         return [str(i) for i in self.interventions.existing()]
+
+    @property
+    def type_display(self):
+        return self.type.type if self.type else ""
 
     @property
     def intervention_contractors(self):
