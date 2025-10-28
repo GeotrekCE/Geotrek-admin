@@ -4,7 +4,7 @@ $(window).on('entity:map', function (e, data) {
 	var url = window.SETTINGS.urls[layername];
     var loaded_trail = false;
     var map = data.map;
-    var style = L.Util.extend({ clickable: false },
+    var style = L.Util.extend({ clickable: true },
         window.SETTINGS.map.styles[modelname] || {});
     // Show trail layer in application maps
 	var layer = new L.ObjectsLayer(null, {
