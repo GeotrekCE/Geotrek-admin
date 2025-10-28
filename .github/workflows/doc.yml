@@ -33,6 +33,11 @@ jobs:
             cache-suffix: "sphinx"
             activate-environment: true
 
+      - name: Install Graphviz
+        run: |
+          apt-get update -q
+          apt-get install -q -y graphviz
+
       - name: Build doc
         run: |
           cd docs/
