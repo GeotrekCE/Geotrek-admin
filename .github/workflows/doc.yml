@@ -35,8 +35,8 @@ jobs:
 
       - name: Install Graphviz
         run: |
-          apt-get update -q
-          apt-get install -q -y graphviz
+          sudo apt-get update -q
+          sudo apt-get install -q -y graphviz
 
       - name: Build doc
         run: |
