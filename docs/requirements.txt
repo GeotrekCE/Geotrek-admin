@@ -33,8 +33,6 @@ docutils==0.21.2
     # via sphinx
 exceptiongroup==1.3.0
     # via anyio
-graphviz==0.21
-    # via -r requirements.in
 h11==0.16.0
     # via uvicorn
 idna==3.11

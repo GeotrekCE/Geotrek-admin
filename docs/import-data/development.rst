@@ -75,43 +75,9 @@ Available attributes
 Execution flow diagram
 -----------------------
 
-.. graphviz::
-
-   digraph {
-       PARSE    [label="PARSE\nstarts data import"]
-       START    [label="START\nlists database objects"]
-       NEXT_ROW [label="NEXT_ROW\niterates over input rows"]
-       PARSE_ROW [label="PARSE_ROW\nhandles full row import"]
-       END      [label="END\ndeletes outdated objects"]
-       PARSE_OBJ [label="PARSE_OBJ\ncreates/updates object"]
-       GET_EID_KWARGS [label="GET_EID_KWARGS\ngets unique ID"]
-       PARSE_FIELDS [label="PARSE_FIELDS\nhandles all object fields"]
-       PARSE_FIELD [label="PARSE_FIELD\nindividual field import"]
-       GET_VAL  [label="GET_VAL\ngets field values"]
-       PARSE_TRANSLATION_FIELD [label="PARSE_TRANSLATION_FIELD\nupdates translated field"]
-       PARSE_REAL_FIELD [label="PARSE_REAL_FIELD\nupdates real field"]
-       PARSE_NON_FIELD [label="PARSE_NON_FIELD\nhandles special fields"]
-       GET_PART [label="GET_PART\nextract nested data"]
-       SET_VALUE [label="SET_VALUE\nsave value"]
-       APPLY_FILTER [label="APPLY_FILTER\nfilter fk/m2m"]
-
-       PARSE -> START
-       PARSE -> NEXT_ROW
-       PARSE -> PARSE_ROW
-       PARSE -> END
-       PARSE_ROW -> PARSE_OBJ
-       PARSE_ROW -> GET_EID_KWARGS
-       PARSE_OBJ -> PARSE_FIELDS
-       PARSE_FIELDS -> PARSE_FIELD
-       PARSE_FIELD -> GET_VAL
-       PARSE_FIELD -> PARSE_TRANSLATION_FIELD
-       PARSE_FIELD -> PARSE_REAL_FIELD
-       PARSE_FIELD -> PARSE_NON_FIELD
-       GET_VAL -> GET_PART
-       PARSE_TRANSLATION_FIELD -> SET_VALUE
-       PARSE_REAL_FIELD -> SET_VALUE
-       PARSE_REAL_FIELD -> APPLY_FILTER
-   }
+.. figure:: ../images/import-data/execution-flow-diagram.png
+   :alt: Execution flow diagram for the Parser class
+   :align: center
 
 .. _configurable-built-in-parsers:
 
