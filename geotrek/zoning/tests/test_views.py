@@ -25,7 +25,7 @@ class LandLayersViewsTest(APITestCase):
 
     def test_views_status(self):
         for layer in ["city", "restrictedarea", "district"]:
-            url = reverse(f"zoning:{layer}_layer")
+            url = reverse(f"zoning:{layer}-list")
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200, response.json())
 
@@ -39,13 +39,13 @@ class RestrictedAreaViewsTest(APITestCase):
         self.client.force_authenticate(self.user)
 
     def test_views_status_is_404_when_type_unknown(self):
-        url = reverse("zoning:restrictedarea_type_layer", kwargs={"type_pk": 1023})
+        url = reverse("zoning:restrictedarea-by-type-list", kwargs={"type_pk": 1023})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_views_status_is_200_when_type_known(self):
         t = RestrictedAreaTypeFactory()
-        url = reverse("zoning:restrictedarea_type_layer", kwargs={"type_pk": t.pk})
+        url = reverse("zoning:restrictedarea-by-type-list", kwargs={"type_pk": t.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, response.json())
 

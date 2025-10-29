@@ -82,6 +82,13 @@ class City(TimeStampedModelMixin, models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def latest_updated(cls):
+        try:
+            return cls.objects.only("date_update").latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
+
 
 class District(TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
@@ -108,3 +115,10 @@ class District(TimeStampedModelMixin, models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def latest_updated(cls):
+        try:
+            return cls.objects.only("date_update").latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
