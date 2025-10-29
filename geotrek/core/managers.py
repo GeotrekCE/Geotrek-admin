@@ -1,8 +1,5 @@
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Value
 
-from geotrek.common.functions import LengthSpheroid
 from geotrek.common.mixins.managers import NoDeleteManager
 
 
@@ -25,16 +22,6 @@ class PathInvisibleManager(models.Manager):
 class TopologyManager(NoDeleteManager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        qs = qs.annotate(
-            length_2d=LengthSpheroid(
-                Transform("geom", 4326),
-                Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
-            ),
-        )
-        return qs
 
 
 class PathAggregationManager(models.Manager):
