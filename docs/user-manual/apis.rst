@@ -15,8 +15,8 @@ Cette API, désormais dans sa version 2 permet à toute structure tierce de réc
 
 L'API Geotrek est le point central pour permettre les interconnexions avec divers services. Grâce à cette interface de données, Geotrek s'est positionné comme un point central dans un écosystème de solutions du monde de la gestion et promotion des activités de pleine nature.
 
-.. seealso:: 
-   
+.. seealso::
+
    Pour changer les paramètres d'accès de l'API, référez vous à cette section :ref:`API <api>`
 
 APIs externes
@@ -29,7 +29,7 @@ Geotrek et IGNrando' / Cirkwi
 
 Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' `(voir cet article) <https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne>`_.
 
-Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins 
+Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins
 
 Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par l'IGN :
 
@@ -70,12 +70,12 @@ Ce même flux est aussi utilisable pour alimenter directement la plateforme Cirk
 .. seealso::
 
     - Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux contenus d'une instance à l'adresse ``[URL_GEOTREK-ADMIN]/api/v2/``
-    - Pour importer des itinéraires et contenus touristiques depuis CIRKWI, se référer à la section :ref:`Import from Cirkwi <import-from-cirkwi>`.
+    - Pour importer des itinéraires et contenus touristiques depuis CIRKWI, se référer à la section :ref:`Import from Cirkwi<cirkwi-parsers>`.
 
 Geotrek et APIDAE
 -----------------
 
-Il existe plusieurs passerelles entre la plateforme d'informations touristiques APIDAE et Geotrek. 
+Il existe plusieurs passerelles entre la plateforme d'informations touristiques APIDAE et Geotrek.
 
 APIDAE vers Geotrek
 ~~~~~~~~~~~~~~~~~~~
@@ -91,7 +91,7 @@ Il est également possible de mettre en place des passerelles pour importer des 
 
 .. seealso::
 
-   Pour configurer APIDAE, se référer à cette section :ref:`Import from APIDAE <import-from-apidae>`
+   Pour configurer APIDAE, se référer à cette section : :ref:`Import from APIDAE<apidae-parsers>`
 
 Geotrek vers APIDAE
 ~~~~~~~~~~~~~~~~~~~
@@ -104,7 +104,7 @@ Les randonnées VTT, trail, vélo et les tours itinérants sont également inté
 
 .. seealso::
 
-   Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_. 
+   Pour plus d'information, se référer à la documentation en ligne de `Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-api>`_.
 
 
 Sensitivity module (or Biodiv'Sports)
@@ -124,7 +124,7 @@ Commons parameters
 ~~~~~~~~~~~~~~~~~~~
 
 If ``language`` parameter is provided, API returns directly translated fields, else, a dictionnary of traductions is returned
-      
+
 e.g. ``/api/v2/sensitivearea_practice/1/?``
 
 
@@ -171,7 +171,7 @@ List of sensitive areas
 
 The default output format is ``json``. To obtain output in ``geojson`` format, simply add the ``format=geojson`` parameter.
 
-``/api/v2/sensitivearea/?format=geojson`` 
+``/api/v2/sensitivearea/?format=geojson``
 
 e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson
 
@@ -194,7 +194,7 @@ e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson
    - Expected values: List of practices ids (see :ref:`Sport practices <sport-practices>`)
    - e.g. ``/api/v2/sensitivearea/?practices=1,2``
 
-   - ``structure`` : Organization that declared the sensitive area. 
+   - ``structure`` : Organization that declared the sensitive area.
 
    - Expected values: List of structures ids
    - e.g. ``/api/v2/sensitivearea/?structures=1,2``

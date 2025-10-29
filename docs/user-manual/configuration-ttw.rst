@@ -47,7 +47,7 @@ Exemple : ajouter une pratique
 Exemple : ajouter une étiquette
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages : 
+Les étiquettes sont des encarts "pré-configurés" pouvant être réutilisés sur de multiples itinéraires. Elles présentent plusieurs avantages :
 
 - ne pas avoir à saisir à chaque itinéraire les même informations
 - permet de filtrer les itinéraires dans la vue liste (catégorie "Autres") sur Geotrek-Rando.
@@ -71,8 +71,8 @@ Pour mettre en forme le contenu de l'étiquette, il est possible d'utiliser du `
 
 * Associer une étiquette à un itinéraire :
 
-Une fois l'étiquette créée il faut l'associer à un itinéraire pour qu'elle soit visible sur le site. 
-Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet :guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu déroulant l'étiquette de votre choix (si vous en avez défini plusieurs). 
+Une fois l'étiquette créée il faut l'associer à un itinéraire pour qu'elle soit visible sur le site.
+Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet :guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu déroulant l'étiquette de votre choix (si vous en avez défini plusieurs).
 
 .. figure:: ../images/admin/associer_etiquette_itineraire.png
    :alt: Ajout d'une étiquette à un itinéraire
@@ -84,7 +84,7 @@ Une fois dans votre instance Geotrek Admin, éditez l'itinéraire concerné. Cli
 
     * L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de l'étiquette sera le même que celui des recommandations dans les "Infos pratiques" de la fiche d'une randonnées (Geotrek Rando).
     * Si le champ "Filtre" est coché, l'étiquette sera proposée comme filtre dans Geotrek-Rando.
-    * Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web. 
+    * Les images (hors pictogramme) utilisées dans le contenu de l'étiquette doivent être des liens web.
 
 Rendu dans **Geotrek Rando** (onglet :guilabel:`Infos pratiques` d'une fiche randonnée) :
 
@@ -263,7 +263,7 @@ Pour définir la structure par défaut, se référer à la section :ref:`Default
 Gestion multilingue
 ===================
 
-La configuration des langues de la plate-forme est réalisée au travers du fichier de configuration principal. 
+La configuration des langues de la plate-forme est réalisée au travers du fichier de configuration principal.
 Lors de sa mise à jour, la commande de déploiement créé les champs nécessaires qui manquent dans la base de données (exemple : nom_fr, nom_es, nom_it…).
 Ceci est à distinguer des langues dans lesquelles sont traduits les éléments de l'interface de l'application (Français, Anglais, Italien, Espagnol).
 
@@ -304,7 +304,7 @@ Il convient ensuite de configurer chaque flux dans Geotrek-Admin afin que ceux-c
 La fonctionnalité consiste à absorber le flux XML, afin de le remettre à disposition sous une forme optimisée et épurée. Les données sont alors exposées sous la forme d’une web API, au format GeoJSON.
 L’obtention d’un flux de données GeoJSON (agnostique et standard) présente de nombreux avantages pour l’intégration dans les applications tierces. Ce format est compatible nativement avec Rando V3, mais également avec la plupart des bibliothèques de cartographie (web et natives mobile).
 
-Pour configurer l'import de SIT, référez vous à cette section :ref:`Import from touristic data systems <import-from-touristic-data-systems>`.
+Pour configurer l'import de SIT, référez vous à cette section : :ref:`Import from touristic data systems <custom-parsers-data-sources>`.
 
 Intégration des fonds de cartes
 ===============================
