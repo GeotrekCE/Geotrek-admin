@@ -6,12 +6,11 @@ from django.test import TestCase
 
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
-from geotrek.zoning.models import City
+from geotrek.zoning.models import City, District, RestrictedArea
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
-    RestrictedAreaTypeFactory,
 )
 
 
@@ -357,42 +356,49 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(len(p.cities), 1)
 
 
-class ZoningModelsTest(TestCase):
-    def test_city(self):
-        city = CityFactory.create(
-            name="Are",
-            code="09000",
-            geom=MultiPolygon(
-                Polygon(
-                    ((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
-                    srid=settings.SRID,
-                )
-            ),
-        )
-        self.assertEqual(str(city), "Are")
+class CityTestCase(TestCase):
+    def test_city_str(self):
+        """City __str__ method should return its name."""
+        city = CityFactory()
+        self.assertEqual(str(city), city.name)
 
-    def test_district(self):
-        district = DistrictFactory.create(
-            name="Lil",
-            geom=MultiPolygon(
-                Polygon(
-                    ((201, 0), (300, 0), (300, 100), (200, 100), (201, 0)),
-                    srid=settings.SRID,
-                )
-            ),
-        )
-        self.assertEqual(str(district), "Lil")
+    def test_city_last_updated_without_data(self):
+        self.assertIsNone(City.latest_updated())
 
-    def test_restricted_area(self):
-        area_type = RestrictedAreaTypeFactory.create(name="Test")
-        restricted_area = RestrictedAreaFactory.create(
-            area_type=area_type,
-            name="Tel",
-            geom=MultiPolygon(
-                Polygon(
-                    ((201, 0), (300, 0), (300, 100), (200, 100), (201, 0)),
-                    srid=settings.SRID,
-                )
-            ),
+    def test_city_last_updated_with_data(self):
+        city = CityFactory()
+        self.assertIsNotNone(City.latest_updated())
+        self.assertEqual(City.latest_updated(), city.date_update)
+
+
+class DistrictTestCase(TestCase):
+    def test_district_str(self):
+        """District __str__ method should return its name."""
+        district = DistrictFactory()
+        self.assertEqual(str(district), district.name)
+
+    def test_district_last_updated_without_data(self):
+        self.assertIsNone(District.latest_updated())
+
+    def test_district_last_updated_with_data(self):
+        district = DistrictFactory()
+        self.assertIsNotNone(District.latest_updated())
+        self.assertEqual(District.latest_updated(), district.date_update)
+
+
+class RestrictedAreaTestCase(TestCase):
+    def test_restricted_area_str(self):
+        """RestrictedArea __str__ method should return its type and its name."""
+        restricted_area = RestrictedAreaFactory()
+        self.assertEqual(
+            str(restricted_area),
+            f"{restricted_area.area_type} - {restricted_area.name}",
         )
-        self.assertEqual(str(restricted_area), "Test - Tel")
+
+    def test_restricted_area_last_updated_without_data(self):
+        self.assertIsNone(RestrictedArea.latest_updated())
+
+    def test_restricted_area_last_updated_with_data(self):
+        restricted_area = RestrictedAreaFactory()
+        self.assertIsNotNone(RestrictedArea.latest_updated())
+        self.assertEqual(RestrictedArea.latest_updated(), restricted_area.date_update)
