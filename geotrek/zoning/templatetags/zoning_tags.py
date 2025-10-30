@@ -59,7 +59,8 @@ def restricted_area_types():
     serialized = []
     for area_type in used_types:
         area_type_url = reverse(
-            "zoning:restrictedarea_type_layer", kwargs={"type_pk": area_type.pk}
+            "zoning:restrictedarea-by-type-list",
+            kwargs={"type_pk": area_type.pk, "format": "geojson"},
         )
         serialized.append(
             {"id": "restrictedarea", "name": area_type.name, "url": area_type_url}

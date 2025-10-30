@@ -72,6 +72,13 @@ class TimeStampedModelMixin(models.Model):
             last_update=Max("date_update"), count=Count("pk")
         )
 
+    @classmethod
+    def latest_updated(cls):
+        try:
+            return cls.objects.only("date_update").latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
+
 
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(
