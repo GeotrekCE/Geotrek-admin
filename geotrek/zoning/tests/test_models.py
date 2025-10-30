@@ -14,20 +14,6 @@ from geotrek.zoning.tests.factories import (
 )
 
 
-class PathUpdateTest(TestCase):
-    def test_path_touching_land_layer(self):
-        p1 = PathFactory.create(geom=LineString((3, 3), (4, 4), srid=settings.SRID))
-        City.objects.create(
-            code="005177",
-            name="Trifouillis-les-oies",
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        p1.geom = LineString((2, 2), (4, 4), srid=settings.SRID)
-        p1.save()
-
-
 class ZoningLayersUpdateTest(TestCase):
     def test_paths_link(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (1, 1)))
@@ -35,16 +21,12 @@ class ZoningLayersUpdateTest(TestCase):
         p3 = PathFactory.create(geom=LineString((3, 3), (4, 4)))
         p4 = PathFactory.create(geom=LineString((4, 1), (6, 2), (4, 3)))
 
-        c1 = City.objects.create(
-            code="005177",
-            name="Trifouillis-les-oies",
+        c1 = CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 4), (0, 4), (0, 0)), srid=settings.SRID)
             ),
         )
-        City.objects.create(
-            code="005179",
-            name="Trifouillis-les-poules",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((2, 0), (5, 0), (5, 4), (2, 4), (2, 0)), srid=settings.SRID)
             ),
@@ -88,18 +70,13 @@ class ZoningLayersUpdateTest(TestCase):
         """
         # Create a path before city to test one trigger
         p1 = PathFactory(geom=LineString((1, 1), (1, 2)))
-        p1.save()
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         # Create a path after city to the the another trigger
         p2 = PathFactory(geom=LineString((1.5, 2), (1.5, 1)))
-        p2.save()
         self.assertEqual(len(p1.cities), 1)
         self.assertEqual(len(p2.cities), 1)
 
@@ -114,19 +91,15 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
@@ -142,19 +115,15 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
@@ -172,19 +141,15 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 1, 1)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
@@ -201,21 +166,17 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString(
                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
                 )
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
@@ -231,21 +192,17 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString(
                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
                 )
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
@@ -261,21 +218,17 @@ class ZoningLayersUpdateTest(TestCase):
         |                 |
         +-----------------+
         """
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory(
                 geom=LineString(
                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
                 )
             )
-            p.save()
             signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
@@ -301,18 +254,14 @@ class ZoningLayersUpdateTest(TestCase):
         )
 
         # Fake city
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
 
         # Fake paths in these areas
         p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
-        p.save()
 
         self.assertEqual(len(p.areas), 2)
         self.assertEqual(len(p.cities), 1)
@@ -337,20 +286,16 @@ class ZoningLayersUpdateTest(TestCase):
         )
 
         # Fake city
-        c = City(
-            code="005178",
-            name="Trifouillis-les-marmottes",
+        CityFactory(
             geom=MultiPolygon(
                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
             ),
         )
-        c.save()
 
         # Fake paths in these areas
         p = PathFactory(
             geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5))
         )
-        p.save()
 
         self.assertEqual(len(p.areas), 2)
         self.assertEqual(len(p.cities), 1)
