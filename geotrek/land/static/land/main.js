@@ -17,7 +17,7 @@ $(window).on('entity:map', function (e, data) {
     for (var i = 0; i < managementLayers.length; i++) {
         var managementLayer = managementLayers[i];
 
-        var style = L.Util.extend({ clickable: true },
+        var style = L.Util.extend({ clickable: false },
             window.SETTINGS.map.styles[managementLayer.id] || {});
         var layer = new L.ObjectsLayer(null, {
             modelname: managementLayer.name,
