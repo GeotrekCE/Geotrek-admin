@@ -5,6 +5,11 @@ CHANGELOG
 2.120.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Performances**
+
+* Topology length 2d is now computed at database level.
+* Last modified header and content cache is now enabled on zoning internal API.
+
 
 2.120.2         (2025-10-28)
 ----------------------------
