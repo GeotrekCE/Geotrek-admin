@@ -217,6 +217,7 @@ class CitiesCommandTest(TestCase):
             verbosity=2,
             stdout=output,
         )
+        raise Exception(output.getvalue())
         value = City.objects.first()
         self.assertEqual("99999", value.code)
         self.assertEqual("Trifouilli-les-Oies", value.name)
