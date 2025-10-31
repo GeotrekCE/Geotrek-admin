@@ -496,10 +496,6 @@ class Trek(
     def web_links_display(self):
         return ", ".join([str(n) for n in self.web_links.all()])
 
-    @property
-    def practice_display(self):
-        return self.practice.name if self.practice else ""
-
     @cached_property
     def departure_city(self):
         cities = self.published_cities
