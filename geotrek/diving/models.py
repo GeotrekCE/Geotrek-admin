@@ -206,10 +206,6 @@ class Dive(
     def levels_display(self):
         return ", ".join([str(level) for level in self.levels.all()])
 
-    @property
-    def practice_display(self):
-        return self.practice.name if self.practice else ""
-
 
 Topology.add_property("dives", lambda self: intersecting(Dive, self), _("Dives"))
 Topology.add_property(

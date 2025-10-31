@@ -449,10 +449,6 @@ class TouristicContent(
             qs=queryset_or_model(queryset, cls), obj=tourism_obj
         ).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
 
-    @property
-    def category_display(self):
-        return self.category.label if self.category else ""
-
 
 Topology.add_property(
     "touristic_contents",
@@ -724,10 +720,6 @@ class TouristicEvent(
                 begin=date_format(self.begin_date, "SHORT_DATE_FORMAT"),
                 end=date_format(self.end_date, "SHORT_DATE_FORMAT"),
             )
-
-    @property
-    def type_display(self):
-        return self.type.type if self.type else ""
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN

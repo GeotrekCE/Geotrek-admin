@@ -220,9 +220,6 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
         Blade.objects.filter(signage=self).update(deleted=True)
         super().delete(*args, **kwargs)
 
-    def type_display(self):
-        return self.type.label if self.type else ""
-
 
 @receiver(pre_delete, sender=Topology)
 def log_cascade_deletion_from_signage_topology(sender, instance, using, **kwargs):
