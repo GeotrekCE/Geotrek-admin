@@ -326,6 +326,26 @@ Since IGN map backgrounds are very dense and colourful, a dark opacity is applie
 
           MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
+Popup configuration
+-------------------
+
+Geotrek displays a popup when clicking on an object on the map.
+By default, this popup shows the object's name, its type, and a button linking to its detail page.
+
+You can customize the fields displayed in the popup for each model by defining the ``LABEL_PER_MODEL`` setting in ``/var/conf/custom.py``:
+
+.. code-block:: python
+
+    LABEL_PER_MODEL = {
+        "signage": ["code", "type", "conditions"],
+    }
+
+Each key corresponds to a model name written in lowercase (for example, ``"signage"``),
+and each value is a list of field names to display in the popup.
+
+The available fields are the same as those that can be configured for column display and exports.
+For more information, see :ref:`Custom columns available <custom-columns-available>`.
+
 Map screenshots
 ----------------
 
