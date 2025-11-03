@@ -21,7 +21,7 @@ billiard==4.2.2
     # via celery
 brotli==1.1.0
     # via fonttools
-btrees==6.1
+btrees==6.2
     # via zodb
 cachetools==6.2.1
     # via large-image
