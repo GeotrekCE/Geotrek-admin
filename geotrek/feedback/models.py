@@ -503,10 +503,6 @@ class Report(
         return s
 
     @property
-    def category_display(self):
-        return self.category.label if self.category else ""
-
-    @property
     def eid_verbose_name(self):
         return _("Tag") if settings.SURICATE_WORKFLOW_ENABLED else _("Label")
 
