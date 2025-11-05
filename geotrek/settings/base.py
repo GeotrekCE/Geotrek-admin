@@ -1042,7 +1042,7 @@ if (
     HIDDEN_FORM_FIELDS["report"].remove("current_user")
 
 # Popup configuration
-LABEL_PER_MODEL = {
+POPUP_CONTENT = {
     "trail": [],
     "path": [],
     "dive": ["practice"],

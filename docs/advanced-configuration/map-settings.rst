@@ -332,11 +332,11 @@ Popup configuration
 Geotrek displays a popup when clicking on an object on the map.
 By default, this popup shows the object's name, its type, and a button linking to its detail page.
 
-You can customize the fields displayed in the popup for each model by defining the ``LABEL_PER_MODEL`` setting in ``/var/conf/custom.py``:
+You can customize the fields displayed in the popup for each model by defining the ``POPUP_CONTENT`` setting in ``/var/conf/custom.py``:
 
 .. code-block:: python
 
-    LABEL_PER_MODEL = {
+    POPUP_CONTENT = {
         "signage": ["code", "type", "conditions"],
     }
 
