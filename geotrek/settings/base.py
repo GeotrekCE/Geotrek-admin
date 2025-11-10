@@ -1010,6 +1010,24 @@ REST_FRAMEWORK_EXTENSIONS = {
 SESSION_ENGINE = "django.contrib.sessions.backends.file"
 SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
 
+# Popup configuration
+POPUP_CONTENT = {
+    "trail": [],
+    "path": [],
+    "dive": ["practice"],
+    "report": ["category"],
+    "infrastructure": ["type"],
+    "intervention": ["type"],
+    "project": ["type"],
+    "site": ["type"],
+    "sensitivearea": ["category"],
+    "signage": ["type"],
+    "touristiccontent": ["category"],
+    "touristicevent": ["type"],
+    "trek": ["practice"],
+    "poi": [],
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
@@ -1040,21 +1058,3 @@ if (
     and "current_user" in HIDDEN_FORM_FIELDS["report"]
 ):
     HIDDEN_FORM_FIELDS["report"].remove("current_user")
-
-# Popup configuration
-POPUP_CONTENT = {
-    "trail": [],
-    "path": [],
-    "dive": ["practice"],
-    "report": ["category"],
-    "infrastructure": ["type"],
-    "intervention": ["type"],
-    "project": ["type"],
-    "site": ["type"],
-    "sensitivearea": ["category"],
-    "signage": ["type"],
-    "touristiccontent": ["category"],
-    "touristicevent": ["type"],
-    "trek": ["practice"],
-    "poi": [],
-}
