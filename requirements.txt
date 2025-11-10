@@ -119,7 +119,7 @@ django==5.2.7
     #   easy-thumbnails
     #   mapentity
     #   paperclip
-django-appconf==1.1.0
+django-appconf==1.2.0
     # via django-compressor
 django-appypod==2.0.7
     # via mapentity
