@@ -356,7 +356,6 @@ setuptools==80.9.0
     #   argdispatch
     #   zc-lockfile
     #   zope-deferredimport
-    #   zope-event
     #   zope-proxy
 shapely==2.1.2
     # via pyopenair
