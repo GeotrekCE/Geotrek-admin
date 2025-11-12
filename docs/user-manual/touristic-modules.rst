@@ -11,7 +11,7 @@ Itinéraires
 
     .. 
 
-Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
+Les itinéraires sont des randonnées présentées au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout ou la modification sont fréquents.
 
 Fiche détaillée
@@ -430,6 +430,18 @@ Services
 Contenus touristiques
 =====================
 
+Les contenus touristiques sont des lieux accessibles sans date préétablie, par exemple un hôtel, une auberge, un producteur artisanal, etc. Ils sont filtrables directement depuis la liste des éléments géographiques et sont identifiés dans Geotrek-Rando comme des « services ».
+
+Les contenus touristiques contiennent de multiples champs, mais il existe 3 champs permettant de filtrer sur le contenu :
+    • Categorie
+    • Type 1 (sous type 1)
+    • Type 2 (sous type 2)
+- **Categorie**
+- **Type 1** (sous type 1)
+- **Type 2** (sous type 2)
+
+Le type 1 et type 2 sont dépendants de la catégorie. Par exemple pour une catégorie « Hébergement », on peut avoir une sous-catégorie Type 1 « Type d’hébergement » (qui contiendra alors des valeurs comme Camping, Hébergement collectif, Hôtel, Gite, etc.) et une sous-catégorie Type 2 « Label » (qui indiquerait alors des appartenances à des réseaux par exemple, ou des étoiles).
+
 Zone tampon pour contenus à proximité
 ----------------------------------------
 
@@ -443,6 +455,8 @@ La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remo
 
 Évènements touristiques
 =======================
+
+Les événements touristiques sont des lieux ou des événement accessibles avec date préétablie, par exemple, une randonnée accompagnée. 
 
 .. _signalements:
 
