@@ -356,7 +356,6 @@ setuptools==80.9.0
     #   argdispatch
     #   zc-lockfile
     #   zope-deferredimport
-    #   zope-event
     #   zope-proxy
 shapely==2.1.2
     # via pyopenair
@@ -435,7 +434,7 @@ zodbpickle==4.2
     # via zodb
 zope-deferredimport==6.0
     # via persistent
-zope-event==6.0
+zope-event==6.1
     # via gevent
 zope-interface==8.0.1
     # via
