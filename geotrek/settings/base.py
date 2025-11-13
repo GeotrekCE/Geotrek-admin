@@ -1020,12 +1020,15 @@ POPUP_CONTENT = {
     "intervention": ["type"],
     "project": ["type"],
     "site": ["type"],
+    "course": ["type"],
     "sensitivearea": ["category"],
     "signage": ["type"],
+    "blade": ["type"],
     "touristiccontent": ["category"],
     "touristicevent": ["type"],
     "trek": ["practice"],
     "poi": [],
+    "service": [],
 }
 
 # Override with prod/dev/tests/tests_nds settings
