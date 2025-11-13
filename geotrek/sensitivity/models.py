@@ -5,6 +5,7 @@ import simplekml
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
+from django.db.models import IntegerChoices
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from mapentity.serializers import plain_text
@@ -58,8 +59,9 @@ class SportPractice(TimeStampedModelMixin, models.Model):
 
 
 class Species(TimeStampedModelMixin, OptionalPictogramMixin):
-    SPECIES = 1
-    REGULATORY = 2
+    class CategoryChoices(IntegerChoices):
+        SPECIES = 1, pgettext_lazy("Singular", "Species")
+        REGULATORY = 2, _("Regulatory")
 
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     # TODO: we should replace these 12 fields by a unique JSONField
@@ -83,11 +85,8 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
     category = models.IntegerField(
         verbose_name=_("Category"),
         editable=False,
-        default=SPECIES,
-        choices=(
-            (SPECIES, pgettext_lazy("Singular", "Species")),
-            (REGULATORY, _("Regulatory")),
-        ),
+        default=CategoryChoices.SPECIES,
+        choices=CategoryChoices,
     )
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True

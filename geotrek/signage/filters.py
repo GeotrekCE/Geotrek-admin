@@ -1,8 +1,8 @@
+from dal import autocomplete
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
-    CharFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
@@ -34,27 +34,34 @@ class SignageFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    name = CharFilter(label=_("Name"), lookup_expr="icontains")
-    code = CharFilter(label=_("Code"), lookup_expr="icontains")
-    description = CharFilter(label=_("Description"), lookup_expr="icontains")
     implantation_year = MultipleChoiceFilter(
-        choices=lambda: Signage.objects.implantation_year_choices()
+        choices=lambda: Signage.objects.implantation_year_choices(),
+        widget=autocomplete.Select2Multiple(),
     )
     intervention_year = MultipleChoiceFilter(
         label=_("Intervention year"),
         method="filter_intervention_year",
         choices=lambda: Intervention.objects.year_choices(),
+        widget=autocomplete.Select2Multiple(),
     )
-    trail = TopologyFilterTrail(label=_("Trail"), required=False)
+    trail = TopologyFilterTrail(
+        label=_("Trail"),
+        required=False,
+        widget=autocomplete.Select2Multiple(),
+    )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(signage__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            "name",
+            "code",
+            "description",
             "type",
             "conditions",
             "implantation_year",
@@ -89,11 +96,13 @@ class BladeFilterSet(MapEntityFilterSet):
         field_name="signage__structure",
         queryset=Structure.objects.all(),
         help_text=_("Filter by one or more structure."),
+        widget=autocomplete.Select2Multiple(),
     )
     manager = ModelMultipleChoiceFilter(
         field_name="signage__manager",
         queryset=Organism.objects.all(),
         help_text=_("Filter by one or more manager."),
+        widget=autocomplete.Select2Multiple(),
     )
 
     def __init__(self, *args, **kwargs):

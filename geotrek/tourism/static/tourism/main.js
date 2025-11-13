@@ -113,12 +113,6 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         format: window.SETTINGS.date_format
     });
 
-    // Chosen on themes etc...
-    $('select[multiple]').chosen({
-        no_results_text: tr("No result"),
-        placeholder_text_multiple: tr("Choose value(s)")
-    });
-
     if(data.modelname == 'touristicevent') {
         $('#div_id_cancellation_reason').prop("hidden", !$('#id_cancelled').is(":checked"));
         $('#id_cancelled').change(function () {
