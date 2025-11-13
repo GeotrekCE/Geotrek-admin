@@ -1,14 +1,25 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from mapentity.decorators import view_cache_latest, view_cache_response_content
 from mapentity.renderers import GeoJSONRenderer
 from rest_framework import permissions, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from ..common.functions import SimplifyPreserveTopology
 from .models import City, District, RestrictedArea, RestrictedAreaType
-from .serializers import CitySerializer, DistrictSerializer, RestrictedAreaSerializer
+from .serializers import (
+    CityAutoCompleteBBoxSerializer,
+    CityAutoCompleteSerializer,
+    CitySerializer,
+    DistrictAutoCompleteBBoxSerializer,
+    DistrictAutoCompleteSerializer,
+    DistrictSerializer,
+    RestrictedAreaSerializer,
+)
 
 
 class LandGeoJSONAPIViewMixin:
@@ -23,10 +34,31 @@ class LandGeoJSONAPIViewMixin:
             )
         ).defer("geom")
 
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.all()
+
     @view_cache_latest()
     @view_cache_response_content()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+    @action(detail=False)
+    def autocomplete_bbox(self, request, *args, **kwargs):
+        qs = self.get_queryset_autocomplete_bbox()
+        q = self.request.query_params.get("q")
+        qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
+
+        serializer = self.serializer_autocomplete_bbox_class(qs[:10], many=True)
+        return Response({"results": serializer.data})
+
+    @action(detail=False)
+    def autocomplete(self, request, *args, **kwargs):
+        qs = self.get_queryset_autocomplete()
+        q = self.request.query_params.get("q")
+        qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
+
+        serializer = self.serializer_autocomplete_class(qs[:10], many=True)
+        return Response({"results": serializer.data})
 
 
 class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
@@ -58,8 +90,24 @@ class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewS
 class DistrictViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
     model = District
     serializer_class = DistrictSerializer
+    serializer_autocomplete_class = DistrictAutoCompleteSerializer
+    serializer_autocomplete_bbox_class = DistrictAutoCompleteBBoxSerializer
+
+    def get_queryset_autocomplete(self):
+        return self.model.objects.only("name", "id")
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.only("name", "envelope")
 
 
 class CityViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
     model = City
     serializer_class = CitySerializer
+    serializer_autocomplete_class = CityAutoCompleteSerializer
+    serializer_autocomplete_bbox_class = CityAutoCompleteBBoxSerializer
+
+    def get_queryset_autocomplete(self):
+        return self.model.objects.only("name", "code", "id")
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.only("name", "code", "envelope")
