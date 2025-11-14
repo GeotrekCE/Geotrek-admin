@@ -197,6 +197,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         # When assigning a user to a report
         data = {
             "current_user": str(self.other_user.pk),
+            "status": self.waiting_status,
             "email": "test@test.fr",
             "geom": self.filed_report.geom,
             "message_sentinel": "Your message",
@@ -269,6 +270,7 @@ class TestSuricateForms(SuricateWorkflowTests):
         # When assigning a user to a report
         data = {
             "current_user": str(self.workflow_manager.user.pk),
+            "status": self.waiting_status,
             "email": "test@test.fr",
             "geom": self.filed_report.geom,
             "message_sentinel": "Your message",
