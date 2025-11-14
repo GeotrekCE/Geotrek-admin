@@ -19,7 +19,7 @@ beautifulsoup4==4.14.2
     # via mapentity
 billiard==4.2.2
     # via celery
-brotli==1.1.0
+brotli==1.2.0
     # via fonttools
 btrees==6.2
     # via zodb
