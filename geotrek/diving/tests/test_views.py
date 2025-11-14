@@ -54,6 +54,17 @@ class DiveViewsTests(CommonTest):
             "geom": '{"type": "Point", "coordinates":[0, 0]}',
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.practice)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/dive/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
 
 class DiveViewsLiveTests(CommonLiveTest):
     model = Dive

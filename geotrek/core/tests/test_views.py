@@ -174,6 +174,14 @@ class PathViewsTest(CommonTest):
             "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/path/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def _post_add_form(self):
         # Avoid overlap, delete all !
         for p in Path.objects.all():
@@ -2286,6 +2294,14 @@ class TrailViewsTest(CommonTest):
             "certifications-INITIAL_FORMS": "1",
             "certifications-MAX_NUM_FORMS": "0",
         }, _("This field is required.")
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/trail/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def test_detail_page(self):
         trail = TrailFactory()

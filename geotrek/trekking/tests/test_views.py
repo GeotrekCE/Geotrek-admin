@@ -98,6 +98,14 @@ class POIViewsTest(CommonTest):
             good_data["geom"] = "POINT(5.1 6.6)"
         return good_data
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/poi/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create(published=False, review=True)
         element_not_published.save()
@@ -313,6 +321,17 @@ class TrekViewsTest(CommonTest):
                 geom="SRID=2154;POINT (700000 6600000)"
             ).pk
         return good_data
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.practice)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/trek/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def test_status(self):
         TrekFactory.create(duration=float("nan"))
@@ -968,6 +987,14 @@ class ServiceViewsTest(CommonTest):
                 "type": ServiceTypeFactory.create().pk,
                 "geom": "POINT(5.1 6.6)",
             }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/service/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"

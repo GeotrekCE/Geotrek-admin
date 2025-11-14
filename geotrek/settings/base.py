@@ -1010,6 +1010,27 @@ REST_FRAMEWORK_EXTENSIONS = {
 SESSION_ENGINE = "django.contrib.sessions.backends.file"
 SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
 
+# Popup configuration
+POPUP_CONTENT = {
+    "trail": [],
+    "path": [],
+    "dive": ["practice"],
+    "report": ["category"],
+    "infrastructure": ["type"],
+    "intervention": ["type"],
+    "project": ["type"],
+    "site": ["type"],
+    "course": ["type"],
+    "sensitivearea": ["category"],
+    "signage": ["type"],
+    "blade": ["type"],
+    "touristiccontent": ["category"],
+    "touristicevent": ["type"],
+    "trek": ["practice"],
+    "poi": [],
+    "service": [],
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")

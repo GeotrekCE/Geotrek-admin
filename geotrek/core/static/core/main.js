@@ -24,7 +24,7 @@ $(window).on('entity:map', function (e, data) {
 
         var pathsLayer = MapEntity.pathsLayer({
             indexing: false,
-            style: { clickable: false },
+            style: { clickable: true },
             modelname: 'path',
             no_draft: data.modelname != 'path',
         });

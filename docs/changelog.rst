@@ -14,6 +14,10 @@ CHANGELOG
 
 - Reorganize the "Import data" chapter
 
+**Improvements**
+
+* Add configurable popups on map overlay (refs #4626).
+
 
 2.120.2         (2025-10-28)
 ----------------------------

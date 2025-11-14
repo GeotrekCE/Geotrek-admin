@@ -10,7 +10,7 @@ $(window).on('entity:map', function (e, data) {
     var map = data.map;
 
     // Show sensitiveare layer in application maps
-    var style = L.Util.extend({clickable: false},
+    var style = L.Util.extend({clickable: true},
         window.SETTINGS.map.styles[modelname] || {})
 
     var layer = new L.ObjectsLayer(null, {

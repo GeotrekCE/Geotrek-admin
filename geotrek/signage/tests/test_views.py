@@ -151,6 +151,17 @@ class BladeViewsTest(CommonTest):
             good_data["topology"] = signage.geom.ewkt
         return good_data
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/blade/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def _post_add_form(self):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + f"?signage={signa.pk}")
@@ -398,6 +409,17 @@ class SignageViewsTest(CommonTest):
         else:
             good_data["geom"] = "POINT(0.42 0.666)"
         return good_data
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/signage/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")
