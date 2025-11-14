@@ -96,10 +96,9 @@ class ReportForm(CommonForm):
                     identifier__in=next_statuses
                 )
                 # current_user
-                if (
+                if self.old_status.identifier not in ["filed", "waiting"] or (
                     WorkflowManager.objects.first()
-                    and self.old_status.identifier not in ["filed", "waiting"]
-                    or kwargs["user"] != WorkflowManager.objects.first().user
+                    and kwargs["user"] != WorkflowManager.objects.first().user
                 ):
                     # only manager can reassign a report
                     self.fields["current_user"].widget = HiddenInput()
@@ -192,7 +191,11 @@ class ReportForm(CommonForm):
         if (not creation) and settings.SURICATE_WORKFLOW_ENABLED:
             waiting_status = ReportStatus.objects.get(identifier="waiting")
             # Assign report through moderation step
-            if self.old_status.identifier in ["filed"] and report.current_user:
+            if (
+                self.old_status.identifier in ["filed"]
+                and report.status.identifier in ["waiting"]
+                and report.current_user
+            ):
                 msg = self.cleaned_data.get("message_supervisor", "")
                 report.notify_current_user(msg)
                 report.assigned_handler = report.current_user
@@ -229,8 +232,10 @@ class ReportForm(CommonForm):
                 self.old_status.identifier != report.status.identifier
                 or self.old_user != report.current_user
                 # do not notify suricate when the supervisor is reassigned
-                and self.old_status.identifier in ["waiting"]
-                and report.status.identifier in ["waiting"]
+                and not (
+                    self.old_status.identifier in ["waiting"]
+                    and report.status.identifier in ["waiting"]
+                )
             ):
                 msg_sentinel = self.cleaned_data.get("message_sentinel", "")
                 msg_admins = self.cleaned_data.get("message_administrators", "")
