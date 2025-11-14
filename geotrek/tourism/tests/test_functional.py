@@ -55,6 +55,17 @@ class TouristicContentViewsTests(CommonTest):
             "geom": '{"type": "Point", "coordinates":[0, 0]}',
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.category)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/touristiccontent/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_intersection_zoning(self):
         self.modelfactory.create()
         city1 = CityFactory.create(
@@ -148,6 +159,17 @@ class TouristicEventViewsTests(CommonTest):
             "begin_date": "2002-02-20",
             "end_date": "2002-02-20",
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/touristicevent/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     @patch("mapentity.helpers.requests")
     def test_document_export_with_attachment(self, mock_requests):

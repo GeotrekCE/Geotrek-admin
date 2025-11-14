@@ -174,6 +174,17 @@ class ReportViewsTest(CommonTest):
             "problem_magnitude": feedback_factories.ReportProblemMagnitudeFactory.create().pk,
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.category)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/report/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_good_data_with_name(self):
         """Test report created if `name` in data"""
         data = self.get_good_data()
