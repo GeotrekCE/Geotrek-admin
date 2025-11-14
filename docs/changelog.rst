@@ -5,6 +5,10 @@ CHANGELOG
 2.121.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Draft path can be add by user without permission to add regular path
+
 
 2.121.0         (2025-11-14)
 ----------------------------
