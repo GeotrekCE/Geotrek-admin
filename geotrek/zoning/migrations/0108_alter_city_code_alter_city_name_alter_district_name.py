@@ -4,25 +4,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0107_city_envelope_district_envelope_and_more'),
+        ("zoning", "0107_city_envelope_district_envelope_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='city',
-            name='code',
-            field=models.CharField(blank=True, db_index=True, max_length=256, null=True, unique=True, verbose_name='Code'),
+            model_name="city",
+            name="code",
+            field=models.CharField(
+                blank=True,
+                db_index=True,
+                max_length=256,
+                null=True,
+                unique=True,
+                verbose_name="Code",
+            ),
         ),
         migrations.AlterField(
-            model_name='city',
-            name='name',
-            field=models.CharField(db_index=True, max_length=128, verbose_name='Name'),
+            model_name="city",
+            name="name",
+            field=models.CharField(db_index=True, max_length=128, verbose_name="Name"),
         ),
         migrations.AlterField(
-            model_name='district',
-            name='name',
-            field=models.CharField(db_index=True, max_length=128, verbose_name='Name'),
+            model_name="district",
+            name="name",
+            field=models.CharField(db_index=True, max_length=128, verbose_name="Name"),
         ),
     ]
