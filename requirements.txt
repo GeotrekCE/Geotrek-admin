@@ -129,7 +129,7 @@ django-clearcache==1.2.1
     # via geotrek (setup.py)
 django-colorfield==0.14.0
     # via geotrek (setup.py)
-django-compressor==4.5.1
+django-compressor==4.6.0
     # via mapentity
 django-crispy-forms==2.5
     # via
@@ -321,7 +321,7 @@ pyxdg==0.28
     # via pdfimpose
 pyyaml==6.0.3
     # via drf-spectacular
-rcssmin==1.1.2
+rcssmin==1.2.2
     # via django-compressor
 redis==7.0.1
     # via geotrek (setup.py)
@@ -339,7 +339,7 @@ requests==2.32.5
     #   django-embed-video
     #   landez
     #   mapentity
-rjsmin==1.2.2
+rjsmin==1.2.5
     # via django-compressor
 rpds-py==0.28.0
     # via
