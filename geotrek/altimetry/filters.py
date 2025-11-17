@@ -18,7 +18,7 @@ class AltimetryPointFilterSet(MapEntityFilterSet):
         return qs
 
 
-class AltimetryAllGeometriesFilterSet(MapEntityFilterSet):
+class AltimetryAllGeometriesFilterSet(AltimetryPointFilterSet):
     length = OptionalRangeFilter(field_name="length_2d", label=_("length"))
     length_3d = OptionalRangeFilter(field_name="length", label=_("length 3d"))
     ascent = OptionalRangeFilter(label=_("ascent"))
