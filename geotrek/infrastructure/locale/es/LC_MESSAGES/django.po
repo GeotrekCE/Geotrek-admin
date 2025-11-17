@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-11-17 09:32+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/infrastructure/es/>\n"
@@ -19,12 +19,6 @@ msgstr ""
 "X-Generator: Weblate 5.13.3\n"
 
 msgid "Infrastructure"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Intervention year"
@@ -66,6 +60,9 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Infrastructure Condition"
 msgstr ""
 
@@ -82,6 +79,9 @@ msgid "Usage difficulty levels"
 msgstr ""
 
 msgid "Reference, code, ..."
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Specificites"

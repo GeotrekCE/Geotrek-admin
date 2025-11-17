@@ -115,13 +115,25 @@ msgstr ""
 msgid "Shown in lists and maps"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Official name"
+msgstr ""
+
+msgid "Comments"
 msgstr ""
 
 msgid "Remarks"
 msgstr ""
 
+msgid "Departure"
+msgstr ""
+
 msgid "Departure place"
+msgstr ""
+
+msgid "Arrival"
 msgstr ""
 
 msgid "Arrival place"
