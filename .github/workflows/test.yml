@@ -107,7 +107,7 @@ jobs:
            libxml2-dev \
            libxslt-dev \
            libpangocairo-1.0-0 \
-           libgdk-pixbuf2.0-dev \
+           libgdk-pixbuf*2.0-dev \
            libffi-dev \
            libvips
         apt-get install -y --no-install-recommends postgis

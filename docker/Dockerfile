@@ -63,7 +63,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libxml2-dev \
         libxslt-dev \
         libpangocairo-1.0-0 \
-        libgdk-pixbuf2.0-dev \
+        libgdk-pixbuf*2.0-dev \
         libffi-dev \
         fonts-dejavu-core \
         libvips && \
