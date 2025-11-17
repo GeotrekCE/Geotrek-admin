@@ -332,8 +332,7 @@ jobs:
       matrix:
           os: ['noble', 'resolute']
           include:
-              - os: 'jammy'
-                code: '22.04'
+
               - os: 'noble'
                 code: '24.04'
               - os: 'resolute'
