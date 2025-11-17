@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 11:11+0200\n"
+"POT-Creation-Date: 2025-11-17 09:32+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/fr/>\n"
@@ -530,12 +530,6 @@ msgstr "Ajouter relation"
 
 msgid "Remove"
 msgstr "Supprimer"
-
-msgid "No result"
-msgstr "Pas de résultat"
-
-msgid "Choose value(s)"
-msgstr "Choisir valeur(s)"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
