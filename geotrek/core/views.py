@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
+from mapentity.helpers import user_has_perm
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (
     LastModifiedMixin,
@@ -77,6 +78,13 @@ class PathList(CustomColumnsMixin, MapEntityList):
     default_extra_columns = ["length_2d"]
     unorderable_columns = ["checkbox"]
     searchable_columns = ["id", "name"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_add"] = user_has_perm(
+            self.request.user, "core.add_path"
+        ) or user_has_perm(self.request.user, "core.add_draft_path")
+        return context
 
 
 class PathFilter(MapEntityFilter):

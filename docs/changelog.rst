@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-2.120.2+dev     (XXXX-XX-XX)
+2.121.0+dev     (XXXX-XX-XX)
+----------------------------
+
+**Bug fixes**
+
+* Draft path can be add by user without permission to add regular path
+
+
+2.121.0         (2025-11-14)
 ----------------------------
 
 **Performances**
@@ -13,6 +21,10 @@ CHANGELOG
 **Documentation**
 
 - Reorganize the "Import data" chapter
+
+**Improvements**
+
+* Add configurable popups on map overlay (refs #4626).
 
 
 2.120.2         (2025-10-28)

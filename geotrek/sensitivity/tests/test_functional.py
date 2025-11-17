@@ -61,6 +61,17 @@ class SensitiveAreaViewsTests(CommonTest):
             "structure": str(self.user.profile.structure.pk),
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.category_display)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/sensitivearea/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_custom_columns_mixin_on_list(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:

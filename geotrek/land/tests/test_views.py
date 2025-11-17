@@ -117,6 +117,14 @@ class PhysicalEdgeViewsTest(CommonTest):
             "length_2d": round(self.obj.length, 1),
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/physicaledge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LandEdgeViewsTest(CommonTest):
@@ -155,6 +163,14 @@ class LandEdgeViewsTest(CommonTest):
             "length": round(self.obj.length, 1),
             "length_2d": round(self.obj.length, 1),
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/landedge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -197,6 +213,14 @@ class CirculationEdgeViewsTest(CommonTest):
             "length_2d": round(self.obj.length, 1),
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/circulationedge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class CompetenceEdgeViewsTest(CommonTest):
@@ -235,6 +259,14 @@ class CompetenceEdgeViewsTest(CommonTest):
             "organization": self.obj.organization_display,
             "length_2d": round(self.obj.length, 1),
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/competenceedge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -275,6 +307,14 @@ class WorkManagementEdgeViewsTest(CommonTest):
             "length_2d": round(self.obj.length, 1),
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/workmanagementedge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SignageManagementEdgeViewsTest(CommonTest):
@@ -313,3 +353,11 @@ class SignageManagementEdgeViewsTest(CommonTest):
             "organization": self.obj.organization_display,
             "length_2d": round(self.obj.length, 1),
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/signagemanagementedge/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )

@@ -6,9 +6,9 @@ $(window).on('entity:map', function (e, data) {
     var modelname = 'signage';
     var layername = `${modelname}_layer`;
 	var url = window.SETTINGS.urls[layername];
-    var loaded_infrastructure = false;
+    var loaded_signage = false;
     var map = data.map;
-    var style = L.Util.extend({ clickable: false },
+    var style = L.Util.extend({ clickable: true },
         window.SETTINGS.map.styles[modelname] || {});
     // Show infrastructure layer in application maps
 	var layer = new L.ObjectsLayer(null, {
@@ -22,10 +22,10 @@ $(window).on('entity:map', function (e, data) {
 
     map.on('layeradd', function (e) {
         var options = e.layer.options || { 'modelname': 'None' };
-        if (! loaded_infrastructure) {
+        if (! loaded_signage) {
             if (options.modelname == modelname && options.modelname != data.modelname) {
                 e.layer.load(url);
-                loaded_infrastructure = true;
+                loaded_signage = true;
             }
         }
     });
