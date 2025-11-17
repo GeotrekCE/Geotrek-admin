@@ -1,5 +1,5 @@
+from dal_select2.widgets import Select2Multiple
 from django.contrib.auth.models import Permission
-from django.forms.widgets import SelectMultiple
 from django.test import TestCase
 from mapentity.widgets import SelectMultipleWithPop
 
@@ -66,7 +66,7 @@ class TouristicEventFormTestCase(TestCase):
         # if user has 'add_touristiceventorganizer' permission the widget must be a SelectMultipleWithPop
         # otherwise a Select
         form = TouristicEventForm(user=UserFactory(), data={})
-        self.assertEqual(type(form.fields["organizers"].widget), SelectMultiple)
+        self.assertEqual(type(form.fields["organizers"].widget), Select2Multiple)
 
     def test_organizers_widget_select_multiple_with_pop(self):
         # if user has 'add_touristiceventorganizer' permission the widget must be a SelectMultipleWithPop
