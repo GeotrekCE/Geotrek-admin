@@ -249,7 +249,7 @@ markupsafe==3.0.3
     # via jinja2
 mbutil==0.3.0
     # via landez
-numpy==2.2.6
+numpy==2.3.5
     # via
     #   large-image
     #   large-image-source-vips
