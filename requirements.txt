@@ -383,6 +383,7 @@ typing-extensions==4.15.0
     # via
     #   beautifulsoup4
     #   large-image
+    #   referencing
 tzdata==2025.2
     # via
     #   kombu
