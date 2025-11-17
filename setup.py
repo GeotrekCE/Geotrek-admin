@@ -17,6 +17,7 @@ setup(
     scripts=["manage.py"],
     install_requires=[
         "Django==5.2.*",
+        "deepl",
         "mapentity",
         "chardet",
         "cairosvg",
