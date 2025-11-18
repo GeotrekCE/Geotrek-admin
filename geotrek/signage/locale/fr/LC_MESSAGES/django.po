@@ -45,7 +45,7 @@ msgstr "Le numéro existe déjà, numéro(s) déjà utilisé(s) : %(number)s"
 
 #, python-format
 msgid "On: %(target)s"
-msgstr ""
+msgstr "Sur : %(target)s"
 
 msgid "Name"
 msgstr "Nom"
