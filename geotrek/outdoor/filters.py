@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.db.models import Q
 from django.utils.translation import gettext as _
 from django_filters.filters import (
@@ -13,21 +14,36 @@ from geotrek.zoning.filters import ZoningFilterSet
 
 class SiteFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     orientation = MultipleChoiceFilter(
-        choices=Site.ORIENTATION_CHOICES, method="filter_orientation"
+        choices=Site.ORIENTATION_CHOICES,
+        method="filter_orientation",
+        widget=autocomplete.Select2Multiple(),
     )
-    wind = MultipleChoiceFilter(choices=Site.WIND_CHOICES, method="filter_orientation")
+    wind = MultipleChoiceFilter(
+        choices=Site.WIND_CHOICES,
+        method="filter_orientation",
+        widget=autocomplete.Select2Multiple(),
+    )
     practice = ModelMultipleChoiceFilter(
-        queryset=Practice.objects.all(), method="filter_super"
+        queryset=Practice.objects.all(),
+        method="filter_super",
+        widget=autocomplete.Select2Multiple(),
     )
     sector = ModelMultipleChoiceFilter(
-        queryset=Sector.objects.all(), method="filter_sector", label=_("Sector")
+        queryset=Sector.objects.all(),
+        method="filter_sector",
+        label=_("Sector"),
+        widget=autocomplete.Select2Multiple(),
     )
     managers = ModelMultipleChoiceFilter(
-        queryset=Organism.objects.all(), method="filter_manager", label=_("Manager")
+        queryset=Organism.objects.all(),
+        method="filter_manager",
+        label=_("Manager"),
+        widget=autocomplete.Select2Multiple(),
     )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(site__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -76,13 +92,18 @@ class CourseFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
         choices=Site.ORIENTATION_CHOICES,
         method="filter_orientation",
         label=_("Orientation"),
+        widget=autocomplete.Select2Multiple(),
     )
     wind = MultipleChoiceFilter(
-        choices=Site.WIND_CHOICES, method="filter_orientation", label=_("Wind")
+        choices=Site.WIND_CHOICES,
+        method="filter_orientation",
+        label=_("Wind"),
+        widget=autocomplete.Select2Multiple(),
     )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(course__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
