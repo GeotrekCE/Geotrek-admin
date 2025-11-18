@@ -2,6 +2,7 @@
 
 import django.contrib.gis.db.models.fields
 import django.contrib.gis.db.models.functions
+from django.conf import settings
 from django.db import migrations, models
 
 
@@ -17,7 +18,9 @@ class Migration(migrations.Migration):
             field=models.GeneratedField(
                 db_persist=True,
                 expression=django.contrib.gis.db.models.functions.Envelope(
-                    django.contrib.gis.db.models.functions.Transform("geom", 4326)
+                    django.contrib.gis.db.models.functions.Transform(
+                        "geom", settings.API_SRID
+                    )
                 ),
                 output_field=django.contrib.gis.db.models.fields.GeometryField(
                     srid=4326
@@ -30,7 +33,9 @@ class Migration(migrations.Migration):
             field=models.GeneratedField(
                 db_persist=True,
                 expression=django.contrib.gis.db.models.functions.Envelope(
-                    django.contrib.gis.db.models.functions.Transform("geom", 4326)
+                    django.contrib.gis.db.models.functions.Transform(
+                        "geom", settings.API_SRID
+                    )
                 ),
                 output_field=django.contrib.gis.db.models.fields.GeometryField(
                     srid=4326
@@ -43,7 +48,9 @@ class Migration(migrations.Migration):
             field=models.GeneratedField(
                 db_persist=True,
                 expression=django.contrib.gis.db.models.functions.Envelope(
-                    django.contrib.gis.db.models.functions.Transform("geom", 4326)
+                    django.contrib.gis.db.models.functions.Transform(
+                        "geom", settings.API_SRID
+                    )
                 ),
                 output_field=django.contrib.gis.db.models.fields.GeometryField(
                     srid=4326
