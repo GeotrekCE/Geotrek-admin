@@ -158,7 +158,9 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
 
     def filter_species(self, src, val):
         try:
-            species = Species.objects.get(category=Species.CategoryChoices.SPECIES, name=val)
+            species = Species.objects.get(
+                category=Species.CategoryChoices.SPECIES, name=val
+            )
         except Species.DoesNotExist:
             msg = f"L'espèce {val} n'existe pas dans Geotrek. Merci de la créer."
             raise RowImportError(msg)
