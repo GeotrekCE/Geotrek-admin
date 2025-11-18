@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 09:32+0000\n"
+"POT-Creation-Date: 2025-11-18 10:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgid "Number already exists, numbers already used: %(number)s"
 msgstr ""
 
 #, python-format
-msgid "On %s"
+msgid "On: %(target)s"
 msgstr ""
 
 msgid "Name"
