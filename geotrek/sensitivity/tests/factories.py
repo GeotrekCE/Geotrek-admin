@@ -50,7 +50,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
 
 
 class RegulatorySpeciesFactory(SpeciesFactory):
-    category = models.Species.REGULATORY
+    category = models.Species.CategoryChoices.REGULATORY
 
 
 class SensitiveAreaFactory(StructureRelatedDefaultFactory):
