@@ -74,7 +74,7 @@ describe('Nav reports workflow', () => {
         cy.get("#id_message_sentinel").should("have.value", "Ce probleme n'en sera bientot plus un")
         cy.get("#id_message_administrators").should("have.value", "Ce probleme n'en sera bientot plus un")
         // Select another assigned user
-        cy.get("#id_current_user").select("1")
+        cy.get("#id_current_user").select("1", { force: true })
         // Can use selectors for sentinel and supervisor messages
         cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
         cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
