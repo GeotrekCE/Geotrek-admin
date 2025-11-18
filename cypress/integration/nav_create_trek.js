@@ -38,9 +38,9 @@ describe('Create trek', () => {
         cy.get("a[href='#arrival_fr']").click();
         cy.get("input[id='id_arrival_fr']").type('Arrivée');
         cy.get("input[id='id_duration']").type('100');
-        cy.get("select[id='id_practice']").select("Cycling");
-        cy.get("select[id='id_difficulty']").select("Very hard");
-        cy.get("select[id='id_route']").select("Loop");
+        cy.get("select[id='id_practice']").select("Cycling", { force: true });
+        cy.get("select[id='id_difficulty']").select("Very hard", { force: true });
+        cy.get("select[id='id_route']").select("Loop", { force: true });
         cy.setTinyMceContent('id_access_en', 'Access number 1');;
         cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1');
         cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1');
