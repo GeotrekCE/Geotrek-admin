@@ -1293,7 +1293,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
             return obj.species.radius
 
         def get_species_id(self, obj):
-            if obj.species.category == sensitivity_models.Species.SPECIES:
+            if obj.species.category == sensitivity_models.Species.CategoryChoices.SPECIES:
                 return obj.species_id
             return None
 
@@ -1346,7 +1346,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
 
         def get_radius(self, obj):
             if (
-                obj.species.category == sensitivity_models.Species.SPECIES
+                obj.species.category == sensitivity_models.Species.CategoryChoices.SPECIES
                 and obj.geom.geom_typeid == 0
             ):
                 return obj.species.radius

@@ -27,4 +27,4 @@ class SpeciesAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "name"
 
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(category=Species.SPECIES)
+        return super().get_queryset(request).filter(category=Species.CategoryChoices.SPECIES)
