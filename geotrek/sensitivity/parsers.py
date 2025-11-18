@@ -107,12 +107,12 @@ class BiodivParser(Parser):
             try:
                 species = self.obj.species
             except Species.DoesNotExist:
-                species = Species(category=Species.REGULATORY)
+                species = Species(category=Species.CategoryChoices.REGULATORY)
         else:  # Species area
             try:
                 species = Species.objects.get(eid=eid)
             except Species.DoesNotExist:
-                species = Species(category=Species.SPECIES, eid=eid)
+                species = Species(category=Species.CategoryChoices.SPECIES, eid=eid)
         for lang, translation in names.items():
             if lang in settings.MODELTRANSLATION_LANGUAGES and translation != getattr(
                 species, "name_" + lang
@@ -158,7 +158,7 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
 
     def filter_species(self, src, val):
         try:
-            species = Species.objects.get(category=Species.SPECIES, name=val)
+            species = Species.objects.get(category=Species.CategoryChoices.SPECIES, name=val)
         except Species.DoesNotExist:
             msg = f"L'espèce {val} n'existe pas dans Geotrek. Merci de la créer."
             raise RowImportError(msg)
@@ -191,7 +191,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
 
     def filter_species(self, src, val):
         (name, elevation, period, practice_names, url) = val
-        species = Species(category=Species.REGULATORY)
+        species = Species(category=Species.CategoryChoices.REGULATORY)
         species.name = name
         if period:
             period = period.split(self.separator)
