@@ -1031,6 +1031,13 @@ POPUP_CONTENT = {
     "service": [],
 }
 
+### DEEPL SETTINGS ###
+DEEPL_API_KEY = os.getenv("DEEPL_API_KEY", None)  # define API key for DeepL translation service
+DEEPL_LANGUAGE_FALLBACK = {
+    'en': 'en-us',
+    'fr-ca': 'fr',
+}  # some languages are not allowed in DeepL, define fallback here
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
