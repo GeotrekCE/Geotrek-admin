@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
         if options.get('check_key'):
             usage = deepl_client.get_usage()
-            self.stdout.write(f"DeepL API Usage:")
+            self.stdout.write("DeepL API Usage:")
             self.stdout.write(f"  - {usage.character.count}/{usage.character.limit} characters used this month. ({round(usage.character.count/usage.character.limit*100, 3)}%)")
             self.stdout.write(f"  - Limit reached: {usage.any_limit_reached}")
             return
