@@ -33,12 +33,25 @@ class Command(BaseCommand):
             action='store_true',
             help='Force re-translation even if target field is already filled.',
         )
+        # check usage of DeepL API key
+        parser.add_argument(
+            '--check-key',
+            action='store_true',
+            help='Check DeepL API key usage and exit.',
+        )
 
     def handle(self, *args, **options):
         if not settings.DEEPL_API_KEY:
             self.stderr.write("DEEPL_API_KEY not set in settings or environment variable.")
 
         deepl_client = deepl.DeepLClient(settings.DEEPL_API_KEY)
+
+        if options.get('check_key'):
+            usage = deepl_client.get_usage()
+            self.stdout.write(f"DeepL API Usage:")
+            self.stdout.write(f"  - {usage.character.count}/{usage.character.limit} characters used this month. ({round(usage.character.count/usage.character.limit*100, 3)}%)")
+            self.stdout.write(f"  - Limit reached: {usage.any_limit_reached}")
+            return
 
         treks = Trek.objects.all()
         trek_limit = options.get('treks').split(',') if options.get('treks') else None
