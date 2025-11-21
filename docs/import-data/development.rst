@@ -89,30 +89,30 @@ Existing parsers
 
 Several default parsers are available in Geotrek.  
 They are more or less generic scripts designed to save time when creating data mappings.  
-Below is the list of these scripts for each touristic information systems:
+Below is the list of these scripts for each touristic information system:
 
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 |                          | Apidae   | Tourinsoft   | Cirkwi   | Lei  | Esprit Parc   | Openstreetmap |
 +==========================+==========+==============+==========+======+===============+===============+
-| Touristic content        | x        | x            | x        | x    | x              | x              |
+| Touristic content        | x        | x            | x        | x    | x             | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 | Touristic event          | x        | x            | x        | x    |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| Information desk         | x        |              |          |      |               | x               |
+| Information desk         | x        |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| Infrastructure           | x        |              |          |      |               | x              |
+| Infrastructure           | x        |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| Services                 |          | x            |          |      |               | x              |
+| Services                 |          | x            |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| POI                      |          | x            |          |      |               | x              |
+| POI                      |          | x            |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| Trek *                   | x        |              | x        |      |               | x              |
+| Trek *                   | x        |              | x        |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 | District                 |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 | City                     |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
-| Restricted area           |          |              |          |      |               | x             |
+| Restricted area          |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 | Signage                  |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
@@ -121,6 +121,7 @@ Below is the list of these scripts for each touristic information systems:
 
 \* Geometry is only available without dynamic segmentation.  
 It is not possible to import geometries for treks in a database using dynamic segmentation.
+
 
 .. _apidae-parsers:
 
