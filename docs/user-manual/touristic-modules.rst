@@ -430,17 +430,24 @@ Services
 Contenus touristiques
 =====================
 
-Les contenus touristiques sont des lieux accessibles sans date préétablie, par exemple un hôtel, une auberge, un producteur artisanal, etc. Ils sont filtrables directement depuis la liste des éléments géographiques et sont identifiés dans Geotrek-Rando comme des « services ».
+Les contenus touristiques sont des lieux accessibles sans date préétablie, par exemple un hôtel,
+une auberge, un producteur artisanal, etc. Ils sont filtrables directement depuis la liste des
+éléments géographiques et sont identifiés dans Geotrek-Rando comme des « services ».
 
-Les contenus touristiques contiennent de multiples champs, mais il existe 3 champs permettant de filtrer sur le contenu :
-    • Categorie
-    • Type 1 (sous type 1)
-    • Type 2 (sous type 2)
+Les contenus touristiques contiennent de multiples champs, mais il existe trois champs
+permettant de filtrer sur le contenu :
+
 - **Categorie**
-- **Type 1** (sous type 1)
-- **Type 2** (sous type 2)
+- **Type 1** (sous-type 1)
+- **Type 2** (sous-type 2)
 
-Le type 1 et type 2 sont dépendants de la catégorie. Par exemple pour une catégorie « Hébergement », on peut avoir une sous-catégorie Type 1 « Type d’hébergement » (qui contiendra alors des valeurs comme Camping, Hébergement collectif, Hôtel, Gite, etc.) et une sous-catégorie Type 2 « Label » (qui indiquerait alors des appartenances à des réseaux par exemple, ou des étoiles).
+Le Type 1 et le Type 2 sont dépendants de la catégorie.  
+Par exemple, pour une catégorie « Hébergement », on peut avoir :
+
+- une sous-catégorie *Type 1* : « Type d’hébergement »  
+  (contenant des valeurs comme *Camping*, *Hébergement collectif*, *Hôtel*, *Gîte*, etc.)
+- une sous-catégorie *Type 2* : « Label »  
+  (indiquant par exemple des appartenances à des réseaux, ou des niveaux comme des étoiles)
 
 Zone tampon pour contenus à proximité
 ----------------------------------------
