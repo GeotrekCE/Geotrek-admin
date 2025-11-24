@@ -463,7 +463,7 @@ La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remo
 Évènements touristiques
 =======================
 
-Les événements touristiques sont des lieux ou des événement accessibles avec date préétablie, par exemple, une randonnée accompagnée. 
+Les événements touristiques sont des lieux ou des événements accessibles avec date préétablie, par exemple, une randonnée accompagnée. 
 
 .. _signalements:
 
