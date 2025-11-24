@@ -4,7 +4,9 @@ FROM ${DISTRO} AS base
 
 
 RUN apt-get update -qq -o Acquire::Languages=none && \
-    env DEBIAN_FRONTEND=noninteractive apt-get install -yqq curl lsb-release && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
+    curl \
+    lsb-release \
     nano \
     dpkg-dev \
     debhelper \
