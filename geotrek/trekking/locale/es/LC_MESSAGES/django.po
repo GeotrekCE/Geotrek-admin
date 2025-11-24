@@ -10,8 +10,7 @@ msgstr ""
 "POT-Creation-Date: 2025-09-04 11:40+0200\n"
 "PO-Revision-Date: 2025-10-10 08:45+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/trekking/es/>\n"
+"Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -85,8 +84,7 @@ msgstr ""
 msgid "Distance"
 msgstr ""
 
-msgid ""
-"Touristic contents and events will associate within this distance (meters)"
+msgid "Touristic contents and events will associate within this distance (meters)"
 msgstr ""
 
 msgid "Cirkwi locomotion"
@@ -209,33 +207,25 @@ msgstr ""
 msgid "Accessibility advice"
 msgstr ""
 
-msgid ""
-"Specific elements allowing to appreciate the context of the itinerary for "
-"PRMs (advice, delicate passages, etc.)"
+msgid "Specific elements allowing to appreciate the context of the itinerary for PRMs (advice, delicate passages, etc.)"
 msgstr ""
 
 msgid "Accessibility covering"
 msgstr ""
 
-msgid ""
-"Description of the surfaces encountered on the entire route. Track, path, "
-"road + type of surface (stony, presence of stones, sand, paving, slab...)"
+msgid "Description of the surfaces encountered on the entire route. Track, path, road + type of surface (stony, presence of stones, sand, paving, slab...)"
 msgstr ""
 
 msgid "Level accessibility"
 msgstr ""
 
-msgid ""
-"Beginner (Little drop – terrain without difficulties) / Experienced "
-"(Significant slope – Technical terrain, with obstacles)"
+msgid "Beginner (Little drop – terrain without difficulties) / Experienced (Significant slope – Technical terrain, with obstacles)"
 msgstr ""
 
 msgid "Accessibility exposure"
 msgstr ""
 
-msgid ""
-"Description of exposures and shaded areas. Shaded, High exposure, Presence "
-"of shaded areas"
+msgid "Description of exposures and shaded areas. Shaded, High exposure, Presence of shaded areas"
 msgstr ""
 
 msgid "Accessibility infrastructure"
@@ -253,18 +243,13 @@ msgstr ""
 msgid "Accessibility slope"
 msgstr ""
 
-msgid ""
-"Description of the slope: greater than 10% (Requires assistance when the "
-"slope is greater than 8%); slope break"
+msgid "Description of the slope: greater than 10% (Requires assistance when the slope is greater than 8%); slope break"
 msgstr ""
 
 msgid "Accessibility width"
 msgstr ""
 
-msgid ""
-"Description of the narrowing of the trails and the minimum width for "
-"wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving "
-"technique)"
+msgid "Description of the narrowing of the trails and the minimum width for wheelchairs (Trail>0.90 m, Joëlette, Narrow trail requiring strong driving technique)"
 msgstr ""
 
 msgid "Route"
@@ -427,25 +412,19 @@ msgid "Published Services"
 msgstr ""
 
 #, python-format
-msgid ""
-"Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
+msgid "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
+msgid "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Invalid geometry type for field '{src}'. Should be LineString, not "
-"{geom_type}"
+msgid "Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}"
 msgstr ""
 
 #, python-format
-msgid ""
-"Trying to retrieve children for missing trek: could not find trek with UUID "
-"%(key)s"
+msgid "Trying to retrieve children for missing trek: could not find trek with UUID %(key)s"
 msgstr ""
 
 #, python-format
@@ -470,8 +449,7 @@ msgid "Bad value for parking geometry: should be a Point"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"License '{val}' did not exist in Geotrek-admin and was automatically created"
+msgid "License '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
@@ -499,9 +477,7 @@ msgstr "Créditos de fotos"
 msgid "Powered by http://geotrek.fr"
 msgstr "Generado por geotrek.fr"
 
-msgid ""
-"Your pictures should have the same ratio (height/width) for a better "
-"apparence in public portal."
+msgid "Your pictures should have the same ratio (height/width) for a better apparence in public portal."
 msgstr ""
 
 msgid "Public print"
@@ -629,12 +605,9 @@ msgstr ""
 
 msgid ""
 "\n"
-"              Along your trek, you will go through sensitive areas related "
-"to the presence of a specific species or\n"
-"              environment. In these areas, an appropriate behaviour allows "
-"to contribute to their preservation. For\n"
-"              detailed information, specific forms are accessible for each "
-"area.\n"
+"              Along your trek, you will go through sensitive areas related to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each area.\n"
 "            "
 msgstr ""
 
@@ -656,12 +629,8 @@ msgstr ""
 msgid "Geographical location"
 msgstr ""
 
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"El parque nacional es un área natural sin restricciones pero sometido a "
-"regulaciones que deben ser conocidas por todos los visitantes."
+msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgstr "El parque nacional es un área natural sin restricciones pero sometido a regulaciones que deben ser conocidas por todos los visitantes."
 
 msgid "This hike is in the core of the national park"
 msgstr "Este itinerario está en el corazón del Parque nacional"

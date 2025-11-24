@@ -11,8 +11,7 @@ msgstr ""
 "POT-Creation-Date: 2025-07-22 09:48+0000\n"
 "PO-Revision-Date: 2025-10-10 08:46+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/common/es/>\n"
+"Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/common/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -52,9 +51,7 @@ msgid "Fields are missing to publish or review object: %(fields)s"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Please select a choice related to all structures (without brackets) or "
-"related to the structure {struc} (in brackets)"
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
 msgstr ""
 
 msgid "Data to import from network"
@@ -108,9 +105,7 @@ msgstr ""
 msgid "Is in the midst of the park"
 msgstr ""
 
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
+msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
 msgstr ""
 
 msgid "Merge"
@@ -371,14 +366,11 @@ msgid "Missing id field '{eid_src}'"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
-"identifier"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier"
 msgstr ""
 
 #, python-brace-format
@@ -394,8 +386,7 @@ msgid "Bad value '{val}' for field {src}. Should be in {values}"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"{model} '{val}' did not exist in Geotrek-admin and was automatically created"
+msgid "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
@@ -449,15 +440,11 @@ msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
 msgstr ""
 
 #, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' "
-"is not allowed."
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' is not allowed."
 msgstr ""
 
 #, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type "
-"'%(mimetype)s' is not allowed for %(ext)s."
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type '%(mimetype)s' is not allowed for %(ext)s."
 msgstr ""
 
 #, python-format
@@ -472,9 +459,7 @@ msgid "Geotrek-admin"
 msgstr ""
 
 #, python-format
-msgid ""
-"Source '%(name)s' did not exist in Geotrek-admin and was automatically "
-"created"
+msgid "Source '%(name)s' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
@@ -490,9 +475,7 @@ msgstr ""
 msgid "Photos accessibility"
 msgstr ""
 
-msgid ""
-"You are not allowed to modify attachments on this object, this object is not "
-"from the same structure."
+msgid "You are not allowed to modify attachments on this object, this object is not from the same structure."
 msgstr ""
 
 msgid "Accessibility type"
@@ -580,9 +563,7 @@ msgstr ""
 msgid "Full history"
 msgstr ""
 
-msgid ""
-"Add very high resolution images that will be automatically tiled and add "
-"annotations on it (points, lines, polygons and text)"
+msgid "Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)"
 msgstr ""
 
 msgid "Add a new HD view"
@@ -704,14 +685,10 @@ msgctxt "West"
 msgid "W"
 msgstr ""
 
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
+msgid "Feature geometry cannot be converted to a single continuous LineString feature"
 msgstr ""
 
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
+msgid "Geometries from various features cannot be converted to a single continuous LineString feature"
 msgstr ""
 
 #, python-format

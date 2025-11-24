@@ -10,8 +10,7 @@ msgstr ""
 "POT-Creation-Date: 2025-01-06 15:41+0000\n"
 "PO-Revision-Date: 2025-10-10 08:46+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/cirkwi/it/>\n"
+"Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/cirkwi/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,8 +46,7 @@ msgid "Cirkwi POI categories"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"{model} '{val}' did not exist in Geotrek-admin and was automatically created"
+msgid "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
 msgstr ""
 
 #, python-brace-format
@@ -56,9 +54,7 @@ msgid "{model} '{val}' does not exists in Geotrek-admin. Please add it"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"No Practice matching Cirkwi Locomotion '{type}' (id: '{id}') was found. "
-"Please add it"
+msgid "No Practice matching Cirkwi Locomotion '{type}' (id: '{id}') was found. Please add it"
 msgstr ""
 
 msgid "Difficulty Level with Cirkwi Level"
