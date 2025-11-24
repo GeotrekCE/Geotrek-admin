@@ -1,6 +1,5 @@
 from django.contrib.gis.db import models
 
-from geotrek.common.functions import Length
 from geotrek.common.mixins.managers import NoDeleteManager
 
 
@@ -10,12 +9,7 @@ class PathManager(models.Manager):
 
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible."""
-        return (
-            super()
-            .get_queryset()
-            .filter(visible=True)
-            .annotate(length_2d=Length("geom"))
-        )
+        return super().get_queryset().filter(visible=True)
 
 
 class PathInvisibleManager(models.Manager):
@@ -28,9 +22,6 @@ class PathInvisibleManager(models.Manager):
 class TopologyManager(NoDeleteManager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
-
-    def get_queryset(self):
-        return super().get_queryset().annotate(length_2d=Length("geom"))
 
 
 class PathAggregationManager(models.Manager):

@@ -28,7 +28,7 @@ msgid "ascent"
 msgstr "dénivelé positif"
 
 msgid "descent"
-msgstr "Dénivelé négatif"
+msgstr "dénivelé négatif"
 
 msgid "slope"
 msgstr "pente"
@@ -64,7 +64,7 @@ msgid "Trail"
 msgstr "Sentier"
 
 msgid "Report"
-msgstr "Rapport"
+msgstr "Signalement"
 
 msgid "Outdoor Course"
 msgstr "Parcours Outdoor"
@@ -100,7 +100,7 @@ msgid "City"
 msgstr "Commune"
 
 msgid "District"
-msgstr "District"
+msgstr "Secteur"
 
 msgid "Year of activity"
 msgstr "Année d'activité"
@@ -224,7 +224,7 @@ msgid "Intervention's status"
 msgstr "Statut d'intervention"
 
 msgid "Intervention's statuses"
-msgstr "Statuts"
+msgstr "Statuts d'intervention"
 
 msgid "Intervention's type"
 msgstr "Type d'intervention"
@@ -304,9 +304,6 @@ msgstr "Période"
 msgid "Interventions total cost"
 msgstr "Coût total des interventions"
 
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
-
 msgid "Project type"
 msgstr "Type de chantier"
 
@@ -353,13 +350,13 @@ msgid "Dimensions"
 msgstr "Dimensions"
 
 msgid "H:"
-msgstr "h:"
+msgstr "h :"
 
 msgid "L:"
-msgstr "L:"
+msgstr "L :"
 
 msgid "W:"
-msgstr "l:"
+msgstr "l :"
 
 msgid "Add"
 msgstr "Ajouter"

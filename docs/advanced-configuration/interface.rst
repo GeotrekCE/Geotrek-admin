@@ -98,6 +98,8 @@ By default, job cost details are not included in intervention exports. You can e
 
 When enabled, a new column will be added to intervention exports, displaying the total cost for each job.
 
+.. _custom-columns-available:
+
 Custom columns available
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

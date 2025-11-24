@@ -300,9 +300,6 @@ msgstr "Itinéraires"
 msgid "Formated duration"
 msgstr "Durée formatée"
 
-msgid "Add a new trek"
-msgstr "Ajouter un itinéraire"
-
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
@@ -618,6 +615,9 @@ msgstr "Période de sensibilité :"
 
 msgid "Contact:"
 msgstr "Contact :"
+
+msgid "Add a new trek"
+msgstr "Ajouter un itinéraire"
 
 msgid "Add a new poi"
 msgstr "Ajouter un POI"

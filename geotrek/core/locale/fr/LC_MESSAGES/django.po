@@ -100,6 +100,9 @@ msgstr "Impossible d'importer l'objet : la géométrie est None"
 msgid "Could not parse geometry from value '%(value)s'"
 msgstr "Impossible de parser la géométrie à partir de la valeur '%(value)s'"
 
+msgid "Length 2D"
+msgstr "Longueur 2D"
+
 msgid "Validity"
 msgstr "Validité"
 
@@ -167,9 +170,6 @@ msgstr "Sentiers"
 
 msgid "None"
 msgstr "Aucun(e)"
-
-msgid "Add a new path"
-msgstr "Ajouter un tronçon"
 
 msgid "Treks"
 msgstr "Itinéraires"

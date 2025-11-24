@@ -570,10 +570,6 @@ class Trek(
     def tourism_treks(cls, tourism_object, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new trek")
-
     @property
     def parents(self):
         return Trek.objects.filter(trek_children__child=self, deleted=False)

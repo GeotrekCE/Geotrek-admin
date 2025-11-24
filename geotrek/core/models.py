@@ -6,12 +6,12 @@ import uuid
 import simplekml
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.db.models.functions import Distance, Transform
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point, fromstr
 from django.contrib.postgres.indexes import GistIndex
 from django.core.mail import mail_managers
 from django.db import DEFAULT_DB_ALIAS, connection, connections
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Value
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -23,7 +23,7 @@ from modelcluster.models import ClusterableModel
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.functions import IsSimple
+from geotrek.common.functions import IsSimple, LengthSpheroid
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
     CheckBoxActionMixin,
@@ -60,6 +60,14 @@ class Path(
     """Path model. Spatial indexes disabled because managed in Meta.indexes"""
 
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    length_2d = models.GeneratedField(
+        expression=LengthSpheroid(
+            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
+        ),
+        output_field=models.FloatField(),
+        db_persist=True,
+        verbose_name=_("Length 2D"),
+    )
     geom_cadastre = models.LineStringField(
         null=True, srid=settings.SRID, spatial_index=False, editable=False
     )
@@ -79,7 +87,6 @@ class Path(
     comments = models.TextField(
         null=True, blank=True, verbose_name=_("Comments"), help_text=_("Remarks")
     )
-
     departure = models.CharField(
         null=True,
         blank=True,
@@ -96,7 +103,6 @@ class Path(
         verbose_name=_("Arrival"),
         help_text=_("Arrival place"),
     )
-
     comfort = models.ForeignKey(
         "Comfort",
         on_delete=models.PROTECT,
@@ -401,10 +407,6 @@ class Path(
     def networks_display(self):
         return ", ".join([str(n) for n in self.networks.all()])
 
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new path")
-
     def topologies_by_path(self, default_dict):
         if "geotrek.core" in settings.INSTALLED_APPS:
             for trail in self.trails:
@@ -490,13 +492,20 @@ class Topology(
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
     geom_need_update = models.BooleanField(default=False)
-
     geom = models.GeometryField(
         editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
         srid=settings.SRID,
         null=True,
         default=None,
         spatial_index=False,
+    )
+    length_2d = models.GeneratedField(
+        expression=LengthSpheroid(
+            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
+        ),
+        output_field=models.FloatField(),
+        db_persist=True,
+        verbose_name=_("Length 2D"),
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 

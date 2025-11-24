@@ -61,6 +61,17 @@ class InfrastructureViewsTest(CommonTest):
             good_data["geom"] = "LINESTRING (0.0 0.0, 1.0 1.0)"
         return good_data
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/infrastructure/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
         response = self.client.get(infra.get_detail_url())
@@ -102,3 +113,14 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
         else:
             good_data["geom"] = "POINT(0.42 0.666)"
         return good_data
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/infrastructure/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )

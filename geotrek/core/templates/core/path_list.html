@@ -68,11 +68,3 @@
     </script>
 
 {% endblock %}
-
-{% block mainactions %}
-
-    {% if perms.core.add_path or perms.core.add_draft_path %}
-        {{ block.super }}
-    {% endif %}
-
-{% endblock mainactions %}

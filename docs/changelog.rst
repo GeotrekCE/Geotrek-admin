@@ -2,7 +2,57 @@
 CHANGELOG
 =========
 
-2.119.0+dev     (XXXX-XX-XX)
+2.121.1+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.121.1         (2025-11-17)
+----------------------------
+
+**Bug fixes**
+
+* Draft path can be add by user without permission to add regular path
+* Fix the email sending and status change processes in the Suricate workflow.
+
+
+2.121.0         (2025-11-14)
+----------------------------
+
+**Performances**
+
+* Topology length 2d is now computed at database level.
+* Last modified header and content cache is now enabled on zoning internal API.
+
+**Documentation**
+
+- Reorganize the "Import data" chapter
+
+**Improvements**
+
+* Add configurable popups on map overlay (refs #4626).
+
+
+2.120.2         (2025-10-28)
+----------------------------
+
+**Bug fixes**
+
+* Fix trek's ``ambiance`` translated fields not being emptied by ApidaeTrekParser when the source data does not contain corresponding translations
+
+
+2.120.1         (2025-10-22)
+----------------------------
+
+**Improvements**
+
+* Length are now computed with Earth spheroïd. We can now support using SRID 3857 (Pseudo mercator) to cover - almost - all Earth surface.
+
+**Documentation**
+
+* Refactor sphinx dependencies management
+
+
+2.120.0         (2025-10-22)
 ----------------------------
 
 **Breaking changes**
@@ -19,16 +69,14 @@ CHANGELOG
 * It is recommended to upgrade your OS to Ubuntu 22.04 or 24.04, and PostgreSQL to version 14 minimum. Or to externalize your database on another server with the desired PostgreSQL version.
 * Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
 
-**Developers**
-
-* For developers, you need to upgrade your database. ``make flush`` can help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
-  * By using this command, you will lose local data.
-
 **Improvements**
 
 * Add new parameter: ``PGROUTING_TOLERANCE``, which corresponds to pgrouting's tolerance for disconnected edges in the graph
 * Add a ``--flush`` option to the ``generate_pgr_network_topology`` command to reset the graph before regenerating it
 * Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM.
+* Allow manager to self assign a report (refs #4627)
+* Allow report reassignment (refs #4624)
+* Related report status now auto-updates to “Planned” when intervention status is set to “To be verified”, “Requested”, or “Planned” (refs #4633)
 
 **Bug fixes**
 
@@ -37,6 +85,11 @@ CHANGELOG
 **Maintenance**
 
 * Upgrade to Django 5.2 LTS
+
+**Developers**
+
+* For developers, you need to upgrade your database. ``make flush`` can help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
+  * By using this command, you will lose local data.
 
 
 2.119.0         (2025-10-06)

@@ -5,7 +5,7 @@ $(window).on('entity:map', function (e, data) {
     var loaded_course = false;
     // Show outdoor layers in application maps
     $.each(['site', 'course'], function (i, modelname) {
-        var style = L.Util.extend({ clickable: false },
+        var style = L.Util.extend({ clickable: true },
             window.SETTINGS.map.styles[modelname] || {});
         var layer = new L.ObjectsLayer(null, {
             modelname: modelname,

@@ -26,12 +26,12 @@ jobs:
       actions: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: github.event.pull_request.head.repo.full_name != github.repository
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: github.event.pull_request.head.repo.full_name == github.repository
         with:
           token: ${{ secrets.PAT }}
@@ -46,7 +46,7 @@ jobs:
         run: |
           uv pip compile setup.py -o requirements.txt
           uv pip compile requirements-dev.in -o requirements-dev.txt
-          cd docs/ && uv pip compile requirements.in -o requirements.txt
+          cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
         uses: tj-actions/verify-changed-files@v20

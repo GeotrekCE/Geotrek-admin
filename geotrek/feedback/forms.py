@@ -55,20 +55,15 @@ class ReportForm(CommonForm):
         # {'current_status': ['allowed_next_status', 'other_allowed_status']}
         # Empty status should not be changed from this form
         suricate_workflow_steps = {
-            "filed": ["classified", "filed", "rejected"],
+            "filed": ["classified", "filed", "rejected", "waiting"],
             "solved_intervention": ["solved", "solved_intervention"],
         }
-        if settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION"):
-            suricate_workflow_steps = {
-                "filed": ["classified", "filed", "rejected", "waiting"],
-                "solved_intervention": ["solved", "solved_intervention"],
-            }
-        super().__init__(*args, **kwargs)
         if (
             settings.SURICATE_WORKFLOW_ENABLED
             and settings.SURICATE_WORKFLOW_SETTINGS.get("SKIP_MANAGER_MODERATION")
         ):
             self.user = kwargs["user"]
+        super().__init__(*args, **kwargs)
         self.fields["geom"].required = True
         # Store current status
         if self.instance.pk:
@@ -101,7 +96,11 @@ class ReportForm(CommonForm):
                     identifier__in=next_statuses
                 )
                 # current_user
-                if self.old_status.identifier not in ["filed"]:
+                if self.old_status.identifier not in ["filed", "waiting"] or (
+                    WorkflowManager.objects.first()
+                    and kwargs["user"] != WorkflowManager.objects.first().user
+                ):
+                    # only manager can reassign a report
                     self.fields["current_user"].widget = HiddenInput()
                 # message for sentinel
                 self.fields["message_sentinel"] = CharField(
@@ -123,16 +122,36 @@ class ReportForm(CommonForm):
                 self.fieldslayout[0].insert(
                     right_after_status_index, "message_sentinel_predefined"
                 )
-                # message for supervisor
+                # message for the new supervisor
                 self.fields["message_supervisor"] = CharField(
                     required=False, widget=Textarea()
                 )
-                self.fields["message_supervisor"].label = _("Message for supervisor")
+                if self.old_status.identifier not in ["waiting"]:
+                    self.fields["message_supervisor"].label = _(
+                        "Message for supervisor"
+                    )
+                else:
+                    self.fields["message_supervisor"].label = _(
+                        "Message for new supervisor"
+                    )
                 right_after_user_index = (
                     self.fieldslayout[0].fields.index("current_user") + 1
                 )
                 self.fieldslayout[0].insert(
                     right_after_user_index, "message_supervisor"
+                )
+                # message for the former supervisor
+                self.fields["message_former_supervisor"] = CharField(
+                    required=False, widget=Textarea()
+                )
+                self.fields["message_former_supervisor"].label = _(
+                    "Message for former supervisor"
+                )
+                right_after_supervisor_message_index = (
+                    self.fieldslayout[0].fields.index("message_supervisor") + 1
+                )
+                self.fieldslayout[0].insert(
+                    right_after_supervisor_message_index, "message_former_supervisor"
                 )
                 # message for administrators
                 self.fields["message_administrators"] = CharField(
@@ -158,11 +177,11 @@ class ReportForm(CommonForm):
                 self.fields["activity"].required = True
                 self.fields["category"].required = True
                 self.fields["problem_magnitude"].required = True
-                if settings.SURICATE_WORKFLOW_ENABLED:
-                    self.old_status = None
-                    self.old_user = None
-                    self.fields["current_user"].widget = HiddenInput()
-                    self.fields["uses_timers"].widget = HiddenInput()
+
+                self.old_status = None
+                self.old_user = None
+                self.fields["current_user"].widget = HiddenInput()
+                self.fields["uses_timers"].widget = HiddenInput()
         else:  # Do not use these fields outside of worflow
             self.fields["uses_timers"].widget = HiddenInput()
 
@@ -174,8 +193,8 @@ class ReportForm(CommonForm):
             # Assign report through moderation step
             if (
                 self.old_status.identifier in ["filed"]
+                and report.status.identifier in ["waiting"]
                 and report.current_user
-                and report.current_user != WorkflowManager.objects.first().user
             ):
                 msg = self.cleaned_data.get("message_supervisor", "")
                 report.notify_current_user(msg)
@@ -194,9 +213,29 @@ class ReportForm(CommonForm):
                 report.assigned_handler = self.user
                 report.save()
                 TimerEvent.objects.create(step=waiting_status, report=report)
+            # Reassign report through moderation step
+            elif (
+                self.old_status.identifier in ["waiting"]
+                and report.status.identifier in ["waiting"]
+                and report.current_user
+            ):
+                msg_new_supervisor = self.cleaned_data.get("message_supervisor", "")
+                msg_former_supervisor = self.cleaned_data.get(
+                    "message_former_supervisor", ""
+                )
+                report.notify_current_user(msg_new_supervisor)
+                report.notify_assigned_handler(msg_former_supervisor)
+                report.assigned_handler = report.current_user
+                report.save()
+                TimerEvent.objects.create(step=waiting_status, report=report)
             if (
                 self.old_status.identifier != report.status.identifier
                 or self.old_user != report.current_user
+                # do not notify suricate when the supervisor is reassigned
+                and not (
+                    self.old_status.identifier in ["waiting"]
+                    and report.status.identifier in ["waiting"]
+                )
             ):
                 msg_sentinel = self.cleaned_data.get("message_sentinel", "")
                 msg_admins = self.cleaned_data.get("message_administrators", "")

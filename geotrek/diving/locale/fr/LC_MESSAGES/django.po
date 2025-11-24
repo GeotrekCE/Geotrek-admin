@@ -130,9 +130,6 @@ msgstr "Plongée"
 msgid "Dives"
 msgstr "Plongées"
 
-msgid "Add a new dive"
-msgstr "Ajouter une plongée"
-
 msgid "Published dives"
 msgstr "Plongées publiées"
 
@@ -202,6 +199,9 @@ msgstr "Période de sensibilité :"
 
 msgid "Contact:"
 msgstr "Contact :"
+
+msgid "Add a new dive"
+msgstr "Ajouter une plongée"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide."

@@ -54,12 +54,15 @@ describe('Nav reports workflow', () => {
         cy.get("#id_message_sentinel").should("not.be.visible")
         cy.get("#id_message_administrators").should("not.be.visible")
         cy.get("#id_message_supervisor").should("not.be.visible")
-        // Change assigned user
+        // Change selected status to waiting
+        cy.get("#id_status").select("4")
+        // Select an assigned user
         cy.get("#id_current_user").select("5")
         // Can use selectors for sentinel and supervisor messages
-        cy.get("#id_message_sentinel_predefined").should("be.visible")
-        cy.get("#id_message_sentinel").should("be.visible")
-        cy.get("#id_message_administrators").should("be.visible")
+        cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
+        cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
+        cy.get("#id_message_administrators").scrollIntoView().should("be.visible")
+        cy.get("#id_message_supervisor").scrollIntoView().should("be.visible")
         cy.get("#modelfields").scrollTo('bottom').get("#id_message_supervisor").should("be.visible")
         // Select a predefined email
         cy.get("#id_message_sentinel_predefined").select("2")
@@ -70,13 +73,19 @@ describe('Nav reports workflow', () => {
         cy.get("#id_message_sentinel_predefined").select("3")
         cy.get("#id_message_sentinel").should("have.value", "Ce probleme n'en sera bientot plus un")
         cy.get("#id_message_administrators").should("have.value", "Ce probleme n'en sera bientot plus un")
+        // Select another assigned user
+        cy.get("#id_current_user").select("1")
+        // Can use selectors for sentinel and supervisor messages
+        cy.get("#id_message_sentinel_predefined").scrollIntoView().should("be.visible")
+        cy.get("#id_message_sentinel").scrollIntoView().should("be.visible")
+        cy.get("#id_message_administrators").scrollIntoView().should("be.visible")
+        cy.get("#modelfields").scrollTo('bottom').get("#id_message_supervisor").should("be.visible")
         // Remove predefined email
         cy.get("#id_message_sentinel_predefined").select("")
         cy.get("#id_message_sentinel").should("have.value", "")
         cy.get("#id_message_administrators").should("have.value", "")
-        // Change assigned user back
-        cy.get("#modelfields").scrollTo('bottom').get("#id_current_user").should("be.visible")
-        cy.get("#id_current_user").select("9")
+        // Change status back
+        cy.get("#id_status").select("2")
         // Cannot use selectors for sentinel and supervisor messages anymore
         cy.get("#id_message_sentinel_predefined").should("not.be.visible")
         cy.get("#id_message_sentinel").should("not.be.visible")

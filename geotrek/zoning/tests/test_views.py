@@ -15,7 +15,9 @@ from geotrek.zoning.tests.factories import (
 )
 
 
-class LandLayersViewsTest(APITestCase):
+class LandLayersViewsTest:
+    layer = ""
+
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -24,28 +26,36 @@ class LandLayersViewsTest(APITestCase):
         self.client.force_authenticate(self.user)
 
     def test_views_status(self):
-        for layer in ["city", "restrictedarea", "district"]:
-            url = reverse(f"zoning:{layer}_layer")
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200, response.json())
+        url = reverse(f"zoning:{self.layer}-list", kwargs={"format": "geojson"})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.json())
 
 
-class RestrictedAreaViewsTest(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = UserFactory()
+class CityViewSetTestCase(LandLayersViewsTest, APITestCase):
+    layer = "city"
 
-    def setUp(self) -> None:
-        self.client.force_authenticate(self.user)
 
-    def test_views_status_is_404_when_type_unknown(self):
-        url = reverse("zoning:restrictedarea_type_layer", kwargs={"type_pk": 1023})
+class DistrictViewSetTestCase(LandLayersViewsTest, APITestCase):
+    layer = "district"
+
+
+class RestrictedAreaViewTest(LandLayersViewsTest, APITestCase):
+    layer = "restrictedarea"
+
+    def test_view_by_type_status_is_404_when_unknown(self):
+        url = reverse(
+            f"zoning:{self.layer}-by-type-list",
+            kwargs={"type_pk": 1023, "format": "geojson"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-    def test_views_status_is_200_when_type_known(self):
+    def test_view_by_type_status_is_200_when_known(self):
         t = RestrictedAreaTypeFactory()
-        url = reverse("zoning:restrictedarea_type_layer", kwargs={"type_pk": t.pk})
+        url = reverse(
+            f"zoning:{self.layer}-by-type-list",
+            kwargs={"type_pk": t.pk, "format": "geojson"},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, response.json())
 

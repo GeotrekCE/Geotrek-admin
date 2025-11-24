@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
-"PO-Revision-Date: 2025-10-10 09:15+0000\n"
+"POT-Creation-Date: 2025-10-23 16:15+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/outdoor/fr/>\n"
 "Language: fr\n"
@@ -223,9 +223,6 @@ msgstr "Site outdoor"
 msgid "Outdoor sites"
 msgstr "Sites outdoor"
 
-msgid "Add a new outdoor site"
-msgstr "Ajouter un nouveau site outdoor"
-
 msgid "Sites"
 msgstr "Sites"
 
@@ -279,9 +276,6 @@ msgstr "Parcours outdoor"
 
 msgid "Outdoor courses"
 msgstr "Parcours outdoor"
-
-msgid "Add a new outdoor course"
-msgstr "Ajouter un nouveau parcours outdoor"
 
 msgid "Courses"
 msgstr "Parcours"
@@ -339,6 +333,12 @@ msgstr "Sur votre route..."
 
 msgid "Attribution"
 msgstr "Crédit"
+
+msgid "Add a new outdoor site"
+msgstr "Ajouter un nouveau site outdoor"
+
+msgid "Add a new outdoor course"
+msgstr "Ajouter un nouveau parcours outdoor"
 
 msgid "Add a course"
 msgstr "Ajouter un parcours outdoor"
