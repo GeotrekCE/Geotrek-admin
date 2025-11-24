@@ -54,11 +54,21 @@ class LandGeoJSONAPIViewMixin:
     @action(detail=False)
     def autocomplete(self, request, *args, **kwargs):
         qs = self.get_queryset_autocomplete()
-        q = self.request.query_params.get("q")
-        qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
-
-        serializer = self.serializer_autocomplete_class(qs[:10], many=True)
-        return Response({"results": serializer.data})
+        identifier = self.request.query_params.get(
+            "id"
+        )  # filter with id parameter is used to retrieve a known value
+        if identifier:
+            qs = qs.filter(id=identifier)
+            serializer = self.serializer_autocomplete_class(qs.first())
+            data = serializer.data
+        else:
+            q = self.request.query_params.get(
+                "q"
+            )  # filter with q parameter is standard for select2 (dal)
+            qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
+            serializer = self.serializer_autocomplete_class(qs[:10], many=True)
+            data = {"results": serializer.data}
+        return Response(data)
 
 
 class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
