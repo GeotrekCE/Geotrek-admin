@@ -47,5 +47,3 @@ typing-extensions==4.15.0
     # via
     #   -c requirements.txt
     #   asgiref
-uv==0.8.23
-    # via -r requirements-dev.in

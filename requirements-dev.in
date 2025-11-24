@@ -1,6 +1,5 @@
 -c requirements.txt
 
-uv
 lxml
 tblib
 ruff
