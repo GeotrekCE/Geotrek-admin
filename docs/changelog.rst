@@ -2,12 +2,17 @@
 CHANGELOG
 =========
 
-2.121.0+dev     (XXXX-XX-XX)
+2.121.1+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.121.1         (2025-11-17)
 ----------------------------
 
 **Bug fixes**
 
 * Draft path can be add by user without permission to add regular path
+* Fix the email sending and status change processes in the Suricate workflow.
 
 
 2.121.0         (2025-11-14)

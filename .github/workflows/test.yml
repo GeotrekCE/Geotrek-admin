@@ -80,7 +80,7 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
@@ -174,7 +174,7 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v6
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
@@ -191,7 +191,7 @@ jobs:
     name: Build docker image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         id: buildx
@@ -232,7 +232,7 @@ jobs:
           DISTRO: ubuntu:${{ matrix.os }}
 
       steps:
-          - uses: actions/checkout@v5
+          - uses: actions/checkout@v6
           - name: Prepare versioning
             run: |
                 grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -274,7 +274,7 @@ jobs:
           - postgres:/var/lib/postgresql/data
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download image
         uses: ishworkh/container-image-artifact-download@v2.1.0
@@ -362,7 +362,7 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v6
         with:
           name: ${{ matrix.os }}
@@ -427,7 +427,7 @@ jobs:
     needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download 20.04 debian artifact
         uses: actions/download-artifact@v6
