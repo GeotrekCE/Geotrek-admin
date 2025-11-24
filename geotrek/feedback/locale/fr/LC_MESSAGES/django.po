@@ -257,31 +257,25 @@ msgstr "jours."
 msgid "An intervention must be planned."
 msgstr "Une intervention doit être programmée."
 
-#, fuzzy
-#| msgid "You have been assigned a report on"
 msgid "You are no longer assigned to the report "
-msgstr "Un signalement vous a été assigné sur"
+msgstr "Vous n'être plus assigné au signalement"
 
 #, python-format
 msgid "%(email)s has sent a feedback."
-msgstr ""
+msgstr "%(email)s a signalé un problème."
 
 msgid "A new feedback has been sent."
-msgstr ""
+msgstr "Un problème a été signalé."
 
 #, python-format
 msgid "Comment : %(comment)s"
-msgstr ""
+msgstr "Commentaire : %(comment)s"
 
-#, fuzzy
-#| msgid "Treks"
 msgid "Trek"
-msgstr "Itinéraires"
+msgstr "Itinéraire"
 
-#, fuzzy
-#| msgid "A report on"
 msgid "Report origin"
-msgstr "Un signalement sur"
+msgstr "Provenance du signalement"
 
 #, python-format
 msgid ""
@@ -289,22 +283,21 @@ msgid ""
 "Lat : %(lat)s / Lon : %(lng)s\n"
 "https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 msgstr ""
+"\n"
+"Lat : %(lat)s / Lon : %(lng)s\n"
+"https://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 
-#, fuzzy
-#| msgid "New reports from Suricate"
 msgid "New reports have been imported from Suricate."
-msgstr "Nouveaux signalements Suricate"
+msgstr "De nouveaux signalements ont été importés depuis Suricate."
 
 msgid "Please consult your reports in"
-msgstr ""
+msgstr "Consultez vos signalements sur"
 
-#, fuzzy
-#| msgid "Status"
 msgid "Statuses"
-msgstr "Statut"
+msgstr "Statuts"
 
 msgid "Legend"
-msgstr ""
+msgstr "Légende"
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"
