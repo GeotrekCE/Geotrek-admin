@@ -21,6 +21,52 @@ from .serializers import (
 )
 
 
+class AutocompleteMixin:
+    autocomplete_search_fields = None
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.get_queryset()
+
+    def get_queryset_autocomplete(self):
+        return self.get_queryset()
+
+    @action(detail=False)
+    def autocomplete_bbox(self, request, *args, **kwargs):
+        qs = self.get_queryset_autocomplete_bbox()
+        q = self.request.query_params.get("q")
+        qs = qs.filter(self._get_filters(q)) if q else qs
+        serializer = self.serializer_autocomplete_bbox_class(qs[:10], many=True)
+        return Response({"results": serializer.data})
+
+    def _get_filters(self, q):
+        filters = Q()
+        for field in self.autocomplete_search_fields:
+            filters |= Q(**{f"{field}__icontains": q})
+        return filters
+
+    @action(detail=False)
+    def autocomplete(self, request, *args, **kwargs):
+        qs = self.get_queryset_autocomplete()
+        identifier = self.request.query_params.get(
+            "id"
+        )  # filter with id parameter is used to retrieve a known value
+        if identifier:
+            qs = qs.filter(id=identifier)
+            instance = qs.first()
+            if instance is None:
+                return Response({})
+            serializer = self.serializer_autocomplete_class(qs.first())
+            data = serializer.data
+        else:
+            q = self.request.query_params.get(
+                "q"
+            )  # filter with q parameter is standard for select2 (dal)
+            qs = qs.filter(self._get_filters(q)) if q else qs
+            serializer = self.serializer_autocomplete_class(qs[:10], many=True)
+            data = {"results": serializer.data}
+        return Response(data)
+
+
 class LandGeoJSONAPIViewMixin:
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [GeoJSONRenderer]
@@ -33,41 +79,10 @@ class LandGeoJSONAPIViewMixin:
             )
         ).defer("geom")
 
-    def get_queryset_autocomplete_bbox(self):
-        return self.model.objects.all()
-
     @view_cache_latest()
     @view_cache_response_content()
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
-    @action(detail=False)
-    def autocomplete_bbox(self, request, *args, **kwargs):
-        qs = self.get_queryset_autocomplete_bbox()
-        q = self.request.query_params.get("q")
-        qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
-
-        serializer = self.serializer_autocomplete_bbox_class(qs[:10], many=True)
-        return Response({"results": serializer.data})
-
-    @action(detail=False)
-    def autocomplete(self, request, *args, **kwargs):
-        qs = self.get_queryset_autocomplete()
-        identifier = self.request.query_params.get(
-            "id"
-        )  # filter with id parameter is used to retrieve a known value
-        if identifier:
-            qs = qs.filter(id=identifier)
-            serializer = self.serializer_autocomplete_class(qs.first())
-            data = serializer.data
-        else:
-            q = self.request.query_params.get(
-                "q"
-            )  # filter with q parameter is standard for select2 (dal)
-            qs = qs.filter(Q(name__icontains=q) | Q(code__istartswith=q)) if q else qs
-            serializer = self.serializer_autocomplete_class(qs[:10], many=True)
-            data = {"results": serializer.data}
-        return Response(data)
 
 
 class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
@@ -83,11 +98,14 @@ class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewS
         return qs
 
 
-class DistrictViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
+class DistrictViewSet(
+    AutocompleteMixin, LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet
+):
     model = District
     serializer_class = DistrictSerializer
     serializer_autocomplete_class = DistrictAutoCompleteSerializer
     serializer_autocomplete_bbox_class = DistrictAutoCompleteBBoxSerializer
+    autocomplete_search_fields = ["name"]
 
     def get_queryset_autocomplete(self):
         return self.model.objects.only("name", "id")
@@ -96,8 +114,11 @@ class DistrictViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
         return self.model.objects.only("name", "envelope")
 
 
-class CityViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
+class CityViewSet(
+    AutocompleteMixin, LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet
+):
     model = City
+    autocomplete_search_fields = ["name", "code"]
     serializer_class = CitySerializer
     serializer_autocomplete_class = CityAutoCompleteSerializer
     serializer_autocomplete_bbox_class = CityAutoCompleteBBoxSerializer
