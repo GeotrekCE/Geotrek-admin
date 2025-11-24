@@ -14,7 +14,7 @@ jobs:
     name: Checking SRID in migrations files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: |
           test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
@@ -22,7 +22,7 @@ jobs:
     name: Checking lint rules
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
         with:
             version: "latest"
@@ -52,12 +52,12 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: github.event.pull_request.head.repo.full_name != github.repository
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: github.event.pull_request.head.repo.full_name == github.repository
         with:
           token: ${{ secrets.PAT }}
