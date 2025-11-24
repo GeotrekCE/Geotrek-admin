@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 11:24+0100\n"
+"POT-Creation-Date: 2025-11-24 10:47+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -35,23 +35,3 @@ msgstr "Geotrek-admin est en maintenance..."
 
 msgid "Please come back later."
 msgstr "Veuillez revenir plus tard."
-
-#, python-brace-format
-msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"
-msgstr ""
-
-#, python-brace-format
-msgid "Failed to download '{url}'"
-msgstr ""
