@@ -424,7 +424,7 @@ xmltodict==1.0.2
     # via tif2geojson
 zc-lockfile==4.0
     # via zodb
-zconfig==4.2
+zconfig==4.3
     # via zodb
 zipp==3.23.0
     # via importlib-metadata
