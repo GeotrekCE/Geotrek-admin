@@ -24,12 +24,8 @@ from .serializers import (
 
 class AutocompleteMixin:
     autocomplete_search_fields = None
-
-    def get_queryset_autocomplete_bbox(self):
-        return self.get_queryset()
-
-    def get_queryset_autocomplete(self):
-        return self.get_queryset()
+    serializer_autocomplete_class = None
+    serializer_autocomplete_bbox_class = None
 
     @action(detail=False)
     def autocomplete_bbox(self, request, *args, **kwargs):
