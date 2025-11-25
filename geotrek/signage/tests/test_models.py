@@ -1,6 +1,7 @@
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.templatetags.static import static
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
@@ -84,6 +85,13 @@ class BladeModelTest(TestCase):
     def test_str_bladecondition_without_structure(self):
         bladecondition = BladeConditionFactory(label="condition", structure=None)
         self.assertEqual(str(bladecondition), "condition")
+
+    def test_signage_display_blade(self):
+        blade = BladeFactory()
+        self.assertEqual(
+            blade.signage_display,
+            f'<img src="{static("images/signage-16.png")}" title="Signage">',
+        )
 
 
 class SignageModelTest(TestCase):
