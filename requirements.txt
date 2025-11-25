@@ -87,7 +87,7 @@ cssselect2==0.8.0
     #   cairosvg
     #   svglib
     #   weasyprint
-datetime==5.5
+datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
