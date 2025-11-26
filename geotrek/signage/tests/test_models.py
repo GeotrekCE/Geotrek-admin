@@ -90,7 +90,7 @@ class BladeModelTest(TestCase):
         blade = BladeFactory()
         self.assertEqual(
             blade.signage_display,
-            f'<img src="{static("images/signage-16.png")}" title="Signage">',
+            f'<img src="{static("images/signage-16.png")}" title="Signage" />',
         )
 
 
