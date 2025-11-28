@@ -324,8 +324,8 @@ jobs:
         with:
           name: cypress-docker
           path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/
+            ${{ github.workspace }}/cypress/videos/
+            ${{ github.workspace }}/cypress/screenshots/
 
   e2e_deb:
     name: Tests E2E debian package
@@ -415,8 +415,8 @@ jobs:
         with:
           name: cypress-${{ matrix.code }}
           path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/
+            ${{ github.workspace }}/cypress/videos/
+            ${{ github.workspace }}/cypress/screenshots/
 
   deploy:
     name: Publish (on release only)
